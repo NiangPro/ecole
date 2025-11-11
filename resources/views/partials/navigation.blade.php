@@ -99,7 +99,39 @@
                 </div>
 
                 <a href="{{ route('about') }}" class="nav-link text-gray-300 hover:text-cyan-400 font-semibold transition">À propos</a>
-                <a href="{{ route('exercices') }}" class="nav-link text-gray-300 hover:text-cyan-400 font-semibold transition">Exercices</a>
+                
+                <!-- Dropdown Pratique -->
+                <div class="relative group">
+                    <button class="nav-link text-gray-300 hover:text-cyan-400 font-semibold flex items-center gap-1 transition">
+                        Pratique
+                        <svg class="w-4 h-4 transform group-hover:rotate-180 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                        </svg>
+                    </button>
+                    <div class="absolute left-0 mt-3 w-56 bg-black/95 backdrop-blur-2xl rounded-2xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 border border-cyan-500/20 overflow-hidden" style="z-index: 10000;">
+                        <div class="py-3">
+                            <a href="{{ route('exercices') }}" class="flex items-center px-6 py-3.5 hover:bg-gradient-to-r hover:from-cyan-500/10 hover:to-transparent transition-all group/item">
+                                <div class="w-10 h-10 rounded-lg bg-cyan-500/10 flex items-center justify-center mr-3 group-hover/item:scale-110 transition-transform">
+                                    <i class="fas fa-code text-cyan-400 text-lg"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <span class="block font-semibold text-white group-hover/item:text-cyan-400 transition-colors">Exercices</span>
+                                    <span class="text-xs text-gray-500">Pratiquer le code</span>
+                                </div>
+                            </a>
+                            <a href="{{ route('quiz') }}" class="flex items-center px-6 py-3.5 hover:bg-gradient-to-r hover:from-cyan-500/10 hover:to-transparent transition-all group/item">
+                                <div class="w-10 h-10 rounded-lg bg-purple-500/10 flex items-center justify-center mr-3 group-hover/item:scale-110 transition-transform">
+                                    <i class="fas fa-question-circle text-purple-400 text-lg"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <span class="block font-semibold text-white group-hover/item:text-cyan-400 transition-colors">Quiz</span>
+                                    <span class="text-xs text-gray-500">Tester vos connaissances</span>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
                 <a href="{{ route('contact') }}" class="px-6 py-2.5 bg-gradient-to-r from-cyan-500 to-teal-600 text-white font-bold rounded-lg hover:shadow-lg hover:scale-105 transition">
                     <i class="fas fa-envelope mr-2"></i>Contact
                 </a>
@@ -164,10 +196,22 @@
                 <span class="text-white font-semibold">À propos</span>
             </a>
 
-            <a href="{{ route('exercices') }}" class="flex items-center gap-3 px-4 py-3 rounded-lg hover:bg-cyan-500/10 transition">
-                <i class="fas fa-dumbbell text-cyan-400"></i>
-                <span class="text-white font-semibold">Exercices</span>
-            </a>
+            <!-- Pratique Mobile -->
+            <div>
+                <button id="pratiqueToggle" class="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-lg hover:bg-cyan-500/10 transition">
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-graduation-cap text-cyan-400"></i>
+                        <span class="text-white font-semibold">Pratique</span>
+                    </div>
+                    <i class="fas fa-chevron-down text-cyan-400 transition-transform" id="pratiqueIcon"></i>
+                </button>
+                <div id="pratiqueSubmenu" class="max-h-0 overflow-hidden transition-all duration-300">
+                    <div class="pl-12 space-y-1 mt-2">
+                        <a href="{{ route('exercices') }}" class="block py-2 text-gray-300 hover:text-cyan-400 transition">Exercices</a>
+                        <a href="{{ route('quiz') }}" class="block py-2 text-gray-300 hover:text-cyan-400 transition">Quiz</a>
+                    </div>
+                </div>
+            </div>
 
             <a href="{{ route('contact') }}" class="flex items-center gap-3 px-4 py-3 mt-4 bg-gradient-to-r from-cyan-500 to-teal-600 rounded-lg hover:shadow-lg transition">
                 <i class="fas fa-envelope text-white"></i>
@@ -212,6 +256,22 @@
         } else {
             formationsSubmenu.style.maxHeight = formationsSubmenu.scrollHeight + 'px';
             formationsIcon.style.transform = 'rotate(180deg)';
+        }
+    });
+
+    // Toggle Pratique
+    const pratiqueToggle = document.getElementById('pratiqueToggle');
+    const pratiqueSubmenu = document.getElementById('pratiqueSubmenu');
+    const pratiqueIcon = document.getElementById('pratiqueIcon');
+    
+    pratiqueToggle.addEventListener('click', () => {
+        const isOpen = pratiqueSubmenu.style.maxHeight && pratiqueSubmenu.style.maxHeight !== '0px';
+        if (isOpen) {
+            pratiqueSubmenu.style.maxHeight = '0';
+            pratiqueIcon.style.transform = 'rotate(0deg)';
+        } else {
+            pratiqueSubmenu.style.maxHeight = pratiqueSubmenu.scrollHeight + 'px';
+            pratiqueIcon.style.transform = 'rotate(180deg)';
         }
     });
 

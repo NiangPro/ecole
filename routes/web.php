@@ -12,6 +12,9 @@ Route::get('/exercices', [PageController::class, 'exercices'])->name('exercices'
 Route::get('/exercices/{language}', [PageController::class, 'exercicesLanguage'])->name('exercices.language');
 Route::get('/exercices/{language}/{id}', [PageController::class, 'exerciceDetail'])->name('exercices.detail');
 Route::post('/exercices/{language}/{id}/submit', [PageController::class, 'exerciceSubmit'])->name('exercices.submit');
+Route::get('/quiz', [PageController::class, 'quiz'])->name('quiz');
+Route::get('/quiz/{language}', [PageController::class, 'quizLanguage'])->name('quiz.language');
+Route::post('/quiz/{language}/submit', [PageController::class, 'quizSubmit'])->name('quiz.submit');
 Route::get('/legal', [PageController::class, 'legal'])->name('legal');
 Route::get('/privacy-policy', [PageController::class, 'privacyPolicy'])->name('privacy-policy');
 Route::get('/terms', [PageController::class, 'terms'])->name('terms');
