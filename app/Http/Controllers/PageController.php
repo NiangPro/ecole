@@ -819,6 +819,420 @@ foreach ($fruits as $fruit) {
                     'hint' => 'Créez $fruits = array("Pomme", "Banane", "Orange"); puis foreach ($fruits as $fruit) { echo $fruit . " "; }'
                 ],
             ],
+            'bootstrap' => [
+                1 => [
+                    'title' => 'Grille Bootstrap',
+                    'difficulty' => 'Facile',
+                    'points' => 10,
+                    'instruction' => 'Créez une grille Bootstrap avec 3 colonnes égales.',
+                    'description' => 'Utilisez les classes Bootstrap col pour créer des colonnes.',
+                    'startCode' => '<html>
+<head>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+  <div class="row">
+    <div class="">Colonne 1</div>
+    <div class="">Colonne 2</div>
+    <div class="">Colonne 3</div>
+  </div>
+</div>
+
+</body>
+</html>',
+                    'solution' => '<html>
+<head>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+  <div class="row">
+    <div class="col">Colonne 1</div>
+    <div class="col">Colonne 2</div>
+    <div class="col">Colonne 3</div>
+  </div>
+</div>
+
+</body>
+</html>',
+                    'hint' => 'Ajoutez la classe "col" à chaque div pour créer des colonnes égales.'
+                ],
+                2 => [
+                    'title' => 'Bouton Bootstrap',
+                    'difficulty' => 'Facile',
+                    'points' => 10,
+                    'instruction' => 'Créez un bouton bleu primaire avec Bootstrap.',
+                    'description' => 'Utilisez les classes btn et btn-primary.',
+                    'startCode' => '<html>
+<head>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5">
+  <button class="">Cliquez-moi</button>
+</div>
+
+</body>
+</html>',
+                    'solution' => '<html>
+<head>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5">
+  <button class="btn btn-primary">Cliquez-moi</button>
+</div>
+
+</body>
+</html>',
+                    'hint' => 'Ajoutez les classes "btn btn-primary" au bouton.'
+                ],
+                3 => [
+                    'title' => 'Card Bootstrap',
+                    'difficulty' => 'Moyen',
+                    'points' => 15,
+                    'instruction' => 'Complétez la structure d\'une card Bootstrap.',
+                    'description' => 'Ajoutez les classes card-body et card-title.',
+                    'startCode' => '<html>
+<head>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5">
+  <div class="card" style="width: 18rem;">
+    <div class="">
+      <h5 class="">Titre de la carte</h5>
+      <p class="card-text">Contenu de la carte.</p>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>',
+                    'solution' => '<html>
+<head>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5">
+  <div class="card" style="width: 18rem;">
+    <div class="card-body">
+      <h5 class="card-title">Titre de la carte</h5>
+      <p class="card-text">Contenu de la carte.</p>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>',
+                    'hint' => 'Ajoutez "card-body" à la div et "card-title" au h5.'
+                ],
+                4 => [
+                    'title' => 'Navbar Bootstrap',
+                    'difficulty' => 'Moyen',
+                    'points' => 20,
+                    'instruction' => 'Créez une navbar Bootstrap avec un logo et des liens.',
+                    'description' => 'Utilisez les classes navbar, navbar-brand et nav-link.',
+                    'startCode' => '<html>
+<head>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container">
+    <a class="" href="#">MonSite</a>
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="" href="#">Accueil</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+</body>
+</html>',
+                    'solution' => '<html>
+<head>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container">
+    <a class="navbar-brand" href="#">MonSite</a>
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" href="#">Accueil</a>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+</body>
+</html>',
+                    'hint' => 'Ajoutez "navbar-brand" au logo et "nav-link" au lien.'
+                ],
+                5 => [
+                    'title' => 'Responsive Bootstrap',
+                    'difficulty' => 'Difficile',
+                    'points' => 20,
+                    'instruction' => 'Créez une grille responsive : 12 colonnes sur mobile, 6 sur tablette, 4 sur desktop.',
+                    'description' => 'Utilisez col-12, col-md-6 et col-lg-4.',
+                    'startCode' => '<html>
+<head>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+  <div class="row">
+    <div class="">Colonne 1</div>
+    <div class="">Colonne 2</div>
+    <div class="">Colonne 3</div>
+  </div>
+</div>
+
+</body>
+</html>',
+                    'solution' => '<html>
+<head>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+  <div class="row">
+    <div class="col-12 col-md-6 col-lg-4">Colonne 1</div>
+    <div class="col-12 col-md-6 col-lg-4">Colonne 2</div>
+    <div class="col-12 col-md-6 col-lg-4">Colonne 3</div>
+  </div>
+</div>
+
+</body>
+</html>',
+                    'hint' => 'Utilisez "col-12 col-md-6 col-lg-4" pour chaque colonne.'
+                ],
+            ],
+            'git' => [
+                1 => [
+                    'title' => 'Initialiser un dépôt Git',
+                    'difficulty' => 'Facile',
+                    'points' => 10,
+                    'instruction' => 'Quelle commande initialise un nouveau dépôt Git ?',
+                    'description' => 'Tapez la commande Git pour créer un nouveau dépôt.',
+                    'startCode' => 'git ',
+                    'solution' => 'git init',
+                    'hint' => 'La commande commence par "git" et utilise "init".'
+                ],
+                2 => [
+                    'title' => 'Ajouter des fichiers',
+                    'difficulty' => 'Facile',
+                    'points' => 10,
+                    'instruction' => 'Quelle commande ajoute tous les fichiers au staging ?',
+                    'description' => 'Utilisez la commande pour ajouter tous les fichiers modifiés.',
+                    'startCode' => 'git ',
+                    'solution' => 'git add .',
+                    'hint' => 'Utilisez "git add" suivi d\'un point pour tout ajouter.'
+                ],
+                3 => [
+                    'title' => 'Créer un commit',
+                    'difficulty' => 'Facile',
+                    'points' => 15,
+                    'instruction' => 'Créez un commit avec le message "Premier commit".',
+                    'description' => 'Utilisez la commande commit avec l\'option -m.',
+                    'startCode' => 'git ',
+                    'solution' => 'git commit -m "Premier commit"',
+                    'hint' => 'Utilisez git commit -m suivi du message entre guillemets.'
+                ],
+                4 => [
+                    'title' => 'Créer une branche',
+                    'difficulty' => 'Moyen',
+                    'points' => 15,
+                    'instruction' => 'Créez une nouvelle branche appelée "develop".',
+                    'description' => 'Utilisez la commande branch ou checkout -b.',
+                    'startCode' => 'git ',
+                    'solution' => 'git branch develop',
+                    'hint' => 'Utilisez "git branch" suivi du nom de la branche.'
+                ],
+                5 => [
+                    'title' => 'Fusionner des branches',
+                    'difficulty' => 'Difficile',
+                    'points' => 20,
+                    'instruction' => 'Fusionnez la branche "feature" dans la branche actuelle.',
+                    'description' => 'Utilisez la commande merge.',
+                    'startCode' => 'git ',
+                    'solution' => 'git merge feature',
+                    'hint' => 'Utilisez "git merge" suivi du nom de la branche à fusionner.'
+                ],
+            ],
+            'wordpress' => [
+                1 => [
+                    'title' => 'The Loop WordPress',
+                    'difficulty' => 'Facile',
+                    'points' => 10,
+                    'instruction' => 'Complétez la boucle WordPress pour afficher les articles.',
+                    'description' => 'Utilisez have_posts() et the_post().',
+                    'startCode' => '<?php
+if ( ) {
+  while ( ) {
+    
+    the_title();
+    the_content();
+  }
+}
+?>',
+                    'solution' => '<?php
+if (have_posts()) {
+  while (have_posts()) {
+    the_post();
+    the_title();
+    the_content();
+  }
+}
+?>',
+                    'hint' => 'Utilisez have_posts() dans le if et le while, puis the_post() dans la boucle.'
+                ],
+                2 => [
+                    'title' => 'Afficher le titre',
+                    'difficulty' => 'Facile',
+                    'points' => 10,
+                    'instruction' => 'Affichez le titre de l\'article dans un h1.',
+                    'description' => 'Utilisez la fonction WordPress appropriée.',
+                    'startCode' => '<h1><?php  ?></h1>',
+                    'solution' => '<h1><?php the_title(); ?></h1>',
+                    'hint' => 'Utilisez the_title() pour afficher le titre.'
+                ],
+                3 => [
+                    'title' => 'Image à la une',
+                    'difficulty' => 'Moyen',
+                    'points' => 15,
+                    'instruction' => 'Affichez l\'image à la une de l\'article.',
+                    'description' => 'Utilisez la fonction WordPress pour l\'image à la une.',
+                    'startCode' => '<?php
+if (has_post_thumbnail()) {
+  
+}
+?>',
+                    'solution' => '<?php
+if (has_post_thumbnail()) {
+  the_post_thumbnail();
+}
+?>',
+                    'hint' => 'Utilisez the_post_thumbnail() pour afficher l\'image.'
+                ],
+                4 => [
+                    'title' => 'Menu WordPress',
+                    'difficulty' => 'Moyen',
+                    'points' => 18,
+                    'instruction' => 'Affichez le menu principal de WordPress.',
+                    'description' => 'Utilisez wp_nav_menu avec le bon paramètre.',
+                    'startCode' => '<?php
+wp_nav_menu(array(
+  \'theme_location\' => \'\'
+));
+?>',
+                    'solution' => '<?php
+wp_nav_menu(array(
+  \'theme_location\' => \'primary\'
+));
+?>',
+                    'hint' => 'Utilisez "primary" comme theme_location.'
+                ],
+                5 => [
+                    'title' => 'Custom Post Type',
+                    'difficulty' => 'Difficile',
+                    'points' => 20,
+                    'instruction' => 'Enregistrez un custom post type "portfolio".',
+                    'description' => 'Utilisez register_post_type avec les bons paramètres.',
+                    'startCode' => '<?php
+function create_portfolio_post_type() {
+  register_post_type(\'\', array(
+    \'labels\' => array(\'name\' => \'Portfolio\'),
+    \'public\' => true
+  ));
+}
+add_action(\'init\', \'create_portfolio_post_type\');
+?>',
+                    'solution' => '<?php
+function create_portfolio_post_type() {
+  register_post_type(\'portfolio\', array(
+    \'labels\' => array(\'name\' => \'Portfolio\'),
+    \'public\' => true
+  ));
+}
+add_action(\'init\', \'create_portfolio_post_type\');
+?>',
+                    'hint' => 'Utilisez "portfolio" comme premier paramètre de register_post_type.'
+                ],
+            ],
+            'ia' => [
+                1 => [
+                    'title' => 'Concepts de base IA',
+                    'difficulty' => 'Facile',
+                    'points' => 10,
+                    'instruction' => 'Complétez : L\'IA est la simulation de l\'intelligence ___ par des machines.',
+                    'description' => 'Quel type d\'intelligence l\'IA simule-t-elle ?',
+                    'startCode' => 'L\'IA est la simulation de l\'intelligence ___ par des machines.',
+                    'solution' => 'L\'IA est la simulation de l\'intelligence humaine par des machines.',
+                    'hint' => 'L\'IA simule l\'intelligence humaine.'
+                ],
+                2 => [
+                    'title' => 'Machine Learning',
+                    'difficulty' => 'Facile',
+                    'points' => 12,
+                    'instruction' => 'Citez les 3 types principaux de Machine Learning.',
+                    'description' => 'Supervisé, Non supervisé et...',
+                    'startCode' => '1. Apprentissage supervisé
+2. Apprentissage non supervisé
+3. Apprentissage ___',
+                    'solution' => '1. Apprentissage supervisé
+2. Apprentissage non supervisé
+3. Apprentissage par renforcement',
+                    'hint' => 'Le troisième type est l\'apprentissage par renforcement.'
+                ],
+                3 => [
+                    'title' => 'Réseaux de neurones',
+                    'difficulty' => 'Moyen',
+                    'points' => 15,
+                    'instruction' => 'Complétez la structure d\'un réseau de neurones simple.',
+                    'description' => 'Un réseau a une couche d\'entrée, des couches ___ et une couche de sortie.',
+                    'startCode' => 'Couche d\'entrée → Couches ___ → Couche de sortie',
+                    'solution' => 'Couche d\'entrée → Couches cachées → Couche de sortie',
+                    'hint' => 'Les couches intermédiaires sont appelées couches cachées.'
+                ],
+                4 => [
+                    'title' => 'Deep Learning',
+                    'difficulty' => 'Moyen',
+                    'points' => 15,
+                    'instruction' => 'Quelle bibliothèque Python est populaire pour le Deep Learning ?',
+                    'description' => 'Développée par Google, commence par "Tensor".',
+                    'startCode' => 'import ___',
+                    'solution' => 'import tensorflow',
+                    'hint' => 'La bibliothèque s\'appelle TensorFlow.'
+                ],
+                5 => [
+                    'title' => 'Applications IA',
+                    'difficulty' => 'Difficile',
+                    'points' => 18,
+                    'instruction' => 'Citez 3 applications concrètes de l\'IA.',
+                    'description' => 'Exemples : reconnaissance vocale, voitures autonomes...',
+                    'startCode' => '1. Reconnaissance ___
+2. Voitures ___
+3. Assistants ___',
+                    'solution' => '1. Reconnaissance vocale
+2. Voitures autonomes
+3. Assistants virtuels',
+                    'hint' => 'Pensez à Siri, Tesla, et la reconnaissance d\'image.'
+                ],
+            ],
         ];
 
         return $allExercises[$language][$id] ?? null;
@@ -855,6 +1269,34 @@ foreach ($fruits as $fruit) {
                 ['title' => 'Conditions PHP', 'difficulty' => 'Moyen', 'points' => 15],
                 ['title' => 'Boucles PHP', 'difficulty' => 'Moyen', 'points' => 20],
                 ['title' => 'Tableaux PHP', 'difficulty' => 'Difficile', 'points' => 25],
+            ],
+            'bootstrap' => [
+                ['title' => 'Grille Bootstrap', 'difficulty' => 'Facile', 'points' => 10],
+                ['title' => 'Bouton Bootstrap', 'difficulty' => 'Facile', 'points' => 10],
+                ['title' => 'Card Bootstrap', 'difficulty' => 'Moyen', 'points' => 15],
+                ['title' => 'Navbar Bootstrap', 'difficulty' => 'Moyen', 'points' => 20],
+                ['title' => 'Responsive Bootstrap', 'difficulty' => 'Difficile', 'points' => 20],
+            ],
+            'git' => [
+                ['title' => 'Initialiser un dépôt Git', 'difficulty' => 'Facile', 'points' => 10],
+                ['title' => 'Ajouter des fichiers', 'difficulty' => 'Facile', 'points' => 10],
+                ['title' => 'Créer un commit', 'difficulty' => 'Facile', 'points' => 15],
+                ['title' => 'Créer une branche', 'difficulty' => 'Moyen', 'points' => 15],
+                ['title' => 'Fusionner des branches', 'difficulty' => 'Difficile', 'points' => 20],
+            ],
+            'wordpress' => [
+                ['title' => 'The Loop WordPress', 'difficulty' => 'Facile', 'points' => 10],
+                ['title' => 'Afficher le titre', 'difficulty' => 'Facile', 'points' => 10],
+                ['title' => 'Image à la une', 'difficulty' => 'Moyen', 'points' => 15],
+                ['title' => 'Menu WordPress', 'difficulty' => 'Moyen', 'points' => 18],
+                ['title' => 'Custom Post Type', 'difficulty' => 'Difficile', 'points' => 20],
+            ],
+            'ia' => [
+                ['title' => 'Concepts de base IA', 'difficulty' => 'Facile', 'points' => 10],
+                ['title' => 'Machine Learning', 'difficulty' => 'Facile', 'points' => 12],
+                ['title' => 'Réseaux de neurones', 'difficulty' => 'Moyen', 'points' => 15],
+                ['title' => 'Deep Learning', 'difficulty' => 'Moyen', 'points' => 15],
+                ['title' => 'Applications IA', 'difficulty' => 'Difficile', 'points' => 18],
             ],
         ];
 
