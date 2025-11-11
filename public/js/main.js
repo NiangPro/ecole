@@ -1,0 +1,224 @@
+// Fonction pour le défilement fluide vers les ancres
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        try {
+            e.preventDefault();
+            
+            const targetId = this.getAttribute('href');
+            if (targetId === '#') return;
+            
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                window.scrollTo({
+                    top: targetElement.offsetTop - 80,
+                    behavior: 'smooth'
+                });
+                
+                // Fermer le menu mobile si ouvert
+                const mobileMenu = document.getElementById('mobile-menu');
+                if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+                    mobileMenu.classList.add('hidden');
+                }
+            }
+        } catch (error) {
+            console.error('Erreur lors du défilement:', error);
+        }
+    });
+});
+
+// Bouton de retour en haut
+const backToTopButton = document.getElementById('backToTop');
+
+if (backToTopButton) {
+    window.addEventListener('scroll', () => {
+        try {
+            // Afficher/masquer le bouton de retour en haut
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.add('visible');
+                backToTopButton.style.display = 'block';
+            } else {
+                backToTopButton.classList.remove('visible');
+                backToTopButton.style.display = 'none';
+            }
+            
+            // Animation d'apparition des éléments au défilement
+            animateOnScroll();
+        } catch (error) {
+            console.error('Erreur lors du scroll:', error);
+        }
+    });
+
+    // Gestion du clic sur le bouton de retour en haut
+    backToTopButton.addEventListener('click', () => {
+        try {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        } catch (error) {
+            console.error('Erreur lors du retour en haut:', error);
+        }
+    });
+}
+
+// Animation d'apparition des éléments au défilement
+function animateOnScroll() {
+    const elements = document.querySelectorAll('.fade-in, .feature-item');
+    
+    elements.forEach(element => {
+        const elementTop = element.getBoundingClientRect().top;
+        const windowHeight = window.innerHeight;
+        
+        if (elementTop < windowHeight - 100) {
+            element.classList.add('visible');
+        }
+    });
+}
+
+// Initialisation des animations au chargement de la page
+document.addEventListener('DOMContentLoaded', () => {
+    try {
+        // Démarrer les animations
+        animateOnScroll();
+        
+        // Menu mobile
+        const mobileMenuButton = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        if (mobileMenuButton && mobileMenu) {
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            // Gestion du bouton formations mobile
+            const mobileFormationsBtn = document.getElementById('mobile-formations-btn');
+            const mobileFormationsMenu = document.getElementById('mobile-formations-menu');
+            
+            if (mobileFormationsBtn && mobileFormationsMenu) {
+                mobileFormationsBtn.addEventListener('click', () => {
+                    mobileFormationsMenu.classList.toggle('hidden');
+                });
+            }
+        }
+        
+        // Animation des cartes de compétences
+        const skillCards = document.querySelectorAll('.skill-card');
+        skillCards.forEach((card, index) => {
+            // Délai d'animation progressif pour chaque carte
+            card.style.transitionDelay = `${index * 0.1}s`;
+        });
+    } catch (error) {
+        console.error('Erreur lors de l\'initialisation:', error);
+    }
+});
+
+// Gestion de la soumission du formulaire de contact
+const contactForm = document.querySelector('#contact form');
+if (contactForm) {
+    contactForm.addEventListener('submit', function(e) {
+        try {
+            e.preventDefault();
+            
+            // Récupération des données du formulaire
+            const formData = new FormData(this);
+            const formObject = {};
+            formData.forEach((value, key) => {
+                formObject[key] = value;
+            });
+            
+            // Ici, vous pouvez ajouter la logique pour envoyer les données à votre serveur
+            console.log('Données du formulaire :', formObject);
+            
+            // Afficher un message de succès
+            alert('Merci pour votre message ! Nous vous recontacterons bientôt.');
+            
+            // Réinitialiser le formulaire
+            this.reset();
+        } catch (error) {
+            console.error('Erreur lors de la soumission du formulaire:', error);
+            alert('Une erreur s\'est produite. Veuillez réessayer.');
+        }
+    });
+}
+
+// Fonction pour ajouter une classe au header lors du défilement
+const header = document.querySelector('header');
+if (header) {
+    window.addEventListener('scroll', () => {
+        try {
+            if (window.scrollY > 100) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        } catch (error) {
+            console.error('Erreur lors du scroll du header:', error);
+        }
+    });
+}
+
+// Animation des compteurs de statistiques
+function animateCounters() {
+    try {
+        const counters = document.querySelectorAll('.counter');
+        const speed = 200; // La vitesse de l'animation
+        
+        counters.forEach(counter => {
+            const target = +counter.getAttribute('data-target');
+            const count = +counter.innerText;
+            const increment = target / speed;
+            
+            if (count < target) {
+                counter.innerText = Math.ceil(count + increment);
+                setTimeout(animateCounters, 1);
+            } else {
+                counter.innerText = target;
+            }
+        });
+    } catch (error) {
+        console.error('Erreur lors de l\'animation des compteurs:', error);
+    }
+}
+
+// Observer pour déclencher l'animation des compteurs lorsqu'ils sont visibles
+if ('IntersectionObserver' in window) {
+    try {
+        const observerOptions = {
+            threshold: 0.5
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateCounters();
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.counter').forEach(counter => {
+            observer.observe(counter);
+        });
+    } catch (error) {
+        console.error('Erreur lors de l\'initialisation de l\'observer:', error);
+    }
+}
+
+// Gestion du mode sombre (optionnel)
+const darkModeToggle = document.getElementById('darkModeToggle');
+if (darkModeToggle) {
+    try {
+        darkModeToggle.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('darkMode', document.documentElement.classList.contains('dark'));
+        });
+        
+        // Vérifier les préférences utilisateur
+        if (localStorage.getItem('darkMode') === 'true' || 
+            (!localStorage.getItem('darkMode') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        }
+    } catch (error) {
+        console.error('Erreur lors de l\'initialisation du mode sombre:', error);
+    }
+}
