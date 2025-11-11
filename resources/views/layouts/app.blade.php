@@ -26,8 +26,9 @@
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="{{ asset('css/styles.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/animations-3d.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
     
     @php
         $adsenseSettings = \App\Models\AdSenseSetting::first();
@@ -64,6 +65,25 @@
     </script>
     @endif
     
+    <style>
+        /* GLOBAL STYLES */
+        html {
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            padding-top: 70px;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+        
+        * {
+            box-sizing: border-box;
+        }
+    </style>
     @yield('styles')
 </head>
 <body class="bg-black text-white">

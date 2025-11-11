@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Admin\NewsletterController;
 
 Route::get('/', [PageController::class, 'index'])->name('home');
 Route::get('/about', [PageController::class, 'about'])->name('about');
@@ -18,6 +20,8 @@ Route::post('/quiz/{language}/submit', [PageController::class, 'quizSubmit'])->n
 Route::get('/legal', [PageController::class, 'legal'])->name('legal');
 Route::get('/privacy-policy', [PageController::class, 'privacyPolicy'])->name('privacy-policy');
 Route::get('/terms', [PageController::class, 'terms'])->name('terms');
+Route::post('/newsletter/subscribe', [PageController::class, 'newsletterSubscribe'])->name('newsletter.subscribe');
+Route::get('/newsletter/unsubscribe/{token}', [PageController::class, 'newsletterUnsubscribe'])->name('newsletter.unsubscribe');
 
 // Routes Formations
 Route::get('/formations/html5', [PageController::class, 'html5'])->name('formations.html5');
@@ -49,4 +53,11 @@ Route::post('/admin/messages/{id}/mark-read', [App\Http\Controllers\AdminControl
 Route::delete('/admin/messages/{id}', [App\Http\Controllers\AdminController::class, 'deleteMessage'])->name('admin.messages.delete');
 Route::get('/admin/settings', [App\Http\Controllers\AdminController::class, 'settings'])->name('admin.settings');
 Route::post('/admin/settings', [App\Http\Controllers\AdminController::class, 'updateSettings'])->name('admin.settings.update');
+
+// Newsletter Admin
+Route::get('/admin/newsletter', [\App\Http\Controllers\Admin\NewsletterController::class, 'index'])->name('admin.newsletter.index');
+Route::get('/admin/newsletter/export', [\App\Http\Controllers\Admin\NewsletterController::class, 'export'])->name('admin.newsletter.export');
+Route::post('/admin/newsletter/{id}/toggle', [\App\Http\Controllers\Admin\NewsletterController::class, 'toggleStatus'])->name('admin.newsletter.toggle');
+Route::delete('/admin/newsletter/{id}', [\App\Http\Controllers\Admin\NewsletterController::class, 'destroy'])->name('admin.newsletter.destroy');
+
 Route::get('/admin/logout', [App\Http\Controllers\AdminController::class, 'logout'])->name('admin.logout');

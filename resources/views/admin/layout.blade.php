@@ -16,10 +16,18 @@
             box-sizing: border-box;
         }
         
+        html {
+            overflow-x: hidden !important;
+            overflow-y: auto;
+        }
+        
         body {
             font-family: 'Inter', sans-serif;
             background: #0a0a0f;
             color: white;
+            overflow-x: hidden !important;
+            overflow-y: auto;
+            max-width: 100vw;
         }
         
         .sidebar {
@@ -27,12 +35,13 @@
             left: 0;
             top: 0;
             height: 100vh;
-            width: 280px;
+            width: 240px;
             background: linear-gradient(180deg, rgba(10, 10, 26, 0.95) 0%, rgba(0, 0, 0, 0.95) 100%);
             backdrop-filter: blur(20px);
             border-right: 1px solid rgba(6, 182, 212, 0.2);
-            padding: 2rem 0;
+            padding: 1.5rem 0;
             overflow-y: auto;
+            overflow-x: hidden;
             z-index: 100;
             transition: transform 0.3s ease;
         }
@@ -71,14 +80,15 @@
         }
         
         .sidebar-item {
-            padding: 1rem 1.5rem;
+            padding: 0.875rem 1.25rem;
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 0.75rem;
             color: #9ca3af;
             text-decoration: none;
             transition: all 0.3s ease;
             border-left: 3px solid transparent;
+            font-size: 0.9rem;
         }
         
         .sidebar-item:hover, .sidebar-item.active {
@@ -88,9 +98,10 @@
         }
         
         .main-content {
-            margin-left: 280px;
+            margin-left: 240px;
             padding: 2rem;
             min-height: 100vh;
+            overflow-x: hidden;
         }
         
         @media (max-width: 1024px) {
@@ -375,6 +386,16 @@
             <a href="{{ route('admin.users') }}" class="sidebar-item {{ request()->routeIs('admin.users') ? 'active' : '' }}">
                 <i class="fas fa-users text-xl"></i>
                 <span>Utilisateurs</span>
+            </a>
+            <a href="{{ route('admin.newsletter.index') }}" class="sidebar-item {{ request()->routeIs('admin.newsletter.*') ? 'active' : '' }}">
+                <i class="fas fa-envelope-open-text text-xl"></i>
+                <span>Newsletter</span>
+                @php
+                    $subscribersCount = \App\Models\Newsletter::where('is_active', true)->count();
+                @endphp
+                @if($subscribersCount > 0)
+                    <span class="ml-auto px-2 py-1 bg-blue-500 text-white text-xs rounded-full">{{ $subscribersCount }}</span>
+                @endif
             </a>
             <a href="{{ route('admin.settings') }}" class="sidebar-item {{ request()->routeIs('admin.settings') ? 'active' : '' }}">
                 <i class="fas fa-cog text-xl"></i>

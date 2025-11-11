@@ -56,6 +56,36 @@
     </div>
 </div>
 
+<!-- Newsletter Stats -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+    <div class="stat-card">
+        <div class="flex items-center justify-between mb-4">
+            <i class="fas fa-envelope text-4xl text-blue-400"></i>
+        </div>
+        <div class="stat-number">{{ number_format(\App\Models\Newsletter::count()) }}</div>
+        <p class="text-gray-400 mt-2">Total Newsletter</p>
+        <a href="{{ route('admin.newsletter.index') }}" class="text-xs text-blue-400 hover:text-blue-300 mt-1 inline-block">Voir tous →</a>
+    </div>
+    
+    <div class="stat-card">
+        <div class="flex items-center justify-between mb-4">
+            <i class="fas fa-check-circle text-4xl text-green-400"></i>
+        </div>
+        <div class="stat-number">{{ number_format(\App\Models\Newsletter::where('is_active', true)->count()) }}</div>
+        <p class="text-gray-400 mt-2">Abonnés actifs</p>
+        <p class="text-xs text-gray-500 mt-1">Recevront les emails</p>
+    </div>
+    
+    <div class="stat-card">
+        <div class="flex items-center justify-between mb-4">
+            <i class="fas fa-calendar-plus text-4xl text-purple-400"></i>
+        </div>
+        <div class="stat-number">{{ number_format(\App\Models\Newsletter::whereDate('created_at', \Carbon\Carbon::today())->count()) }}</div>
+        <p class="text-gray-400 mt-2">Aujourd'hui</p>
+        <p class="text-xs text-gray-500 mt-1">Nouvelles inscriptions</p>
+    </div>
+</div>
+
 <!-- Graphique et top pages -->
 <div class="grid lg:grid-cols-2 gap-6 mb-8">
     <!-- Graphique des visites -->
@@ -162,6 +192,17 @@
                     <p class="text-xs text-gray-400">Configuration</p>
                 </div>
                 <i class="fas fa-chevron-right text-gray-600 group-hover:text-green-400 transition"></i>
+            </a>
+            
+            <a href="{{ route('admin.newsletter.index') }}" class="flex items-center gap-3 p-4 bg-black/30 rounded-lg hover:bg-blue-500/20 transition group">
+                <div class="w-10 h-10 bg-blue-500/20 rounded-lg flex items-center justify-center group-hover:bg-blue-500/30 transition">
+                    <i class="fas fa-envelope text-blue-400"></i>
+                </div>
+                <div class="flex-1">
+                    <p class="font-semibold">Newsletter</p>
+                    <p class="text-xs text-gray-400">{{ \App\Models\Newsletter::where('is_active', true)->count() }} abonnés</p>
+                </div>
+                <i class="fas fa-chevron-right text-gray-600 group-hover:text-blue-400 transition"></i>
             </a>
             
             <a href="{{ route('admin.settings') }}" class="flex items-center gap-3 p-4 bg-black/30 rounded-lg hover:bg-orange-500/20 transition group">

@@ -2,6 +2,14 @@
 
 @section('title', 'FAQ - Questions Fréquentes | DevFormation')
 
+@section('styles')
+<style>
+    body {
+        overflow-x: hidden;
+    }
+</style>
+@endsection
+
 @section('content')
 <!-- Hero Section -->
 <section class="py-20 relative overflow-hidden pt-24">

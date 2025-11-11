@@ -1540,6 +1540,44 @@ add_action(\'init\', \'create_portfolio_post_type\');
         return view('terms');
     }
 
+    public function newsletterSubscribe(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|unique:newsletters,email'
+        ], [
+            'email.required' => 'L\'adresse email est requise.',
+            'email.email' => 'Veuillez entrer une adresse email valide.',
+            'email.unique' => 'Cette adresse email est déjà inscrite à notre newsletter.'
+        ]);
+
+        $token = \Str::random(64);
+
+        \App\Models\Newsletter::create([
+            'email' => $request->email,
+            'token' => $token,
+            'is_active' => true,
+            'subscribed_at' => now()
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Merci pour votre inscription ! Vous recevrez bientôt nos actualités.'
+        ]);
+    }
+
+    public function newsletterUnsubscribe($token)
+    {
+        $subscriber = \App\Models\Newsletter::where('token', $token)->first();
+
+        if (!$subscriber) {
+            return redirect()->route('home')->with('error', 'Lien de désinscription invalide.');
+        }
+
+        $subscriber->update(['is_active' => false]);
+
+        return redirect()->route('home')->with('success', 'Vous avez été désinscrit de notre newsletter.');
+    }
+
     // Formations
     public function html5()
     {

@@ -317,12 +317,14 @@
                 <p class="text-gray-400 mb-4">
                     Recevez nos dernières formations et actualités directement dans votre boîte mail.
                 </p>
-                <form class="newsletter-form" onsubmit="event.preventDefault(); alert('Merci pour votre inscription!')">
-                    <input type="email" placeholder="Votre email" class="newsletter-input" required>
-                    <button type="submit" class="newsletter-btn">
+                <form id="newsletterForm" class="newsletter-form">
+                    @csrf
+                    <input type="email" name="email" id="newsletterEmail" placeholder="Votre email" class="newsletter-input" required>
+                    <button type="submit" class="newsletter-btn" id="newsletterBtn">
                         <i class="fas fa-paper-plane mr-2"></i>S'abonner
                     </button>
                 </form>
+                <div id="newsletterMessage" class="mt-3 text-sm"></div>
             </div>
         </div>
         
@@ -364,3 +366,52 @@
         </div>
     </div>
 </footer>
+
+<script>
+    // Gestion du formulaire newsletter
+    document.getElementById('newsletterForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const form = this;
+        const email = document.getElementById('newsletterEmail').value;
+        const btn = document.getElementById('newsletterBtn');
+        const message = document.getElementById('newsletterMessage');
+        const csrfToken = document.querySelector('input[name="_token"]').value;
+        
+        // Désactiver le bouton
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Envoi...';
+        
+        try {
+            const response = await fetch('{{ route("newsletter.subscribe") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ email: email })
+            });
+            
+            const data = await response.json();
+            
+            if (response.ok) {
+                message.innerHTML = '<div class="text-green-400"><i class="fas fa-check-circle mr-2"></i>' + data.message + '</div>';
+                form.reset();
+            } else {
+                const errorMessage = data.errors?.email?.[0] || data.message || 'Une erreur est survenue.';
+                message.innerHTML = '<div class="text-red-400"><i class="fas fa-exclamation-circle mr-2"></i>' + errorMessage + '</div>';
+            }
+        } catch (error) {
+            message.innerHTML = '<div class="text-red-400"><i class="fas fa-exclamation-circle mr-2"></i>Erreur de connexion. Veuillez réessayer.</div>';
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-paper-plane mr-2"></i>S\'abonner';
+            
+            // Effacer le message après 5 secondes
+            setTimeout(() => {
+                message.innerHTML = '';
+            }, 5000);
+        }
+    });
+</script>
