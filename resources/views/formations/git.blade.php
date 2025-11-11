@@ -9,14 +9,12 @@
     }
     html {
         overflow-x: hidden;
+        scroll-behavior: smooth;
     }
     body {
         background-color: #fff !important;
         color: #000 !important;
-        padding-top: 80px !important;
         overflow-x: hidden !important;
-        margin: 0;
-        padding: 0;
     }
     .tutorial-header {
         background-color: #F05032;
@@ -31,15 +29,14 @@
         margin: 0 auto;
         background: white;
         width: 100%;
-        overflow-x: hidden;
     }
     .content-wrapper {
         display: flex;
         gap: 20px;
         padding: 20px;
         width: 100%;
-        max-width: 100%;
         margin: 0;
+        position: relative;
     }
     .sidebar {
         width: 280px;
@@ -47,15 +44,16 @@
         background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
         padding: 25px;
         border-radius: 15px;
-        position: -webkit-sticky;
+        min-width: 280px;
         position: sticky;
-        top: 100px;
-        align-self: flex-start;
-        max-height: calc(100vh - 120px);
+        top: 90px;
+        height: fit-content;
+        max-height: calc(100vh - 110px);
         overflow-y: auto;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
         border: 1px solid rgba(240, 80, 50, 0.2);
-        z-index: 10;
+        z-index: 100;
+        will-change: transform;
     }
     .sidebar::-webkit-scrollbar {
         width: 6px;
@@ -126,13 +124,13 @@
         background: white;
     }
     .main-content {
-        flex: 1 1 auto;
+        flex: 1;
         min-width: 0;
         background: white;
         padding: 30px;
         border-radius: 5px;
         overflow-x: hidden;
-        max-width: 100%;
+        max-width: calc(100% - 300px);
     }
     .main-content h1 {
         color: #000;
@@ -248,9 +246,13 @@
         }
         .sidebar {
             width: 100%;
-            flex-shrink: 0;
-            position: relative;
-            top: 0;
+            min-width: 100%;
+            position: static;
+            top: auto;
+            max-height: none;
+        }
+        .main-content {
+            max-width: 100%;
         }
     }
 </style>

@@ -9,14 +9,12 @@
     }
     html {
         overflow-x: hidden;
+        scroll-behavior: smooth;
     }
     body {
         background-color: #fff !important;
         color: #000 !important;
-        padding-top: 80px !important;
         overflow-x: hidden !important;
-        margin: 0;
-        padding: 0;
     }
     .tutorial-header {
         background-color: #21759B;
@@ -31,15 +29,14 @@
         margin: 0 auto;
         background: white;
         width: 100%;
-        overflow-x: hidden;
     }
     .content-wrapper {
         display: flex;
         gap: 20px;
         padding: 20px;
         width: 100%;
-        max-width: 100%;
         margin: 0;
+        position: relative;
     }
     .sidebar {
         width: 280px;
@@ -47,15 +44,16 @@
         background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
         padding: 25px;
         border-radius: 15px;
-        position: -webkit-sticky;
+        min-width: 280px;
         position: sticky;
-        top: 100px;
-        align-self: flex-start;
-        max-height: calc(100vh - 120px);
+        top: 90px;
+        height: fit-content;
+        max-height: calc(100vh - 110px);
         overflow-y: auto;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
         border: 1px solid rgba(33, 117, 155, 0.2);
-        z-index: 10;
+        z-index: 100;
+        will-change: transform;
     }
     .sidebar::-webkit-scrollbar {
         width: 6px;
@@ -126,13 +124,13 @@
         background: white;
     }
     .main-content {
-        flex: 1 1 auto;
+        flex: 1;
         min-width: 0;
         background: white;
         padding: 30px;
         border-radius: 5px;
         overflow-x: hidden;
-        max-width: 100%;
+        max-width: calc(100% - 300px);
     }
     .main-content h1 {
         color: #000;
@@ -246,14 +244,209 @@
         box-shadow: 0 4px 12px rgba(33, 117, 155, 0.3);
     }
     @media (max-width: 992px) {
-        .content-wrapper {
-            flex-direction: column;
         }
-        .sidebar {
-            width: 100%;
-            flex-shrink: 0;
+        .sidebar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .sidebar::-webkit-scrollbar-track {
+            background: transparent;
+            border-radius: 10px;
+        }
+        .sidebar::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #21759B 0%, #1A5F7A 100%);
+            border-radius: 10px;
+        }
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #1A5F7A 0%, #134A5F 100%);
+        }
+        .sidebar h3 {
+            color: #21759B;
+            font-size: 20px;
+            margin-bottom: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(33, 117, 155, 0.2);
+        }
+        .sidebar a {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            color: #2c3e50;
+            text-decoration: none;
+            border-radius: 10px;
+            margin-bottom: 6px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 14px;
+            font-weight: 500;
             position: relative;
+            overflow: hidden;
+        }
+        .sidebar a::before {
+            content: '';
+            position: absolute;
+            left: 0;
             top: 0;
+            height: 100%;
+            width: 3px;
+            background: #21759B;
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+        .sidebar a:hover {
+            background: linear-gradient(135deg, rgba(33, 117, 155, 0.1) 0%, rgba(33, 117, 155, 0.05) 100%);
+            color: #21759B;
+            transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(33, 117, 155, 0.15);
+        }
+        .sidebar a:hover::before {
+            transform: scaleY(1);
+        }
+        .sidebar a.active {
+            background: linear-gradient(135deg, #21759B 0%, #1A5F7A 100%);
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 6px 20px rgba(33, 117, 155, 0.3);
+            transform: translateX(5px);
+        }
+        .sidebar a.active::before {
+            transform: scaleY(1);
+            background: white;
+        }
+        .main-content {
+            flex: 1;
+            min-width: 0;
+            background: white;
+            padding: 30px;
+            border-radius: 5px;
+            overflow-x: hidden;
+            max-width: calc(100% - 300px);
+        }
+        .main-content h1 {
+            color: #000;
+            font-size: 42px;
+            margin-bottom: 10px;
+        }
+        .main-content h2 {
+            color: #000;
+            font-size: 32px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        .main-content h3 {
+            color: #000;
+            font-size: 24px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        .main-content p {
+            color: #000;
+            line-height: 1.8;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        .example-box {
+            background-color: #E7E9EB;
+            border-left: 4px solid #21759B;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .example-box h3 {
+            color: #000;
+            margin-bottom: 10px;
+        }
+        .code-box {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 2px solid #21759B;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            overflow-x: auto;
+            word-wrap: break-word;
+            margin: 15px 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 0 20px rgba(33, 117, 155, 0.1);
+            position: relative;
+            max-width: 100%;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .code-box code {
+            display: block;
+            max-width: 100%;
+            overflow-wrap: break-word;
+            color: #e2e8f0;
+            line-height: 1.6;
+        }
+        .code-box::before {
+            content: 'WordPress';
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: #21759B;
+            color: white;
+            padding: 2px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .code-function {
+            color: #61afef;
+        }
+        .code-tag {
+            color: #c678dd;
+        }
+        .code-string {
+            color: #98c379;
+        }
+        .code-variable {
+            color: #e5c07b;
+        }
+        .code-comment {
+            color: #5c6370;
+            font-style: italic;
+        }
+        .note-box {
+            background-color: #ffffcc;
+            border-left: 4px solid #ffeb3b;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 5px;
+        }
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #ddd;
+        }
+        .nav-btn {
+            background-color: #21759B;
+            color: white;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 25px;
+            transition: all 0.3s;
+            font-weight: 600;
+        }
+        .nav-btn:hover {
+            background-color: #1A5F7A;
+            box-shadow: 0 4px 12px rgba(33, 117, 155, 0.3);
+        }
+        @media (max-width: 992px) {
+            .content-wrapper {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                min-width: 100%;
+                position: static;
+                top: auto;
+                max-height: none;
+            }
+            .main-content {
+                max-width: 100%;
+            }
         }
     }
 </style>

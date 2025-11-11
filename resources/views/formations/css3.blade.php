@@ -9,14 +9,12 @@
     }
     html {
         overflow-x: hidden;
+        scroll-behavior: smooth;
     }
     body {
         background-color: #fff !important;
         color: #000 !important;
-        padding-top: 80px !important;
         overflow-x: hidden !important;
-        margin: 0;
-        padding: 0;
     }
     .tutorial-header {
         background-color: #1E90FF;
@@ -31,15 +29,14 @@
         margin: 0 auto;
         background: white;
         width: 100%;
-        overflow-x: hidden;
     }
     .content-wrapper {
         display: flex;
         gap: 20px;
         padding: 20px;
         width: 100%;
-        max-width: 100%;
         margin: 0;
+        position: relative;
     }
     .sidebar {
         width: 280px;
