@@ -9,7 +9,29 @@ class PageController extends Controller
 {
     public function index()
     {
-        return view('index');
+        $latestJobs = \App\Models\JobArticle::where('status', 'published')
+            ->with('category')
+            ->orderBy('published_at', 'desc')
+            ->take(4)
+            ->get();
+        
+        // Récupérer les publicités pour la position "content" (sidebar latérale)
+        $sidebarAds = \App\Models\Ad::active()
+            ->forPosition('content')
+            ->where(function($q) {
+                $q->whereNull('location')
+                  ->orWhere('location', '!=', 'homepage_after_exercises');
+            })
+            ->orderBy('order')
+            ->get();
+        
+        // Récupérer les publicités pour l'emplacement "homepage_after_exercises"
+        $homepageAds = \App\Models\Ad::active()
+            ->forLocation('homepage_after_exercises')
+            ->orderBy('order')
+            ->get();
+        
+        return view('index', compact('latestJobs', 'sidebarAds', 'homepageAds'));
     }
 
     public function about()
@@ -1617,5 +1639,108 @@ add_action(\'init\', \'create_portfolio_post_type\');
     public function ia()
     {
         return view('formations.ia');
+    }
+
+    // Pages Emplois
+    public function emplois()
+    {
+        $categories = \App\Models\Category::where('is_active', true)
+            ->withCount('publishedArticles')
+            ->orderBy('order')
+            ->get();
+        
+        $recentArticles = \App\Models\JobArticle::where('status', 'published')
+            ->with('category')
+            ->orderBy('published_at', 'desc')
+            ->take(6)
+            ->get();
+        
+        return view('emplois.index', compact('categories', 'recentArticles'));
+    }
+
+    public function offresEmploi(Request $request)
+    {
+        $categorySlug = $request->get('category');
+        $query = \App\Models\JobArticle::where('status', 'published')->with('category');
+        
+        if ($categorySlug) {
+            $category = \App\Models\Category::where('slug', $categorySlug)->first();
+            if ($category) {
+                $query->where('category_id', $category->id);
+            }
+        } else {
+            $category = \App\Models\Category::where('slug', 'offres-emploi')->first();
+            if ($category) {
+                $query->where('category_id', $category->id);
+            }
+        }
+        
+        $articles = $query->orderBy('published_at', 'desc')->paginate(12);
+        
+        return view('emplois.offres', compact('articles', 'category'));
+    }
+
+    public function bourses()
+    {
+        $category = \App\Models\Category::where('slug', 'bourses-etudes')->first();
+        $articles = \App\Models\JobArticle::where('status', 'published')
+            ->where('category_id', $category->id ?? null)
+            ->with('category')
+            ->orderBy('published_at', 'desc')
+            ->paginate(12);
+        
+        return view('emplois.bourses', compact('articles', 'category'));
+    }
+
+    public function candidatureSpontanee()
+    {
+        $category = \App\Models\Category::where('slug', 'candidature-spontanee')->first();
+        $articles = \App\Models\JobArticle::where('status', 'published')
+            ->where('category_id', $category->id ?? null)
+            ->with('category')
+            ->orderBy('published_at', 'desc')
+            ->paginate(12);
+        
+        return view('emplois.candidature', compact('articles', 'category'));
+    }
+
+    public function opportunites()
+    {
+        $category = \App\Models\Category::where('slug', 'opportunites-professionnelles')->first();
+        $articles = \App\Models\JobArticle::where('status', 'published')
+            ->where('category_id', $category->id ?? null)
+            ->with('category')
+            ->orderBy('published_at', 'desc')
+            ->paginate(12);
+        
+        return view('emplois.opportunites', compact('articles', 'category'));
+    }
+
+    public function showArticle($slug)
+    {
+        $article = \App\Models\JobArticle::where('slug', $slug)
+            ->where('status', 'published')
+            ->with('category')
+            ->firstOrFail();
+        
+        // Incrémenter les vues
+        $article->increment('views');
+        
+        // Articles similaires
+        $relatedArticles = \App\Models\JobArticle::where('status', 'published')
+            ->where('category_id', $article->category_id)
+            ->where('id', '!=', $article->id)
+            ->with('category')
+            ->orderBy('published_at', 'desc')
+            ->take(4)
+            ->get();
+        
+        // Récupérer les publicités pour la position "content" (sidebar latérale)
+        $sidebarAds = \App\Models\Ad::active()
+            ->forPosition('content')
+            ->orderBy('order')
+            ->get();
+        
+        return view('emplois.article', compact('article', 'relatedArticles', 'sidebarAds'));
     }
 }

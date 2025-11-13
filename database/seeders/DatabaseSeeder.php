@@ -21,5 +21,11 @@ class DatabaseSeeder extends Seeder
             'name' => 'Test User',
             'email' => 'test@example.com',
         ]);
+        
+        // Seeders pour les emplois
+        $this->call([
+            JobCategoriesSeeder::class,
+            JobArticlesSeeder::class,
+        ]);
     }
 }

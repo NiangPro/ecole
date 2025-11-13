@@ -33,6 +33,14 @@ Route::get('/formations/git', [PageController::class, 'git'])->name('formations.
 Route::get('/formations/wordpress', [PageController::class, 'wordpress'])->name('formations.wordpress');
 Route::get('/formations/ia', [PageController::class, 'ia'])->name('formations.ia');
 
+// Routes Emplois
+Route::get('/emplois', [PageController::class, 'emplois'])->name('emplois');
+Route::get('/emplois/offres', [PageController::class, 'offresEmploi'])->name('emplois.offres');
+Route::get('/emplois/bourses', [PageController::class, 'bourses'])->name('emplois.bourses');
+Route::get('/emplois/candidature-spontanee', [PageController::class, 'candidatureSpontanee'])->name('emplois.candidature');
+Route::get('/emplois/opportunites', [PageController::class, 'opportunites'])->name('emplois.opportunites');
+Route::get('/emplois/article/{slug}', [PageController::class, 'showArticle'])->name('emplois.article');
+
 // Routes Admin (pas de lien public)
 Route::get('/admin/login', [App\Http\Controllers\AdminController::class, 'showLogin'])->name('admin.login');
 Route::post('/admin/login', [App\Http\Controllers\AdminController::class, 'login'])->name('admin.login.post');
@@ -40,6 +48,7 @@ Route::get('/admin/dashboard', [App\Http\Controllers\AdminController::class, 'da
 Route::get('/admin/profile', [App\Http\Controllers\AdminController::class, 'profile'])->name('admin.profile');
 Route::post('/admin/profile', [App\Http\Controllers\AdminController::class, 'updateProfile'])->name('admin.profile.update');
 Route::get('/admin/statistics', [App\Http\Controllers\AdminController::class, 'statistics'])->name('admin.statistics');
+Route::post('/admin/statistics/truncate', [App\Http\Controllers\AdminController::class, 'truncateStatistics'])->name('admin.statistics.truncate');
 Route::get('/admin/adsense', [App\Http\Controllers\AdminController::class, 'adsense'])->name('admin.adsense');
 Route::post('/admin/adsense', [App\Http\Controllers\AdminController::class, 'updateAdsense'])->name('admin.adsense.update');
 Route::get('/admin/users', [App\Http\Controllers\AdminController::class, 'users'])->name('admin.users');
@@ -59,6 +68,30 @@ Route::get('/admin/newsletter', [\App\Http\Controllers\Admin\NewsletterControlle
 Route::get('/admin/newsletter/export', [\App\Http\Controllers\Admin\NewsletterController::class, 'export'])->name('admin.newsletter.export');
 Route::post('/admin/newsletter/{id}/toggle', [\App\Http\Controllers\Admin\NewsletterController::class, 'toggleStatus'])->name('admin.newsletter.toggle');
 Route::delete('/admin/newsletter/{id}', [\App\Http\Controllers\Admin\NewsletterController::class, 'destroy'])->name('admin.newsletter.destroy');
+
+// Routes Emplois Admin
+Route::prefix('admin/jobs')->name('admin.jobs.')->group(function () {
+    // Catégories
+    Route::resource('categories', \App\Http\Controllers\Admin\JobCategoryController::class);
+    
+    // Articles
+    Route::resource('articles', \App\Http\Controllers\Admin\JobArticleController::class);
+});
+
+// Routes Publicités Admin
+Route::prefix('admin/ads')->name('admin.ads.')->group(function () {
+    Route::resource('', \App\Http\Controllers\Admin\AdController::class)->parameters(['' => 'ad']);
+});
+
+// API pour tracking des clics publicitaires
+Route::post('/api/ads/{id}/click', function($id) {
+    $ad = \App\Models\Ad::find($id);
+    if ($ad) {
+        $ad->incrementClicks();
+        return response()->json(['success' => true]);
+    }
+    return response()->json(['success' => false], 404);
+})->name('api.ads.click');
 
 Route::get('/admin/logout', [App\Http\Controllers\AdminController::class, 'logout'])->name('admin.logout');
 

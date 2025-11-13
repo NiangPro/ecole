@@ -97,6 +97,50 @@
             border-left-color: #06b6d4;
         }
         
+        .sidebar-dropdown {
+            position: relative;
+        }
+        
+        .sidebar-dropdown-toggle {
+            width: 100%;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .sidebar-dropdown-toggle .dropdown-icon {
+            transition: transform 0.3s ease;
+        }
+        
+        .sidebar-dropdown.active .sidebar-dropdown-toggle .dropdown-icon {
+            transform: rotate(180deg);
+        }
+        
+        .sidebar-dropdown-menu {
+            background: rgba(0, 0, 0, 0.3);
+            padding-left: 1rem;
+            border-left: 2px solid rgba(6, 182, 212, 0.2);
+            margin-left: 1.25rem;
+        }
+        
+        .sidebar-dropdown-item {
+            padding: 0.75rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: #9ca3af;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+            border-left: 2px solid transparent;
+        }
+        
+        .sidebar-dropdown-item:hover, .sidebar-dropdown-item.active {
+            background: rgba(6, 182, 212, 0.1);
+            color: #06b6d4;
+            border-left-color: #06b6d4;
+        }
+        
         .main-content {
             margin-left: 240px;
             padding: 2rem;
@@ -164,10 +208,11 @@
             background: rgba(6, 182, 212, 0.05);
             border: 2px solid rgba(6, 182, 212, 0.2);
             border-radius: 12px;
-            padding: 0.875rem 1.25rem;
+            padding: 0.65rem 1rem;
             color: white;
             width: 100%;
             transition: all 0.3s ease;
+            font-size: 0.9rem;
         }
         
         .input-admin:focus {
@@ -179,6 +224,33 @@
         textarea.input-admin {
             min-height: 120px;
             resize: vertical;
+        }
+        
+        select.input-admin {
+            color: white;
+            background: rgba(15, 23, 42, 0.8);
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2306b6d4' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 0.75rem center;
+            background-size: 12px;
+            padding-right: 2.5rem;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+        }
+        
+        select.input-admin option {
+            background: #0f172a;
+            color: white;
+            padding: 10px;
+        }
+        
+        select.input-admin:focus {
+            background-color: rgba(15, 23, 42, 0.9);
+        }
+        
+        select.input-admin:focus option {
+            background: rgba(6, 182, 212, 0.1);
         }
         
         .mobile-menu-btn {
@@ -383,6 +455,10 @@
                 <i class="fab fa-google text-xl"></i>
                 <span>Google AdSense</span>
             </a>
+            <a href="{{ route('admin.ads.index') }}" class="sidebar-item {{ request()->routeIs('admin.ads.*') ? 'active' : '' }}">
+                <i class="fas fa-ad text-xl"></i>
+                <span>Publicités</span>
+            </a>
             <a href="{{ route('admin.users') }}" class="sidebar-item {{ request()->routeIs('admin.users') ? 'active' : '' }}">
                 <i class="fas fa-users text-xl"></i>
                 <span>Utilisateurs</span>
@@ -397,6 +473,26 @@
                     <span class="ml-auto px-2 py-1 bg-blue-500 text-white text-xs rounded-full">{{ $subscribersCount }}</span>
                 @endif
             </a>
+            
+            <!-- Menu Dropdown Emplois -->
+            <div class="sidebar-dropdown {{ request()->routeIs('admin.jobs.*') ? 'active' : '' }}">
+                <button class="sidebar-item sidebar-dropdown-toggle" onclick="toggleSidebarDropdown('jobs')">
+                    <i class="fas fa-briefcase text-xl"></i>
+                    <span>Emplois</span>
+                    <i class="fas fa-chevron-down ml-auto text-sm dropdown-icon" id="jobs-icon"></i>
+                </button>
+                <div class="sidebar-dropdown-menu" id="jobs-dropdown" style="display: {{ request()->routeIs('admin.jobs.*') ? 'block' : 'none' }};">
+                    <a href="{{ route('admin.jobs.categories.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.jobs.categories.*') ? 'active' : '' }}">
+                        <i class="fas fa-folder"></i>
+                        <span>Catégories</span>
+                    </a>
+                    <a href="{{ route('admin.jobs.articles.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.jobs.articles.*') ? 'active' : '' }}">
+                        <i class="fas fa-newspaper"></i>
+                        <span>Articles</span>
+                    </a>
+                </div>
+            </div>
+            
             <a href="{{ route('admin.settings') }}" class="sidebar-item {{ request()->routeIs('admin.settings') ? 'active' : '' }}">
                 <i class="fas fa-cog text-xl"></i>
                 <span>Paramètres</span>
@@ -467,6 +563,22 @@
             dropdown.classList.toggle('active');
         }
         
+        function toggleSidebarDropdown(id) {
+            const dropdown = document.getElementById(id + '-dropdown');
+            const icon = document.getElementById(id + '-icon');
+            const parent = dropdown.closest('.sidebar-dropdown');
+            
+            if (dropdown.style.display === 'none' || !dropdown.style.display) {
+                dropdown.style.display = 'block';
+                if (icon) icon.style.transform = 'rotate(180deg)';
+                if (parent) parent.classList.add('active');
+            } else {
+                dropdown.style.display = 'none';
+                if (icon) icon.style.transform = 'rotate(0deg)';
+                if (parent) parent.classList.remove('active');
+            }
+        }
+        
         // Close dropdown when clicking outside
         document.addEventListener('click', function(event) {
             const dropdown = document.getElementById('userDropdown');
@@ -475,5 +587,6 @@
             }
         });
     </script>
+    @yield('scripts')
 </body>
 </html>

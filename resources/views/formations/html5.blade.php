@@ -10,11 +10,14 @@
     html {
         overflow-x: hidden;
         scroll-behavior: smooth;
+        height: 100%;
     }
     body {
         background-color: #fff !important;
         color: #000 !important;
         overflow-x: hidden !important;
+        overflow-y: auto !important;
+        height: 100%;
     }
     .tutorial-header {
         background-color: #04AA6D;
@@ -29,6 +32,7 @@
         margin: 0 auto;
         background: white;
         width: 100%;
+        min-height: calc(100vh - 70px);
     }
     .content-wrapper {
         display: flex;
@@ -36,6 +40,7 @@
         padding: 20px;
         width: 100%;
         margin: 0;
+        align-items: flex-start;
         position: relative;
     }
     .sidebar {
@@ -46,10 +51,12 @@
         border-radius: 15px;
         position: -webkit-sticky;
         position: sticky;
-        top: 100px;
+        top: 60px;
         align-self: flex-start;
-        max-height: calc(100vh - 120px);
+        height: calc(100vh - 60px);
+        max-height: calc(100vh - 60px);
         overflow-y: auto;
+        overflow-x: hidden;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
         border: 1px solid rgba(4, 170, 109, 0.1);
         z-index: 10;
@@ -258,6 +265,8 @@
             min-width: 100%;
             position: relative;
             top: 0;
+            height: auto;
+            max-height: none;
         }
     }
 </style>
@@ -1008,48 +1017,6 @@
 @endsection
 
 @section('scripts')
-<script>
-// Surligner le chapitre actif lors du scroll
-document.addEventListener('DOMContentLoaded', function() {
-    const sections = document.querySelectorAll('h1[id], h2[id]');
-    const navLinks = document.querySelectorAll('.sidebar a');
-    
-    function highlightActiveSection() {
-        let current = '';
-        
-        sections.forEach(section => {
-            const sectionTop = section.offsetTop;
-            const sectionHeight = section.clientHeight;
-            if (pageYOffset >= (sectionTop - 150)) {
-                current = section.getAttribute('id');
-            }
-        });
-        
-        navLinks.forEach(link => {
-            link.classList.remove('active');
-            if (link.getAttribute('href') === '#' + current) {
-                link.classList.add('active');
-            }
-        });
-    }
-    
-    window.addEventListener('scroll', highlightActiveSection);
-    highlightActiveSection();
-    
-    // Smooth scroll pour les liens
-    navLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const targetId = this.getAttribute('href').substring(1);
-            const targetSection = document.getElementById(targetId);
-            if (targetSection) {
-                window.scrollTo({
-                    top: targetSection.offsetTop - 100,
-                    behavior: 'smooth'
-                });
-            }
-        });
-    });
-});
-</script>
+<script src="{{ asset('js/sidebar-sticky.js') }}"></script>
+<script src="{{ asset('js/sidebar-navigation.js') }}"></script>
 @endsection

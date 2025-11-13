@@ -106,6 +106,27 @@
         padding: 20px 20px 60px;
         /* max-width: 1200px; */
         margin: 0 auto;
+        background-image: url('https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1920&h=1080&fit=crop');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+    }
+    
+    .hero-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.8) 100%);
+        z-index: -1;
+    }
+    
+    .hero-section > * {
+        position: relative;
+        z-index: 1;
     }
     
     .hero-left {
@@ -747,42 +768,248 @@
 </section>
 
 <!-- Exercices & Quiz Section -->
-<section style="position: relative; z-index: 2; padding: 60px 20px; max-width: 1200px; margin: 0 auto;">
+<section style="position: relative; z-index: 2; padding: 60px 20px; max-width: 1600px; margin: 0 auto;">
     <h2 class="section-title">Pratiquez avec nos Exercices & Quiz</h2>
     <p class="section-subtitle">
         Renforcez vos compétences avec des exercices pratiques et testez vos connaissances avec nos quiz interactifs
     </p>
     
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 60px;">
-        <!-- Exercices Card -->
-        <div class="stat-card" style="text-align: left; padding: 40px;">
-            <div style="width: 70px; height: 70px; background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2)); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 25px;">
-                <i class="fas fa-code" style="font-size: 2rem; color: #06b6d4;"></i>
+    <div style="display: grid; grid-template-columns: {{ isset($sidebarAds) && $sidebarAds->count() > 0 ? '1fr 300px' : '1fr' }}; gap: 30px; margin-bottom: 60px; align-items: start;">
+        <!-- Cards Exercices & Quiz -->
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px;">
+            <!-- Exercices Card -->
+            <div class="stat-card" style="text-align: left; padding: 30px;">
+                <div style="width: 60px; height: 60px; background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2)); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+                    <i class="fas fa-code" style="font-size: 1.8rem; color: #06b6d4;"></i>
+                </div>
+                <h3 style="font-size: 1.3rem; font-weight: 700; color: #fff; margin-bottom: 12px;">Exercices Pratiques</h3>
+                <p style="color: rgba(255, 255, 255, 0.7); line-height: 1.7; margin-bottom: 20px; font-size: 0.9rem;">
+                    Plus de 100 exercices interactifs pour chaque technologie. Écrivez du code directement dans votre navigateur et validez vos solutions en temps réel.
+                </p>
+                <a href="{{ route('exercices') }}" class="tech-link" style="display: inline-flex; align-items: center; gap: 8px; color: #06b6d4; font-weight: 600; text-decoration: none; font-size: 0.9rem;">
+                    Commencer les exercices <i class="fas fa-arrow-right"></i>
+                </a>
             </div>
-            <h3 style="font-size: 1.5rem; font-weight: 700; color: #fff; margin-bottom: 15px;">Exercices Pratiques</h3>
-            <p style="color: rgba(255, 255, 255, 0.7); line-height: 1.8; margin-bottom: 25px;">
-                Plus de 100 exercices interactifs pour chaque technologie. Écrivez du code directement dans votre navigateur et validez vos solutions en temps réel.
-            </p>
-            <a href="{{ route('exercices') }}" class="tech-link" style="display: inline-flex; align-items: center; gap: 8px; color: #06b6d4; font-weight: 600; text-decoration: none;">
-                Commencer les exercices <i class="fas fa-arrow-right"></i>
-            </a>
+            
+            <!-- Quiz Card -->
+            <div class="stat-card" style="text-align: left; padding: 30px;">
+                <div style="width: 60px; height: 60px; background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(168, 85, 247, 0.2)); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+                    <i class="fas fa-question-circle" style="font-size: 1.8rem; color: #a855f7;"></i>
+                </div>
+                <h3 style="font-size: 1.3rem; font-weight: 700; color: #fff; margin-bottom: 12px;">Quiz Interactifs</h3>
+                <p style="color: rgba(255, 255, 255, 0.7); line-height: 1.7; margin-bottom: 20px; font-size: 0.9rem;">
+                    Testez vos connaissances avec nos quiz détaillés. Obtenez un score et des explications pour chaque question pour progresser rapidement.
+                </p>
+                <a href="{{ route('quiz') }}" class="tech-link" style="display: inline-flex; align-items: center; gap: 8px; color: #a855f7; font-weight: 600; text-decoration: none; font-size: 0.9rem;">
+                    Faire un quiz <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
         </div>
         
-        <!-- Quiz Card -->
-        <div class="stat-card" style="text-align: left; padding: 40px;">
-            <div style="width: 70px; height: 70px; background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(168, 85, 247, 0.2)); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 25px;">
-                <i class="fas fa-question-circle" style="font-size: 2rem; color: #a855f7;"></i>
+        <!-- Sidebar Publicités -->
+        @if(isset($sidebarAds) && $sidebarAds->count() > 0)
+        <aside style="position: sticky; top: 80px; align-self: flex-start;">
+            @foreach($sidebarAds as $ad)
+            <div class="ad-container" style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 16px; padding: 20px; margin-bottom: 20px; backdrop-filter: blur(10px);">
+                <a href="{{ $ad->link_url ?? '#' }}" target="_blank" onclick="trackAdClick({{ $ad->id }})" style="display: block; text-decoration: none;">
+                    @if($ad->image)
+                    <img src="{{ $ad->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($ad->image) : $ad->image }}" 
+                         alt="{{ $ad->name }}" 
+                         style="width: 100%; height: auto; border-radius: 12px; display: block;"
+                         onerror="this.style.display='none'">
+                    @endif
+                </a>
             </div>
-            <h3 style="font-size: 1.5rem; font-weight: 700; color: #fff; margin-bottom: 15px;">Quiz Interactifs</h3>
-            <p style="color: rgba(255, 255, 255, 0.7); line-height: 1.8; margin-bottom: 25px;">
-                Testez vos connaissances avec nos quiz détaillés. Obtenez un score et des explications pour chaque question pour progresser rapidement.
-            </p>
-            <a href="{{ route('quiz') }}" class="tech-link" style="display: inline-flex; align-items: center; gap: 8px; color: #a855f7; font-weight: 600; text-decoration: none;">
-                Faire un quiz <i class="fas fa-arrow-right"></i>
-            </a>
-        </div>
+            @php
+                $ad->incrementImpressions();
+            @endphp
+            @endforeach
+        </aside>
+        @endif
     </div>
 </section>
+
+<!-- Section Publicitaire Moderne après Exercices & Quiz -->
+@if(isset($homepageAds) && $homepageAds->count() > 0)
+<section style="position: relative; z-index: 2; padding: 60px 20px; max-width: 1600px; margin: 0 auto;">
+    <div class="modern-ads-container">
+        @foreach($homepageAds as $ad)
+        <div class="modern-ad-card">
+            <a href="{{ $ad->link_url ?? '#' }}" target="_blank" onclick="trackAdClick({{ $ad->id }})" class="modern-ad-link">
+                @if($ad->image)
+                <div class="modern-ad-image-wrapper">
+                    <img src="{{ $ad->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($ad->image) : $ad->image }}" 
+                         alt="{{ $ad->name }}" 
+                         class="modern-ad-image"
+                         onerror="this.style.display='none'">
+                    <div class="modern-ad-overlay">
+                        <div class="modern-ad-content">
+                            <h3 class="modern-ad-title">{{ $ad->name }}</h3>
+                            @if($ad->description)
+                            <p class="modern-ad-description">{{ $ad->description }}</p>
+                            @endif
+                            <span class="modern-ad-cta">Découvrir <i class="fas fa-arrow-right"></i></span>
+                        </div>
+                    </div>
+                </div>
+                @endif
+            </a>
+        </div>
+        @php
+            $ad->incrementImpressions();
+        @endphp
+        @endforeach
+    </div>
+</section>
+@endif
+
+<style>
+    @media (max-width: 1200px) {
+        section[style*="grid-template-columns: 1fr 300px"] > div[style*="display: grid"] {
+            grid-template-columns: 1fr !important;
+        }
+        
+        section[style*="grid-template-columns: 1fr 300px"] > aside {
+            display: none !important;
+        }
+    }
+    
+    .ad-container {
+        min-height: 250px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .ad-container img {
+        max-width: 100%;
+        height: auto;
+        transition: transform 0.3s ease;
+    }
+    
+    .ad-container:hover img {
+        transform: scale(1.05);
+    }
+    
+    /* Modern Ads Section */
+    .modern-ads-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        margin-top: 40px;
+    }
+    
+    .modern-ad-card {
+        position: relative;
+        border-radius: 24px;
+        overflow: hidden;
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(6, 182, 212, 0.2);
+        backdrop-filter: blur(10px);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        cursor: pointer;
+    }
+    
+    .modern-ad-card:hover {
+        transform: translateY(-10px) scale(1.02);
+        border-color: rgba(6, 182, 212, 0.5);
+        box-shadow: 0 30px 80px rgba(6, 182, 212, 0.3);
+    }
+    
+    .modern-ad-link {
+        display: block;
+        text-decoration: none;
+        color: inherit;
+    }
+    
+    .modern-ad-image-wrapper {
+        position: relative;
+        width: 100%;
+        height: 300px;
+        overflow: hidden;
+    }
+    
+    .modern-ad-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+    
+    .modern-ad-card:hover .modern-ad-image {
+        transform: scale(1.1);
+    }
+    
+    .modern-ad-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(180deg, transparent 0%, rgba(15, 23, 42, 0.7) 50%, rgba(15, 23, 42, 0.95) 100%);
+        display: flex;
+        align-items: flex-end;
+        padding: 30px;
+        opacity: 1;
+        transition: opacity 0.3s ease;
+    }
+    
+    .modern-ad-content {
+        width: 100%;
+    }
+    
+    .modern-ad-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 10px;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    }
+    
+    .modern-ad-description {
+        font-size: 0.95rem;
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 15px;
+        line-height: 1.6;
+    }
+    
+    .modern-ad-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #06b6d4;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: gap 0.3s ease;
+    }
+    
+    .modern-ad-card:hover .modern-ad-cta {
+        gap: 12px;
+    }
+    
+    @media (max-width: 768px) {
+        .modern-ads-container {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        
+        .modern-ad-image-wrapper {
+            height: 250px;
+        }
+    }
+</style>
+
+<script>
+    function trackAdClick(adId) {
+        fetch('/api/ads/' + adId + '/click', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                'Content-Type': 'application/json'
+            }
+        }).catch(err => console.log('Ad click tracking error:', err));
+    }
+</script>
 
 <!-- Technologies Section -->
 <section id="technologies" class="tech-section">
@@ -889,4 +1116,96 @@
         </div>
     </div>
 </section>
+
+<!-- Latest Jobs Section -->
+@if(isset($latestJobs) && $latestJobs->count() > 0)
+<section style="position: relative; z-index: 2; padding: 80px 20px; max-width: 1600px; margin: 0 auto;">
+    <div style="text-align: center; margin-bottom: 50px;">
+        <h2 class="section-title">💼 Dernières Opportunités d'Emploi</h2>
+        <p class="section-subtitle">
+            Découvrez les dernières offres d'emploi, bourses et opportunités professionnelles publiées au Sénégal
+        </p>
+    </div>
+    
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; margin-bottom: 40px;">
+        @foreach($latestJobs as $job)
+        <a href="{{ route('emplois.article', $job->slug) }}" style="text-decoration: none; display: block;">
+            <div style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95)); border: 2px solid rgba(6, 182, 212, 0.25); border-radius: 24px; overflow: hidden; transition: all 0.5s ease; height: 100%;">
+                @if($job->cover_image)
+                <div style="width: 100%; height: 180px; overflow: hidden;">
+                    <img src="{{ $job->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($job->cover_image) : $job->cover_image }}" 
+                         alt="{{ $job->title }}" 
+                         style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;"
+                         onerror="this.src='https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=400&h=250&fit=crop'">
+                </div>
+                @else
+                <div style="width: 100%; height: 180px; background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2)); display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-briefcase text-5xl text-cyan-400/50"></i>
+                </div>
+                @endif
+                
+                <div style="padding: 24px;">
+                    <span style="display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; background: rgba(6, 182, 212, 0.15); color: #06b6d4; border-radius: 18px; font-size: 0.75rem; font-weight: 700; margin-bottom: 12px; border: 1px solid rgba(6, 182, 212, 0.3);">
+                        <i class="fas fa-folder"></i>{{ $job->category->name }}
+                    </span>
+                    
+                    <h3 style="font-size: 1.1rem; font-weight: 800; color: #fff; margin-bottom: 12px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 3em;">
+                        {{ $job->title }}
+                    </h3>
+                    
+                    <p style="color: rgba(255, 255, 255, 0.7); line-height: 1.6; margin-bottom: 16px; font-size: 0.85rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                        {{ $job->excerpt ?? Str::limit(strip_tags($job->content), 80) }}
+                    </p>
+                    
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 16px; border-top: 1px solid rgba(6, 182, 212, 0.2);">
+                        <div style="display: flex; align-items: center; gap: 10px; color: rgba(255, 255, 255, 0.6); font-size: 0.8rem;">
+                            <span><i class="fas fa-calendar" style="color: #06b6d4;"></i> {{ $job->published_at ? $job->published_at->format('d/m/Y') : '' }}</span>
+                        </div>
+                        <span style="padding: 8px 18px; background: linear-gradient(135deg, #06b6d4, #14b8a6); color: #000; border-radius: 10px; font-weight: 700; font-size: 0.8rem; transition: all 0.3s ease;">
+                            Voir <i class="fas fa-arrow-right"></i>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </a>
+        @endforeach
+    </div>
+    
+    <div style="text-align: center; margin-top: 40px;">
+        <a href="{{ route('emplois') }}" style="display: inline-flex; align-items: center; gap: 10px; padding: 14px 32px; background: linear-gradient(135deg, #06b6d4, #14b8a6); color: #000; border-radius: 12px; font-weight: 700; text-decoration: none; transition: all 0.3s ease;">
+            Voir toutes les opportunités <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+</section>
+
+<style>
+    @media (max-width: 1400px) {
+        section[style*="grid-template-columns: repeat(4"] > div[style*="display: grid"] {
+            grid-template-columns: repeat(3, 1fr) !important;
+        }
+    }
+    
+    @media (max-width: 1024px) {
+        section[style*="grid-template-columns: repeat(4"] > div[style*="display: grid"] {
+            grid-template-columns: repeat(2, 1fr) !important;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        section[style*="grid-template-columns: repeat(4"] > div[style*="display: grid"] {
+            grid-template-columns: 1fr !important;
+        }
+    }
+    
+    section[style*="grid-template-columns: repeat(4"] > div[style*="display: grid"] > a:hover > div {
+        transform: translateY(-10px);
+        border-color: rgba(6, 182, 212, 0.6);
+        box-shadow: 0 20px 60px rgba(6, 182, 212, 0.3);
+    }
+    
+    section[style*="grid-template-columns: repeat(4"] > div[style*="display: grid"] > a:hover img {
+        transform: scale(1.1);
+    }
+</style>
+@endif
 @endsection

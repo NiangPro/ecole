@@ -4,6 +4,13 @@
 <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-8">
     <h3 class="text-3xl font-bold">Statistiques du site</h3>
     
+    <form action="{{ route('admin.statistics.truncate') }}" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir vider complètement la table statistics ? Cette action est irréversible.');" class="ml-auto">
+        @csrf
+        <button type="submit" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition">
+            <i class="fas fa-trash mr-2"></i>Vider la table
+        </button>
+    </form>
+    
     <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
         <div class="flex gap-3">
             <a href="{{ route('admin.statistics', ['filter' => 'day', 'year' => $year]) }}" 

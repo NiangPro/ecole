@@ -211,6 +211,17 @@ class AdminController extends Controller
         ));
     }
     
+    public function truncateStatistics()
+    {
+        if (!session('admin_logged_in')) {
+            return redirect()->route('admin.login');
+        }
+        
+        Statistic::truncate();
+        
+        return redirect()->route('admin.statistics')->with('success', 'Table statistics vidée avec succès!');
+    }
+    
     public function users(Request $request)
     {
         if (!session('admin_logged_in')) {

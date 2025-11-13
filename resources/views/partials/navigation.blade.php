@@ -51,7 +51,7 @@
     
     .logo-text {
         font-family: 'Orbitron', sans-serif;
-        font-size: 1.3rem;
+        font-size: 1.05rem;
         font-weight: 800;
         background: linear-gradient(135deg, #06b6d4, #14b8a6);
         -webkit-background-clip: text;
@@ -76,13 +76,13 @@
     .navbar-link {
         display: flex;
         align-items: center;
-        gap: 6px;
-        padding: 10px 16px;
+        gap: 5px;
+        padding: 8px 12px;
         color: rgba(255, 255, 255, 0.9);
         text-decoration: none;
-        font-size: 0.95rem;
+        font-size: 0.85rem;
         font-weight: 500;
-        border-radius: 10px;
+        border-radius: 8px;
         transition: all 0.3s ease;
     }
     
@@ -140,12 +140,13 @@
     .dropdown-item {
         display: flex;
         align-items: center;
-        gap: 12px;
-        padding: 12px 16px;
+        gap: 10px;
+        padding: 10px 14px;
         color: rgba(255, 255, 255, 0.8);
         text-decoration: none;
-        border-radius: 10px;
+        border-radius: 8px;
         transition: all 0.3s ease;
+        font-size: 0.85rem;
     }
     
     .dropdown-item:hover {
@@ -235,23 +236,91 @@
         transform: rotate(-45deg) translateY(-7px);
     }
     
+    /* Mobile Menu Overlay */
+    .mobile-menu-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(10px);
+        z-index: 9998;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    .mobile-menu-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+    
     /* Mobile Menu */
     .mobile-menu {
         position: fixed;
-        top: 70px;
-        left: 0;
-        right: 0;
-        background: rgba(15, 23, 42, 0.98);
-        backdrop-filter: blur(20px);
-        border-bottom: 1px solid rgba(6, 182, 212, 0.2);
-        max-height: 0;
-        overflow: hidden;
-        transition: max-height 0.4s ease;
+        top: 0;
+        right: -100%;
+        width: 85%;
+        max-width: 400px;
+        height: 100vh;
+        background: linear-gradient(180deg, rgba(15, 23, 42, 0.98) 0%, rgba(30, 41, 59, 0.98) 100%);
+        backdrop-filter: blur(30px);
+        border-left: 2px solid rgba(6, 182, 212, 0.3);
+        z-index: 9999;
+        overflow-y: auto;
+        transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: -10px 0 50px rgba(0, 0, 0, 0.5);
     }
     
     .mobile-menu.active {
-        max-height: calc(100vh - 70px);
-        overflow-y: auto;
+        right: 0;
+    }
+    
+    .mobile-menu::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    .mobile-menu::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, #06b6d4, #14b8a6);
+        border-radius: 10px;
+    }
+    
+    .mobile-menu-header {
+        padding: 25px 20px;
+        border-bottom: 1px solid rgba(6, 182, 212, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: rgba(6, 182, 212, 0.05);
+    }
+    
+    .mobile-menu-title {
+        font-size: 1.3rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #06b6d4, #14b8a6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    
+    .mobile-menu-close {
+        width: 40px;
+        height: 40px;
+        border-radius: 10px;
+        background: rgba(6, 182, 212, 0.1);
+        border: none;
+        color: #06b6d4;
+        font-size: 1.2rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+    
+    .mobile-menu-close:hover {
+        background: rgba(6, 182, 212, 0.2);
+        transform: rotate(90deg);
     }
     
     .mobile-menu-list {
@@ -261,24 +330,51 @@
     }
     
     .mobile-menu-item {
-        margin-bottom: 8px;
+        margin-bottom: 10px;
     }
     
     .mobile-menu-link {
         display: flex;
         align-items: center;
-        gap: 12px;
-        padding: 14px 16px;
-        color: rgba(255, 255, 255, 0.9);
+        gap: 15px;
+        padding: 16px 18px;
+        color: rgba(255, 255, 255, 0.95);
         text-decoration: none;
-        border-radius: 10px;
-        font-weight: 500;
+        border-radius: 12px;
+        font-weight: 600;
+        font-size: 1rem;
         transition: all 0.3s ease;
+        border: 1px solid transparent;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .mobile-menu-link::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(6, 182, 212, 0.1), transparent);
+        transition: left 0.5s ease;
+    }
+    
+    .mobile-menu-link:hover::before {
+        left: 100%;
     }
     
     .mobile-menu-link:hover {
-        background: rgba(6, 182, 212, 0.1);
+        background: rgba(6, 182, 212, 0.15);
         color: #06b6d4;
+        border-color: rgba(6, 182, 212, 0.3);
+        transform: translateX(5px);
+    }
+    
+    .mobile-menu-link i {
+        width: 24px;
+        text-align: center;
+        font-size: 1.2rem;
     }
     
     .mobile-dropdown-toggle {
@@ -286,28 +382,48 @@
         align-items: center;
         justify-content: space-between;
         width: 100%;
-        padding: 14px 16px;
-        background: none;
-        border: none;
-        color: rgba(255, 255, 255, 0.9);
-        font-weight: 500;
+        padding: 16px 18px;
+        background: rgba(6, 182, 212, 0.08);
+        border: 1px solid rgba(6, 182, 212, 0.2);
+        color: rgba(255, 255, 255, 0.95);
+        font-weight: 600;
         font-size: 1rem;
         text-align: left;
-        border-radius: 10px;
+        border-radius: 12px;
         cursor: pointer;
         transition: all 0.3s ease;
+        margin-bottom: 8px;
     }
     
     .mobile-dropdown-toggle:hover {
-        background: rgba(6, 182, 212, 0.1);
+        background: rgba(6, 182, 212, 0.15);
         color: #06b6d4;
+        border-color: rgba(6, 182, 212, 0.4);
+        transform: translateX(3px);
+    }
+    
+    .mobile-dropdown-toggle i:first-child {
+        margin-right: 12px;
+        width: 24px;
+        text-align: center;
+        font-size: 1.2rem;
+    }
+    
+    .mobile-dropdown-toggle .dropdown-icon {
+        transition: transform 0.3s ease;
+        font-size: 0.9rem;
+    }
+    
+    .mobile-dropdown-toggle.active .dropdown-icon {
+        transform: rotate(180deg);
     }
     
     .mobile-dropdown-content {
         max-height: 0;
         overflow: hidden;
-        transition: max-height 0.3s ease;
-        padding-left: 20px;
+        transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        padding-left: 25px;
+        margin-top: 5px;
     }
     
     .mobile-dropdown-content.active {
@@ -317,18 +433,30 @@
     .mobile-dropdown-item {
         display: flex;
         align-items: center;
-        gap: 10px;
-        padding: 12px 16px;
-        color: rgba(255, 255, 255, 0.8);
+        gap: 12px;
+        padding: 14px 18px;
+        color: rgba(255, 255, 255, 0.85);
         text-decoration: none;
-        border-radius: 8px;
-        margin-top: 4px;
+        border-radius: 10px;
+        margin-top: 6px;
+        margin-bottom: 4px;
         transition: all 0.3s ease;
+        font-weight: 500;
+        border: 1px solid transparent;
+    }
+    
+    .mobile-dropdown-item i {
+        width: 20px;
+        text-align: center;
+        font-size: 1.1rem;
     }
     
     .mobile-dropdown-item:hover {
-        background: rgba(6, 182, 212, 0.1);
+        background: rgba(6, 182, 212, 0.12);
         color: #06b6d4;
+        border-color: rgba(6, 182, 212, 0.25);
+        transform: translateX(8px);
+        padding-left: 22px;
     }
     
     /* Responsive */
@@ -476,6 +604,80 @@
                 </div>
             </li>
             
+            <!-- Dropdown Emplois -->
+            <li class="navbar-item dropdown">
+                <a href="#" class="navbar-link dropdown-toggle">
+                    <i class="fas fa-briefcase"></i>
+                    Emplois
+                    <i class="fas fa-chevron-down dropdown-icon"></i>
+                </a>
+                <div class="dropdown-menu">
+                    <a href="{{ route('emplois') }}" class="dropdown-item">
+                        <div class="dropdown-item-icon" style="background: rgba(34, 197, 94, 0.1);">
+                            <i class="fas fa-search" style="color: #22c55e;"></i>
+                        </div>
+                        <div class="dropdown-item-content">
+                            <div class="dropdown-item-title">Toutes les opportunités</div>
+                            <div class="dropdown-item-desc">Vue d'ensemble</div>
+                        </div>
+                    </a>
+                    @if(isset($jobCategories) && $jobCategories->count() > 0)
+                        @foreach($jobCategories as $category)
+                        <a href="{{ route('emplois.offres') }}?category={{ $category->slug }}" class="dropdown-item">
+                            <div class="dropdown-item-icon" style="background: rgba(6, 182, 212, 0.1);">
+                                @if($category->icon)
+                                    <i class="{{ $category->icon }}" style="color: #06b6d4;"></i>
+                                @else
+                                    <i class="fas fa-folder" style="color: #06b6d4;"></i>
+                                @endif
+                            </div>
+                            <div class="dropdown-item-content">
+                                <div class="dropdown-item-title">{{ $category->name }}</div>
+                                <div class="dropdown-item-desc">{{ $category->published_articles_count ?? 0 }} articles</div>
+                            </div>
+                        </a>
+                        @endforeach
+                    @else
+                        <a href="{{ route('emplois.offres') }}" class="dropdown-item">
+                            <div class="dropdown-item-icon" style="background: rgba(59, 130, 246, 0.1);">
+                                <i class="fas fa-briefcase" style="color: #3b82f6;"></i>
+                            </div>
+                            <div class="dropdown-item-content">
+                                <div class="dropdown-item-title">Offres d'Emploi</div>
+                                <div class="dropdown-item-desc">Emplois disponibles</div>
+                            </div>
+                        </a>
+                        <a href="{{ route('emplois.bourses') }}" class="dropdown-item">
+                            <div class="dropdown-item-icon" style="background: rgba(168, 85, 247, 0.1);">
+                                <i class="fas fa-graduation-cap" style="color: #a855f7;"></i>
+                            </div>
+                            <div class="dropdown-item-content">
+                                <div class="dropdown-item-title">Bourses d'Études</div>
+                                <div class="dropdown-item-desc">Financez vos études</div>
+                            </div>
+                        </a>
+                        <a href="{{ route('emplois.candidature') }}" class="dropdown-item">
+                            <div class="dropdown-item-icon" style="background: rgba(236, 72, 153, 0.1);">
+                                <i class="fas fa-paper-plane" style="color: #ec4899;"></i>
+                            </div>
+                            <div class="dropdown-item-content">
+                                <div class="dropdown-item-title">Candidature Spontanée</div>
+                                <div class="dropdown-item-desc">Faites-vous connaître</div>
+                            </div>
+                        </a>
+                        <a href="{{ route('emplois.opportunites') }}" class="dropdown-item">
+                            <div class="dropdown-item-icon" style="background: rgba(251, 191, 36, 0.1);">
+                                <i class="fas fa-star" style="color: #fbbf24;"></i>
+                            </div>
+                            <div class="dropdown-item-content">
+                                <div class="dropdown-item-title">Opportunités</div>
+                                <div class="dropdown-item-desc">Stages & freelance</div>
+                            </div>
+                        </a>
+                    @endif
+                </div>
+            </li>
+            
             <li class="navbar-item">
                 <a href="{{ route('about') }}" class="navbar-link {{ request()->routeIs('about') ? 'active' : '' }}">
                     <i class="fas fa-info-circle"></i>
@@ -499,8 +701,17 @@
     </div>
 </nav>
 
+<!-- Mobile Menu Overlay -->
+<div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
+
 <!-- Mobile Menu -->
 <div class="mobile-menu" id="mobileMenu">
+    <div class="mobile-menu-header">
+        <div class="mobile-menu-title">Menu</div>
+        <button class="mobile-menu-close" onclick="closeMobileMenu()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
     <ul class="mobile-menu-list">
         <li class="mobile-menu-item">
             <a href="{{ route('home') }}" class="mobile-menu-link">
@@ -559,6 +770,44 @@
             </div>
         </li>
         
+        <!-- Mobile Dropdown Emplois -->
+        <li class="mobile-menu-item">
+            <button class="mobile-dropdown-toggle" onclick="toggleMobileDropdown('emplois')">
+                <span><i class="fas fa-briefcase"></i> Emplois</span>
+                <i class="fas fa-chevron-down dropdown-icon" id="emplois-icon"></i>
+            </button>
+            <div class="mobile-dropdown-content" id="emplois-dropdown">
+                <a href="{{ route('emplois') }}" class="mobile-dropdown-item">
+                    <i class="fas fa-search" style="color: #22c55e;"></i> Toutes les opportunités
+                </a>
+                @if(isset($jobCategories) && $jobCategories->count() > 0)
+                    @foreach($jobCategories as $category)
+                    <a href="{{ route('emplois.offres') }}?category={{ $category->slug }}" class="mobile-dropdown-item">
+                        @if($category->icon)
+                            <i class="{{ $category->icon }}" style="color: #06b6d4;"></i>
+                        @else
+                            <i class="fas fa-folder" style="color: #06b6d4;"></i>
+                        @endif
+                        {{ $category->name }}
+                    </a>
+                    @endforeach
+                @else
+                    <a href="{{ route('emplois.offres') }}" class="mobile-dropdown-item">
+                        <i class="fas fa-briefcase" style="color: #3b82f6;"></i> Offres d'Emploi
+                    </a>
+                    <a href="{{ route('emplois.bourses') }}" class="mobile-dropdown-item">
+                        <i class="fas fa-graduation-cap" style="color: #a855f7;"></i> Bourses d'Études
+                    </a>
+                    <a href="{{ route('emplois.candidature') }}" class="mobile-dropdown-item">
+                        <i class="fas fa-paper-plane" style="color: #ec4899;"></i> Candidature Spontanée
+                    </a>
+                    <a href="{{ route('emplois.opportunites') }}" class="mobile-dropdown-item">
+                        <i class="fas fa-star" style="color: #fbbf24;"></i> Opportunités
+                    </a>
+                @endif
+            </div>
+        </li>
+        
         <li class="mobile-menu-item">
             <a href="{{ route('about') }}" class="mobile-menu-link">
                 <i class="fas fa-info-circle"></i>
@@ -589,25 +838,58 @@
     // Mobile menu toggle
     const mobileToggle = document.getElementById('mobileToggle');
     const mobileMenu = document.getElementById('mobileMenu');
+    const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
+    
+    function openMobileMenu() {
+        mobileToggle.classList.add('active');
+        mobileMenu.classList.add('active');
+        mobileMenuOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+    
+    function closeMobileMenu() {
+        mobileToggle.classList.remove('active');
+        mobileMenu.classList.remove('active');
+        mobileMenuOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+    }
     
     mobileToggle.addEventListener('click', () => {
-        mobileToggle.classList.toggle('active');
-        mobileMenu.classList.toggle('active');
+        if (mobileMenu.classList.contains('active')) {
+            closeMobileMenu();
+        } else {
+            openMobileMenu();
+        }
     });
+    
+    mobileMenuOverlay.addEventListener('click', closeMobileMenu);
     
     // Mobile dropdown toggle
     function toggleMobileDropdown(id) {
         const dropdown = document.getElementById(id + '-dropdown');
         const icon = document.getElementById(id + '-icon');
+        const toggle = event.target.closest('.mobile-dropdown-toggle');
+        
         dropdown.classList.toggle('active');
-        icon.style.transform = dropdown.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0deg)';
+        if (toggle) {
+            toggle.classList.toggle('active');
+        }
+        if (icon) {
+            icon.style.transform = dropdown.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0deg)';
+        }
     }
     
     // Close mobile menu when clicking outside
     document.addEventListener('click', (e) => {
-        if (!e.target.closest('.navbar-modern') && !e.target.closest('.mobile-menu')) {
-            mobileToggle.classList.remove('active');
-            mobileMenu.classList.remove('active');
+        if (!e.target.closest('.navbar-modern') && !e.target.closest('.mobile-menu') && !e.target.closest('.mobile-menu-overlay')) {
+            closeMobileMenu();
+        }
+    });
+    
+    // Close on escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
+            closeMobileMenu();
         }
     });
 </script>

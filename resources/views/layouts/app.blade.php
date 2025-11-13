@@ -7,6 +7,7 @@
     <meta name="keywords" content="@yield('meta_keywords', 'formation développement web, HTML5, CSS3, JavaScript, PHP, Laravel, Bootstrap, Git, WordPress, IA, tutoriel gratuit, apprendre programmation, cours en ligne')">
     <meta name="author" content="Bassirou Niang - NiangProgrammeur">
     <meta name="robots" content="index, follow">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">

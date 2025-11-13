@@ -19,6 +19,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Partager les catégories d'emplois avec la navigation
+        view()->composer('partials.navigation', \App\View\Composers\NavigationComposer::class);
     }
 }
