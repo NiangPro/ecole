@@ -61,3 +61,14 @@ Route::post('/admin/newsletter/{id}/toggle', [\App\Http\Controllers\Admin\Newsle
 Route::delete('/admin/newsletter/{id}', [\App\Http\Controllers\Admin\NewsletterController::class, 'destroy'])->name('admin.newsletter.destroy');
 
 Route::get('/admin/logout', [App\Http\Controllers\AdminController::class, 'logout'])->name('admin.logout');
+
+// Robots.txt dynamique
+Route::get('/robots.txt', function () {
+    $sitemapUrl = url('/sitemap.xml');
+    $content = "User-agent: *\n";
+    $content .= "Allow: /\n\n";
+    $content .= "Sitemap: {$sitemapUrl}\n";
+    
+    return response($content, 200)
+        ->header('Content-Type', 'text/plain');
+});

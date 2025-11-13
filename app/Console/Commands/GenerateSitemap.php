@@ -14,7 +14,8 @@ class GenerateSitemap extends Command
         $sitemap = '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
         $sitemap .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . PHP_EOL;
         
-        $baseUrl = config('app.url', 'http://localhost:8000');
+        // Utiliser l'URL de l'application, enlever le trailing slash
+        $baseUrl = rtrim(config('app.url', 'http://localhost:8000'), '/');
         
         // Pages principales
         $pages = [
@@ -46,7 +47,9 @@ class GenerateSitemap extends Command
         // Générer les entrées XML
         foreach ($pages as $page) {
             $sitemap .= '  <url>' . PHP_EOL;
-            $sitemap .= '    <loc>' . $baseUrl . $page['url'] . '</loc>' . PHP_EOL;
+            // S'assurer que l'URL est correctement formatée
+            $url = $baseUrl . ($page['url'] === '/' ? '' : $page['url']);
+            $sitemap .= '    <loc>' . htmlspecialchars($url, ENT_XML1, 'UTF-8') . '</loc>' . PHP_EOL;
             $sitemap .= '    <lastmod>' . date('Y-m-d') . '</lastmod>' . PHP_EOL;
             $sitemap .= '    <changefreq>' . $page['changefreq'] . '</changefreq>' . PHP_EOL;
             $sitemap .= '    <priority>' . $page['priority'] . '</priority>' . PHP_EOL;
