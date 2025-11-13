@@ -15,17 +15,14 @@ class PageController extends Controller
             ->take(4)
             ->get();
         
-        // Récupérer les publicités pour la position "content" (sidebar latérale)
+        // Récupérer les publicités pour la position "content" (sidebar latérale) - uniquement celles sans location spécifique
         $sidebarAds = \App\Models\Ad::active()
             ->forPosition('content')
-            ->where(function($q) {
-                $q->whereNull('location')
-                  ->orWhere('location', '!=', 'homepage_after_exercises');
-            })
+            ->whereNull('location')
             ->orderBy('order')
             ->get();
         
-        // Récupérer les publicités pour l'emplacement "homepage_after_exercises"
+        // Récupérer les publicités pour l'emplacement "homepage_after_exercises" (accueil uniquement)
         $homepageAds = \App\Models\Ad::active()
             ->forLocation('homepage_after_exercises')
             ->orderBy('order')
@@ -1732,12 +1729,16 @@ add_action(\'init\', \'create_portfolio_post_type\');
             ->where('id', '!=', $article->id)
             ->with('category')
             ->orderBy('published_at', 'desc')
-            ->take(4)
+            ->take(3)
             ->get();
         
-        // Récupérer les publicités pour la position "content" (sidebar latérale)
+        // Récupérer les publicités pour la sidebar des articles (location article_sidebar ou sans location, mais pas homepage_after_exercises)
         $sidebarAds = \App\Models\Ad::active()
             ->forPosition('content')
+            ->where(function($q) {
+                $q->whereNull('location')
+                  ->orWhere('location', 'article_sidebar');
+            })
             ->orderBy('order')
             ->get();
         

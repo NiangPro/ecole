@@ -284,7 +284,8 @@
 
 <!-- Article Container -->
 <div class="article-container">
-    <div style="display: grid; grid-template-columns: {{ isset($sidebarAds) && $sidebarAds->count() > 0 ? '1fr 300px' : '1fr' }}; gap: 30px; align-items: start;">
+    <!-- Contenu et Publicité côte à côte -->
+    <div style="display: grid; grid-template-columns: {{ isset($sidebarAds) && $sidebarAds->count() > 0 ? '1fr 350px' : '1fr' }}; gap: 40px; align-items: start; margin-bottom: 60px;">
         <div>
             <a href="{{ route('emplois.offres') }}" class="back-button">
                 <i class="fas fa-arrow-left"></i>
@@ -294,48 +295,30 @@
             <div class="article-content">
                 {!! nl2br(e($article->content)) !!}
             </div>
-    
-    @if($relatedArticles && $relatedArticles->count() > 0)
-    <div class="related-articles">
-        <h2>📰 Articles Similaires</h2>
-        <div class="related-grid">
-            @foreach($relatedArticles as $related)
-            <a href="{{ route('emplois.article', $related->slug) }}" class="related-card">
-                @if($related->cover_image)
-                <img src="{{ $related->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($related->cover_image) : $related->cover_image }}" 
-                     alt="{{ $related->title }}" 
-                     class="related-card-image"
-                     onerror="this.src='https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=400&h=250&fit=crop'">
-                @else
-                <div class="related-card-image" style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2)); display: flex; align-items: center; justify-content: center;">
-                    <i class="fas fa-image text-4xl text-cyan-400/50"></i>
-                </div>
-                @endif
-                <div class="related-card-content">
-                    <h3 class="related-card-title">{{ $related->title }}</h3>
-                    <div class="related-card-meta">
-                        <span><i class="fas fa-calendar"></i> {{ $related->published_at ? $related->published_at->format('d/m/Y') : '' }}</span>
-                        <span><i class="fas fa-eye"></i> {{ $related->views }}</span>
-                    </div>
-                </div>
-            </a>
-            @endforeach
-        </div>
-    </div>
-    @endif
         </div>
         
-        <!-- Sidebar Publicités -->
+        <!-- Sidebar Publicités Moderne -->
         @if(isset($sidebarAds) && $sidebarAds->count() > 0)
         <aside style="position: sticky; top: 80px; align-self: flex-start;">
             @foreach($sidebarAds as $ad)
-            <div class="ad-container" style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 16px; padding: 20px; margin-bottom: 20px; backdrop-filter: blur(10px);">
-                <a href="{{ $ad->link_url ?? '#' }}" target="_blank" onclick="trackAdClick({{ $ad->id }})" style="display: block; text-decoration: none;">
+            <div class="modern-sidebar-ad">
+                <a href="{{ $ad->link_url ?? '#' }}" target="_blank" onclick="trackAdClick({{ $ad->id }})" class="modern-sidebar-ad-link">
                     @if($ad->image)
-                    <img src="{{ $ad->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($ad->image) : $ad->image }}" 
-                         alt="{{ $ad->name }}" 
-                         style="width: 100%; height: auto; border-radius: 12px; display: block;"
-                         onerror="this.style.display='none'">
+                    <div class="modern-sidebar-ad-image-wrapper">
+                        <img src="{{ $ad->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($ad->image) : $ad->image }}" 
+                             alt="{{ $ad->name }}" 
+                             class="modern-sidebar-ad-image"
+                             onerror="this.style.display='none'">
+                        <div class="modern-sidebar-ad-overlay">
+                            <div class="modern-sidebar-ad-content">
+                                <h4 class="modern-sidebar-ad-title">{{ $ad->name }}</h4>
+                                @if($ad->description)
+                                <p class="modern-sidebar-ad-description">{{ \Illuminate\Support\Str::limit($ad->description, 80) }}</p>
+                                @endif
+                                <span class="modern-sidebar-ad-cta">Découvrir <i class="fas fa-arrow-right"></i></span>
+                            </div>
+                        </div>
+                    </div>
                     @endif
                 </a>
             </div>
@@ -346,34 +329,277 @@
         </aside>
         @endif
     </div>
+    
+    <!-- Articles Similaires en ligne entière -->
+    @if($relatedArticles && $relatedArticles->count() > 0)
+    <div class="related-articles-full">
+        <h2 class="related-articles-title">
+            <i class="fas fa-newspaper mr-3"></i>
+            Articles Similaires
+        </h2>
+        <div class="related-grid-full">
+            @foreach($relatedArticles as $related)
+            <a href="{{ route('emplois.article', $related->slug) }}" class="related-card-modern">
+                @if($related->cover_image)
+                <div class="related-card-modern-image-wrapper">
+                    <img src="{{ $related->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($related->cover_image) : $related->cover_image }}" 
+                         alt="{{ $related->title }}" 
+                         class="related-card-modern-image"
+                         onerror="this.src='https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=400&h=250&fit=crop'">
+                    <div class="related-card-modern-overlay">
+                        <span class="related-card-modern-cta">Lire l'article <i class="fas fa-arrow-right"></i></span>
+                    </div>
+                </div>
+                @else
+                <div class="related-card-modern-image-wrapper" style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.3), rgba(20, 184, 166, 0.3)); display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-image text-5xl text-cyan-400/50"></i>
+                </div>
+                @endif
+                <div class="related-card-modern-content">
+                    <h3 class="related-card-modern-title">{{ $related->title }}</h3>
+                    <div class="related-card-modern-meta">
+                        <span><i class="fas fa-calendar"></i> {{ $related->published_at ? $related->published_at->format('d/m/Y') : '' }}</span>
+                        <span><i class="fas fa-eye"></i> {{ $related->views }} vues</span>
+                    </div>
+                </div>
+            </a>
+            @endforeach
+        </div>
+    </div>
+    @endif
 </div>
 
 <style>
+    /* Modern Sidebar Ad */
+    .modern-sidebar-ad {
+        background: rgba(15, 23, 42, 0.8);
+        border: 2px solid rgba(6, 182, 212, 0.3);
+        border-radius: 20px;
+        overflow: hidden;
+        margin-bottom: 25px;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+    
+    .modern-sidebar-ad:hover {
+        transform: translateY(-5px);
+        border-color: rgba(6, 182, 212, 0.6);
+        box-shadow: 0 15px 40px rgba(6, 182, 212, 0.4);
+    }
+    
+    .modern-sidebar-ad-link {
+        display: block;
+        text-decoration: none;
+        color: inherit;
+    }
+    
+    .modern-sidebar-ad-image-wrapper {
+        position: relative;
+        width: 100%;
+        height: 450px;
+        overflow: hidden;
+    }
+    
+    .modern-sidebar-ad-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+    
+    .modern-sidebar-ad:hover .modern-sidebar-ad-image {
+        transform: scale(1.1);
+    }
+    
+    .modern-sidebar-ad-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(180deg, transparent 0%, rgba(15, 23, 42, 0.8) 60%, rgba(15, 23, 42, 0.95) 100%);
+        display: flex;
+        align-items: flex-end;
+        padding: 20px;
+    }
+    
+    .modern-sidebar-ad-content {
+        width: 100%;
+    }
+    
+    .modern-sidebar-ad-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 8px;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        line-height: 1.3;
+    }
+    
+    .modern-sidebar-ad-description {
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 12px;
+        line-height: 1.5;
+    }
+    
+    .modern-sidebar-ad-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #06b6d4;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: gap 0.3s ease;
+    }
+    
+    .modern-sidebar-ad:hover .modern-sidebar-ad-cta {
+        gap: 12px;
+    }
+    
+    /* Related Articles Full Width */
+    .related-articles-full {
+        margin-top: 60px;
+        padding-top: 60px;
+        border-top: 2px solid rgba(6, 182, 212, 0.2);
+    }
+    
+    .related-articles-title {
+        font-size: 2.5rem;
+        font-weight: 900;
+        color: #fff;
+        margin-bottom: 40px;
+        text-align: center;
+        background: linear-gradient(135deg, #06b6d4, #14b8a6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .related-grid-full {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 30px;
+    }
+    
+    .related-card-modern {
+        background: rgba(15, 23, 42, 0.6);
+        border: 2px solid rgba(6, 182, 212, 0.2);
+        border-radius: 20px;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
+    
+    .related-card-modern:hover {
+        transform: translateY(-10px);
+        border-color: rgba(6, 182, 212, 0.5);
+        box-shadow: 0 20px 50px rgba(6, 182, 212, 0.3);
+    }
+    
+    .related-card-modern-image-wrapper {
+        position: relative;
+        width: 100%;
+        height: 200px;
+        overflow: hidden;
+    }
+    
+    .related-card-modern-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+    
+    .related-card-modern:hover .related-card-modern-image {
+        transform: scale(1.1);
+    }
+    
+    .related-card-modern-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(180deg, transparent 0%, rgba(15, 23, 42, 0.9) 100%);
+        display: flex;
+        align-items: flex-end;
+        padding: 15px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .related-card-modern:hover .related-card-modern-overlay {
+        opacity: 1;
+    }
+    
+    .related-card-modern-cta {
+        color: #06b6d4;
+        font-weight: 600;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .related-card-modern-content {
+        padding: 20px;
+    }
+    
+    .related-card-modern-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 12px;
+        line-height: 1.4;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    .related-card-modern-meta {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 0.85rem;
+    }
+    
+    .related-card-modern-meta i {
+        color: #06b6d4;
+    }
+    
+    @media (max-width: 1400px) {
+        .related-grid-full {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+    
     @media (max-width: 1200px) {
-        .article-container > div[style*="grid-template-columns: 1fr 300px"] {
+        .article-container > div[style*="grid-template-columns: 1fr 350px"] {
             grid-template-columns: 1fr !important;
         }
         
-        .article-container > div[style*="grid-template-columns: 1fr 300px"] > aside {
+        .article-container > div[style*="grid-template-columns: 1fr 350px"] > aside {
             display: none !important;
+        }
+        
+        .related-grid-full {
+            grid-template-columns: repeat(2, 1fr);
         }
     }
     
-    .ad-container {
-        min-height: 250px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    .ad-container img {
-        max-width: 100%;
-        height: auto;
-        transition: transform 0.3s ease;
-    }
-    
-    .ad-container:hover img {
-        transform: scale(1.05);
+    @media (max-width: 768px) {
+        .related-grid-full {
+            grid-template-columns: 1fr;
+        }
+        
+        .related-articles-title {
+            font-size: 2rem;
+        }
     }
 </style>
 

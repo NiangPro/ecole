@@ -891,11 +891,11 @@
         transform: scale(1.05);
     }
     
-    /* Modern Ads Section */
+    /* Modern Ads Section - Full Width */
     .modern-ads-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 30px;
+        display: flex;
+        flex-direction: column;
+        gap: 40px;
         margin-top: 40px;
     }
     
@@ -903,17 +903,18 @@
         position: relative;
         border-radius: 24px;
         overflow: hidden;
-        background: rgba(15, 23, 42, 0.6);
-        border: 1px solid rgba(6, 182, 212, 0.2);
-        backdrop-filter: blur(10px);
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        background: rgba(15, 23, 42, 0.8);
+        border: 2px solid rgba(6, 182, 212, 0.3);
+        backdrop-filter: blur(20px);
+        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         cursor: pointer;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
     }
     
     .modern-ad-card:hover {
-        transform: translateY(-10px) scale(1.02);
-        border-color: rgba(6, 182, 212, 0.5);
-        box-shadow: 0 30px 80px rgba(6, 182, 212, 0.3);
+        transform: translateY(-8px);
+        border-color: rgba(6, 182, 212, 0.6);
+        box-shadow: 0 20px 60px rgba(6, 182, 212, 0.4);
     }
     
     .modern-ad-link {
@@ -925,19 +926,22 @@
     .modern-ad-image-wrapper {
         position: relative;
         width: 100%;
-        height: 300px;
+        height: 400px;
         overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
     
     .modern-ad-image {
         width: 100%;
         height: 100%;
         object-fit: cover;
-        transition: transform 0.5s ease;
+        transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
     
     .modern-ad-card:hover .modern-ad-image {
-        transform: scale(1.1);
+        transform: scale(1.08);
     }
     
     .modern-ad-overlay {
@@ -946,55 +950,73 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: linear-gradient(180deg, transparent 0%, rgba(15, 23, 42, 0.7) 50%, rgba(15, 23, 42, 0.95) 100%);
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(15, 23, 42, 0.6) 50%, rgba(15, 23, 42, 0.9) 100%);
         display: flex;
-        align-items: flex-end;
-        padding: 30px;
-        opacity: 1;
-        transition: opacity 0.3s ease;
+        align-items: center;
+        justify-content: center;
+        padding: 50px;
     }
     
     .modern-ad-content {
-        width: 100%;
+        text-align: center;
+        max-width: 800px;
+        z-index: 2;
     }
     
     .modern-ad-title {
-        font-size: 1.5rem;
-        font-weight: 700;
+        font-size: clamp(2rem, 4vw, 3rem);
+        font-weight: 900;
         color: #fff;
-        margin-bottom: 10px;
-        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        margin-bottom: 20px;
+        text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        background: linear-gradient(135deg, #fff 0%, #06b6d4 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
     }
     
     .modern-ad-description {
-        font-size: 0.95rem;
-        color: rgba(255, 255, 255, 0.8);
-        margin-bottom: 15px;
-        line-height: 1.6;
+        font-size: clamp(1rem, 2vw, 1.3rem);
+        color: rgba(255, 255, 255, 0.9);
+        margin-bottom: 30px;
+        line-height: 1.8;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
     }
     
     .modern-ad-cta {
         display: inline-flex;
         align-items: center;
-        gap: 8px;
-        color: #06b6d4;
-        font-weight: 600;
-        font-size: 0.9rem;
-        transition: gap 0.3s ease;
+        gap: 12px;
+        padding: 16px 40px;
+        background: linear-gradient(135deg, #06b6d4, #14b8a6);
+        color: #fff;
+        font-weight: 700;
+        font-size: 1.1rem;
+        border-radius: 50px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(6, 182, 212, 0.4);
+        text-transform: uppercase;
+        letter-spacing: 1px;
     }
     
     .modern-ad-card:hover .modern-ad-cta {
-        gap: 12px;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 25px rgba(6, 182, 212, 0.6);
+        gap: 16px;
     }
     
     @media (max-width: 768px) {
-        .modern-ads-container {
-            grid-template-columns: 1fr;
-            gap: 20px;
+        .modern-ad-image-wrapper {
+            height: 300px;
         }
         
-        .modern-ad-image-wrapper {
-            height: 250px;
+        .modern-ad-overlay {
+            padding: 30px 20px;
+        }
+        
+        .modern-ad-cta {
+            padding: 14px 30px;
+            font-size: 1rem;
         }
     }
 </style>

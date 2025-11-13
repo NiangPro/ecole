@@ -412,6 +412,7 @@
             }
         }
     </style>
+    @yield('styles')
 </head>
 <body>
     <!-- Mobile Menu Button -->
