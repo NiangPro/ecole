@@ -272,8 +272,28 @@
     </div>
 </form>
 
-@push('scripts')
+@section('scripts')
 <script src="{{ asset('js/article-editor.js') }}"></script>
-@endpush
+<script>
+    // S'assurer que le script s'exécute après le chargement du DOM
+    document.addEventListener('DOMContentLoaded', function() {
+        // Vérifier que le script article-editor.js a bien initialisé
+        setTimeout(function() {
+            const wordCountSpan = document.getElementById('wordCount');
+            const contentTextarea = document.getElementById('articleContent');
+            
+            if (wordCountSpan && contentTextarea) {
+                // Forcer une mise à jour initiale
+                contentTextarea.dispatchEvent(new Event('input'));
+            }
+            
+            // Vérifier que l'analyse SEO se met à jour
+            const titleInput = document.getElementById('articleTitle');
+            if (titleInput) {
+                titleInput.dispatchEvent(new Event('input'));
+            }
+        }, 500);
+    });
+</script>
 @endsection
 

@@ -7,7 +7,6 @@
     const excerptTextarea = document.getElementById('articleExcerpt');
     const metaTitleInput = document.getElementById('metaTitle');
     const metaDescTextarea = document.getElementById('metaDescription');
-    const coverTypeSelect = document.getElementById('coverType');
     const wordCountSpan = document.getElementById('wordCount');
     const wordLabel = document.getElementById('wordLabel');
     
@@ -66,6 +65,7 @@
         }
         
         // Image de couverture (10 points)
+        const coverTypeSelect = document.getElementById('coverType');
         const coverType = coverTypeSelect ? coverTypeSelect.value : 'internal';
         const coverImageFile = document.getElementById('coverImageFile');
         const coverImageUrl = document.getElementById('coverImageUrl');
@@ -228,7 +228,10 @@
     }
     
     // Gérer le changement de type d'image
-    if (coverTypeSelect) {
+    function initCoverTypeHandler() {
+        const coverTypeSelect = document.getElementById('coverType');
+        if (!coverTypeSelect) return;
+        
         coverTypeSelect.addEventListener('change', function() {
             const internalDiv = document.getElementById('internalImage');
             const externalDiv = document.getElementById('externalImage');
@@ -246,9 +249,6 @@
                     externalDiv.style.display = 'none';
                 }
                 // Réinitialiser les valeurs
-                if (coverImageFile) {
-                    coverImageFile.value = '';
-                }
                 if (coverImageUrl) {
                     coverImageUrl.value = '';
                 }
@@ -256,7 +256,7 @@
                     coverPreview.classList.add('hidden');
                     previewImg.src = '';
                 }
-            } else {
+            } else if (this.value === 'external') {
                 // Afficher le champ URL, masquer le champ file
                 if (internalDiv) {
                     internalDiv.style.display = 'none';
@@ -268,9 +268,6 @@
                 if (coverImageFile) {
                     coverImageFile.value = '';
                 }
-                if (coverImageUrl) {
-                    coverImageUrl.value = '';
-                }
                 if (coverPreview && previewImg) {
                     coverPreview.classList.add('hidden');
                     previewImg.src = '';
@@ -280,6 +277,9 @@
             updateDetailedScores();
         });
     }
+    
+    // Initialiser le handler du type d'image
+    initCoverTypeHandler();
     
     // Gérer l'upload d'image
     const coverImageFile = document.getElementById('coverImageFile');
@@ -405,6 +405,7 @@
             }
         }
         
+        const coverTypeSelect = document.getElementById('coverType');
         const coverType = coverTypeSelect ? coverTypeSelect.value : 'internal';
         const coverImageFile = document.getElementById('coverImageFile');
         const coverImageUrl = document.getElementById('coverImageUrl');
@@ -484,19 +485,37 @@
         keywordsInput.addEventListener('input', updateDetailedScores);
     }
     
-    // Initialiser
-    updateScores();
-    updateMetaLengths();
-    updateDetailedScores();
-    
-    // Mettre à jour le compteur de mots au chargement
-    if (wordCountSpan && contentTextarea) {
-        const wordCount = countWords(contentTextarea.value);
-        wordCountSpan.textContent = wordCount;
-        if (wordLabel) {
-            wordLabel.textContent = wordCount <= 1 ? 'mot' : 'mots';
+    // Fonction d'initialisation complète
+    function initializeEditor() {
+        // Initialiser les scores
+        updateScores();
+        updateMetaLengths();
+        updateDetailedScores();
+        
+        // Mettre à jour le compteur de mots au chargement
+        if (wordCountSpan && contentTextarea) {
+            const wordCount = countWords(contentTextarea.value);
+            wordCountSpan.textContent = wordCount;
+            if (wordLabel) {
+                wordLabel.textContent = wordCount <= 1 ? 'mot' : 'mots';
+            }
         }
+        
+        // Réinitialiser le handler du type d'image au cas où
+        initCoverTypeHandler();
     }
+    
+    // Initialiser quand le DOM est prêt
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeEditor);
+    } else {
+        initializeEditor();
+    }
+    
+    // Réessayer après le chargement complet
+    window.addEventListener('load', function() {
+        setTimeout(initializeEditor, 300);
+    });
     
     // Fonctions de formatage de texte
     window.formatText = function(command) {

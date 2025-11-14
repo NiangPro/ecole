@@ -26,7 +26,6 @@
                 <tr class="border-b border-cyan-500/20">
                     <th class="text-left p-4 text-cyan-400">Titre</th>
                     <th class="text-left p-4 text-cyan-400">Catégorie</th>
-                    <th class="text-left p-4 text-cyan-400">Statut</th>
                     <th class="text-left p-4 text-cyan-400">SEO</th>
                     <th class="text-left p-4 text-cyan-400">Lisibilité</th>
                     <th class="text-left p-4 text-cyan-400">Vues</th>
@@ -44,15 +43,6 @@
                         <span class="px-2 py-1 bg-cyan-500/20 text-cyan-400 rounded text-sm">
                             {{ $article->category->name }}
                         </span>
-                    </td>
-                    <td class="p-4">
-                        @if($article->status === 'published')
-                            <span class="px-2 py-1 bg-green-500/20 text-green-400 rounded text-sm">Publié</span>
-                        @elseif($article->status === 'draft')
-                            <span class="px-2 py-1 bg-yellow-500/20 text-yellow-400 rounded text-sm">Brouillon</span>
-                        @else
-                            <span class="px-2 py-1 bg-gray-500/20 text-gray-400 rounded text-sm">Archivé</span>
-                        @endif
                     </td>
                     <td class="p-4">
                         <div class="flex items-center gap-2">
@@ -91,7 +81,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="7" class="p-8 text-center text-gray-400">
+                    <td colspan="6" class="p-8 text-center text-gray-400">
                         <i class="fas fa-newspaper text-4xl mb-4 block"></i>
                         Aucun article trouvé
                     </td>
