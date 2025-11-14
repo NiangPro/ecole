@@ -74,7 +74,7 @@
     
     .articles-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        grid-template-columns: repeat(3, 1fr);
         gap: 30px;
         margin-top: 50px;
     }
@@ -342,16 +342,9 @@
         cursor: not-allowed;
     }
     
-    @media (max-width: 1400px) {
+    @media (max-width: 1200px) {
         .articles-grid {
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        }
-    }
-    
-    @media (max-width: 1024px) {
-        .articles-grid {
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(2, 1fr);
         }
     }
     

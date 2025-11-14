@@ -16,11 +16,8 @@
         });
         
         if (sections.length === 0 || navLinks.length === 0) {
-            console.log('Sidebar navigation: No sections or links found');
             return;
         }
-        
-        console.log('Sidebar navigation initialized:', sections.length, 'sections,', navLinks.length, 'links');
         
         const navbarHeight = 60;
         const scrollOffset = 100;
@@ -135,26 +132,47 @@
                 const targetSection = document.getElementById(targetId);
                 
                 if (!targetSection) {
-                    console.warn('Section not found:', targetId);
                     return;
                 }
                 
                 // Marquer qu'on est en train de scroller
                 isScrolling = true;
                 
-                // Calculer la position exacte
-                const rect = targetSection.getBoundingClientRect();
-                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                const targetPosition = rect.top + scrollTop - navbarHeight - 20;
-                
                 // Mettre à jour l'active immédiatement
                 setActiveLink(targetId);
                 
-                // Scroll vers la position
+                // Calculer la position exacte en tenant compte de la navbar
+                const rect = targetSection.getBoundingClientRect();
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const elementTop = rect.top + scrollTop;
+                const offset = navbarHeight + 30; // Navbar + espace supplémentaire
+                const targetPosition = elementTop - offset;
+                
+                // Scroll vers la position calculée
                 window.scrollTo({
                     top: Math.max(0, targetPosition),
                     behavior: 'smooth'
                 });
+                
+                // Vérification supplémentaire après le scroll pour garantir la visibilité
+                setTimeout(() => {
+                    const finalRect = targetSection.getBoundingClientRect();
+                    const finalScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                    const finalElementTop = finalRect.top + finalScrollTop;
+                    const finalTargetPosition = finalElementTop - offset;
+                    
+                    // Si la section n'est pas correctement positionnée, ajuster
+                    const currentScrollPosition = finalScrollTop;
+                    const expectedPosition = finalTargetPosition;
+                    const difference = Math.abs(currentScrollPosition - expectedPosition);
+                    
+                    if (difference > 10) {
+                        window.scrollTo({
+                            top: expectedPosition,
+                            behavior: 'smooth'
+                        });
+                    }
+                }, 300);
                 
                 // Vérifier que le scroll est terminé
                 let lastScrollTop = scrollTop;
