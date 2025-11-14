@@ -875,7 +875,7 @@
             toggle.classList.toggle('active');
         }
         if (icon) {
-            icon.style.transform = dropdown.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0deg)';
+        icon.style.transform = dropdown.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0deg)';
         }
     }
     

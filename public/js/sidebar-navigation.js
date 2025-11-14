@@ -1,10 +1,19 @@
-// Script pour la navigation du sidebar sur les pages de formations
+// Script pour la navigation du sidebar sur les pages de formations - Version robuste et définitive
 (function() {
     'use strict';
     
+    let isScrolling = false;
+    let scrollTimeout = null;
+    
     function initSidebarNavigation() {
-        const sections = document.querySelectorAll('h1[id], h2[id]');
-        const navLinks = document.querySelectorAll('.sidebar a[href^="#"]');
+        const sections = Array.from(document.querySelectorAll('h1[id], h2[id]')).filter(section => {
+            const id = section.getAttribute('id');
+            return id && id.trim() !== '';
+        });
+        const navLinks = Array.from(document.querySelectorAll('.sidebar a[href^="#"]')).filter(link => {
+            const href = link.getAttribute('href');
+            return href && href !== '#' && href.trim() !== '';
+        });
         
         if (sections.length === 0 || navLinks.length === 0) {
             console.log('Sidebar navigation: No sections or links found');
@@ -14,144 +23,179 @@
         console.log('Sidebar navigation initialized:', sections.length, 'sections,', navLinks.length, 'links');
         
         const navbarHeight = 60;
-        const offset = 100;
+        const scrollOffset = 100;
+        let currentActiveId = '';
         
-        // Fonction pour surligner la section active
-        function highlightActiveSection() {
-            let current = '';
-            const scrollPosition = window.pageYOffset || window.scrollY || document.documentElement.scrollTop;
-            const viewportTop = scrollPosition + navbarHeight;
+        // Fonction pour mettre à jour le lien actif
+        function setActiveLink(sectionId) {
+            if (sectionId === currentActiveId) return;
             
-            // Parcourir toutes les sections de haut en bas
-            for (let i = 0; i < sections.length; i++) {
-                const section = sections[i];
-                const rect = section.getBoundingClientRect();
-                const sectionTop = rect.top + scrollPosition;
-                const sectionBottom = sectionTop + rect.height;
-                
-                // Vérifier si la section est visible dans la viewport
-                if (rect.top <= viewportTop + offset && rect.bottom >= navbarHeight) {
-                    // Si c'est la dernière section, elle est active
-                    if (i === sections.length - 1) {
-                        current = section.getAttribute('id');
-                        break;
-                    }
-                    
-                    // Vérifier la prochaine section
-                    const nextSection = sections[i + 1];
-                    const nextRect = nextSection.getBoundingClientRect();
-                    const nextSectionTop = nextRect.top + scrollPosition;
-                    
-                    // Si la prochaine section n'est pas encore visible, cette section est active
-                    if (nextSectionTop > viewportTop + offset) {
-                        current = section.getAttribute('id');
-                        break;
-                    }
-                }
-            }
-            
-            // Si aucune section trouvée et qu'on est en haut, prendre la première
-            if (!current && sections.length > 0) {
-                const firstSection = sections[0];
-                const firstRect = firstSection.getBoundingClientRect();
-                if (firstRect.top <= viewportTop + offset) {
-                    current = firstSection.getAttribute('id');
-                }
-            }
-            
-            // Mettre à jour les liens actifs
+            currentActiveId = sectionId;
             navLinks.forEach(link => {
                 link.classList.remove('active');
                 const linkHref = link.getAttribute('href');
-                if (linkHref === '#' + current) {
+                if (linkHref === '#' + sectionId) {
                     link.classList.add('active');
+                    // Scroll du sidebar pour garder le lien visible
+                    link.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 }
             });
         }
         
-        // Écouter le scroll avec throttling
-        let ticking = false;
-        function onScroll() {
-            if (!ticking) {
-                window.requestAnimationFrame(function() {
-                    highlightActiveSection();
-                    ticking = false;
-                });
-                ticking = true;
+        // Utiliser Intersection Observer pour une détection précise
+        const observerOptions = {
+            root: null,
+            rootMargin: `-${navbarHeight + scrollOffset}px 0px -${window.innerHeight - navbarHeight - scrollOffset - 200}px 0px`,
+            threshold: [0, 0.1, 0.25, 0.5, 0.75, 1]
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            if (isScrolling) return; // Ignorer pendant le scroll programmé
+            
+            // Filtrer les sections visibles et les trier par position
+            const visibleSections = entries
+                .filter(entry => entry.isIntersecting && entry.intersectionRatio > 0.1)
+                .map(entry => ({
+                    element: entry.target,
+                    id: entry.target.getAttribute('id'),
+                    top: entry.boundingClientRect.top,
+                    ratio: entry.intersectionRatio
+                }))
+                .sort((a, b) => a.top - b.top);
+            
+            if (visibleSections.length > 0) {
+                // Prendre la première section visible (la plus haute dans la viewport)
+                const activeSection = visibleSections[0];
+                if (activeSection.id && activeSection.id !== currentActiveId) {
+                    setActiveLink(activeSection.id);
+                }
             }
+        }, observerOptions);
+        
+        // Observer toutes les sections
+        sections.forEach(section => {
+            observer.observe(section);
+        });
+        
+        // Fallback avec scroll event pour les cas limites
+        let scrollTicking = false;
+        function handleScroll() {
+            if (isScrolling || scrollTicking) return;
+            
+            scrollTicking = true;
+            window.requestAnimationFrame(() => {
+                const scrollPosition = window.pageYOffset || window.scrollY || document.documentElement.scrollTop;
+                const viewportTop = scrollPosition + navbarHeight + scrollOffset;
+                
+                // Trouver la section la plus proche du haut de la viewport
+                let activeSection = null;
+                let minDistance = Infinity;
+                
+                sections.forEach(section => {
+                    const rect = section.getBoundingClientRect();
+                    const sectionTop = rect.top + scrollPosition;
+                    const sectionBottom = sectionTop + rect.height;
+                    const distance = Math.abs(sectionTop - viewportTop);
+                    
+                    // Si la section est dans la zone visible
+                    if (sectionTop <= viewportTop + 150 && sectionBottom >= navbarHeight) {
+                        if (distance < minDistance) {
+                            minDistance = distance;
+                            activeSection = section;
+                        }
+                    }
+                });
+                
+                if (activeSection) {
+                    const sectionId = activeSection.getAttribute('id');
+                    if (sectionId && sectionId !== currentActiveId) {
+                        setActiveLink(sectionId);
+                    }
+                }
+                
+                scrollTicking = false;
+            });
         }
         
-        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('scroll', handleScroll, { passive: true });
         
-        // Initialiser immédiatement
-        highlightActiveSection();
+        // Initialiser l'état actif au chargement
+        setTimeout(() => {
+            handleScroll();
+        }, 200);
         
-        // Réessayer après un court délai
-        setTimeout(highlightActiveSection, 100);
-        setTimeout(highlightActiveSection, 500);
-        
-        // Smooth scroll pour les liens du sidebar
+        // Gestion du clic sur les liens du sidebar
         navLinks.forEach(link => {
             link.addEventListener('click', function(e) {
                 e.preventDefault();
-                const targetId = this.getAttribute('href');
-                if (!targetId || targetId === '#') return;
+                const targetHref = this.getAttribute('href');
+                if (!targetHref || targetHref === '#') return;
                 
-                const targetIdClean = targetId.substring(1);
-                const targetSection = document.getElementById(targetIdClean);
+                const targetId = targetHref.substring(1);
+                const targetSection = document.getElementById(targetId);
                 
-                if (targetSection) {
-                    // Calculer la position exacte avec un offset pour le navbar
-                    const rect = targetSection.getBoundingClientRect();
-                    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                    const targetPosition = rect.top + scrollTop - navbarHeight - 20;
-                    
-                    // Mettre à jour l'active immédiatement
-                    navLinks.forEach(l => l.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    // Scroll vers la position avec smooth
-                    window.scrollTo({
-                        top: Math.max(0, targetPosition),
-                        behavior: 'smooth'
-                    });
-                    
-                    // Attendre la fin du scroll et mettre à jour
-                    let scrollEnded = false;
-                    let lastScrollTop = scrollTop;
-                    let scrollCheckCount = 0;
-                    
-                    const checkScrollEnd = setInterval(() => {
-                        const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                        
-                        // Si le scroll n'a pas changé, on considère qu'il est terminé
-                        if (Math.abs(currentScrollTop - lastScrollTop) < 1) {
-                            scrollCheckCount++;
-                            if (scrollCheckCount >= 3) {
-                                clearInterval(checkScrollEnd);
-                                highlightActiveSection();
-                                scrollEnded = true;
-                            }
-                        } else {
-                            scrollCheckCount = 0;
-                            lastScrollTop = currentScrollTop;
-                        }
-                        
-                        // Mettre à jour pendant le scroll
-                        highlightActiveSection();
-                    }, 50);
-                    
-                    // Timeout de sécurité
-                    setTimeout(() => {
-                        clearInterval(checkScrollEnd);
-                        if (!scrollEnded) {
-                            highlightActiveSection();
-                        }
-                    }, 1500);
-                } else {
-                    console.warn('Section not found:', targetIdClean);
+                if (!targetSection) {
+                    console.warn('Section not found:', targetId);
+                    return;
                 }
+                
+                // Marquer qu'on est en train de scroller
+                isScrolling = true;
+                
+                // Calculer la position exacte
+                const rect = targetSection.getBoundingClientRect();
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const targetPosition = rect.top + scrollTop - navbarHeight - 20;
+                
+                // Mettre à jour l'active immédiatement
+                setActiveLink(targetId);
+                
+                // Scroll vers la position
+                window.scrollTo({
+                    top: Math.max(0, targetPosition),
+                    behavior: 'smooth'
+                });
+                
+                // Vérifier que le scroll est terminé
+                let lastScrollTop = scrollTop;
+                let stableCount = 0;
+                
+                const checkScrollComplete = setInterval(() => {
+                    const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                    const scrollDelta = Math.abs(currentScrollTop - lastScrollTop);
+                    
+                    if (scrollDelta < 1) {
+                        stableCount++;
+                        if (stableCount >= 5) {
+                            clearInterval(checkScrollComplete);
+                            isScrolling = false;
+                            // Vérifier une dernière fois la section active
+                            setTimeout(() => {
+                                handleScroll();
+                            }, 100);
+                        }
+                    } else {
+                        stableCount = 0;
+                        lastScrollTop = currentScrollTop;
+                    }
+                }, 50);
+                
+                // Timeout de sécurité
+                setTimeout(() => {
+                    clearInterval(checkScrollComplete);
+                    isScrolling = false;
+                    handleScroll();
+                }, 2000);
             });
+        });
+        
+        // Réinitialiser au resize
+        let resizeTimer;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                handleScroll();
+            }, 250);
         });
     }
     
@@ -164,6 +208,6 @@
     
     // Réessayer après le chargement complet
     window.addEventListener('load', function() {
-        setTimeout(initSidebarNavigation, 100);
+        setTimeout(initSidebarNavigation, 300);
     });
 })();

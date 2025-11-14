@@ -777,33 +777,33 @@
     <div style="display: grid; grid-template-columns: {{ isset($sidebarAds) && $sidebarAds->count() > 0 ? '1fr 300px' : '1fr' }}; gap: 30px; margin-bottom: 60px; align-items: start;">
         <!-- Cards Exercices & Quiz -->
         <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px;">
-            <!-- Exercices Card -->
+        <!-- Exercices Card -->
             <div class="stat-card" style="text-align: left; padding: 30px;">
                 <div style="width: 60px; height: 60px; background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2)); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
                     <i class="fas fa-code" style="font-size: 1.8rem; color: #06b6d4;"></i>
-                </div>
+            </div>
                 <h3 style="font-size: 1.3rem; font-weight: 700; color: #fff; margin-bottom: 12px;">Exercices Pratiques</h3>
                 <p style="color: rgba(255, 255, 255, 0.7); line-height: 1.7; margin-bottom: 20px; font-size: 0.9rem;">
-                    Plus de 100 exercices interactifs pour chaque technologie. Écrivez du code directement dans votre navigateur et validez vos solutions en temps réel.
-                </p>
+                Plus de 100 exercices interactifs pour chaque technologie. Écrivez du code directement dans votre navigateur et validez vos solutions en temps réel.
+            </p>
                 <a href="{{ route('exercices') }}" class="tech-link" style="display: inline-flex; align-items: center; gap: 8px; color: #06b6d4; font-weight: 600; text-decoration: none; font-size: 0.9rem;">
-                    Commencer les exercices <i class="fas fa-arrow-right"></i>
-                </a>
-            </div>
-            
-            <!-- Quiz Card -->
+                Commencer les exercices <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+        
+        <!-- Quiz Card -->
             <div class="stat-card" style="text-align: left; padding: 30px;">
                 <div style="width: 60px; height: 60px; background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(168, 85, 247, 0.2)); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
                     <i class="fas fa-question-circle" style="font-size: 1.8rem; color: #a855f7;"></i>
-                </div>
+            </div>
                 <h3 style="font-size: 1.3rem; font-weight: 700; color: #fff; margin-bottom: 12px;">Quiz Interactifs</h3>
                 <p style="color: rgba(255, 255, 255, 0.7); line-height: 1.7; margin-bottom: 20px; font-size: 0.9rem;">
-                    Testez vos connaissances avec nos quiz détaillés. Obtenez un score et des explications pour chaque question pour progresser rapidement.
-                </p>
+                Testez vos connaissances avec nos quiz détaillés. Obtenez un score et des explications pour chaque question pour progresser rapidement.
+            </p>
                 <a href="{{ route('quiz') }}" class="tech-link" style="display: inline-flex; align-items: center; gap: 8px; color: #a855f7; font-weight: 600; text-decoration: none; font-size: 0.9rem;">
-                    Faire un quiz <i class="fas fa-arrow-right"></i>
-                </a>
-            </div>
+                Faire un quiz <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
         </div>
         
         <!-- Sidebar Publicités -->

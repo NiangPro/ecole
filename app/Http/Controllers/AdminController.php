@@ -47,7 +47,15 @@ class AdminController extends Controller
             return redirect()->route('admin.login');
         }
         
-        return view('admin.dashboard');
+        // Publicités qui vont bientôt expirer (dans les 7 prochains jours)
+        $expiringAds = \App\Models\Ad::where('status', 'active')
+            ->whereNotNull('end_date')
+            ->where('end_date', '>=', now())
+            ->where('end_date', '<=', now()->addDays(7))
+            ->orderBy('end_date', 'asc')
+            ->get();
+        
+        return view('admin.dashboard', compact('expiringAds'));
     }
     
     public function profile()
