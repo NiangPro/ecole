@@ -47,7 +47,7 @@
         width: 280px;
         flex-shrink: 0;
         background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-        padding: 25px;
+        padding: 15px 25px 25px 25px;
         border-radius: 15px;
         position: -webkit-sticky;
         position: sticky;

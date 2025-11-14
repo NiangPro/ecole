@@ -18,6 +18,7 @@
         sidebar.style.position = 'sticky';
         sidebar.style.top = '60px';
         sidebar.style.alignSelf = 'flex-start';
+        sidebar.style.paddingTop = '15px';
         
         // Fonction pour vérifier et corriger la position
         function enforceSticky() {

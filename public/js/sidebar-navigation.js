@@ -14,24 +14,51 @@
         console.log('Sidebar navigation initialized:', sections.length, 'sections,', navLinks.length, 'links');
         
         const navbarHeight = 60;
-        const offset = 100;
+        const offset = 80; // Offset réduit pour une meilleure détection
         
         // Fonction pour surligner la section active
         function highlightActiveSection() {
             let current = '';
             const scrollPosition = window.pageYOffset || window.scrollY || document.documentElement.scrollTop;
             const viewportTop = scrollPosition + navbarHeight;
+            const viewportMiddle = scrollPosition + (window.innerHeight / 2);
             
-            // Parcourir toutes les sections de bas en haut pour trouver la première qui est visible
-            for (let i = sections.length - 1; i >= 0; i--) {
+            // Parcourir toutes les sections de haut en bas pour trouver la section active
+            for (let i = 0; i < sections.length; i++) {
                 const section = sections[i];
                 const rect = section.getBoundingClientRect();
                 const sectionTop = rect.top + scrollPosition;
+                const sectionBottom = sectionTop + rect.height;
                 
-                // Si le haut de la section est au-dessus ou proche du haut de la viewport
-                if (sectionTop <= viewportTop + offset) {
-                    current = section.getAttribute('id');
-                    break;
+                // Vérifier si la section est dans la zone visible
+                if (viewportTop + offset >= sectionTop) {
+                    // Si c'est la dernière section ou si la prochaine section n'est pas encore visible
+                    if (i === sections.length - 1) {
+                        current = section.getAttribute('id');
+                        break;
+                    } else {
+                        // Vérifier la prochaine section
+                        const nextSection = sections[i + 1];
+                        const nextRect = nextSection.getBoundingClientRect();
+                        const nextSectionTop = nextRect.top + scrollPosition;
+                        
+                        // Si la prochaine section n'est pas encore visible, cette section est active
+                        if (viewportTop < nextSectionTop - offset) {
+                            current = section.getAttribute('id');
+                            break;
+                        } else {
+                            // Si les deux sections sont visibles, choisir celle qui est la plus proche du milieu
+                            const currentDistance = Math.abs(viewportMiddle - (sectionTop + rect.height / 2));
+                            const nextDistance = Math.abs(viewportMiddle - (nextSectionTop + nextRect.height / 2));
+                            
+                            if (currentDistance < nextDistance) {
+                                current = section.getAttribute('id');
+                            } else {
+                                current = nextSection.getAttribute('id');
+                            }
+                            break;
+                        }
+                    }
                 }
             }
             
@@ -39,7 +66,9 @@
             if (!current && sections.length > 0) {
                 const firstSection = sections[0];
                 const firstRect = firstSection.getBoundingClientRect();
-                if (firstRect.top <= viewportTop + offset) {
+                if (scrollPosition < firstRect.top - offset) {
+                    current = '';
+                } else {
                     current = firstSection.getAttribute('id');
                 }
             }
@@ -89,27 +118,30 @@
                     // Calculer la position exacte
                     const rect = targetSection.getBoundingClientRect();
                     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                    const targetPosition = rect.top + scrollTop - navbarHeight - 20;
+                    const targetPosition = rect.top + scrollTop - navbarHeight - 10;
                     
                     // Mettre à jour l'active immédiatement
                     navLinks.forEach(l => l.classList.remove('active'));
                     this.classList.add('active');
                     
-                    // Scroll vers la position
+                    // Scroll vers la position avec smooth
                     window.scrollTo({
                         top: Math.max(0, targetPosition),
                         behavior: 'smooth'
                     });
                     
-                    // Mettre à jour après le scroll
-                    setTimeout(() => {
+                    // Mettre à jour pendant et après le scroll
+                    let scrollCheckInterval = setInterval(() => {
                         highlightActiveSection();
-                    }, 100);
+                    }, 50);
                     
+                    // Arrêter la vérification après le scroll
                     setTimeout(() => {
+                        clearInterval(scrollCheckInterval);
                         highlightActiveSection();
-                    }, 600);
+                    }, 1000);
                     
+                    // Vérification finale
                     setTimeout(() => {
                         highlightActiveSection();
                     }, 1200);
