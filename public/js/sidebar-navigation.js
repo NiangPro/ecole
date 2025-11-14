@@ -14,50 +14,38 @@
         console.log('Sidebar navigation initialized:', sections.length, 'sections,', navLinks.length, 'links');
         
         const navbarHeight = 60;
-        const offset = 80; // Offset réduit pour une meilleure détection
+        const offset = 100;
         
         // Fonction pour surligner la section active
         function highlightActiveSection() {
             let current = '';
             const scrollPosition = window.pageYOffset || window.scrollY || document.documentElement.scrollTop;
             const viewportTop = scrollPosition + navbarHeight;
-            const viewportMiddle = scrollPosition + (window.innerHeight / 2);
             
-            // Parcourir toutes les sections de haut en bas pour trouver la section active
+            // Parcourir toutes les sections de haut en bas
             for (let i = 0; i < sections.length; i++) {
                 const section = sections[i];
                 const rect = section.getBoundingClientRect();
                 const sectionTop = rect.top + scrollPosition;
                 const sectionBottom = sectionTop + rect.height;
                 
-                // Vérifier si la section est dans la zone visible
-                if (viewportTop + offset >= sectionTop) {
-                    // Si c'est la dernière section ou si la prochaine section n'est pas encore visible
+                // Vérifier si la section est visible dans la viewport
+                if (rect.top <= viewportTop + offset && rect.bottom >= navbarHeight) {
+                    // Si c'est la dernière section, elle est active
                     if (i === sections.length - 1) {
                         current = section.getAttribute('id');
                         break;
-                    } else {
-                        // Vérifier la prochaine section
-                        const nextSection = sections[i + 1];
-                        const nextRect = nextSection.getBoundingClientRect();
-                        const nextSectionTop = nextRect.top + scrollPosition;
-                        
-                        // Si la prochaine section n'est pas encore visible, cette section est active
-                        if (viewportTop < nextSectionTop - offset) {
-                            current = section.getAttribute('id');
-                            break;
-                        } else {
-                            // Si les deux sections sont visibles, choisir celle qui est la plus proche du milieu
-                            const currentDistance = Math.abs(viewportMiddle - (sectionTop + rect.height / 2));
-                            const nextDistance = Math.abs(viewportMiddle - (nextSectionTop + nextRect.height / 2));
-                            
-                            if (currentDistance < nextDistance) {
-                                current = section.getAttribute('id');
-                            } else {
-                                current = nextSection.getAttribute('id');
-                            }
-                            break;
-                        }
+                    }
+                    
+                    // Vérifier la prochaine section
+                    const nextSection = sections[i + 1];
+                    const nextRect = nextSection.getBoundingClientRect();
+                    const nextSectionTop = nextRect.top + scrollPosition;
+                    
+                    // Si la prochaine section n'est pas encore visible, cette section est active
+                    if (nextSectionTop > viewportTop + offset) {
+                        current = section.getAttribute('id');
+                        break;
                     }
                 }
             }
@@ -66,9 +54,7 @@
             if (!current && sections.length > 0) {
                 const firstSection = sections[0];
                 const firstRect = firstSection.getBoundingClientRect();
-                if (scrollPosition < firstRect.top - offset) {
-                    current = '';
-                } else {
+                if (firstRect.top <= viewportTop + offset) {
                     current = firstSection.getAttribute('id');
                 }
             }
@@ -115,10 +101,10 @@
                 const targetSection = document.getElementById(targetIdClean);
                 
                 if (targetSection) {
-                    // Calculer la position exacte
+                    // Calculer la position exacte avec un offset pour le navbar
                     const rect = targetSection.getBoundingClientRect();
                     const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-                    const targetPosition = rect.top + scrollTop - navbarHeight - 10;
+                    const targetPosition = rect.top + scrollTop - navbarHeight - 20;
                     
                     // Mettre à jour l'active immédiatement
                     navLinks.forEach(l => l.classList.remove('active'));
@@ -130,21 +116,38 @@
                         behavior: 'smooth'
                     });
                     
-                    // Mettre à jour pendant et après le scroll
-                    let scrollCheckInterval = setInterval(() => {
+                    // Attendre la fin du scroll et mettre à jour
+                    let scrollEnded = false;
+                    let lastScrollTop = scrollTop;
+                    let scrollCheckCount = 0;
+                    
+                    const checkScrollEnd = setInterval(() => {
+                        const currentScrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                        
+                        // Si le scroll n'a pas changé, on considère qu'il est terminé
+                        if (Math.abs(currentScrollTop - lastScrollTop) < 1) {
+                            scrollCheckCount++;
+                            if (scrollCheckCount >= 3) {
+                                clearInterval(checkScrollEnd);
+                                highlightActiveSection();
+                                scrollEnded = true;
+                            }
+                        } else {
+                            scrollCheckCount = 0;
+                            lastScrollTop = currentScrollTop;
+                        }
+                        
+                        // Mettre à jour pendant le scroll
                         highlightActiveSection();
                     }, 50);
                     
-                    // Arrêter la vérification après le scroll
+                    // Timeout de sécurité
                     setTimeout(() => {
-                        clearInterval(scrollCheckInterval);
-                        highlightActiveSection();
-                    }, 1000);
-                    
-                    // Vérification finale
-                    setTimeout(() => {
-                        highlightActiveSection();
-                    }, 1200);
+                        clearInterval(checkScrollEnd);
+                        if (!scrollEnded) {
+                            highlightActiveSection();
+                        }
+                    }, 1500);
                 } else {
                     console.warn('Section not found:', targetIdClean);
                 }

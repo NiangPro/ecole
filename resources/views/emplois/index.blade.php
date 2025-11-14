@@ -188,7 +188,7 @@
     .stats-section {
         background: linear-gradient(135deg, rgba(15, 23, 42, 0.6), rgba(30, 41, 59, 0.6));
         padding: 80px 20px;
-        margin-top: 100px;
+        margin-top: 60px;
         border-top: 2px solid rgba(6, 182, 212, 0.2);
     }
     
@@ -365,6 +365,28 @@
     </div>
 </section>
 
+<!-- Stats Section -->
+<section class="stats-section">
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number">{{ \App\Models\JobArticle::where('status', 'published')->count() }}+</div>
+            <div class="stat-label">Articles publiés</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ \App\Models\Category::where('is_active', true)->count() }}</div>
+            <div class="stat-label">Catégories actives</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ \App\Models\JobArticle::where('status', 'published')->sum('views') }}+</div>
+            <div class="stat-label">Vues totales</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">{{ \App\Models\JobArticle::where('status', 'published')->whereDate('published_at', '>=', now()->subDays(30))->count() }}</div>
+            <div class="stat-label">Nouveaux articles (30j)</div>
+        </div>
+    </div>
+</section>
+
 <!-- Categories Grid -->
 <div class="jobs-grid">
     @forelse($categories as $category)
@@ -438,26 +460,4 @@
     </div>
 </div>
 @endif
-
-<!-- Stats Section -->
-<section class="stats-section">
-    <div class="stats-grid">
-        <div class="stat-card">
-            <div class="stat-number">{{ \App\Models\JobArticle::where('status', 'published')->count() }}+</div>
-            <div class="stat-label">Articles publiés</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number">{{ \App\Models\Category::where('is_active', true)->count() }}</div>
-            <div class="stat-label">Catégories actives</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number">{{ \App\Models\JobArticle::where('status', 'published')->sum('views') }}+</div>
-            <div class="stat-label">Vues totales</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number">{{ \App\Models\JobArticle::where('status', 'published')->whereDate('published_at', '>=', now()->subDays(30))->count() }}</div>
-            <div class="stat-label">Nouveaux articles (30j)</div>
-        </div>
-    </div>
-</section>
 @endsection

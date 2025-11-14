@@ -11,15 +11,15 @@
     
     .article-hero {
         position: relative;
-        height: 400px;
+        height: 500px;
         overflow: hidden;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
     }
     
     .article-hero-image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        filter: brightness(0.6);
+        display: none;
     }
     
     .article-hero-overlay {
@@ -250,11 +250,7 @@
 @section('content')
 <!-- Hero Section -->
 @if($article->cover_image)
-<div class="article-hero">
-    <img src="{{ $article->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($article->cover_image) : $article->cover_image }}" 
-         alt="{{ $article->title }}" 
-         class="article-hero-image"
-         onerror="this.style.display='none'">
+<div class="article-hero" style="background-image: url('{{ $article->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($article->cover_image) : $article->cover_image }}');">
     <div class="article-hero-overlay">
         <div class="article-hero-content">
             <span class="article-hero-category">

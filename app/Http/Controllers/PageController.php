@@ -1672,7 +1672,7 @@ add_action(\'init\', \'create_portfolio_post_type\');
             }
         }
         
-        $articles = $query->orderBy('published_at', 'desc')->paginate(12);
+        $articles = $query->orderBy('published_at', 'desc')->paginate(10);
         
         return view('emplois.offres', compact('articles', 'category'));
     }
