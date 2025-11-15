@@ -296,11 +296,11 @@
             <a href="#tables">Tableaux</a>
             <a href="#lists">Listes</a>
             <a href="#forms">Formulaires</a>
-            <a href="#semantic">HTML Sémantique</a>
             <a href="#media">Audio & Vidéo</a>
             <a href="#canvas">Canvas</a>
             <a href="#svg">SVG</a>
             <a href="#apis">APIs HTML5</a>
+            <a href="#semantic">HTML Sémantique</a>
         </aside>
 
         <!-- Main Content -->
