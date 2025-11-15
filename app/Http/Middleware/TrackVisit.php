@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Statistic;
 use App\Services\UserAgentParser;
 use App\Services\GeoIPService;
+use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
 
 class TrackVisit
@@ -18,6 +19,7 @@ class TrackVisit
             $userAgentData = UserAgentParser::parse($request->userAgent());
             $country = GeoIPService::getCountry($request->ip());
             
+            // Créer la statistique (le cache sera invalidé automatiquement par l'événement du modèle)
             Statistic::create([
                 'page_url' => $request->fullUrl(),
                 'page_title' => $this->getPageTitle($request),
@@ -29,6 +31,9 @@ class TrackVisit
                 'device' => $userAgentData['device'],
                 'visit_date' => Carbon::today(),
             ]);
+            
+            // Les caches seront invalidés automatiquement par l'événement created() du modèle Statistic
+            // Pas besoin d'invalider manuellement ici pour éviter trop d'invalidations
         }
         
         return $next($request);

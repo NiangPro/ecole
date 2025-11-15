@@ -533,9 +533,39 @@
                 <i class="fas fa-eye"></i>
             </div>
         </div>
-        <div class="stat-card-number">{{ number_format(\App\Models\Statistic::whereDate('visit_date', \Carbon\Carbon::today())->count()) }}</div>
+        @php
+            // Cache les statistiques du dashboard (5 minutes)
+            $todayVisits = \Illuminate\Support\Facades\Cache::remember('dashboard_today_visits', 300, function () {
+                return \App\Models\Statistic::whereDate('visit_date', \Carbon\Carbon::today())->count();
+            });
+            $yesterdayVisits = \Illuminate\Support\Facades\Cache::remember('dashboard_yesterday_visits', 300, function () {
+                return \App\Models\Statistic::whereDate('visit_date', \Carbon\Carbon::yesterday())->count();
+            });
+            $monthVisits = \Illuminate\Support\Facades\Cache::remember('dashboard_month_visits', 300, function () {
+                return \App\Models\Statistic::whereMonth('visit_date', \Carbon\Carbon::now()->month)->count();
+            });
+            $totalUsers = \Illuminate\Support\Facades\Cache::remember('dashboard_total_users', 300, function () {
+                return \App\Models\User::count();
+            });
+            $activeUsers = \Illuminate\Support\Facades\Cache::remember('dashboard_active_users', 300, function () {
+                return \App\Models\User::where('is_active', true)->count();
+            });
+            $totalNewsletter = \Illuminate\Support\Facades\Cache::remember('dashboard_total_newsletter', 300, function () {
+                return \App\Models\Newsletter::count();
+            });
+            $activeNewsletter = \Illuminate\Support\Facades\Cache::remember('dashboard_active_newsletter', 300, function () {
+                return \App\Models\Newsletter::where('is_active', true)->count();
+            });
+            $activeAds = \Illuminate\Support\Facades\Cache::remember('dashboard_active_ads', 300, function () {
+                return \App\Models\Ad::where('status', 'active')->count();
+            });
+            $totalAds = \Illuminate\Support\Facades\Cache::remember('dashboard_total_ads', 300, function () {
+                return \App\Models\Ad::count();
+            });
+        @endphp
+        <div class="stat-card-number">{{ number_format($todayVisits) }}</div>
         <div class="stat-card-label">Visites aujourd'hui</div>
-        <div class="stat-card-subtext">+{{ number_format(\App\Models\Statistic::whereDate('visit_date', \Carbon\Carbon::yesterday())->count()) }} hier</div>
+        <div class="stat-card-subtext">+{{ number_format($yesterdayVisits) }} hier</div>
     </div>
     
     <div class="stat-card-modern">
@@ -544,7 +574,7 @@
                 <i class="fas fa-chart-line"></i>
             </div>
         </div>
-        <div class="stat-card-number">{{ number_format(\App\Models\Statistic::whereMonth('visit_date', \Carbon\Carbon::now()->month)->count()) }}</div>
+        <div class="stat-card-number">{{ number_format($monthVisits) }}</div>
         <div class="stat-card-label">Visites ce mois</div>
         <div class="stat-card-subtext">Mois en cours</div>
     </div>
@@ -555,9 +585,9 @@
                 <i class="fas fa-users"></i>
             </div>
         </div>
-        <div class="stat-card-number">{{ number_format(\App\Models\User::count()) }}</div>
+        <div class="stat-card-number">{{ number_format($totalUsers) }}</div>
         <div class="stat-card-label">Utilisateurs</div>
-        <div class="stat-card-subtext">{{ \App\Models\User::where('is_active', true)->count() }} actifs</div>
+        <div class="stat-card-subtext">{{ number_format($activeUsers) }} actifs</div>
     </div>
     
     <div class="stat-card-modern">
@@ -566,9 +596,9 @@
                 <i class="fas fa-envelope"></i>
             </div>
         </div>
-        <div class="stat-card-number">{{ number_format(\App\Models\Newsletter::count()) }}</div>
+        <div class="stat-card-number">{{ number_format($totalNewsletter) }}</div>
         <div class="stat-card-label">Newsletter</div>
-        <div class="stat-card-subtext">{{ \App\Models\Newsletter::where('is_active', true)->count() }} actifs</div>
+        <div class="stat-card-subtext">{{ number_format($activeNewsletter) }} actifs</div>
     </div>
     
     <div class="stat-card-modern">
@@ -577,9 +607,9 @@
                 <i class="fas fa-ad"></i>
             </div>
         </div>
-        <div class="stat-card-number">{{ number_format(\App\Models\Ad::where('status', 'active')->count()) }}</div>
+        <div class="stat-card-number">{{ number_format($activeAds) }}</div>
         <div class="stat-card-label">Publicités actives</div>
-        <div class="stat-card-subtext">{{ number_format(\App\Models\Ad::count()) }} au total</div>
+        <div class="stat-card-subtext">{{ number_format($totalAds) }} au total</div>
     </div>
 </div>
 

@@ -58,7 +58,9 @@ class JobCategoryController extends Controller
             $validated['image'] = $path;
         }
 
-        Category::create($validated);
+        $category = Category::create($validated);
+
+        // Le cache sera invalidé automatiquement par l'événement du modèle
 
         return redirect()->route('admin.jobs.categories.index')
             ->with('success', 'Catégorie créée avec succès');

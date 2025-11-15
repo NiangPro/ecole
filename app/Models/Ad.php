@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Cache;
 
 class Ad extends Model
 {
@@ -76,5 +77,41 @@ class Ad extends Model
     public function incrementClicks()
     {
         $this->increment('clicks');
+    }
+
+    /**
+     * Boot du modèle
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Invalider le cache lors de la création, mise à jour ou suppression
+        static::created(function ($ad) {
+            Cache::forget('sidebar_ads_content');
+            Cache::forget('homepage_ads_after_exercises');
+            Cache::forget('sidebar_ads_articles');
+            Cache::forget('expiring_ads');
+            Cache::forget('dashboard_active_ads');
+            Cache::forget('dashboard_total_ads');
+        });
+
+        static::updated(function ($ad) {
+            Cache::forget('sidebar_ads_content');
+            Cache::forget('homepage_ads_after_exercises');
+            Cache::forget('sidebar_ads_articles');
+            Cache::forget('expiring_ads');
+            Cache::forget('dashboard_active_ads');
+            Cache::forget('dashboard_total_ads');
+        });
+
+        static::deleted(function ($ad) {
+            Cache::forget('sidebar_ads_content');
+            Cache::forget('homepage_ads_after_exercises');
+            Cache::forget('sidebar_ads_articles');
+            Cache::forget('expiring_ads');
+            Cache::forget('dashboard_active_ads');
+            Cache::forget('dashboard_total_ads');
+        });
     }
 }

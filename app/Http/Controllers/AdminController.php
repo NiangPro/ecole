@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Cache;
 use App\Models\AdSenseSetting;
 use App\Models\Statistic;
 use App\Models\User;
@@ -47,13 +48,15 @@ class AdminController extends Controller
             return redirect()->route('admin.login');
         }
         
-        // Publicités qui vont bientôt expirer (dans les 7 prochains jours)
-        $expiringAds = \App\Models\Ad::where('status', 'active')
-            ->whereNotNull('end_date')
-            ->where('end_date', '>=', now())
-            ->where('end_date', '<=', now()->addDays(7))
-            ->orderBy('end_date', 'asc')
-            ->get();
+        // Publicités qui vont bientôt expirer (dans les 7 prochains jours) - Cache 5 minutes
+        $expiringAds = Cache::remember('expiring_ads', 300, function () {
+            return \App\Models\Ad::where('status', 'active')
+                ->whereNotNull('end_date')
+                ->where('end_date', '>=', now())
+                ->where('end_date', '<=', now()->addDays(7))
+                ->orderBy('end_date', 'asc')
+                ->get();
+        });
         
         return view('admin.dashboard', compact('expiringAds'));
     }
@@ -151,59 +154,95 @@ class AdminController extends Controller
         $year = $request->get('year', Carbon::now()->year);
         $month = $request->get('month', Carbon::now()->month);
         
-        // Obtenir les années disponibles
-        $availableYears = Statistic::getAvailableYears();
+        // Obtenir les années disponibles - Cache 1 heure
+        $availableYears = Cache::remember('statistics_available_years', 3600, function () {
+            return Statistic::getAvailableYears();
+        });
         
-        // Calculer les statistiques selon le filtre
-        if ($filter == 'day') {
-            $totalVisits = Statistic::getByDay();
-            $uniqueVisitors = Statistic::whereDate('visit_date', Carbon::today())
-                                      ->distinct('ip_address')
-                                      ->count('ip_address');
-            $totalPages = Statistic::whereDate('visit_date', Carbon::today())
-                                   ->distinct('page_url')
-                                   ->count('page_url');
-            $avgPerDay = $totalVisits;
-        } elseif ($filter == 'month') {
-            $totalVisits = Statistic::getByMonth($year, $month);
-            $uniqueVisitors = Statistic::whereMonth('visit_date', $month)
-                                      ->whereYear('visit_date', $year)
-                                      ->distinct('ip_address')
-                                      ->count('ip_address');
-            $totalPages = Statistic::whereMonth('visit_date', $month)
-                                   ->whereYear('visit_date', $year)
-                                   ->distinct('page_url')
-                                   ->count('page_url');
-            $daysInMonth = Carbon::create($year, $month, 1)->daysInMonth;
-            $avgPerDay = $daysInMonth > 0 ? round($totalVisits / $daysInMonth) : 0;
-        } else {
-            $totalVisits = Statistic::getByYear($year);
-            $uniqueVisitors = Statistic::whereYear('visit_date', $year)
-                                      ->distinct('ip_address')
-                                      ->count('ip_address');
-            $totalPages = Statistic::whereYear('visit_date', $year)
-                                   ->distinct('page_url')
-                                   ->count('page_url');
-            $avgPerDay = round($totalVisits / 365);
-        }
+        // Calculer les statistiques selon le filtre - Cache 5 minutes
+        $cacheKey = "statistics_{$filter}_{$year}_{$month}";
+        $stats = Cache::remember($cacheKey, 300, function () use ($filter, $year, $month) {
+            if ($filter == 'day') {
+                $totalVisits = Statistic::getByDay();
+                $uniqueVisitors = Statistic::whereDate('visit_date', Carbon::today())
+                                          ->distinct('ip_address')
+                                          ->count('ip_address');
+                $totalPages = Statistic::whereDate('visit_date', Carbon::today())
+                                       ->distinct('page_url')
+                                       ->count('page_url');
+                $avgPerDay = $totalVisits;
+            } elseif ($filter == 'month') {
+                $totalVisits = Statistic::getByMonth($year, $month);
+                $uniqueVisitors = Statistic::whereMonth('visit_date', $month)
+                                          ->whereYear('visit_date', $year)
+                                          ->distinct('ip_address')
+                                          ->count('ip_address');
+                $totalPages = Statistic::whereMonth('visit_date', $month)
+                                       ->whereYear('visit_date', $year)
+                                       ->distinct('page_url')
+                                       ->count('page_url');
+                $daysInMonth = Carbon::create($year, $month, 1)->daysInMonth;
+                $avgPerDay = $daysInMonth > 0 ? round($totalVisits / $daysInMonth) : 0;
+            } else {
+                $totalVisits = Statistic::getByYear($year);
+                $uniqueVisitors = Statistic::whereYear('visit_date', $year)
+                                          ->distinct('ip_address')
+                                          ->count('ip_address');
+                $totalPages = Statistic::whereYear('visit_date', $year)
+                                       ->distinct('page_url')
+                                       ->count('page_url');
+                $avgPerDay = round($totalVisits / 365);
+            }
+            
+            return [
+                'totalVisits' => $totalVisits,
+                'uniqueVisitors' => $uniqueVisitors,
+                'totalPages' => $totalPages,
+                'avgPerDay' => $avgPerDay,
+            ];
+        });
         
-        // Pages les plus visitées
-        $topPages = Statistic::getTopPages(10, $filter);
+        $totalVisits = $stats['totalVisits'];
+        $uniqueVisitors = $stats['uniqueVisitors'];
+        $totalPages = $stats['totalPages'];
+        $avgPerDay = $stats['avgPerDay'];
         
-        // Données pour le graphique (30 derniers jours ou mensuel)
-        if ($filter == 'year') {
-            $dailyStats = Statistic::getMonthlyStatsForYear($year);
-        } else {
-            $dailyStats = Statistic::getDailyStats(30);
-        }
+        // Pages les plus visitées - Cache 5 minutes
+        $topPagesCacheKey = "top_pages_{$filter}";
+        $topPages = Cache::remember($topPagesCacheKey, 300, function () use ($filter) {
+            return Statistic::getTopPages(10, $filter);
+        });
         
-        // Statistiques par pays, navigateur, source
-        $countriesStats = Statistic::getByCountry($filter, $year, $month);
-        $browsersStats = Statistic::getByBrowser($filter, $year, $month);
-        $sourcesStats = Statistic::getBySource($filter, $year, $month);
+        // Données pour le graphique - Cache 5 minutes
+        $dailyStatsCacheKey = $filter == 'year' ? "daily_stats_year_{$year}" : "daily_stats_30_days";
+        $dailyStats = Cache::remember($dailyStatsCacheKey, 300, function () use ($filter, $year) {
+            if ($filter == 'year') {
+                return Statistic::getMonthlyStatsForYear($year);
+            } else {
+                return Statistic::getDailyStats(30);
+            }
+        });
         
-        // Statistiques hebdomadaires du mois actuel
-        $weeklyStats = Statistic::getWeeklyStatsForCurrentMonth();
+        // Statistiques par pays, navigateur, source - Cache 5 minutes
+        $countriesStatsCacheKey = "countries_stats_{$filter}_{$year}_{$month}";
+        $countriesStats = Cache::remember($countriesStatsCacheKey, 300, function () use ($filter, $year, $month) {
+            return Statistic::getByCountry($filter, $year, $month);
+        });
+        
+        $browsersStatsCacheKey = "browsers_stats_{$filter}_{$year}_{$month}";
+        $browsersStats = Cache::remember($browsersStatsCacheKey, 300, function () use ($filter, $year, $month) {
+            return Statistic::getByBrowser($filter, $year, $month);
+        });
+        
+        $sourcesStatsCacheKey = "sources_stats_{$filter}_{$year}_{$month}";
+        $sourcesStats = Cache::remember($sourcesStatsCacheKey, 300, function () use ($filter, $year, $month) {
+            return Statistic::getBySource($filter, $year, $month);
+        });
+        
+        // Statistiques hebdomadaires du mois actuel - Cache 5 minutes
+        $weeklyStats = Cache::remember('weekly_stats_current_month', 300, function () {
+            return Statistic::getWeeklyStatsForCurrentMonth();
+        });
         
         return view('admin.statistics', compact(
             'filter',
@@ -230,6 +269,9 @@ class AdminController extends Controller
         }
         
         Statistic::truncate();
+        
+        // Vider tous les caches liés aux statistiques
+        Cache::flush();
         
         return redirect()->route('admin.statistics')->with('success', 'Table statistics vidée avec succès!');
     }

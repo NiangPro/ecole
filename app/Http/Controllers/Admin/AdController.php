@@ -67,7 +67,9 @@ class AdController extends Controller
             $validated['image'] = $request->input('image_url');
         }
 
-        Ad::create($validated);
+        $ad = Ad::create($validated);
+
+        // Le cache sera invalidé automatiquement par l'événement du modèle
 
         return redirect()->route('admin.ads.index')
             ->with('success', 'Publicité créée avec succès');

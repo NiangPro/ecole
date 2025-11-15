@@ -83,7 +83,9 @@ class JobArticleController extends Controller
             $validated['published_at'] = now();
         }
 
-        JobArticle::create($validated);
+        $article = JobArticle::create($validated);
+
+        // Le cache sera invalidé automatiquement par l'événement du modèle
 
         return redirect()->route('admin.jobs.articles.index')
             ->with('success', 'Article créé avec succès');

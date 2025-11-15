@@ -9,24 +9,31 @@ class PageController extends Controller
 {
     public function index()
     {
-        $latestJobs = \App\Models\JobArticle::where('status', 'published')
-            ->with('category')
-            ->orderBy('published_at', 'desc')
-            ->take(3)
-            ->get();
+        // Cache les 3 derniers articles d'emploi (15 minutes)
+        $latestJobs = \Illuminate\Support\Facades\Cache::remember('latest_jobs', 900, function () {
+            return \App\Models\JobArticle::where('status', 'published')
+                ->with('category')
+                ->orderBy('published_at', 'desc')
+                ->take(3)
+                ->get();
+        });
         
-        // Récupérer les publicités pour la position "content" (sidebar latérale) - uniquement celles sans location spécifique
-        $sidebarAds = \App\Models\Ad::active()
-            ->forPosition('content')
-            ->whereNull('location')
-            ->orderBy('order')
-            ->get();
+        // Cache les publicités pour la position "content" (30 minutes)
+        $sidebarAds = \Illuminate\Support\Facades\Cache::remember('sidebar_ads_content', 1800, function () {
+            return \App\Models\Ad::active()
+                ->forPosition('content')
+                ->whereNull('location')
+                ->orderBy('order')
+                ->get();
+        });
         
-        // Récupérer les publicités pour l'emplacement "homepage_after_exercises" (accueil uniquement)
-        $homepageAds = \App\Models\Ad::active()
-            ->forLocation('homepage_after_exercises')
-            ->orderBy('order')
-            ->get();
+        // Cache les publicités pour l'emplacement "homepage_after_exercises" (30 minutes)
+        $homepageAds = \Illuminate\Support\Facades\Cache::remember('homepage_ads_after_exercises', 1800, function () {
+            return \App\Models\Ad::active()
+                ->forLocation('homepage_after_exercises')
+                ->orderBy('order')
+                ->get();
+        });
         
         return view('index', compact('latestJobs', 'sidebarAds', 'homepageAds'));
     }
@@ -1641,16 +1648,22 @@ add_action(\'init\', \'create_portfolio_post_type\');
     // Pages Emplois
     public function emplois()
     {
-        $categories = \App\Models\Category::where('is_active', true)
-            ->withCount('publishedArticles')
-            ->orderBy('order')
-            ->get();
+        // Cache les catégories actives (1 heure)
+        $categories = \Illuminate\Support\Facades\Cache::remember('active_categories', 3600, function () {
+            return \App\Models\Category::where('is_active', true)
+                ->withCount('publishedArticles')
+                ->orderBy('order')
+                ->get();
+        });
         
-        $recentArticles = \App\Models\JobArticle::where('status', 'published')
-            ->with('category')
-            ->orderBy('published_at', 'desc')
-            ->take(6)
-            ->get();
+        // Cache les 6 derniers articles (15 minutes)
+        $recentArticles = \Illuminate\Support\Facades\Cache::remember('recent_job_articles', 900, function () {
+            return \App\Models\JobArticle::where('status', 'published')
+                ->with('category')
+                ->orderBy('published_at', 'desc')
+                ->take(6)
+                ->get();
+        });
         
         return view('emplois.index', compact('categories', 'recentArticles'));
     }
@@ -1658,20 +1671,28 @@ add_action(\'init\', \'create_portfolio_post_type\');
     public function offresEmploi(Request $request)
     {
         $categorySlug = $request->get('category');
-        $query = \App\Models\JobArticle::where('status', 'published')->with('category');
         
+        // Cache la catégorie (1 heure)
         if ($categorySlug) {
-            $category = \App\Models\Category::where('slug', $categorySlug)->first();
-            if ($category) {
-                $query->where('category_id', $category->id);
-            }
+            $category = \Illuminate\Support\Facades\Cache::remember("category_{$categorySlug}", 3600, function () use ($categorySlug) {
+                return \App\Models\Category::where('slug', $categorySlug)->first();
+            });
         } else {
-            $category = \App\Models\Category::where('slug', 'offres-emploi')->first();
-            if ($category) {
-                $query->where('category_id', $category->id);
-            }
+            $category = \Illuminate\Support\Facades\Cache::remember('category_offres-emploi', 3600, function () {
+                return \App\Models\Category::where('slug', 'offres-emploi')->first();
+            });
         }
         
+        // Cache la clé de pagination avec la catégorie
+        $cacheKey = $category ? "job_articles_category_{$category->id}_page_" . $request->get('page', 1) : 'job_articles_all_page_' . $request->get('page', 1);
+        
+        $query = \App\Models\JobArticle::where('status', 'published')->with('category');
+        
+        if ($category) {
+            $query->where('category_id', $category->id);
+        }
+        
+        // Ne pas mettre en cache la pagination, mais utiliser le cache pour les requêtes
         $articles = $query->orderBy('published_at', 'desc')->paginate(10);
         
         return view('emplois.offres', compact('articles', 'category'));
@@ -1679,7 +1700,11 @@ add_action(\'init\', \'create_portfolio_post_type\');
 
     public function bourses()
     {
-        $category = \App\Models\Category::where('slug', 'bourses-etudes')->first();
+        // Cache la catégorie (1 heure)
+        $category = \Illuminate\Support\Facades\Cache::remember('category_bourses-etudes', 3600, function () {
+            return \App\Models\Category::where('slug', 'bourses-etudes')->first();
+        });
+        
         $articles = \App\Models\JobArticle::where('status', 'published')
             ->where('category_id', $category->id ?? null)
             ->with('category')
@@ -1691,7 +1716,11 @@ add_action(\'init\', \'create_portfolio_post_type\');
 
     public function candidatureSpontanee()
     {
-        $category = \App\Models\Category::where('slug', 'candidature-spontanee')->first();
+        // Cache la catégorie (1 heure)
+        $category = \Illuminate\Support\Facades\Cache::remember('category_candidature-spontanee', 3600, function () {
+            return \App\Models\Category::where('slug', 'candidature-spontanee')->first();
+        });
+        
         $articles = \App\Models\JobArticle::where('status', 'published')
             ->where('category_id', $category->id ?? null)
             ->with('category')
@@ -1703,7 +1732,11 @@ add_action(\'init\', \'create_portfolio_post_type\');
 
     public function opportunites()
     {
-        $category = \App\Models\Category::where('slug', 'opportunites-professionnelles')->first();
+        // Cache la catégorie (1 heure)
+        $category = \Illuminate\Support\Facades\Cache::remember('category_opportunites-professionnelles', 3600, function () {
+            return \App\Models\Category::where('slug', 'opportunites-professionnelles')->first();
+        });
+        
         $articles = \App\Models\JobArticle::where('status', 'published')
             ->where('category_id', $category->id ?? null)
             ->with('category')
@@ -1715,32 +1748,42 @@ add_action(\'init\', \'create_portfolio_post_type\');
 
     public function showArticle($slug)
     {
-        $article = \App\Models\JobArticle::where('slug', $slug)
-            ->where('status', 'published')
-            ->with('category')
-            ->firstOrFail();
+        // Cache l'article (30 minutes)
+        $article = \Illuminate\Support\Facades\Cache::remember("job_article_{$slug}", 1800, function () use ($slug) {
+            return \App\Models\JobArticle::where('slug', $slug)
+                ->where('status', 'published')
+                ->with('category')
+                ->firstOrFail();
+        });
         
-        // Incrémenter les vues
+        // Incrémenter les vues (ne pas mettre en cache)
         $article->increment('views');
         
-        // Articles similaires
-        $relatedArticles = \App\Models\JobArticle::where('status', 'published')
-            ->where('category_id', $article->category_id)
-            ->where('id', '!=', $article->id)
-            ->with('category')
-            ->orderBy('published_at', 'desc')
-            ->take(3)
-            ->get();
+        // Invalider le cache de l'article après mise à jour des vues
+        \Illuminate\Support\Facades\Cache::forget("job_article_{$slug}");
         
-        // Récupérer les publicités pour la sidebar des articles (location article_sidebar ou sans location, mais pas homepage_after_exercises)
-        $sidebarAds = \App\Models\Ad::active()
-            ->forPosition('content')
-            ->where(function($q) {
-                $q->whereNull('location')
-                  ->orWhere('location', 'article_sidebar');
-            })
-            ->orderBy('order')
-            ->get();
+        // Cache les articles similaires (15 minutes)
+        $relatedArticles = \Illuminate\Support\Facades\Cache::remember("related_articles_{$article->id}", 900, function () use ($article) {
+            return \App\Models\JobArticle::where('status', 'published')
+                ->where('category_id', $article->category_id)
+                ->where('id', '!=', $article->id)
+                ->with('category')
+                ->orderBy('published_at', 'desc')
+                ->take(3)
+                ->get();
+        });
+        
+        // Cache les publicités pour la sidebar des articles (30 minutes)
+        $sidebarAds = \Illuminate\Support\Facades\Cache::remember('sidebar_ads_articles', 1800, function () {
+            return \App\Models\Ad::active()
+                ->forPosition('content')
+                ->where(function($q) {
+                    $q->whereNull('location')
+                      ->orWhere('location', 'article_sidebar');
+                })
+                ->orderBy('order')
+                ->get();
+        });
         
         return view('emplois.article', compact('article', 'relatedArticles', 'sidebarAds'));
     }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Cache;
 
 class Category extends Model
 {
@@ -33,5 +34,29 @@ class Category extends Model
     public function publishedArticles(): HasMany
     {
         return $this->hasMany(JobArticle::class)->where('status', 'published');
+    }
+
+    /**
+     * Boot du modèle
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Invalider le cache lors de la création, mise à jour ou suppression
+        static::created(function ($category) {
+            Cache::forget('active_categories');
+            Cache::forget("category_{$category->slug}");
+        });
+
+        static::updated(function ($category) {
+            Cache::forget('active_categories');
+            Cache::forget("category_{$category->slug}");
+        });
+
+        static::deleted(function ($category) {
+            Cache::forget('active_categories');
+            Cache::forget("category_{$category->slug}");
+        });
     }
 }
