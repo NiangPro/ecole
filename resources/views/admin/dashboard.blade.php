@@ -583,42 +583,39 @@
     </div>
 </div>
 
-<!-- Graphique et Top Pages -->
-<div class="grid lg:grid-cols-2 gap-6 mb-8">
-    <!-- Graphique des visites -->
-    <div class="content-section-modern">
-        <h4 class="section-title-modern">
-            <i class="fas fa-chart-area"></i>
-            Visites (7 derniers jours)
-        </h4>
-        <div style="background: rgba(0, 0, 0, 0.3); border-radius: 16px; padding: 25px; height: 300px;">
-            <canvas id="visitsChart" height="250"></canvas>
-        </div>
+<!-- Graphique des visites - Ligne entière -->
+<div class="content-section-modern mb-8">
+    <h4 class="section-title-modern">
+        <i class="fas fa-chart-area"></i>
+        Visites (7 derniers jours)
+    </h4>
+    <div style="background: rgba(0, 0, 0, 0.3); border-radius: 16px; padding: 25px; height: 400px;">
+        <canvas id="visitsChart" height="350"></canvas>
     </div>
-    
-    <!-- Top 5 pages -->
-    <div class="content-section-modern">
-        <h4 class="section-title-modern">
-            <i class="fas fa-fire"></i>
-            Pages les plus visitées
-        </h4>
-        <div>
-            @php
-                $topPages = \App\Models\Statistic::getTopPages(5, 'month');
-            @endphp
-            @forelse($topPages as $index => $page)
-            <div class="top-page-item">
-                <div class="top-page-rank">{{ $index + 1 }}</div>
-                <div class="top-page-info">
-                    <div class="top-page-title">{{ $page->page_title ?? 'Sans titre' }}</div>
-                    <div class="top-page-url">{{ Str::limit($page->page_url, 50) }}</div>
-                </div>
-                <div class="top-page-visits">{{ number_format($page->visits) }}</div>
+</div>
+
+<!-- Top Pages - Ligne entière -->
+<div class="content-section-modern mb-8">
+    <h4 class="section-title-modern">
+        <i class="fas fa-fire"></i>
+        Pages les plus visitées
+    </h4>
+    <div>
+        @php
+            $topPages = \App\Models\Statistic::getTopPages(5, 'month');
+        @endphp
+        @forelse($topPages as $index => $page)
+        <div class="top-page-item">
+            <div class="top-page-rank">{{ $index + 1 }}</div>
+            <div class="top-page-info">
+                <div class="top-page-title">{{ $page->page_title ?? 'Sans titre' }}</div>
+                <div class="top-page-url">{{ Str::limit($page->page_url, 50) }}</div>
             </div>
-            @empty
-            <p class="text-center text-gray-400 py-8">Aucune donnée disponible</p>
-            @endforelse
+            <div class="top-page-visits">{{ number_format($page->visits) }}</div>
         </div>
+        @empty
+        <p class="text-center text-gray-400 py-8">Aucune donnée disponible</p>
+        @endforelse
     </div>
 </div>
 
@@ -784,7 +781,7 @@
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false,
+                maintainAspectRatio: true,
                 plugins: {
                     legend: {
                         display: false

@@ -186,21 +186,21 @@
     
     .field-select {
         width: 100%;
-        padding: 16px 20px;
+        padding: 0.7rem 1rem;
         background: rgba(10, 10, 26, 0.8);
         border: 2px solid rgba(6, 182, 212, 0.25);
-        border-radius: 14px;
+        border-radius: 10px;
         color: #fff;
-        font-size: 1rem;
+        font-size: 0.9rem;
         font-family: 'Inter', sans-serif;
         cursor: pointer;
         transition: all 0.3s ease;
         appearance: none;
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='%2306b6d4' d='M8 11L3 6h10z'/%3E%3C/svg%3E");
         background-repeat: no-repeat;
-        background-position: right 16px center;
-        background-size: 16px;
-        padding-right: 50px;
+        background-position: right 12px center;
+        background-size: 14px;
+        padding-right: 40px;
     }
     
     .field-select:focus {
@@ -296,41 +296,41 @@
         flex: 1;
         background: linear-gradient(135deg, #06b6d4, #14b8a6);
         border: none;
-        padding: 18px 32px;
-        border-radius: 14px;
+        padding: 0.7rem 1.5rem;
+        border-radius: 10px;
         color: #000;
         font-weight: 700;
-        font-size: 1.05rem;
+        font-size: 0.9rem;
         cursor: pointer;
         transition: all 0.3s ease;
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 10px;
-        box-shadow: 0 4px 20px rgba(6, 182, 212, 0.3);
+        gap: 8px;
+        box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
         font-family: 'Inter', sans-serif;
     }
     
     .btn-save:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 30px rgba(6, 182, 212, 0.5);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(6, 182, 212, 0.5);
     }
     
     .btn-cancel {
-        padding: 18px 32px;
+        padding: 0.7rem 1.5rem;
         background: rgba(100, 100, 100, 0.2);
         border: 2px solid rgba(255, 255, 255, 0.1);
-        border-radius: 14px;
+        border-radius: 10px;
         color: #fff;
         font-weight: 600;
-        font-size: 1.05rem;
+        font-size: 0.9rem;
         cursor: pointer;
         transition: all 0.3s ease;
         text-decoration: none;
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 10px;
+        gap: 8px;
         font-family: 'Inter', sans-serif;
     }
     

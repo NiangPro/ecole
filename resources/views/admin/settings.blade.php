@@ -108,7 +108,7 @@
             
             <div>
                 <label class="block text-gray-300 mb-2 font-semibold">
-                    <i class="fab fa-tiktok text-black mr-2"></i>TikTok
+                    <i class="fab fa-tiktok mr-2" style="color: #000; background: #fff; padding: 2px 4px; border-radius: 4px;"></i>TikTok
                 </label>
                 <input type="url" name="tiktok_url" value="{{ old('tiktok_url', $settings->tiktok_url ?? '') }}" 
                        class="input-admin" placeholder="https://tiktok.com/@...">
