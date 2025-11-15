@@ -163,12 +163,12 @@
     
     .field-input {
         width: 100%;
-        padding: 16px 20px;
+        padding: 0.7rem 1rem;
         background: rgba(10, 10, 26, 0.8);
         border: 2px solid rgba(6, 182, 212, 0.25);
-        border-radius: 14px;
+        border-radius: 10px;
         color: #fff;
-        font-size: 1rem;
+        font-size: 0.9rem;
         font-family: 'Inter', sans-serif;
         transition: all 0.3s ease;
     }
