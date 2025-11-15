@@ -229,26 +229,33 @@
     }
     
     
-    /* Stats Cards 3D */
+    /* Stats Section Ultra Moderne - Refonte Complète */
     .stats-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 30px;
-        max-width: 1200px;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 25px;
+        max-width: 1400px;
         margin: 0 auto 100px;
+        padding: 0 20px;
     }
     
     .stat-card {
         position: relative;
-        background: rgba(6, 182, 212, 0.05);
-        border: 1px solid rgba(6, 182, 212, 0.2);
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.08) 0%, rgba(20, 184, 166, 0.05) 100%);
+        background-image: 
+            radial-gradient(circle at 20% 30%, rgba(6, 182, 212, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 80% 70%, rgba(20, 184, 166, 0.1) 0%, transparent 50%);
+        border: 2px solid rgba(6, 182, 212, 0.15);
         border-radius: 24px;
-        padding: 40px 30px;
-        backdrop-filter: blur(20px);
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        padding: 35px 25px;
+        backdrop-filter: blur(30px);
+        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         overflow: hidden;
+        text-align: center;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
     }
     
+    /* Effet de brillance animé */
     .stat-card::before {
         content: '';
         position: absolute;
@@ -256,49 +263,110 @@
         left: -50%;
         width: 200%;
         height: 200%;
-        background: radial-gradient(circle, rgba(6, 182, 212, 0.1) 0%, transparent 70%);
+        background: conic-gradient(from 0deg, transparent, rgba(6, 182, 212, 0.1), transparent 30%);
+        animation: rotate 8s linear infinite;
         opacity: 0;
-        transition: opacity 0.4s;
+        transition: opacity 0.5s;
+    }
+    
+    @keyframes rotate {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
     }
     
     .stat-card:hover::before {
         opacity: 1;
     }
     
+    /* Effet de glow au survol */
+    .stat-card::after {
+        content: '';
+        position: absolute;
+        inset: -2px;
+        border-radius: 28px;
+        padding: 2px;
+        background: linear-gradient(135deg, #06b6d4, #14b8a6, #06b6d4);
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        opacity: 0;
+        transition: opacity 0.5s;
+        z-index: -1;
+    }
+    
+    .stat-card:hover::after {
+        opacity: 1;
+        animation: borderGlow 2s ease-in-out infinite;
+    }
+    
+    @keyframes borderGlow {
+        0%, 100% { opacity: 0.6; }
+        50% { opacity: 1; }
+    }
+    
     .stat-card:hover {
-        transform: translateY(-10px) rotateX(5deg);
-        border-color: rgba(6, 182, 212, 0.5);
-        box-shadow: 0 30px 80px rgba(6, 182, 212, 0.3);
+        transform: translateY(-15px) scale(1.02);
+        border-color: rgba(6, 182, 212, 0.4);
+        box-shadow: 0 25px 60px rgba(6, 182, 212, 0.4), 0 0 40px rgba(6, 182, 212, 0.2);
     }
     
     .stat-icon {
-        width: 80px;
-        height: 80px;
+        width: 70px;
+        height: 70px;
         margin: 0 auto 20px;
-        background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2));
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.25), rgba(20, 184, 166, 0.25));
+        border: 2px solid rgba(6, 182, 212, 0.3);
         border-radius: 20px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 2.5rem;
+        font-size: 2.2rem;
         position: relative;
         z-index: 1;
+        transition: all 0.5s ease;
+        box-shadow: 0 8px 25px rgba(6, 182, 212, 0.2);
+    }
+    
+    .stat-card:hover .stat-icon {
+        transform: rotateY(360deg) scale(1.1);
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.4), rgba(20, 184, 166, 0.4));
+        border-color: rgba(6, 182, 212, 0.6);
+        box-shadow: 0 12px 35px rgba(6, 182, 212, 0.4);
     }
     
     .stat-number {
-        font-size: 3.5rem;
+        font-size: clamp(2rem, 4vw, 3rem);
         font-weight: 900;
-        background: linear-gradient(135deg, #06b6d4, #14b8a6);
+        background: linear-gradient(135deg, #06b6d4 0%, #14b8a6 50%, #06b6d4 100%);
+        background-size: 200% 200%;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
+        background-clip: text;
         margin-bottom: 10px;
+        line-height: 1.1;
+        position: relative;
+        z-index: 1;
+        animation: gradientShift 3s ease infinite;
+    }
+    
+    @keyframes gradientShift {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
     }
     
     .stat-label {
-        font-size: 1rem;
-        color: rgba(255, 255, 255, 0.6);
-        text-transform: uppercase;
-        letter-spacing: 2px;
+        font-size: 0.95rem;
+        color: rgba(255, 255, 255, 0.75);
+        font-weight: 600;
+        text-transform: none;
+        letter-spacing: 0.5px;
+        position: relative;
+        z-index: 1;
+        transition: color 0.3s ease;
+    }
+    
+    .stat-card:hover .stat-label {
+        color: rgba(255, 255, 255, 0.95);
     }
     
     /* Technologies Section */
@@ -456,6 +524,20 @@
             gap: 20px;
         }
         
+        .stat-card {
+            padding: 30px 20px;
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            font-size: 1.8rem;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+        }
+        
         .tech-section {
             padding: 40px 20px;
         }
@@ -505,22 +587,22 @@
 <section class="hero-section">
     <div class="hero-content">
         <h1 class="main-title">
-            Devenez <span class="title-gradient">Développeur Web</span><br>
-            Professionnel en 2025
+            Apprenez la <span class="title-gradient">Programmation</span><br>
+            Gratuitement avec <span class="title-gradient">NiangProgrammeur</span>
         </h1>
         
         <p class="subtitle">
-            Apprenez HTML5, CSS3, JavaScript, PHP, Laravel et bien plus encore. Formations gratuites, complètes et pratiques pour maîtriser le développement web moderne.
+            La meilleure plateforme gratuite pour apprendre le développement web. Maîtrisez HTML, CSS, JavaScript, PHP, Laravel et bien plus encore avec nos tutoriels interactifs, exemples pratiques et exercices.
         </p>
         
         <div class="cta-buttons">
             <a href="#technologies" class="btn-3d btn-primary">
-                <i class="fas fa-graduation-cap"></i>
-                Découvrir les formations
+                <i class="fas fa-book-open"></i>
+                Commencer à apprendre
             </a>
             <a href="{{ route('exercices') }}" class="btn-3d btn-secondary">
                 <i class="fas fa-code"></i>
-                Voir les exercices
+                Essayer gratuitement
             </a>
         </div>
     </div>

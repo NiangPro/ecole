@@ -133,7 +133,7 @@
                     </div>
                     <div id="internalImage" style="display: {{ old('cover_type', $article->cover_type ?? 'internal') === 'internal' ? 'block' : 'none' }};">
                         <label class="block text-cyan-400 mb-2 font-semibold">Fichier image</label>
-                        <input type="file" name="cover_image_file" accept="image/*" class="input-admin">
+                        <input type="file" name="cover_image_file" id="coverImageFile" accept="image/*" class="input-admin">
                         @if(isset($article) && $article->cover_type === 'internal' && $article->cover_image)
                             <p class="text-gray-400 text-sm mt-1">Image actuelle: <a href="{{ \Illuminate\Support\Facades\Storage::url($article->cover_image) }}" target="_blank" class="text-cyan-400 hover:underline">{{ basename($article->cover_image) }}</a></p>
                         @else
@@ -146,8 +146,8 @@
                                class="input-admin" placeholder="https://example.com/image.jpg">
                         <p class="text-gray-400 text-sm mt-1">Entrez l'URL complète de l'image</p>
                     </div>
-                    <div id="coverPreview" class="mt-4 {{ (isset($article) && $article->cover_image) ? '' : 'hidden' }}">
-                        <img id="previewImg" src="{{ isset($article) && $article->cover_image ? ($article->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($article->cover_image) : $article->cover_image) : '' }}" alt="Aperçu" class="w-full rounded-lg border border-cyan-500/20">
+                    <div id="coverPreview" class="mt-4 {{ (isset($article) && $article->cover_image) ? '' : 'hidden' }}" style="text-align: center;">
+                        <img id="previewImg" src="{{ isset($article) && $article->cover_image ? ($article->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($article->cover_image) : $article->cover_image) : '' }}" alt="Aperçu" style="max-width: 100%; border-radius: 12px; border: 2px solid rgba(6, 182, 212, 0.3);">
                     </div>
                 </div>
             </div>
@@ -207,6 +207,94 @@
 
 @push('scripts')
 <script src="{{ asset('js/article-editor.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialiser l'aperçu de l'image existante
+        const coverPreview = document.getElementById('coverPreview');
+        const previewImg = document.getElementById('previewImg');
+        const coverTypeSelect = document.getElementById('coverType');
+        const coverImageFile = document.getElementById('coverImageFile');
+        const coverImageUrl = document.getElementById('coverImageUrl');
+        
+        // Afficher l'aperçu si une image existe déjà
+        @if(isset($article) && $article->cover_image)
+            if (coverPreview && previewImg) {
+                coverPreview.classList.remove('hidden');
+            }
+        @endif
+        
+        // Gérer le changement de type d'image
+        if (coverTypeSelect) {
+            coverTypeSelect.addEventListener('change', function() {
+                const internalDiv = document.getElementById('internalImage');
+                const externalDiv = document.getElementById('externalImage');
+                
+                if (this.value === 'internal') {
+                    if (internalDiv) internalDiv.style.display = 'block';
+                    if (externalDiv) externalDiv.style.display = 'none';
+                    if (coverImageUrl) coverImageUrl.value = '';
+                } else {
+                    if (internalDiv) internalDiv.style.display = 'none';
+                    if (externalDiv) externalDiv.style.display = 'block';
+                    if (coverImageFile) coverImageFile.value = '';
+                }
+                
+                // Cacher l'aperçu si on change de type
+                if (coverPreview) coverPreview.classList.add('hidden');
+                if (previewImg) previewImg.src = '';
+            });
+        }
+        
+        // Aperçu pour fichier uploadé
+        if (coverImageFile) {
+            coverImageFile.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        if (previewImg) {
+                            previewImg.src = e.target.result;
+                            if (coverPreview) coverPreview.classList.remove('hidden');
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+        
+        // Aperçu pour URL externe
+        if (coverImageUrl) {
+            coverImageUrl.addEventListener('input', function() {
+                const url = this.value.trim();
+                if (url && url.startsWith('http')) {
+                    if (previewImg) {
+                        previewImg.src = url;
+                        previewImg.onload = function() {
+                            if (coverPreview) coverPreview.classList.remove('hidden');
+                        };
+                        previewImg.onerror = function() {
+                            if (coverPreview) coverPreview.classList.add('hidden');
+                        };
+                    }
+                } else {
+                    if (coverPreview) coverPreview.classList.add('hidden');
+                }
+            });
+        }
+        
+        // Initialiser les scores SEO et lisibilité après un court délai
+        setTimeout(function() {
+            const contentTextarea = document.getElementById('articleContent');
+            if (contentTextarea) {
+                contentTextarea.dispatchEvent(new Event('input'));
+            }
+            const titleInput = document.getElementById('articleTitle');
+            if (titleInput) {
+                titleInput.dispatchEvent(new Event('input'));
+            }
+        }, 500);
+    });
+</script>
 @endpush
 @endsection
 
