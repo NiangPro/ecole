@@ -2,212 +2,701 @@
 
 @section('title', isset($article) ? 'Modifier Article' : 'Nouvel Article')
 
-@section('content')
-<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-    <div>
-        <h3 class="text-3xl font-bold mb-2">{{ isset($article) ? 'Modifier Article' : 'Nouvel Article' }}</h3>
-        <p class="text-gray-400">{{ isset($article) ? 'Modifiez l\'article d\'emploi' : 'Créez un nouvel article d\'emploi' }}</p>
-    </div>
-    <a href="{{ route('admin.jobs.articles.index') }}" class="px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg transition">
-        <i class="fas fa-arrow-left mr-2"></i>Retour
-    </a>
-</div>
-
-<form action="{{ isset($article) ? route('admin.jobs.articles.update', $article->id) : route('admin.jobs.articles.store') }}" method="POST" enctype="multipart/form-data" id="articleForm">
-    @csrf
-    @if(isset($article))
-        @method('PUT')
-    @endif
+@section('styles')
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800;900&display=swap');
     
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Colonne principale (contenu) -->
-        <div class="lg:col-span-2 space-y-6">
-            <!-- Titre -->
-            <div class="content-section">
-                <label class="block text-cyan-400 mb-2 font-semibold">Titre de l'article *</label>
-                <input type="text" name="title" id="articleTitle" value="{{ old('title', $article->title ?? '') }}" required
-                       class="input-admin text-2xl font-bold" placeholder="Entrez le titre de l'article">
-                @error('title')
-                    <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
-                @enderror
-            </div>
+    .article-form-wrapper {
+        max-width: 1600px;
+        margin: 0 auto;
+    }
+    
+    .form-hero {
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(20, 184, 166, 0.1) 100%);
+        border: 2px solid rgba(6, 182, 212, 0.3);
+        border-radius: 24px;
+        padding: 50px;
+        margin-bottom: 40px;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .form-hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(6, 182, 212, 0.1) 0%, transparent 70%);
+        animation: rotate 20s linear infinite;
+    }
+    
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    
+    .form-hero-content {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .form-hero h1 {
+        font-family: 'Poppins', sans-serif;
+        font-size: 3rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #06b6d4 0%, #14b8a6 50%, #06b6d4 100%);
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: shimmer 3s linear infinite;
+        margin-bottom: 15px;
+    }
+    
+    @keyframes shimmer {
+        to { background-position: 200% center; }
+    }
+    
+    .form-hero p {
+        font-size: 1.1rem;
+        color: rgba(255, 255, 255, 0.7);
+        font-weight: 400;
+    }
+    
+    .btn-back {
+        padding: 12px 24px;
+        background: rgba(6, 182, 212, 0.1);
+        border: 2px solid rgba(6, 182, 212, 0.3);
+        border-radius: 12px;
+        color: #06b6d4;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.95rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-back:hover {
+        background: rgba(6, 182, 212, 0.2);
+        border-color: rgba(6, 182, 212, 0.5);
+        transform: translateY(-2px);
+    }
+    
+    .form-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 30px;
+    }
+    
+    .form-card {
+        background: rgba(15, 23, 42, 0.7);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(6, 182, 212, 0.2);
+        border-radius: 20px;
+        padding: 35px;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 25px;
+    }
+    
+    .form-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(6, 182, 212, 0.1), transparent);
+        transition: left 0.6s;
+    }
+    
+    .form-card:hover::before {
+        left: 100%;
+    }
+    
+    .form-card:hover {
+        border-color: rgba(6, 182, 212, 0.5);
+        transform: translateY(-5px);
+        box-shadow: 0 20px 60px rgba(6, 182, 212, 0.2);
+    }
+    
+    .form-section-title {
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #06b6d4;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 2px solid rgba(6, 182, 212, 0.3);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .form-section-title i {
+        font-size: 1.3rem;
+    }
+    
+    .form-group {
+        margin-bottom: 25px;
+    }
+    
+    .form-label {
+        display: block;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #06b6d4;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .form-input,
+    .form-select,
+    .form-textarea {
+        width: 100%;
+        padding: 10px 14px;
+        background: rgba(15, 23, 42, 0.8);
+        border: 2px solid rgba(6, 182, 212, 0.2);
+        border-radius: 10px;
+        color: #fff;
+        font-size: 0.9rem;
+        font-family: 'Inter', sans-serif;
+        transition: all 0.3s ease;
+    }
+    
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+        outline: none;
+        border-color: #06b6d4;
+        background: rgba(15, 23, 42, 0.95);
+        box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.1);
+    }
+    
+    .form-textarea {
+        resize: vertical;
+        min-height: 120px;
+    }
+    
+    .form-textarea-large {
+        min-height: 400px;
+        font-family: 'Courier New', monospace;
+        line-height: 1.8;
+    }
+    
+    .form-help {
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.5);
+        margin-top: 8px;
+        font-style: italic;
+    }
+    
+    .form-error {
+        color: #ef4444;
+        font-size: 0.85rem;
+        margin-top: 8px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    
+    .editor-toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px;
+        background: rgba(6, 182, 212, 0.05);
+        border: 2px solid rgba(6, 182, 212, 0.2);
+        border-radius: 12px;
+        margin-bottom: 15px;
+    }
+    
+    .editor-buttons {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    
+    .editor-btn {
+        padding: 10px 14px;
+        background: rgba(6, 182, 212, 0.1);
+        border: 1px solid rgba(6, 182, 212, 0.3);
+        border-radius: 8px;
+        color: #06b6d4;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.9rem;
+    }
+    
+    .editor-btn:hover {
+        background: rgba(6, 182, 212, 0.2);
+        border-color: rgba(6, 182, 212, 0.5);
+        transform: translateY(-2px);
+    }
+    
+    .word-count {
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.6);
+        font-weight: 600;
+    }
+    
+    .seo-card {
+        background: rgba(15, 23, 42, 0.6);
+        border: 2px solid rgba(6, 182, 212, 0.2);
+        border-radius: 16px;
+        padding: 25px;
+        margin-bottom: 20px;
+    }
+    
+    .seo-score {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+    
+    .seo-score-value {
+        font-size: 2.5rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #06b6d4, #14b8a6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .seo-progress {
+        width: 100%;
+        height: 12px;
+        background: rgba(15, 23, 42, 0.8);
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 20px;
+    }
+    
+    .seo-progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #ef4444, #f59e0b, #22c55e);
+        border-radius: 10px;
+        transition: width 0.3s ease;
+    }
+    
+    .seo-detail-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 0;
+        border-bottom: 1px solid rgba(6, 182, 212, 0.1);
+    }
+    
+    .seo-detail-item:last-child {
+        border-bottom: none;
+    }
+    
+    .seo-check {
+        font-size: 1.2rem;
+    }
+    
+    .seo-check.success {
+        color: #22c55e;
+    }
+    
+    .seo-check.warning {
+        color: #f59e0b;
+    }
+    
+    .seo-check.error {
+        color: #ef4444;
+    }
+    
+    .form-actions {
+        display: flex;
+        gap: 15px;
+        margin-top: 40px;
+        padding-top: 30px;
+        border-top: 2px solid rgba(6, 182, 212, 0.2);
+    }
+    
+    .btn-submit {
+        flex: 1;
+        padding: 16px 32px;
+        background: linear-gradient(135deg, #06b6d4, #14b8a6);
+        color: #000;
+        border: none;
+        border-radius: 12px;
+        font-family: 'Poppins', sans-serif;
+        font-size: 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+    }
+    
+    .btn-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(6, 182, 212, 0.5);
+    }
+    
+    @media (max-width: 1200px) {
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .form-hero {
+            padding: 25px;
+        }
+        
+        .form-hero-content {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 20px;
+        }
+        
+        .form-hero h1 {
+            font-size: 2rem;
+        }
+        
+        .form-card {
+            padding: 25px;
+        }
+        
+        .editor-toolbar {
+            flex-direction: column;
+            gap: 15px;
+        }
+    }
+</style>
+@endsection
 
-            <!-- Éditeur de contenu (WordPress Classic Editor style) -->
-            <div class="content-section">
-                <div class="flex items-center justify-between mb-4 border-b border-cyan-500/20 pb-3">
-                    <div class="flex gap-2">
-                        <button type="button" onclick="formatText('bold')" class="px-3 py-1 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-400 rounded transition" title="Gras">
-                            <i class="fas fa-bold"></i>
-                        </button>
-                        <button type="button" onclick="formatText('italic')" class="px-3 py-1 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-400 rounded transition" title="Italique">
-                            <i class="fas fa-italic"></i>
-                        </button>
-                        <button type="button" onclick="formatText('underline')" class="px-3 py-1 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-400 rounded transition" title="Souligné">
-                            <i class="fas fa-underline"></i>
-                        </button>
-                        <button type="button" onclick="insertLink()" class="px-3 py-1 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-400 rounded transition" title="Lien">
-                            <i class="fas fa-link"></i>
-                        </button>
-                        <button type="button" onclick="insertList('ul')" class="px-3 py-1 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-400 rounded transition" title="Liste">
-                            <i class="fas fa-list-ul"></i>
-                        </button>
-                        <button type="button" onclick="insertList('ol')" class="px-3 py-1 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-400 rounded transition" title="Liste numérotée">
-                            <i class="fas fa-list-ol"></i>
-                        </button>
+@section('content')
+<div class="article-form-wrapper">
+    <!-- Hero Section -->
+    <div class="form-hero">
+        <div class="form-hero-content">
+            <div>
+                <h1><i class="fas fa-{{ isset($article) ? 'edit' : 'plus' }}"></i> {{ isset($article) ? 'Modifier Article' : 'Nouvel Article' }}</h1>
+                <p>{{ isset($article) ? 'Modifiez l\'article d\'emploi' : 'Créez un nouvel article d\'emploi' }}</p>
+            </div>
+            <a href="{{ route('admin.jobs.articles.index') }}" class="btn-back">
+                <i class="fas fa-arrow-left"></i>
+                Retour à la liste
+            </a>
+        </div>
+    </div>
+    
+    <form action="{{ isset($article) ? route('admin.jobs.articles.update', $article->id) : route('admin.jobs.articles.store') }}" method="POST" enctype="multipart/form-data" id="articleForm">
+        @csrf
+        @if(isset($article))
+            @method('PUT')
+        @endif
+        
+        <div class="form-grid">
+            <!-- Colonne principale (contenu) -->
+            <div>
+                <!-- Titre -->
+                <div class="form-card">
+                    <div class="form-section-title">
+                        <i class="fas fa-heading"></i>
+                        <span>Titre de l'article</span>
                     </div>
-                    <div class="text-sm text-gray-400">
-                        <span id="wordCount">0</span> <span id="wordLabel">mots</span>
+                    <div class="form-group">
+                        <input type="text" name="title" id="articleTitle" value="{{ old('title', $article->title ?? '') }}" required
+                               class="form-input" style="font-size: 1.5rem; font-weight: 700;" placeholder="Entrez le titre de l'article">
+                        @error('title')
+                            <div class="form-error">{{ $message }}</div>
+                        @enderror
                     </div>
                 </div>
-                <textarea name="content" id="articleContent" rows="20" required
-                          class="input-admin font-mono text-base leading-relaxed" 
-                          placeholder="Commencez à écrire votre article...">{{ old('content', $article->content ?? '') }}</textarea>
-                @error('content')
-                    <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
-                @enderror
+
+                <!-- Éditeur de contenu -->
+                <div class="form-card">
+                    <div class="form-section-title">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Contenu de l'article</span>
+                    </div>
+                    <div class="editor-toolbar">
+                        <div class="editor-buttons">
+                            <button type="button" onclick="formatText('bold')" class="editor-btn" title="Gras">
+                                <i class="fas fa-bold"></i>
+                            </button>
+                            <button type="button" onclick="formatText('italic')" class="editor-btn" title="Italique">
+                                <i class="fas fa-italic"></i>
+                            </button>
+                            <button type="button" onclick="formatText('underline')" class="editor-btn" title="Souligné">
+                                <i class="fas fa-underline"></i>
+                            </button>
+                            <button type="button" onclick="insertLink()" class="editor-btn" title="Lien">
+                                <i class="fas fa-link"></i>
+                            </button>
+                            <button type="button" onclick="insertList('ul')" class="editor-btn" title="Liste">
+                                <i class="fas fa-list-ul"></i>
+                            </button>
+                            <button type="button" onclick="insertList('ol')" class="editor-btn" title="Liste numérotée">
+                                <i class="fas fa-list-ol"></i>
+                            </button>
+                        </div>
+                        <div class="word-count">
+                            <span id="wordCount">0</span> <span id="wordLabel">mots</span>
+                        </div>
+                    </div>
+                    <textarea name="content" id="articleContent" required
+                              class="form-textarea form-textarea-large" 
+                              placeholder="Commencez à écrire votre article...">{{ old('content', $article->content ?? '') }}</textarea>
+                    @error('content')
+                        <div class="form-error">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <!-- Extrait -->
+                <div class="form-card">
+                    <div class="form-section-title">
+                        <i class="fas fa-align-left"></i>
+                        <span>Extrait</span>
+                    </div>
+                    <div class="form-group">
+                        <textarea name="excerpt" id="articleExcerpt" rows="4" 
+                                  class="form-textarea" 
+                                  placeholder="Résumé court de l'article (optionnel)">{{ old('excerpt', $article->excerpt ?? '') }}</textarea>
+                        <div class="form-help">L'extrait est utilisé dans les aperçus et les résultats de recherche.</div>
+                    </div>
+                </div>
+
+                <!-- Analyse SEO et Lisibilité détaillée -->
+                <div class="form-card">
+                    <div class="form-section-title">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Analyse SEO & Lisibilité</span>
+                    </div>
+                    <div class="seo-card">
+                        <div class="seo-score">
+                            <span style="font-weight: 700; color: #06b6d4; font-size: 1.2rem;">Score SEO</span>
+                            <span id="seoScoreDetail" class="seo-score-value">0/100</span>
+                        </div>
+                        <div class="seo-progress">
+                            <div id="seoBarDetail" class="seo-progress-bar" style="width: 0%"></div>
+                        </div>
+                        <div id="seoDetails" class="space-y-2">
+                            <div class="seo-detail-item">
+                                <span style="color: rgba(255, 255, 255, 0.7);">Titre (30-60 caractères)</span>
+                                <span id="titleCheck" class="seo-check error"><i class="fas fa-times"></i></span>
+                            </div>
+                            <div class="seo-detail-item">
+                                <span style="color: rgba(255, 255, 255, 0.7);">Meta Title (30-60 caractères)</span>
+                                <span id="metaTitleCheck" class="seo-check error"><i class="fas fa-times"></i></span>
+                            </div>
+                            <div class="seo-detail-item">
+                                <span style="color: rgba(255, 255, 255, 0.7);">Meta Description (120-160 caractères)</span>
+                                <span id="metaDescCheck" class="seo-check error"><i class="fas fa-times"></i></span>
+                            </div>
+                            <div class="seo-detail-item">
+                                <span style="color: rgba(255, 255, 255, 0.7);">Contenu (≥300 mots)</span>
+                                <span id="contentCheck" class="seo-check error"><i class="fas fa-times"></i></span>
+                            </div>
+                            <div class="seo-detail-item">
+                                <span style="color: rgba(255, 255, 255, 0.7);">Extrait (≥100 caractères)</span>
+                                <span id="excerptCheck" class="seo-check error"><i class="fas fa-times"></i></span>
+                            </div>
+                            <div class="seo-detail-item">
+                                <span style="color: rgba(255, 255, 255, 0.7);">Image de couverture</span>
+                                <span id="imageCheck" class="seo-check error"><i class="fas fa-times"></i></span>
+                            </div>
+                            <div class="seo-detail-item">
+                                <span style="color: rgba(255, 255, 255, 0.7);">Mots-clés (3-10)</span>
+                                <span id="keywordsCheck" class="seo-check error"><i class="fas fa-times"></i></span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="seo-card">
+                        <div class="seo-score">
+                            <span style="font-weight: 700; color: #06b6d4; font-size: 1.2rem;">Score Lisibilité</span>
+                            <span id="readabilityScoreDetail" class="seo-score-value">0/100</span>
+                        </div>
+                        <div class="seo-progress">
+                            <div id="readabilityBarDetail" class="seo-progress-bar" style="width: 0%"></div>
+                        </div>
+                        <div id="readabilityDetails" class="space-y-2">
+                            <div class="seo-detail-item">
+                                <span style="color: rgba(255, 255, 255, 0.7);">Mots par phrase (10-15 idéal)</span>
+                                <span id="wordsPerSentence" style="color: rgba(255, 255, 255, 0.5);">-</span>
+                            </div>
+                            <div class="seo-detail-item">
+                                <span style="color: rgba(255, 255, 255, 0.7);">Phrases par paragraphe (≤5 idéal)</span>
+                                <span id="sentencesPerParagraph" style="color: rgba(255, 255, 255, 0.5);">-</span>
+                            </div>
+                            <div class="seo-detail-item">
+                                <span style="color: rgba(255, 255, 255, 0.7);">Nombre de paragraphes</span>
+                                <span id="paragraphCount" style="color: rgba(255, 255, 255, 0.5);">-</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
-            <!-- Extrait -->
-            <div class="content-section">
-                <label class="block text-cyan-400 mb-2 font-semibold">Extrait</label>
-                <textarea name="excerpt" id="articleExcerpt" rows="4" 
-                          class="input-admin" 
-                          placeholder="Résumé court de l'article (optionnel)">{{ old('excerpt', $article->excerpt ?? '') }}</textarea>
-                <p class="text-gray-400 text-sm mt-1">L'extrait est utilisé dans les aperçus et les résultats de recherche.</p>
-            </div>
-        </div>
-
-        <!-- Sidebar (métadonnées) -->
-        <div class="space-y-6">
-            <!-- Publier -->
-            <div class="content-section">
-                <h4 class="text-cyan-400 font-bold mb-4 border-b border-cyan-500/20 pb-2">Publier</h4>
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-cyan-400 mb-2 font-semibold">Statut</label>
-                        <select name="status" id="articleStatus" class="input-admin">
+            <!-- Sidebar (métadonnées) -->
+            <div>
+                <!-- Publier -->
+                <div class="form-card">
+                    <div class="form-section-title">
+                        <i class="fas fa-paper-plane"></i>
+                        <span>Publier</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Statut</label>
+                        <select name="status" id="articleStatus" class="form-select">
                             <option value="draft" {{ old('status', $article->status ?? 'draft') === 'draft' ? 'selected' : '' }}>Brouillon</option>
                             <option value="published" {{ old('status', $article->status ?? '') === 'published' ? 'selected' : '' }}>Publié</option>
                             <option value="archived" {{ old('status', $article->status ?? '') === 'archived' ? 'selected' : '' }}>Archivé</option>
                         </select>
                     </div>
-                    <div>
-                        <label class="block text-cyan-400 mb-2 font-semibold">Date de publication</label>
+                    <div class="form-group">
+                        <label class="form-label">Date de publication</label>
                         <input type="datetime-local" name="published_at" value="{{ old('published_at', isset($article) && $article->published_at ? $article->published_at->format('Y-m-d\TH:i') : '') }}"
-                               class="input-admin">
+                               class="form-input">
                     </div>
-                    <div class="flex gap-2 pt-4">
-                        <button type="submit" class="btn-primary flex-1">
-                            <i class="fas fa-save mr-2"></i>Enregistrer
+                    <div class="form-actions" style="margin-top: 20px; padding-top: 20px; border-top: 2px solid rgba(6, 182, 212, 0.2);">
+                        <button type="submit" class="btn-submit">
+                            <i class="fas fa-save"></i>
+                            <span>Enregistrer</span>
                         </button>
                     </div>
                 </div>
-            </div>
 
-            <!-- Catégorie -->
-            <div class="content-section">
-                <h4 class="text-cyan-400 font-bold mb-4 border-b border-cyan-500/20 pb-2">Catégorie</h4>
-                <select name="category_id" required class="input-admin">
-                    <option value="">Sélectionnez une catégorie</option>
-                    @foreach($categories as $category)
-                        <option value="{{ $category->id }}" {{ old('category_id', $article->category_id ?? '') == $category->id ? 'selected' : '' }}>
-                            {{ $category->name }}
-                        </option>
-                    @endforeach
-                </select>
-                @error('category_id')
-                    <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
-                @enderror
-            </div>
+                <!-- Catégorie -->
+                <div class="form-card">
+                    <div class="form-section-title">
+                        <i class="fas fa-folder"></i>
+                        <span>Catégorie</span>
+                    </div>
+                    <div class="form-group">
+                        <select name="category_id" required class="form-select">
+                            <option value="">Sélectionnez une catégorie</option>
+                            @foreach($categories as $category)
+                                <option value="{{ $category->id }}" {{ old('category_id', $article->category_id ?? '') == $category->id ? 'selected' : '' }}>
+                                    {{ $category->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('category_id')
+                            <div class="form-error">{{ $message }}</div>
+                        @enderror
+                    </div>
+                </div>
 
-            <!-- Image de couverture -->
-            <div class="content-section">
-                <h4 class="text-cyan-400 font-bold mb-4 border-b border-cyan-500/20 pb-2">Image de couverture</h4>
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-cyan-400 mb-2 font-semibold">Type d'image</label>
-                        <select name="cover_type" id="coverType" class="input-admin">
+                <!-- Image de couverture -->
+                <div class="form-card">
+                    <div class="form-section-title">
+                        <i class="fas fa-image"></i>
+                        <span>Image de couverture</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Type d'image</label>
+                        <select name="cover_type" id="coverType" class="form-select">
                             <option value="internal" {{ old('cover_type', $article->cover_type ?? 'internal') === 'internal' ? 'selected' : '' }}>Interne (upload)</option>
                             <option value="external" {{ old('cover_type', $article->cover_type ?? '') === 'external' ? 'selected' : '' }}>Externe (URL)</option>
                         </select>
                     </div>
                     <div id="internalImage" style="display: {{ old('cover_type', $article->cover_type ?? 'internal') === 'internal' ? 'block' : 'none' }};">
-                        <label class="block text-cyan-400 mb-2 font-semibold">Fichier image</label>
-                        <input type="file" name="cover_image_file" id="coverImageFile" accept="image/*" class="input-admin">
-                        @if(isset($article) && $article->cover_type === 'internal' && $article->cover_image)
-                            <p class="text-gray-400 text-sm mt-1">Image actuelle: <a href="{{ \Illuminate\Support\Facades\Storage::url($article->cover_image) }}" target="_blank" class="text-cyan-400 hover:underline">{{ basename($article->cover_image) }}</a></p>
-                        @else
-                            <p class="text-gray-400 text-sm mt-1">Formats acceptés: JPG, PNG, GIF</p>
-                        @endif
+                        <div class="form-group">
+                            <label class="form-label">Fichier image</label>
+                            <input type="file" name="cover_image_file" id="coverImageFile" accept="image/*" class="form-input">
+                            @if(isset($article) && $article->cover_type === 'internal' && $article->cover_image)
+                                <div class="form-help">
+                                    Image actuelle: <a href="{{ \Illuminate\Support\Facades\Storage::url($article->cover_image) }}" target="_blank" class="text-cyan-400 hover:underline">{{ basename($article->cover_image) }}</a>
+                                </div>
+                            @else
+                                <div class="form-help">Formats acceptés: JPG, PNG, GIF</div>
+                            @endif
+                        </div>
                     </div>
                     <div id="externalImage" style="display: {{ old('cover_type', $article->cover_type ?? '') === 'external' ? 'block' : 'none' }};">
-                        <label class="block text-cyan-400 mb-2 font-semibold">URL de l'image</label>
-                        <input type="url" name="cover_image_url" id="coverImageUrl" value="{{ old('cover_image_url', (isset($article) && $article->cover_type === 'external' ? $article->cover_image : '')) }}"
-                               class="input-admin" placeholder="https://example.com/image.jpg">
-                        <p class="text-gray-400 text-sm mt-1">Entrez l'URL complète de l'image</p>
+                        <div class="form-group">
+                            <label class="form-label">URL de l'image</label>
+                            <input type="url" name="cover_image_url" id="coverImageUrl" value="{{ old('cover_image_url', (isset($article) && $article->cover_type === 'external' ? $article->cover_image : '')) }}"
+                                   class="form-input" placeholder="https://example.com/image.jpg">
+                            <div class="form-help">Entrez l'URL complète de l'image</div>
+                        </div>
                     </div>
                     <div id="coverPreview" class="mt-4 {{ (isset($article) && $article->cover_image) ? '' : 'hidden' }}" style="text-align: center;">
                         <img id="previewImg" src="{{ isset($article) && $article->cover_image ? ($article->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($article->cover_image) : $article->cover_image) : '' }}" alt="Aperçu" style="max-width: 100%; border-radius: 12px; border: 2px solid rgba(6, 182, 212, 0.3);">
                     </div>
                 </div>
-            </div>
 
-            <!-- SEO et Lisibilité -->
-            <div class="content-section">
-                <h4 class="text-cyan-400 font-bold mb-4 border-b border-cyan-500/20 pb-2">SEO & Lisibilité</h4>
-                <div class="space-y-4">
-                    <div>
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-cyan-400 font-semibold">Score SEO</span>
-                            <span id="seoScore" class="text-2xl font-bold text-cyan-400">0</span>
+                <!-- SEO et Lisibilité -->
+                <div class="form-card">
+                    <div class="form-section-title">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>SEO & Lisibilité</span>
+                    </div>
+                    <div class="form-group">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                            <span style="color: #06b6d4; font-weight: 600;">Score SEO</span>
+                            <span id="seoScore" style="font-size: 1.8rem; font-weight: 900; color: #06b6d4;">0</span>
                         </div>
-                        <div class="w-full h-3 bg-gray-700 rounded-full overflow-hidden">
-                            <div id="seoBar" class="h-full bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 rounded-full transition-all duration-300" style="width: 0%"></div>
+                        <div class="seo-progress">
+                            <div id="seoBar" class="seo-progress-bar" style="width: 0%"></div>
                         </div>
                     </div>
-                    <div>
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-cyan-400 font-semibold">Lisibilité</span>
-                            <span id="readabilityScore" class="text-2xl font-bold text-cyan-400">0</span>
+                    <div class="form-group">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
+                            <span style="color: #06b6d4; font-weight: 600;">Lisibilité</span>
+                            <span id="readabilityScore" style="font-size: 1.8rem; font-weight: 900; color: #06b6d4;">0</span>
                         </div>
-                        <div class="w-full h-3 bg-gray-700 rounded-full overflow-hidden">
-                            <div id="readabilityBar" class="h-full bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 rounded-full transition-all duration-300" style="width: 0%"></div>
+                        <div class="seo-progress">
+                            <div id="readabilityBar" class="seo-progress-bar" style="width: 0%"></div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <!-- Métadonnées SEO -->
-            <div class="content-section">
-                <h4 class="text-cyan-400 font-bold mb-4 border-b border-cyan-500/20 pb-2">Métadonnées SEO</h4>
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-cyan-400 mb-2 font-semibold">Meta Title</label>
+                <!-- Métadonnées SEO -->
+                <div class="form-card">
+                    <div class="form-section-title">
+                        <i class="fas fa-tags"></i>
+                        <span>Métadonnées SEO</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Meta Title</label>
                         <input type="text" name="meta_title" id="metaTitle" value="{{ old('meta_title', $article->meta_title ?? '') }}"
-                               class="input-admin" maxlength="60" placeholder="Titre SEO (max 60 caractères)">
-                        <p class="text-gray-400 text-sm mt-1"><span id="metaTitleLength">0</span>/60 caractères</p>
+                               class="form-input" maxlength="60" placeholder="Titre SEO (max 60 caractères)">
+                        <div class="form-help"><span id="metaTitleLength">0</span>/60 caractères</div>
                     </div>
-                    <div>
-                        <label class="block text-cyan-400 mb-2 font-semibold">Meta Description</label>
+                    <div class="form-group">
+                        <label class="form-label">Meta Description</label>
                         <textarea name="meta_description" id="metaDescription" rows="3"
-                                  class="input-admin" maxlength="160" placeholder="Description SEO (max 160 caractères)">{{ old('meta_description', $article->meta_description ?? '') }}</textarea>
-                        <p class="text-gray-400 text-sm mt-1"><span id="metaDescLength">0</span>/160 caractères</p>
+                                  class="form-textarea" maxlength="160" placeholder="Description SEO (max 160 caractères)">{{ old('meta_description', $article->meta_description ?? '') }}</textarea>
+                        <div class="form-help"><span id="metaDescLength">0</span>/160 caractères</div>
                     </div>
-                    <div>
-                        <label class="block text-cyan-400 mb-2 font-semibold">Mots-clés</label>
+                    <div class="form-group">
+                        <label class="form-label">Mots-clés</label>
                         <input type="text" name="meta_keywords" value="{{ old('meta_keywords', isset($article) && $article->meta_keywords ? implode(', ', $article->meta_keywords) : '') }}"
-                               class="input-admin" placeholder="mot-clé1, mot-clé2, mot-clé3">
-                        <p class="text-gray-400 text-sm mt-1">Séparez les mots-clés par des virgules</p>
+                               class="form-input" placeholder="mot-clé1, mot-clé2, mot-clé3">
+                        <div class="form-help">Séparez les mots-clés par des virgules</div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</form>
+    </form>
+</div>
 
-@push('scripts')
+@section('scripts')
 <script src="{{ asset('js/article-editor.js') }}"></script>
 <script>
+    // S'assurer que le script s'exécute après le chargement du DOM
     document.addEventListener('DOMContentLoaded', function() {
         // Initialiser l'aperçu de l'image existante
         const coverPreview = document.getElementById('coverPreview');
@@ -266,7 +755,7 @@
         if (coverImageUrl) {
             coverImageUrl.addEventListener('input', function() {
                 const url = this.value.trim();
-                if (url && url.startsWith('http')) {
+                if (url && (url.startsWith('http://') || url.startsWith('https://'))) {
                     if (previewImg) {
                         previewImg.src = url;
                         previewImg.onload = function() {
@@ -282,12 +771,14 @@
             });
         }
         
-        // Initialiser les scores SEO et lisibilité après un court délai
         setTimeout(function() {
+            const wordCountSpan = document.getElementById('wordCount');
             const contentTextarea = document.getElementById('articleContent');
-            if (contentTextarea) {
+            
+            if (wordCountSpan && contentTextarea) {
                 contentTextarea.dispatchEvent(new Event('input'));
             }
+            
             const titleInput = document.getElementById('articleTitle');
             if (titleInput) {
                 titleInput.dispatchEvent(new Event('input'));
@@ -295,6 +786,5 @@
         }, 500);
     });
 </script>
-@endpush
 @endsection
-
+@endsection

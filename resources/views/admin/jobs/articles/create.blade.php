@@ -40,6 +40,30 @@
     .form-hero-content {
         position: relative;
         z-index: 1;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .btn-back {
+        padding: 12px 24px;
+        background: rgba(6, 182, 212, 0.1);
+        border: 2px solid rgba(6, 182, 212, 0.3);
+        border-radius: 12px;
+        color: #06b6d4;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.95rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-back:hover {
+        background: rgba(6, 182, 212, 0.2);
+        border-color: rgba(6, 182, 212, 0.5);
+        transform: translateY(-2px);
     }
     
     .form-hero h1 {
@@ -140,12 +164,12 @@
     .form-select,
     .form-textarea {
         width: 100%;
-        padding: 14px 18px;
+        padding: 8px 12px;
         background: rgba(15, 23, 42, 0.8);
         border: 2px solid rgba(6, 182, 212, 0.2);
-        border-radius: 12px;
+        border-radius: 10px;
         color: #fff;
-        font-size: 1rem;
+        font-size: 0.85rem;
         font-family: 'Inter', sans-serif;
         transition: all 0.3s ease;
     }
@@ -204,14 +228,14 @@
     }
     
     .editor-btn {
-        padding: 10px 14px;
+        padding: 8px 12px;
         background: rgba(6, 182, 212, 0.1);
         border: 1px solid rgba(6, 182, 212, 0.3);
         border-radius: 8px;
         color: #06b6d4;
         cursor: pointer;
         transition: all 0.3s ease;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
     }
     
     .editor-btn:hover {
@@ -304,20 +328,20 @@
     
     .btn-submit {
         flex: 1;
-        padding: 16px 32px;
+        padding: 12px 24px;
         background: linear-gradient(135deg, #06b6d4, #14b8a6);
         color: #000;
         border: none;
         border-radius: 12px;
         font-family: 'Poppins', sans-serif;
-        font-size: 1.1rem;
+        font-size: 0.95rem;
         font-weight: 700;
         cursor: pointer;
         transition: all 0.3s ease;
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 10px;
+        gap: 8px;
         box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
     }
     
@@ -332,9 +356,15 @@
         }
     }
     
-    @media (max-width: 768px) {
+        @media (max-width: 768px) {
         .form-hero {
             padding: 25px;
+        }
+        
+        .form-hero-content {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 20px;
         }
         
         .form-hero h1 {
@@ -358,8 +388,14 @@
     <!-- Hero Section -->
     <div class="form-hero">
         <div class="form-hero-content">
-            <h1><i class="fas fa-{{ isset($article) ? 'edit' : 'plus' }}"></i> {{ isset($article) ? 'Modifier Article' : 'Nouvel Article' }}</h1>
-            <p>{{ isset($article) ? 'Modifiez l\'article d\'emploi' : 'Créez un nouvel article d\'emploi' }}</p>
+            <div>
+                <h1><i class="fas fa-{{ isset($article) ? 'edit' : 'plus' }}"></i> {{ isset($article) ? 'Modifier Article' : 'Nouvel Article' }}</h1>
+                <p>{{ isset($article) ? 'Modifiez l\'article d\'emploi' : 'Créez un nouvel article d\'emploi' }}</p>
+            </div>
+            <a href="{{ route('admin.jobs.articles.index') }}" class="btn-back">
+                <i class="fas fa-arrow-left"></i>
+                Retour à la liste
+            </a>
         </div>
     </div>
     
