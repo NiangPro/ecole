@@ -203,10 +203,10 @@
                         </a>
                         @endif
                         
-                        @if($siteSettings && $siteSettings->twitter_url)
-                        <a href="{{ $siteSettings->twitter_url }}" target="_blank" 
-                           class="w-14 h-14 bg-sky-500/20 hover:bg-sky-500/30 border border-sky-500/30 rounded-xl flex items-center justify-center text-sky-400 hover:text-sky-300 transition">
-                            <i class="fab fa-twitter text-2xl"></i>
+                        @if($siteSettings && $siteSettings->tiktok_url)
+                        <a href="{{ $siteSettings->tiktok_url }}" target="_blank" 
+                           class="w-14 h-14 bg-black/40 hover:bg-black/60 border border-white/20 rounded-xl flex items-center justify-center text-white hover:text-white transition">
+                            <i class="fab fa-tiktok text-2xl"></i>
                         </a>
                         @endif
                         

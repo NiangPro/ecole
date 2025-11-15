@@ -262,9 +262,9 @@
                     </a>
                     @endif
                     
-                    @if($siteSettings && $siteSettings->twitter_url)
-                    <a href="{{ $siteSettings->twitter_url }}" target="_blank" class="social-icon" aria-label="Twitter">
-                        <i class="fab fa-twitter"></i>
+                    @if($siteSettings && $siteSettings->tiktok_url)
+                    <a href="{{ $siteSettings->tiktok_url }}" target="_blank" class="social-icon" aria-label="TikTok">
+                        <i class="fab fa-tiktok"></i>
                     </a>
                     @endif
                     

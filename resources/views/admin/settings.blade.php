@@ -108,11 +108,11 @@
             
             <div>
                 <label class="block text-gray-300 mb-2 font-semibold">
-                    <i class="fab fa-twitter text-blue-400 mr-2"></i>Twitter / X
+                    <i class="fab fa-tiktok text-black mr-2"></i>TikTok
                 </label>
-                <input type="url" name="twitter_url" value="{{ old('twitter_url', $settings->twitter_url ?? '') }}" 
-                       class="input-admin" placeholder="https://twitter.com/...">
-                @error('twitter_url')
+                <input type="url" name="tiktok_url" value="{{ old('tiktok_url', $settings->tiktok_url ?? '') }}" 
+                       class="input-admin" placeholder="https://tiktok.com/@...">
+                @error('tiktok_url')
                     <p class="text-red-400 text-sm mt-2">{{ $message }}</p>
                 @enderror
             </div>

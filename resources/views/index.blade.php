@@ -1149,7 +1149,7 @@
         </p>
     </div>
     
-    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 25px; margin-bottom: 40px;">
+    <div class="latest-jobs-grid" style="margin-bottom: 40px;">
         @foreach($latestJobs as $job)
         <a href="{{ route('emplois.article', $job->slug) }}" style="text-decoration: none; display: block;">
             <div style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95)); border: 2px solid rgba(6, 182, 212, 0.25); border-radius: 24px; overflow: hidden; transition: all 0.5s ease; height: 100%;">
@@ -1201,31 +1201,31 @@
 </section>
 
 <style>
-    @media (max-width: 1400px) {
-        section[style*="grid-template-columns: repeat(4"] > div[style*="display: grid"] {
-            grid-template-columns: repeat(3, 1fr) !important;
-        }
+    .latest-jobs-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 25px;
     }
     
     @media (max-width: 1024px) {
-        section[style*="grid-template-columns: repeat(4"] > div[style*="display: grid"] {
+        .latest-jobs-grid {
             grid-template-columns: repeat(2, 1fr) !important;
         }
     }
     
     @media (max-width: 768px) {
-        section[style*="grid-template-columns: repeat(4"] > div[style*="display: grid"] {
+        .latest-jobs-grid {
             grid-template-columns: 1fr !important;
         }
     }
     
-    section[style*="grid-template-columns: repeat(4"] > div[style*="display: grid"] > a:hover > div {
+    .latest-jobs-grid > a:hover > div {
         transform: translateY(-10px);
         border-color: rgba(6, 182, 212, 0.6);
         box-shadow: 0 20px 60px rgba(6, 182, 212, 0.3);
     }
     
-    section[style*="grid-template-columns: repeat(4"] > div[style*="display: grid"] > a:hover img {
+    .latest-jobs-grid > a:hover img {
         transform: scale(1.1);
     }
 </style>

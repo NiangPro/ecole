@@ -118,32 +118,42 @@
     </div>
 </div>
 
+<!-- Graphique des vues hebdomadaires du mois actuel -->
+<div class="content-section mb-8">
+    <h4 class="text-xl font-bold mb-6">Vues du mois actuel par semaine</h4>
+    <div class="bg-black/30 rounded-lg p-6">
+        <canvas id="weeklyChart" height="80"></canvas>
+    </div>
+</div>
+
 <!-- Pages les plus visitées -->
 <div class="content-section mb-8">
     <h4 class="text-xl font-bold mb-6">Pages les plus visitées</h4>
-    <div class="space-y-3">
-        @forelse($topPages as $page)
-        <div class="flex items-center justify-between p-4 bg-black/30 rounded-lg hover:bg-black/40 transition">
-            <div class="flex items-center gap-4 flex-1">
-                <div class="w-12 h-12 bg-cyan-500/20 rounded-lg flex items-center justify-center">
-                    <i class="fas fa-file-alt text-cyan-400 text-xl"></i>
+    <div class="top-pages-scroll" style="max-height: 350px; overflow-y: auto; padding-right: 10px;">
+        <div class="space-y-3">
+            @forelse($topPages as $page)
+            <div class="flex items-center justify-between p-4 bg-black/30 rounded-lg hover:bg-black/40 transition">
+                <div class="flex items-center gap-4 flex-1">
+                    <div class="w-12 h-12 bg-cyan-500/20 rounded-lg flex items-center justify-center">
+                        <i class="fas fa-file-alt text-cyan-400 text-xl"></i>
+                    </div>
+                    <div class="flex-1">
+                        <p class="font-semibold">{{ $page->page_title ?? 'Sans titre' }}</p>
+                        <p class="text-sm text-gray-400">{{ $page->page_url }}</p>
+                    </div>
                 </div>
-                <div class="flex-1">
-                    <p class="font-semibold">{{ $page->page_title ?? 'Sans titre' }}</p>
-                    <p class="text-sm text-gray-400">{{ $page->page_url }}</p>
+                <div class="text-right">
+                    <p class="text-2xl font-bold text-cyan-400">{{ number_format($page->visits) }}</p>
+                    <p class="text-xs text-gray-500">visites</p>
                 </div>
             </div>
-            <div class="text-right">
-                <p class="text-2xl font-bold text-cyan-400">{{ number_format($page->visits) }}</p>
-                <p class="text-xs text-gray-500">visites</p>
+            @empty
+            <div class="text-center py-12 text-gray-400">
+                <i class="fas fa-chart-bar text-5xl mb-4 opacity-50"></i>
+                <p>Aucune donnée disponible pour cette période</p>
             </div>
+            @endforelse
         </div>
-        @empty
-        <div class="text-center py-12 text-gray-400">
-            <i class="fas fa-chart-bar text-5xl mb-4 opacity-50"></i>
-            <p>Aucune donnée disponible pour cette période</p>
-        </div>
-        @endforelse
     </div>
 </div>
 
@@ -213,8 +223,35 @@
     </div>
 </div>
 
+<style>
+    .top-pages-scroll {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(6, 182, 212, 0.5) rgba(15, 23, 42, 0.3);
+    }
+    
+    .top-pages-scroll::-webkit-scrollbar {
+        width: 8px;
+    }
+    
+    .top-pages-scroll::-webkit-scrollbar-track {
+        background: rgba(15, 23, 42, 0.3);
+        border-radius: 10px;
+    }
+    
+    .top-pages-scroll::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, #06b6d4, #14b8a6);
+        border-radius: 10px;
+        border: 2px solid rgba(15, 23, 42, 0.3);
+    }
+    
+    .top-pages-scroll::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(180deg, #14b8a6, #06b6d4);
+    }
+</style>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+    // Graphique principal
     const ctx = document.getElementById('visitsChart').getContext('2d');
     const dailyStats = @json($dailyStats);
     const filter = '{{ $filter }}';
@@ -299,5 +336,67 @@
             }
         }
     });
+    
+    // Graphique hebdomadaire du mois actuel
+    const weeklyCtx = document.getElementById('weeklyChart');
+    if (weeklyCtx) {
+        const weeklyStats = @json($weeklyStats);
+        const weeklyLabels = weeklyStats.map(stat => stat.label);
+        const weeklyData = weeklyStats.map(stat => stat.visits);
+        
+        new Chart(weeklyCtx.getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: weeklyLabels,
+                datasets: [{
+                    label: 'Visites',
+                    data: weeklyData,
+                    backgroundColor: 'rgba(6, 182, 212, 0.6)',
+                    borderColor: '#06b6d4',
+                    borderWidth: 2,
+                    borderRadius: 8,
+                    borderSkipped: false,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: '#06b6d4',
+                        bodyColor: '#fff',
+                        borderColor: '#06b6d4',
+                        borderWidth: 1,
+                        padding: 12,
+                        displayColors: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: '#9ca3af',
+                            precision: 0
+                        },
+                        grid: {
+                            color: 'rgba(156, 163, 175, 0.1)'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: '#9ca3af'
+                        },
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+    }
 </script>
 @endsection

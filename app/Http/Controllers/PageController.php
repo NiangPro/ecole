@@ -12,7 +12,7 @@ class PageController extends Controller
         $latestJobs = \App\Models\JobArticle::where('status', 'published')
             ->with('category')
             ->orderBy('published_at', 'desc')
-            ->take(4)
+            ->take(3)
             ->get();
         
         // Récupérer les publicités pour la position "content" (sidebar latérale) - uniquement celles sans location spécifique

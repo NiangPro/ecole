@@ -300,7 +300,7 @@
         .header-admin {
             position: sticky;
             top: 0;
-            background: rgba(10, 10, 26, 0.95);
+            background: rgba(10, 10, 26, 0.98);
             backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(6, 182, 212, 0.2);
             padding: 1rem 2rem;
@@ -309,7 +309,8 @@
             align-items: center;
             margin-bottom: 2rem;
             border-radius: 16px;
-            z-index: 50;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
         }
         
         .user-dropdown {

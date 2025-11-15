@@ -202,6 +202,9 @@ class AdminController extends Controller
         $browsersStats = Statistic::getByBrowser($filter, $year, $month);
         $sourcesStats = Statistic::getBySource($filter, $year, $month);
         
+        // Statistiques hebdomadaires du mois actuel
+        $weeklyStats = Statistic::getWeeklyStatsForCurrentMonth();
+        
         return view('admin.statistics', compact(
             'filter',
             'year',
@@ -215,7 +218,8 @@ class AdminController extends Controller
             'dailyStats',
             'countriesStats',
             'browsersStats',
-            'sourcesStats'
+            'sourcesStats',
+            'weeklyStats'
         ));
     }
     
@@ -402,7 +406,7 @@ class AdminController extends Controller
             'contact_phone' => 'nullable|string|max:20',
             'contact_address' => 'nullable|string',
             'facebook_url' => 'nullable|url',
-            'twitter_url' => 'nullable|url',
+            'tiktok_url' => 'nullable|url',
             'linkedin_url' => 'nullable|url',
             'instagram_url' => 'nullable|url',
             'youtube_url' => 'nullable|url',

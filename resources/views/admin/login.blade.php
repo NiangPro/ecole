@@ -36,31 +36,32 @@
         .input-field {
             background: rgba(6, 182, 212, 0.05);
             border: 2px solid rgba(6, 182, 212, 0.2);
-            border-radius: 12px;
-            padding: 1rem 1.25rem;
+            border-radius: 10px;
+            padding: 0.7rem 1rem;
             color: white;
             width: 100%;
             transition: all 0.3s ease;
+            font-size: 0.9rem;
         }
         
         .input-field:focus {
             outline: none;
             border-color: #06b6d4;
             background: rgba(6, 182, 212, 0.1);
-            box-shadow: 0 0 20px rgba(6, 182, 212, 0.2);
+            box-shadow: 0 0 15px rgba(6, 182, 212, 0.2);
         }
         
         .btn-login {
             background: linear-gradient(135deg, #06b6d4 0%, #14b8a6 100%);
             border: none;
-            border-radius: 12px;
-            padding: 1rem 2rem;
+            border-radius: 10px;
+            padding: 0.7rem 1.5rem;
             color: #000;
             font-weight: 700;
             width: 100%;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-size: 1rem;
+            font-size: 0.9rem;
         }
         
         .btn-login:hover {
@@ -112,16 +113,6 @@
                 <i class="fas fa-sign-in-alt mr-2"></i>Se connecter
             </button>
         </form>
-        
-        <div class="mt-8 p-4 bg-cyan-500/5 border border-cyan-500/20 rounded-lg">
-            <p class="text-sm text-gray-400 text-center mb-2">
-                <i class="fas fa-info-circle mr-2"></i>Compte test
-            </p>
-            <p class="text-xs text-cyan-400 text-center">
-                Email: <strong>admin@niangprogrammeur.com</strong><br>
-                Password: <strong>Admin@2025</strong>
-            </p>
-        </div>
     </div>
 </body>
 </html>

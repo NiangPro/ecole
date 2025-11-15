@@ -178,4 +178,45 @@ class Statistic extends Model
                    ->orderBy('month')
                    ->get();
     }
+
+    // Statistiques hebdomadaires du mois actuel
+    public static function getWeeklyStatsForCurrentMonth()
+    {
+        $now = Carbon::now();
+        $startOfMonth = $now->copy()->startOfMonth();
+        $endOfMonth = $now->copy()->endOfMonth();
+        $daysInMonth = $startOfMonth->copy()->daysInMonth;
+        
+        // Calculer les semaines du mois (4-5 semaines)
+        $weeks = [];
+        $weekCounter = 1;
+        $currentDay = 1;
+        
+        while ($currentDay <= $daysInMonth) {
+            $weekStartDate = $startOfMonth->copy()->addDays($currentDay - 1);
+            $weekEndDay = min($currentDay + 6, $daysInMonth);
+            $weekEndDate = $startOfMonth->copy()->addDays($weekEndDay - 1);
+            
+            // Compter les visites pour cette semaine
+            $visits = self::whereBetween('visit_date', [
+                $weekStartDate->format('Y-m-d'), 
+                $weekEndDate->format('Y-m-d')
+            ])->count();
+            
+            // Ajouter la semaine à la liste
+            $weeks[] = [
+                'week' => $weekCounter,
+                'week_start' => $weekStartDate->format('Y-m-d'),
+                'week_end' => $weekEndDate->format('Y-m-d'),
+                'visits' => $visits,
+                'label' => 'Sem ' . $weekCounter . ' (' . $weekStartDate->format('d/m') . ' - ' . $weekEndDate->format('d/m') . ')'
+            ];
+            
+            // Passer à la semaine suivante
+            $currentDay += 7;
+            $weekCounter++;
+        }
+        
+        return collect($weeks);
+    }
 }

@@ -10,7 +10,9 @@
     }
     
     .jobs-hero {
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%),
+                    url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80') center/cover no-repeat;
+        background-attachment: fixed;
         padding: 140px 20px 100px;
         text-align: center;
         position: relative;
@@ -25,8 +27,9 @@
         right: 0;
         bottom: 0;
         background: 
-            radial-gradient(circle at 20% 30%, rgba(6, 182, 212, 0.15), transparent 50%),
-            radial-gradient(circle at 80% 70%, rgba(20, 184, 166, 0.15), transparent 50%);
+            radial-gradient(circle at 20% 30%, rgba(6, 182, 212, 0.25), transparent 50%),
+            radial-gradient(circle at 80% 70%, rgba(20, 184, 166, 0.25), transparent 50%),
+            rgba(15, 23, 42, 0.7);
         pointer-events: none;
     }
     
@@ -343,6 +346,7 @@
         
         .jobs-hero {
             padding: 120px 20px 80px;
+            background-attachment: scroll;
         }
         
         .jobs-hero h1 {
