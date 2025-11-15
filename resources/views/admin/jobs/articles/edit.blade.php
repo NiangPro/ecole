@@ -142,7 +142,7 @@
                     </div>
                     <div id="externalImage" style="display: {{ old('cover_type', $article->cover_type ?? '') === 'external' ? 'block' : 'none' }};">
                         <label class="block text-cyan-400 mb-2 font-semibold">URL de l'image</label>
-                        <input type="url" name="cover_image_url" id="coverImageUrl" value="{{ old('cover_image', $article->cover_image ?? '') }}"
+                        <input type="url" name="cover_image_url" id="coverImageUrl" value="{{ old('cover_image_url', (isset($article) && $article->cover_type === 'external' ? $article->cover_image : '')) }}"
                                class="input-admin" placeholder="https://example.com/image.jpg">
                         <p class="text-gray-400 text-sm mt-1">Entrez l'URL complète de l'image</p>
                     </div>

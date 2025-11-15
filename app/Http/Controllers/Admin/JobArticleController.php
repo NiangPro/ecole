@@ -98,7 +98,14 @@ class JobArticleController extends Controller
             $path = $request->file('cover_image_file')->store('job-covers', 'public');
             $validated['cover_image'] = $path;
         } elseif ($validated['cover_type'] === 'external' && $request->has('cover_image_url')) {
-            $validated['cover_image'] = $request->input('cover_image_url');
+            $url = trim($request->input('cover_image_url', ''));
+            // Vérifier que c'est une URL valide (commence par http) et pas une base64
+            if (!empty($url) && (str_starts_with($url, 'http://') || str_starts_with($url, 'https://'))) {
+                $validated['cover_image'] = $url;
+            } else {
+                // Si l'URL n'est pas valide, ne pas définir cover_image
+                unset($validated['cover_image']);
+            }
         }
 
         // Convertir les mots-clés en array
@@ -161,7 +168,8 @@ class JobArticleController extends Controller
             'slug' => 'nullable|string|max:255|unique:job_articles,slug,' . $id,
             'excerpt' => 'nullable|string',
             'content' => 'required|string',
-            'cover_image' => 'nullable|string',
+            'cover_image_file' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
+            'cover_image_url' => 'nullable|url|max:500',
             'cover_type' => 'required|in:internal,external',
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string|max:500',
@@ -173,20 +181,56 @@ class JobArticleController extends Controller
             $validated['slug'] = Str::slug($validated['title']);
         }
 
-        // Gérer l'upload d'image si c'est une image interne
+        // Gérer l'upload d'image
+        $imageChanged = false;
+        
         if ($validated['cover_type'] === 'internal' && $request->hasFile('cover_image_file')) {
+            // Nouveau fichier uploadé
+            $imageChanged = true;
             // Supprimer l'ancienne image si elle existe
-            if ($article->cover_image && Storage::disk('public')->exists($article->cover_image)) {
+            if ($article->cover_image && $article->cover_type === 'internal' && Storage::disk('public')->exists($article->cover_image)) {
                 Storage::disk('public')->delete($article->cover_image);
             }
             $path = $request->file('cover_image_file')->store('job-covers', 'public');
             $validated['cover_image'] = $path;
         } elseif ($validated['cover_type'] === 'external' && $request->has('cover_image_url')) {
-            // Supprimer l'ancienne image interne si on passe à externe
-            if ($article->cover_type === 'internal' && $article->cover_image && Storage::disk('public')->exists($article->cover_image)) {
-                Storage::disk('public')->delete($article->cover_image);
+            // Nouvelle URL externe fournie
+            $newUrl = trim($request->input('cover_image_url', ''));
+            // Vérifier que c'est une URL valide (commence par http) et pas une base64
+            if (!empty($newUrl) && (str_starts_with($newUrl, 'http://') || str_starts_with($newUrl, 'https://'))) {
+                if ($newUrl !== $article->cover_image || $article->cover_type !== 'external') {
+                    $imageChanged = true;
+                    // Supprimer l'ancienne image interne si on passe à externe
+                    if ($article->cover_type === 'internal' && $article->cover_image && Storage::disk('public')->exists($article->cover_image)) {
+                        Storage::disk('public')->delete($article->cover_image);
+                    }
+                    $validated['cover_image'] = $newUrl;
+                }
+            } elseif (empty($newUrl) && $article->cover_type === 'external' && $article->cover_image) {
+                // URL vide mais on garde l'ancienne URL
+                $validated['cover_image'] = $article->cover_image;
             }
-            $validated['cover_image'] = $request->input('cover_image_url');
+        }
+        
+        // Si l'image n'a pas changé, conserver l'image existante
+        if (!$imageChanged) {
+            if ($article->cover_image) {
+                $validated['cover_image'] = $article->cover_image;
+            } else {
+                // Si pas d'image existante, ne pas mettre à jour le champ
+                unset($validated['cover_image']);
+            }
+        }
+        
+        // Si le type change mais pas l'image, gérer la transition
+        if ($validated['cover_type'] !== $article->cover_type && !$imageChanged) {
+            if ($validated['cover_type'] === 'external' && $article->cover_type === 'internal') {
+                // Passage de interne à externe sans nouvelle URL - garder l'image interne
+                $validated['cover_type'] = 'internal';
+            } elseif ($validated['cover_type'] === 'internal' && $article->cover_type === 'external') {
+                // Passage de externe à interne sans nouveau fichier - garder l'URL externe
+                $validated['cover_type'] = 'external';
+            }
         }
 
         // Convertir les mots-clés en array

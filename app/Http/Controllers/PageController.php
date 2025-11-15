@@ -1746,6 +1746,55 @@ add_action(\'init\', \'create_portfolio_post_type\');
         return view('emplois.opportunites', compact('articles', 'category'));
     }
 
+    public function search(Request $request)
+    {
+        $query = $request->get('q', '');
+        $results = [
+            'formations' => collect(),
+            'articles' => collect(),
+            'total' => 0
+        ];
+        
+        if (strlen($query) >= 2) {
+            // Recherche dans les formations (titres et descriptions)
+            $formations = collect([
+                ['name' => 'HTML5', 'url' => route('formations.html5'), 'description' => 'Formation complète HTML5'],
+                ['name' => 'CSS3', 'url' => route('formations.css3'), 'description' => 'Formation complète CSS3'],
+                ['name' => 'JavaScript', 'url' => route('formations.javascript'), 'description' => 'Formation complète JavaScript'],
+                ['name' => 'PHP', 'url' => route('formations.php'), 'description' => 'Formation complète PHP'],
+                // Laravel route n'existe pas encore
+                // ['name' => 'Laravel', 'url' => route('formations.laravel'), 'description' => 'Formation complète Laravel'],
+                ['name' => 'Bootstrap', 'url' => route('formations.bootstrap'), 'description' => 'Formation complète Bootstrap'],
+                ['name' => 'Git', 'url' => route('formations.git'), 'description' => 'Formation complète Git'],
+                ['name' => 'WordPress', 'url' => route('formations.wordpress'), 'description' => 'Formation complète WordPress'],
+                ['name' => 'Intelligence Artificielle', 'url' => route('formations.ia'), 'description' => 'Formation Intelligence Artificielle'],
+            ])->filter(function($formation) use ($query) {
+                return stripos($formation['name'], $query) !== false || 
+                       stripos($formation['description'], $query) !== false;
+            });
+            
+            // Recherche dans les articles d'emploi publiés
+            $articles = \Illuminate\Support\Facades\Cache::remember("search_articles_{$query}", 300, function () use ($query) {
+                return \App\Models\JobArticle::where('status', 'published')
+                    ->where(function($q) use ($query) {
+                        $q->where('title', 'like', "%{$query}%")
+                          ->orWhere('content', 'like', "%{$query}%")
+                          ->orWhere('excerpt', 'like', "%{$query}%");
+                    })
+                    ->with('category')
+                    ->orderBy('published_at', 'desc')
+                    ->limit(20)
+                    ->get();
+            });
+            
+            $results['formations'] = $formations;
+            $results['articles'] = $articles;
+            $results['total'] = $formations->count() + $articles->count();
+        }
+        
+        return view('search', compact('query', 'results'));
+    }
+
     public function showArticle($slug)
     {
         // Cache l'article (30 minutes)

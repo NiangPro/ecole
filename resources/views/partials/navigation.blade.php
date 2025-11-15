@@ -205,6 +205,127 @@
         box-shadow: 0 10px 30px rgba(6, 182, 212, 0.4);
     }
     
+    /* Search Icon & Form */
+    .navbar-search-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background: rgba(6, 182, 212, 0.1);
+        border: 1px solid rgba(6, 182, 212, 0.3);
+        border-radius: 50%;
+        color: #06b6d4;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-right: 15px;
+    }
+    
+    .navbar-search-icon:hover {
+        background: rgba(6, 182, 212, 0.2);
+        border-color: rgba(6, 182, 212, 0.5);
+        transform: scale(1.1);
+    }
+    
+    .navbar-search-form {
+        position: absolute;
+        top: 100%;
+        right: 20px;
+        margin-top: 10px;
+        width: 400px;
+        max-width: calc(100vw - 40px);
+        background: rgba(15, 23, 42, 0.98);
+        backdrop-filter: blur(20px);
+        border: 2px solid rgba(6, 182, 212, 0.3);
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 10000;
+    }
+    
+    .navbar-search-form.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+    
+    .search-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+    
+    .search-input {
+        width: 100%;
+        padding: 12px 50px 12px 16px;
+        background: rgba(6, 182, 212, 0.1);
+        border: 2px solid rgba(6, 182, 212, 0.3);
+        border-radius: 12px;
+        color: #fff;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        outline: none;
+    }
+    
+    .search-input:focus {
+        background: rgba(6, 182, 212, 0.15);
+        border-color: rgba(6, 182, 212, 0.5);
+        box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
+    }
+    
+    .search-input::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+    }
+    
+    .search-button {
+        position: absolute;
+        right: 8px;
+        background: linear-gradient(135deg, #06b6d4, #14b8a6);
+        border: none;
+        color: #000;
+        cursor: pointer;
+        padding: 8px 16px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+    
+    .search-button:hover {
+        transform: scale(1.05);
+        box-shadow: 0 4px 15px rgba(6, 182, 212, 0.4);
+    }
+    
+    .search-close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: none;
+        border: none;
+        color: rgba(255, 255, 255, 0.7);
+        cursor: pointer;
+        padding: 5px;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+    }
+    
+    .search-close:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+    }
+    
     /* Mobile Menu Toggle */
     .mobile-toggle {
         display: none;
@@ -472,6 +593,12 @@
         .navbar-cta {
             display: none;
         }
+        
+        .navbar-search-form {
+            right: 10px;
+            width: calc(100vw - 20px);
+            max-width: 400px;
+        }
     }
 </style>
 
@@ -686,17 +813,42 @@
             </li>
         </ul>
         
+        <!-- Search Icon -->
+        <div class="navbar-search-container" style="position: relative;">
+            <button type="button" class="navbar-search-icon" id="searchIcon" aria-label="Rechercher">
+                <i class="fas fa-search"></i>
+            </button>
+            
+            <!-- Search Form (hidden by default) -->
+            <form action="{{ route('search') }}" method="GET" class="navbar-search-form" id="searchForm" role="search">
+                <button type="button" class="search-close" id="searchClose" aria-label="Fermer la recherche">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="search-wrapper">
+                    <input type="search" name="q" id="navbarSearch" 
+                           value="{{ request('q') }}" 
+                           placeholder="Rechercher une formation, un article..." 
+                           class="search-input"
+                           aria-label="Rechercher sur le site"
+                           autocomplete="off">
+                    <button type="submit" class="search-button" aria-label="Lancer la recherche">
+                        <i class="fas fa-search mr-2"></i>Rechercher
+                    </button>
+                </div>
+            </form>
+        </div>
+        
         <!-- CTA Button -->
-        <a href="{{ route('contact') }}" class="navbar-cta">
-            <i class="fas fa-envelope"></i>
+        <a href="{{ route('contact') }}" class="navbar-cta" aria-label="Page de contact">
+            <i class="fas fa-envelope" aria-hidden="true"></i>
             Contact
         </a>
         
         <!-- Mobile Toggle -->
-        <button class="mobile-toggle" id="mobileToggle">
-            <span class="mobile-toggle-line"></span>
-            <span class="mobile-toggle-line"></span>
-            <span class="mobile-toggle-line"></span>
+        <button class="mobile-toggle" id="mobileToggle" aria-label="Ouvrir le menu mobile" aria-expanded="false">
+            <span class="mobile-toggle-line" aria-hidden="true"></span>
+            <span class="mobile-toggle-line" aria-hidden="true"></span>
+            <span class="mobile-toggle-line" aria-hidden="true"></span>
         </button>
     </div>
 </nav>
@@ -891,5 +1043,71 @@
         if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
             closeMobileMenu();
         }
+        if (e.key === 'Escape') {
+            const searchForm = document.getElementById('searchForm');
+            if (searchForm && searchForm.classList.contains('active')) {
+                closeSearchForm();
+            }
+        }
     });
+    
+    // Search Form Toggle
+    const searchIcon = document.getElementById('searchIcon');
+    const searchForm = document.getElementById('searchForm');
+    const searchClose = document.getElementById('searchClose');
+    const navbarSearch = document.getElementById('navbarSearch');
+    
+    function openSearchForm() {
+        if (searchForm) {
+            searchForm.classList.add('active');
+            setTimeout(() => {
+                if (navbarSearch) {
+                    navbarSearch.focus();
+                }
+            }, 100);
+        }
+    }
+    
+    function closeSearchForm() {
+        if (searchForm) {
+            searchForm.classList.remove('active');
+            if (navbarSearch) {
+                navbarSearch.blur();
+            }
+        }
+    }
+    
+    if (searchIcon) {
+        searchIcon.addEventListener('click', function(e) {
+            e.stopPropagation();
+            if (searchForm && searchForm.classList.contains('active')) {
+                closeSearchForm();
+            } else {
+                openSearchForm();
+            }
+        });
+    }
+    
+    if (searchClose) {
+        searchClose.addEventListener('click', function(e) {
+            e.stopPropagation();
+            closeSearchForm();
+        });
+    }
+    
+    // Fermer le formulaire de recherche si on clique en dehors
+    document.addEventListener('click', function(e) {
+        if (searchForm && searchIcon) {
+            if (!searchForm.contains(e.target) && !searchIcon.contains(e.target)) {
+                closeSearchForm();
+            }
+        }
+    });
+    
+    // Empêcher la fermeture quand on clique dans le formulaire
+    if (searchForm) {
+        searchForm.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    }
 </script>

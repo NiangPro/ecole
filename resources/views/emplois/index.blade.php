@@ -397,8 +397,9 @@
     <a href="{{ route('emplois.offres') }}?category={{ $category->slug }}" class="job-card">
         @if($category->image)
         <div style="position: relative; height: 220px; overflow: hidden;">
-            <img src="{{ $category->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($category->image) : $category->image }}" 
-                 alt="{{ $category->name }}" 
+            <img src="{{ $category->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($category->image) : $category->image }}"
+                 alt="{{ $category->name }} - Catégorie d'emploi"
+                 loading="lazy" 
                  class="job-card-image">
             <div class="job-card-image-overlay"></div>
         </div>
@@ -436,8 +437,9 @@
         <a href="{{ route('emplois.article', $article->slug) }}" class="article-mini-card">
             <div class="article-mini-card-image-wrapper">
                 @if($article->cover_image)
-                <img src="{{ $article->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($article->cover_image) : $article->cover_image }}" 
-                     alt="{{ $article->title }}" 
+                <img src="{{ $article->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($article->cover_image) : $article->cover_image }}"
+                     alt="{{ $article->title }} - {{ $article->category->name }}"
+                     loading="lazy" 
                      class="article-mini-card-image"
                      onerror="this.src='https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=400&h=250&fit=crop'">
                 @else

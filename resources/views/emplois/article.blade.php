@@ -338,8 +338,9 @@
             <a href="{{ route('emplois.article', $related->slug) }}" class="related-card-modern">
                 @if($related->cover_image)
                 <div class="related-card-modern-image-wrapper">
-                    <img src="{{ $related->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($related->cover_image) : $related->cover_image }}" 
-                         alt="{{ $related->title }}" 
+                        <img src="{{ $related->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($related->cover_image) : $related->cover_image }}"
+                             alt="{{ $related->title }} - {{ $related->category->name }}"
+                             loading="lazy" 
                          class="related-card-modern-image"
                          onerror="this.src='https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=400&h=250&fit=crop'">
                     <div class="related-card-modern-overlay">

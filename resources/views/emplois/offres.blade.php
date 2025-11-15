@@ -398,8 +398,9 @@
             <div class="article-card-image-wrapper">
                 @if($article->cover_image)
                 <img src="{{ $article->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($article->cover_image) : $article->cover_image }}" 
-                     alt="{{ $article->title }}" 
+                     alt="{{ $article->title }} - {{ $article->category->name }}" 
                      class="article-card-image"
+                     loading="lazy"
                      onerror="this.src='https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=600&h=400&fit=crop'">
                 @else
                 <div class="article-card-image" style="display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(6, 182, 212, 0.3), rgba(20, 184, 166, 0.3));">

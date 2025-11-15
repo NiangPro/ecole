@@ -252,8 +252,9 @@
         <a href="{{ route('emplois.article', $article->slug) }}" class="article-card">
             @if($article->cover_image)
             <img src="{{ $article->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($article->cover_image) : $article->cover_image }}" 
-                 alt="{{ $article->title }}" 
+                 alt="{{ $article->title }} - {{ $article->category->name }}" 
                  class="article-card-image"
+                 loading="lazy"
                  onerror="this.src='https://images.unsplash.com/photo-1509062522246-3755977927d7?w=600&h=400&fit=crop'">
             @else
             <div class="article-card-image" style="display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2));">

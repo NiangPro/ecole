@@ -692,8 +692,9 @@
                 <a href="{{ $ad->link_url ?? '#' }}" target="_blank" onclick="trackAdClick({{ $ad->id }})" style="display: block; text-decoration: none;">
                     @if($ad->image)
                     <img src="{{ $ad->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($ad->image) : $ad->image }}" 
-                         alt="{{ $ad->name }}" 
+                         alt="{{ $ad->name }} - Publicité" 
                          style="width: 100%; height: auto; border-radius: 12px; display: block;"
+                         loading="lazy"
                          onerror="this.style.display='none'">
                     @endif
                 </a>
@@ -717,8 +718,9 @@
                 @if($ad->image)
                 <div class="modern-ad-image-wrapper">
                     <img src="{{ $ad->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($ad->image) : $ad->image }}" 
-                         alt="{{ $ad->name }}" 
+                         alt="{{ $ad->name }} - Publicité" 
                          class="modern-ad-image"
+                         loading="lazy"
                          onerror="this.style.display='none'">
                     <div class="modern-ad-overlay">
                         <div class="modern-ad-content">
@@ -1033,8 +1035,9 @@
             <div style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95)); border: 2px solid rgba(6, 182, 212, 0.25); border-radius: 24px; overflow: hidden; transition: all 0.5s ease; height: 100%;">
                 @if($job->cover_image)
                 <div style="width: 100%; height: 180px; overflow: hidden;">
-                    <img src="{{ $job->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($job->cover_image) : $job->cover_image }}" 
-                         alt="{{ $job->title }}" 
+                    <img src="{{ $job->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($job->cover_image) : $job->cover_image }}"
+                         alt="{{ $job->title }} - {{ $job->category->name ?? 'Article d\'emploi' }}"
+                         loading="lazy" 
                          style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;"
                          onerror="this.src='https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=400&h=250&fit=crop'">
                 </div>
