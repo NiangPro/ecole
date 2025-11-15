@@ -95,24 +95,23 @@
         }
     }
     
-    /* Hero Section Moderne et Lumineuse */
+    /* Hero Section Style Sunu Code - Design Centré et Professionnel */
     .hero-section {
         position: relative;
         z-index: 2;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 40px;
+        width: 100%;
+        min-height: 85vh;
+        display: flex;
         align-items: center;
-        padding: 20px 20px 60px;
-        /* max-width: 1200px; */
-        margin: 0 auto;
-        background-image: url('https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1920&h=1080&fit=crop');
-        background-size: cover;
-        background-position: center;
+        justify-content: center;
+        padding: 100px 40px 80px;
+        overflow: hidden;
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.85) 0%, rgba(10, 10, 15, 0.9) 100%),
+                    url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2072&q=80') center/cover no-repeat;
         background-attachment: fixed;
-        background-repeat: no-repeat;
     }
     
+    /* Overlay pour améliorer la lisibilité */
     .hero-section::before {
         content: '';
         position: absolute;
@@ -120,8 +119,8 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.8) 100%);
-        z-index: -1;
+        background: radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.1) 0%, rgba(0, 0, 0, 0.7) 100%);
+        z-index: 0;
     }
     
     .hero-section > * {
@@ -129,60 +128,35 @@
         z-index: 1;
     }
     
-    .hero-left {
-        text-align: left;
+    /* Hero Content - Centré comme Sunu Code */
+    .hero-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        width: 100%;
+        text-align: center;
+        animation: fadeInUp 1s ease-out;
     }
     
-    .hero-right {
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    
-    /* Badge moderne */
-    .badge-modern {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        padding: 10px 20px;
-        background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2));
-        border: 1px solid rgba(6, 182, 212, 0.4);
-        border-radius: 50px;
-        backdrop-filter: blur(10px);
-        margin-bottom: 30px;
-        font-size: 0.9rem;
-        font-weight: 600;
-        color: #06b6d4;
-    }
-    
-    .badge-icon {
-        width: 6px;
-        height: 6px;
-        background: #06b6d4;
-        border-radius: 50%;
-        animation: pulse-glow 2s ease-in-out infinite;
-    }
-    
-    @keyframes pulse-glow {
-        0%, 100% {
-            box-shadow: 0 0 10px #06b6d4;
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+        to {
             opacity: 1;
-        }
-        50% {
-            box-shadow: 0 0 20px #06b6d4;
-            opacity: 0.7;
+            transform: translateY(0);
         }
     }
     
-    /* Titre principal moderne */
+    /* Titre Principal - Style Sunu Code */
     .main-title {
-        font-family: 'Orbitron', sans-serif;
-        font-size: clamp(1.8rem, 4vw, 3rem);
+        font-family: 'Inter', sans-serif;
+        font-size: clamp(2.5rem, 5vw, 4rem);
         font-weight: 900;
         line-height: 1.2;
-        margin-bottom: 20px;
+        margin-bottom: 25px;
         color: #fff;
+        letter-spacing: -0.02em;
     }
     
     .title-gradient {
@@ -193,181 +167,67 @@
         display: inline-block;
     }
     
+    /* Sous-titre descriptif */
     .subtitle {
-        font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+        font-size: clamp(1.1rem, 2.5vw, 1.4rem);
         font-weight: 400;
-        color: rgba(255, 255, 255, 0.9);
-        margin-bottom: 25px;
-        line-height: 1.6;
-    }
-    
-    /* Description */
-    .hero-description {
-        font-size: clamp(1rem, 1.8vw, 1.15rem);
-        color: rgba(255, 255, 255, 0.7);
-        line-height: 1.8;
+        color: rgba(255, 255, 255, 0.8);
         margin-bottom: 40px;
+        line-height: 1.6;
+        max-width: 900px;
+        margin-left: auto;
+        margin-right: auto;
     }
     
-    .highlight {
-        color: #06b6d4;
-        font-weight: 600;
-    }
-    
-    /* Illustration 3D */
-    .hero-illustration {
-        position: relative;
-        width: 100%;
-        max-width: 500px;
-        aspect-ratio: 1;
-    }
-    
-    .floating-card {
-        position: absolute;
-        background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(20, 184, 166, 0.1));
-        border: 1px solid rgba(6, 182, 212, 0.3);
-        border-radius: 20px;
-        backdrop-filter: blur(20px);
-        padding: 25px;
-        box-shadow: 0 20px 60px rgba(6, 182, 212, 0.2);
-        animation: float-card 6s ease-in-out infinite;
-    }
-    
-    .card-1 {
-        top: 10%;
-        left: 10%;
-        width: 200px;
-        animation-delay: 0s;
-    }
-    
-    .card-2 {
-        top: 40%;
-        right: 5%;
-        width: 180px;
-        animation-delay: 2s;
-    }
-    
-    .card-3 {
-        bottom: 15%;
-        left: 20%;
-        width: 220px;
-        animation-delay: 4s;
-    }
-    
-    @keyframes float-card {
-        0%, 100% {
-            transform: translateY(0) rotate(0deg);
-        }
-        50% {
-            transform: translateY(-20px) rotate(2deg);
-        }
-    }
-    
-    .card-icon {
-        font-size: 2.5rem;
-        margin-bottom: 15px;
-        display: block;
-    }
-    
-    .card-title {
-        font-size: 1.1rem;
-        font-weight: 700;
-        color: #fff;
-        margin-bottom: 8px;
-    }
-    
-    .card-text {
-        font-size: 0.85rem;
-        color: rgba(255, 255, 255, 0.6);
-    }
-    
-    /* Central Glow */
-    .central-glow {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 300px;
-        height: 300px;
-        background: radial-gradient(circle, rgba(6, 182, 212, 0.3) 0%, transparent 70%);
-        border-radius: 50%;
-        animation: glow-pulse 4s ease-in-out infinite;
-    }
-    
-    @keyframes glow-pulse {
-        0%, 100% {
-            opacity: 0.5;
-            transform: translate(-50%, -50%) scale(1);
-        }
-        50% {
-            opacity: 0.8;
-            transform: translate(-50%, -50%) scale(1.1);
-        }
-    }
-    
-    /* Boutons CTA 3D */
+    /* Boutons CTA - Style Sunu Code */
     .cta-buttons {
         display: flex;
         gap: 20px;
         justify-content: center;
         flex-wrap: wrap;
-        margin-bottom: 80px;
+        margin-bottom: 60px;
     }
     
     .btn-3d {
         position: relative;
-        padding: 18px 40px;
-        font-size: 1.1rem;
+        padding: 16px 36px;
+        font-size: 1rem;
         font-weight: 700;
         border: none;
-        border-radius: 16px;
+        border-radius: 10px;
         cursor: pointer;
-        overflow: hidden;
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        transition: all 0.3s ease;
         text-decoration: none;
         display: inline-flex;
         align-items: center;
         gap: 10px;
+        letter-spacing: 0.5px;
     }
     
     .btn-primary {
         background: linear-gradient(135deg, #06b6d4, #14b8a6);
         color: #000;
-        box-shadow: 0 10px 40px rgba(6, 182, 212, 0.4);
+        box-shadow: 0 6px 20px rgba(6, 182, 212, 0.4);
     }
     
     .btn-primary:hover {
-        transform: translateY(-5px) scale(1.05);
-        box-shadow: 0 20px 60px rgba(6, 182, 212, 0.6);
-    }
-    
-    .btn-primary::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-        transition: left 0.5s;
-    }
-    
-    .btn-primary:hover::before {
-        left: 100%;
+        transform: translateY(-4px);
+        box-shadow: 0 10px 30px rgba(6, 182, 212, 0.6);
     }
     
     .btn-secondary {
-        background: rgba(6, 182, 212, 0.1);
-        color: #06b6d4;
-        border: 2px solid #06b6d4;
-        backdrop-filter: blur(20px);
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(10px);
     }
     
     .btn-secondary:hover {
-        background: rgba(6, 182, 212, 0.2);
-        transform: translateY(-5px) scale(1.05);
-        box-shadow: 0 20px 60px rgba(6, 182, 212, 0.3);
+        background: rgba(255, 255, 255, 0.15);
+        border-color: rgba(255, 255, 255, 0.5);
+        transform: translateY(-4px);
     }
+    
     
     /* Stats Cards 3D */
     .stats-grid {
@@ -575,41 +435,25 @@
     /* Responsive */
     @media (max-width: 968px) {
         .hero-section {
-            grid-template-columns: 1fr;
-            padding: 100px 20px 40px;
-            gap: 30px;
+            padding: 80px 20px 60px;
+            min-height: auto;
+            background-attachment: scroll;
         }
         
-        .hero-left {
-            text-align: center;
+        .cta-buttons {
+            flex-direction: column;
+            align-items: center;
         }
         
-        .badge-modern {
+        .btn-3d {
+            width: 100%;
+            max-width: 320px;
             justify-content: center;
-        }
-        
-        .hero-right {
-            order: -1;
-        }
-        
-        .hero-illustration {
-            max-width: 350px;
-            margin: 0 auto;
         }
         
         .stats-grid {
             grid-template-columns: repeat(2, 1fr);
             gap: 20px;
-        }
-        
-        .cta-buttons {
-            flex-direction: column;
-            gap: 15px;
-        }
-        
-        .btn-3d {
-            width: 100%;
-            justify-content: center;
         }
         
         .tech-section {
@@ -623,7 +467,11 @@
     
     @media (max-width: 480px) {
         .hero-section {
-            padding: 90px 15px 30px;
+            padding: 70px 15px 50px;
+        }
+        
+        .main-title {
+            font-size: 2rem;
         }
         
         .stats-grid {
@@ -631,20 +479,8 @@
             gap: 15px;
         }
         
-        .floating-card {
-            padding: 15px;
-        }
-        
-        .card-1, .card-2, .card-3 {
-            width: 130px;
-        }
-        
-        .main-title {
-            font-size: 1.5rem;
-        }
-        
         .section-title {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
         }
         
         .tech-card {
@@ -665,67 +501,27 @@
     <div class="shape shape-3"></div>
 </div>
 
-<!-- Hero Section -->
+<!-- Hero Section Style Sunu Code -->
 <section class="hero-section">
-    <!-- Left Content -->
-    <div class="hero-left">
-        <!-- Badge -->
-        <div class="badge-modern">
-            <span class="badge-icon"></span>
-            <span>Plateforme 100% Gratuite</span>
-        </div>
-        
-        <!-- Titre Principal -->
+    <div class="hero-content">
         <h1 class="main-title">
-            Apprenez le <span class="title-gradient">Développement Web</span> avec NiangProgrammeur
+            Devenez <span class="title-gradient">Développeur Web</span><br>
+            Professionnel en 2025
         </h1>
         
         <p class="subtitle">
-            Formations complètes et pratiques pour devenir développeur web professionnel
+            Apprenez HTML5, CSS3, JavaScript, PHP, Laravel et bien plus encore. Formations gratuites, complètes et pratiques pour maîtriser le développement web moderne.
         </p>
         
-        <p class="hero-description">
-            Maîtrisez <span class="highlight">HTML5</span>, <span class="highlight">CSS3</span>, <span class="highlight">JavaScript</span>, <span class="highlight">PHP</span> et bien plus encore. 
-            Accès illimité à tous les cours, exercices interactifs et quiz de validation.
-        </p>
-        
-        <!-- CTA Buttons -->
         <div class="cta-buttons">
             <a href="#technologies" class="btn-3d btn-primary">
-                <i class="fas fa-play-circle"></i>
-                Commencer Maintenant
+                <i class="fas fa-graduation-cap"></i>
+                Découvrir les formations
             </a>
             <a href="{{ route('exercices') }}" class="btn-3d btn-secondary">
                 <i class="fas fa-code"></i>
-                Voir les Exercices
+                Voir les exercices
             </a>
-        </div>
-    </div>
-    
-    <!-- Right Illustration -->
-    <div class="hero-right">
-        <div class="hero-illustration">
-            <!-- Central Glow -->
-            <div class="central-glow"></div>
-            
-            <!-- Floating Cards -->
-            <div class="floating-card card-1">
-                <i class="fab fa-html5 card-icon" style="color: #e34c26;"></i>
-                <div class="card-title">HTML5</div>
-                <div class="card-text">Structure web moderne</div>
-            </div>
-            
-            <div class="floating-card card-2">
-                <i class="fab fa-css3-alt card-icon" style="color: #264de4;"></i>
-                <div class="card-title">CSS3</div>
-                <div class="card-text">Design responsive</div>
-            </div>
-            
-            <div class="floating-card card-3">
-                <i class="fab fa-js card-icon" style="color: #f0db4f;"></i>
-                <div class="card-title">JavaScript</div>
-                <div class="card-text">Interactivité web</div>
-            </div>
         </div>
     </div>
 </section>

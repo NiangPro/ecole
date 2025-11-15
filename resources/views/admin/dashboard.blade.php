@@ -279,6 +279,8 @@
         border-radius: 24px;
         padding: 35px;
         transition: all 0.3s ease;
+        width: 100%;
+        box-sizing: border-box;
     }
     
     .content-section-modern:hover {
@@ -614,13 +616,13 @@
 </div>
 
 <!-- Graphique des visites - Ligne entière -->
-<div class="content-section-modern mb-8">
+<div class="content-section-modern mb-8" style="width: 100%;">
     <h4 class="section-title-modern">
         <i class="fas fa-chart-area"></i>
         Visites (7 derniers jours)
     </h4>
-    <div style="background: rgba(0, 0, 0, 0.3); border-radius: 16px; padding: 25px; height: 400px;">
-        <canvas id="visitsChart" height="350"></canvas>
+    <div style="background: rgba(0, 0, 0, 0.3); border-radius: 16px; padding: 25px; height: 400px; width: 100%;">
+        <canvas id="visitsChart" height="350" style="width: 100% !important; max-width: 100%;"></canvas>
     </div>
 </div>
 
@@ -811,7 +813,15 @@
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: true,
+                maintainAspectRatio: false,
+                layout: {
+                    padding: {
+                        left: 0,
+                        right: 0,
+                        top: 0,
+                        bottom: 0
+                    }
+                },
                 plugins: {
                     legend: {
                         display: false

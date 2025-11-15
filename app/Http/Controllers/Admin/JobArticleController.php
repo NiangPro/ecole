@@ -11,17 +11,49 @@ use Illuminate\Support\Str;
 
 class JobArticleController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         if (!session('admin_logged_in')) {
             return redirect()->route('admin.login');
         }
 
-        $articles = JobArticle::with('category')
-            ->orderBy('created_at', 'desc')
-            ->paginate(15);
+        $query = JobArticle::with('category');
+        
+        // Filtre par recherche (titre)
+        if ($request->filled('search')) {
+            $query->where('title', 'like', '%' . $request->search . '%');
+        }
+        
+        // Filtre par catégorie
+        if ($request->filled('category')) {
+            $query->where('category_id', $request->category);
+        }
+        
+        // Filtre par score SEO
+        if ($request->filled('seo_min')) {
+            $query->where('seo_score', '>=', $request->seo_min);
+        }
+        
+        // Filtre par score de lisibilité
+        if ($request->filled('readability_min')) {
+            $query->where('readability_score', '>=', $request->readability_min);
+        }
+        
+        // Filtre par nombre de vues
+        if ($request->filled('views_min')) {
+            $query->where('views', '>=', $request->views_min);
+        }
+        
+        // Tri
+        $sortBy = $request->get('sort_by', 'created_at');
+        $sortOrder = $request->get('sort_order', 'desc');
+        $query->orderBy($sortBy, $sortOrder);
 
-        return view('admin.jobs.articles.index', compact('articles'));
+        $articles = $query->paginate(15)->withQueryString();
+        
+        $categories = Category::where('is_active', true)->orderBy('name')->get();
+
+        return view('admin.jobs.articles.index', compact('articles', 'categories'));
     }
 
     public function create()
