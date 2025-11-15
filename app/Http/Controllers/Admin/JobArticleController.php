@@ -44,10 +44,17 @@ class JobArticleController extends Controller
             $query->where('views', '>=', $request->views_min);
         }
         
-        // Tri
-        $sortBy = $request->get('sort_by', 'created_at');
+        // Tri par défaut : plus récents au plus anciens (par updated_at puis created_at)
+        $sortBy = $request->get('sort_by', 'updated_at');
         $sortOrder = $request->get('sort_order', 'desc');
-        $query->orderBy($sortBy, $sortOrder);
+        
+        if ($sortBy === 'updated_at') {
+            // Si tri par updated_at, ajouter aussi created_at comme critère secondaire
+            $query->orderBy('updated_at', $sortOrder)
+                  ->orderBy('created_at', $sortOrder);
+        } else {
+            $query->orderBy($sortBy, $sortOrder);
+        }
 
         $articles = $query->paginate(15)->withQueryString();
         

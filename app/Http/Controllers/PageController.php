@@ -9,11 +9,13 @@ class PageController extends Controller
 {
     public function index()
     {
-        // Cache les 3 derniers articles d'emploi (15 minutes)
+        // Cache les 3 derniers articles publiés (15 minutes)
         $latestJobs = \Illuminate\Support\Facades\Cache::remember('latest_jobs', 900, function () {
             return \App\Models\JobArticle::where('status', 'published')
                 ->with('category')
                 ->orderBy('published_at', 'desc')
+                ->orderBy('updated_at', 'desc')
+                ->orderBy('created_at', 'desc')
                 ->take(3)
                 ->get();
         });

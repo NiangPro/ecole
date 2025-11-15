@@ -172,7 +172,9 @@
         <div>
             <label class="block text-gray-300 mb-2 text-sm font-semibold">Trier par</label>
             <select name="sort_by" class="input-admin">
+                <option value="updated_at" {{ request('sort_by', 'updated_at') == 'updated_at' ? 'selected' : '' }}>Date de modification</option>
                 <option value="created_at" {{ request('sort_by') == 'created_at' ? 'selected' : '' }}>Date de création</option>
+                <option value="published_at" {{ request('sort_by') == 'published_at' ? 'selected' : '' }}>Date de publication</option>
                 <option value="title" {{ request('sort_by') == 'title' ? 'selected' : '' }}>Titre</option>
                 <option value="views" {{ request('sort_by') == 'views' ? 'selected' : '' }}>Vues</option>
                 <option value="seo_score" {{ request('sort_by') == 'seo_score' ? 'selected' : '' }}>Score SEO</option>
