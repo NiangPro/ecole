@@ -1888,7 +1888,7 @@ add_action(\'init\', \'create_portfolio_post_type\');
 
         // Cache les commentaires (15 minutes)
         $comments = \Illuminate\Support\Facades\Cache::remember("article_comments_{$article->id}", 900, function () use ($article) {
-            return $article->comments()->with(['user', 'replies.user'])->get();
+            return $article->comments()->where('status', 'approved')->with(['user', 'replies.user'])->get();
         });
 
         // Cache les 3 derniers commentaires approuvés (15 minutes)

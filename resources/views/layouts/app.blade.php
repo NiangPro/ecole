@@ -6,8 +6,17 @@
     <meta name="description" content="@yield('meta_description', 'Plateforme de formation gratuite en développement web. Apprenez HTML5, CSS3, JavaScript, PHP, Laravel, Bootstrap, Git, WordPress et Intelligence Artificielle avec NiangProgrammeur.')">
     <meta name="keywords" content="@yield('meta_keywords', 'formation développement web, HTML5, CSS3, JavaScript, PHP, Laravel, Bootstrap, Git, WordPress, IA, tutoriel gratuit, apprendre programmation, cours en ligne')">
     <meta name="author" content="Bassirou Niang - NiangProgrammeur">
-    <meta name="robots" content="index, follow">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="googlebot" content="index, follow">
+    <meta name="bingbot" content="index, follow">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    
+    <!-- Canonical URL -->
+    @hasSection('canonical')
+        <link rel="canonical" href="@yield('canonical')">
+    @else
+        <link rel="canonical" href="{{ url()->current() }}">
+    @endif
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
@@ -15,13 +24,26 @@
     <meta property="og:title" content="@yield('title', 'NiangProgrammeur - Formation Gratuite en Développement Web')">
     <meta property="og:description" content="@yield('meta_description', 'Plateforme de formation gratuite en développement web. Apprenez HTML5, CSS3, JavaScript, PHP et plus encore.')">
     <meta property="og:image" content="{{ asset('images/logo.png') }}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="NiangProgrammeur">
+    <meta property="og:locale" content="fr_FR">
     
     <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="{{ url()->current() }}">
-    <meta property="twitter:title" content="@yield('title', 'NiangProgrammeur - Formation Gratuite en Développement Web')">
-    <meta property="twitter:description" content="@yield('meta_description', 'Plateforme de formation gratuite en développement web.')">
-    <meta property="twitter:image" content="{{ asset('images/logo.png') }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="{{ url()->current() }}">
+    <meta name="twitter:title" content="@yield('title', 'NiangProgrammeur - Formation Gratuite en Développement Web')">
+    <meta name="twitter:description" content="@yield('meta_description', 'Plateforme de formation gratuite en développement web.')">
+    <meta name="twitter:image" content="{{ asset('images/logo.png') }}">
+    
+    <!-- DNS Prefetch pour améliorer les performances -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="//www.google-analytics.com">
+    
+    <!-- Preconnect pour les ressources critiques -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     
     @stack('meta')
     
@@ -389,25 +411,28 @@
             "hideMethod": "fadeOut"
         };
 
-        // Afficher les messages de succès
-        @if(session('success'))
-            toastr.success('{{ session('success') }}', 'Succès');
-        @endif
+        // Attendre que le DOM soit chargé
+        document.addEventListener('DOMContentLoaded', function() {
+            // Afficher les messages de succès
+            @if(session('success'))
+                toastr.success('{{ addslashes(session('success')) }}', 'Succès');
+            @endif
 
-        // Afficher les messages d'erreur
-        @if(session('error'))
-            toastr.error('{{ session('error') }}', 'Erreur');
-        @endif
+            // Afficher les messages d'erreur
+            @if(session('error'))
+                toastr.error('{{ addslashes(session('error')) }}', 'Erreur');
+            @endif
 
-        // Afficher les messages d'info
-        @if(session('info'))
-            toastr.info('{{ session('info') }}', 'Information');
-        @endif
+            // Afficher les messages d'info
+            @if(session('info'))
+                toastr.info('{{ addslashes(session('info')) }}', 'Information');
+            @endif
 
-        // Afficher les messages d'avertissement
-        @if(session('warning'))
-            toastr.warning('{{ session('warning') }}', 'Attention');
-        @endif
+            // Afficher les messages d'avertissement
+            @if(session('warning'))
+                toastr.warning('{{ addslashes(session('warning')) }}', 'Attention');
+            @endif
+        });
     </script>
     
     <script src="{{ asset('js/main.js') }}"></script>

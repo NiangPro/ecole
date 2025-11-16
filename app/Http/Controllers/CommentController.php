@@ -54,6 +54,8 @@ class CommentController extends Controller
         // Invalider le cache
         if ($commentableType === 'App\\Models\\JobArticle') {
             \Illuminate\Support\Facades\Cache::forget("job_article_{$commentable->slug}");
+            \Illuminate\Support\Facades\Cache::forget("article_comments_{$commentable->id}");
+            \Illuminate\Support\Facades\Cache::forget("article_latest_comments_{$commentable->id}");
         }
 
         return back()->with('success', 'Votre commentaire a été soumis avec succès! Il sera publié après modération.');

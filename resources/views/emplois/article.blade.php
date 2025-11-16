@@ -12,25 +12,42 @@
 @endphp
 
 @push('meta')
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{{ route('emplois.article', $article->slug) }}">
+    
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="article">
     <meta property="og:url" content="{{ route('emplois.article', $article->slug) }}">
     <meta property="og:title" content="{{ $article->meta_title ?? $article->title }}">
     <meta property="og:description" content="{{ $article->meta_description ?? $article->excerpt ?? substr(strip_tags($article->content), 0, 160) }}">
     <meta property="og:image" content="{{ $articleImage }}">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="NiangProgrammeur">
+    <meta property="og:locale" content="fr_FR">
     
     <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="{{ route('emplois.article', $article->slug) }}">
-    <meta property="twitter:title" content="{{ $article->meta_title ?? $article->title }}">
-    <meta property="twitter:description" content="{{ $article->meta_description ?? $article->excerpt ?? substr(strip_tags($article->content), 0, 160) }}">
-    <meta property="twitter:image" content="{{ $articleImage }}">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="{{ route('emplois.article', $article->slug) }}">
+    <meta name="twitter:title" content="{{ $article->meta_title ?? $article->title }}">
+    <meta name="twitter:description" content="{{ $article->meta_description ?? $article->excerpt ?? substr(strip_tags($article->content), 0, 160) }}">
+    <meta name="twitter:image" content="{{ $articleImage }}">
     
+    <!-- Meta Tags SEO -->
     <meta name="keywords" content="{{ $article->meta_keywords ? implode(', ', is_array($article->meta_keywords) ? $article->meta_keywords : json_decode($article->meta_keywords, true) ?? []) : '' }}">
     <meta name="author" content="NiangProgrammeur">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="googlebot" content="index, follow">
+    <meta name="bingbot" content="index, follow">
+    
+    <!-- Article Meta -->
     <meta property="article:published_time" content="{{ $article->published_at ? $article->published_at->toIso8601String() : $article->created_at->toIso8601String() }}">
     <meta property="article:modified_time" content="{{ $article->updated_at->toIso8601String() }}">
     <meta property="article:section" content="{{ $article->category->name ?? 'Emploi' }}">
+    <meta property="article:author" content="NiangProgrammeur">
+    @if($article->category)
+    <meta property="article:tag" content="{{ $article->category->name }}">
+    @endif
 @endpush
 
 @section('styles')

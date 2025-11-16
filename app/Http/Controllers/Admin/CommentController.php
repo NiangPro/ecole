@@ -66,6 +66,8 @@ class CommentController extends Controller
         if ($comment->commentable_type === 'App\\Models\\JobArticle') {
             $article = $comment->commentable;
             \Illuminate\Support\Facades\Cache::forget("job_article_{$article->slug}");
+            \Illuminate\Support\Facades\Cache::forget("article_comments_{$article->id}");
+            \Illuminate\Support\Facades\Cache::forget("article_latest_comments_{$article->id}");
         }
 
         return back()->with('success', 'Commentaire approuvé avec succès!');
@@ -89,15 +91,43 @@ class CommentController extends Controller
             return redirect()->route('admin.login');
         }
 
-        $comment = Comment::findOrFail($id);
+        $comment = Comment::with('commentable')->findOrFail($id);
         $commentType = $comment->commentable_type;
         $commentable = $comment->commentable;
         
+        // Récupérer l'ID de l'article avant suppression
+        $articleId = $commentable ? $commentable->id : null;
+        $slug = $commentable ? $commentable->slug : null;
+        
+        // Supprimer d'abord toutes les réponses (si elles existent)
+        // Note: La migration a déjà onDelete('cascade'), mais on supprime explicitement pour être sûr
+        Comment::where('parent_id', $comment->id)->delete();
+        
+        // Ensuite supprimer le commentaire principal
         $comment->delete();
 
-        // Invalider le cache
-        if ($commentType === 'App\\Models\\JobArticle') {
-            \Illuminate\Support\Facades\Cache::forget("job_article_{$commentable->slug}");
+        // Invalider TOUS les caches liés à cet article
+        if ($commentType === 'App\\Models\\JobArticle' && $commentable && $articleId && $slug) {
+            // Invalider les caches spécifiques de l'article
+            \Illuminate\Support\Facades\Cache::forget("job_article_{$slug}");
+            \Illuminate\Support\Facades\Cache::forget("article_comments_{$articleId}");
+            \Illuminate\Support\Facades\Cache::forget("article_latest_comments_{$articleId}");
+            
+            // Invalider aussi les caches généraux qui pourraient contenir cet article
+            \Illuminate\Support\Facades\Cache::forget('latest_jobs');
+            \Illuminate\Support\Facades\Cache::forget('recent_job_articles');
+            
+            // Invalider le cache des articles similaires
+            if ($commentable->category_id) {
+                \Illuminate\Support\Facades\Cache::forget("related_articles_{$articleId}");
+                $category = $commentable->category ?? \App\Models\Category::find($commentable->category_id);
+                if ($category) {
+                    \Illuminate\Support\Facades\Cache::forget("category_{$category->slug}");
+                }
+            }
+            
+            // Nettoyer le cache des vues pour forcer la régénération
+            \Illuminate\Support\Facades\Artisan::call('view:clear');
         }
 
         return back()->with('success', 'Commentaire supprimé avec succès!');

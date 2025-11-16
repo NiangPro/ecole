@@ -71,26 +71,34 @@
 
     <!-- 3 Derniers commentaires approuvés -->
     @if(isset($latestComments) && $latestComments->count() > 0)
-    <div style="margin-top: 25px; padding-top: 25px; border-top: 2px solid rgba(6, 182, 212, 0.2);">
-        <h4 style="font-size: 1.1rem; font-weight: 800; color: #06b6d4; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
-            <i class="fas fa-comments"></i>
-            Derniers commentaires
+    <div style="margin-top: 30px; padding-top: 30px; border-top: 2px solid rgba(6, 182, 212, 0.3);">
+        <h4 style="font-size: 1.15rem; font-weight: 800; color: #06b6d4; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; padding-bottom: 10px; border-bottom: 1px solid rgba(6, 182, 212, 0.2);">
+            <div style="width: 35px; height: 35px; background: linear-gradient(135deg, #06b6d4, #14b8a6); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                <i class="fas fa-comments" style="color: #fff; font-size: 0.9rem;"></i>
+            </div>
+            <span>Derniers commentaires</span>
         </h4>
-        <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div style="display: flex; flex-direction: column; gap: 16px;">
             @foreach($latestComments as $latestComment)
-            <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 12px; padding: 12px;">
-                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                    <div style="width: 28px; height: 28px; background: linear-gradient(135deg, #06b6d4, #14b8a6); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #fff; font-size: 0.75rem; flex-shrink: 0;">
+            <div style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(20, 184, 166, 0.1)); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 16px; padding: 18px; position: relative; overflow: hidden; transition: all 0.3s ease;" onmouseover="this.style.borderColor='rgba(6, 182, 212, 0.5)'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(6, 182, 212, 0.2)';" onmouseout="this.style.borderColor='rgba(6, 182, 212, 0.3)'; this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                <!-- Effet de brillance en arrière-plan -->
+                <div style="position: absolute; top: -50%; right: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(6, 182, 212, 0.1) 0%, transparent 70%); pointer-events: none;"></div>
+                
+                <div style="display: flex; align-items: flex-start; gap: 12px; position: relative; z-index: 1;">
+                    <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #06b6d4, #14b8a6); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #fff; font-size: 0.9rem; flex-shrink: 0; box-shadow: 0 4px 8px rgba(6, 182, 212, 0.3);">
                         {{ strtoupper(substr($latestComment->author_name, 0, 1)) }}
                     </div>
                     <div style="flex: 1; min-width: 0;">
-                        <h5 style="font-size: 0.8rem; font-weight: 700; color: #fff; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $latestComment->author_name }}</h5>
-                        <p style="font-size: 0.65rem; color: rgba(255, 255, 255, 0.6);">
-                            <i class="fas fa-clock mr-1"></i>{{ $latestComment->created_at->diffForHumans() }}
-                        </p>
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+                            <h5 style="font-size: 0.9rem; font-weight: 700; color: #fff; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $latestComment->author_name }}</h5>
+                            <div style="display: flex; align-items: center; gap: 8px; font-size: 0.7rem; color: rgba(255, 255, 255, 0.6);">
+                                <i class="fas fa-clock"></i>
+                                <span>{{ $latestComment->created_at->diffForHumans() }}</span>
+                            </div>
+                        </div>
+                        <p style="color: rgba(255, 255, 255, 0.9); line-height: 1.6; font-size: 0.85rem; word-wrap: break-word; margin: 0; padding: 12px; background: rgba(15, 23, 42, 0.4); border-radius: 10px; border-left: 3px solid #06b6d4;">{!! nl2br(e($latestComment->content)) !!}</p>
                     </div>
                 </div>
-                <p style="color: rgba(255, 255, 255, 0.85); line-height: 1.4; font-size: 0.8rem; word-wrap: break-word; margin: 0;">{!! nl2br(e($latestComment->content)) !!}</p>
             </div>
             @endforeach
         </div>
