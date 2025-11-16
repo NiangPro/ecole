@@ -152,14 +152,33 @@
         navLinks.forEach(link => {
             link.addEventListener('click', function(e) {
                 e.preventDefault();
+                e.stopPropagation();
+                
                 const targetHref = this.getAttribute('href');
                 if (!targetHref || targetHref === '#') return;
                 
                 const targetId = targetHref.substring(1);
-                const targetSection = document.getElementById(targetId);
                 
+                // Chercher la section cible
+                let targetSection = document.getElementById(targetId);
+                
+                // Si pas trouvé, chercher dans h1 et h2
+                if (!targetSection) {
+                    const allHeadings = document.querySelectorAll('h1[id], h2[id], h3[id]');
+                    allHeadings.forEach(heading => {
+                        if (heading.id === targetId) {
+                            targetSection = heading;
+                        }
+                    });
+                }
+                
+                // Si toujours pas trouvé, log pour debug
                 if (!targetSection) {
                     console.warn('Sidebar navigation: Section not found:', targetId);
+                    const allIds = Array.from(document.querySelectorAll('[id]')).map(el => el.id).filter(id => id);
+                    console.log('Available IDs:', allIds);
+                    // Permettre la navigation normale du navigateur comme fallback
+                    window.location.href = targetHref;
                     return;
                 }
                 
@@ -169,49 +188,51 @@
                 // Mettre à jour l'active immédiatement
                 setActiveLink(targetId);
                 
-                // Calculer la position exacte de la section
-                // Méthode : Calcul manuel pour un contrôle précis
+                // Calculer les offsets dynamiquement
+                const actualBodyPaddingTop = parseInt(window.getComputedStyle(document.body).paddingTop) || 0;
+                const navbarElement = document.querySelector('.navbar-modern') || document.querySelector('nav');
+                const actualNavbarHeight = navbarElement ? navbarElement.offsetHeight : 70;
+                const offset = Math.max(actualBodyPaddingTop, actualNavbarHeight, 70) + scrollOffset + 10;
+                
+                // Calculer la position de scroll cible
                 const rect = targetSection.getBoundingClientRect();
-                const scrollTop = window.pageYOffset || window.scrollY || document.documentElement.scrollTop;
+                const currentScroll = window.pageYOffset || window.scrollY || document.documentElement.scrollTop;
+                const elementTop = rect.top + currentScroll;
+                const targetPosition = elementTop - offset;
                 
-                // Position absolue de l'élément = position relative + scroll actuel
-                const elementAbsoluteTop = rect.top + scrollTop;
-                
-                // Offset = padding-top du body (qui compense la navbar) + petit offset pour visibilité
-                const offset = bodyPaddingTop + scrollOffset;
-                const targetPosition = elementAbsoluteTop - offset;
-                
-                // Scroll vers la position calculée
-                window.scrollTo({
-                    top: Math.max(0, targetPosition),
-                    behavior: 'smooth'
+                // Scroll vers la position avec animation smooth
+                targetSection.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
                 });
                 
-                // Vérification et ajustement après le scroll
+                // Ajuster la position après le scroll initial pour tenir compte de la navbar
                 setTimeout(() => {
-                    // Vérifier que la section est visible après le scroll
                     const newRect = targetSection.getBoundingClientRect();
                     const newScroll = window.pageYOffset || window.scrollY || document.documentElement.scrollTop;
-                    const elementNewAbsoluteTop = newRect.top + newScroll;
-                    const expectedPosition = elementNewAbsoluteTop - offset;
-                    const currentPosition = newScroll;
-                    const difference = Math.abs(currentPosition - expectedPosition);
+                    const elementNewTop = newRect.top + newScroll;
+                    const expectedTop = elementNewTop - offset;
                     
-                    // Si la différence est significative (plus de 10px), ajuster
-                    if (difference > 10) {
+                    // Si la position n'est pas correcte, ajuster
+                    if (Math.abs(newScroll - expectedTop) > 5) {
                         window.scrollTo({
-                            top: Math.max(0, expectedPosition),
+                            top: Math.max(0, expectedTop),
                             behavior: 'smooth'
                         });
                     }
                     
-                    // Marquer que le scroll est terminé après un délai
+                    // Marquer la fin du scroll
                     setTimeout(() => {
                         isScrolling = false;
-                        // Vérifier une dernière fois la section active
+                        // Vérifier la section active après le scroll
                         handleScroll();
-                    }, 300);
-                }, 400);
+                    }, 400);
+                }, 200);
+                
+                // Mettre à jour l'URL sans recharger la page
+                if (history.pushState) {
+                    history.pushState(null, null, targetHref);
+                }
             });
         });
         
