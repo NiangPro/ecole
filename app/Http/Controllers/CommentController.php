@@ -18,6 +18,7 @@ class CommentController extends Controller
             'parent_id' => 'nullable|exists:comments,id',
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
+            'phone' => 'nullable|string|max:20',
         ]);
 
         // Rate limiting : 5 commentaires par 15 minutes par IP
@@ -41,11 +42,12 @@ class CommentController extends Controller
             'user_id' => null, // Toujours anonyme maintenant
             'name' => $request->name,
             'email' => $request->email,
+            'phone' => $request->phone,
             'commentable_type' => $commentableType,
             'commentable_id' => $commentableId,
             'content' => $request->content,
             'parent_id' => $request->parent_id,
-            'status' => 'approved', // Auto-approve pour l'instant, peut être modéré plus tard
+            'status' => 'pending', // En attente de modération
             'ip_address' => $request->ip(),
         ]);
 
@@ -54,7 +56,7 @@ class CommentController extends Controller
             \Illuminate\Support\Facades\Cache::forget("job_article_{$commentable->slug}");
         }
 
-        return back()->with('success', 'Votre commentaire a été publié avec succès!');
+        return back()->with('success', 'Votre commentaire a été soumis avec succès! Il sera publié après modération.');
     }
 
     public function like($id)

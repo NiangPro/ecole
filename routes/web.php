@@ -73,6 +73,16 @@ Route::delete('/admin/users/{id}', [App\Http\Controllers\AdminController::class,
 Route::get('/admin/messages', [App\Http\Controllers\AdminController::class, 'messages'])->name('admin.messages');
 Route::post('/admin/messages/{id}/mark-read', [App\Http\Controllers\AdminController::class, 'markAsRead'])->name('admin.messages.mark-read');
 Route::delete('/admin/messages/{id}', [App\Http\Controllers\AdminController::class, 'deleteMessage'])->name('admin.messages.delete');
+
+// Routes Commentaires Admin
+Route::prefix('admin/comments')->name('admin.comments.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Admin\CommentController::class, 'index'])->name('index');
+    Route::post('/{id}/approve', [\App\Http\Controllers\Admin\CommentController::class, 'approve'])->name('approve');
+    Route::post('/{id}/reject', [\App\Http\Controllers\Admin\CommentController::class, 'reject'])->name('reject');
+    Route::delete('/{id}', [\App\Http\Controllers\Admin\CommentController::class, 'delete'])->name('delete');
+    Route::get('/{id}/whatsapp-link', [\App\Http\Controllers\Admin\CommentController::class, 'getWhatsAppLink'])->name('whatsapp-link');
+    Route::get('/{id}/email-link', [\App\Http\Controllers\Admin\CommentController::class, 'getEmailLink'])->name('email-link');
+});
 Route::get('/admin/settings', [App\Http\Controllers\AdminController::class, 'settings'])->name('admin.settings');
 Route::post('/admin/settings', [App\Http\Controllers\AdminController::class, 'updateSettings'])->name('admin.settings.update');
 

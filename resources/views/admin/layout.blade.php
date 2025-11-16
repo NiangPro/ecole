@@ -7,6 +7,9 @@
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <!-- Toastr CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
         
@@ -453,6 +456,16 @@
                     <span class="ml-auto px-2 py-1 bg-red-500 text-white text-xs rounded-full">{{ $unreadCount }}</span>
                 @endif
             </a>
+            <a href="{{ route('admin.comments.index') }}" class="sidebar-item {{ request()->routeIs('admin.comments.*') ? 'active' : '' }}">
+                <i class="fas fa-comments text-xl"></i>
+                <span>Commentaires</span>
+                @php
+                    $pendingComments = \App\Models\Comment::where('status', 'pending')->count();
+                @endphp
+                @if($pendingComments > 0)
+                    <span class="ml-auto px-2 py-1 bg-yellow-500 text-white text-xs rounded-full">{{ $pendingComments }}</span>
+                @endif
+            </a>
             <a href="{{ route('admin.adsense') }}" class="sidebar-item {{ request()->routeIs('admin.adsense*') ? 'active' : '' }}">
                 <i class="fab fa-google text-xl"></i>
                 <span>Google AdSense</span>
@@ -593,6 +606,50 @@
             }
         });
     </script>
+    
+    <!-- Toastr JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script>
+        // Configuration Toastr
+        toastr.options = {
+            "closeButton": true,
+            "debug": false,
+            "newestOnTop": true,
+            "progressBar": true,
+            "positionClass": "toast-top-right",
+            "preventDuplicates": false,
+            "onclick": null,
+            "showDuration": "300",
+            "hideDuration": "1000",
+            "timeOut": "5000",
+            "extendedTimeOut": "1000",
+            "showEasing": "swing",
+            "hideEasing": "linear",
+            "showMethod": "fadeIn",
+            "hideMethod": "fadeOut"
+        };
+
+        // Afficher les messages de succès
+        @if(session('success'))
+            toastr.success('{{ session('success') }}', 'Succès');
+        @endif
+
+        // Afficher les messages d'erreur
+        @if(session('error'))
+            toastr.error('{{ session('error') }}', 'Erreur');
+        @endif
+
+        // Afficher les messages d'info
+        @if(session('info'))
+            toastr.info('{{ session('info') }}', 'Information');
+        @endif
+
+        // Afficher les messages d'avertissement
+        @if(session('warning'))
+            toastr.warning('{{ session('warning') }}', 'Attention');
+        @endif
+    </script>
+    
     @yield('scripts')
 </body>
 </html>

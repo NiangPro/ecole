@@ -23,12 +23,6 @@
     </div>
 </div>
 
-@if(session('success'))
-    <div class="bg-green-500/10 border border-green-500/30 text-green-400 px-6 py-4 rounded-lg mb-6 flex items-center gap-3">
-        <i class="fas fa-check-circle text-xl"></i>
-        <span>{{ session('success') }}</span>
-    </div>
-@endif
 
 <!-- Statistiques -->
 <div class="grid md:grid-cols-3 gap-6 mb-8">

@@ -13,6 +13,7 @@ class Comment extends Model
         'user_id',
         'name',
         'email',
+        'phone',
         'commentable_type',
         'commentable_id',
         'content',

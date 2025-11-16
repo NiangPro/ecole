@@ -11,42 +11,43 @@
             <input type="hidden" name="commentable_type" value="{{ get_class($commentable) }}">
             <input type="hidden" name="commentable_id" value="{{ $commentable->id }}">
             
-            @if(session('success'))
-                <div style="background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); color: #22c55e; padding: 15px; border-radius: 12px; margin-bottom: 20px;">
-                    <i class="fas fa-check-circle mr-2"></i>{{ session('success') }}
-                </div>
-            @endif
-
-            @if(session('error'))
-                <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); color: #ef4444; padding: 15px; border-radius: 12px; margin-bottom: 20px;">
-                    <i class="fas fa-exclamation-circle mr-2"></i>{{ session('error') }}
-                </div>
-            @endif
             
             <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 15px;">
                 <div class="form-group">
-                <label style="display: block; color: rgba(255, 255, 255, 0.9); font-weight: 600; margin-bottom: 6px; font-size: 0.9rem;">
-                    Nom <span style="color: #ef4444;">*</span>
-                </label>
-                <input type="text" name="name" value="{{ old('name') }}" required maxlength="255" 
-                       placeholder="Votre nom" 
-                       style="width: 100%; padding: 10px 12px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 10px; color: #fff; font-size: 0.9rem;">
-                @error('name')
-                    <p style="color: #ef4444; font-size: 0.75rem; margin-top: 4px;">{{ $message }}</p>
-                @enderror
-            </div>
-            
-            <div class="form-group">
-                <label style="display: block; color: rgba(255, 255, 255, 0.9); font-weight: 600; margin-bottom: 6px; font-size: 0.9rem;">
-                    Email <span style="color: #ef4444;">*</span>
-                </label>
-                <input type="email" name="email" value="{{ old('email') }}" required maxlength="255" 
-                       placeholder="votre@email.com" 
-                       style="width: 100%; padding: 10px 12px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 10px; color: #fff; font-size: 0.9rem;">
-                @error('email')
-                    <p style="color: #ef4444; font-size: 0.75rem; margin-top: 4px;">{{ $message }}</p>
-                @enderror
-            </div>
+                    <label style="display: block; color: rgba(255, 255, 255, 0.9); font-weight: 600; margin-bottom: 6px; font-size: 0.9rem;">
+                        Nom <span style="color: #ef4444;">*</span>
+                    </label>
+                    <input type="text" name="name" value="{{ old('name') }}" required maxlength="255" 
+                           placeholder="Votre nom" 
+                           style="width: 100%; padding: 10px 12px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 10px; color: #fff; font-size: 0.9rem;">
+                    @error('name')
+                        <p style="color: #ef4444; font-size: 0.75rem; margin-top: 4px;">{{ $message }}</p>
+                    @enderror
+                </div>
+                
+                <div class="form-group">
+                    <label style="display: block; color: rgba(255, 255, 255, 0.9); font-weight: 600; margin-bottom: 6px; font-size: 0.9rem;">
+                        Email <span style="color: #ef4444;">*</span>
+                    </label>
+                    <input type="email" name="email" value="{{ old('email') }}" required maxlength="255" 
+                           placeholder="votre@email.com" 
+                           style="width: 100%; padding: 10px 12px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 10px; color: #fff; font-size: 0.9rem;">
+                    @error('email')
+                        <p style="color: #ef4444; font-size: 0.75rem; margin-top: 4px;">{{ $message }}</p>
+                    @enderror
+                </div>
+                
+                <div class="form-group">
+                    <label style="display: block; color: rgba(255, 255, 255, 0.9); font-weight: 600; margin-bottom: 6px; font-size: 0.9rem;">
+                        Téléphone
+                    </label>
+                    <input type="text" name="phone" value="{{ old('phone') }}" maxlength="20" 
+                           placeholder="+221 XX XXX XX XX" 
+                           style="width: 100%; padding: 10px 12px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 10px; color: #fff; font-size: 0.9rem;">
+                    @error('phone')
+                        <p style="color: #ef4444; font-size: 0.75rem; margin-top: 4px;">{{ $message }}</p>
+                    @enderror
+                </div>
             </div>
             
             <div class="form-group" style="margin-bottom: 15px;">
@@ -134,6 +135,8 @@
                         <input type="text" name="name" required maxlength="255" placeholder="Votre nom" 
                                style="width: 100%; padding: 8px 10px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 8px; color: #fff; font-size: 0.85rem;">
                         <input type="email" name="email" required maxlength="255" placeholder="votre@email.com" 
+                               style="width: 100%; padding: 8px 10px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 8px; color: #fff; font-size: 0.85rem;">
+                        <input type="text" name="phone" maxlength="20" placeholder="+221 XX XXX XX XX" 
                                style="width: 100%; padding: 8px 10px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 8px; color: #fff; font-size: 0.85rem;">
                     </div>
                     
