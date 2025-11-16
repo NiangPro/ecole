@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
 use App\Models\Category;
@@ -39,6 +40,16 @@ class JobArticle extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function comments(): MorphMany
+    {
+        return $this->morphMany(Comment::class, 'commentable')->where('parent_id', null)->where('status', 'approved')->orderBy('created_at', 'desc');
+    }
+
+    public function allComments(): MorphMany
+    {
+        return $this->morphMany(Comment::class, 'commentable')->where('status', 'approved')->orderBy('created_at', 'desc');
     }
 
     public function getRouteKeyName()

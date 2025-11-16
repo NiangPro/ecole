@@ -1885,7 +1885,12 @@ add_action(\'init\', \'create_portfolio_post_type\');
                 ->orderBy('order')
                 ->get();
         });
+
+        // Cache les commentaires (15 minutes)
+        $comments = \Illuminate\Support\Facades\Cache::remember("article_comments_{$article->id}", 900, function () use ($article) {
+            return $article->comments()->with(['user', 'replies.user'])->get();
+        });
         
-        return view('emplois.article', compact('article', 'relatedArticles', 'sidebarAds'));
+        return view('emplois.article', compact('article', 'relatedArticles', 'sidebarAds', 'comments'));
     }
 }

@@ -44,6 +44,11 @@ Route::get('/emplois/candidature-spontanee', [PageController::class, 'candidatur
 Route::get('/emplois/opportunites', [PageController::class, 'opportunites'])->name('emplois.opportunites');
 Route::get('/emplois/article/{slug}', [PageController::class, 'showArticle'])->name('emplois.article');
 
+// Commentaires (publiques - avec rate limiting)
+Route::post('/comments', [\App\Http\Controllers\CommentController::class, 'store'])->middleware('throttle:5,15')->name('comments.store');
+Route::post('/comments/{id}/like', [\App\Http\Controllers\CommentController::class, 'like'])->middleware('throttle:10,1')->name('comments.like');
+
+
 // Routes Admin (pas de lien public)
 Route::get('/admin/login', [App\Http\Controllers\AdminController::class, 'showLogin'])->name('admin.login');
 Route::post('/admin/login', [App\Http\Controllers\AdminController::class, 'login'])->name('admin.login.post');

@@ -364,6 +364,14 @@
                 $ad->incrementImpressions();
             @endphp
             @endforeach
+            
+            <!-- Section Commentaires (dans la sidebar) -->
+            @include('partials.comments', ['commentable' => $article, 'comments' => $comments ?? []])
+        </aside>
+        @else
+        <!-- Si pas de publicités, afficher les commentaires quand même -->
+        <aside style="position: sticky; top: 80px; align-self: flex-start;">
+            @include('partials.comments', ['commentable' => $article, 'comments' => $comments ?? []])
         </aside>
         @endif
     </div>

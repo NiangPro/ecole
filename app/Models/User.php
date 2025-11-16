@@ -59,4 +59,19 @@ class User extends Authenticatable
     {
         return $query->where('is_active', true);
     }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    public function formationProgress()
+    {
+        return $this->hasMany(FormationProgress::class);
+    }
+
+    public function getProgressForFormation(string $formationSlug): ?FormationProgress
+    {
+        return $this->formationProgress()->where('formation_slug', $formationSlug)->first();
+    }
 }
