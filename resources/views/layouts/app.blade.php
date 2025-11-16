@@ -23,6 +23,8 @@
     <meta property="twitter:description" content="@yield('meta_description', 'Plateforme de formation gratuite en développement web.')">
     <meta property="twitter:image" content="{{ asset('images/logo.png') }}">
     
+    @stack('meta')
+    
     <title>@yield('title', 'NiangProgrammeur - Formation Gratuite en Développement Web')</title>
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     <script src="https://cdn.tailwindcss.com"></script>

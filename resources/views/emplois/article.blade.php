@@ -1,7 +1,37 @@
 @extends('layouts.app')
 
 @section('title', $article->meta_title ?? $article->title . ' | NiangProgrammeur')
-@section('meta_description', $article->meta_description ?? $article->excerpt)
+@section('meta_description', $article->meta_description ?? $article->excerpt ?? substr(strip_tags($article->content), 0, 160))
+
+@php
+    $articleImage = $article->cover_image 
+        ? ($article->cover_type === 'internal' 
+            ? url(\Illuminate\Support\Facades\Storage::url($article->cover_image)) 
+            : $article->cover_image)
+        : asset('images/logo.png');
+@endphp
+
+@push('meta')
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="{{ route('emplois.article', $article->slug) }}">
+    <meta property="og:title" content="{{ $article->meta_title ?? $article->title }}">
+    <meta property="og:description" content="{{ $article->meta_description ?? $article->excerpt ?? substr(strip_tags($article->content), 0, 160) }}">
+    <meta property="og:image" content="{{ $articleImage }}">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="{{ route('emplois.article', $article->slug) }}">
+    <meta property="twitter:title" content="{{ $article->meta_title ?? $article->title }}">
+    <meta property="twitter:description" content="{{ $article->meta_description ?? $article->excerpt ?? substr(strip_tags($article->content), 0, 160) }}">
+    <meta property="twitter:image" content="{{ $articleImage }}">
+    
+    <meta name="keywords" content="{{ $article->meta_keywords ? implode(', ', is_array($article->meta_keywords) ? $article->meta_keywords : json_decode($article->meta_keywords, true) ?? []) : '' }}">
+    <meta name="author" content="NiangProgrammeur">
+    <meta property="article:published_time" content="{{ $article->published_at ? $article->published_at->toIso8601String() : $article->created_at->toIso8601String() }}">
+    <meta property="article:modified_time" content="{{ $article->updated_at->toIso8601String() }}">
+    <meta property="article:section" content="{{ $article->category->name ?? 'Emploi' }}">
+@endpush
 
 @section('styles')
 <style>
@@ -91,6 +121,15 @@
         line-height: 1.9;
         font-size: 1.1rem;
         color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .article-content img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 12px;
+        margin: 20px 0;
+        display: block;
+        loading: lazy;
     }
     
     .article-content h2 {
@@ -291,6 +330,8 @@
             <div class="article-content">
                 {!! nl2br(e($article->content)) !!}
             </div>
+            
+            @include('partials.share-buttons', ['article' => $article])
         </div>
         
         <!-- Sidebar Publicités Moderne -->
@@ -304,6 +345,7 @@
                         <img src="{{ $ad->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($ad->image) : $ad->image }}" 
                              alt="{{ $ad->name }}" 
                              class="modern-sidebar-ad-image"
+                             loading="lazy"
                              onerror="this.style.display='none'">
                         <div class="modern-sidebar-ad-overlay">
                             <div class="modern-sidebar-ad-content">
@@ -339,8 +381,8 @@
                 @if($related->cover_image)
                 <div class="related-card-modern-image-wrapper">
                         <img src="{{ $related->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($related->cover_image) : $related->cover_image }}"
-                             alt="{{ $related->title }} - {{ $related->category->name }}"
-                             loading="lazy" 
+                             loading="lazy"
+                             alt="{{ $related->title }} - {{ $related->category->name ?? 'Article' }}" 
                          class="related-card-modern-image"
                          onerror="this.src='https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=400&h=250&fit=crop'">
                     <div class="related-card-modern-overlay">

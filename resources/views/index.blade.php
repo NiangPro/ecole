@@ -691,7 +691,9 @@
             <div class="ad-container" style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 16px; padding: 20px; margin-bottom: 20px; backdrop-filter: blur(10px);">
                 <a href="{{ $ad->link_url ?? '#' }}" target="_blank" onclick="trackAdClick({{ $ad->id }})" style="display: block; text-decoration: none;">
                     @if($ad->image)
-                    <img src="{{ $ad->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($ad->image) : $ad->image }}" 
+                    <img src="{{ $ad->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($ad->image) : $ad->image }}"
+                         loading="lazy"
+                         alt="{{ $ad->name ?? 'Publicité' }}" 
                          alt="{{ $ad->name }} - Publicité" 
                          style="width: 100%; height: auto; border-radius: 12px; display: block;"
                          loading="lazy"
@@ -717,7 +719,9 @@
             <a href="{{ $ad->link_url ?? '#' }}" target="_blank" onclick="trackAdClick({{ $ad->id }})" class="modern-ad-link">
                 @if($ad->image)
                 <div class="modern-ad-image-wrapper">
-                    <img src="{{ $ad->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($ad->image) : $ad->image }}" 
+                    <img src="{{ $ad->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($ad->image) : $ad->image }}"
+                         loading="lazy"
+                         alt="{{ $ad->name ?? 'Publicité' }}" 
                          alt="{{ $ad->name }} - Publicité" 
                          class="modern-ad-image"
                          loading="lazy"

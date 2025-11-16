@@ -883,8 +883,9 @@
         
         <!-- Search Icon -->
         <div class="navbar-search-container" style="position: relative;">
-            <button type="button" class="navbar-search-icon" id="searchIcon" aria-label="Rechercher">
-                <i class="fas fa-search"></i>
+            <button type="button" class="navbar-search-icon" id="searchIcon" aria-label="Rechercher" aria-expanded="false" aria-controls="searchForm">
+                <i class="fas fa-search" aria-hidden="true"></i>
+                <span class="sr-only">Rechercher</span>
             </button>
             
             <!-- Search Form (hidden by default) -->

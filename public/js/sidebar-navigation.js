@@ -201,9 +201,9 @@
                 const targetPosition = elementTop - offset;
                 
                 // Scroll vers la position avec animation smooth
-                targetSection.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'start' 
+                window.scrollTo({
+                    top: Math.max(0, targetPosition),
+                    behavior: 'smooth'
                 });
                 
                 // Ajuster la position après le scroll initial pour tenir compte de la navbar
