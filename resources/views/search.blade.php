@@ -185,9 +185,42 @@
 @if($query)
 <section class="results-section">
     <div class="results-header">
-        <p class="results-count">
-            <strong>{{ $results['total'] }}</strong> résultat(s) pour "<strong>{{ $query }}</strong>"
-        </p>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
+            <p class="results-count">
+                <strong>{{ $results['total'] }}</strong> résultat(s) pour "<strong>{{ $query }}</strong>"
+            </p>
+            
+            <!-- Filtres avancés -->
+            <form action="{{ route('search') }}" method="GET" style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                <input type="hidden" name="q" value="{{ $query }}">
+                
+                <select name="category" style="padding: 8px 12px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 8px; color: #fff; font-size: 0.9rem; outline: none; cursor: pointer;">
+                    <option value="">Toutes les catégories</option>
+                    @foreach($categories as $cat)
+                        <option value="{{ $cat->id }}" {{ $category == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
+                    @endforeach
+                </select>
+                
+                <select name="date" style="padding: 8px 12px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 8px; color: #fff; font-size: 0.9rem; outline: none; cursor: pointer;">
+                    <option value="">Toutes les dates</option>
+                    <option value="today" {{ $dateFilter == 'today' ? 'selected' : '' }}>Aujourd'hui</option>
+                    <option value="week" {{ $dateFilter == 'week' ? 'selected' : '' }}>Cette semaine</option>
+                    <option value="month" {{ $dateFilter == 'month' ? 'selected' : '' }}>Ce mois</option>
+                    <option value="year" {{ $dateFilter == 'year' ? 'selected' : '' }}>Cette année</option>
+                </select>
+                
+                <select name="sort" style="padding: 8px 12px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 8px; color: #fff; font-size: 0.9rem; outline: none; cursor: pointer;">
+                    <option value="relevance" {{ $sortBy == 'relevance' ? 'selected' : '' }}>Pertinence</option>
+                    <option value="date" {{ $sortBy == 'date' ? 'selected' : '' }}>Plus récent</option>
+                    <option value="views" {{ $sortBy == 'views' ? 'selected' : '' }}>Plus vus</option>
+                    <option value="title" {{ $sortBy == 'title' ? 'selected' : '' }}>Titre (A-Z)</option>
+                </select>
+                
+                <button type="submit" style="padding: 8px 16px; background: linear-gradient(135deg, #06b6d4, #14b8a6); border: none; border-radius: 8px; color: #000; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">
+                    <i class="fas fa-filter mr-1"></i>Appliquer
+                </button>
+            </form>
+        </div>
     </div>
     
     @if($results['total'] > 0)

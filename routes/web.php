@@ -6,7 +6,9 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Admin\NewsletterController;
 
 Route::get('/', [PageController::class, 'index'])->name('home');
-Route::get('/search', [PageController::class, 'search'])->name('search');
+Route::get('/search', [PageController::class, 'search'])->middleware('throttle:30,1')->name('search');
+Route::post('/contact', [PageController::class, 'sendContact'])->middleware('throttle:5,1')->name('contact.send');
+Route::post('/newsletter/subscribe', [PageController::class, 'newsletterSubscribe'])->middleware('throttle:10,1')->name('newsletter.subscribe');
 Route::get('/about', [PageController::class, 'about'])->name('about');
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 Route::post('/contact', [PageController::class, 'sendContact'])->name('contact.send');

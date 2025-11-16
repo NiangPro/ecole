@@ -1751,11 +1751,22 @@ add_action(\'init\', \'create_portfolio_post_type\');
     public function search(Request $request)
     {
         $query = $request->get('q', '');
+        $category = $request->get('category', '');
+        $dateFilter = $request->get('date', '');
+        $sortBy = $request->get('sort', 'relevance');
+        
         $results = [
             'formations' => collect(),
             'articles' => collect(),
             'total' => 0
         ];
+        
+        // Récupérer toutes les catégories pour les filtres
+        $categories = \Illuminate\Support\Facades\Cache::remember('all_categories_search', 3600, function () {
+            return \App\Models\Category::where('is_active', true)
+                ->orderBy('name')
+                ->get();
+        });
         
         if (strlen($query) >= 2) {
             // Recherche dans les formations (titres et descriptions)
@@ -1775,18 +1786,57 @@ add_action(\'init\', \'create_portfolio_post_type\');
                        stripos($formation['description'], $query) !== false;
             });
             
-            // Recherche dans les articles d'emploi publiés
-            $articles = \Illuminate\Support\Facades\Cache::remember("search_articles_{$query}", 300, function () use ($query) {
-                return \App\Models\JobArticle::where('status', 'published')
-                    ->where(function($q) use ($query) {
-                        $q->where('title', 'like', "%{$query}%")
-                          ->orWhere('content', 'like', "%{$query}%")
-                          ->orWhere('excerpt', 'like', "%{$query}%");
-                    })
-                    ->with('category')
-                    ->orderBy('published_at', 'desc')
-                    ->limit(20)
-                    ->get();
+            // Recherche dans les articles d'emploi publiés avec filtres
+            $articlesQuery = \App\Models\JobArticle::where('status', 'published')
+                ->where(function($q) use ($query) {
+                    $q->where('title', 'like', "%{$query}%")
+                      ->orWhere('content', 'like', "%{$query}%")
+                      ->orWhere('excerpt', 'like', "%{$query}%");
+                });
+            
+            // Filtre par catégorie
+            if ($category) {
+                $articlesQuery->where('category_id', $category);
+            }
+            
+            // Filtre par date
+            if ($dateFilter) {
+                switch($dateFilter) {
+                    case 'today':
+                        $articlesQuery->whereDate('published_at', today());
+                        break;
+                    case 'week':
+                        $articlesQuery->where('published_at', '>=', now()->subWeek());
+                        break;
+                    case 'month':
+                        $articlesQuery->where('published_at', '>=', now()->subMonth());
+                        break;
+                    case 'year':
+                        $articlesQuery->where('published_at', '>=', now()->subYear());
+                        break;
+                }
+            }
+            
+            // Tri
+            switch($sortBy) {
+                case 'date':
+                    $articlesQuery->orderBy('published_at', 'desc');
+                    break;
+                case 'views':
+                    $articlesQuery->orderBy('views', 'desc');
+                    break;
+                case 'title':
+                    $articlesQuery->orderBy('title', 'asc');
+                    break;
+                case 'relevance':
+                default:
+                    $articlesQuery->orderBy('published_at', 'desc');
+                    break;
+            }
+            
+            $cacheKey = "search_articles_{$query}_{$category}_{$dateFilter}_{$sortBy}";
+            $articles = \Illuminate\Support\Facades\Cache::remember($cacheKey, 300, function () use ($articlesQuery) {
+                return $articlesQuery->with('category')->limit(50)->get();
             });
             
             $results['formations'] = $formations;
@@ -1794,7 +1844,7 @@ add_action(\'init\', \'create_portfolio_post_type\');
             $results['total'] = $formations->count() + $articles->count();
         }
         
-        return view('search', compact('query', 'results'));
+        return view('search', compact('query', 'results', 'categories', 'category', 'dateFilter', 'sortBy'));
     }
 
     public function showArticle($slug)
