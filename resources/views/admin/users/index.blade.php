@@ -15,20 +15,41 @@
     </div>
 @endif
 
-<!-- Barre de recherche -->
+<!-- Barre de recherche et filtres -->
 <div class="content-section mb-6">
-    <form action="{{ route('admin.users') }}" method="GET" class="flex gap-3">
-        <input type="text" name="search" value="{{ $search }}" 
-               placeholder="Rechercher par nom ou email..." 
-               class="input-admin flex-1">
-        <button type="submit" class="btn-primary">
-            <i class="fas fa-search mr-2"></i>Rechercher
-        </button>
-        @if($search)
-        <a href="{{ route('admin.users') }}" class="px-6 py-3 bg-gray-600 hover:bg-gray-700 rounded-lg font-semibold transition">
-            <i class="fas fa-times mr-2"></i>Réinitialiser
-        </a>
-        @endif
+    <form action="{{ route('admin.users') }}" method="GET" class="space-y-4">
+        <div class="flex flex-wrap gap-3">
+            <input type="text" name="search" value="{{ $search }}" 
+                   placeholder="Rechercher par nom, email ou téléphone..." 
+                   class="input-admin flex-1 min-w-[200px]">
+            <select name="role" class="input-admin" style="min-width: 150px;">
+                <option value="">Tous les rôles</option>
+                <option value="admin" {{ $role == 'admin' ? 'selected' : '' }}>Admin</option>
+                <option value="user" {{ $role == 'user' ? 'selected' : '' }}>Utilisateur</option>
+            </select>
+            <select name="status" class="input-admin" style="min-width: 150px;">
+                <option value="">Tous les statuts</option>
+                <option value="active" {{ $status == 'active' ? 'selected' : '' }}>Actifs</option>
+                <option value="inactive" {{ $status == 'inactive' ? 'selected' : '' }}>Inactifs</option>
+            </select>
+            <select name="sort" class="input-admin" style="min-width: 150px;">
+                <option value="created_at" {{ $sortBy == 'created_at' ? 'selected' : '' }}>Date d'inscription</option>
+                <option value="name" {{ $sortBy == 'name' ? 'selected' : '' }}>Nom</option>
+                <option value="email" {{ $sortBy == 'email' ? 'selected' : '' }}>Email</option>
+            </select>
+            <select name="order" class="input-admin" style="min-width: 120px;">
+                <option value="desc" {{ $sortOrder == 'desc' ? 'selected' : '' }}>Décroissant</option>
+                <option value="asc" {{ $sortOrder == 'asc' ? 'selected' : '' }}>Croissant</option>
+            </select>
+            <button type="submit" class="btn-primary">
+                <i class="fas fa-search mr-2"></i>Rechercher
+            </button>
+            @if($search || $role || $status)
+            <a href="{{ route('admin.users') }}" class="px-6 py-3 bg-gray-600 hover:bg-gray-700 rounded-lg font-semibold transition">
+                <i class="fas fa-times mr-2"></i>Réinitialiser
+            </a>
+            @endif
+        </div>
     </form>
 </div>
 
@@ -121,29 +142,45 @@
 </div>
 
 <!-- Statistiques -->
-<div class="grid md:grid-cols-3 gap-6 mt-6">
+<div class="grid md:grid-cols-5 gap-4 mt-6">
     <div class="stat-card">
         <div class="flex items-center justify-between mb-4">
-            <i class="fas fa-users text-4xl text-cyan-400"></i>
+            <i class="fas fa-users text-3xl text-cyan-400"></i>
         </div>
-        <div class="stat-number">{{ \App\Models\User::count() }}</div>
-        <p class="text-gray-400 mt-2">Total utilisateurs</p>
+        <div class="stat-number">{{ number_format($stats['total']) }}</div>
+        <p class="text-gray-400 mt-2 text-sm">Total utilisateurs</p>
     </div>
     
     <div class="stat-card">
         <div class="flex items-center justify-between mb-4">
-            <i class="fas fa-user-check text-4xl text-green-400"></i>
+            <i class="fas fa-user-check text-3xl text-green-400"></i>
         </div>
-        <div class="stat-number">{{ \App\Models\User::where('is_active', true)->count() }}</div>
-        <p class="text-gray-400 mt-2">Utilisateurs actifs</p>
+        <div class="stat-number">{{ number_format($stats['active']) }}</div>
+        <p class="text-gray-400 mt-2 text-sm">Actifs</p>
     </div>
     
     <div class="stat-card">
         <div class="flex items-center justify-between mb-4">
-            <i class="fas fa-shield-alt text-4xl text-purple-400"></i>
+            <i class="fas fa-user-times text-3xl text-red-400"></i>
         </div>
-        <div class="stat-number">{{ \App\Models\User::where('role', 'admin')->count() }}</div>
-        <p class="text-gray-400 mt-2">Administrateurs</p>
+        <div class="stat-number">{{ number_format($stats['inactive']) }}</div>
+        <p class="text-gray-400 mt-2 text-sm">Inactifs</p>
+    </div>
+    
+    <div class="stat-card">
+        <div class="flex items-center justify-between mb-4">
+            <i class="fas fa-shield-alt text-3xl text-purple-400"></i>
+        </div>
+        <div class="stat-number">{{ number_format($stats['admins']) }}</div>
+        <p class="text-gray-400 mt-2 text-sm">Administrateurs</p>
+    </div>
+    
+    <div class="stat-card">
+        <div class="flex items-center justify-between mb-4">
+            <i class="fas fa-user text-3xl text-blue-400"></i>
+        </div>
+        <div class="stat-number">{{ number_format($stats['users']) }}</div>
+        <p class="text-gray-400 mt-2 text-sm">Utilisateurs</p>
     </div>
 </div>
 @endsection

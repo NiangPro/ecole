@@ -58,7 +58,56 @@ class AdminController extends Controller
                 ->get();
         });
         
-        return view('admin.dashboard', compact('expiringAds'));
+        // Statistiques détaillées - Cache 5 minutes
+        $stats = Cache::remember('dashboard_stats_detailed', 300, function () {
+            $today = Carbon::today();
+            $yesterday = Carbon::yesterday();
+            $thisMonth = Carbon::now()->startOfMonth();
+            $lastMonth = Carbon::now()->subMonth()->startOfMonth();
+            $lastMonthEnd = Carbon::now()->subMonth()->endOfMonth();
+            
+            return [
+                'today' => [
+                    'visits' => Statistic::whereDate('visit_date', $today)->count(),
+                    'unique' => Statistic::whereDate('visit_date', $today)->distinct('ip_address')->count('ip_address'),
+                ],
+                'yesterday' => [
+                    'visits' => Statistic::whereDate('visit_date', $yesterday)->count(),
+                    'unique' => Statistic::whereDate('visit_date', $yesterday)->distinct('ip_address')->count('ip_address'),
+                ],
+                'thisMonth' => [
+                    'visits' => Statistic::where('visit_date', '>=', $thisMonth)->count(),
+                    'unique' => Statistic::where('visit_date', '>=', $thisMonth)->distinct('ip_address')->count('ip_address'),
+                ],
+                'lastMonth' => [
+                    'visits' => Statistic::whereBetween('visit_date', [$lastMonth, $lastMonthEnd])->count(),
+                    'unique' => Statistic::whereBetween('visit_date', [$lastMonth, $lastMonthEnd])->distinct('ip_address')->count('ip_address'),
+                ],
+                'totalArticles' => \App\Models\JobArticle::count(),
+                'publishedArticles' => \App\Models\JobArticle::where('status', 'published')->count(),
+                'draftArticles' => \App\Models\JobArticle::where('status', 'draft')->count(),
+                'totalUsers' => User::count(),
+                'activeUsers' => User::where('is_active', true)->count(),
+                'totalNewsletter' => \App\Models\Newsletter::count(),
+                'activeNewsletter' => \App\Models\Newsletter::where('is_active', true)->count(),
+                'totalCategories' => \App\Models\Category::where('is_active', true)->count(),
+                'totalAds' => \App\Models\Ad::count(),
+                'activeAds' => \App\Models\Ad::where('status', 'active')->count(),
+                'unreadMessages' => ContactMessage::where('is_read', false)->count(),
+                'recentArticles' => \App\Models\JobArticle::orderBy('created_at', 'desc')->take(5)->get(),
+                'topArticles' => \App\Models\JobArticle::where('status', 'published')->orderBy('views', 'desc')->take(5)->get(),
+            ];
+        });
+        
+        // Calculer les pourcentages de croissance
+        $stats['visitsGrowth'] = $stats['yesterday']['visits'] > 0 
+            ? round((($stats['today']['visits'] - $stats['yesterday']['visits']) / $stats['yesterday']['visits']) * 100, 1)
+            : 0;
+        $stats['monthGrowth'] = $stats['lastMonth']['visits'] > 0
+            ? round((($stats['thisMonth']['visits'] - $stats['lastMonth']['visits']) / $stats['lastMonth']['visits']) * 100, 1)
+            : 0;
+        
+        return view('admin.dashboard', compact('expiringAds', 'stats'));
     }
     
     public function profile()
@@ -283,14 +332,47 @@ class AdminController extends Controller
         }
         
         $search = $request->get('search');
-        $users = User::when($search, function($query) use ($search) {
-                        return $query->where('name', 'like', "%{$search}%")
-                                    ->orWhere('email', 'like', "%{$search}%");
-                    })
-                    ->orderBy('created_at', 'desc')
-                    ->paginate(10);
+        $role = $request->get('role', '');
+        $status = $request->get('status', '');
+        $sortBy = $request->get('sort', 'created_at');
+        $sortOrder = $request->get('order', 'desc');
         
-        return view('admin.users.index', compact('users', 'search'));
+        $query = User::query();
+        
+        // Recherche
+        if ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('phone', 'like', "%{$search}%");
+            });
+        }
+        
+        // Filtre par rôle
+        if ($role) {
+            $query->where('role', $role);
+        }
+        
+        // Filtre par statut
+        if ($status !== '') {
+            $query->where('is_active', $status === 'active' ? 1 : 0);
+        }
+        
+        // Tri
+        $query->orderBy($sortBy, $sortOrder);
+        
+        $users = $query->paginate(15)->withQueryString();
+        
+        // Statistiques pour le dashboard
+        $stats = [
+            'total' => User::count(),
+            'active' => User::where('is_active', true)->count(),
+            'inactive' => User::where('is_active', false)->count(),
+            'admins' => User::where('role', 'admin')->count(),
+            'users' => User::where('role', 'user')->count(),
+        ];
+        
+        return view('admin.users.index', compact('users', 'search', 'role', 'status', 'sortBy', 'sortOrder', 'stats'));
     }
     
     public function createUser()

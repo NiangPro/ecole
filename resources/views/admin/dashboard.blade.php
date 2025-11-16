@@ -191,17 +191,35 @@
     /* Stats Cards Modernes */
     .stats-grid-modern {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 25px;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 18px;
         margin-bottom: 40px;
+    }
+    
+    @media (max-width: 1400px) {
+        .stats-grid-modern {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+    
+    @media (max-width: 1024px) {
+        .stats-grid-modern {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    @media (max-width: 640px) {
+        .stats-grid-modern {
+            grid-template-columns: 1fr;
+        }
     }
     
     .stat-card-modern {
         background: rgba(15, 23, 42, 0.7);
         backdrop-filter: blur(20px);
         border: 2px solid rgba(6, 182, 212, 0.2);
-        border-radius: 20px;
-        padding: 30px;
+        border-radius: 16px;
+        padding: 20px;
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         position: relative;
         overflow: hidden;
@@ -232,43 +250,44 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-bottom: 20px;
+        margin-bottom: 12px;
     }
     
     .stat-card-icon {
-        width: 60px;
-        height: 60px;
-        border-radius: 16px;
+        width: 45px;
+        height: 45px;
+        border-radius: 12px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.8rem;
+        font-size: 1.3rem;
         background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2));
         border: 1px solid rgba(6, 182, 212, 0.3);
     }
     
     .stat-card-number {
         font-family: 'Poppins', sans-serif;
-        font-size: 2.8rem;
+        font-size: 1.9rem;
         font-weight: 900;
         background: linear-gradient(135deg, #06b6d4, #14b8a6);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
-        line-height: 1;
-        margin-bottom: 10px;
+        line-height: 1.2;
+        margin-bottom: 6px;
     }
     
     .stat-card-label {
         color: rgba(255, 255, 255, 0.8);
         font-weight: 600;
-        font-size: 1rem;
-        margin-bottom: 5px;
+        font-size: 0.9rem;
+        margin-bottom: 4px;
     }
     
     .stat-card-subtext {
         color: rgba(255, 255, 255, 0.5);
-        font-size: 0.85rem;
+        font-size: 0.75rem;
+        line-height: 1.3;
     }
     
     /* Content Sections Modernes */
@@ -535,39 +554,17 @@
                 <i class="fas fa-eye"></i>
             </div>
         </div>
-        @php
-            // Cache les statistiques du dashboard (5 minutes)
-            $todayVisits = \Illuminate\Support\Facades\Cache::remember('dashboard_today_visits', 300, function () {
-                return \App\Models\Statistic::whereDate('visit_date', \Carbon\Carbon::today())->count();
-            });
-            $yesterdayVisits = \Illuminate\Support\Facades\Cache::remember('dashboard_yesterday_visits', 300, function () {
-                return \App\Models\Statistic::whereDate('visit_date', \Carbon\Carbon::yesterday())->count();
-            });
-            $monthVisits = \Illuminate\Support\Facades\Cache::remember('dashboard_month_visits', 300, function () {
-                return \App\Models\Statistic::whereMonth('visit_date', \Carbon\Carbon::now()->month)->count();
-            });
-            $totalUsers = \Illuminate\Support\Facades\Cache::remember('dashboard_total_users', 300, function () {
-                return \App\Models\User::count();
-            });
-            $activeUsers = \Illuminate\Support\Facades\Cache::remember('dashboard_active_users', 300, function () {
-                return \App\Models\User::where('is_active', true)->count();
-            });
-            $totalNewsletter = \Illuminate\Support\Facades\Cache::remember('dashboard_total_newsletter', 300, function () {
-                return \App\Models\Newsletter::count();
-            });
-            $activeNewsletter = \Illuminate\Support\Facades\Cache::remember('dashboard_active_newsletter', 300, function () {
-                return \App\Models\Newsletter::where('is_active', true)->count();
-            });
-            $activeAds = \Illuminate\Support\Facades\Cache::remember('dashboard_active_ads', 300, function () {
-                return \App\Models\Ad::where('status', 'active')->count();
-            });
-            $totalAds = \Illuminate\Support\Facades\Cache::remember('dashboard_total_ads', 300, function () {
-                return \App\Models\Ad::count();
-            });
-        @endphp
-        <div class="stat-card-number">{{ number_format($todayVisits) }}</div>
+        <div class="stat-card-number">{{ number_format($stats['today']['visits']) }}</div>
         <div class="stat-card-label">Visites aujourd'hui</div>
-        <div class="stat-card-subtext">+{{ number_format($yesterdayVisits) }} hier</div>
+        <div class="stat-card-subtext">
+            @if($stats['visitsGrowth'] > 0)
+                <span style="color: #22c55e;">+{{ $stats['visitsGrowth'] }}%</span> vs hier
+            @elseif($stats['visitsGrowth'] < 0)
+                <span style="color: #ef4444;">{{ $stats['visitsGrowth'] }}%</span> vs hier
+            @else
+                Stable
+            @endif
+        </div>
     </div>
     
     <div class="stat-card-modern">
@@ -576,9 +573,17 @@
                 <i class="fas fa-chart-line"></i>
             </div>
         </div>
-        <div class="stat-card-number">{{ number_format($monthVisits) }}</div>
+        <div class="stat-card-number">{{ number_format($stats['thisMonth']['visits']) }}</div>
         <div class="stat-card-label">Visites ce mois</div>
-        <div class="stat-card-subtext">Mois en cours</div>
+        <div class="stat-card-subtext">
+            @if($stats['monthGrowth'] > 0)
+                <span style="color: #22c55e;">+{{ $stats['monthGrowth'] }}%</span> vs mois dernier
+            @elseif($stats['monthGrowth'] < 0)
+                <span style="color: #ef4444;">{{ $stats['monthGrowth'] }}%</span> vs mois dernier
+            @else
+                Stable
+            @endif
+        </div>
     </div>
     
     <div class="stat-card-modern">
@@ -587,9 +592,9 @@
                 <i class="fas fa-users"></i>
             </div>
         </div>
-        <div class="stat-card-number">{{ number_format($totalUsers) }}</div>
+        <div class="stat-card-number">{{ number_format($stats['totalUsers']) }}</div>
         <div class="stat-card-label">Utilisateurs</div>
-        <div class="stat-card-subtext">{{ number_format($activeUsers) }} actifs</div>
+        <div class="stat-card-subtext">{{ number_format($stats['activeUsers']) }} actifs</div>
     </div>
     
     <div class="stat-card-modern">
@@ -598,9 +603,9 @@
                 <i class="fas fa-envelope"></i>
             </div>
         </div>
-        <div class="stat-card-number">{{ number_format($totalNewsletter) }}</div>
+        <div class="stat-card-number">{{ number_format($stats['totalNewsletter']) }}</div>
         <div class="stat-card-label">Newsletter</div>
-        <div class="stat-card-subtext">{{ number_format($activeNewsletter) }} actifs</div>
+        <div class="stat-card-subtext">{{ number_format($stats['activeNewsletter']) }} actifs</div>
     </div>
     
     <div class="stat-card-modern">
@@ -609,11 +614,110 @@
                 <i class="fas fa-ad"></i>
             </div>
         </div>
-        <div class="stat-card-number">{{ number_format($activeAds) }}</div>
+        <div class="stat-card-number">{{ number_format($stats['activeAds']) }}</div>
         <div class="stat-card-label">Publicités actives</div>
-        <div class="stat-card-subtext">{{ number_format($totalAds) }} au total</div>
+        <div class="stat-card-subtext">{{ number_format($stats['totalAds']) }} au total</div>
+    </div>
+    
+    <div class="stat-card-modern">
+        <div class="stat-card-header">
+            <div class="stat-card-icon" style="color: #ec4899;">
+                <i class="fas fa-file-alt"></i>
+            </div>
+        </div>
+        <div class="stat-card-number">{{ number_format($stats['publishedArticles']) }}</div>
+        <div class="stat-card-label">Articles publiés</div>
+        <div class="stat-card-subtext">{{ number_format($stats['draftArticles']) }} brouillons</div>
+    </div>
+    
+    <div class="stat-card-modern">
+        <div class="stat-card-header">
+            <div class="stat-card-icon" style="color: #10b981;">
+                <i class="fas fa-folder"></i>
+            </div>
+        </div>
+        <div class="stat-card-number">{{ number_format($stats['totalCategories']) }}</div>
+        <div class="stat-card-label">Catégories actives</div>
+        <div class="stat-card-subtext">Catégories disponibles</div>
+    </div>
+    
+    @if($stats['unreadMessages'] > 0)
+    <div class="stat-card-modern" style="border: 2px solid rgba(239, 68, 68, 0.4); background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1));">
+        <div class="stat-card-header">
+            <div class="stat-card-icon" style="color: #ef4444;">
+                <i class="fas fa-envelope-open-text"></i>
+            </div>
+        </div>
+        <div class="stat-card-number">{{ number_format($stats['unreadMessages']) }}</div>
+        <div class="stat-card-label">Messages non lus</div>
+        <div class="stat-card-subtext">
+            <a href="{{ route('admin.messages') }}" style="color: #06b6d4; text-decoration: none;">Voir les messages</a>
+        </div>
+    </div>
+    @endif
+</div>
+
+@if(isset($stats['recentArticles']) && $stats['recentArticles']->count() > 0)
+<!-- Articles Récents -->
+<div class="content-section-modern mb-8">
+    <h4 class="section-title-modern">
+        <i class="fas fa-clock"></i>
+        Articles Récents
+    </h4>
+    <div style="display: grid; gap: 15px;">
+        @foreach($stats['recentArticles'] as $article)
+        <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 12px; padding: 20px; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s ease;">
+            <div style="flex: 1;">
+                <h5 style="font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 5px;">
+                    <a href="{{ route('admin.jobs.articles.edit', $article->id) }}" style="color: inherit; text-decoration: none;">{{ $article->title }}</a>
+                </h5>
+                <div style="display: flex; gap: 15px; font-size: 0.85rem; color: rgba(255, 255, 255, 0.6);">
+                    <span><i class="fas fa-folder mr-1"></i>{{ $article->category->name ?? 'Non catégorisé' }}</span>
+                    <span><i class="fas fa-eye mr-1"></i>{{ number_format($article->views) }} vues</span>
+                    <span><i class="fas fa-calendar mr-1"></i>{{ $article->created_at->format('d/m/Y') }}</span>
+                </div>
+            </div>
+            <div>
+                <span style="padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; {{ $article->status === 'published' ? 'background: rgba(34, 197, 94, 0.2); color: #22c55e;' : 'background: rgba(239, 68, 68, 0.2); color: #ef4444;' }}">
+                    {{ $article->status === 'published' ? 'Publié' : 'Brouillon' }}
+                </span>
+            </div>
+        </div>
+        @endforeach
     </div>
 </div>
+@endif
+
+@if(isset($stats['topArticles']) && $stats['topArticles']->count() > 0)
+<!-- Articles les Plus Vus -->
+<div class="content-section-modern mb-8">
+    <h4 class="section-title-modern">
+        <i class="fas fa-fire"></i>
+        Articles les Plus Vus
+    </h4>
+    <div style="display: grid; gap: 15px;">
+        @foreach($stats['topArticles'] as $article)
+        <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 12px; padding: 20px; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s ease;">
+            <div style="flex: 1;">
+                <h5 style="font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 5px;">
+                    <a href="{{ route('admin.jobs.articles.edit', $article->id) }}" style="color: inherit; text-decoration: none;">{{ $article->title }}</a>
+                </h5>
+                <div style="display: flex; gap: 15px; font-size: 0.85rem; color: rgba(255, 255, 255, 0.6);">
+                    <span><i class="fas fa-folder mr-1"></i>{{ $article->category->name ?? 'Non catégorisé' }}</span>
+                    <span><i class="fas fa-eye mr-1" style="color: #f59e0b;"></i><strong style="color: #f59e0b;">{{ number_format($article->views) }}</strong> vues</span>
+                    <span><i class="fas fa-calendar mr-1"></i>{{ $article->published_at ? $article->published_at->format('d/m/Y') : $article->created_at->format('d/m/Y') }}</span>
+                </div>
+            </div>
+            <div>
+                <span style="padding: 6px 12px; background: rgba(245, 158, 11, 0.2); color: #f59e0b; border-radius: 6px; font-size: 0.75rem; font-weight: 600;">
+                    🔥 Top
+                </span>
+            </div>
+        </div>
+        @endforeach
+    </div>
+</div>
+@endif
 
 <!-- Graphique des visites - Ligne entière -->
 <div class="content-section-modern mb-8" style="width: 100%;">
