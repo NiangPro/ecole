@@ -92,6 +92,8 @@
 <body class="bg-black text-white">
     @include('partials.navigation')
     
+    @include('partials.schema-org')
+    
     @yield('content')
     
     @include('partials.footer')
