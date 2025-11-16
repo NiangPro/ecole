@@ -47,7 +47,7 @@
 
 <!-- Barre de recherche et filtres -->
 <div class="content-section mb-6">
-    <form action="{{ route('admin.comments.index') }}" method="GET" class="space-y-4">
+    <form action="{{ route('admin.comments.index') }}" method="GET" class="space-y-3">
         <div class="flex flex-wrap gap-3">
             <input type="text" name="search" value="{{ $search }}" 
                    placeholder="Rechercher par nom, email, téléphone ou contenu..." 
@@ -67,6 +67,8 @@
                 <option value="desc" {{ $sortOrder == 'desc' ? 'selected' : '' }}>Décroissant</option>
                 <option value="asc" {{ $sortOrder == 'asc' ? 'selected' : '' }}>Croissant</option>
             </select>
+        </div>
+        <div class="flex gap-3">
             <button type="submit" class="btn-primary">
                 <i class="fas fa-search mr-2"></i>Rechercher
             </button>
@@ -181,15 +183,17 @@
                     </form>
                     @endif
                     
-                    <div class="flex gap-2">
+                    <div class="flex flex-col gap-2">
                         @if($comment->phone)
-                        <button onclick="openWhatsApp({{ $comment->id }})" class="flex-1 px-3 py-2 bg-green-500/20 text-green-400 rounded-lg hover:bg-green-500/30 transition text-sm font-semibold" title="Répondre par WhatsApp">
+                        <button onclick="openWhatsApp({{ $comment->id }})" class="w-full px-4 py-2 bg-green-500/20 text-green-400 rounded-lg hover:bg-green-500/30 transition text-sm font-semibold flex items-center justify-center gap-2" title="Répondre par WhatsApp">
                             <i class="fab fa-whatsapp"></i>
+                            <span>WhatsApp</span>
                         </button>
                         @endif
                         
-                        <button onclick="openEmail({{ $comment->id }})" class="flex-1 px-3 py-2 bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/30 transition text-sm font-semibold" title="Répondre par Email">
+                        <button onclick="openEmail({{ $comment->id }})" class="w-full px-4 py-2 bg-blue-500/20 text-blue-400 rounded-lg hover:bg-blue-500/30 transition text-sm font-semibold flex items-center justify-center gap-2" title="Répondre par Email">
                             <i class="fas fa-envelope"></i>
+                            <span>Email</span>
                         </button>
                     </div>
                     

@@ -1890,7 +1890,19 @@ add_action(\'init\', \'create_portfolio_post_type\');
         $comments = \Illuminate\Support\Facades\Cache::remember("article_comments_{$article->id}", 900, function () use ($article) {
             return $article->comments()->with(['user', 'replies.user'])->get();
         });
+
+        // Cache les 3 derniers commentaires approuvés (15 minutes)
+        $latestComments = \Illuminate\Support\Facades\Cache::remember("article_latest_comments_{$article->id}", 900, function () use ($article) {
+            return \App\Models\Comment::where('commentable_type', 'App\\Models\\JobArticle')
+                ->where('commentable_id', $article->id)
+                ->where('status', 'approved')
+                ->whereNull('parent_id')
+                ->with('user')
+                ->orderBy('created_at', 'desc')
+                ->take(3)
+                ->get();
+        });
         
-        return view('emplois.article', compact('article', 'relatedArticles', 'sidebarAds', 'comments'));
+        return view('emplois.article', compact('article', 'relatedArticles', 'sidebarAds', 'comments', 'latestComments'));
     }
 }

@@ -69,6 +69,34 @@
         </form>
     </div>
 
+    <!-- 3 Derniers commentaires approuvés -->
+    @if(isset($latestComments) && $latestComments->count() > 0)
+    <div style="margin-top: 25px; padding-top: 25px; border-top: 2px solid rgba(6, 182, 212, 0.2);">
+        <h4 style="font-size: 1.1rem; font-weight: 800; color: #06b6d4; margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+            <i class="fas fa-comments"></i>
+            Derniers commentaires
+        </h4>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+            @foreach($latestComments as $latestComment)
+            <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 12px; padding: 12px;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                    <div style="width: 28px; height: 28px; background: linear-gradient(135deg, #06b6d4, #14b8a6); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #fff; font-size: 0.75rem; flex-shrink: 0;">
+                        {{ strtoupper(substr($latestComment->author_name, 0, 1)) }}
+                    </div>
+                    <div style="flex: 1; min-width: 0;">
+                        <h5 style="font-size: 0.8rem; font-weight: 700; color: #fff; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $latestComment->author_name }}</h5>
+                        <p style="font-size: 0.65rem; color: rgba(255, 255, 255, 0.6);">
+                            <i class="fas fa-clock mr-1"></i>{{ $latestComment->created_at->diffForHumans() }}
+                        </p>
+                    </div>
+                </div>
+                <p style="color: rgba(255, 255, 255, 0.85); line-height: 1.4; font-size: 0.8rem; word-wrap: break-word; margin: 0;">{!! nl2br(e($latestComment->content)) !!}</p>
+            </div>
+            @endforeach
+        </div>
+    </div>
+    @endif
+
     <!-- Liste des commentaires -->
     @if($comments->count() > 0)
     <div class="comments-list" style="space-y: 20px;">
