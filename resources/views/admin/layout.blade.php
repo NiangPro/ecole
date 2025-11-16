@@ -453,9 +453,13 @@
                     <span class="ml-auto px-2 py-1 bg-red-500 text-white text-xs rounded-full">{{ $unreadCount }}</span>
                 @endif
             </a>
-            <a href="{{ route('admin.adsense') }}" class="sidebar-item {{ request()->routeIs('admin.adsense') ? 'active' : '' }}">
+            <a href="{{ route('admin.adsense') }}" class="sidebar-item {{ request()->routeIs('admin.adsense*') ? 'active' : '' }}">
                 <i class="fab fa-google text-xl"></i>
                 <span>Google AdSense</span>
+            </a>
+            <a href="{{ route('admin.backups') }}" class="sidebar-item {{ request()->routeIs('admin.backups*') ? 'active' : '' }}">
+                <i class="fas fa-database text-xl"></i>
+                <span>Sauvegardes</span>
             </a>
             <a href="{{ route('admin.ads.index') }}" class="sidebar-item {{ request()->routeIs('admin.ads.*') ? 'active' : '' }}">
                 <i class="fas fa-ad text-xl"></i>

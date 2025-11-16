@@ -555,4 +555,185 @@ class AdminController extends Controller
         session()->forget(['admin_logged_in', 'admin_email']);
         return redirect()->route('admin.login');
     }
+    
+    public function backups()
+    {
+        if (!session('admin_logged_in')) {
+            return redirect()->route('admin.login');
+        }
+        
+        $backupsPath = storage_path('app/backups');
+        $backups = [];
+        
+        if (is_dir($backupsPath)) {
+            $files = glob($backupsPath . '/backup_*.sql.gz');
+            foreach ($files as $file) {
+                $backups[] = [
+                    'filename' => basename($file),
+                    'path' => $file,
+                    'size' => filesize($file),
+                    'created_at' => date('Y-m-d H:i:s', filemtime($file)),
+                ];
+            }
+            
+            // Trier par date (plus récent en premier)
+            usort($backups, function($a, $b) {
+                return strtotime($b['created_at']) - strtotime($a['created_at']);
+            });
+        }
+        
+        return view('admin.backups', compact('backups'));
+    }
+    
+    public function downloadBackup($filename)
+    {
+        if (!session('admin_logged_in')) {
+            return redirect()->route('admin.login');
+        }
+        
+        $path = storage_path('app/backups/' . $filename);
+        
+        if (!file_exists($path) || !preg_match('/^backup_.*\.sql\.gz$/', $filename)) {
+            return redirect()->route('admin.backups')->with('error', 'Fichier de sauvegarde non trouvé');
+        }
+        
+        return response()->download($path);
+    }
+    
+    public function deleteBackup($filename)
+    {
+        if (!session('admin_logged_in')) {
+            return redirect()->route('admin.login');
+        }
+        
+        $path = storage_path('app/backups/' . $filename);
+        
+        if (!file_exists($path) || !preg_match('/^backup_.*\.sql\.gz$/', $filename)) {
+            return redirect()->route('admin.backups')->with('error', 'Fichier de sauvegarde non trouvé');
+        }
+        
+        unlink($path);
+        
+        return redirect()->route('admin.backups')->with('success', 'Sauvegarde supprimée avec succès!');
+    }
+    
+    public function createBackup()
+    {
+        if (!session('admin_logged_in')) {
+            return redirect()->route('admin.login');
+        }
+        
+        \Artisan::call('backup:database');
+        
+        return redirect()->route('admin.backups')->with('success', 'Sauvegarde créée avec succès!');
+    }
+    
+    public function adsenseCheck()
+    {
+        if (!session('admin_logged_in')) {
+            return redirect()->route('admin.login');
+        }
+        
+        // Vérifier toutes les exigences AdSense
+        $checks = [
+            'content_quality' => [
+                'title' => 'Qualité du contenu',
+                'status' => $this->checkContentQuality(),
+                'message' => 'Le site doit contenir suffisamment de contenu original et de qualité (minimum 30 articles publiés)',
+            ],
+            'pages_legal' => [
+                'title' => 'Pages légales (Politique de confidentialité, Mentions légales)',
+                'status' => $this->checkLegalPages(),
+                'message' => 'Les pages légales doivent être accessibles et complètes',
+            ],
+            'navigation' => [
+                'title' => 'Navigation claire',
+                'status' => true,
+                'message' => 'La navigation doit être claire et intuitive',
+            ],
+            'mobile_friendly' => [
+                'title' => 'Responsive/Mobile-friendly',
+                'status' => true,
+                'message' => 'Le site doit être optimisé pour mobile',
+            ],
+            'contact_page' => [
+                'title' => 'Page de contact',
+                'status' => $this->checkContactPage(),
+                'message' => 'Une page de contact doit être disponible',
+            ],
+            'about_page' => [
+                'title' => 'Page À propos',
+                'status' => $this->checkAboutPage(),
+                'message' => 'Une page À propos aide à établir la crédibilité',
+            ],
+            'ads_txt' => [
+                'title' => 'Fichier ads.txt',
+                'status' => $this->checkAdsTxt(),
+                'message' => 'Le fichier ads.txt doit être présent à la racine',
+            ],
+            'sitemap' => [
+                'title' => 'Sitemap.xml',
+                'status' => $this->checkSitemap(),
+                'message' => 'Un sitemap aide les moteurs de recherche à indexer le site',
+            ],
+            'robots_txt' => [
+                'title' => 'Robots.txt',
+                'status' => $this->checkRobotsTxt(),
+                'message' => 'Le fichier robots.txt doit être présent',
+            ],
+        ];
+        
+        $score = 0;
+        $total = 0;
+        foreach ($checks as $check) {
+            if ($check['status'] !== null) {
+                $total++;
+                if ($check['status']) {
+                    $score++;
+                }
+            }
+        }
+        
+        $percentage = $total > 0 ? round(($score / $total) * 100) : 0;
+        
+        return view('admin.adsense-check', compact('checks', 'score', 'total', 'percentage'));
+    }
+    
+    private function checkContentQuality()
+    {
+        $articlesCount = \App\Models\JobArticle::where('status', 'published')->count();
+        return $articlesCount >= 30;
+    }
+    
+    private function checkLegalPages()
+    {
+        $privacyExists = file_exists(resource_path('views/privacy-policy.blade.php'));
+        $legalExists = file_exists(resource_path('views/legal.blade.php'));
+        return $privacyExists && $legalExists;
+    }
+    
+    private function checkContactPage()
+    {
+        return \Illuminate\Support\Facades\Route::has('contact');
+    }
+    
+    private function checkAboutPage()
+    {
+        return file_exists(resource_path('views/about.blade.php')) || \Illuminate\Support\Facades\Route::has('about');
+    }
+    
+    private function checkAdsTxt()
+    {
+        return file_exists(public_path('ads.txt'));
+    }
+    
+    private function checkSitemap()
+    {
+        return file_exists(public_path('sitemap.xml'));
+    }
+    
+    private function checkRobotsTxt()
+    {
+        return file_exists(public_path('robots.txt'));
+    }
 }

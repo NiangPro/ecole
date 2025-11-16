@@ -1,7 +1,12 @@
 @extends('admin.layout')
 
 @section('content')
-<h3 class="text-3xl font-bold mb-8">Configuration Google AdSense</h3>
+<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+    <h3 class="text-3xl font-bold">Configuration Google AdSense</h3>
+    <a href="{{ route('admin.adsense.check') }}" class="btn-primary">
+        <i class="fas fa-check-circle mr-2"></i>Vérifier l'éligibilité
+    </a>
+</div>
 
 @if(session('success'))
     <div class="bg-green-500/10 border border-green-500/30 text-green-400 px-6 py-4 rounded-lg mb-6 flex items-center gap-3">

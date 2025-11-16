@@ -1,0 +1,19 @@
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://niangprogrammeur.com/sitemap.xml
+Sitemap: http://127.0.0.1:8000/sitemap.xml
+
+# Blocage des dossiers sensibles
+Disallow: /admin/
+Disallow: /storage/
+Disallow: /vendor/
+Disallow: /*.json$
+Disallow: /*.php$
+
+# Autoriser les fichiers CSS et JS
+Allow: /css/
+Allow: /js/
+Allow: /images/
+

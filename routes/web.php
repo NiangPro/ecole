@@ -54,6 +54,11 @@ Route::get('/admin/statistics', [App\Http\Controllers\AdminController::class, 's
 Route::post('/admin/statistics/truncate', [App\Http\Controllers\AdminController::class, 'truncateStatistics'])->name('admin.statistics.truncate');
 Route::get('/admin/adsense', [App\Http\Controllers\AdminController::class, 'adsense'])->name('admin.adsense');
 Route::post('/admin/adsense', [App\Http\Controllers\AdminController::class, 'updateAdsense'])->name('admin.adsense.update');
+Route::get('/admin/adsense/check', [App\Http\Controllers\AdminController::class, 'adsenseCheck'])->name('admin.adsense.check');
+Route::get('/admin/backups', [App\Http\Controllers\AdminController::class, 'backups'])->name('admin.backups');
+Route::post('/admin/backups/create', [App\Http\Controllers\AdminController::class, 'createBackup'])->name('admin.backups.create');
+Route::get('/admin/backups/download/{filename}', [App\Http\Controllers\AdminController::class, 'downloadBackup'])->name('admin.backups.download');
+Route::delete('/admin/backups/{filename}', [App\Http\Controllers\AdminController::class, 'deleteBackup'])->name('admin.backups.delete');
 Route::get('/admin/users', [App\Http\Controllers\AdminController::class, 'users'])->name('admin.users');
 Route::get('/admin/users/create', [App\Http\Controllers\AdminController::class, 'createUser'])->name('admin.users.create');
 Route::post('/admin/users', [App\Http\Controllers\AdminController::class, 'storeUser'])->name('admin.users.store');
