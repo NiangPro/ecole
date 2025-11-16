@@ -351,7 +351,7 @@
                             <div class="modern-sidebar-ad-content">
                                 <h4 class="modern-sidebar-ad-title">{{ $ad->name }}</h4>
                                 @if($ad->description)
-                                <p class="modern-sidebar-ad-description">{{ \Illuminate\Support\Str::limit($ad->description, 80) }}</p>
+                                <p class="modern-sidebar-ad-description">{{ $ad->description }}</p>
                                 @endif
                                 <span class="modern-sidebar-ad-cta">Découvrir <i class="fas fa-arrow-right"></i></span>
                             </div>
@@ -435,7 +435,8 @@
     .modern-sidebar-ad-image-wrapper {
         position: relative;
         width: 100%;
-        height: 450px;
+        min-height: 450px;
+        height: auto;
         overflow: hidden;
     }
     
@@ -456,10 +457,11 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: linear-gradient(180deg, transparent 0%, rgba(15, 23, 42, 0.8) 60%, rgba(15, 23, 42, 0.95) 100%);
+        background: linear-gradient(180deg, transparent 0%, rgba(15, 23, 42, 0.8) 50%, rgba(15, 23, 42, 0.95) 100%);
         display: flex;
         align-items: flex-end;
-        padding: 20px;
+        padding: 25px;
+        min-height: 100%;
     }
     
     .modern-sidebar-ad-content {
@@ -476,10 +478,13 @@
     }
     
     .modern-sidebar-ad-description {
-        font-size: 0.85rem;
-        color: rgba(255, 255, 255, 0.8);
-        margin-bottom: 12px;
-        line-height: 1.5;
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.9);
+        margin-bottom: 15px;
+        line-height: 1.6;
+        max-height: none;
+        overflow: visible;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
     }
     
     .modern-sidebar-ad-cta {
