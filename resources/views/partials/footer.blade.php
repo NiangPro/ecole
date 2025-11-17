@@ -6,6 +6,10 @@
         overflow: hidden;
     }
     
+    body:not(.dark-mode) .footer-modern {
+        background: linear-gradient(180deg, rgba(248, 250, 252, 0.95) 0%, rgba(241, 245, 249, 1) 100%) !important;
+    }
+    
     .footer-modern::before {
         content: '';
         position: absolute;
@@ -140,10 +144,25 @@
         transition: all 0.3s ease;
     }
     
+    body:not(.dark-mode) .newsletter-input {
+        background: rgba(255, 255, 255, 0.9) !important;
+        color: rgba(30, 41, 59, 0.9) !important;
+        border-color: rgba(6, 182, 212, 0.3) !important;
+    }
+    
     .newsletter-input:focus {
         border-color: #06b6d4;
         background: rgba(6, 182, 212, 0.1);
         box-shadow: 0 0 20px rgba(6, 182, 212, 0.2);
+    }
+    
+    body:not(.dark-mode) .newsletter-input:focus {
+        background: rgba(255, 255, 255, 1) !important;
+        box-shadow: 0 0 20px rgba(6, 182, 212, 0.15) !important;
+    }
+    
+    body:not(.dark-mode) .newsletter-input::placeholder {
+        color: rgba(30, 41, 59, 0.5) !important;
     }
     
     .newsletter-btn {
@@ -210,6 +229,14 @@
         font-size: 0.875rem;
     }
     
+    body:not(.dark-mode) .copyright-text {
+        color: rgba(30, 41, 59, 0.7) !important;
+    }
+    
+    body:not(.dark-mode) .copyright-text strong {
+        color: rgba(30, 41, 59, 0.9) !important;
+    }
+    
     .adsense-notice {
         background: rgba(6, 182, 212, 0.05);
         border: 1px solid rgba(6, 182, 212, 0.2);
@@ -219,6 +246,40 @@
         text-align: center;
         font-size: 0.75rem;
         color: #9ca3af;
+    }
+    
+    body:not(.dark-mode) .adsense-notice {
+        background: rgba(6, 182, 212, 0.05) !important;
+        color: rgba(30, 41, 59, 0.7) !important;
+    }
+    
+    /* Force text colors in light mode for footer */
+    body:not(.dark-mode) .footer-link {
+        color: rgba(30, 41, 59, 0.7) !important;
+    }
+    
+    body:not(.dark-mode) .footer-link:hover {
+        color: #06b6d4 !important;
+    }
+    
+    body:not(.dark-mode) .text-gray-400 {
+        color: rgba(30, 41, 59, 0.6) !important;
+    }
+    
+    body:not(.dark-mode) .legal-link {
+        color: rgba(30, 41, 59, 0.7) !important;
+    }
+    
+    body:not(.dark-mode) .text-gray-700 {
+        color: rgba(30, 41, 59, 0.5) !important;
+    }
+    
+    body:not(.dark-mode) .text-green-400 {
+        color: rgba(34, 197, 94, 0.8) !important;
+    }
+    
+    body:not(.dark-mode) .text-red-400 {
+        color: rgba(239, 68, 68, 0.8) !important;
     }
     
     @media (max-width: 768px) {

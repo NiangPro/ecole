@@ -19,6 +19,11 @@
         overflow: hidden;
     }
     
+    body:not(.dark-mode) .jobs-hero {
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.4) 0%, rgba(51, 65, 85, 0.5) 100%),
+                    url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80') center/cover no-repeat !important;
+    }
+    
     .jobs-hero::before {
         content: '';
         position: absolute;
@@ -31,6 +36,13 @@
             radial-gradient(circle at 80% 70%, rgba(20, 184, 166, 0.25), transparent 50%),
             rgba(15, 23, 42, 0.7);
         pointer-events: none;
+    }
+    
+    body:not(.dark-mode) .jobs-hero::before {
+        background: 
+            radial-gradient(circle at 20% 30%, rgba(6, 182, 212, 0.2), transparent 50%),
+            radial-gradient(circle at 80% 70%, rgba(20, 184, 166, 0.2), transparent 50%),
+            rgba(30, 41, 59, 0.6) !important;
     }
     
     .jobs-hero h1 {
@@ -54,12 +66,18 @@
     
     .jobs-hero p {
         font-size: 1.4rem;
-        color: rgba(255, 255, 255, 0.85);
+        color: rgba(255, 255, 255, 0.95);
         max-width: 800px;
         margin: 0 auto;
         position: relative;
         z-index: 1;
         line-height: 1.8;
+        text-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+    }
+    
+    body:not(.dark-mode) .jobs-hero p {
+        color: rgba(255, 255, 255, 0.95) !important;
+        text-shadow: 0 1px 5px rgba(0, 0, 0, 0.3) !important;
     }
     
     .jobs-grid {
@@ -82,6 +100,12 @@
         text-decoration: none;
         display: block;
         height: 100%;
+    }
+    
+    body:not(.dark-mode) .job-card {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.95)) !important;
+        border-color: rgba(6, 182, 212, 0.25) !important;
+        box-shadow: 0 10px 40px rgba(6, 182, 212, 0.1) !important;
     }
     
     .job-card::before {
@@ -152,11 +176,19 @@
         line-height: 1.3;
     }
     
+    body:not(.dark-mode) .job-card h3 {
+        color: rgba(30, 41, 59, 0.9) !important;
+    }
+    
     .job-card p {
         color: rgba(255, 255, 255, 0.75);
         line-height: 1.8;
         margin-bottom: 25px;
         font-size: 1rem;
+    }
+    
+    body:not(.dark-mode) .job-card p {
+        color: rgba(30, 41, 59, 0.7) !important;
     }
     
     .job-badge {
@@ -195,6 +227,10 @@
         border-top: 2px solid rgba(6, 182, 212, 0.2);
     }
     
+    body:not(.dark-mode) .stats-section {
+        background: linear-gradient(135deg, rgba(248, 250, 252, 0.6), rgba(241, 245, 249, 0.6)) !important;
+    }
+    
     .stats-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -210,6 +246,12 @@
         border-radius: 20px;
         border: 1px solid rgba(6, 182, 212, 0.2);
         transition: all 0.3s ease;
+    }
+    
+    body:not(.dark-mode) .stat-card {
+        background: rgba(255, 255, 255, 0.9) !important;
+        border-color: rgba(6, 182, 212, 0.25) !important;
+        box-shadow: 0 10px 40px rgba(6, 182, 212, 0.1) !important;
     }
     
     .stat-card:hover {
@@ -232,6 +274,10 @@
         color: rgba(255, 255, 255, 0.8);
         font-size: 1.1rem;
         font-weight: 600;
+    }
+    
+    body:not(.dark-mode) .stat-label {
+        color: rgba(30, 41, 59, 0.7) !important;
     }
     
     .recent-articles {
@@ -266,6 +312,12 @@
         display: block;
         position: relative;
         height: 100%;
+    }
+    
+    body:not(.dark-mode) .article-mini-card {
+        background: rgba(255, 255, 255, 0.9) !important;
+        border-color: rgba(6, 182, 212, 0.25) !important;
+        box-shadow: 0 10px 40px rgba(6, 182, 212, 0.1) !important;
     }
     
     .article-mini-card-image-wrapper {
@@ -329,6 +381,19 @@
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
+    }
+    
+    body:not(.dark-mode) .article-mini-card p {
+        color: rgba(30, 41, 59, 0.7) !important;
+    }
+    
+    body:not(.dark-mode) .article-mini-card h4 {
+        color: rgba(255, 255, 255, 0.95) !important;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7) !important;
+    }
+    
+    body:not(.dark-mode) .text-gray-400 {
+        color: rgba(30, 41, 59, 0.6) !important;
     }
     
     .article-mini-card:hover {

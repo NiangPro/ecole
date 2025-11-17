@@ -81,6 +81,10 @@
         padding: 60px 20px 40px;
     }
     
+    body:not(.dark-mode) .article-hero-overlay {
+        background: linear-gradient(to bottom, transparent 0%, rgba(30, 41, 59, 0.7) 100%) !important;
+    }
+    
     .article-hero-content {
         max-width: 1200px;
         width: 100%;
@@ -107,6 +111,12 @@
         color: #fff;
         margin-bottom: 15px;
         line-height: 1.2;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+    
+    body:not(.dark-mode) .article-hero-title {
+        color: rgba(255, 255, 255, 0.95) !important;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5) !important;
     }
     
     .article-hero-meta {
@@ -116,6 +126,11 @@
         flex-wrap: wrap;
         color: rgba(255, 255, 255, 0.8);
         font-size: 0.95rem;
+    }
+    
+    body:not(.dark-mode) .article-hero-meta {
+        color: rgba(255, 255, 255, 0.9) !important;
+        text-shadow: 0 1px 5px rgba(0, 0, 0, 0.3) !important;
     }
     
     .article-hero-meta i {
@@ -138,6 +153,13 @@
         line-height: 1.9;
         font-size: 1.1rem;
         color: rgba(255, 255, 255, 0.9);
+    }
+    
+    body:not(.dark-mode) .article-content {
+        background: rgba(255, 255, 255, 0.9) !important;
+        border-color: rgba(6, 182, 212, 0.25) !important;
+        color: rgba(30, 41, 59, 0.9) !important;
+        box-shadow: 0 10px 40px rgba(6, 182, 212, 0.1) !important;
     }
     
     .article-content img {
@@ -227,6 +249,15 @@
         overflow: hidden;
         transition: all 0.3s ease;
         text-decoration: none;
+    }
+    
+    body:not(.dark-mode) .related-card {
+        background: rgba(255, 255, 255, 0.9) !important;
+        border-color: rgba(6, 182, 212, 0.25) !important;
+        box-shadow: 0 10px 40px rgba(6, 182, 212, 0.1) !important;
+    }
+    
+    .related-card-image {
         display: block;
     }
     
@@ -257,6 +288,10 @@
         overflow: hidden;
     }
     
+    body:not(.dark-mode) .related-card-title {
+        color: rgba(30, 41, 59, 0.9) !important;
+    }
+    
     .related-card-meta {
         display: flex;
         align-items: center;
@@ -264,6 +299,10 @@
         color: rgba(255, 255, 255, 0.6);
         font-size: 0.85rem;
         margin-top: 10px;
+    }
+    
+    body:not(.dark-mode) .related-card-meta {
+        color: rgba(30, 41, 59, 0.6) !important;
     }
     
     .back-button {
@@ -285,6 +324,14 @@
         background: rgba(6, 182, 212, 0.2);
         border-color: rgba(6, 182, 212, 0.5);
         transform: translateX(-5px);
+    }
+    
+    .article-hero-fallback {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+    }
+    
+    body:not(.dark-mode) .article-hero-fallback {
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.4) 0%, rgba(51, 65, 85, 0.5) 50%, rgba(30, 41, 59, 0.4) 100%) !important;
     }
     
     @media (max-width: 768px) {
@@ -322,7 +369,7 @@
     </div>
 </div>
 @else
-<div style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); padding: 100px 20px 60px; text-align: center;">
+<div class="article-hero-fallback" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); padding: 100px 20px 60px; text-align: center;">
     <span class="article-hero-category" style="display: inline-block; margin-bottom: 20px;">
         <i class="fas fa-folder mr-2"></i>{{ $article->category->name }}
     </span>
@@ -445,6 +492,12 @@
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     }
     
+    body:not(.dark-mode) .modern-sidebar-ad {
+        background: rgba(255, 255, 255, 0.9) !important;
+        border-color: rgba(6, 182, 212, 0.25) !important;
+        box-shadow: 0 10px 30px rgba(6, 182, 212, 0.1) !important;
+    }
+    
     .modern-sidebar-ad:hover {
         transform: translateY(-5px);
         border-color: rgba(6, 182, 212, 0.6);
@@ -487,6 +540,10 @@
         align-items: flex-end;
         padding: 25px;
         min-height: 100%;
+    }
+    
+    body:not(.dark-mode) .modern-sidebar-ad-overlay {
+        background: linear-gradient(180deg, transparent 0%, rgba(30, 41, 59, 0.6) 50%, rgba(30, 41, 59, 0.8) 100%) !important;
     }
     
     .modern-sidebar-ad-content {
@@ -558,6 +615,15 @@
         overflow: hidden;
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         text-decoration: none;
+    }
+    
+    body:not(.dark-mode) .related-card-modern {
+        background: rgba(255, 255, 255, 0.9) !important;
+        border-color: rgba(6, 182, 212, 0.25) !important;
+        box-shadow: 0 10px 40px rgba(6, 182, 212, 0.1) !important;
+    }
+    
+    .related-card-modern-link {
         color: inherit;
         display: block;
     }
@@ -629,6 +695,10 @@
         overflow: hidden;
     }
     
+    body:not(.dark-mode) .related-card-modern-title {
+        color: rgba(30, 41, 59, 0.9) !important;
+    }
+    
     .related-card-modern-meta {
         display: flex;
         align-items: center;
@@ -637,8 +707,51 @@
         font-size: 0.85rem;
     }
     
+    body:not(.dark-mode) .related-card-modern-meta {
+        color: rgba(30, 41, 59, 0.6) !important;
+    }
+    
     .related-card-modern-meta i {
         color: #06b6d4;
+    }
+    
+    body:not(.dark-mode) .related-articles-title {
+        -webkit-text-fill-color: transparent !important;
+    }
+    
+    body:not(.dark-mode) .related-articles-full {
+        border-top-color: rgba(6, 182, 212, 0.25) !important;
+    }
+    
+    body:not(.dark-mode) .back-button {
+        background: rgba(6, 182, 212, 0.1) !important;
+        border-color: rgba(6, 182, 212, 0.3) !important;
+    }
+    
+    body:not(.dark-mode) .back-button:hover {
+        background: rgba(6, 182, 212, 0.15) !important;
+    }
+    
+    /* Force text colors in light mode */
+    body:not(.dark-mode) .article-content h2,
+    body:not(.dark-mode) .article-content h3,
+    body:not(.dark-mode) .article-content p,
+    body:not(.dark-mode) .article-content li,
+    body:not(.dark-mode) .article-content ul,
+    body:not(.dark-mode) .article-content ol {
+        color: rgba(30, 41, 59, 0.9) !important;
+    }
+    
+    body:not(.dark-mode) .article-content h2 {
+        color: #06b6d4 !important;
+    }
+    
+    body:not(.dark-mode) .article-content h3 {
+        color: #14b8a6 !important;
+    }
+    
+    body:not(.dark-mode) .article-content strong {
+        color: #06b6d4 !important;
     }
     
     @media (max-width: 1400px) {

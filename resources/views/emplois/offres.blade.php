@@ -19,6 +19,10 @@
         overflow: hidden;
     }
     
+    body:not(.dark-mode) .offers-hero {
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.4) 0%, rgba(51, 65, 85, 0.5) 50%, rgba(30, 41, 59, 0.4) 100%) !important;
+    }
+    
     .offers-hero::before {
         content: '';
         position: absolute;
@@ -61,9 +65,15 @@
     
     .offers-hero p {
         font-size: 1.3rem;
-        color: rgba(255, 255, 255, 0.85);
+        color: rgba(255, 255, 255, 0.95);
         line-height: 1.8;
         font-weight: 400;
+        text-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+    }
+    
+    body:not(.dark-mode) .offers-hero p {
+        color: rgba(255, 255, 255, 0.95) !important;
+        text-shadow: 0 1px 5px rgba(0, 0, 0, 0.3) !important;
     }
     
     .offers-container {
@@ -91,6 +101,12 @@
         height: 100%;
         position: relative;
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    }
+    
+    body:not(.dark-mode) .article-card {
+        background: rgba(255, 255, 255, 0.9) !important;
+        border-color: rgba(6, 182, 212, 0.25) !important;
+        box-shadow: 0 10px 40px rgba(6, 182, 212, 0.1) !important;
     }
     
     .article-card::before {
@@ -188,6 +204,11 @@
         transition: all 0.3s ease;
     }
     
+    body:not(.dark-mode) .article-card-title {
+        color: rgba(255, 255, 255, 0.95) !important;
+        text-shadow: 0 2px 15px rgba(0, 0, 0, 0.7) !important;
+    }
+    
     .article-card:hover .article-card-title {
         text-shadow: 0 4px 20px rgba(6, 182, 212, 0.8);
     }
@@ -215,6 +236,10 @@
         color: rgba(255, 255, 255, 0.6);
         font-size: 0.9rem;
         flex-wrap: wrap;
+    }
+    
+    body:not(.dark-mode) .article-card-meta {
+        color: rgba(30, 41, 59, 0.6) !important;
     }
     
     .article-card-meta i {
@@ -252,6 +277,11 @@
         backdrop-filter: blur(20px);
     }
     
+    body:not(.dark-mode) .no-articles {
+        background: rgba(255, 255, 255, 0.9) !important;
+        border-color: rgba(6, 182, 212, 0.25) !important;
+    }
+    
     .no-articles i {
         font-size: 6rem;
         color: rgba(6, 182, 212, 0.4);
@@ -280,6 +310,10 @@
     .no-articles p {
         color: rgba(255, 255, 255, 0.7);
         font-size: 1.2rem;
+    }
+    
+    body:not(.dark-mode) .no-articles p {
+        color: rgba(30, 41, 59, 0.7) !important;
     }
     
     /* Pagination moderne */
@@ -319,6 +353,13 @@
         font-size: 0.95rem;
         transition: all 0.3s ease;
         backdrop-filter: blur(10px);
+    }
+    
+    body:not(.dark-mode) .pagination a,
+    body:not(.dark-mode) .pagination span {
+        background: rgba(255, 255, 255, 0.9) !important;
+        border-color: rgba(6, 182, 212, 0.25) !important;
+        color: rgba(30, 41, 59, 0.8) !important;
     }
     
     .pagination a:hover {
