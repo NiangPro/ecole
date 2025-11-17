@@ -155,7 +155,7 @@
 @endsection
 
 @section('content')
-<section class="py-20 relative overflow-hidden pt-32">
+<section class="py-20 relative overflow-hidden pt-8">
     <div class="container mx-auto px-6">
         <!-- Breadcrumb -->
         <div class="mb-8">
