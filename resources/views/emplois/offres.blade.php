@@ -26,10 +26,29 @@
         text-align: center;
         position: relative;
         overflow: hidden;
+        background-attachment: fixed;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    }
+    
+    /* Si la catégorie a une image, l'utiliser comme background */
+    .offers-hero.has-category-image {
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.9) 50%, rgba(15, 23, 42, 0.85) 100%);
     }
     
     body:not(.dark-mode) .offers-hero {
         background: linear-gradient(135deg, rgba(30, 41, 59, 0.4) 0%, rgba(51, 65, 85, 0.5) 50%, rgba(30, 41, 59, 0.4) 100%) !important;
+    }
+    
+    body:not(.dark-mode) .offers-hero.has-category-image {
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(51, 65, 85, 0.7) 50%, rgba(30, 41, 59, 0.6) 100%) !important;
+    }
+    
+    @media (max-width: 768px) {
+        .offers-hero {
+            background-attachment: scroll !important;
+        }
     }
     
     .offers-hero::before {
@@ -450,7 +469,17 @@
 
 @section('content')
 <!-- Hero Section -->
-<section class="offers-hero">
+@php
+    $categoryImage = null;
+    $heroClass = 'offers-hero';
+    if ($category && $category->image) {
+        $categoryImage = $category->image_type === 'internal' 
+            ? \Illuminate\Support\Facades\Storage::url($category->image) 
+            : $category->image;
+        $heroClass .= ' has-category-image';
+    }
+@endphp
+<section class="{{ $heroClass }}" @if($categoryImage) style="background-image: url('{{ $categoryImage }}');" @endif>
     <div class="offers-hero-content">
         <h1>💼 {{ $category ? $category->name : 'Offres d\'Emploi' }}</h1>
         <p>Découvrez les meilleures offres d'emploi publiées au Sénégal. Nous ne recrutons pas directement mais publions les offres de recrutement existantes pour vous aider à trouver votre emploi idéal.</p>

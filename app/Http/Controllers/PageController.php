@@ -1677,13 +1677,20 @@ add_action(\'init\', \'create_portfolio_post_type\');
     // Pages Emplois
     public function emplois()
     {
-        // Cache les catégories actives avec sélection optimisée (1 heure)
-        $categories = \Illuminate\Support\Facades\Cache::remember('active_categories', 3600, function () {
+        // Cache les catégories actives avec sélection optimisée (15 minutes - réduit pour avoir des données plus fraîches)
+        $categories = \Illuminate\Support\Facades\Cache::remember('active_categories', 900, function () {
             return \App\Models\Category::where('is_active', true)
-                ->withCount('publishedArticles')
+                ->withCount(['articles' => function($query) {
+                    $query->where('status', 'published');
+                }])
                 ->select('id', 'name', 'slug', 'description', 'icon', 'image', 'image_type', 'order')
                 ->orderBy('order')
-                ->get();
+                ->get()
+                ->map(function($category) {
+                    // S'assurer que le count est accessible
+                    $category->published_articles_count = $category->articles_count ?? 0;
+                    return $category;
+                });
         });
         
         // Cache les 6 derniers articles avec sélection optimisée (15 minutes)
