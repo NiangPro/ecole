@@ -2,6 +2,14 @@
 
 @section('title', 'Emplois & Opportunités | NiangProgrammeur')
 @section('meta_description', 'Découvrez les meilleures offres d\'emploi, bourses d\'études, opportunités de carrière et candidatures spontanées au Sénégal.')
+@section('meta_keywords', 'emploi Sénégal, offres d\'emploi, bourses d\'études, opportunités carrière, recrutement Sénégal, emploi Dakar')
+@push('meta')
+    <link rel="canonical" href="{{ route('emplois') }}">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ route('emplois') }}">
+    <meta property="og:title" content="Emplois & Opportunités | NiangProgrammeur">
+    <meta property="og:description" content="Découvrez les meilleures offres d'emploi, bourses d'études, opportunités de carrière et candidatures spontanées au Sénégal.">
+@endpush
 
 @section('styles')
 <style>
@@ -507,7 +515,7 @@
             <p>{{ $category->description }}</p>
             <span class="job-badge">
                 Voir les articles
-                <span class="job-card-count">{{ $category->published_articles_count ?? 0 }}</span>
+                <span class="job-card-count">{{ $category->published_articles_count ?? $category->articles_count ?? 0 }}</span>
             </span>
         </div>
     </a>

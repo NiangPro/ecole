@@ -135,7 +135,7 @@
                     <p class="text-white text-sm">{{ $article->meta_description }}</p>
                 </div>
                 @endif
-                @if($article->meta_keywords && count($article->meta_keywords) > 0)
+                @if($article->meta_keywords && is_array($article->meta_keywords) && count($article->meta_keywords) > 0)
                 <div>
                     <span class="text-gray-400 text-sm">Mots-clés:</span>
                     <div class="flex flex-wrap gap-2 mt-2">

@@ -1679,18 +1679,29 @@ add_action(\'init\', \'create_portfolio_post_type\');
     {
         // Cache les catégories actives avec sélection optimisée (15 minutes - réduit pour avoir des données plus fraîches)
         $categories = \Illuminate\Support\Facades\Cache::remember('active_categories', 900, function () {
-            return \App\Models\Category::where('is_active', true)
-                ->withCount(['articles' => function($query) {
-                    $query->where('status', 'published');
-                }])
+            $categories = \App\Models\Category::where('is_active', true)
+                ->withCount([
+                    'articles' => function($query) {
+                        $query->where('status', 'published');
+                    }
+                ])
                 ->select('id', 'name', 'slug', 'description', 'icon', 'image', 'image_type', 'order')
                 ->orderBy('order')
-                ->get()
-                ->map(function($category) {
-                    // S'assurer que le count est accessible
-                    $category->published_articles_count = $category->articles_count ?? 0;
-                    return $category;
-                });
+                ->get();
+            
+            // S'assurer que le count est accessible et calculé correctement
+            foreach ($categories as $category) {
+                // Utiliser articles_count qui est créé par withCount
+                // Si articles_count n'existe pas, calculer directement
+                if (!isset($category->articles_count)) {
+                    $category->articles_count = \App\Models\JobArticle::where('category_id', $category->id)
+                        ->where('status', 'published')
+                        ->count();
+                }
+                $category->published_articles_count = $category->articles_count ?? 0;
+            }
+            
+            return $categories;
         });
         
         // Cache les 6 derniers articles avec sélection optimisée (15 minutes)
@@ -1749,7 +1760,8 @@ add_action(\'init\', \'create_portfolio_post_type\');
         
         $articles = \App\Models\JobArticle::where('status', 'published')
             ->where('category_id', $category->id ?? null)
-            ->with('category')
+            ->with('category:id,name,slug')
+            ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')
             ->orderBy('published_at', 'desc')
             ->paginate(12);
         
@@ -1765,7 +1777,8 @@ add_action(\'init\', \'create_portfolio_post_type\');
         
         $articles = \App\Models\JobArticle::where('status', 'published')
             ->where('category_id', $category->id ?? null)
-            ->with('category')
+            ->with('category:id,name,slug')
+            ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')
             ->orderBy('published_at', 'desc')
             ->paginate(12);
         
@@ -1781,7 +1794,8 @@ add_action(\'init\', \'create_portfolio_post_type\');
         
         $articles = \App\Models\JobArticle::where('status', 'published')
             ->where('category_id', $category->id ?? null)
-            ->with('category')
+            ->with('category:id,name,slug')
+            ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')
             ->orderBy('published_at', 'desc')
             ->paginate(12);
         
@@ -1797,7 +1811,8 @@ add_action(\'init\', \'create_portfolio_post_type\');
         
         $articles = \App\Models\JobArticle::where('status', 'published')
             ->where('category_id', $category->id ?? null)
-            ->with('category')
+            ->with('category:id,name,slug')
+            ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')
             ->orderBy('published_at', 'desc')
             ->paginate(12);
         

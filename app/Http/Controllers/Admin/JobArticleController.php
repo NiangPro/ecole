@@ -148,6 +148,20 @@ class JobArticleController extends Controller
         }
 
         $article = JobArticle::with('category')->findOrFail($id);
+        
+        // S'assurer que meta_keywords est un array
+        if ($article->meta_keywords && !is_array($article->meta_keywords)) {
+            // Si c'est une string JSON, la décoder
+            if (is_string($article->meta_keywords)) {
+                $decoded = json_decode($article->meta_keywords, true);
+                $article->meta_keywords = is_array($decoded) ? $decoded : [];
+            } else {
+                $article->meta_keywords = [];
+            }
+        } elseif (!$article->meta_keywords) {
+            $article->meta_keywords = [];
+        }
+        
         return view('admin.jobs.articles.show', compact('article'));
     }
 
@@ -158,6 +172,20 @@ class JobArticleController extends Controller
         }
 
         $article = JobArticle::findOrFail($id);
+        
+        // S'assurer que meta_keywords est un array
+        if ($article->meta_keywords && !is_array($article->meta_keywords)) {
+            // Si c'est une string JSON, la décoder
+            if (is_string($article->meta_keywords)) {
+                $decoded = json_decode($article->meta_keywords, true);
+                $article->meta_keywords = is_array($decoded) ? $decoded : [];
+            } else {
+                $article->meta_keywords = [];
+            }
+        } elseif (!$article->meta_keywords) {
+            $article->meta_keywords = [];
+        }
+        
         $categories = Category::where('is_active', true)
             ->orderBy('name')
             ->get();

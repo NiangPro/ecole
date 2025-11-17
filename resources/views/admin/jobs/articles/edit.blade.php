@@ -683,7 +683,7 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Mots-clés</label>
-                        <input type="text" name="meta_keywords" value="{{ old('meta_keywords', isset($article) && $article->meta_keywords ? implode(', ', $article->meta_keywords) : '') }}"
+                        <input type="text" name="meta_keywords" value="{{ old('meta_keywords', isset($article) && $article->meta_keywords && is_array($article->meta_keywords) ? implode(', ', $article->meta_keywords) : '') }}"
                                class="form-input" placeholder="mot-clé1, mot-clé2, mot-clé3">
                         <div class="form-help">Séparez les mots-clés par des virgules</div>
                     </div>

@@ -1,7 +1,18 @@
 @extends('layouts.app')
 
-@section('title', 'Offres d\'Emploi | NiangProgrammeur')
-@section('meta_description', 'Consultez les meilleures offres d\'emploi publiées au Sénégal. Nous ne recrutons pas mais publions les offres de recrutement existantes.')
+@section('title', ($category ? $category->name : 'Offres d\'Emploi') . ' | NiangProgrammeur')
+@section('meta_description', $category ? ($category->description ?? 'Découvrez les meilleures offres d\'emploi dans la catégorie ' . $category->name . ' au Sénégal.') : 'Consultez les meilleures offres d\'emploi publiées au Sénégal. Nous ne recrutons pas mais publions les offres de recrutement existantes.')
+@section('meta_keywords', $category ? ($category->name . ', emploi Sénégal, recrutement, offres d\'emploi') : 'emploi Sénégal, offres d\'emploi, recrutement, opportunités carrière')
+@push('meta')
+    <link rel="canonical" href="{{ route('emplois.offres', ['category' => $category->slug ?? null]) }}">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ route('emplois.offres', ['category' => $category->slug ?? null]) }}">
+    <meta property="og:title" content="{{ ($category ? $category->name : 'Offres d\'Emploi') . ' | NiangProgrammeur' }}">
+    <meta property="og:description" content="{{ $category ? ($category->description ?? 'Découvrez les meilleures offres d\'emploi dans la catégorie ' . $category->name . ' au Sénégal.') : 'Consultez les meilleures offres d\'emploi publiées au Sénégal.' }}">
+    @if($category && $category->image)
+    <meta property="og:image" content="{{ $category->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($category->image) : $category->image }}">
+    @endif
+@endpush
 
 @section('styles')
 <style>
@@ -30,6 +41,7 @@
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
+        min-height: 400px;
     }
     
     /* Si la catégorie a une image, l'utiliser comme background */
@@ -37,16 +49,62 @@
         background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.9) 50%, rgba(15, 23, 42, 0.85) 100%);
     }
     
-    body:not(.dark-mode) .offers-hero {
-        background: linear-gradient(135deg, rgba(30, 41, 59, 0.4) 0%, rgba(51, 65, 85, 0.5) 50%, rgba(30, 41, 59, 0.4) 100%) !important;
+    .offers-hero.has-category-image[style*="background-image"] {
+        background-size: cover !important;
+        background-position: center !important;
+        background-repeat: no-repeat !important;
+        background-attachment: fixed !important;
     }
     
-    body:not(.dark-mode) .offers-hero.has-category-image {
-        background: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(51, 65, 85, 0.7) 50%, rgba(30, 41, 59, 0.6) 100%) !important;
+    /* Overlay pour mode sombre */
+    .offers-hero.has-category-image::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.7) 0%, rgba(30, 41, 59, 0.8) 50%, rgba(15, 23, 42, 0.7) 100%);
+        z-index: 0;
+    }
+    
+    /* Overlay plus léger pour mode clair - permet de voir l'image */
+    body:not(.dark-mode) .offers-hero.has-category-image::before {
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.3) 0%, rgba(51, 65, 85, 0.4) 50%, rgba(30, 41, 59, 0.3) 100%) !important;
+    }
+    
+    /* Mode clair - background par défaut plus transparent pour voir l'image */
+    body:not(.dark-mode) .offers-hero {
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.2) 0%, rgba(51, 65, 85, 0.3) 50%, rgba(30, 41, 59, 0.2) 100%) !important;
+    }
+    
+    /* Mode clair - si image de catégorie, supprimer le gradient background pour voir l'image */
+    body:not(.dark-mode) .offers-hero.has-category-image[style*="background-image"] {
+        background: transparent !important;
+        background-blend-mode: normal;
+    }
+    
+    /* Overlay encore plus léger en mode clair avec image */
+    body:not(.dark-mode) .offers-hero.has-category-image[style*="background-image"]::before {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.1) 100%) !important;
+    }
+    
+    /* Mode sombre - blend mode overlay pour meilleur contraste */
+    body.dark-mode .offers-hero.has-category-image[style*="background-image"] {
+        background-blend-mode: overlay;
+    }
+    
+    .offers-hero-content {
+        position: relative;
+        z-index: 1;
     }
     
     @media (max-width: 768px) {
         .offers-hero {
+            background-attachment: scroll !important;
+        }
+        
+        .offers-hero.has-category-image[style*="background-image"] {
             background-attachment: scroll !important;
         }
     }
@@ -479,7 +537,7 @@
         $heroClass .= ' has-category-image';
     }
 @endphp
-<section class="{{ $heroClass }}" @if($categoryImage) style="background-image: url('{{ $categoryImage }}');" @endif>
+<section class="{{ $heroClass }}" @if($categoryImage) style="background-image: url('{{ $categoryImage }}'); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed;" @endif>
     <div class="offers-hero-content">
         <h1>💼 {{ $category ? $category->name : 'Offres d\'Emploi' }}</h1>
         <p>Découvrez les meilleures offres d'emploi publiées au Sénégal. Nous ne recrutons pas directement mais publions les offres de recrutement existantes pour vous aider à trouver votre emploi idéal.</p>
