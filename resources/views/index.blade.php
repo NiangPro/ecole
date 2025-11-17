@@ -20,6 +20,15 @@
         overflow-x: hidden;
     }
     
+    /* Dark Mode Styles */
+    body.dark-mode {
+        background: #0a0a0f !important;
+    }
+    
+    body.dark-mode .bg-canvas {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%) !important;
+    }
+    
     /* Background moderne et lumineux */
     .bg-canvas {
         position: fixed;
@@ -111,6 +120,11 @@
         background-attachment: fixed;
     }
     
+    body.dark-mode .hero-section {
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.9) 100%),
+                    url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2072&q=80') center/cover no-repeat;
+    }
+    
     /* Overlay pour améliorer la lisibilité */
     .hero-section::before {
         content: '';
@@ -121,6 +135,10 @@
         bottom: 0;
         background: radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.15) 0%, rgba(30, 41, 59, 0.6) 100%);
         z-index: 0;
+    }
+    
+    body.dark-mode .hero-section::before {
+        background: radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.1) 0%, rgba(15, 23, 42, 0.8) 100%);
     }
     
     .hero-section > * {
@@ -253,6 +271,14 @@
         overflow: hidden;
         text-align: center;
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    }
+    
+    body.dark-mode .stat-card {
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.12) 0%, rgba(20, 184, 166, 0.08) 100%);
+        background-image: 
+            radial-gradient(circle at 20% 30%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
+            radial-gradient(circle at 80% 70%, rgba(20, 184, 166, 0.15) 0%, transparent 50%);
+        border: 2px solid rgba(6, 182, 212, 0.25);
     }
     
     /* Effet de brillance animé */
@@ -413,6 +439,11 @@
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         cursor: pointer;
         overflow: hidden;
+    }
+    
+    body.dark-mode .tech-card {
+        background: rgba(15, 23, 42, 0.7);
+        border: 1px solid rgba(6, 182, 212, 0.3);
     }
     
     .tech-card::after {
@@ -795,6 +826,25 @@
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
     }
     
+    body.dark-mode .modern-ad-card {
+        background: rgba(15, 23, 42, 0.8);
+        border: 2px solid rgba(6, 182, 212, 0.3);
+    }
+    
+    body.dark-mode .ad-container {
+        background: rgba(15, 23, 42, 0.6) !important;
+        border-color: rgba(6, 182, 212, 0.25) !important;
+    }
+    
+    body.dark-mode .latest-jobs-grid > a > div {
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.9)) !important;
+        border-color: rgba(6, 182, 212, 0.3) !important;
+    }
+    
+    body.dark-mode .modern-ad-overlay {
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(15, 23, 42, 0.7) 50%, rgba(15, 23, 42, 0.95) 100%) !important;
+    }
+    
     .modern-ad-card:hover {
         transform: translateY(-8px);
         border-color: rgba(6, 182, 212, 0.6);
@@ -828,7 +878,7 @@
         transform: scale(1.08);
     }
     
-    .modern-ad-overlay {
+        .modern-ad-overlay {
         position: absolute;
         top: 0;
         left: 0;
@@ -839,6 +889,10 @@
         align-items: center;
         justify-content: center;
         padding: 50px;
+    }
+    
+    body.dark-mode .modern-ad-overlay {
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(15, 23, 42, 0.7) 50%, rgba(15, 23, 42, 0.95) 100%);
     }
     
     .modern-ad-content {
@@ -1090,6 +1144,19 @@
         display: grid;
         grid-template-columns: repeat(3, 1fr);
         gap: 25px;
+    }
+    
+    body.dark-mode .latest-jobs-grid > a > div {
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.9)) !important;
+        border-color: rgba(6, 182, 212, 0.3) !important;
+    }
+    
+    body.dark-mode [style*="rgba(51, 65, 85, 0.85"] {
+        background: rgba(15, 23, 42, 0.9) !important;
+    }
+    
+    body.dark-mode [style*="rgba(71, 85, 105, 0.85"] {
+        background: rgba(30, 41, 59, 0.9) !important;
     }
     
     @media (max-width: 1024px) {

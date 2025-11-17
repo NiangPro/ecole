@@ -222,19 +222,19 @@
         /* Dark Mode Widget */
         .dark-mode-widget {
             position: fixed;
-            bottom: 90px;
+            bottom: 80px;
             right: 20px;
             z-index: 9998;
         }
         
         .dark-mode-button {
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             background: linear-gradient(135deg, #334155, #475569);
             border: 2px solid rgba(6, 182, 212, 0.3);
             color: #fff;
-            font-size: 24px;
+            font-size: 20px;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -257,14 +257,14 @@
         
         .dark-mode-tooltip {
             position: absolute;
-            right: 70px;
+            right: 60px;
             top: 50%;
             transform: translateY(-50%);
             background: rgba(15, 23, 42, 0.95);
             color: #fff;
-            padding: 8px 12px;
+            padding: 6px 10px;
             border-radius: 8px;
-            font-size: 12px;
+            font-size: 11px;
             white-space: nowrap;
             opacity: 0;
             visibility: hidden;
@@ -335,8 +335,8 @@
         
         .whatsapp-button {
             position: relative;
-            width: 60px;
-            height: 60px;
+            width: 50px;
+            height: 50px;
             background: linear-gradient(135deg, #25D366, #128C7E);
             border-radius: 50%;
             display: flex;
@@ -354,7 +354,7 @@
         }
         
         .whatsapp-button i {
-            font-size: 32px;
+            font-size: 26px;
             color: #fff;
             z-index: 1;
         }
@@ -529,7 +529,7 @@
             }
             
             .dark-mode-widget {
-                bottom: 85px;
+                bottom: 75px;
                 right: 15px;
             }
         }
