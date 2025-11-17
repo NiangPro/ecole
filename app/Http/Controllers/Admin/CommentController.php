@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Comment;
 use App\Models\SiteSetting;
+use App\Models\AdminLog;
 use Illuminate\Http\Request;
 
 class CommentController extends Controller
@@ -60,7 +61,11 @@ class CommentController extends Controller
         }
 
         $comment = Comment::findOrFail($id);
+        $oldStatus = $comment->status;
         $comment->update(['status' => 'approved']);
+
+        // Logger l'action
+        AdminLog::log('approve', $comment, "Approbation du commentaire #{$id}", ['status' => $oldStatus], ['status' => 'approved']);
 
         // Invalider le cache
         if ($comment->commentable_type === 'App\\Models\\JobArticle') {
@@ -80,7 +85,19 @@ class CommentController extends Controller
         }
 
         $comment = Comment::findOrFail($id);
+        $oldStatus = $comment->status;
         $comment->update(['status' => 'rejected']);
+
+        // Logger l'action
+        AdminLog::log('reject', $comment, "Rejet du commentaire #{$id}", ['status' => $oldStatus], ['status' => 'rejected']);
+
+        // Invalider le cache
+        if ($comment->commentable_type === 'App\\Models\\JobArticle') {
+            $article = $comment->commentable;
+            \Illuminate\Support\Facades\Cache::forget("job_article_{$article->slug}");
+            \Illuminate\Support\Facades\Cache::forget("article_comments_{$article->id}");
+            \Illuminate\Support\Facades\Cache::forget("article_latest_comments_{$article->id}");
+        }
 
         return back()->with('success', 'Commentaire rejeté avec succès!');
     }
@@ -99,12 +116,15 @@ class CommentController extends Controller
         $articleId = $commentable ? $commentable->id : null;
         $slug = $commentable ? $commentable->slug : null;
         
-        // Supprimer d'abord toutes les réponses (si elles existent)
-        // Note: La migration a déjà onDelete('cascade'), mais on supprime explicitement pour être sûr
-        Comment::where('parent_id', $comment->id)->delete();
-        
-        // Ensuite supprimer le commentaire principal
-        $comment->delete();
+        // Logger l'action avant suppression
+        AdminLog::log('delete', $comment, "Suppression du commentaire #{$id}");
+                
+                // Supprimer d'abord toutes les réponses (si elles existent)
+                // Note: La migration a déjà onDelete('cascade'), mais on supprime explicitement pour être sûr
+                Comment::where('parent_id', $comment->id)->delete();
+                
+                // Ensuite supprimer le commentaire principal
+                $comment->delete();
 
         // Invalider TOUS les caches liés à cet article
         if ($commentType === 'App\\Models\\JobArticle' && $commentable && $articleId && $slug) {

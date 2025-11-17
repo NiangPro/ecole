@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\JobArticle;
+use App\Models\AdminLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -131,6 +132,9 @@ class JobArticleController extends Controller
 
         $article = JobArticle::create($validated);
 
+        // Logger l'action
+        AdminLog::log('create', $article, "Création de l'article \"{$article->title}\"");
+
         // Le cache sera invalidé automatiquement par l'événement du modèle
 
         return redirect()->route('admin.jobs.articles.index')
@@ -254,7 +258,13 @@ class JobArticleController extends Controller
             $validated['published_at'] = now();
         }
 
+        // Sauvegarder les anciennes valeurs pour le log
+        $oldValues = $article->toArray();
+        
         $article->update($validated);
+
+        // Logger l'action
+        AdminLog::log('update', $article, "Modification de l'article \"{$article->title}\"", $oldValues, $article->toArray());
 
         return redirect()->route('admin.jobs.articles.index')
             ->with('success', 'Article mis à jour avec succès');
@@ -267,6 +277,10 @@ class JobArticleController extends Controller
         }
 
         $article = JobArticle::findOrFail($id);
+        $articleTitle = $article->title;
+
+        // Logger l'action avant suppression
+        AdminLog::log('delete', $article, "Suppression de l'article \"{$articleTitle}\"");
 
         // Supprimer l'image de couverture si elle existe
         if ($article->cover_image && $article->cover_type === 'internal') {

@@ -88,6 +88,11 @@ Route::prefix('admin/comments')->name('admin.comments.')->group(function () {
     Route::get('/{id}/whatsapp-link', [\App\Http\Controllers\Admin\CommentController::class, 'getWhatsAppLink'])->name('whatsapp-link');
     Route::get('/{id}/email-link', [\App\Http\Controllers\Admin\CommentController::class, 'getEmailLink'])->name('email-link');
 });
+
+// Routes Logs Admin
+Route::prefix('admin/logs')->name('admin.logs.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Admin\LogController::class, 'index'])->name('index');
+});
 Route::get('/admin/settings', [App\Http\Controllers\AdminController::class, 'settings'])->name('admin.settings');
 Route::post('/admin/settings', [App\Http\Controllers\AdminController::class, 'updateSettings'])->name('admin.settings.update');
 

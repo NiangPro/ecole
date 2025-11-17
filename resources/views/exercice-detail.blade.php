@@ -78,10 +78,10 @@
 @endsection
 
 @section('content')
-<section class="py-20 relative overflow-hidden pt-32">
+<section class="py-20 relative overflow-hidden pt-8">
     <div class="container mx-auto px-6">
         <!-- Breadcrumb & Navigation -->
-        <div class="flex items-center justify-between mb-8 flex-wrap gap-4">
+        <div class="flex items-center justify-between mb-3 flex-wrap gap-4">
             <div>
                 <a href="{{ route('exercices') }}" class="text-cyan-400 hover:text-cyan-300 transition">
                     <i class="fas fa-arrow-left mr-2"></i>Tous les exercices

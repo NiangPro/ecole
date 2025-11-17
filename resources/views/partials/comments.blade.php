@@ -6,11 +6,19 @@
 
     <!-- Formulaire de commentaire -->
     <div class="comment-form-wrapper" style="background: rgba(15, 23, 42, 0.6); border: 2px solid rgba(6, 182, 212, 0.2); border-radius: 16px; padding: 20px; margin-bottom: 25px;">
-        <form action="{{ route('comments.store') }}" method="POST" class="comment-form">
+        <form action="{{ route('comments.store') }}" method="POST" class="comment-form" id="comment-form">
             @csrf
             <input type="hidden" name="commentable_type" value="{{ get_class($commentable) }}">
             <input type="hidden" name="commentable_id" value="{{ $commentable->id }}">
             
+            <!-- Honeypot field (invisible pour les humains, rempli par les bots) -->
+            <div style="position: absolute; left: -9999px; opacity: 0; pointer-events: none; visibility: hidden;" aria-hidden="true">
+                <label for="website">Website (ne pas remplir)</label>
+                <input type="text" name="website" id="website" autocomplete="off" tabindex="-1">
+            </div>
+            
+            <!-- Temps de remplissage du formulaire (anti-bot) -->
+            <input type="hidden" name="_form_time" id="form-time" value="{{ microtime(true) }}">
             
             <div style="display: flex; flex-direction: column; gap: 15px; margin-bottom: 15px;">
                 <div class="form-group">
@@ -62,7 +70,7 @@
                 @enderror
             </div>
             
-            <button type="submit" style="width: 100%; padding: 10px 20px; background: linear-gradient(135deg, #06b6d4, #14b8a6); color: #fff; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.9rem;">
+            <button type="submit" onclick="event.preventDefault(); if (typeof executeRecaptcha === 'function') { executeRecaptcha('comment-form', function() { document.getElementById('comment-form').submit(); }); } else { document.getElementById('comment-form').submit(); }" style="width: 100%; padding: 10px 20px; background: linear-gradient(135deg, #06b6d4, #14b8a6); color: #fff; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.9rem;">
                 <i class="fas fa-paper-plane"></i>
                 Publier
             </button>

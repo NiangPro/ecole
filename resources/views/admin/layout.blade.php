@@ -493,6 +493,11 @@
                 @endif
             </a>
             
+            <a href="{{ route('admin.logs.index') }}" class="sidebar-item {{ request()->routeIs('admin.logs.*') ? 'active' : '' }}">
+                <i class="fas fa-history text-xl"></i>
+                <span>Logs</span>
+            </a>
+            
             <!-- Menu Dropdown Emplois -->
             <div class="sidebar-dropdown {{ request()->routeIs('admin.jobs.*') ? 'active' : '' }}">
                 <button class="sidebar-item sidebar-dropdown-toggle" onclick="toggleSidebarDropdown('jobs')">

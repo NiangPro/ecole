@@ -50,6 +50,48 @@
     <title>@yield('title', 'NiangProgrammeur - Formation Gratuite en Développement Web')</title>
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- reCAPTCHA v3 (invisible) -->
+    @php
+        $recaptchaSiteKey = config('services.recaptcha.site_key', '');
+    @endphp
+    @if(!empty($recaptchaSiteKey))
+    <script src="https://www.google.com/recaptcha/api.js?render={{ $recaptchaSiteKey }}" async defer></script>
+    <script>
+        // Fonction pour exécuter reCAPTCHA avant la soumission du formulaire
+        function executeRecaptcha(formId, callback) {
+            if (typeof grecaptcha === 'undefined') {
+                // reCAPTCHA non chargé, continuer sans vérification
+                callback();
+                return;
+            }
+            
+            grecaptcha.ready(function() {
+                grecaptcha.execute('{{ $recaptchaSiteKey }}', {action: 'submit'}).then(function(token) {
+                    // Ajouter le token au formulaire
+                    const form = document.getElementById(formId);
+                    if (form) {
+                        // Supprimer le token précédent s'il existe
+                        const existingToken = form.querySelector('input[name="g-recaptcha-response"]');
+                        if (existingToken) {
+                            existingToken.remove();
+                        }
+                        
+                        // Ajouter le nouveau token
+                        const tokenInput = document.createElement('input');
+                        tokenInput.type = 'hidden';
+                        tokenInput.name = 'g-recaptcha-response';
+                        tokenInput.value = token;
+                        form.appendChild(tokenInput);
+                        
+                        // Exécuter le callback
+                        callback();
+                    }
+                });
+            });
+        }
+    </script>
+    @endif
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

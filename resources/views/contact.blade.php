@@ -85,8 +85,17 @@
                     </div>
                 @endif
                 
-                <form action="{{ route('contact.send') }}" method="POST" class="space-y-5">
+                <form action="{{ route('contact.send') }}" method="POST" class="space-y-5" id="contact-form">
                     @csrf
+                    
+                    <!-- Honeypot field (invisible pour les humains, rempli par les bots) -->
+                    <div style="position: absolute; left: -9999px; opacity: 0; pointer-events: none; visibility: hidden;" aria-hidden="true">
+                        <label for="website">Website (ne pas remplir)</label>
+                        <input type="text" name="website" id="website" autocomplete="off" tabindex="-1">
+                    </div>
+                    
+                    <!-- Temps de remplissage du formulaire (anti-bot) -->
+                    <input type="hidden" name="_form_time" id="form-time" value="{{ microtime(true) }}">
                     
                     <div>
                         <label for="name" class="block text-sm font-semibold mb-2 text-gray-300">
@@ -128,7 +137,7 @@
                                   class="contact-input" placeholder="Votre message..."></textarea>
                     </div>
                     
-                    <button type="submit" class="w-full px-6 py-3 bg-gradient-to-r from-cyan-500 to-teal-600 rounded-xl font-bold hover:shadow-2xl hover:scale-105 transition">
+                    <button type="submit" onclick="event.preventDefault(); if (typeof executeRecaptcha === 'function') { executeRecaptcha('contact-form', function() { document.getElementById('contact-form').submit(); }); } else { document.getElementById('contact-form').submit(); }" class="w-full px-6 py-3 bg-gradient-to-r from-cyan-500 to-teal-600 rounded-xl font-bold hover:shadow-2xl hover:scale-105 transition">
                         <i class="fas fa-paper-plane mr-2"></i>Envoyer le message
                     </button>
                 </form>

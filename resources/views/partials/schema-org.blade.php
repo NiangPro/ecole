@@ -127,11 +127,98 @@ try {
             $formationJson = json_encode($formationSchema, JSON_UNESCAPED_SLASHES | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_PRETTY_PRINT);
         }
     }
+    
+    // FAQPage Schema (if FAQ page)
+    $faqJson = null;
+    if (request()->routeIs('faq')) {
+        try {
+            $faqQuestions = [];
+            // Exemple de questions FAQ - À adapter selon votre contenu
+            $faqQuestions[] = [
+                '@type' => 'Question',
+                'name' => 'Qu\'est-ce que NiangProgrammeur ?',
+                'acceptedAnswer' => [
+                    '@type' => 'Answer',
+                    'text' => 'NiangProgrammeur est une plateforme de formation gratuite en développement web proposant des tutoriels, exercices et quiz pour apprendre HTML5, CSS3, JavaScript, PHP et plus encore.'
+                ]
+            ];
+            $faqQuestions[] = [
+                '@type' => 'Question',
+                'name' => 'Les formations sont-elles vraiment gratuites ?',
+                'acceptedAnswer' => [
+                    '@type' => 'Answer',
+                    'text' => 'Oui, toutes les formations sur NiangProgrammeur sont 100% gratuites. Vous pouvez apprendre à votre rythme sans aucune restriction.'
+                ]
+            ];
+            $faqQuestions[] = [
+                '@type' => 'Question',
+                'name' => 'Dois-je créer un compte pour suivre les formations ?',
+                'acceptedAnswer' => [
+                    '@type' => 'Answer',
+                    'text' => 'Non, vous pouvez suivre les formations sans créer de compte. Cependant, créer un compte vous permet de sauvegarder votre progression.'
+                ]
+            ];
+            
+            if (count($faqQuestions) > 0) {
+                $faqSchema = [
+                    '@context' => 'https://schema.org',
+                    '@type' => 'FAQPage',
+                    'mainEntity' => $faqQuestions
+                ];
+                $faqJson = json_encode($faqSchema, JSON_UNESCAPED_SLASHES | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_PRETTY_PRINT);
+            }
+        } catch (\Exception $e) {
+            $faqJson = null;
+        }
+    }
+    
+    // Review Schema (if article with comments)
+    $reviewJson = null;
+    if (isset($article) && !empty($article) && isset($latestComments) && $latestComments->count() > 0) {
+        try {
+            $reviews = [];
+            foreach ($latestComments->take(3) as $comment) {
+                $reviews[] = [
+                    '@type' => 'Review',
+                    'author' => [
+                        '@type' => 'Person',
+                        'name' => $comment->author_name ?? 'Anonyme'
+                    ],
+                    'reviewBody' => substr(strip_tags($comment->content), 0, 200),
+                    'datePublished' => $comment->created_at ? $comment->created_at->toIso8601String() : '',
+                    'reviewRating' => [
+                        '@type' => 'Rating',
+                        'ratingValue' => 5,
+                        'bestRating' => 5
+                    ]
+                ];
+            }
+            
+            if (count($reviews) > 0) {
+                $reviewSchema = [
+                    '@context' => 'https://schema.org',
+                    '@type' => 'Product',
+                    'name' => $article->title ?? '',
+                    'aggregateRating' => [
+                        '@type' => 'AggregateRating',
+                        'ratingValue' => '5',
+                        'reviewCount' => count($reviews)
+                    ],
+                    'review' => $reviews
+                ];
+                $reviewJson = json_encode($reviewSchema, JSON_UNESCAPED_SLASHES | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_PRETTY_PRINT);
+            }
+        } catch (\Exception $e) {
+            $reviewJson = null;
+        }
+    }
 } catch (\Exception $e) {
     $orgJson = null;
     $websiteJson = null;
     $articleJson = null;
     $formationJson = null;
+    $faqJson = null;
+    $reviewJson = null;
 }
 @endphp
 <script type="application/ld+json">
@@ -148,6 +235,16 @@ try {
 @php if (!empty($formationJson)) { @endphp
 <script type="application/ld+json">
 {!! $formationJson !!}
+</script>
+@php } @endphp
+@php if (!empty($faqJson)) { @endphp
+<script type="application/ld+json">
+{!! $faqJson !!}
+</script>
+@php } @endphp
+@php if (!empty($reviewJson)) { @endphp
+<script type="application/ld+json">
+{!! $reviewJson !!}
 </script>
 @php } @endphp
 

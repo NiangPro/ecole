@@ -6,11 +6,39 @@ use Illuminate\Http\Request;
 use App\Models\Comment;
 use App\Models\JobArticle;
 use Illuminate\Support\Facades\RateLimiter;
+use App\Services\RecaptchaService;
 
 class CommentController extends Controller
 {
     public function store(Request $request)
     {
+        // Vérifier le Honeypot
+        if ($request->has('website') && !empty($request->input('website'))) {
+            // Bot détecté - rejeter silencieusement
+            abort(403, 'Spam détecté');
+        }
+
+        // Vérifier le temps de remplissage du formulaire
+        if ($request->has('_form_time')) {
+            $formTime = (float) $request->input('_form_time');
+            $submitTime = microtime(true);
+            $timeDiff = $submitTime - $formTime;
+
+            // Si le formulaire a été soumis en moins de 2 secondes, c'est probablement un bot
+            if ($timeDiff < 2) {
+                abort(403, 'Spam détecté');
+            }
+        }
+
+        // Vérifier reCAPTCHA si configuré
+        $recaptchaService = new RecaptchaService();
+        if (!empty(config('services.recaptcha.secret_key'))) {
+            $recaptchaToken = $request->input('g-recaptcha-response');
+            if (!$recaptchaService->verify($recaptchaToken, $request->ip())) {
+                return back()->with('error', 'Vérification anti-spam échouée. Veuillez réessayer.');
+            }
+        }
+
         $request->validate([
             'commentable_type' => 'required|string',
             'commentable_id' => 'required|integer',
