@@ -265,6 +265,93 @@ class PageController extends Controller
         ]);
     }
 
+    public function runCode(Request $request, $language)
+    {
+        $code = $request->input('code');
+        
+        // Sécurité : Ne permettre l'exécution que pour PHP
+        if ($language !== 'php') {
+            // Pour les autres langages (HTML, CSS, JS), retourner le code tel quel
+            return response()->json([
+                'output' => $code,
+                'error' => null
+            ]);
+        }
+        
+        // Sécurité : Vérifier que le code ne contient pas de fonctions dangereuses
+        $dangerousFunctions = [
+            'exec', 'system', 'shell_exec', 'passthru', 'proc_open',
+            'popen', 'fopen', 'fwrite', 'rmdir', 'mkdir', 'chmod', 'chown',
+            'curl_exec', 'curl_init', 'fsockopen', 'pfsockopen',
+            'mail', 'ini_set', 'ini_alter', 'putenv', 'dl'
+        ];
+        
+        foreach ($dangerousFunctions as $func) {
+            // Vérifier avec des limites pour éviter les faux positifs
+            if (preg_match('/\b' . preg_quote($func, '/') . '\s*\(/i', $code)) {
+                return response()->json([
+                    'output' => '',
+                    'error' => 'Fonction non autorisée détectée : ' . $func . '(). Cette fonction est désactivée pour des raisons de sécurité.'
+                ]);
+            }
+        }
+        
+        // Vérifier les includes/requires
+        if (preg_match('/\b(include|require|include_once|require_once)\s*\(/i', $code)) {
+            return response()->json([
+                'output' => '',
+                'error' => 'Les fonctions include/require ne sont pas autorisées pour des raisons de sécurité.'
+            ]);
+        }
+        
+        // Capturer la sortie
+        ob_start();
+        $error = null;
+        $output = '';
+        
+        try {
+            // Créer un fichier temporaire pour exécuter le code PHP
+            $tempFile = tempnam(sys_get_temp_dir(), 'php_exercise_');
+            
+            // Écrire le code dans le fichier temporaire
+            if (file_put_contents($tempFile, $code) === false) {
+                throw new \Exception('Impossible d\'écrire dans le fichier temporaire');
+            }
+            
+            // Exécuter le code PHP
+            include $tempFile;
+            
+            // Récupérer la sortie
+            $output = ob_get_clean();
+            
+            // Supprimer le fichier temporaire
+            @unlink($tempFile);
+            
+        } catch (\ParseError $e) {
+            $error = 'Erreur de syntaxe : ' . $e->getMessage();
+            $output = ob_get_clean();
+        } catch (\Error $e) {
+            $error = 'Erreur : ' . $e->getMessage();
+            $output = ob_get_clean();
+        } catch (\Exception $e) {
+            $error = 'Exception : ' . $e->getMessage();
+            $output = ob_get_clean();
+        } catch (\Throwable $e) {
+            $error = 'Erreur : ' . $e->getMessage();
+            $output = ob_get_clean();
+        }
+        
+        // Nettoyer le fichier temporaire en cas d'erreur
+        if (isset($tempFile) && file_exists($tempFile)) {
+            @unlink($tempFile);
+        }
+        
+        return response()->json([
+            'output' => $output,
+            'error' => $error
+        ]);
+    }
+
     private function checkAnswer($exercise, $userCode)
     {
         // Normaliser le code (enlever espaces, sauts de ligne, etc.)

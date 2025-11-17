@@ -22,6 +22,7 @@ Route::get('/exercices', [PageController::class, 'exercices'])->name('exercices'
 Route::get('/exercices/{language}', [PageController::class, 'exercicesLanguage'])->name('exercices.language');
 Route::get('/exercices/{language}/{id}', [PageController::class, 'exerciceDetail'])->name('exercices.detail');
 Route::post('/exercices/{language}/{id}/submit', [PageController::class, 'exerciceSubmit'])->name('exercices.submit');
+Route::post('/exercices/{language}/run', [PageController::class, 'runCode'])->middleware('throttle:30,1')->name('exercices.run');
 Route::get('/quiz', [PageController::class, 'quiz'])->name('quiz');
 Route::get('/quiz/{language}', [PageController::class, 'quizLanguage'])->name('quiz.language');
 Route::post('/quiz/{language}/submit', [PageController::class, 'quizSubmit'])->name('quiz.submit');

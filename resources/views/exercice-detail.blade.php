@@ -287,11 +287,109 @@
         const iframe = document.getElementById('resultFrame');
         const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
         
-        iframeDoc.open();
-        iframeDoc.write(code);
-        iframeDoc.close();
-        
-        hideMessages();
+        // Si c'est du PHP, exécuter côté serveur
+        if (language === 'php') {
+            fetch(`/exercices/${language}/run`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({ code: code })
+            })
+            .then(response => response.json())
+            .then(data => {
+                iframeDoc.open();
+                
+                if (data.error) {
+                    iframeDoc.write(`
+                        <!DOCTYPE html>
+                        <html>
+                        <head>
+                            <meta charset="UTF-8">
+                            <title>Erreur</title>
+                            <style>
+                                body {
+                                    font-family: Arial, sans-serif;
+                                    padding: 20px;
+                                    background: #fee;
+                                    color: #c33;
+                                }
+                                .error {
+                                    background: #fcc;
+                                    border: 2px solid #c33;
+                                    padding: 15px;
+                                    border-radius: 5px;
+                                }
+                            </style>
+                        </head>
+                        <body>
+                            <div class="error">
+                                <h3>Erreur PHP :</h3>
+                                <pre>${data.error}</pre>
+                            </div>
+                        </body>
+                        </html>
+                    `);
+                } else {
+                    // Envelopper la sortie PHP dans du HTML
+                    iframeDoc.write(`
+                        <!DOCTYPE html>
+                        <html>
+                        <head>
+                            <meta charset="UTF-8">
+                            <title>Résultat</title>
+                            <style>
+                                body {
+                                    font-family: Arial, sans-serif;
+                                    padding: 20px;
+                                    background: white;
+                                    color: #333;
+                                }
+                            </style>
+                        </head>
+                        <body>
+                            ${data.output || '<p style="color: #999;">Aucune sortie</p>'}
+                        </body>
+                        </html>
+                    `);
+                }
+                
+                iframeDoc.close();
+                hideMessages();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                iframeDoc.open();
+                iframeDoc.write(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <meta charset="UTF-8">
+                        <title>Erreur</title>
+                        <style>
+                            body {
+                                font-family: Arial, sans-serif;
+                                padding: 20px;
+                                background: #fee;
+                                color: #c33;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <p>Erreur lors de l'exécution : ${error.message}</p>
+                    </body>
+                    </html>
+                `);
+                iframeDoc.close();
+            });
+        } else {
+            // Pour HTML/CSS/JS, afficher directement
+            iframeDoc.open();
+            iframeDoc.write(code);
+            iframeDoc.close();
+            hideMessages();
+        }
     }
     
     function submitCode() {
