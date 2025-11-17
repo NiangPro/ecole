@@ -7,6 +7,57 @@
     body {
         overflow-x: hidden;
     }
+    
+    /* Dark Mode Styles */
+    body:not(.dark-mode) section.py-20 {
+        background: rgba(248, 250, 252, 1) !important;
+    }
+    
+    body:not(.dark-mode) .bg-gradient-to-br.from-gray-800.to-gray-900 {
+        background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.95)) !important;
+        border-color: rgba(6, 182, 212, 0.2) !important;
+    }
+    
+    body:not(.dark-mode) .text-gray-400 {
+        color: rgba(30, 41, 59, 0.6) !important;
+    }
+    
+    body:not(.dark-mode) .text-gray-300 {
+        color: rgba(30, 41, 59, 0.8) !important;
+    }
+    
+    body:not(.dark-mode) .text-gray-200 {
+        color: rgba(30, 41, 59, 0.9) !important;
+    }
+    
+    /* Force text colors in light mode */
+    body:not(.dark-mode) h1,
+    body:not(.dark-mode) h2,
+    body:not(.dark-mode) h3,
+    body:not(.dark-mode) h4,
+    body:not(.dark-mode) p,
+    body:not(.dark-mode) li,
+    body:not(.dark-mode) ul,
+    body:not(.dark-mode) a:not(.text-cyan-400) {
+        color: rgba(30, 41, 59, 0.9) !important;
+    }
+    
+    body:not(.dark-mode) .text-5xl {
+        color: rgba(30, 41, 59, 0.9) !important;
+    }
+    
+    body:not(.dark-mode) .text-2xl {
+        color: rgba(30, 41, 59, 0.9) !important;
+    }
+    
+    body:not(.dark-mode) .text-xl {
+        color: rgba(30, 41, 59, 0.9) !important;
+    }
+    
+    /* Keep gradient and cyan links */
+    body:not(.dark-mode) .bg-gradient-to-r.from-cyan-400.to-teal-500 {
+        -webkit-text-fill-color: transparent !important;
+    }
 </style>
 @endsection
 

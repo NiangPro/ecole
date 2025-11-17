@@ -35,6 +35,12 @@
         transition: all 0.3s ease;
     }
     
+    body:not(.dark-mode) .contact-input {
+        background: rgba(255, 255, 255, 0.9) !important;
+        color: rgba(30, 41, 59, 0.9) !important;
+        border-color: rgba(6, 182, 212, 0.3) !important;
+    }
+    
     .contact-input:focus {
         outline: none;
         border-color: #06b6d4;
@@ -42,13 +48,96 @@
         box-shadow: 0 0 20px rgba(6, 182, 212, 0.3);
     }
     
+    body:not(.dark-mode) .contact-input:focus {
+        background: rgba(255, 255, 255, 1) !important;
+        box-shadow: 0 0 20px rgba(6, 182, 212, 0.2) !important;
+    }
+    
     .contact-input::placeholder {
         color: rgba(255, 255, 255, 0.4);
+    }
+    
+    body:not(.dark-mode) .contact-input::placeholder {
+        color: rgba(30, 41, 59, 0.5) !important;
     }
     
     textarea.contact-input {
         resize: vertical;
         min-height: 120px;
+    }
+    
+    /* Dark Mode Styles for Contact Page */
+    body:not(.dark-mode) section.relative.min-h-screen {
+        background: linear-gradient(135deg, rgba(248, 250, 252, 0.95) 0%, rgba(241, 245, 249, 0.95) 100%) !important;
+    }
+    
+    body:not(.dark-mode) .text-gray-300 {
+        color: rgba(30, 41, 59, 0.8) !important;
+    }
+    
+    body:not(.dark-mode) .text-gray-400 {
+        color: rgba(30, 41, 59, 0.6) !important;
+    }
+    
+    body:not(.dark-mode) .bg-gradient-to-br.from-gray-900\/90.to-black\/90 {
+        background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.95)) !important;
+        border-color: rgba(6, 182, 212, 0.2) !important;
+    }
+    
+    body:not(.dark-mode) .bg-green-500\/10 {
+        background: rgba(34, 197, 94, 0.1) !important;
+    }
+    
+    body:not(.dark-mode) .border-green-500\/30 {
+        border-color: rgba(34, 197, 94, 0.3) !important;
+    }
+    
+    body:not(.dark-mode) .text-green-400 {
+        color: rgba(34, 197, 94, 0.8) !important;
+    }
+    
+    /* Force text colors in light mode */
+    body:not(.dark-mode) .text-white {
+        color: rgba(30, 41, 59, 0.9) !important;
+    }
+    
+    body:not(.dark-mode) h1,
+    body:not(.dark-mode) h2,
+    body:not(.dark-mode) h3,
+    body:not(.dark-mode) p {
+        color: rgba(30, 41, 59, 0.9) !important;
+    }
+    
+    body:not(.dark-mode) .text-xl {
+        color: rgba(30, 41, 59, 0.8) !important;
+    }
+    
+    body:not(.dark-mode) .text-2xl {
+        color: rgba(30, 41, 59, 0.9) !important;
+    }
+    
+    body:not(.dark-mode) .text-3xl {
+        color: rgba(30, 41, 59, 0.9) !important;
+    }
+    
+    body:not(.dark-mode) .text-6xl {
+        color: rgba(30, 41, 59, 0.9) !important;
+    }
+    
+    body:not(.dark-mode) .text-7xl {
+        color: rgba(30, 41, 59, 0.9) !important;
+    }
+    
+    /* Keep gradient text as is */
+    body:not(.dark-mode) .gradient-text {
+        -webkit-text-fill-color: transparent !important;
+    }
+    
+    /* Icons in cards should remain visible */
+    body:not(.dark-mode) .bg-gradient-to-br.from-cyan-500.to-teal-600 .text-white,
+    body:not(.dark-mode) .bg-gradient-to-br.from-teal-500.to-cyan-600 .text-white,
+    body:not(.dark-mode) .bg-gradient-to-br.from-purple-500.to-pink-600 .text-white {
+        color: #fff !important;
     }
 </style>
 @endsection

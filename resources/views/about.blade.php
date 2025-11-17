@@ -42,6 +42,202 @@
         border-radius: 10px;
         transition: width 2s ease-out;
     }
+    
+    /* Dark Mode Styles */
+    /* Mode clair - Hero Section */
+    section.relative.min-h-screen {
+        background: linear-gradient(135deg, rgba(248, 250, 252, 0.95) 0%, rgba(241, 245, 249, 0.95) 100%) !important;
+    }
+    
+    body.dark-mode section.relative.min-h-screen {
+        background: #000 !important;
+    }
+    
+    /* Mode clair - Background Effects */
+    .absolute.inset-0.opacity-20 .bg-cyan-500,
+    .absolute.inset-0.opacity-20 .bg-teal-500 {
+        opacity: 0.1 !important;
+    }
+    
+    body.dark-mode .absolute.inset-0.opacity-20 .bg-cyan-500,
+    body.dark-mode .absolute.inset-0.opacity-20 .bg-teal-500 {
+        opacity: 0.2 !important;
+    }
+    
+    /* Mode clair - Text Colors */
+    body:not(.dark-mode) .text-gray-300 {
+        color: rgba(30, 41, 59, 0.8) !important;
+    }
+    
+    body.dark-mode .text-gray-300 {
+        color: rgba(209, 213, 219, 1) !important;
+    }
+    
+    body:not(.dark-mode) .text-gray-400 {
+        color: rgba(30, 41, 59, 0.6) !important;
+    }
+    
+    body.dark-mode .text-gray-400 {
+        color: rgba(156, 163, 175, 1) !important;
+    }
+    
+    body:not(.dark-mode) .text-white {
+        color: rgba(30, 41, 59, 0.9) !important;
+    }
+    
+    body.dark-mode .text-white {
+        color: #fff !important;
+    }
+    
+    /* Mode clair - Cards */
+    .bg-gradient-to-br.from-gray-900\/90.to-black\/90 {
+        background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.95)) !important;
+        border-color: rgba(6, 182, 212, 0.2) !important;
+    }
+    
+    body.dark-mode .bg-gradient-to-br.from-gray-900\/90.to-black\/90 {
+        background: linear-gradient(to bottom right, rgba(17, 24, 39, 0.9), rgba(0, 0, 0, 0.9)) !important;
+    }
+    
+    .bg-black\/50 {
+        background: rgba(248, 250, 252, 0.5) !important;
+    }
+    
+    body.dark-mode .bg-black\/50 {
+        background: rgba(0, 0, 0, 0.5) !important;
+    }
+    
+    /* Mode clair - Sections */
+    .bg-gradient-to-b.from-black.to-gray-900 {
+        background: linear-gradient(to bottom, rgba(248, 250, 252, 1), rgba(241, 245, 249, 1)) !important;
+    }
+    
+    body.dark-mode .bg-gradient-to-b.from-black.to-gray-900 {
+        background: linear-gradient(to bottom, #000, rgba(17, 24, 39, 1)) !important;
+    }
+    
+    .bg-gray-900 {
+        background: rgba(241, 245, 249, 1) !important;
+    }
+    
+    body.dark-mode .bg-gray-900 {
+        background: rgba(17, 24, 39, 1) !important;
+    }
+    
+    .bg-gray-900\/50 {
+        background: rgba(248, 250, 252, 0.5) !important;
+    }
+    
+    body.dark-mode .bg-gray-900\/50 {
+        background: rgba(17, 24, 39, 0.5) !important;
+    }
+    
+    .bg-gradient-to-br.from-gray-800\/50.to-black\/50 {
+        background: linear-gradient(to bottom right, rgba(248, 250, 252, 0.5), rgba(255, 255, 255, 0.5)) !important;
+    }
+    
+    body.dark-mode .bg-gradient-to-br.from-gray-800\/50.to-black\/50 {
+        background: linear-gradient(to bottom right, rgba(31, 41, 55, 0.5), rgba(0, 0, 0, 0.5)) !important;
+    }
+    
+    .bg-gradient-to-b.from-gray-900.to-black {
+        background: linear-gradient(to bottom, rgba(241, 245, 249, 1), rgba(248, 250, 252, 1)) !important;
+    }
+    
+    body.dark-mode .bg-gradient-to-b.from-gray-900.to-black {
+        background: linear-gradient(to bottom, rgba(17, 24, 39, 1), #000) !important;
+    }
+    
+    .bg-black {
+        background: rgba(248, 250, 252, 1) !important;
+    }
+    
+    body.dark-mode .bg-black {
+        background: #000 !important;
+    }
+    
+    /* Mode clair - Text in cards */
+    .text-gray-500 {
+        color: rgba(30, 41, 59, 0.6) !important;
+    }
+    
+    body.dark-mode .text-gray-500 {
+        color: rgba(107, 114, 128, 1) !important;
+    }
+    
+    .text-gray-600 {
+        color: rgba(30, 41, 59, 0.5) !important;
+    }
+    
+    body.dark-mode .text-gray-600 {
+        color: rgba(75, 85, 99, 1) !important;
+    }
+    
+    /* Mode clair - CTA Section */
+    .bg-gradient-to-br.from-cyan-600\/20.to-teal-600\/20 {
+        background: linear-gradient(to bottom right, rgba(6, 182, 212, 0.1), rgba(20, 184, 166, 0.1)) !important;
+    }
+    
+    body.dark-mode .bg-gradient-to-br.from-cyan-600\/20.to-teal-600\/20 {
+        background: linear-gradient(to bottom right, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2)) !important;
+    }
+    
+    .bg-gray-800 {
+        background: rgba(248, 250, 252, 0.8) !important;
+    }
+    
+    body.dark-mode .bg-gray-800 {
+        background: rgba(31, 41, 55, 1) !important;
+    }
+    
+    .hover\:bg-gray-700:hover {
+        background: rgba(241, 245, 249, 0.9) !important;
+    }
+    
+    body.dark-mode .hover\:bg-gray-700:hover {
+        background: rgba(55, 65, 81, 1) !important;
+    }
+    
+    /* Force text colors in light mode for all white/gray text */
+    body:not(.dark-mode) h1,
+    body:not(.dark-mode) h2,
+    body:not(.dark-mode) h3,
+    body:not(.dark-mode) p {
+        color: rgba(30, 41, 59, 0.9) !important;
+    }
+    
+    body:not(.dark-mode) .text-xl {
+        color: rgba(30, 41, 59, 0.8) !important;
+    }
+    
+    body:not(.dark-mode) .text-2xl {
+        color: rgba(30, 41, 59, 0.9) !important;
+    }
+    
+    body:not(.dark-mode) .text-3xl {
+        color: rgba(30, 41, 59, 0.9) !important;
+    }
+    
+    body:not(.dark-mode) .text-4xl {
+        color: rgba(30, 41, 59, 0.9) !important;
+    }
+    
+    body:not(.dark-mode) .text-5xl {
+        color: rgba(30, 41, 59, 0.9) !important;
+    }
+    
+    body:not(.dark-mode) .text-6xl {
+        color: rgba(30, 41, 59, 0.9) !important;
+    }
+    
+    body:not(.dark-mode) .text-7xl {
+        color: rgba(30, 41, 59, 0.9) !important;
+    }
+    
+    /* Keep gradient text as is */
+    body:not(.dark-mode) .gradient-text {
+        -webkit-text-fill-color: transparent !important;
+    }
 </style>
 @endsection
 

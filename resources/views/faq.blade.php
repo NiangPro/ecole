@@ -19,6 +19,10 @@
         overflow: hidden;
     }
     
+    body:not(.dark-mode) .faq-hero {
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.05) 0%, rgba(20, 184, 166, 0.05) 100%) !important;
+    }
+    
     .faq-hero::before {
         content: '';
         position: absolute;
@@ -89,6 +93,10 @@
         font-weight: 400;
     }
     
+    body:not(.dark-mode) .faq-hero p {
+        color: rgba(30, 41, 59, 0.7) !important;
+    }
+    
     .faq-section {
         padding: 80px 20px;
         max-width: 1000px;
@@ -106,6 +114,11 @@
         position: relative;
         overflow: hidden;
         cursor: pointer;
+    }
+    
+    body:not(.dark-mode) .faq-item {
+        background: rgba(255, 255, 255, 0.9) !important;
+        border-color: rgba(6, 182, 212, 0.25) !important;
     }
     
     .faq-item::before {
@@ -167,6 +180,10 @@
         transition: all 0.3s ease;
     }
     
+    body:not(.dark-mode) .faq-answer {
+        color: rgba(30, 41, 59, 0.7) !important;
+    }
+    
     .faq-cta {
         background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(20, 184, 166, 0.1));
         border: 2px solid rgba(6, 182, 212, 0.3);
@@ -176,6 +193,11 @@
         margin-top: 60px;
         position: relative;
         overflow: hidden;
+    }
+    
+    body:not(.dark-mode) .faq-cta {
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.05), rgba(20, 184, 166, 0.05)) !important;
+        border-color: rgba(6, 182, 212, 0.25) !important;
     }
     
     .faq-cta::before {
@@ -206,6 +228,26 @@
         color: rgba(255, 255, 255, 0.7);
         font-size: 1.1rem;
         margin-bottom: 30px;
+    }
+    
+    body:not(.dark-mode) .faq-cta p {
+        color: rgba(30, 41, 59, 0.7) !important;
+    }
+    
+    /* Force text colors in light mode */
+    body:not(.dark-mode) .faq-question h3 {
+        color: rgba(30, 41, 59, 0.9) !important;
+    }
+    
+    body:not(.dark-mode) h1,
+    body:not(.dark-mode) h2,
+    body:not(.dark-mode) h3,
+    body:not(.dark-mode) p {
+        color: rgba(30, 41, 59, 0.9) !important;
+    }
+    
+    body:not(.dark-mode) .faq-cta h3 {
+        color: rgba(30, 41, 59, 0.9) !important;
     }
     
     .faq-cta-button {

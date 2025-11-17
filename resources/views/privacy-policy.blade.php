@@ -19,6 +19,10 @@
         overflow: hidden;
     }
     
+    body:not(.dark-mode) .privacy-hero {
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.05) 0%, rgba(20, 184, 166, 0.05) 100%) !important;
+    }
+    
     .privacy-hero::before {
         content: '';
         position: absolute;
@@ -89,6 +93,10 @@
         font-weight: 400;
     }
     
+    body:not(.dark-mode) .privacy-hero p {
+        color: rgba(30, 41, 59, 0.7) !important;
+    }
+    
     .privacy-section {
         padding: 80px 20px;
         max-width: 1000px;
@@ -105,6 +113,11 @@
         transition: all 0.3s ease;
         position: relative;
         overflow: hidden;
+    }
+    
+    body:not(.dark-mode) .privacy-card {
+        background: rgba(255, 255, 255, 0.9) !important;
+        border-color: rgba(6, 182, 212, 0.25) !important;
     }
     
     .privacy-card::before {
@@ -135,6 +148,10 @@
         border-bottom: 1px solid rgba(6, 182, 212, 0.2);
     }
     
+    body:not(.dark-mode) .privacy-update {
+        color: rgba(30, 41, 59, 0.6) !important;
+    }
+    
     .privacy-section-title {
         font-family: 'Poppins', sans-serif;
         font-size: 2rem;
@@ -159,11 +176,19 @@
         margin-bottom: 15px;
     }
     
+    body:not(.dark-mode) .privacy-subtitle {
+        color: rgba(30, 41, 59, 0.9) !important;
+    }
+    
     .privacy-text {
         color: rgba(255, 255, 255, 0.8);
         line-height: 1.9;
         font-size: 1rem;
         margin-bottom: 20px;
+    }
+    
+    body:not(.dark-mode) .privacy-text {
+        color: rgba(30, 41, 59, 0.8) !important;
     }
     
     .privacy-list {
@@ -179,6 +204,10 @@
         margin-bottom: 12px;
         padding-left: 30px;
         position: relative;
+    }
+    
+    body:not(.dark-mode) .privacy-list li {
+        color: rgba(30, 41, 59, 0.8) !important;
     }
     
     .privacy-list li::before {
@@ -211,6 +240,11 @@
         overflow: hidden;
     }
     
+    body:not(.dark-mode) .privacy-contact {
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.05), rgba(20, 184, 166, 0.05)) !important;
+        border-color: rgba(6, 182, 212, 0.25) !important;
+    }
+    
     .privacy-contact::before {
         content: '';
         position: absolute;
@@ -234,6 +268,28 @@
         margin-bottom: 15px;
         color: rgba(255, 255, 255, 0.8);
         font-size: 1.1rem;
+    }
+    
+    body:not(.dark-mode) .privacy-contact-item {
+        color: rgba(30, 41, 59, 0.8) !important;
+    }
+    
+    /* Force text colors in light mode */
+    body:not(.dark-mode) h1,
+    body:not(.dark-mode) h2,
+    body:not(.dark-mode) h3,
+    body:not(.dark-mode) p,
+    body:not(.dark-mode) li,
+    body:not(.dark-mode) strong {
+        color: rgba(30, 41, 59, 0.9) !important;
+    }
+    
+    body:not(.dark-mode) .privacy-hero h1 {
+        -webkit-text-fill-color: transparent !important;
+    }
+    
+    body:not(.dark-mode) .privacy-section-title {
+        color: #06b6d4 !important;
     }
     
     .privacy-contact-item i {
