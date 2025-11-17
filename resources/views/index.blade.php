@@ -15,18 +15,15 @@
     
     body {
         font-family: 'Inter', sans-serif;
-        background: #1a1a2e;
-        color: #fff;
+        background: #ffffff;
+        color: rgba(30, 41, 59, 0.9);
         overflow-x: hidden;
     }
     
     /* Dark Mode Styles */
     body.dark-mode {
         background: #0a0a0f !important;
-    }
-    
-    body.dark-mode .bg-canvas {
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%) !important;
+        color: #fff !important;
     }
     
     /* Background moderne et lumineux */
@@ -37,7 +34,11 @@
         width: 100%;
         height: 100%;
         z-index: 0;
-        background: linear-gradient(135deg, #334155 0%, #475569 50%, #334155 100%);
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #f8fafc 100%);
+    }
+    
+    body.dark-mode .bg-canvas {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%) !important;
     }
     
     .floating-shapes {
@@ -115,7 +116,7 @@
         justify-content: center;
         padding: 100px 40px 80px;
         overflow: hidden;
-        background: linear-gradient(135deg, rgba(30, 41, 59, 0.75) 0%, rgba(51, 65, 85, 0.8) 100%),
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.4) 0%, rgba(51, 65, 85, 0.5) 100%),
                     url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2072&q=80') center/cover no-repeat;
         background-attachment: fixed;
     }
@@ -133,7 +134,7 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.15) 0%, rgba(30, 41, 59, 0.6) 100%);
+        background: radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.2) 0%, rgba(30, 41, 59, 0.6) 100%);
         z-index: 0;
     }
     
@@ -173,8 +174,14 @@
         font-weight: 900;
         line-height: 1.2;
         margin-bottom: 25px;
-        color: #fff;
+        color: #ffffff;
         letter-spacing: -0.02em;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+    
+    body.dark-mode .main-title {
+        color: #fff;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
     }
     
     .title-gradient {
@@ -189,12 +196,17 @@
     .subtitle {
         font-size: clamp(1.1rem, 2.5vw, 1.4rem);
         font-weight: 400;
-        color: rgba(255, 255, 255, 0.8);
+        color: rgba(255, 255, 255, 0.95);
         margin-bottom: 40px;
         line-height: 1.6;
         max-width: 900px;
         margin-left: auto;
         margin-right: auto;
+        text-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+    }
+    
+    body.dark-mode .subtitle {
+        color: rgba(255, 255, 255, 0.8);
     }
     
     /* Boutons CTA - Style Sunu Code */
@@ -248,29 +260,36 @@
     
     
     /* Stats Section Ultra Moderne - Refonte Complète */
+    .stats-section {
+        position: relative;
+        z-index: 2;
+        padding: 80px 20px;
+        margin: 60px 0;
+    }
+    
     .stats-grid {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
         gap: 25px;
         max-width: 1400px;
-        margin: 0 auto 100px;
+        margin: 0 auto;
         padding: 0 20px;
     }
     
     .stat-card {
         position: relative;
-        background: linear-gradient(135deg, rgba(6, 182, 212, 0.08) 0%, rgba(20, 184, 166, 0.05) 100%);
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(20, 184, 166, 0.08) 100%);
         background-image: 
-            radial-gradient(circle at 20% 30%, rgba(6, 182, 212, 0.1) 0%, transparent 50%),
-            radial-gradient(circle at 80% 70%, rgba(20, 184, 166, 0.1) 0%, transparent 50%);
-        border: 2px solid rgba(6, 182, 212, 0.15);
+            radial-gradient(circle at 20% 30%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
+            radial-gradient(circle at 80% 70%, rgba(20, 184, 166, 0.15) 0%, transparent 50%);
+        border: 2px solid rgba(6, 182, 212, 0.2);
         border-radius: 24px;
         padding: 35px 25px;
         backdrop-filter: blur(30px);
         transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         overflow: hidden;
         text-align: center;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 10px 40px rgba(6, 182, 212, 0.15);
     }
     
     body.dark-mode .stat-card {
@@ -382,7 +401,7 @@
     
     .stat-label {
         font-size: 0.95rem;
-        color: rgba(255, 255, 255, 0.75);
+        color: rgba(30, 41, 59, 0.8);
         font-weight: 600;
         text-transform: none;
         letter-spacing: 0.5px;
@@ -391,7 +410,15 @@
         transition: color 0.3s ease;
     }
     
+    body.dark-mode .stat-label {
+        color: rgba(255, 255, 255, 0.75);
+    }
+    
     .stat-card:hover .stat-label {
+        color: rgba(30, 41, 59, 1);
+    }
+    
+    body.dark-mode .stat-card:hover .stat-label {
         color: rgba(255, 255, 255, 0.95);
     }
     
@@ -399,7 +426,7 @@
     .tech-section {
         position: relative;
         z-index: 2;
-        padding: 60px 20px;
+        padding: 80px 20px;
         max-width: 1200px;
         margin: 0 auto;
     }
@@ -418,9 +445,13 @@
     .section-subtitle {
         text-align: center;
         font-size: 1.1rem;
-        color: rgba(255, 255, 255, 0.6);
+        color: rgba(30, 41, 59, 0.7);
         max-width: 700px;
         margin: 0 auto 40px;
+    }
+    
+    body.dark-mode .section-subtitle {
+        color: rgba(255, 255, 255, 0.6);
     }
     
     .tech-grid {
@@ -431,14 +462,15 @@
     
     .tech-card {
         position: relative;
-        background: rgba(10, 10, 26, 0.6);
-        border: 1px solid rgba(6, 182, 212, 0.2);
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.08) 0%, rgba(20, 184, 166, 0.05) 100%);
+        border: 2px solid rgba(6, 182, 212, 0.2);
         border-radius: 24px;
         padding: 40px;
         backdrop-filter: blur(20px);
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         cursor: pointer;
         overflow: hidden;
+        box-shadow: 0 10px 40px rgba(6, 182, 212, 0.1);
     }
     
     body.dark-mode .tech-card {
@@ -477,13 +509,21 @@
         font-size: 1.8rem;
         font-weight: 700;
         margin-bottom: 15px;
+        color: rgba(30, 41, 59, 0.9);
+    }
+    
+    body.dark-mode .tech-name {
         color: #fff;
     }
     
     .tech-desc {
-        color: rgba(255, 255, 255, 0.6);
+        color: rgba(30, 41, 59, 0.7);
         line-height: 1.6;
         margin-bottom: 20px;
+    }
+    
+    body.dark-mode .tech-desc {
+        color: rgba(255, 255, 255, 0.6);
     }
     
     .tech-link {
@@ -640,7 +680,7 @@
 </section>
 
 <!-- Stats Section -->
-<section style="position: relative; z-index: 2; padding: 40px 20px; max-width: 1200px; margin: 0 auto;">
+<section class="stats-section">
     <div class="stats-grid">
         <div class="stat-card">
             <div class="stat-icon">
@@ -677,7 +717,7 @@
 </section>
 
 <!-- Exercices & Quiz Section -->
-<section style="position: relative; z-index: 2; padding: 60px 20px; max-width: 1600px; margin: 0 auto;">
+<section class="exercices-quiz-section" style="position: relative; z-index: 2; padding: 80px 20px; max-width: 1600px; margin: 0 auto;">
     <h2 class="section-title">Pratiquez avec nos Exercices & Quiz</h2>
     <p class="section-subtitle">
         Renforcez vos compétences avec des exercices pratiques et testez vos connaissances avec nos quiz interactifs
@@ -1079,7 +1119,7 @@
 
 <!-- Latest Jobs Section -->
 @if(isset($latestJobs) && $latestJobs->count() > 0)
-<section style="position: relative; z-index: 2; padding: 80px 20px; max-width: 1600px; margin: 0 auto;">
+<section class="latest-jobs-section" style="position: relative; z-index: 2; padding: 80px 20px; max-width: 1600px; margin: 0 auto;">
     <div style="text-align: center; margin-bottom: 50px;">
         <h2 class="section-title">💼 Dernières Opportunités d'Emploi</h2>
         <p class="section-subtitle">
@@ -1090,7 +1130,7 @@
     <div class="latest-jobs-grid" style="margin-bottom: 40px;">
         @foreach($latestJobs as $job)
         <a href="{{ route('emplois.article', $job->slug) }}" style="text-decoration: none; display: block;">
-            <div style="background: linear-gradient(135deg, rgba(51, 65, 85, 0.85), rgba(71, 85, 105, 0.85)); border: 2px solid rgba(6, 182, 212, 0.35); border-radius: 24px; overflow: hidden; transition: all 0.5s ease; height: 100%;">
+            <div class="latest-job-card" style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.95)); border: 2px solid rgba(6, 182, 212, 0.25); border-radius: 24px; overflow: hidden; transition: all 0.5s ease; height: 100%; box-shadow: 0 10px 40px rgba(6, 182, 212, 0.1);">
                 @if($job->cover_image)
                 <div style="width: 100%; height: 180px; overflow: hidden;">
                     <img src="{{ $job->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($job->cover_image) : $job->cover_image }}"
@@ -1100,26 +1140,26 @@
                          onerror="this.src='https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=400&h=250&fit=crop'">
                 </div>
                 @else
-                <div style="width: 100%; height: 180px; background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2)); display: flex; align-items: center; justify-content: center;">
-                    <i class="fas fa-briefcase text-5xl text-cyan-400/50"></i>
+                <div class="latest-job-placeholder" style="width: 100%; height: 180px; background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(20, 184, 166, 0.15)); display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-briefcase text-5xl" style="color: rgba(6, 182, 212, 0.4);"></i>
                 </div>
                 @endif
                 
                 <div style="padding: 24px;">
-                    <span style="display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; background: rgba(6, 182, 212, 0.15); color: #06b6d4; border-radius: 18px; font-size: 0.75rem; font-weight: 700; margin-bottom: 12px; border: 1px solid rgba(6, 182, 212, 0.3);">
+                    <span class="latest-job-category" style="display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; background: rgba(6, 182, 212, 0.1); color: #06b6d4; border-radius: 18px; font-size: 0.75rem; font-weight: 700; margin-bottom: 12px; border: 1px solid rgba(6, 182, 212, 0.25);">
                         <i class="fas fa-folder"></i>{{ $job->category->name }}
                     </span>
                     
-                    <h3 style="font-size: 1.1rem; font-weight: 800; color: #fff; margin-bottom: 12px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 3em;">
+                    <h3 class="latest-job-title" style="font-size: 1.1rem; font-weight: 800; color: rgba(30, 41, 59, 0.9); margin-bottom: 12px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 3em;">
                         {{ $job->title }}
                     </h3>
                     
-                    <p style="color: rgba(255, 255, 255, 0.7); line-height: 1.6; margin-bottom: 16px; font-size: 0.85rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                    <p class="latest-job-excerpt" style="color: rgba(30, 41, 59, 0.7); line-height: 1.6; margin-bottom: 16px; font-size: 0.85rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
                         {{ $job->excerpt ?? Str::limit(strip_tags($job->content), 80) }}
                     </p>
                     
                     <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 16px; border-top: 1px solid rgba(6, 182, 212, 0.2);">
-                        <div style="display: flex; align-items: center; gap: 10px; color: rgba(255, 255, 255, 0.6); font-size: 0.8rem;">
+                        <div class="latest-job-meta" style="display: flex; align-items: center; gap: 10px; color: rgba(30, 41, 59, 0.6); font-size: 0.8rem;">
                             <span><i class="fas fa-calendar" style="color: #06b6d4;"></i> {{ $job->published_at ? $job->published_at->format('d/m/Y') : '' }}</span>
                         </div>
                         <span style="padding: 8px 18px; background: linear-gradient(135deg, #06b6d4, #14b8a6); color: #000; border-radius: 10px; font-weight: 700; font-size: 0.8rem; transition: all 0.3s ease;">
@@ -1146,9 +1186,51 @@
         gap: 25px;
     }
     
-    body.dark-mode .latest-jobs-grid > a > div {
+    /* Mode jour - cards des dernières opportunités */
+    .latest-job-card {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.95)) !important;
+        border: 2px solid rgba(6, 182, 212, 0.25) !important;
+        box-shadow: 0 10px 40px rgba(6, 182, 212, 0.1) !important;
+    }
+    
+    .latest-job-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 60px rgba(6, 182, 212, 0.2) !important;
+        border-color: rgba(6, 182, 212, 0.4) !important;
+    }
+    
+    .latest-job-title {
+        color: rgba(30, 41, 59, 0.9) !important;
+    }
+    
+    .latest-job-excerpt {
+        color: rgba(30, 41, 59, 0.7) !important;
+    }
+    
+    .latest-job-meta {
+        color: rgba(30, 41, 59, 0.6) !important;
+    }
+    
+    body.dark-mode .latest-job-card {
         background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.9)) !important;
         border-color: rgba(6, 182, 212, 0.3) !important;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3) !important;
+    }
+    
+    body.dark-mode .latest-job-card:hover {
+        box-shadow: 0 20px 60px rgba(6, 182, 212, 0.4) !important;
+    }
+    
+    body.dark-mode .latest-job-title {
+        color: #fff !important;
+    }
+    
+    body.dark-mode .latest-job-excerpt {
+        color: rgba(255, 255, 255, 0.7) !important;
+    }
+    
+    body.dark-mode .latest-job-meta {
+        color: rgba(255, 255, 255, 0.6) !important;
     }
     
     body.dark-mode [style*="rgba(51, 65, 85, 0.85"] {
@@ -1157,6 +1239,43 @@
     
     body.dark-mode [style*="rgba(71, 85, 105, 0.85"] {
         background: rgba(30, 41, 59, 0.9) !important;
+    }
+    
+    /* Mode jour - placeholder pour les images manquantes */
+    .latest-job-placeholder {
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(20, 184, 166, 0.15)) !important;
+    }
+    
+    body.dark-mode .latest-job-placeholder {
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2)) !important;
+    }
+    
+    /* Mode jour - catégorie */
+    .latest-job-category {
+        background: rgba(6, 182, 212, 0.1) !important;
+        border-color: rgba(6, 182, 212, 0.25) !important;
+    }
+    
+    body.dark-mode .latest-job-category {
+        background: rgba(6, 182, 212, 0.15) !important;
+        border-color: rgba(6, 182, 212, 0.3) !important;
+    }
+    
+    /* Mode jour - cards exercices & quiz */
+    .stat-card h3 {
+        color: rgba(30, 41, 59, 0.9) !important;
+    }
+    
+    .stat-card p {
+        color: rgba(30, 41, 59, 0.7) !important;
+    }
+    
+    body.dark-mode .stat-card h3 {
+        color: #fff !important;
+    }
+    
+    body.dark-mode .stat-card p {
+        color: rgba(255, 255, 255, 0.7) !important;
     }
     
     @media (max-width: 1024px) {
