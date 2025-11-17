@@ -8,6 +8,15 @@
         overflow-x: hidden;
     }
     
+    /* Body background */
+    body:not(.dark-mode) {
+        background: #ffffff !important;
+    }
+    
+    body.dark-mode {
+        background: #0a0a0f !important;
+    }
+    
     .result-container {
         max-width: 900px;
         margin: 0 auto;
@@ -20,6 +29,12 @@
         padding: 3rem;
         text-align: center;
         margin-bottom: 3rem;
+    }
+    
+    body:not(.dark-mode) .score-card {
+        background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(236, 72, 153, 0.1)) !important;
+        border-color: rgba(168, 85, 247, 0.25) !important;
+        box-shadow: 0 10px 40px rgba(168, 85, 247, 0.1) !important;
     }
     
     .score-circle {
@@ -42,14 +57,64 @@
         margin-bottom: 1.5rem;
     }
     
+    body:not(.dark-mode) .answer-card {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.95)) !important;
+        border-color: rgba(168, 85, 247, 0.25) !important;
+        box-shadow: 0 10px 40px rgba(168, 85, 247, 0.1) !important;
+    }
+    
     .answer-card.correct {
         border-color: rgba(34, 197, 94, 0.5);
         background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(34, 197, 94, 0.05));
     }
     
+    body:not(.dark-mode) .answer-card.correct {
+        background: linear-gradient(135deg, rgba(34, 197, 94, 0.08), rgba(34, 197, 94, 0.05)) !important;
+        border-color: rgba(34, 197, 94, 0.3) !important;
+    }
+    
     .answer-card.incorrect {
         border-color: rgba(239, 68, 68, 0.5);
         background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05));
+    }
+    
+    body:not(.dark-mode) .answer-card.incorrect {
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.08), rgba(239, 68, 68, 0.05)) !important;
+        border-color: rgba(239, 68, 68, 0.3) !important;
+    }
+    
+    /* Text colors */
+    body:not(.dark-mode) .text-gray-300 {
+        color: rgba(30, 41, 59, 0.8) !important;
+    }
+    
+    body:not(.dark-mode) .text-white {
+        color: rgba(30, 41, 59, 0.9) !important;
+    }
+    
+    /* Buttons */
+    body:not(.dark-mode) .bg-white\/10 {
+        background: rgba(168, 85, 247, 0.1) !important;
+        border-color: rgba(168, 85, 247, 0.3) !important;
+    }
+    
+    body:not(.dark-mode) .bg-white\/10:hover {
+        background: rgba(168, 85, 247, 0.15) !important;
+    }
+    
+    body:not(.dark-mode) .text-white.border-white\/20 {
+        color: rgba(30, 41, 59, 0.9) !important;
+        border-color: rgba(168, 85, 247, 0.3) !important;
+    }
+    
+    /* CTA section */
+    body:not(.dark-mode) .bg-gradient-to-r.from-purple-500\/10.to-pink-500\/10 {
+        background: linear-gradient(to right, rgba(168, 85, 247, 0.05), rgba(236, 72, 153, 0.05)) !important;
+        border-color: rgba(168, 85, 247, 0.2) !important;
+    }
+    
+    body:not(.dark-mode) .text-purple-400 {
+        color: #a855f7 !important;
     }
 </style>
 @endsection

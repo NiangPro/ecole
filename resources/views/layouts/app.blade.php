@@ -38,6 +38,7 @@
     
     <!-- DNS Prefetch pour améliorer les performances -->
     <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
     <link rel="dns-prefetch" href="//www.google-analytics.com">
     
@@ -640,6 +641,7 @@
     </script>
     
     <script src="{{ asset('js/main.js') }}"></script>
+    <script src="{{ asset('js/pwa.js') }}"></script>
     @yield('scripts')
 </body>
 </html>

@@ -8,6 +8,15 @@
         overflow-x: hidden;
     }
     
+    /* Body background */
+    body:not(.dark-mode) {
+        background: #ffffff !important;
+    }
+    
+    body.dark-mode {
+        background: #0a0a0f !important;
+    }
+    
     .exercise-container {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -29,6 +38,12 @@
         height: fit-content;
     }
     
+    body:not(.dark-mode) .exercise-panel {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.95)) !important;
+        border-color: rgba(6, 182, 212, 0.25) !important;
+        box-shadow: 0 10px 40px rgba(6, 182, 212, 0.1) !important;
+    }
+    
     .code-editor {
         width: 100%;
         min-height: 400px;
@@ -43,10 +58,20 @@
         resize: vertical;
     }
     
+    body:not(.dark-mode) .code-editor {
+        background: #f8fafc !important;
+        color: rgba(30, 41, 59, 0.9) !important;
+        border-color: rgba(6, 182, 212, 0.3) !important;
+    }
+    
     .code-editor:focus {
         outline: none;
         border-color: rgba(6, 182, 212, 0.6);
         box-shadow: 0 0 20px rgba(6, 182, 212, 0.2);
+    }
+    
+    body:not(.dark-mode) .code-editor:focus {
+        box-shadow: 0 0 20px rgba(6, 182, 212, 0.15) !important;
     }
     
     .result-frame {
@@ -73,6 +98,53 @@
         padding: 1rem;
         color: #ef4444;
         display: none;
+    }
+    
+    /* Text colors */
+    body:not(.dark-mode) .text-gray-300 {
+        color: rgba(30, 41, 59, 0.8) !important;
+    }
+    
+    body:not(.dark-mode) .text-gray-400 {
+        color: rgba(30, 41, 59, 0.6) !important;
+    }
+    
+    body:not(.dark-mode) .text-gray-500 {
+        color: rgba(30, 41, 59, 0.5) !important;
+    }
+    
+    body:not(.dark-mode) .text-white {
+        color: rgba(30, 41, 59, 0.9) !important;
+    }
+    
+    /* Buttons */
+    body:not(.dark-mode) .bg-gray-700 {
+        background: rgba(6, 182, 212, 0.1) !important;
+        color: rgba(30, 41, 59, 0.9) !important;
+        border: 1px solid rgba(6, 182, 212, 0.3) !important;
+    }
+    
+    body:not(.dark-mode) .bg-gray-700:hover {
+        background: rgba(6, 182, 212, 0.15) !important;
+    }
+    
+    /* Info boxes */
+    body:not(.dark-mode) .bg-yellow-500\/10 {
+        background: rgba(234, 179, 8, 0.05) !important;
+        border-color: rgba(234, 179, 8, 0.2) !important;
+    }
+    
+    body:not(.dark-mode) .bg-cyan-500\/10 {
+        background: rgba(6, 182, 212, 0.05) !important;
+        border-color: rgba(6, 182, 212, 0.2) !important;
+    }
+    
+    body:not(.dark-mode) .text-gray-300 {
+        color: rgba(30, 41, 59, 0.7) !important;
+    }
+    
+    body:not(.dark-mode) .text-cyan-400 {
+        color: #06b6d4 !important;
     }
 </style>
 @endsection

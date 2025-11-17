@@ -25,6 +25,7 @@ Route::post('/exercices/{language}/{id}/submit', [PageController::class, 'exerci
 Route::get('/quiz', [PageController::class, 'quiz'])->name('quiz');
 Route::get('/quiz/{language}', [PageController::class, 'quizLanguage'])->name('quiz.language');
 Route::post('/quiz/{language}/submit', [PageController::class, 'quizSubmit'])->name('quiz.submit');
+Route::get('/quiz/{language}/result', [PageController::class, 'quizResult'])->name('quiz.result');
 Route::get('/legal', [PageController::class, 'legal'])->name('legal');
 Route::get('/privacy-policy', [PageController::class, 'privacyPolicy'])->name('privacy-policy');
 Route::get('/terms', [PageController::class, 'terms'])->name('terms');

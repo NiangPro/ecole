@@ -10,6 +10,15 @@
         overflow-x: hidden;
     }
     
+    /* Body background */
+    body:not(.dark-mode) {
+        background: #ffffff !important;
+    }
+    
+    body.dark-mode {
+        background: #0a0a0f !important;
+    }
+    
     .exercise-card {
         background: linear-gradient(135deg, rgba(10, 10, 26, 0.9), rgba(0, 0, 0, 0.9));
         border: 2px solid rgba(6, 182, 212, 0.2);
@@ -18,6 +27,12 @@
         transition: all 0.3s ease;
         position: relative;
         overflow: hidden;
+    }
+    
+    body:not(.dark-mode) .exercise-card {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.95)) !important;
+        border-color: rgba(6, 182, 212, 0.25) !important;
+        box-shadow: 0 10px 40px rgba(6, 182, 212, 0.1) !important;
     }
     
     .exercise-card::before {
@@ -38,6 +53,10 @@
         box-shadow: 0 20px 60px rgba(6, 182, 212, 0.3);
     }
     
+    body:not(.dark-mode) .exercise-card:hover {
+        box-shadow: 0 20px 60px rgba(6, 182, 212, 0.2) !important;
+    }
+    
     .exercise-card:hover::before {
         transform: scaleX(1);
     }
@@ -56,6 +75,46 @@
     
     .exercise-card:hover .language-icon {
         transform: scale(1.1) rotate(5deg);
+    }
+    
+    /* Text colors */
+    body:not(.dark-mode) .text-gray-300 {
+        color: rgba(30, 41, 59, 0.8) !important;
+    }
+    
+    body:not(.dark-mode) .text-gray-400 {
+        color: rgba(30, 41, 59, 0.6) !important;
+    }
+    
+    body:not(.dark-mode) .text-white {
+        color: rgba(30, 41, 59, 0.9) !important;
+    }
+    
+    /* Stats cards */
+    body:not(.dark-mode) .bg-gradient-to-br {
+        background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.9), rgba(248, 250, 252, 0.9)) !important;
+        border-color: rgba(6, 182, 212, 0.2) !important;
+    }
+    
+    /* CTA section */
+    body:not(.dark-mode) .bg-gradient-to-r.from-cyan-500\/10.to-teal-500\/10 {
+        background: linear-gradient(to right, rgba(6, 182, 212, 0.05), rgba(20, 184, 166, 0.05)) !important;
+        border-color: rgba(6, 182, 212, 0.2) !important;
+    }
+    
+    /* Buttons */
+    body:not(.dark-mode) .bg-white\/10 {
+        background: rgba(6, 182, 212, 0.1) !important;
+        border-color: rgba(6, 182, 212, 0.3) !important;
+    }
+    
+    body:not(.dark-mode) .bg-white\/10:hover {
+        background: rgba(6, 182, 212, 0.15) !important;
+    }
+    
+    body:not(.dark-mode) .text-white.border-white\/20 {
+        color: rgba(30, 41, 59, 0.9) !important;
+        border-color: rgba(6, 182, 212, 0.3) !important;
     }
 </style>
 @endsection

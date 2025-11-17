@@ -32,134 +32,78 @@
     }
     
     .offers-hero {
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
-        padding: 140px 20px 100px;
-        text-align: center;
         position: relative;
+        height: 500px;
         overflow: hidden;
-        background-attachment: fixed;
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
-        min-height: 400px;
     }
     
-    /* Si la catégorie a une image, l'utiliser comme background */
-    .offers-hero.has-category-image {
-        background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.9) 50%, rgba(15, 23, 42, 0.85) 100%);
-    }
-    
-    .offers-hero.has-category-image[style*="background-image"] {
-        background-size: cover !important;
-        background-position: center !important;
-        background-repeat: no-repeat !important;
-        background-attachment: fixed !important;
-    }
-    
-    /* Overlay pour mode sombre */
-    .offers-hero.has-category-image::before {
-        content: '';
+    .offers-hero-overlay {
         position: absolute;
         top: 0;
         left: 0;
         right: 0;
         bottom: 0;
-        background: linear-gradient(135deg, rgba(15, 23, 42, 0.7) 0%, rgba(30, 41, 59, 0.8) 50%, rgba(15, 23, 42, 0.7) 100%);
-        z-index: 0;
+        background: linear-gradient(to bottom, transparent 0%, rgba(51, 65, 85, 0.85) 100%);
+        display: flex;
+        align-items: flex-end;
+        padding: 60px 20px 40px;
     }
     
-    /* Overlay plus léger pour mode clair - permet de voir l'image */
-    body:not(.dark-mode) .offers-hero.has-category-image::before {
-        background: linear-gradient(135deg, rgba(30, 41, 59, 0.3) 0%, rgba(51, 65, 85, 0.4) 50%, rgba(30, 41, 59, 0.3) 100%) !important;
-    }
-    
-    /* Mode clair - background par défaut plus transparent pour voir l'image */
-    body:not(.dark-mode) .offers-hero {
-        background: linear-gradient(135deg, rgba(30, 41, 59, 0.2) 0%, rgba(51, 65, 85, 0.3) 50%, rgba(30, 41, 59, 0.2) 100%) !important;
-    }
-    
-    /* Mode clair - si image de catégorie, supprimer le gradient background pour voir l'image */
-    body:not(.dark-mode) .offers-hero.has-category-image[style*="background-image"] {
-        background: transparent !important;
-        background-blend-mode: normal;
-    }
-    
-    /* Overlay encore plus léger en mode clair avec image */
-    body:not(.dark-mode) .offers-hero.has-category-image[style*="background-image"]::before {
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.1) 100%) !important;
-    }
-    
-    /* Mode sombre - blend mode overlay pour meilleur contraste */
-    body.dark-mode .offers-hero.has-category-image[style*="background-image"] {
-        background-blend-mode: overlay;
+    body:not(.dark-mode) .offers-hero-overlay {
+        background: linear-gradient(to bottom, transparent 0%, rgba(30, 41, 59, 0.7) 100%) !important;
     }
     
     .offers-hero-content {
+        max-width: 1200px;
+        width: 100%;
+        margin: 0 auto;
         position: relative;
         z-index: 1;
+    }
+    
+    .offers-hero-title {
+        font-size: clamp(2rem, 4vw, 3.5rem);
+        font-weight: 900;
+        color: #fff;
+        margin-bottom: 15px;
+        line-height: 1.2;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+    
+    body:not(.dark-mode) .offers-hero-title {
+        color: rgba(255, 255, 255, 0.95) !important;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5) !important;
+    }
+    
+    .offers-hero-description {
+        font-size: 1.1rem;
+        color: rgba(255, 255, 255, 0.9);
+        line-height: 1.6;
+        text-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
+    }
+    
+    body:not(.dark-mode) .offers-hero-description {
+        color: rgba(255, 255, 255, 0.95) !important;
+        text-shadow: 0 1px 5px rgba(0, 0, 0, 0.4) !important;
+    }
+    
+    .offers-hero-fallback {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        padding: 100px 20px 60px;
+        text-align: center;
+    }
+    
+    body:not(.dark-mode) .offers-hero-fallback {
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.4) 0%, rgba(51, 65, 85, 0.5) 50%, rgba(30, 41, 59, 0.4) 100%) !important;
     }
     
     @media (max-width: 768px) {
         .offers-hero {
-            background-attachment: scroll !important;
+            height: 300px;
         }
-        
-        .offers-hero.has-category-image[style*="background-image"] {
-            background-attachment: scroll !important;
-        }
-    }
-    
-    .offers-hero::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(circle, rgba(6, 182, 212, 0.1) 0%, transparent 70%);
-        animation: rotate 20s linear infinite;
-    }
-    
-    @keyframes rotate {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-    }
-    
-    .offers-hero-content {
-        position: relative;
-        z-index: 1;
-        max-width: 900px;
-        margin: 0 auto;
-    }
-    
-    .offers-hero h1 {
-        font-family: 'Poppins', sans-serif;
-        font-size: clamp(3rem, 6vw, 5rem);
-        font-weight: 900;
-        background: linear-gradient(135deg, #06b6d4 0%, #14b8a6 50%, #06b6d4 100%);
-        background-size: 200% auto;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        margin-bottom: 25px;
-        animation: shimmer 3s linear infinite;
-    }
-    
-    @keyframes shimmer {
-        to { background-position: 200% center; }
-    }
-    
-    .offers-hero p {
-        font-size: 1.3rem;
-        color: rgba(255, 255, 255, 0.95);
-        line-height: 1.8;
-        font-weight: 400;
-        text-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
-    }
-    
-    body:not(.dark-mode) .offers-hero p {
-        color: rgba(255, 255, 255, 0.95) !important;
-        text-shadow: 0 1px 5px rgba(0, 0, 0, 0.3) !important;
     }
     
     .offers-container {
@@ -529,20 +473,27 @@
 <!-- Hero Section -->
 @php
     $categoryImage = null;
-    $heroClass = 'offers-hero';
     if ($category && $category->image) {
         $categoryImage = $category->image_type === 'internal' 
             ? \Illuminate\Support\Facades\Storage::url($category->image) 
             : $category->image;
-        $heroClass .= ' has-category-image';
     }
 @endphp
-<section class="{{ $heroClass }}" @if($categoryImage) style="background-image: url('{{ $categoryImage }}'); background-size: cover; background-position: center; background-repeat: no-repeat; background-attachment: fixed;" @endif>
-    <div class="offers-hero-content">
-        <h1>💼 {{ $category ? $category->name : 'Offres d\'Emploi' }}</h1>
-        <p>Découvrez les meilleures offres d'emploi publiées au Sénégal. Nous ne recrutons pas directement mais publions les offres de recrutement existantes pour vous aider à trouver votre emploi idéal.</p>
+@if($categoryImage)
+<div class="offers-hero" style="background-image: url('{{ $categoryImage }}');">
+    <div class="offers-hero-overlay">
+        <div class="offers-hero-content">
+            <h1 class="offers-hero-title">💼 {{ $category ? $category->name : 'Offres d\'Emploi' }}</h1>
+            <p class="offers-hero-description">Découvrez les meilleures offres d'emploi publiées au Sénégal. Nous ne recrutons pas directement mais publions les offres de recrutement existantes pour vous aider à trouver votre emploi idéal.</p>
+        </div>
     </div>
-</section>
+</div>
+@else
+<div class="offers-hero-fallback">
+    <h1 class="offers-hero-title" style="max-width: 1200px; margin: 0 auto;">💼 {{ $category ? $category->name : 'Offres d\'Emploi' }}</h1>
+    <p class="offers-hero-description" style="max-width: 1200px; margin: 20px auto 0;">Découvrez les meilleures offres d'emploi publiées au Sénégal. Nous ne recrutons pas directement mais publions les offres de recrutement existantes pour vous aider à trouver votre emploi idéal.</p>
+</div>
+@endif
 
 <!-- Offers Container -->
 <div class="offers-container">

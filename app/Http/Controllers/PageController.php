@@ -9,10 +9,11 @@ class PageController extends Controller
 {
     public function index()
     {
-        // Cache les 3 derniers articles publiés (15 minutes)
+        // Cache les 3 derniers articles publiés (15 minutes) - Optimisé avec select()
         $latestJobs = \Illuminate\Support\Facades\Cache::remember('latest_jobs', 900, function () {
             return \App\Models\JobArticle::where('status', 'published')
-                ->with('category')
+                ->with('category:id,name,slug')
+                ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')
                 ->orderBy('published_at', 'desc')
                 ->orderBy('updated_at', 'desc')
                 ->orderBy('created_at', 'desc')
@@ -1413,7 +1414,42 @@ add_action(\'init\', \'create_portfolio_post_type\');
         
         $percentage = ($score / $total) * 100;
         
-        return view('quiz-result', compact('language', 'score', 'total', 'percentage', 'results'));
+        // Stocker les résultats en session pour éviter la re-soumission
+        session([
+            'quiz_results_' . $language => [
+                'score' => $score,
+                'total' => $total,
+                'percentage' => $percentage,
+                'results' => $results
+            ]
+        ]);
+        
+        // Rediriger vers la route GET pour afficher les résultats (pattern Post-Redirect-Get)
+        return redirect()->route('quiz.result', $language);
+    }
+    
+    public function quizResult($language)
+    {
+        // Récupérer les résultats depuis la session
+        $sessionKey = 'quiz_results_' . $language;
+        $quizData = session($sessionKey);
+        
+        if (!$quizData) {
+            // Si pas de résultats en session, rediriger vers le quiz
+            return redirect()->route('quiz.language', $language)
+                ->with('error', 'Aucun résultat de quiz trouvé. Veuillez compléter le quiz d\'abord.');
+        }
+        
+        // Supprimer les résultats de la session après récupération (une seule fois)
+        session()->forget($sessionKey);
+        
+        return view('quiz-result', [
+            'language' => $language,
+            'score' => $quizData['score'],
+            'total' => $quizData['total'],
+            'percentage' => $quizData['percentage'],
+            'results' => $quizData['results']
+        ]);
     }
 
     private function getQuizQuestions($language)
@@ -1758,12 +1794,17 @@ add_action(\'init\', \'create_portfolio_post_type\');
             return \App\Models\Category::where('slug', 'bourses-etudes')->first();
         });
         
-        $articles = \App\Models\JobArticle::where('status', 'published')
-            ->where('category_id', $category->id ?? null)
-            ->with('category:id,name,slug')
-            ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')
-            ->orderBy('published_at', 'desc')
-            ->paginate(12);
+        // Cache optimisé avec eager loading (15 minutes)
+        $cacheKey = $category ? "job_articles_bourses_page_" . request()->get('page', 1) : "job_articles_bourses_all_page_" . request()->get('page', 1);
+        
+        $articles = \Illuminate\Support\Facades\Cache::remember($cacheKey, 900, function () use ($category) {
+            return \App\Models\JobArticle::where('status', 'published')
+                ->where('category_id', $category->id ?? null)
+                ->with('category:id,name,slug')
+                ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')
+                ->orderBy('published_at', 'desc')
+                ->paginate(12);
+        });
         
         return view('emplois.bourses', compact('articles', 'category'));
     }
@@ -1775,12 +1816,17 @@ add_action(\'init\', \'create_portfolio_post_type\');
             return \App\Models\Category::where('slug', 'candidature-spontanee')->first();
         });
         
-        $articles = \App\Models\JobArticle::where('status', 'published')
-            ->where('category_id', $category->id ?? null)
-            ->with('category:id,name,slug')
-            ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')
-            ->orderBy('published_at', 'desc')
-            ->paginate(12);
+        // Cache optimisé avec eager loading (15 minutes)
+        $cacheKey = "job_articles_candidature_page_" . request()->get('page', 1);
+        
+        $articles = \Illuminate\Support\Facades\Cache::remember($cacheKey, 900, function () use ($category) {
+            return \App\Models\JobArticle::where('status', 'published')
+                ->where('category_id', $category->id ?? null)
+                ->with('category:id,name,slug')
+                ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')
+                ->orderBy('published_at', 'desc')
+                ->paginate(12);
+        });
         
         return view('emplois.candidature', compact('articles', 'category'));
     }
@@ -1792,12 +1838,17 @@ add_action(\'init\', \'create_portfolio_post_type\');
             return \App\Models\Category::where('slug', 'opportunites-professionnelles')->first();
         });
         
-        $articles = \App\Models\JobArticle::where('status', 'published')
-            ->where('category_id', $category->id ?? null)
-            ->with('category:id,name,slug')
-            ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')
-            ->orderBy('published_at', 'desc')
-            ->paginate(12);
+        // Cache optimisé avec eager loading (15 minutes)
+        $cacheKey = "job_articles_opportunites_page_" . request()->get('page', 1);
+        
+        $articles = \Illuminate\Support\Facades\Cache::remember($cacheKey, 900, function () use ($category) {
+            return \App\Models\JobArticle::where('status', 'published')
+                ->where('category_id', $category->id ?? null)
+                ->with('category:id,name,slug')
+                ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')
+                ->orderBy('published_at', 'desc')
+                ->paginate(12);
+        });
         
         return view('emplois.opportunites', compact('articles', 'category'));
     }
@@ -1809,12 +1860,17 @@ add_action(\'init\', \'create_portfolio_post_type\');
             return \App\Models\Category::where('slug', 'concours')->first();
         });
         
-        $articles = \App\Models\JobArticle::where('status', 'published')
-            ->where('category_id', $category->id ?? null)
-            ->with('category:id,name,slug')
-            ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')
-            ->orderBy('published_at', 'desc')
-            ->paginate(12);
+        // Cache optimisé avec eager loading (15 minutes)
+        $cacheKey = "job_articles_concours_page_" . request()->get('page', 1);
+        
+        $articles = \Illuminate\Support\Facades\Cache::remember($cacheKey, 900, function () use ($category) {
+            return \App\Models\JobArticle::where('status', 'published')
+                ->where('category_id', $category->id ?? null)
+                ->with('category:id,name,slug')
+                ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')
+                ->orderBy('published_at', 'desc')
+                ->paginate(12);
+        });
         
         return view('emplois.concours', compact('articles', 'category'));
     }

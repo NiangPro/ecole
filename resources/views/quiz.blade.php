@@ -9,14 +9,29 @@
         overflow-x: hidden;
     }
     
+    /* Body background */
+    body:not(.dark-mode) {
+        background: #ffffff !important;
+    }
+    
+    body.dark-mode {
+        background: #0a0a0f !important;
+    }
+    
     .quiz-card {
         background: linear-gradient(135deg, rgba(10, 10, 26, 0.9), rgba(0, 0, 0, 0.9));
-        border: 2px solid rgba(6, 182, 212, 0.2);
+        border: 2px solid rgba(168, 85, 247, 0.2);
         border-radius: 20px;
         padding: 2rem;
         transition: all 0.3s ease;
         position: relative;
         overflow: hidden;
+    }
+    
+    body:not(.dark-mode) .quiz-card {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.95)) !important;
+        border-color: rgba(168, 85, 247, 0.25) !important;
+        box-shadow: 0 10px 40px rgba(168, 85, 247, 0.1) !important;
     }
     
     .quiz-card::before {
@@ -35,6 +50,10 @@
         transform: translateY(-10px);
         border-color: rgba(168, 85, 247, 0.5);
         box-shadow: 0 20px 60px rgba(168, 85, 247, 0.3);
+    }
+    
+    body:not(.dark-mode) .quiz-card:hover {
+        box-shadow: 0 20px 60px rgba(168, 85, 247, 0.2) !important;
     }
     
     .quiz-card:hover::before {
@@ -56,11 +75,51 @@
     .quiz-card:hover .language-icon {
         transform: scale(1.1) rotate(-5deg);
     }
+    
+    /* Text colors */
+    body:not(.dark-mode) .text-gray-300 {
+        color: rgba(30, 41, 59, 0.8) !important;
+    }
+    
+    body:not(.dark-mode) .text-gray-400 {
+        color: rgba(30, 41, 59, 0.6) !important;
+    }
+    
+    body:not(.dark-mode) .text-white {
+        color: rgba(30, 41, 59, 0.9) !important;
+    }
+    
+    /* Stats cards */
+    body:not(.dark-mode) .bg-gradient-to-br {
+        background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.9), rgba(248, 250, 252, 0.9)) !important;
+        border-color: rgba(168, 85, 247, 0.2) !important;
+    }
+    
+    /* CTA section */
+    body:not(.dark-mode) .bg-gradient-to-r.from-purple-500\/10.to-pink-500\/10 {
+        background: linear-gradient(to right, rgba(168, 85, 247, 0.05), rgba(236, 72, 153, 0.05)) !important;
+        border-color: rgba(168, 85, 247, 0.2) !important;
+    }
+    
+    /* Buttons */
+    body:not(.dark-mode) .bg-white\/10 {
+        background: rgba(168, 85, 247, 0.1) !important;
+        border-color: rgba(168, 85, 247, 0.3) !important;
+    }
+    
+    body:not(.dark-mode) .bg-white\/10:hover {
+        background: rgba(168, 85, 247, 0.15) !important;
+    }
+    
+    body:not(.dark-mode) .text-white.border-white\/20 {
+        color: rgba(30, 41, 59, 0.9) !important;
+        border-color: rgba(168, 85, 247, 0.3) !important;
+    }
 </style>
 @endsection
 
 @section('content')
-<section class="py-20 relative overflow-hidden pt-32">
+<section class="py-20 relative overflow-hidden pt-8">
     <div class="container mx-auto px-6">
         <!-- Header -->
         <div class="text-center mb-16">
