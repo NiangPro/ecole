@@ -1677,18 +1677,20 @@ add_action(\'init\', \'create_portfolio_post_type\');
     // Pages Emplois
     public function emplois()
     {
-        // Cache les catégories actives (1 heure)
+        // Cache les catégories actives avec sélection optimisée (1 heure)
         $categories = \Illuminate\Support\Facades\Cache::remember('active_categories', 3600, function () {
             return \App\Models\Category::where('is_active', true)
                 ->withCount('publishedArticles')
+                ->select('id', 'name', 'slug', 'description', 'icon', 'image', 'image_type', 'order')
                 ->orderBy('order')
                 ->get();
         });
         
-        // Cache les 6 derniers articles (15 minutes)
+        // Cache les 6 derniers articles avec sélection optimisée (15 minutes)
         $recentArticles = \Illuminate\Support\Facades\Cache::remember('recent_job_articles', 900, function () {
             return \App\Models\JobArticle::where('status', 'published')
-                ->with('category')
+                ->with('category:id,name,slug')
+                ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')
                 ->orderBy('published_at', 'desc')
                 ->take(6)
                 ->get();
@@ -1700,6 +1702,7 @@ add_action(\'init\', \'create_portfolio_post_type\');
     public function offresEmploi(Request $request)
     {
         $categorySlug = $request->get('category');
+        $page = $request->get('page', 1);
         
         // Cache la catégorie (1 heure)
         if ($categorySlug) {
@@ -1712,17 +1715,20 @@ add_action(\'init\', \'create_portfolio_post_type\');
             });
         }
         
-        // Cache la clé de pagination avec la catégorie
-        $cacheKey = $category ? "job_articles_category_{$category->id}_page_" . $request->get('page', 1) : 'job_articles_all_page_' . $request->get('page', 1);
+        // Cache optimisé avec eager loading (15 minutes)
+        $cacheKey = $category ? "job_articles_category_{$category->id}_page_{$page}" : "job_articles_all_page_{$page}";
         
-        $query = \App\Models\JobArticle::where('status', 'published')->with('category');
-        
-        if ($category) {
-            $query->where('category_id', $category->id);
-        }
-        
-        // Ne pas mettre en cache la pagination, mais utiliser le cache pour les requêtes
-        $articles = $query->orderBy('published_at', 'desc')->paginate(10);
+        $articles = \Illuminate\Support\Facades\Cache::remember($cacheKey, 900, function () use ($category) {
+            $query = \App\Models\JobArticle::where('status', 'published')
+                ->with('category:id,name,slug')
+                ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views', 'created_at', 'updated_at');
+            
+            if ($category) {
+                $query->where('category_id', $category->id);
+            }
+            
+            return $query->orderBy('published_at', 'desc')->paginate(10);
+        });
         
         return view('emplois.offres', compact('articles', 'category'));
     }
@@ -1892,26 +1898,25 @@ add_action(\'init\', \'create_portfolio_post_type\');
 
     public function showArticle($slug)
     {
-        // Cache l'article (30 minutes)
+        // Cache l'article avec sélection optimisée (30 minutes)
         $article = \Illuminate\Support\Facades\Cache::remember("job_article_{$slug}", 1800, function () use ($slug) {
             return \App\Models\JobArticle::where('slug', $slug)
                 ->where('status', 'published')
-                ->with('category')
+                ->with('category:id,name,slug')
+                ->select('id', 'title', 'slug', 'excerpt', 'content', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views', 'meta_title', 'meta_description', 'meta_keywords', 'created_at', 'updated_at')
                 ->firstOrFail();
         });
         
-        // Incrémenter les vues (ne pas mettre en cache)
-        $article->increment('views');
+        // Incrémenter les vues de manière optimisée (sans recharger l'article)
+        \App\Models\JobArticle::where('id', $article->id)->increment('views');
         
-        // Invalider le cache de l'article après mise à jour des vues
-        \Illuminate\Support\Facades\Cache::forget("job_article_{$slug}");
-        
-        // Cache les articles similaires (15 minutes)
+        // Cache les articles similaires avec sélection optimisée (15 minutes)
         $relatedArticles = \Illuminate\Support\Facades\Cache::remember("related_articles_{$article->id}", 900, function () use ($article) {
             return \App\Models\JobArticle::where('status', 'published')
                 ->where('category_id', $article->category_id)
                 ->where('id', '!=', $article->id)
-                ->with('category')
+                ->with('category:id,name,slug')
+                ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')
                 ->orderBy('published_at', 'desc')
                 ->take(3)
                 ->get();
@@ -1925,30 +1930,50 @@ add_action(\'init\', \'create_portfolio_post_type\');
                     $q->whereNull('location')
                       ->orWhere('location', 'article_sidebar');
                 })
+                ->select('id', 'name', 'description', 'image', 'image_type', 'link_url')
                 ->orderBy('order')
                 ->get();
         });
 
-        // Cache les 3 derniers commentaires approuvés (15 minutes)
+        // Cache les 3 derniers commentaires approuvés avec sélection optimisée (15 minutes)
         $latestComments = \Illuminate\Support\Facades\Cache::remember("article_latest_comments_{$article->id}", 900, function () use ($article) {
             return \App\Models\Comment::where('commentable_type', 'App\\Models\\JobArticle')
                 ->where('commentable_id', $article->id)
                 ->where('status', 'approved')
                 ->whereNull('parent_id')
-                ->with('user')
+                ->select('id', 'name', 'email', 'content', 'created_at', 'user_id')
                 ->orderBy('created_at', 'desc')
                 ->take(3)
                 ->get();
         });
 
-        // Cache les commentaires (15 minutes) - Exclure les 3 derniers pour éviter les doublons
+        // Cache les commentaires avec sélection optimisée (15 minutes) - Exclure les 3 derniers pour éviter les doublons
         $latestCommentIds = $latestComments->pluck('id')->toArray();
         $comments = \Illuminate\Support\Facades\Cache::remember("article_comments_{$article->id}", 900, function () use ($article, $latestCommentIds) {
-            $query = $article->comments()->where('status', 'approved');
+            $query = \App\Models\Comment::where('commentable_type', 'App\\Models\\JobArticle')
+                ->where('commentable_id', $article->id)
+                ->where('status', 'approved')
+                ->select('id', 'name', 'email', 'content', 'parent_id', 'created_at', 'user_id');
             if (!empty($latestCommentIds)) {
                 $query->whereNotIn('id', $latestCommentIds);
             }
-            return $query->with(['user', 'replies.user'])->get();
+            $comments = $query->orderBy('created_at', 'desc')->get();
+            
+            // Charger les réponses de manière optimisée
+            $commentIds = $comments->pluck('id')->toArray();
+            if (!empty($commentIds)) {
+                $replies = \App\Models\Comment::whereIn('parent_id', $commentIds)
+                    ->where('status', 'approved')
+                    ->select('id', 'name', 'email', 'content', 'parent_id', 'created_at', 'user_id')
+                    ->get()
+                    ->groupBy('parent_id');
+                
+                foreach ($comments as $comment) {
+                    $comment->setRelation('replies', $replies->get($comment->id, collect()));
+                }
+            }
+            
+            return $comments;
         });
         
         return view('emplois.article', compact('article', 'relatedArticles', 'sidebarAds', 'comments', 'latestComments'));

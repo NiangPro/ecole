@@ -11,6 +11,15 @@
         box-sizing: border-box;
     }
     
+    /* Body background for offres page */
+    body:not(.dark-mode) {
+        background: #ffffff !important;
+    }
+    
+    body.dark-mode {
+        background: #0a0a0f !important;
+    }
+    
     .offers-hero {
         background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
         padding: 140px 20px 100px;
@@ -101,6 +110,13 @@
         height: 100%;
         position: relative;
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        will-change: transform;
+    }
+    
+    @media (max-width: 768px) {
+        .article-card {
+            backdrop-filter: blur(10px);
+        }
     }
     
     body:not(.dark-mode) .article-card {
@@ -360,6 +376,17 @@
         background: rgba(255, 255, 255, 0.9) !important;
         border-color: rgba(6, 182, 212, 0.25) !important;
         color: rgba(30, 41, 59, 0.8) !important;
+    }
+    
+    /* Buttons adaptation */
+    body:not(.dark-mode) .article-card-button {
+        background: linear-gradient(135deg, #06b6d4, #14b8a6) !important;
+        color: #000 !important;
+    }
+    
+    body:not(.dark-mode) .article-card-category {
+        background: rgba(6, 182, 212, 0.15) !important;
+        border-color: rgba(6, 182, 212, 0.3) !important;
     }
     
     .pagination a:hover {

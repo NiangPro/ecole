@@ -10,6 +10,15 @@
         overflow-x: hidden;
     }
     
+    /* Body background for privacy-policy page */
+    body:not(.dark-mode) {
+        background: #ffffff !important;
+    }
+    
+    body.dark-mode {
+        background: #0a0a0f !important;
+    }
+    
     .privacy-hero {
         background: linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(20, 184, 166, 0.1) 100%);
         border-bottom: 2px solid rgba(6, 182, 212, 0.2);

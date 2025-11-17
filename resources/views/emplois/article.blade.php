@@ -56,6 +56,15 @@
         box-sizing: border-box;
     }
     
+    /* Body background for article page */
+    body:not(.dark-mode) {
+        background: #ffffff !important;
+    }
+    
+    body.dark-mode {
+        background: #0a0a0f !important;
+    }
+    
     .article-hero {
         position: relative;
         height: 500px;
@@ -751,6 +760,25 @@
     }
     
     body:not(.dark-mode) .article-content strong {
+        color: #06b6d4 !important;
+    }
+    
+    /* Buttons and links adaptation */
+    body:not(.dark-mode) .back-button {
+        color: #06b6d4 !important;
+    }
+    
+    body:not(.dark-mode) .modern-sidebar-ad-title {
+        color: rgba(255, 255, 255, 0.95) !important;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7) !important;
+    }
+    
+    body:not(.dark-mode) .modern-sidebar-ad-description {
+        color: rgba(255, 255, 255, 0.9) !important;
+        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5) !important;
+    }
+    
+    body:not(.dark-mode) .modern-sidebar-ad-cta {
         color: #06b6d4 !important;
     }
     

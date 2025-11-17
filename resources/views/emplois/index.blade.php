@@ -9,6 +9,15 @@
         box-sizing: border-box;
     }
     
+    /* Body background for emplois pages */
+    body:not(.dark-mode) {
+        background: #ffffff !important;
+    }
+    
+    body.dark-mode {
+        background: #0a0a0f !important;
+    }
+    
     .jobs-hero {
         background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%),
                     url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80') center/cover no-repeat;
@@ -17,6 +26,13 @@
         text-align: center;
         position: relative;
         overflow: hidden;
+        will-change: transform;
+    }
+    
+    @media (max-width: 768px) {
+        .jobs-hero {
+            background-attachment: scroll !important;
+        }
     }
     
     body:not(.dark-mode) .jobs-hero {
@@ -394,6 +410,16 @@
     
     body:not(.dark-mode) .text-gray-400 {
         color: rgba(30, 41, 59, 0.6) !important;
+    }
+    
+    /* Buttons adaptation */
+    body:not(.dark-mode) .job-badge {
+        background: rgba(6, 182, 212, 0.1) !important;
+        border-color: rgba(6, 182, 212, 0.3) !important;
+    }
+    
+    body:not(.dark-mode) .job-card-count {
+        background: rgba(6, 182, 212, 0.2) !important;
     }
     
     .article-mini-card:hover {

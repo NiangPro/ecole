@@ -14,26 +14,44 @@ class TrackVisit
 {
     public function handle(Request $request, Closure $next)
     {
-        // Ne pas tracker les routes admin et assets
-        if (!$request->is('admin/*') && !$request->is('css/*') && !$request->is('js/*') && !$request->is('images/*')) {
-            $userAgentData = UserAgentParser::parse($request->userAgent());
-            $country = GeoIPService::getCountry($request->ip());
+        // Ne pas tracker les routes admin, assets, et API
+        if (!$request->is('admin/*') && 
+            !$request->is('css/*') && 
+            !$request->is('js/*') && 
+            !$request->is('images/*') &&
+            !$request->is('api/*') &&
+            $request->method() === 'GET') {
             
-            // Créer la statistique (le cache sera invalidé automatiquement par l'événement du modèle)
-            Statistic::create([
-                'page_url' => $request->fullUrl(),
-                'page_title' => $this->getPageTitle($request),
-                'ip_address' => $request->ip(),
-                'user_agent' => $request->userAgent(),
-                'referer' => $request->header('referer'),
-                'country' => $country,
-                'browser' => $userAgentData['browser'],
-                'device' => $userAgentData['device'],
-                'visit_date' => Carbon::today(),
-            ]);
+            // Utiliser une queue pour les statistiques afin de ne pas bloquer la réponse
+            // Pour l'instant, on utilise un cache pour limiter les écritures
+            $cacheKey = 'visit_' . md5($request->ip() . $request->path() . Carbon::today()->format('Y-m-d'));
             
-            // Les caches seront invalidés automatiquement par l'événement created() du modèle Statistic
-            // Pas besoin d'invalider manuellement ici pour éviter trop d'invalidations
+            if (!Cache::has($cacheKey)) {
+                // Mettre en cache pendant 1 heure pour éviter les doublons
+                Cache::put($cacheKey, true, 3600);
+                
+                // Exécuter de manière asynchrone si possible, sinon en arrière-plan
+                try {
+                    $userAgentData = UserAgentParser::parse($request->userAgent());
+                    $country = GeoIPService::getCountry($request->ip());
+                    
+                    // Créer la statistique
+                    Statistic::create([
+                        'page_url' => $request->fullUrl(),
+                        'page_title' => $this->getPageTitle($request),
+                        'ip_address' => $request->ip(),
+                        'user_agent' => $request->userAgent(),
+                        'referer' => $request->header('referer'),
+                        'country' => $country,
+                        'browser' => $userAgentData['browser'],
+                        'device' => $userAgentData['device'],
+                        'visit_date' => Carbon::today(),
+                    ]);
+                } catch (\Exception $e) {
+                    // Ignorer les erreurs de tracking pour ne pas bloquer la requête
+                    \Log::warning('Erreur lors du tracking de visite: ' . $e->getMessage());
+                }
+            }
         }
         
         return $next($request);
