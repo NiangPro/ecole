@@ -116,14 +116,115 @@ class PageController extends Controller
 
     public function exercicesLanguage($language)
     {
-        $exercises = $this->getExercisesByLanguage($language);
+        $allExercises = $this->getExercisesByLanguage($language);
+        
+        // Varier les exercices par utilisateur (basé sur IP + session)
+        $userIdentifier = md5(request()->ip() . session()->getId() . $language);
+        $exercises = $this->getVariedExercises($allExercises, $userIdentifier);
         
         return view('exercices-language', compact('language', 'exercises'));
+    }
+    
+    /**
+     * Obtenir des exercices variés par utilisateur pour tous les niveaux
+     */
+    private function getVariedExercises($allExercises, $userIdentifier)
+    {
+        // Organiser les exercices par niveau
+        $byDifficulty = [
+            'Facile' => [],
+            'Moyen' => [],
+            'Difficile' => []
+        ];
+        
+        foreach ($allExercises as $index => $exercise) {
+            $difficulty = $exercise['difficulty'] ?? 'Facile';
+            if (isset($byDifficulty[$difficulty])) {
+                $byDifficulty[$difficulty][] = array_merge($exercise, ['original_index' => $index + 1]);
+            }
+        }
+        
+        // Utiliser l'identifiant utilisateur pour créer une variation
+        $seed = hexdec(substr($userIdentifier, 0, 8));
+        mt_srand($seed);
+        
+        $selectedExercises = [];
+        
+        // Sélectionner des exercices de chaque niveau
+        // Facile: 2-3 exercices
+        $facileCount = min(3, count($byDifficulty['Facile']));
+        if ($facileCount > 0) {
+            $facileSelected = $this->selectRandomExercises($byDifficulty['Facile'], $facileCount);
+            $selectedExercises = array_merge($selectedExercises, $facileSelected);
+        }
+        
+        // Moyen: 2-3 exercices
+        $moyenCount = min(3, count($byDifficulty['Moyen']));
+        if ($moyenCount > 0) {
+            $moyenSelected = $this->selectRandomExercises($byDifficulty['Moyen'], $moyenCount);
+            $selectedExercises = array_merge($selectedExercises, $moyenSelected);
+        }
+        
+        // Difficile: 1-2 exercices
+        $difficileCount = min(2, count($byDifficulty['Difficile']));
+        if ($difficileCount > 0) {
+            $difficileSelected = $this->selectRandomExercises($byDifficulty['Difficile'], $difficileCount);
+            $selectedExercises = array_merge($selectedExercises, $difficileSelected);
+        }
+        
+        // Mélanger l'ordre pour plus de variété
+        shuffle($selectedExercises);
+        
+        // Réindexer pour les URLs
+        foreach ($selectedExercises as $index => &$exercise) {
+            $exercise['display_index'] = $index + 1;
+        }
+        
+        return $selectedExercises;
+    }
+    
+    /**
+     * Sélectionner des exercices aléatoires de manière déterministe
+     */
+    private function selectRandomExercises($exercises, $count)
+    {
+        if (count($exercises) <= $count) {
+            return $exercises;
+        }
+        
+        $selected = [];
+        $indices = range(0, count($exercises) - 1);
+        shuffle($indices);
+        
+        for ($i = 0; $i < $count; $i++) {
+            $selected[] = $exercises[$indices[$i]];
+        }
+        
+        return $selected;
     }
 
     public function exerciceDetail($language, $id)
     {
-        $exercise = $this->getExerciseDetail($language, $id);
+        // Récupérer tous les exercices pour trouver celui correspondant à l'index d'affichage
+        $allExercises = $this->getExercisesByLanguage($language);
+        
+        // Varier les exercices par utilisateur (même logique que dans exercicesLanguage)
+        $userIdentifier = md5(request()->ip() . session()->getId() . $language);
+        $variedExercises = $this->getVariedExercises($allExercises, $userIdentifier);
+        
+        // Trouver l'exercice par son index d'affichage
+        $exercise = null;
+        foreach ($variedExercises as $ex) {
+            if ($ex['display_index'] == $id) {
+                // Récupérer les détails complets de l'exercice
+                $originalIndex = $ex['original_index'] ?? $id;
+                $exercise = $this->getExerciseDetail($language, $originalIndex);
+                if ($exercise) {
+                    $exercise['display_index'] = $id;
+                }
+                break;
+            }
+        }
         
         if (!$exercise) {
             abort(404);
@@ -134,7 +235,24 @@ class PageController extends Controller
 
     public function exerciceSubmit(Request $request, $language, $id)
     {
-        $exercise = $this->getExerciseDetail($language, $id);
+        // Utiliser la même logique que exerciceDetail pour trouver l'exercice
+        $allExercises = $this->getExercisesByLanguage($language);
+        $userIdentifier = md5(request()->ip() . session()->getId() . $language);
+        $variedExercises = $this->getVariedExercises($allExercises, $userIdentifier);
+        
+        $exercise = null;
+        foreach ($variedExercises as $ex) {
+            if ($ex['display_index'] == $id) {
+                $originalIndex = $ex['original_index'] ?? $id;
+                $exercise = $this->getExerciseDetail($language, $originalIndex);
+                break;
+            }
+        }
+        
+        if (!$exercise) {
+            return response()->json(['correct' => false, 'message' => 'Exercice non trouvé']);
+        }
+        
         $userCode = $request->input('code');
         
         // Vérification simple (à améliorer)
@@ -1306,53 +1424,130 @@ add_action(\'init\', \'create_portfolio_post_type\');
                 ['title' => 'Les listes', 'difficulty' => 'Moyen', 'points' => 20],
             ],
             'css3' => [
+                // Niveau Facile
                 ['title' => 'Les sélecteurs CSS', 'difficulty' => 'Facile', 'points' => 10],
+                ['title' => 'Les couleurs et backgrounds', 'difficulty' => 'Facile', 'points' => 10],
+                ['title' => 'Les polices et textes', 'difficulty' => 'Facile', 'points' => 12],
+                ['title' => 'Les marges et paddings', 'difficulty' => 'Facile', 'points' => 10],
+                ['title' => 'Les bordures', 'difficulty' => 'Facile', 'points' => 12],
+                // Niveau Moyen
                 ['title' => 'Flexbox - Centrage', 'difficulty' => 'Moyen', 'points' => 20],
                 ['title' => 'Grid Layout', 'difficulty' => 'Moyen', 'points' => 20],
-                ['title' => 'Animations CSS', 'difficulty' => 'Difficile', 'points' => 25],
                 ['title' => 'Responsive Design', 'difficulty' => 'Moyen', 'points' => 15],
+                ['title' => 'Les pseudo-classes', 'difficulty' => 'Moyen', 'points' => 18],
+                ['title' => 'Les transformations CSS', 'difficulty' => 'Moyen', 'points' => 20],
+                // Niveau Difficile
+                ['title' => 'Animations CSS', 'difficulty' => 'Difficile', 'points' => 25],
+                ['title' => 'CSS Variables', 'difficulty' => 'Difficile', 'points' => 25],
+                ['title' => 'Advanced Grid', 'difficulty' => 'Difficile', 'points' => 30],
             ],
             'javascript' => [
+                // Niveau Facile
                 ['title' => 'Variables et types', 'difficulty' => 'Facile', 'points' => 10],
                 ['title' => 'Fonctions', 'difficulty' => 'Facile', 'points' => 15],
+                ['title' => 'Les conditions if/else', 'difficulty' => 'Facile', 'points' => 12],
+                ['title' => 'Les opérateurs', 'difficulty' => 'Facile', 'points' => 10],
+                ['title' => 'Les chaînes de caractères', 'difficulty' => 'Facile', 'points' => 12],
+                // Niveau Moyen
                 ['title' => 'DOM Manipulation', 'difficulty' => 'Moyen', 'points' => 20],
                 ['title' => 'Tableaux et boucles', 'difficulty' => 'Moyen', 'points' => 20],
+                ['title' => 'Les événements', 'difficulty' => 'Moyen', 'points' => 18],
+                ['title' => 'Les fonctions fléchées', 'difficulty' => 'Moyen', 'points' => 20],
+                ['title' => 'Async/Await', 'difficulty' => 'Moyen', 'points' => 22],
+                // Niveau Difficile
                 ['title' => 'Objets JavaScript', 'difficulty' => 'Difficile', 'points' => 30],
+                ['title' => 'Promises et Callbacks', 'difficulty' => 'Difficile', 'points' => 28],
+                ['title' => 'Closures et Scope', 'difficulty' => 'Difficile', 'points' => 30],
             ],
             'php' => [
+                // Niveau Facile
                 ['title' => 'Syntaxe de base PHP', 'difficulty' => 'Facile', 'points' => 10],
                 ['title' => 'Variables PHP', 'difficulty' => 'Facile', 'points' => 10],
+                ['title' => 'Les types de données', 'difficulty' => 'Facile', 'points' => 12],
+                ['title' => 'Les opérateurs PHP', 'difficulty' => 'Facile', 'points' => 10],
+                ['title' => 'Les chaînes PHP', 'difficulty' => 'Facile', 'points' => 12],
+                // Niveau Moyen
                 ['title' => 'Conditions PHP', 'difficulty' => 'Moyen', 'points' => 15],
                 ['title' => 'Boucles PHP', 'difficulty' => 'Moyen', 'points' => 20],
-                ['title' => 'Tableaux PHP', 'difficulty' => 'Difficile', 'points' => 25],
+                ['title' => 'Les fonctions PHP', 'difficulty' => 'Moyen', 'points' => 18],
+                ['title' => 'Les tableaux associatifs', 'difficulty' => 'Moyen', 'points' => 20],
+                ['title' => 'Les formulaires PHP', 'difficulty' => 'Moyen', 'points' => 22],
+                // Niveau Difficile
+                ['title' => 'Tableaux PHP avancés', 'difficulty' => 'Difficile', 'points' => 25],
+                ['title' => 'POO en PHP', 'difficulty' => 'Difficile', 'points' => 30],
+                ['title' => 'Les sessions PHP', 'difficulty' => 'Difficile', 'points' => 28],
             ],
             'bootstrap' => [
+                // Niveau Facile
                 ['title' => 'Grille Bootstrap', 'difficulty' => 'Facile', 'points' => 10],
                 ['title' => 'Bouton Bootstrap', 'difficulty' => 'Facile', 'points' => 10],
+                ['title' => 'Les couleurs Bootstrap', 'difficulty' => 'Facile', 'points' => 10],
+                ['title' => 'Les typographies', 'difficulty' => 'Facile', 'points' => 12],
+                ['title' => 'Les badges et alertes', 'difficulty' => 'Facile', 'points' => 12],
+                // Niveau Moyen
                 ['title' => 'Card Bootstrap', 'difficulty' => 'Moyen', 'points' => 15],
                 ['title' => 'Navbar Bootstrap', 'difficulty' => 'Moyen', 'points' => 20],
+                ['title' => 'Les modales', 'difficulty' => 'Moyen', 'points' => 18],
+                ['title' => 'Les formulaires Bootstrap', 'difficulty' => 'Moyen', 'points' => 20],
+                ['title' => 'Les carrousels', 'difficulty' => 'Moyen', 'points' => 22],
+                // Niveau Difficile
                 ['title' => 'Responsive Bootstrap', 'difficulty' => 'Difficile', 'points' => 20],
+                ['title' => 'Customisation Bootstrap', 'difficulty' => 'Difficile', 'points' => 25],
+                ['title' => 'Bootstrap avec JavaScript', 'difficulty' => 'Difficile', 'points' => 28],
             ],
             'git' => [
+                // Niveau Facile
                 ['title' => 'Initialiser un dépôt Git', 'difficulty' => 'Facile', 'points' => 10],
                 ['title' => 'Ajouter des fichiers', 'difficulty' => 'Facile', 'points' => 10],
                 ['title' => 'Créer un commit', 'difficulty' => 'Facile', 'points' => 15],
+                ['title' => 'Voir l\'historique', 'difficulty' => 'Facile', 'points' => 12],
+                ['title' => 'Les statuts Git', 'difficulty' => 'Facile', 'points' => 10],
+                // Niveau Moyen
                 ['title' => 'Créer une branche', 'difficulty' => 'Moyen', 'points' => 15],
+                ['title' => 'Changer de branche', 'difficulty' => 'Moyen', 'points' => 15],
+                ['title' => 'Les remotes', 'difficulty' => 'Moyen', 'points' => 18],
+                ['title' => 'Push et Pull', 'difficulty' => 'Moyen', 'points' => 20],
+                ['title' => 'Les tags Git', 'difficulty' => 'Moyen', 'points' => 18],
+                // Niveau Difficile
                 ['title' => 'Fusionner des branches', 'difficulty' => 'Difficile', 'points' => 20],
+                ['title' => 'Résoudre les conflits', 'difficulty' => 'Difficile', 'points' => 25],
+                ['title' => 'Git rebase', 'difficulty' => 'Difficile', 'points' => 28],
             ],
             'wordpress' => [
+                // Niveau Facile
                 ['title' => 'The Loop WordPress', 'difficulty' => 'Facile', 'points' => 10],
                 ['title' => 'Afficher le titre', 'difficulty' => 'Facile', 'points' => 10],
+                ['title' => 'Afficher le contenu', 'difficulty' => 'Facile', 'points' => 12],
+                ['title' => 'Les fonctions WordPress', 'difficulty' => 'Facile', 'points' => 10],
+                ['title' => 'Les hooks de base', 'difficulty' => 'Facile', 'points' => 12],
+                // Niveau Moyen
                 ['title' => 'Image à la une', 'difficulty' => 'Moyen', 'points' => 15],
                 ['title' => 'Menu WordPress', 'difficulty' => 'Moyen', 'points' => 18],
+                ['title' => 'Les widgets', 'difficulty' => 'Moyen', 'points' => 18],
+                ['title' => 'Les taxonomies', 'difficulty' => 'Moyen', 'points' => 20],
+                ['title' => 'Les métadonnées', 'difficulty' => 'Moyen', 'points' => 20],
+                // Niveau Difficile
                 ['title' => 'Custom Post Type', 'difficulty' => 'Difficile', 'points' => 20],
+                ['title' => 'Les actions et filtres', 'difficulty' => 'Difficile', 'points' => 25],
+                ['title' => 'Créer un thème complet', 'difficulty' => 'Difficile', 'points' => 30],
             ],
             'ia' => [
+                // Niveau Facile
                 ['title' => 'Concepts de base IA', 'difficulty' => 'Facile', 'points' => 10],
                 ['title' => 'Machine Learning', 'difficulty' => 'Facile', 'points' => 12],
+                ['title' => 'Qu\'est-ce que l\'IA ?', 'difficulty' => 'Facile', 'points' => 10],
+                ['title' => 'Les types d\'IA', 'difficulty' => 'Facile', 'points' => 12],
+                ['title' => 'Histoire de l\'IA', 'difficulty' => 'Facile', 'points' => 10],
+                // Niveau Moyen
                 ['title' => 'Réseaux de neurones', 'difficulty' => 'Moyen', 'points' => 15],
                 ['title' => 'Deep Learning', 'difficulty' => 'Moyen', 'points' => 15],
+                ['title' => 'Supervised Learning', 'difficulty' => 'Moyen', 'points' => 18],
+                ['title' => 'Unsupervised Learning', 'difficulty' => 'Moyen', 'points' => 18],
+                ['title' => 'Reinforcement Learning', 'difficulty' => 'Moyen', 'points' => 20],
+                // Niveau Difficile
                 ['title' => 'Applications IA', 'difficulty' => 'Difficile', 'points' => 18],
+                ['title' => 'Natural Language Processing', 'difficulty' => 'Difficile', 'points' => 25],
+                ['title' => 'Computer Vision', 'difficulty' => 'Difficile', 'points' => 28],
             ],
         ];
 

@@ -101,7 +101,57 @@
     body:not(.dark-mode) .text-cyan-400 {
         color: #06b6d4 !important;
     }
+    
+    /* Filtres */
+    .filter-btn.active {
+        background: rgba(6, 182, 212, 0.3) !important;
+        border-color: rgba(6, 182, 212, 0.5) !important;
+    }
+    
+    body:not(.dark-mode) .filter-btn {
+        background: rgba(6, 182, 212, 0.1) !important;
+        border-color: rgba(6, 182, 212, 0.3) !important;
+        color: rgba(30, 41, 59, 0.9) !important;
+    }
+    
+    body:not(.dark-mode) .filter-btn.active {
+        background: rgba(6, 182, 212, 0.2) !important;
+    }
+    
+    .exercise-item.hidden {
+        display: none;
+    }
 </style>
+@endsection
+
+@section('scripts')
+<script>
+    function filterExercises(difficulty) {
+        const exercises = document.querySelectorAll('.exercise-item');
+        const buttons = document.querySelectorAll('.filter-btn');
+        
+        // Mettre à jour les boutons actifs
+        buttons.forEach(btn => {
+            btn.classList.remove('active');
+            if (btn.textContent.includes(difficulty === 'all' ? 'Tous' : difficulty)) {
+                btn.classList.add('active');
+            }
+        });
+        
+        // Filtrer les exercices
+        exercises.forEach(exercise => {
+            if (difficulty === 'all') {
+                exercise.classList.remove('hidden');
+            } else {
+                if (exercise.dataset.difficulty === difficulty) {
+                    exercise.classList.remove('hidden');
+                } else {
+                    exercise.classList.add('hidden');
+                }
+            }
+        });
+    }
+</script>
 @endsection
 
 @section('content')
@@ -125,14 +175,31 @@
         </div>
 
         @if(count($exercises) > 0)
+        <!-- Filtres par niveau -->
+        <div class="mb-8 flex flex-wrap gap-4 items-center">
+            <span class="text-gray-400 font-semibold">Filtrer par niveau:</span>
+            <button onclick="filterExercises('all')" class="filter-btn active px-4 py-2 rounded-lg bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500/30 transition">
+                Tous ({{ count($exercises) }})
+            </button>
+            <button onclick="filterExercises('Facile')" class="filter-btn px-4 py-2 rounded-lg bg-green-500/20 text-green-400 border border-green-500/30 hover:bg-green-500/30 transition">
+                Facile ({{ collect($exercises)->where('difficulty', 'Facile')->count() }})
+            </button>
+            <button onclick="filterExercises('Moyen')" class="filter-btn px-4 py-2 rounded-lg bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 hover:bg-yellow-500/30 transition">
+                Moyen ({{ collect($exercises)->where('difficulty', 'Moyen')->count() }})
+            </button>
+            <button onclick="filterExercises('Difficile')" class="filter-btn px-4 py-2 rounded-lg bg-red-500/20 text-red-400 border border-red-500/30 hover:bg-red-500/30 transition">
+                Difficile ({{ collect($exercises)->where('difficulty', 'Difficile')->count() }})
+            </button>
+        </div>
+        
         <!-- Liste des exercices -->
-        <div class="grid grid-cols-1 gap-6">
+        <div class="grid grid-cols-1 gap-6" id="exercisesList">
             @foreach($exercises as $index => $exercise)
-            <div class="exercise-item">
+            <div class="exercise-item" data-difficulty="{{ $exercise['difficulty'] }}">
                 <div class="flex items-center justify-between flex-wrap gap-4">
                     <div class="flex items-center gap-4 flex-1">
                         <div class="w-12 h-12 rounded-full bg-cyan-500/10 border-2 border-cyan-500/30 flex items-center justify-center text-cyan-400 font-bold text-lg">
-                            {{ $index + 1 }}
+                            {{ $exercise['display_index'] ?? ($index + 1) }}
                         </div>
                         <div class="flex-1">
                             <h3 class="text-xl font-bold text-white mb-2">{{ $exercise['title'] }}</h3>
@@ -146,7 +213,7 @@
                             </div>
                         </div>
                     </div>
-                    <a href="{{ route('exercices.detail', [$language, $index + 1]) }}" class="px-6 py-3 bg-gradient-to-r from-cyan-500 to-teal-600 text-white font-bold rounded-lg hover:shadow-lg hover:scale-105 transition inline-block">
+                    <a href="{{ route('exercices.detail', [$language, $exercise['display_index'] ?? ($index + 1)]) }}" class="px-6 py-3 bg-gradient-to-r from-cyan-500 to-teal-600 text-white font-bold rounded-lg hover:shadow-lg hover:scale-105 transition inline-block">
                         <i class="fas fa-play mr-2"></i>Commencer
                     </a>
                 </div>
