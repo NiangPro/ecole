@@ -238,6 +238,33 @@
     body:not(.dark-mode) .gradient-text {
         -webkit-text-fill-color: transparent !important;
     }
+    
+    /* Mode clair - Email et Téléphone dans les cartes de contact */
+    body:not(.dark-mode) a[href^="mailto:"],
+    body:not(.dark-mode) a[href^="tel:"] {
+        color: rgba(30, 41, 59, 0.9) !important;
+    }
+    
+    body:not(.dark-mode) a[href^="mailto:"]:hover,
+    body:not(.dark-mode) a[href^="tel:"]:hover {
+        color: #06b6d4 !important;
+    }
+    
+    /* Mode clair - Bouton "Me contacter" */
+    body:not(.dark-mode) .bg-gray-800,
+    body:not(.dark-mode) .hover\:bg-gray-700:hover {
+        color: rgba(30, 41, 59, 0.9) !important;
+    }
+    
+    body:not(.dark-mode) .bg-gray-800 a,
+    body:not(.dark-mode) .hover\:bg-gray-700:hover a {
+        color: rgba(30, 41, 59, 0.9) !important;
+    }
+    
+    /* Mode clair - Textes dans les cartes de contact */
+    body:not(.dark-mode) .text-sm.font-semibold {
+        color: rgba(30, 41, 59, 0.9) !important;
+    }
 </style>
 @endsection
 

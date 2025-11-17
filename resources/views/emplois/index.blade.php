@@ -22,8 +22,9 @@
         background: #ffffff !important;
     }
     
+    /* Ne pas changer le background en dark mode pour /emplois */
     body.dark-mode {
-        background: #0a0a0f !important;
+        background: #ffffff !important;
     }
     
     .jobs-hero {
