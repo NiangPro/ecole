@@ -168,6 +168,14 @@
     <!-- Cookie Banner -->
     @include('partials.cookie-banner')
     
+    <!-- Dark Mode Toggle Button -->
+    <div id="dark-mode-widget" class="dark-mode-widget">
+        <button id="dark-mode-toggle" class="dark-mode-button" onclick="toggleDarkMode()" title="Basculer le mode sombre">
+            <i class="fas fa-moon" id="dark-mode-icon"></i>
+            <span class="dark-mode-tooltip" id="dark-mode-tooltip">Activer le mode sombre</span>
+        </button>
+    </div>
+    
     <!-- WhatsApp Chatbot Widget -->
     @php
         $siteSettings = \App\Models\SiteSetting::first();
@@ -211,6 +219,113 @@
         </div>
     </div>
     <style>
+        /* Dark Mode Widget */
+        .dark-mode-widget {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            z-index: 9998;
+        }
+        
+        .dark-mode-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #334155, #475569);
+            border: 2px solid rgba(6, 182, 212, 0.3);
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .dark-mode-button:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 6px 25px rgba(6, 182, 212, 0.4);
+            border-color: rgba(6, 182, 212, 0.5);
+        }
+        
+        .dark-mode-button.active {
+            background: linear-gradient(135deg, #06b6d4, #14b8a6);
+            border-color: rgba(6, 182, 212, 0.6);
+        }
+        
+        .dark-mode-tooltip {
+            position: absolute;
+            right: 70px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(15, 23, 42, 0.95);
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            pointer-events: none;
+            border: 1px solid rgba(6, 182, 212, 0.3);
+        }
+        
+        .dark-mode-tooltip::after {
+            content: '';
+            position: absolute;
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            border: 6px solid transparent;
+            border-left-color: rgba(15, 23, 42, 0.95);
+        }
+        
+        .dark-mode-button:hover .dark-mode-tooltip {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Dark Mode Styles */
+        body.dark-mode {
+            background: #0a0a0f !important;
+            color: #e5e7eb !important;
+        }
+        
+        body.dark-mode .bg-canvas {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%) !important;
+        }
+        
+        body.dark-mode .navbar-modern {
+            background: rgba(15, 23, 42, 0.95) !important;
+        }
+        
+        body.dark-mode .navbar-modern.scrolled {
+            background: rgba(15, 23, 42, 0.98) !important;
+        }
+        
+        body.dark-mode [style*="rgba(51, 65, 85"] {
+            background: rgba(15, 23, 42, 0.8) !important;
+        }
+        
+        body.dark-mode [style*="rgba(51, 65, 85, 0.5"] {
+            background: rgba(15, 23, 42, 0.6) !important;
+        }
+        
+        body.dark-mode [style*="rgba(51, 65, 85, 0.7"] {
+            background: rgba(15, 23, 42, 0.8) !important;
+        }
+        
+        body.dark-mode [style*="rgba(51, 65, 85, 0.85"] {
+            background: rgba(15, 23, 42, 0.95) !important;
+        }
+        
+        body.dark-mode [style*="rgba(71, 85, 105"] {
+            background: rgba(30, 41, 59, 0.8) !important;
+        }
+        
         .whatsapp-widget {
             position: fixed;
             bottom: 20px;
@@ -412,9 +527,56 @@
                 bottom: 15px;
                 right: 15px;
             }
+            
+            .dark-mode-widget {
+                bottom: 85px;
+                right: 15px;
+            }
         }
     </style>
     <script>
+        // Dark Mode Toggle
+        function toggleDarkMode() {
+            const body = document.body;
+            const isDark = body.classList.toggle('dark-mode');
+            const icon = document.getElementById('dark-mode-icon');
+            const tooltip = document.getElementById('dark-mode-tooltip');
+            const button = document.getElementById('dark-mode-toggle');
+            
+            // Sauvegarder la préférence
+            localStorage.setItem('darkMode', isDark ? 'enabled' : 'disabled');
+            
+            // Mettre à jour l'icône et le tooltip
+            if (isDark) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+                tooltip.textContent = 'Désactiver le mode sombre';
+                button.classList.add('active');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+                tooltip.textContent = 'Activer le mode sombre';
+                button.classList.remove('active');
+            }
+        }
+        
+        // Initialiser le dark mode au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            const darkMode = localStorage.getItem('darkMode');
+            const body = document.body;
+            const icon = document.getElementById('dark-mode-icon');
+            const tooltip = document.getElementById('dark-mode-tooltip');
+            const button = document.getElementById('dark-mode-toggle');
+            
+            if (darkMode === 'enabled') {
+                body.classList.add('dark-mode');
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+                tooltip.textContent = 'Désactiver le mode sombre';
+                button.classList.add('active');
+            }
+        });
+        
         function toggleWhatsApp() {
             const popup = document.getElementById('whatsappPopup');
             popup.classList.toggle('active');

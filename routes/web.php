@@ -47,6 +47,7 @@ Route::get('/emplois/offres', [PageController::class, 'offresEmploi'])->name('em
 Route::get('/emplois/bourses', [PageController::class, 'bourses'])->name('emplois.bourses');
 Route::get('/emplois/candidature-spontanee', [PageController::class, 'candidatureSpontanee'])->name('emplois.candidature');
 Route::get('/emplois/opportunites', [PageController::class, 'opportunites'])->name('emplois.opportunites');
+Route::get('/emplois/concours', [PageController::class, 'concours'])->name('emplois.concours');
 Route::get('/emplois/article/{slug}', [PageController::class, 'showArticle'])->name('emplois.article');
 
 // Commentaires (publiques - avec rate limiting)

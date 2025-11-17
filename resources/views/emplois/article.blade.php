@@ -75,7 +75,7 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: linear-gradient(to bottom, transparent 0%, rgba(15, 23, 42, 0.95) 100%);
+        background: linear-gradient(to bottom, transparent 0%, rgba(51, 65, 85, 0.85) 100%);
         display: flex;
         align-items: flex-end;
         padding: 60px 20px 40px;
@@ -130,7 +130,7 @@
     }
     
     .article-content {
-        background: rgba(15, 23, 42, 0.6);
+        background: rgba(51, 65, 85, 0.5);
         border: 1px solid rgba(6, 182, 212, 0.2);
         border-radius: 24px;
         padding: 50px;
@@ -221,7 +221,7 @@
     }
     
     .related-card {
-        background: rgba(15, 23, 42, 0.6);
+        background: rgba(51, 65, 85, 0.5);
         border: 1px solid rgba(6, 182, 212, 0.2);
         border-radius: 20px;
         overflow: hidden;
@@ -436,7 +436,7 @@
 <style>
     /* Modern Sidebar Ad */
     .modern-sidebar-ad {
-        background: rgba(15, 23, 42, 0.8);
+        background: rgba(51, 65, 85, 0.7);
         border: 2px solid rgba(6, 182, 212, 0.3);
         border-radius: 20px;
         overflow: hidden;
@@ -482,7 +482,7 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: linear-gradient(180deg, transparent 0%, rgba(15, 23, 42, 0.8) 50%, rgba(15, 23, 42, 0.95) 100%);
+        background: linear-gradient(180deg, transparent 0%, rgba(51, 65, 85, 0.7) 50%, rgba(51, 65, 85, 0.85) 100%);
         display: flex;
         align-items: flex-end;
         padding: 25px;
@@ -552,7 +552,7 @@
     }
     
     .related-card-modern {
-        background: rgba(15, 23, 42, 0.6);
+        background: rgba(51, 65, 85, 0.5);
         border: 2px solid rgba(6, 182, 212, 0.2);
         border-radius: 20px;
         overflow: hidden;
@@ -592,7 +592,7 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: linear-gradient(180deg, transparent 0%, rgba(15, 23, 42, 0.9) 100%);
+        background: linear-gradient(180deg, transparent 0%, rgba(51, 65, 85, 0.8) 100%);
         display: flex;
         align-items: flex-end;
         padding: 15px;

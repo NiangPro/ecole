@@ -1775,6 +1775,22 @@ add_action(\'init\', \'create_portfolio_post_type\');
         return view('emplois.opportunites', compact('articles', 'category'));
     }
 
+    public function concours()
+    {
+        // Cache la catégorie (1 heure)
+        $category = \Illuminate\Support\Facades\Cache::remember('category_concours', 3600, function () {
+            return \App\Models\Category::where('slug', 'concours')->first();
+        });
+        
+        $articles = \App\Models\JobArticle::where('status', 'published')
+            ->where('category_id', $category->id ?? null)
+            ->with('category')
+            ->orderBy('published_at', 'desc')
+            ->paginate(12);
+        
+        return view('emplois.concours', compact('articles', 'category'));
+    }
+
     public function search(Request $request)
     {
         $query = $request->get('q', '');

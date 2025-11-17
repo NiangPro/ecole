@@ -15,7 +15,7 @@
     
     body {
         font-family: 'Inter', sans-serif;
-        background: #000;
+        background: #1a1a2e;
         color: #fff;
         overflow-x: hidden;
     }
@@ -28,7 +28,7 @@
         width: 100%;
         height: 100%;
         z-index: 0;
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+        background: linear-gradient(135deg, #334155 0%, #475569 50%, #334155 100%);
     }
     
     .floating-shapes {
@@ -43,7 +43,7 @@
     
     .shape {
         position: absolute;
-        opacity: 0.15;
+        opacity: 0.25;
         animation: float 20s ease-in-out infinite;
     }
     
@@ -106,7 +106,7 @@
         justify-content: center;
         padding: 100px 40px 80px;
         overflow: hidden;
-        background: linear-gradient(135deg, rgba(0, 0, 0, 0.85) 0%, rgba(10, 10, 15, 0.9) 100%),
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.75) 0%, rgba(51, 65, 85, 0.8) 100%),
                     url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2072&q=80') center/cover no-repeat;
         background-attachment: fixed;
     }
@@ -119,7 +119,7 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.1) 0%, rgba(0, 0, 0, 0.7) 100%);
+        background: radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.15) 0%, rgba(30, 41, 59, 0.6) 100%);
         z-index: 0;
     }
     
@@ -688,7 +688,7 @@
         @if(isset($sidebarAds) && $sidebarAds->count() > 0)
         <aside style="position: sticky; top: 80px; align-self: flex-start;">
             @foreach($sidebarAds as $ad)
-            <div class="ad-container" style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 16px; padding: 20px; margin-bottom: 20px; backdrop-filter: blur(10px);">
+            <div class="ad-container" style="background: rgba(51, 65, 85, 0.5); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 16px; padding: 20px; margin-bottom: 20px; backdrop-filter: blur(10px);">
                 <a href="{{ $ad->link_url ?? '#' }}" target="_blank" onclick="trackAdClick({{ $ad->id }})" style="display: block; text-decoration: none;">
                     @if($ad->image)
                     <img src="{{ $ad->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($ad->image) : $ad->image }}"
@@ -787,12 +787,12 @@
         position: relative;
         border-radius: 24px;
         overflow: hidden;
-        background: rgba(15, 23, 42, 0.8);
-        border: 2px solid rgba(6, 182, 212, 0.3);
+        background: rgba(51, 65, 85, 0.7);
+        border: 2px solid rgba(6, 182, 212, 0.4);
         backdrop-filter: blur(20px);
         transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         cursor: pointer;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
     }
     
     .modern-ad-card:hover {
@@ -834,7 +834,7 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(15, 23, 42, 0.6) 50%, rgba(15, 23, 42, 0.9) 100%);
+        background: linear-gradient(135deg, rgba(51, 65, 85, 0.75) 0%, rgba(71, 85, 105, 0.6) 50%, rgba(51, 65, 85, 0.8) 100%);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -1036,7 +1036,7 @@
     <div class="latest-jobs-grid" style="margin-bottom: 40px;">
         @foreach($latestJobs as $job)
         <a href="{{ route('emplois.article', $job->slug) }}" style="text-decoration: none; display: block;">
-            <div style="background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95)); border: 2px solid rgba(6, 182, 212, 0.25); border-radius: 24px; overflow: hidden; transition: all 0.5s ease; height: 100%;">
+            <div style="background: linear-gradient(135deg, rgba(51, 65, 85, 0.85), rgba(71, 85, 105, 0.85)); border: 2px solid rgba(6, 182, 212, 0.35); border-radius: 24px; overflow: hidden; transition: all 0.5s ease; height: 100%;">
                 @if($job->cover_image)
                 <div style="width: 100%; height: 180px; overflow: hidden;">
                     <img src="{{ $job->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($job->cover_image) : $job->cover_image }}"

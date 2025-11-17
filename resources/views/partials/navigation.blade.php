@@ -8,15 +8,15 @@
         right: 0;
         width: 100%;
         z-index: 9999;
-        background: rgba(15, 23, 42, 0.95);
+        background: rgba(51, 65, 85, 0.9);
         backdrop-filter: blur(20px);
-        border-bottom: 1px solid rgba(6, 182, 212, 0.2);
+        border-bottom: 1px solid rgba(6, 182, 212, 0.3);
         transition: all 0.3s ease;
     }
     
     .navbar-modern.scrolled {
-        background: rgba(15, 23, 42, 0.98);
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        background: rgba(51, 65, 85, 0.95);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
     }
     
     .navbar-container {
@@ -119,7 +119,7 @@
         top: calc(100% + 10px);
         left: 0;
         min-width: 280px;
-        background: rgba(15, 23, 42, 0.98);
+        background: rgba(51, 65, 85, 0.95);
         backdrop-filter: blur(20px);
         border: 1px solid rgba(6, 182, 212, 0.2);
         border-radius: 16px;
@@ -234,7 +234,7 @@
         margin-top: 10px;
         width: 600px;
         max-width: calc(100vw - 40px);
-        background: linear-gradient(135deg, rgba(15, 23, 42, 0.98) 0%, rgba(15, 23, 42, 0.95) 100%);
+        background: linear-gradient(135deg, rgba(51, 65, 85, 0.95) 0%, rgba(71, 85, 105, 0.9) 100%);
         backdrop-filter: blur(30px);
         border: 2px solid rgba(6, 182, 212, 0.3);
         border-radius: 20px;
@@ -445,7 +445,7 @@
         width: 85%;
         max-width: 400px;
         height: 100vh;
-        background: linear-gradient(180deg, rgba(15, 23, 42, 0.98) 0%, rgba(30, 41, 59, 0.98) 100%);
+        background: linear-gradient(180deg, rgba(51, 65, 85, 0.95) 0%, rgba(71, 85, 105, 0.95) 100%);
         backdrop-filter: blur(30px);
         border-left: 2px solid rgba(6, 182, 212, 0.3);
         z-index: 9999;
