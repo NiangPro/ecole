@@ -695,6 +695,15 @@
                     <i class="fas fa-chevron-down dropdown-icon"></i>
                 </a>
                 <div class="dropdown-menu">
+                    <a href="{{ route('formations.all') }}" class="dropdown-item">
+                        <div class="dropdown-item-icon" style="background: rgba(6, 182, 212, 0.1);">
+                            <i class="fas fa-graduation-cap" style="color: #06b6d4;"></i>
+                        </div>
+                        <div class="dropdown-item-content">
+                            <div class="dropdown-item-title">Toutes les formations</div>
+                            <div class="dropdown-item-desc">Voir toutes les formations</div>
+                        </div>
+                    </a>
                     <a href="{{ route('formations.html5') }}" class="dropdown-item">
                         <div class="dropdown-item-icon" style="background: rgba(227, 76, 38, 0.1);">
                             <i class="fab fa-html5" style="color: #e34c26;"></i>
@@ -747,33 +756,6 @@
                         <div class="dropdown-item-content">
                             <div class="dropdown-item-title">Git</div>
                             <div class="dropdown-item-desc">Versioning</div>
-                        </div>
-                    </a>
-                    <a href="{{ route('formations.wordpress') }}" class="dropdown-item">
-                        <div class="dropdown-item-icon" style="background: rgba(33, 117, 155, 0.1);">
-                            <i class="fab fa-wordpress" style="color: #21759b;"></i>
-                        </div>
-                        <div class="dropdown-item-content">
-                            <div class="dropdown-item-title">WordPress</div>
-                            <div class="dropdown-item-desc">CMS</div>
-                        </div>
-                    </a>
-                    <a href="{{ route('formations.ia') }}" class="dropdown-item">
-                        <div class="dropdown-item-icon" style="background: rgba(6, 182, 212, 0.1);">
-                            <i class="fas fa-robot" style="color: #06b6d4;"></i>
-                        </div>
-                        <div class="dropdown-item-content">
-                            <div class="dropdown-item-title">Intelligence Artificielle</div>
-                            <div class="dropdown-item-desc">IA & ML</div>
-                        </div>
-                    </a>
-                    <a href="{{ route('formations.python') }}" class="dropdown-item">
-                        <div class="dropdown-item-icon" style="background: rgba(55, 118, 171, 0.1);">
-                            <i class="fab fa-python" style="color: #3776ab;"></i>
-                        </div>
-                        <div class="dropdown-item-content">
-                            <div class="dropdown-item-title">Python</div>
-                            <div class="dropdown-item-desc">Programmation</div>
                         </div>
                     </a>
                 </div>
@@ -968,6 +950,9 @@
                 <i class="fas fa-chevron-down dropdown-icon" id="formations-icon"></i>
             </button>
             <div class="mobile-dropdown-content" id="formations-dropdown">
+                <a href="{{ route('formations.all') }}" class="mobile-dropdown-item">
+                    <i class="fas fa-graduation-cap" style="color: #06b6d4;"></i> Toutes les formations
+                </a>
                 <a href="{{ route('formations.html5') }}" class="mobile-dropdown-item">
                     <i class="fab fa-html5" style="color: #e34c26;"></i> HTML5
                 </a>
@@ -985,15 +970,6 @@
                 </a>
                 <a href="{{ route('formations.git') }}" class="mobile-dropdown-item">
                     <i class="fab fa-git-alt" style="color: #f34f29;"></i> Git
-                </a>
-                <a href="{{ route('formations.wordpress') }}" class="mobile-dropdown-item">
-                    <i class="fab fa-wordpress" style="color: #21759b;"></i> WordPress
-                </a>
-                <a href="{{ route('formations.ia') }}" class="mobile-dropdown-item">
-                    <i class="fas fa-robot" style="color: #06b6d4;"></i> Intelligence Artificielle
-                </a>
-                <a href="{{ route('formations.python') }}" class="mobile-dropdown-item">
-                    <i class="fab fa-python" style="color: #3776ab;"></i> Python
                 </a>
             </div>
         </li>

@@ -391,8 +391,10 @@
                     loadScript('https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js', function() {
                         loadScript('https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/clike/clike.min.js', function() {
                             loadScript('https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/php/php.min.js', function() {
-                                // Tous les scripts sont chargés, initialiser CodeMirror
-                                initCodeMirror();
+                                loadScript('https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js', function() {
+                                    // Tous les scripts sont chargés, initialiser CodeMirror
+                                    initCodeMirror();
+                                });
                             });
                         });
                     });
@@ -423,6 +425,8 @@
             codeMirrorMode = 'javascript';
         } else if (language === 'php') {
             codeMirrorMode = 'application/x-httpd-php';
+        } else if (language === 'python') {
+            codeMirrorMode = 'python';
         } else if (language === 'html5' || language === 'html') {
             codeMirrorMode = 'htmlmixed';
         }
@@ -430,6 +434,9 @@
         // Déterminer le thème selon le mode sombre
         const isDarkMode = document.body.classList.contains('dark-mode');
         const codeMirrorTheme = isDarkMode ? 'monokai' : 'eclipse';
+        
+        // Stocker isDarkMode globalement pour l'utiliser dans runCode
+        window.isDarkMode = isDarkMode;
         
         // Attendre un peu pour s'assurer que le textarea est dans le DOM
         setTimeout(function() {
@@ -490,6 +497,7 @@
                     if (mutation.attributeName === 'class') {
                         const isDark = document.body.classList.contains('dark-mode');
                         codeEditor.setOption('theme', isDark ? 'monokai' : 'eclipse');
+                        window.isDarkMode = isDark; // Mettre à jour la variable globale
                     }
                 });
             });
@@ -506,21 +514,32 @@
                 const iframe = document.getElementById('resultFrame');
                 const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
                 
-                // Si c'est du PHP, exécuter côté serveur
-                if (language === 'php') {
+                // Si c'est du PHP ou Python, exécuter côté serveur
+                if (language === 'php' || language === 'python') {
                     fetch(`/exercices/${language}/run`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'Accept': 'application/json'
                         },
                         body: JSON.stringify({ code: code })
                     })
-                    .then(response => response.json())
+                    .then(response => {
+                        // Vérifier si la réponse est du JSON
+                        const contentType = response.headers.get('content-type');
+                        if (!contentType || !contentType.includes('application/json')) {
+                            return response.text().then(text => {
+                                throw new Error('Réponse non-JSON reçue: ' + text.substring(0, 200));
+                            });
+                        }
+                        return response.json();
+                    })
                     .then(data => {
                         iframeDoc.open();
                         
                         if (data.error) {
+                            const langName = language === 'python' ? 'Python' : 'PHP';
                             iframeDoc.write(`
                                 <!DOCTYPE html>
                                 <html>
@@ -544,14 +563,18 @@
                                 </head>
                                 <body>
                                     <div class="error">
-                                        <h3>Erreur PHP :</h3>
+                                        <h3>Erreur ${langName} :</h3>
                                         <pre>${data.error}</pre>
                                     </div>
                                 </body>
                                 </html>
                             `);
                         } else {
-                            // Envelopper la sortie PHP dans du HTML
+                            // Envelopper la sortie dans du HTML
+                            const output = data.output || '';
+                            const hasOutput = output.trim().length > 0;
+                            const darkMode = window.isDarkMode || document.body.classList.contains('dark-mode');
+                            
                             iframeDoc.write(`
                                 <!DOCTYPE html>
                                 <html>
@@ -560,15 +583,22 @@
                                     <title>Résultat</title>
                                     <style>
                                         body {
-                                            font-family: Arial, sans-serif;
+                                            font-family: 'Courier New', 'Consolas', 'Monaco', monospace;
                                             padding: 20px;
-                                            background: white;
-                                            color: #333;
+                                            background: ${darkMode ? '#1e293b' : 'white'};
+                                            color: ${darkMode ? '#e2e8f0' : '#333'};
+                                            white-space: pre-wrap;
+                                            word-wrap: break-word;
+                                        }
+                                        .no-output {
+                                            color: #999;
+                                            font-style: italic;
+                                            font-family: Arial, sans-serif;
                                         }
                                     </style>
                                 </head>
                                 <body>
-                                    ${data.output || '<p style="color: #999;">Aucune sortie</p>'}
+                                    ${hasOutput ? output : '<p class="no-output">Aucune sortie. Le code s\'est exécuté sans erreur mais n\'a rien affiché. Utilisez print() pour afficher des résultats.</p>'}
                                 </body>
                                 </html>
                             `);
@@ -593,10 +623,19 @@
                                         background: #fee;
                                         color: #c33;
                                     }
+                                    pre {
+                                        background: #fff;
+                                        padding: 10px;
+                                        border: 1px solid #c33;
+                                        border-radius: 5px;
+                                        overflow-x: auto;
+                                    }
                                 </style>
                             </head>
                             <body>
-                                <p>Erreur lors de l'exécution : ${error.message}</p>
+                                <h3>Erreur lors de l'exécution :</h3>
+                                <pre>${error.message}</pre>
+                                <p><small>Vérifiez la console du navigateur pour plus de détails.</small></p>
                             </body>
                             </html>
                         `);

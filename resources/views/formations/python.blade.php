@@ -3,6 +3,9 @@
 @section('title', 'Formation Python | NiangProgrammeur')
 
 @section('styles')
+<!-- Prism.js pour la coloration syntaxique -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css">
 <style>
     * {
         box-sizing: border-box;
@@ -148,6 +151,8 @@
         font-size: 32px;
         margin-top: 30px;
         margin-bottom: 15px;
+        padding-top: 20px;
+        border-top: 2px solid rgba(55, 118, 171, 0.2);
     }
     .main-content h3 {
         color: #000;
@@ -187,13 +192,6 @@
         width: 100%;
         box-sizing: border-box;
     }
-    .code-box code {
-        display: block;
-        max-width: 100%;
-        overflow-wrap: break-word;
-        color: #e2e8f0;
-        line-height: 1.6;
-    }
     .code-box::before {
         content: 'Python';
         position: absolute;
@@ -205,22 +203,23 @@
         border-radius: 4px;
         font-size: 12px;
         font-weight: bold;
+        z-index: 1;
     }
-    .code-keyword {
-        color: #c678dd;
+    .code-box pre {
+        margin: 0;
+        padding: 0;
+        background: transparent !important;
+        overflow-x: auto;
     }
-    .code-function {
-        color: #61afef;
-    }
-    .code-string {
-        color: #98c379;
-    }
-    .code-variable {
-        color: #e5c07b;
-    }
-    .code-comment {
-        color: #5c6370;
-        font-style: italic;
+    .code-box pre code {
+        display: block;
+        padding: 0;
+        color: #e2e8f0;
+        line-height: 1.6;
+        font-family: 'Courier New', 'Consolas', 'Monaco', monospace;
+        font-size: 14px;
+        white-space: pre;
+        overflow-x: auto;
     }
     .note-box {
         background-color: #ffffcc;
@@ -264,6 +263,13 @@
         .main-content {
             max-width: 100%;
         }
+    }
+    /* Styles Prism.js pour mode sombre */
+    body.dark-mode .code-box {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    }
+    body.dark-mode .code-box pre code {
+        color: #e2e8f0;
     }
 </style>
 @endsection
@@ -309,281 +315,634 @@
             <div class="example-box">
                 <h3 style="color: #000;">💡 Pourquoi Python est si populaire ?</h3>
                 <ol style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                    <li>Syntaxe simple et lisible - Le code Python ressemble presque à de l'anglais</li>
-                    <li>Polyvalent - Utilisé pour le web, la data science, l'IA, l'automatisation</li>
-                    <li>Vaste bibliothèque standard - Des milliers de modules disponibles</li>
-                    <li>Communauté active - Des millions de développeurs dans le monde</li>
-                    <li>Open-source et gratuit - Aucun coût de licence</li>
-                    <li>Multi-plateforme - Fonctionne sur Windows, Linux, macOS</li>
+                    <li><strong>Syntaxe simple et lisible</strong> - Le code Python ressemble presque à de l'anglais, ce qui le rend facile à apprendre et à comprendre</li>
+                    <li><strong>Polyvalent</strong> - Utilisé pour le web (Django, Flask), la data science (Pandas, NumPy), l'IA (TensorFlow, PyTorch), l'automatisation</li>
+                    <li><strong>Vaste bibliothèque standard</strong> - Des milliers de modules disponibles pour presque tous les besoins</li>
+                    <li><strong>Communauté active</strong> - Des millions de développeurs dans le monde, documentation complète, nombreuses ressources d'apprentissage</li>
+                    <li><strong>Open-source et gratuit</strong> - Aucun coût de licence, multiplateforme (Windows, Linux, macOS)</li>
+                    <li><strong>Multi-paradigme</strong> - Supporte la programmation procédurale, orientée objet et fonctionnelle</li>
                 </ol>
             </div>
 
             <h3>🚀 Pourquoi apprendre Python ?</h3>
             <p>Python est un excellent choix pour débuter en programmation pour plusieurs raisons :</p>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li>✅ <strong>Facile à apprendre</strong> - Syntaxe claire et intuitive, parfaite pour les débutants</li>
-                <li>✅ <strong>Polyvalent</strong> - Développement web (Django, Flask), data science (Pandas, NumPy), IA (TensorFlow, PyTorch), automatisation</li>
-                <li>✅ <strong>Très demandé</strong> - L'un des langages les plus recherchés sur le marché du travail</li>
-                <li>✅ <strong>Gratuit et Open-Source</strong> - Aucun coût, multiplateforme</li>
-                <li>✅ <strong>Vaste écosystème</strong> - Des milliers de bibliothèques disponibles via pip</li>
-                <li>✅ <strong>Grande communauté</strong> - Support et ressources abondantes</li>
-                <li>✅ <strong>Utilisé par les géants</strong> - Google, Facebook, Netflix, Instagram, Spotify utilisent Python</li>
+                <li>✅ <strong>Facile à apprendre</strong> - Syntaxe claire et intuitive, parfaite pour les débutants. La courbe d'apprentissage est douce comparée à d'autres langages</li>
+                <li>✅ <strong>Polyvalent</strong> - Développement web (Django, Flask), data science (Pandas, NumPy), IA (TensorFlow, PyTorch), automatisation, scripts système</li>
+                <li>✅ <strong>Très demandé</strong> - L'un des langages les plus recherchés sur le marché du travail. Utilisé par Google, Facebook, Netflix, Instagram, Spotify</li>
+                <li>✅ <strong>Gratuit et Open-Source</strong> - Aucun coût, multiplateforme, communauté active</li>
+                <li>✅ <strong>Vaste écosystème</strong> - Des milliers de bibliothèques disponibles via pip (gestionnaire de paquets Python)</li>
+                <li>✅ <strong>Grande communauté</strong> - Support et ressources abondantes, forums actifs, tutoriels gratuits</li>
+                <li>✅ <strong>Rapidité de développement</strong> - Permet de développer rapidement des prototypes et applications</li>
             </ul>
 
             <h3>📋 Prérequis pour apprendre Python</h3>
             <p>Python est si simple que vous pouvez commencer sans aucune expérience préalable ! Cependant, avoir des connaissances de base en :</p>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li>✅ <strong>Informatique de base</strong> - Savoir utiliser un ordinateur</li>
-                <li>⚠️ <strong>Logique</strong> - Comprendre les concepts de base (variables, conditions, boucles) est utile mais pas obligatoire</li>
+                <li>✅ <strong>Informatique de base</strong> - Savoir utiliser un ordinateur, créer et éditer des fichiers</li>
+                <li>⚠️ <strong>Logique</strong> - Comprendre les concepts de base (variables, conditions, boucles) est utile mais pas obligatoire, vous les apprendrez avec Python</li>
             </ul>
 
             <div class="note-box">
-                <p style="color: #000;"><strong>💡 Note importante :</strong> Python est installé par défaut sur Linux et macOS. Pour Windows, vous pouvez télécharger Python depuis <a href="https://www.python.org/downloads/" target="_blank" style="color: #3776ab;">python.org</a>. Vous pouvez aussi utiliser un IDE comme PyCharm, VS Code, ou simplement l'interpréteur Python en ligne de commande.</p>
+                <p style="color: #000;"><strong>💡 Note importante :</strong> Python est installé par défaut sur Linux et macOS. Pour Windows, vous pouvez télécharger Python depuis <a href="https://www.python.org/downloads/" target="_blank" style="color: #3776ab; font-weight: bold;">python.org</a>. Vous pouvez aussi utiliser un IDE comme PyCharm, VS Code, ou simplement l'interpréteur Python en ligne de commande. Pour tester rapidement, vous pouvez utiliser des environnements en ligne comme Repl.it ou Python.org/shell.</p>
             </div>
 
             <h3>🎯 Cas d'usage de Python</h3>
             <p>Python est utilisé dans de nombreux domaines :</p>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li>🌐 <strong>Développement web</strong> - Django, Flask pour créer des sites web et API</li>
-                <li>📊 <strong>Data Science</strong> - Analyse de données, visualisation avec Pandas, Matplotlib</li>
-                <li>🤖 <strong>Intelligence Artificielle</strong> - Machine Learning, Deep Learning avec TensorFlow, PyTorch</li>
-                <li>🔧 <strong>Automatisation</strong> - Scripts pour automatiser des tâches répétitives</li>
-                <li>📱 <strong>Applications desktop</strong> - Tkinter, PyQt pour créer des interfaces graphiques</li>
-                <li>🎮 <strong>Développement de jeux</strong> - Pygame pour créer des jeux vidéo</li>
+                <li>🌐 <strong>Développement web</strong> - Django, Flask pour créer des sites web et API REST. Frameworks modernes et puissants</li>
+                <li>📊 <strong>Data Science</strong> - Analyse de données, visualisation avec Pandas, NumPy, Matplotlib. Très utilisé dans la finance et la recherche</li>
+                <li>🤖 <strong>Intelligence Artificielle</strong> - Machine Learning, Deep Learning avec TensorFlow, PyTorch, Scikit-learn</li>
+                <li>🔧 <strong>Automatisation</strong> - Scripts pour automatiser des tâches répétitives, traitement de fichiers, web scraping</li>
+                <li>📱 <strong>Applications desktop</strong> - Tkinter, PyQt pour créer des interfaces graphiques multiplateformes</li>
+                <li>🎮 <strong>Développement de jeux</strong> - Pygame pour créer des jeux vidéo 2D</li>
                 <li>🌐 <strong>Scraping web</strong> - BeautifulSoup, Scrapy pour extraire des données de sites web</li>
+                <li>🔬 <strong>Calcul scientifique</strong> - NumPy, SciPy pour les calculs mathématiques et scientifiques</li>
             </ul>
 
             <h2 id="syntax">📝 Syntaxe de base</h2>
-            <p>La syntaxe Python est simple et lisible. Python utilise l'indentation (espaces ou tabulations) pour définir les blocs de code, contrairement à d'autres langages qui utilisent des accolades.</p>
+            <p>La syntaxe Python est simple et lisible. Python utilise l'<strong>indentation</strong> (espaces ou tabulations) pour définir les blocs de code, contrairement à d'autres langages qui utilisent des accolades <code>{}</code> ou des mots-clés comme <code>begin/end</code>.</p>
 
             <div class="code-box">
-                <code>
-<span class="code-comment"># Premier programme Python</span>
-<span class="code-function">print</span>(<span class="code-string">"Bonjour, monde !"</span>)
+                <pre><code class="language-python"># Premier programme Python
+print("Bonjour, monde !")
 
-<span class="code-comment"># Variables</span>
-<span class="code-variable">nom</span> = <span class="code-string">"NiangProgrammeur"</span>
-<span class="code-variable">age</span> = <span class="code-number">25</span>
+# Variables
+nom = "NiangProgrammeur"
+age = 25
 
-<span class="code-function">print</span>(<span class="code-string">f"Je m'appelle {nom} et j'ai {age} ans"</span>)
-                </code>
+# F-strings pour formater les chaînes (Python 3.6+)
+print(f"Je m'appelle {nom} et j'ai {age} ans")
+
+# Opérations simples
+resultat = 10 + 5
+print(f"10 + 5 = {resultat}")</code></pre>
             </div>
 
             <div class="example-box">
                 <h3 style="color: #000;">💡 Points importants sur la syntaxe Python :</h3>
                 <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                    <li>Python est <strong>sensible à l'indentation</strong> - Utilisez 4 espaces (recommandé) ou des tabulations de manière cohérente</li>
-                    <li>Les commentaires commencent par <code>#</code></li>
-                    <li>Pas besoin de point-virgule à la fin des lignes</li>
-                    <li>Les chaînes de caractères peuvent utiliser des guillemets simples <code>'</code> ou doubles <code>"</code></li>
+                    <li><strong>Python est sensible à l'indentation</strong> - Utilisez 4 espaces (recommandé par PEP 8) ou des tabulations de manière cohérente. L'indentation définit les blocs de code</li>
+                    <li><strong>Les commentaires</strong> commencent par <code>#</code> pour une ligne, ou <code>"""</code> pour plusieurs lignes (docstrings)</li>
+                    <li><strong>Pas besoin de point-virgule</strong> à la fin des lignes (contrairement à C, Java, PHP)</li>
+                    <li><strong>Les chaînes de caractères</strong> peuvent utiliser des guillemets simples <code>'</code> ou doubles <code>"</code>. Les f-strings (f"...") permettent l'interpolation</li>
+                    <li><strong>Les deux-points</strong> <code>:</code> marquent le début d'un bloc (après if, for, def, class, etc.)</li>
+                    <li><strong>PEP 8</strong> est le guide de style officiel pour écrire du code Python lisible</li>
                 </ul>
             </div>
 
-            <h2 id="variables">🔤 Variables</h2>
-            <p>En Python, les variables sont créées simplement en leur assignant une valeur. Vous n'avez pas besoin de déclarer le type de variable.</p>
+            <h3>🔍 Exemple détaillé de syntaxe</h3>
+            <p>Voici un exemple complet montrant plusieurs aspects de la syntaxe Python :</p>
 
             <div class="code-box">
-                <code>
-<span class="code-comment"># Déclaration de variables</span>
-<span class="code-variable">nom</span> = <span class="code-string">"Python"</span>  <span class="code-comment"># String (chaîne de caractères)</span>
-<span class="code-variable">age</span> = <span class="code-number">30</span>  <span class="code-comment"># Integer (entier)</span>
-<span class="code-variable">prix</span> = <span class="code-number">19.99</span>  <span class="code-comment"># Float (nombre décimal)</span>
-<span class="code-variable">est_actif</span> = <span class="code-keyword">True</span>  <span class="code-comment"># Boolean (booléen)</span>
+                <pre><code class="language-python"># Définition d'une fonction
+def calculer_moyenne(nombres):
+    """Calcule la moyenne d'une liste de nombres."""
+    if len(nombres) == 0:
+        return 0
+    somme = sum(nombres)
+    moyenne = somme / len(nombres)
+    return moyenne
 
-<span class="code-comment"># Affichage</span>
-<span class="code-function">print</span>(<span class="code-variable">nom</span>)
-<span class="code-function">print</span>(<span class="code-variable">age</span>)
-<span class="code-function">print</span>(<span class="code-variable">prix</span>)
-<span class="code-function">print</span>(<span class="code-variable">est_actif</span>)
-                </code>
+# Utilisation
+notes = [15, 18, 12, 20, 16]
+moyenne = calculer_moyenne(notes)
+print(f"La moyenne est : {moyenne}")</code></pre>
+            </div>
+
+            <h2 id="variables">🔤 Variables</h2>
+            <p>En Python, les variables sont créées simplement en leur assignant une valeur. Vous n'avez <strong>pas besoin de déclarer le type</strong> de variable explicitement. Python est un langage à <strong>typage dynamique</strong>, ce qui signifie que le type est déterminé automatiquement à l'exécution.</p>
+
+            <div class="code-box">
+                <pre><code class="language-python"># Déclaration de variables
+nom = "Python"          # String (chaîne de caractères)
+age = 30                # Integer (entier)
+prix = 19.99            # Float (nombre décimal)
+est_actif = True        # Boolean (booléen)
+valeur_nulle = None     # NoneType (valeur nulle)
+
+# Affichage
+print(nom)
+print(age)
+print(prix)
+print(est_actif)
+print(valeur_nulle)
+
+# Réassignation (changement de type)
+variable = 10
+print(type(variable))   # <class 'int'>
+
+variable = "Dix"
+print(type(variable))   # <class 'str'>
+
+# Noms de variables valides
+nom_utilisateur = "Bassirou"
+age_utilisateur = 25
+_privé = "variable privée"
+CONSTANTE = 3.14159     # Convention pour les constantes</code></pre>
+            </div>
+
+            <div class="example-box">
+                <h3 style="color: #000;">📌 Règles pour les noms de variables :</h3>
+                <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
+                    <li>Doivent commencer par une lettre ou un underscore <code>_</code></li>
+                    <li>Peuvent contenir des lettres, chiffres et underscores</li>
+                    <li>Ne peuvent pas contenir d'espaces (utilisez <code>_</code> à la place)</li>
+                    <li>Sont sensibles à la casse (<code>age</code> ≠ <code>Age</code>)</li>
+                    <li>Ne peuvent pas être des mots-clés Python (<code>if</code>, <code>for</code>, <code>def</code>, etc.)</li>
+                    <li>Convention : utilisez <code>snake_case</code> pour les variables (PEP 8)</li>
+                </ul>
             </div>
 
             <h2 id="datatypes">📊 Types de données</h2>
-            <p>Python a plusieurs types de données intégrés :</p>
+            <p>Python a plusieurs types de données intégrés (built-in types). Voici les principaux :</p>
 
             <div class="code-box">
-                <code>
-<span class="code-comment"># Types de base</span>
-<span class="code-variable">texte</span> = <span class="code-string">"Hello"</span>  <span class="code-comment"># str</span>
-<span class="code-variable">nombre</span> = <span class="code-number">42</span>  <span class="code-comment"># int</span>
-<span class="code-variable">decimal</span> = <span class="code-number">3.14</span>  <span class="code-comment"># float</span>
-<span class="code-variable">booleen</span> = <span class="code-keyword">True</span>  <span class="code-comment"># bool</span>
+                <pre><code class="language-python"># Types de base (scalaires)
+texte = "Hello"                    # str (string)
+nombre = 42                        # int (integer)
+decimal = 3.14                     # float (floating point)
+booleen = True                     # bool (boolean)
+valeur_nulle = None                # NoneType
 
-<span class="code-comment"># Collections</span>
-<span class="code-variable">liste</span> = [<span class="code-number">1</span>, <span class="code-number">2</span>, <span class="code-number">3</span>]  <span class="code-comment"># list</span>
-<span class="code-variable">dictionnaire</span> = {<span class="code-string">"nom"</span>: <span class="code-string">"Python"</span>, <span class="code-string">"age"</span>: <span class="code-number">30</span>}  <span class="code-comment"># dict</span>
-<span class="code-variable">tuple</span> = (<span class="code-number">1</span>, <span class="code-number">2</span>, <span class="code-number">3</span>)  <span class="code-comment"># tuple</span>
-<span class="code-variable">ensemble</span> = {<span class="code-number">1</span>, <span class="code-number">2</span>, <span class="code-number">3</span>}  <span class="code-comment"># set</span>
-                </code>
+# Collections (structures de données)
+liste = [1, 2, 3, 4, 5]           # list (liste ordonnée, modifiable)
+tuple = (1, 2, 3)                 # tuple (liste ordonnée, immuable)
+dictionnaire = {"nom": "Python", "age": 30}  # dict (paires clé-valeur)
+ensemble = {1, 2, 3, 4}           # set (ensemble unique, non ordonné)
+
+# Vérifier le type
+print(type(texte))                # <class 'str'>
+print(type(nombre))               # <class 'int'>
+print(type(liste))                # <class 'list'>
+print(type(dictionnaire))         # <class 'dict'>
+
+# Conversion de types
+age_str = str(25)                 # Convertir en string
+age_int = int("25")               # Convertir en entier
+prix_float = float("19.99")       # Convertir en décimal</code></pre>
+            </div>
+
+            <div class="example-box">
+                <h3 style="color: #000;">📚 Types de données Python :</h3>
+                <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
+                    <li><strong>str</strong> - Chaînes de caractères (texte)</li>
+                    <li><strong>int</strong> - Nombres entiers (positifs, négatifs, zéro)</li>
+                    <li><strong>float</strong> - Nombres décimaux (virgule flottante)</li>
+                    <li><strong>bool</strong> - Booléens (True ou False)</li>
+                    <li><strong>list</strong> - Listes ordonnées et modifiables</li>
+                    <li><strong>tuple</strong> - Tuples ordonnés et immuables</li>
+                    <li><strong>dict</strong> - Dictionnaires (paires clé-valeur)</li>
+                    <li><strong>set</strong> - Ensembles (éléments uniques, non ordonnés)</li>
+                    <li><strong>NoneType</strong> - Type pour la valeur None (équivalent à null)</li>
+                </ul>
             </div>
 
             <h2 id="operators">🔢 Opérateurs</h2>
-            <p>Python supporte les opérateurs arithmétiques, de comparaison et logiques :</p>
+            <p>Python supporte les opérateurs arithmétiques, de comparaison, logiques, d'assignation et d'identité :</p>
 
             <div class="code-box">
-                <code>
-<span class="code-comment"># Opérateurs arithmétiques</span>
-<span class="code-variable">a</span> = <span class="code-number">10</span>
-<span class="code-variable">b</span> = <span class="code-number">3</span>
+                <pre><code class="language-python"># Opérateurs arithmétiques
+a = 10
+b = 3
 
-<span class="code-function">print</span>(<span class="code-variable">a</span> + <span class="code-variable">b</span>)  <span class="code-comment"># Addition: 13</span>
-<span class="code-function">print</span>(<span class="code-variable">a</span> - <span class="code-variable">b</span>)  <span class="code-comment"># Soustraction: 7</span>
-<span class="code-function">print</span>(<span class="code-variable">a</span> * <span class="code-variable">b</span>)  <span class="code-comment"># Multiplication: 30</span>
-<span class="code-function">print</span>(<span class="code-variable">a</span> / <span class="code-variable">b</span>)  <span class="code-comment"># Division: 3.333...</span>
-<span class="code-function">print</span>(<span class="code-variable">a</span> // <span class="code-variable">b</span>)  <span class="code-comment"># Division entière: 3</span>
-<span class="code-function">print</span>(<span class="code-variable">a</span> % <span class="code-variable">b</span>)  <span class="code-comment"># Modulo: 1</span>
-<span class="code-function">print</span>(<span class="code-variable">a</span> ** <span class="code-variable">b</span>)  <span class="code-comment"># Puissance: 1000</span>
+print(a + b)    # Addition: 13
+print(a - b)    # Soustraction: 7
+print(a * b)    # Multiplication: 30
+print(a / b)    # Division: 3.3333333333333335
+print(a // b)   # Division entière: 3
+print(a % b)    # Modulo (reste): 1
+print(a ** b)   # Puissance: 1000
 
-<span class="code-comment"># Opérateurs de comparaison</span>
-<span class="code-function">print</span>(<span class="code-variable">a</span> > <span class="code-variable">b</span>)  <span class="code-comment"># True</span>
-<span class="code-function">print</span>(<span class="code-variable">a</span> == <span class="code-variable">b</span>)  <span class="code-comment"># False</span>
-<span class="code-function">print</span>(<span class="code-variable">a</span> != <span class="code-variable">b</span>)  <span class="code-comment"># True</span>
-                </code>
+# Opérateurs de comparaison
+print(a > b)    # True (supérieur à)
+print(a < b)    # False (inférieur à)
+print(a >= b)   # True (supérieur ou égal)
+print(a <= b)   # False (inférieur ou égal)
+print(a == b)   # False (égalité)
+print(a != b)   # True (différent)
+
+# Opérateurs logiques
+x = True
+y = False
+print(x and y)  # False (ET logique)
+print(x or y)   # True (OU logique)
+print(not x)    # False (NON logique)
+
+# Opérateurs d'assignation
+c = 5
+c += 3          # Équivalent à c = c + 3 (c devient 8)
+c -= 2          # Équivalent à c = c - 2 (c devient 6)
+c *= 2          # Équivalent à c = c * 2 (c devient 12)
+c /= 3          # Équivalent à c = c / 3 (c devient 4.0)
+
+# Opérateurs d'identité
+liste1 = [1, 2, 3]
+liste2 = [1, 2, 3]
+liste3 = liste1
+
+print(liste1 is liste2)    # False (objets différents)
+print(liste1 is liste3)    # True (même objet)
+print(liste1 == liste2)    # True (valeurs égales)</code></pre>
             </div>
 
             <h2 id="conditions">🔀 Structures conditionnelles</h2>
-            <p>Python utilise <code>if</code>, <code>elif</code> et <code>else</code> pour les conditions :</p>
+            <p>Python utilise <code>if</code>, <code>elif</code> (else if) et <code>else</code> pour les conditions. L'indentation est cruciale pour définir les blocs de code.</p>
 
             <div class="code-box">
-                <code>
-<span class="code-variable">age</span> = <span class="code-number">20</span>
+                <pre><code class="language-python"># Structure if simple
+age = 20
 
-<span class="code-keyword">if</span> <span class="code-variable">age</span> >= <span class="code-number">18</span>:
-    <span class="code-function">print</span>(<span class="code-string">"Vous êtes majeur"</span>)
-<span class="code-keyword">elif</span> <span class="code-variable">age</span> >= <span class="code-number">13</span>:
-    <span class="code-function">print</span>(<span class="code-string">"Vous êtes adolescent"</span>)
-<span class="code-keyword">else</span>:
-    <span class="code-function">print</span>(<span class="code-string">"Vous êtes mineur"</span>)
-                </code>
+if age >= 18:
+    print("Vous êtes majeur")
+else:
+    print("Vous êtes mineur")
+
+# Structure if/elif/else
+age = 15
+
+if age >= 18:
+    print("Vous êtes majeur")
+    print("Vous pouvez voter")
+elif age >= 13:
+    print("Vous êtes adolescent")
+elif age >= 6:
+    print("Vous êtes enfant")
+else:
+    print("Vous êtes un bébé")
+
+# Conditions multiples
+note = 85
+
+if note >= 90:
+    mention = "Excellent"
+elif note >= 80:
+    mention = "Très bien"
+elif note >= 70:
+    mention = "Bien"
+elif note >= 60:
+    mention = "Assez bien"
+else:
+    mention = "Insuffisant"
+
+print(f"Votre mention : {mention}")
+
+# Opérateur ternaire (expression conditionnelle)
+age = 20
+statut = "Majeur" if age >= 18 else "Mineur"
+print(statut)
+
+# Conditions avec and/or
+age = 25
+permis = True
+
+if age >= 18 and permis:
+    print("Vous pouvez conduire")
+else:
+    print("Vous ne pouvez pas conduire")</code></pre>
             </div>
 
             <h2 id="loops">🔄 Boucles</h2>
-            <p>Python propose deux types de boucles : <code>for</code> et <code>while</code> :</p>
+            <p>Python propose deux types de boucles : <code>for</code> (pour itérer sur une séquence) et <code>while</code> (pour répéter tant qu'une condition est vraie) :</p>
 
             <div class="code-box">
-                <code>
-<span class="code-comment"># Boucle for</span>
-<span class="code-keyword">for</span> <span class="code-variable">i</span> <span class="code-keyword">in</span> <span class="code-function">range</span>(<span class="code-number">5</span>):
-    <span class="code-function">print</span>(<span class="code-variable">i</span>)  <span class="code-comment"># Affiche 0, 1, 2, 3, 4</span>
+                <pre><code class="language-python"># Boucle for avec range()
+for i in range(5):
+    print(i)  # Affiche 0, 1, 2, 3, 4
 
-<span class="code-comment"># Boucle for avec liste</span>
-<span class="code-variable">fruits</span> = [<span class="code-string">"pomme"</span>, <span class="code-string">"banane"</span>, <span class="code-string">"orange"</span>]
-<span class="code-keyword">for</span> <span class="code-variable">fruit</span> <span class="code-keyword">in</span> <span class="code-variable">fruits</span>:
-    <span class="code-function">print</span>(<span class="code-variable">fruit</span>)
+# range() avec début et fin
+for i in range(1, 6):
+    print(i)  # Affiche 1, 2, 3, 4, 5
 
-<span class="code-comment"># Boucle while</span>
-<span class="code-variable">compteur</span> = <span class="code-number">0</span>
-<span class="code-keyword">while</span> <span class="code-variable">compteur</span> < <span class="code-number">5</span>:
-    <span class="code-function">print</span>(<span class="code-variable">compteur</span>)
-    <span class="code-variable">compteur</span> += <span class="code-number">1</span>
-                </code>
+# range() avec pas
+for i in range(0, 10, 2):
+    print(i)  # Affiche 0, 2, 4, 6, 8
+
+# Boucle for avec liste
+fruits = ["pomme", "banane", "orange"]
+for fruit in fruits:
+    print(f"J'aime les {fruit}")
+
+# Boucle for avec index (enumerate)
+fruits = ["pomme", "banane", "orange"]
+for index, fruit in enumerate(fruits):
+    print(f"{index}: {fruit}")
+
+# Boucle while
+compteur = 0
+while compteur < 5:
+    print(compteur)
+    compteur += 1
+
+# Boucle while avec break
+compteur = 0
+while True:
+    print(compteur)
+    compteur += 1
+    if compteur >= 5:
+        break  # Sortir de la boucle
+
+# continue (passer à l'itération suivante)
+for i in range(10):
+    if i % 2 == 0:  # Si i est pair
+        continue    # Passer au suivant
+    print(i)       # Affiche seulement les impairs: 1, 3, 5, 7, 9
+
+# Boucle for avec else
+for i in range(5):
+    print(i)
+else:
+    print("Boucle terminée")  # Exécuté si la boucle se termine normalement</code></pre>
             </div>
 
             <h2 id="functions">⚙️ Fonctions</h2>
-            <p>Les fonctions permettent de réutiliser du code. En Python, on définit une fonction avec <code>def</code> :</p>
+            <p>Les fonctions permettent de réutiliser du code. En Python, on définit une fonction avec <code>def</code>. Les fonctions peuvent prendre des paramètres et retourner des valeurs avec <code>return</code>.</p>
 
             <div class="code-box">
-                <code>
-<span class="code-comment"># Fonction simple</span>
-<span class="code-keyword">def</span> <span class="code-function">dire_bonjour</span>():
-    <span class="code-function">print</span>(<span class="code-string">"Bonjour !"</span>)
+                <pre><code class="language-python"># Fonction simple (sans paramètres)
+def dire_bonjour():
+    print("Bonjour !")
 
-<span class="code-function">dire_bonjour</span>()  <span class="code-comment"># Appel de la fonction</span>
+dire_bonjour()  # Appel de la fonction
 
-<span class="code-comment"># Fonction avec paramètres</span>
-<span class="code-keyword">def</span> <span class="code-function">saluer</span>(<span class="code-variable">nom</span>):
-    <span class="code-keyword">return</span> <span class="code-string">f"Bonjour, {nom} !"</span>
+# Fonction avec paramètres
+def saluer(nom):
+    return f"Bonjour, {nom} !"
 
-<span class="code-variable">message</span> = <span class="code-function">saluer</span>(<span class="code-string">"Python"</span>)
-<span class="code-function">print</span>(<span class="code-variable">message</span>)  <span class="code-comment"># "Bonjour, Python !"</span>
+message = saluer("Python")
+print(message)  # "Bonjour, Python !"
 
-<span class="code-comment"># Fonction avec plusieurs paramètres</span>
-<span class="code-keyword">def</span> <span class="code-function">additionner</span>(<span class="code-variable">a</span>, <span class="code-variable">b</span>):
-    <span class="code-keyword">return</span> <span class="code-variable">a</span> + <span class="code-variable">b</span>
+# Fonction avec plusieurs paramètres
+def additionner(a, b):
+    return a + b
 
-<span class="code-function">print</span>(<span class="code-function">additionner</span>(<span class="code-number">5</span>, <span class="code-number">3</span>))  <span class="code-comment"># 8</span>
-                </code>
+resultat = additionner(5, 3)
+print(resultat)  # 8
+
+# Fonction avec paramètres par défaut
+def saluer_personne(nom, message="Bonjour"):
+    return f"{message}, {nom} !"
+
+print(saluer_personne("Bassirou"))              # "Bonjour, Bassirou !"
+print(saluer_personne("Bassirou", "Salut"))     # "Salut, Bassirou !"
+
+# Fonction avec arguments nommés
+def creer_personne(nom, age, ville="Dakar"):
+    return f"{nom}, {age} ans, habite à {ville}"
+
+print(creer_personne("Bassirou", 25))
+print(creer_personne(age=25, nom="Bassirou", ville="Thiès"))
+
+# Fonction avec *args (arguments variables)
+def additionner_nombres(*args):
+    return sum(args)
+
+print(additionner_nombres(1, 2, 3, 4, 5))  # 15
+
+# Fonction avec **kwargs (arguments nommés variables)
+def afficher_info(**kwargs):
+    for cle, valeur in kwargs.items():
+        print(f"{cle}: {valeur}")
+
+afficher_info(nom="Bassirou", age=25, ville="Dakar")
+
+# Fonction lambda (fonction anonyme)
+carre = lambda x: x ** 2
+print(carre(5))  # 25
+
+# Utilisation de lambda avec map()
+nombres = [1, 2, 3, 4, 5]
+carres = list(map(lambda x: x ** 2, nombres))
+print(carres)  # [1, 4, 9, 16, 25]</code></pre>
             </div>
 
             <h2 id="lists">📋 Listes et Dictionnaires</h2>
-            <p>Les listes et dictionnaires sont des structures de données très utiles en Python :</p>
+            <p>Les listes et dictionnaires sont des structures de données très utiles en Python. Les listes sont ordonnées et modifiables, les dictionnaires stockent des paires clé-valeur.</p>
 
             <div class="code-box">
-                <code>
-<span class="code-comment"># Listes</span>
-<span class="code-variable">nombres</span> = [<span class="code-number">1</span>, <span class="code-number">2</span>, <span class="code-number">3</span>, <span class="code-number">4</span>, <span class="code-number">5</span>]
-<span class="code-variable">nombres</span>.<span class="code-function">append</span>(<span class="code-number">6</span>)  <span class="code-comment"># Ajouter un élément</span>
-<span class="code-function">print</span>(<span class="code-variable">nombres</span>[<span class="code-number">0</span>])  <span class="code-comment"># Premier élément: 1</span>
-<span class="code-function">print</span>(<span class="code-function">len</span>(<span class="code-variable">nombres</span>))  <span class="code-comment"># Longueur: 6</span>
+                <pre><code class="language-python"># ========== LISTES ==========
+# Création de listes
+nombres = [1, 2, 3, 4, 5]
+fruits = ["pomme", "banane", "orange"]
+liste_mixte = [1, "deux", 3.0, True]
 
-<span class="code-comment"># Dictionnaires</span>
-<span class="code-variable">personne</span> = {
-    <span class="code-string">"nom"</span>: <span class="code-string">"Bassirou"</span>,
-    <span class="code-string">"age"</span>: <span class="code-number">25</span>,
-    <span class="code-string">"ville"</span>: <span class="code-string">"Dakar"</span>
+# Accès aux éléments (index commence à 0)
+print(fruits[0])        # "pomme" (premier élément)
+print(fruits[-1])      # "orange" (dernier élément)
+
+# Modification
+fruits[1] = "mangue"    # Remplacer "banane" par "mangue"
+
+# Méthodes des listes
+fruits.append("kiwi")           # Ajouter à la fin
+fruits.insert(1, "ananas")      # Insérer à l'index 1
+fruits.remove("pomme")          # Supprimer un élément
+fruits.pop()                    # Supprimer le dernier élément
+fruits.pop(0)                   # Supprimer l'élément à l'index 0
+
+# Autres méthodes utiles
+print(len(fruits))              # Longueur de la liste
+print(fruits.count("banane"))   # Compter les occurrences
+fruits.sort()                   # Trier la liste
+fruits.reverse()                # Inverser la liste
+
+# Slicing (tranches)
+nombres = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+print(nombres[2:5])     # [2, 3, 4] (de l'index 2 à 4)
+print(nombres[:3])      # [0, 1, 2] (du début à l'index 2)
+print(nombres[3:])      # [3, 4, 5, 6, 7, 8, 9] (de l'index 3 à la fin)
+print(nombres[::2])     # [0, 2, 4, 6, 8] (tous les 2 éléments)
+
+# ========== DICTIONNAIRES ==========
+# Création de dictionnaires
+personne = {
+    "nom": "Bassirou",
+    "age": 25,
+    "ville": "Dakar"
 }
-<span class="code-function">print</span>(<span class="code-variable">personne</span>[<span class="code-string">"nom"</span>])  <span class="code-comment"># "Bassirou"</span>
-<span class="code-variable">personne</span>[<span class="code-string">"metier"</span>] = <span class="code-string">"Développeur"</span>  <span class="code-comment"># Ajouter une clé</span>
-                </code>
+
+# Accès aux valeurs
+print(personne["nom"])          # "Bassirou"
+print(personne.get("age"))      # 25 (méthode get() plus sûre)
+print(personne.get("email", "Non renseigné"))  # Valeur par défaut
+
+# Modification et ajout
+personne["age"] = 26            # Modifier
+personne["email"] = "bassirou@example.com"  # Ajouter
+
+# Méthodes des dictionnaires
+print(personne.keys())          # Toutes les clés
+print(personne.values())        # Toutes les valeurs
+print(personne.items())         # Toutes les paires clé-valeur
+
+# Parcourir un dictionnaire
+for cle, valeur in personne.items():
+    print(f"{cle}: {valeur}")
+
+# Supprimer
+del personne["email"]           # Supprimer une clé
+personne.pop("ville")           # Supprimer et retourner la valeur</code></pre>
             </div>
 
             <h2 id="modules">📦 Modules</h2>
-            <p>Python permet d'importer des modules pour étendre ses fonctionnalités :</p>
+            <p>Python permet d'importer des modules pour étendre ses fonctionnalités. Un module est un fichier contenant des fonctions, classes et variables que vous pouvez réutiliser.</p>
 
             <div class="code-box">
-                <code>
-<span class="code-comment"># Importer un module</span>
-<span class="code-keyword">import</span> math
+                <pre><code class="language-python"># Importer un module complet
+import math
 
-<span class="code-function">print</span>(math.<span class="code-function">sqrt</span>(<span class="code-number">16</span>))  <span class="code-comment"># 4.0</span>
-<span class="code-function">print</span>(math.<span class="code-function">pi</span>)  <span class="code-comment"># 3.14159...</span>
+print(math.sqrt(16))        # 4.0 (racine carrée)
+print(math.pi)              # 3.141592653589793
+print(math.cos(0))          # 1.0
 
-<span class="code-comment"># Importer une fonction spécifique</span>
-<span class="code-keyword">from</span> datetime <span class="code-keyword">import</span> datetime
+# Importer avec un alias
+import datetime as dt
+maintenant = dt.datetime.now()
+print(maintenant)
 
-<span class="code-variable">maintenant</span> = datetime.<span class="code-function">now</span>()
-<span class="code-function">print</span>(<span class="code-variable">maintenant</span>)
-                </code>
+# Importer des fonctions spécifiques
+from math import sqrt, pi
+print(sqrt(25))             # 5.0
+print(pi)                   # 3.141592653589793
+
+# Importer tout d'un module (non recommandé)
+from math import *
+print(sin(0))               # 0.0
+
+# Modules standards utiles
+import random
+print(random.randint(1, 100))  # Nombre aléatoire entre 1 et 100
+
+import os
+print(os.getcwd())          # Répertoire courant
+
+import sys
+print(sys.version)          # Version de Python
+
+# Créer son propre module
+# Créer un fichier mon_module.py avec :
+# def ma_fonction():
+#     return "Hello from module"
+#
+# Puis l'importer :
+# import mon_module
+# print(mon_module.ma_fonction())</code></pre>
             </div>
 
             <h2 id="oop">🏗️ Programmation Orientée Objet</h2>
-            <p>Python supporte la programmation orientée objet (POO) :</p>
+            <p>Python supporte la programmation orientée objet (POO). Une classe est un modèle pour créer des objets. Les objets ont des attributs (données) et des méthodes (fonctions).</p>
 
             <div class="code-box">
-                <code>
-<span class="code-comment"># Définir une classe</span>
-<span class="code-keyword">class</span> <span class="code-function">Personne</span>:
-    <span class="code-keyword">def</span> <span class="code-function">__init__</span>(<span class="code-keyword">self</span>, <span class="code-variable">nom</span>, <span class="code-variable">age</span>):
-        <span class="code-keyword">self</span>.<span class="code-variable">nom</span> = <span class="code-variable">nom</span>
-        <span class="code-keyword">self</span>.<span class="code-variable">age</span> = <span class="code-variable">age</span>
+                <pre><code class="language-python"># Définir une classe
+class Personne:
+    # Constructeur (méthode spéciale __init__)
+    def __init__(self, nom, age):
+        self.nom = nom      # Attribut d'instance
+        self.age = age
     
-    <span class="code-keyword">def</span> <span class="code-function">se_presenter</span>(<span class="code-keyword">self</span>):
-        <span class="code-keyword">return</span> <span class="code-string">f"Je m'appelle {self.nom} et j'ai {self.age} ans"</span>
+    # Méthode d'instance
+    def se_presenter(self):
+        return f"Je m'appelle {self.nom} et j'ai {self.age} ans"
+    
+    def avoir_ans(self, annees):
+        self.age += annees
+        return f"Dans {annees} ans, j'aurai {self.age} ans"
 
-<span class="code-comment"># Créer un objet</span>
-<span class="code-variable">personne1</span> = <span class="code-function">Personne</span>(<span class="code-string">"Bassirou"</span>, <span class="code-number">25</span>)
-<span class="code-function">print</span>(<span class="code-variable">personne1</span>.<span class="code-function">se_presenter</span>())
-                </code>
+# Créer des objets (instances)
+personne1 = Personne("Bassirou", 25)
+personne2 = Personne("Aminata", 30)
+
+# Utiliser les méthodes
+print(personne1.se_presenter())
+print(personne2.se_presenter())
+print(personne1.avoir_ans(5))
+
+# Accéder aux attributs
+print(personne1.nom)
+print(personne1.age)
+
+# Classe avec attributs de classe
+class Voiture:
+    # Attribut de classe (partagé par toutes les instances)
+    nombre_voitures = 0
+    
+    def __init__(self, marque, modele):
+        self.marque = marque
+        self.modele = modele
+        Voiture.nombre_voitures += 1
+    
+    def __str__(self):
+        return f"{self.marque} {self.modele}"
+
+voiture1 = Voiture("Toyota", "Corolla")
+voiture2 = Voiture("Honda", "Civic")
+print(f"Nombre de voitures créées : {Voiture.nombre_voitures}")
+
+# Héritage
+class Etudiant(Personne):
+    def __init__(self, nom, age, ecole):
+        super().__init__(nom, age)  # Appeler le constructeur parent
+        self.ecole = ecole
+    
+    def etudier(self):
+        return f"{self.nom} étudie à {self.ecole}"
+
+etudiant = Etudiant("Bassirou", 25, "UCAD")
+print(etudiant.se_presenter())  # Méthode héritée
+print(etudiant.etudier())       # Méthode spécifique</code></pre>
             </div>
 
             <h2 id="files">📁 Manipulation de fichiers</h2>
-            <p>Python permet de lire et écrire dans des fichiers facilement :</p>
+            <p>Python permet de lire et écrire dans des fichiers facilement. Il est recommandé d'utiliser <code>with</code> pour garantir la fermeture automatique du fichier.</p>
 
             <div class="code-box">
-                <code>
-<span class="code-comment"># Écrire dans un fichier</span>
-<span class="code-keyword">with</span> <span class="code-function">open</span>(<span class="code-string">"fichier.txt"</span>, <span class="code-string">"w"</span>) <span class="code-keyword">as</span> <span class="code-variable">f</span>:
-    <span class="code-variable">f</span>.<span class="code-function">write</span>(<span class="code-string">"Bonjour Python !"</span>)
+                <pre><code class="language-python"># Écrire dans un fichier (mode 'w' = write)
+with open("fichier.txt", "w", encoding="utf-8") as f:
+    f.write("Bonjour Python !\n")
+    f.write("Ceci est la deuxième ligne\n")
 
-<span class="code-comment"># Lire un fichier</span>
-<span class="code-keyword">with</span> <span class="code-function">open</span>(<span class="code-string">"fichier.txt"</span>, <span class="code-string">"r"</span>) <span class="code-keyword">as</span> <span class="code-variable">f</span>:
-    <span class="code-variable">contenu</span> = <span class="code-variable">f</span>.<span class="code-function">read</span>()
-    <span class="code-function">print</span>(<span class="code-variable">contenu</span>)
-                </code>
+# Lire un fichier (mode 'r' = read)
+with open("fichier.txt", "r", encoding="utf-8") as f:
+    contenu = f.read()
+    print(contenu)
+
+# Lire ligne par ligne
+with open("fichier.txt", "r", encoding="utf-8") as f:
+    for ligne in f:
+        print(ligne.strip())  # strip() enlève les sauts de ligne
+
+# Lire toutes les lignes dans une liste
+with open("fichier.txt", "r", encoding="utf-8") as f:
+    lignes = f.readlines()
+    print(lignes)
+
+# Ajouter à un fichier (mode 'a' = append)
+with open("fichier.txt", "a", encoding="utf-8") as f:
+    f.write("Nouvelle ligne ajoutée\n")
+
+# Modes de fichier
+# 'r'  - Lecture (défaut)
+# 'w'  - Écriture (écrase le fichier existant)
+# 'a'  - Ajout (ajoute à la fin)
+# 'x'  - Création exclusive (erreur si existe)
+# 'b'  - Mode binaire (rb, wb)
+# 't'  - Mode texte (défaut, rt, wt)
+# '+'  - Lecture et écriture (r+, w+, a+)
+
+# Gestion d'erreurs
+try:
+    with open("fichier_inexistant.txt", "r") as f:
+        contenu = f.read()
+except FileNotFoundError:
+    print("Le fichier n'existe pas")
+except PermissionError:
+    print("Permission refusée")
+except Exception as e:
+    print(f"Erreur : {e}")</code></pre>
             </div>
 
             <div class="note-box">
-                <p style="color: #000;"><strong>💡 Bonne pratique :</strong> Utilisez <code>with</code> pour ouvrir les fichiers, cela garantit que le fichier sera fermé automatiquement même en cas d'erreur. C'est la méthode recommandée en Python !</p>
+                <p style="color: #000;"><strong>💡 Bonne pratique :</strong> Utilisez toujours <code>with</code> pour ouvrir les fichiers. Cela garantit que le fichier sera fermé automatiquement même en cas d'erreur. C'est la méthode recommandée en Python et cela évite les fuites de ressources !</p>
             </div>
 
             <h2>🎓 Prochaines étapes</h2>
@@ -593,15 +952,27 @@
                 <h3 style="color: #000;">✅ Ce que vous avez appris :</h3>
                 <ul style="margin-left: 20px; line-height: 2; color: #000;">
                     <li>Syntaxe Python et variables</li>
-                    <li>Types de données</li>
-                    <li>Opérateurs et expressions</li>
-                    <li>Structures conditionnelles</li>
+                    <li>Types de données (str, int, float, bool, list, dict, tuple, set)</li>
+                    <li>Opérateurs (arithmétiques, comparaison, logiques)</li>
+                    <li>Structures conditionnelles (if, elif, else)</li>
                     <li>Boucles (for et while)</li>
-                    <li>Fonctions</li>
-                    <li>Listes et dictionnaires</li>
-                    <li>Modules</li>
-                    <li>Programmation Orientée Objet</li>
-                    <li>Manipulation de fichiers</li>
+                    <li>Fonctions (définition, paramètres, return, lambda)</li>
+                    <li>Listes et dictionnaires (méthodes, slicing)</li>
+                    <li>Modules (import, création)</li>
+                    <li>Programmation Orientée Objet (classes, objets, héritage)</li>
+                    <li>Manipulation de fichiers (lecture, écriture, gestion d'erreurs)</li>
+                </ul>
+            </div>
+
+            <div class="example-box">
+                <h3 style="color: #000;">🚀 Pour aller plus loin :</h3>
+                <ul style="margin-left: 20px; line-height: 2; color: #000;">
+                    <li>📚 <strong>Compréhensions de listes</strong> - Syntaxe concise pour créer des listes</li>
+                    <li>🔧 <strong>Gestion des exceptions</strong> - try/except pour gérer les erreurs</li>
+                    <li>📦 <strong>Packages et pip</strong> - Installer des bibliothèques externes</li>
+                    <li>🌐 <strong>Développement web</strong> - Django ou Flask pour créer des sites web</li>
+                    <li>📊 <strong>Data Science</strong> - Pandas, NumPy pour l'analyse de données</li>
+                    <li>🤖 <strong>Intelligence Artificielle</strong> - TensorFlow, PyTorch pour le Machine Learning</li>
                 </ul>
             </div>
 
@@ -619,5 +990,15 @@
 @section('scripts')
 <script src="{{ asset('js/sidebar-sticky.js') }}"></script>
 <script src="{{ asset('js/sidebar-navigation.js') }}"></script>
+<!-- Prism.js pour la coloration syntaxique -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+<script>
+    // Initialiser Prism.js après le chargement de la page
+    document.addEventListener('DOMContentLoaded', function() {
+        if (typeof Prism !== 'undefined') {
+            Prism.highlightAll();
+        }
+    });
+</script>
 @endsection
-

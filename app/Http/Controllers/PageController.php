@@ -297,6 +297,156 @@ class PageController extends Controller
     {
         $code = $request->input('code');
         
+        // Exécution Python
+        if ($language === 'python') {
+            // Sécurité : Vérifier que le code ne contient pas de fonctions dangereuses
+            $dangerousFunctions = [
+                'exec', 'eval', 'compile', '__import__', 'open', 'file',
+                'input', 'raw_input', 'execfile', 'reload', '__builtin__',
+                'subprocess', 'os.system', 'os.popen', 'popen2', 'commands',
+                'socket', 'urllib', 'urllib2', 'httplib', 'ftplib', 'telnetlib'
+            ];
+            
+            foreach ($dangerousFunctions as $func) {
+                if (preg_match('/\b' . preg_quote($func, '/') . '\s*\(/i', $code)) {
+                    return response()->json([
+                        'output' => '',
+                        'error' => 'Fonction non autorisée détectée : ' . $func . '(). Cette fonction est désactivée pour des raisons de sécurité.'
+                    ]);
+                }
+            }
+            
+            // Vérifier les imports dangereux
+            if (preg_match('/\bimport\s+(os|sys|subprocess|socket|urllib|commands|popen2|eval|exec|compile)/i', $code)) {
+                return response()->json([
+                    'output' => '',
+                    'error' => 'Import non autorisé détecté. Certains modules sont désactivés pour des raisons de sécurité.'
+                ]);
+            }
+            
+            $output = '';
+            $error = null;
+            
+            try {
+                // Créer un fichier temporaire pour exécuter le code Python
+                $tempFile = tempnam(sys_get_temp_dir(), 'python_exercise_') . '.py';
+                
+                // Écrire le code dans le fichier temporaire
+                if (file_put_contents($tempFile, $code) === false) {
+                    throw new \Exception('Impossible d\'écrire dans le fichier temporaire');
+                }
+                
+                // Exécuter le code Python avec un timeout
+                // Essayer différentes commandes Python
+                $pythonCommands = ['python3', 'python'];
+                $process = null;
+                $pipes = null;
+                $command = null;
+                
+                foreach ($pythonCommands as $pythonCmd) {
+                    $descriptorspec = [
+                        0 => ['pipe', 'r'],  // stdin
+                        1 => ['pipe', 'w'],  // stdout
+                        2 => ['pipe', 'w']   // stderr
+                    ];
+                    
+                    $command = $pythonCmd . ' ' . escapeshellarg($tempFile);
+                    $process = @proc_open($command, $descriptorspec, $pipes);
+                    
+                    if (is_resource($process)) {
+                        break; // Commande trouvée, sortir de la boucle
+                    }
+                }
+                
+                if (!is_resource($process)) {
+                    throw new \Exception('Impossible d\'exécuter Python. Vérifiez que Python est installé sur le serveur (python3 ou python).');
+                }
+                
+                // Fermer stdin
+                fclose($pipes[0]);
+                
+                // Lire stdout et stderr avec un timeout
+                stream_set_blocking($pipes[1], false);
+                stream_set_blocking($pipes[2], false);
+                
+                $output = '';
+                $stderr = '';
+                $startTime = time();
+                $timeout = 5; // 5 secondes
+                
+                // Lire les pipes de manière non-bloquante
+                while (true) {
+                    $read = [$pipes[1], $pipes[2]];
+                    $write = null;
+                    $except = null;
+                    
+                    if (stream_select($read, $write, $except, 0, 200000) === false) {
+                        break;
+                    }
+                    
+                    foreach ($read as $pipe) {
+                        if ($pipe === $pipes[1]) {
+                            $chunk = stream_get_contents($pipe);
+                            if ($chunk !== false) {
+                                $output .= $chunk;
+                            }
+                        } elseif ($pipe === $pipes[2]) {
+                            $chunk = stream_get_contents($pipe);
+                            if ($chunk !== false) {
+                                $stderr .= $chunk;
+                            }
+                        }
+                    }
+                    
+                    // Vérifier le statut du processus
+                    $status = proc_get_status($process);
+                    if (!$status['running']) {
+                        break;
+                    }
+                    
+                    // Timeout
+                    if (time() - $startTime > $timeout) {
+                        proc_terminate($process);
+                        break;
+                    }
+                    
+                    usleep(100000); // 0.1 seconde
+                }
+                
+                // Lire le reste
+                $output .= stream_get_contents($pipes[1]);
+                $stderr .= stream_get_contents($pipes[2]);
+                
+                fclose($pipes[1]);
+                fclose($pipes[2]);
+                
+                // Obtenir le code de retour
+                $returnValue = proc_close($process);
+                
+                // Supprimer le fichier temporaire
+                @unlink($tempFile);
+                
+                // Nettoyer la sortie
+                $output = trim($output);
+                $stderr = trim($stderr);
+                
+                if ($returnValue !== 0 || !empty($stderr)) {
+                    $error = $stderr ?: 'Erreur lors de l\'exécution du code Python (code de retour: ' . $returnValue . ')';
+                }
+                
+            } catch (\Exception $e) {
+                $error = 'Erreur : ' . $e->getMessage();
+                if (isset($tempFile) && file_exists($tempFile)) {
+                    @unlink($tempFile);
+                }
+            }
+            
+            return response()->json([
+                'output' => $output,
+                'error' => $error
+            ]);
+        }
+        
         // Sécurité : Ne permettre l'exécution que pour PHP
         if ($language !== 'php') {
             // Pour les autres langages (HTML, CSS, JS), retourner le code tel quel
@@ -5367,6 +5517,86 @@ print(carres)',
     }
 
     // Formations
+    public function allFormations()
+    {
+        $formations = [
+            [
+                'name' => 'HTML5',
+                'slug' => 'html5',
+                'icon' => 'fab fa-html5',
+                'color' => '#e34c26',
+                'description' => 'Apprenez les fondamentaux du web avec HTML5. Structure, sémantique et bonnes pratiques.',
+                'route' => route('formations.html5')
+            ],
+            [
+                'name' => 'CSS3',
+                'slug' => 'css3',
+                'icon' => 'fab fa-css3-alt',
+                'color' => '#264de4',
+                'description' => 'Créez des designs modernes et responsives avec CSS3, Flexbox et Grid.',
+                'route' => route('formations.css3')
+            ],
+            [
+                'name' => 'JavaScript',
+                'slug' => 'javascript',
+                'icon' => 'fab fa-js',
+                'color' => '#f0db4f',
+                'description' => 'Maîtrisez JavaScript ES6+, DOM manipulation et programmation asynchrone.',
+                'route' => route('formations.javascript')
+            ],
+            [
+                'name' => 'PHP',
+                'slug' => 'php',
+                'icon' => 'fab fa-php',
+                'color' => '#8993be',
+                'description' => 'Développez des applications web dynamiques avec PHP et MySQL.',
+                'route' => route('formations.php')
+            ],
+            [
+                'name' => 'Bootstrap',
+                'slug' => 'bootstrap',
+                'icon' => 'fab fa-bootstrap',
+                'color' => '#7952b3',
+                'description' => 'Créez rapidement des interfaces responsives avec le framework Bootstrap.',
+                'route' => route('formations.bootstrap')
+            ],
+            [
+                'name' => 'Git',
+                'slug' => 'git',
+                'icon' => 'fab fa-git-alt',
+                'color' => '#f34f29',
+                'description' => 'Gérez vos projets avec Git et GitHub. Versioning et collaboration.',
+                'route' => route('formations.git')
+            ],
+            [
+                'name' => 'WordPress',
+                'slug' => 'wordpress',
+                'icon' => 'fab fa-wordpress',
+                'color' => '#21759b',
+                'description' => 'Créez des sites web professionnels avec WordPress. Thèmes et plugins.',
+                'route' => route('formations.wordpress')
+            ],
+            [
+                'name' => 'Intelligence Artificielle',
+                'slug' => 'ia',
+                'icon' => 'fas fa-robot',
+                'color' => '#06b6d4',
+                'description' => 'Découvrez l\'IA, le Machine Learning et les applications pratiques.',
+                'route' => route('formations.ia')
+            ],
+            [
+                'name' => 'Python',
+                'slug' => 'python',
+                'icon' => 'fab fa-python',
+                'color' => '#3776ab',
+                'description' => 'Apprenez Python, le langage de programmation polyvalent pour le web, la data science et l\'IA.',
+                'route' => route('formations.python')
+            ],
+        ];
+        
+        return view('formations.all', compact('formations'));
+    }
+
     public function html5()
     {
         return view('formations.html5');

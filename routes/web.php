@@ -34,6 +34,7 @@ Route::post('/newsletter/subscribe', [PageController::class, 'newsletterSubscrib
 Route::get('/newsletter/unsubscribe/{token}', [PageController::class, 'newsletterUnsubscribe'])->name('newsletter.unsubscribe');
 
 // Routes Formations
+Route::get('/formations', [PageController::class, 'allFormations'])->name('formations.all');
 Route::get('/formations/html5', [PageController::class, 'html5'])->name('formations.html5');
 Route::get('/formations/css3', [PageController::class, 'css3'])->name('formations.css3');
 Route::get('/formations/javascript', [PageController::class, 'javascript'])->name('formations.javascript');
