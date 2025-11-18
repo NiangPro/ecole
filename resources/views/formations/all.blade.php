@@ -14,15 +14,15 @@
     
     body {
         font-family: 'Inter', sans-serif;
-        background: #ffffff;
-        color: rgba(30, 41, 59, 0.9);
+        background: #ffffff !important;
+        color: #1e293b !important;
         overflow-x: hidden;
     }
     
     /* Dark Mode Styles */
     body.dark-mode {
         background: #0a0a0f !important;
-        color: #fff !important;
+        color: #ffffff !important;
     }
     
     /* Hero Section */
@@ -30,13 +30,13 @@
         position: relative;
         padding: 120px 20px 80px;
         text-align: center;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #06b6d4 0%, #14b8a6 100%);
         overflow: hidden;
         z-index: 1;
     }
     
     body.dark-mode .hero-section {
-        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
     }
     
     .hero-section::before {
@@ -93,18 +93,18 @@
         font-size: 2.5rem;
         font-weight: 800;
         margin-bottom: 20px;
-        color: rgba(30, 41, 59, 0.9);
+        color: #1e293b !important;
         font-family: 'Orbitron', sans-serif;
     }
     
     body.dark-mode .section-title {
-        color: #fff;
+        color: #ffffff !important;
     }
     
     .section-subtitle {
         text-align: center;
         font-size: 1.2rem;
-        color: rgba(30, 41, 59, 0.7);
+        color: #475569 !important;
         margin-bottom: 60px;
         max-width: 700px;
         margin-left: auto;
@@ -112,7 +112,7 @@
     }
     
     body.dark-mode .section-subtitle {
-        color: rgba(255, 255, 255, 0.7);
+        color: rgba(255, 255, 255, 0.8) !important;
     }
     
     .formations-grid {
@@ -184,23 +184,23 @@
         font-size: 1.8rem;
         font-weight: 700;
         margin-bottom: 15px;
-        color: rgba(30, 41, 59, 0.9);
+        color: #1e293b !important;
         font-family: 'Orbitron', sans-serif;
     }
     
     body.dark-mode .formation-name {
-        color: #fff;
+        color: #ffffff !important;
     }
     
     .formation-description {
-        color: rgba(30, 41, 59, 0.7);
+        color: #475569 !important;
         line-height: 1.6;
         margin-bottom: 20px;
         font-size: 1rem;
     }
     
     body.dark-mode .formation-description {
-        color: rgba(255, 255, 255, 0.7);
+        color: rgba(255, 255, 255, 0.8) !important;
     }
     
     .formation-link {
@@ -290,12 +290,12 @@
     
     .stat-label {
         font-size: 1.1rem;
-        color: rgba(30, 41, 59, 0.7);
+        color: #475569 !important;
         font-weight: 600;
     }
     
     body.dark-mode .stat-label {
-        color: rgba(255, 255, 255, 0.7);
+        color: rgba(255, 255, 255, 0.8) !important;
     }
     
     /* Responsive */
@@ -359,6 +359,28 @@
 
 <!-- Formations Section -->
 <section class="formations-container">
+    <!-- Stats Section -->
+    <div class="stats-section" style="margin-top: 0; margin-bottom: 60px;">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">{{ count($formations) }}+</div>
+                <div class="stat-label">Formations</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">100+</div>
+                <div class="stat-label">Exercices</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Disponible</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">Gratuit</div>
+            </div>
+        </div>
+    </div>
+    
     <h2 class="section-title">Nos Formations</h2>
     <p class="section-subtitle">
         Choisissez la formation qui correspond à vos besoins et commencez votre parcours d'apprentissage dès aujourd'hui
@@ -379,28 +401,6 @@
             </span>
         </a>
         @endforeach
-    </div>
-    
-    <!-- Stats Section -->
-    <div class="stats-section">
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-number">{{ count($formations) }}+</div>
-                <div class="stat-label">Formations</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">100+</div>
-                <div class="stat-label">Exercices</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">24/7</div>
-                <div class="stat-label">Disponible</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number">100%</div>
-                <div class="stat-label">Gratuit</div>
-            </div>
-        </div>
     </div>
 </section>
 @endsection

@@ -509,13 +509,71 @@
                 hideMessages();
             };
             
+            // Vérifier que la fonction est bien définie
+            console.log('Initialisation de runCode pour language:', language);
+            
             window.runCode = function() {
+                console.log('runCode appelé, language:', language);
                 const code = codeEditor.getValue();
+                console.log('Code récupéré:', code.substring(0, 100));
                 const iframe = document.getElementById('resultFrame');
+                if (!iframe) {
+                    console.error('iframe non trouvé');
+                    return;
+                }
                 const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                
+                // Afficher un message de chargement
+                iframeDoc.open();
+                iframeDoc.write(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <meta charset="UTF-8">
+                        <title>Exécution...</title>
+                        <style>
+                            body {
+                                font-family: Arial, sans-serif;
+                                padding: 20px;
+                                background: #1e293b;
+                                color: #e2e8f0;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                height: 100vh;
+                                margin: 0;
+                            }
+                            .loading {
+                                text-align: center;
+                            }
+                            .spinner {
+                                border: 4px solid rgba(6, 182, 212, 0.2);
+                                border-top: 4px solid #06b6d4;
+                                border-radius: 50%;
+                                width: 40px;
+                                height: 40px;
+                                animation: spin 1s linear infinite;
+                                margin: 0 auto 20px;
+                            }
+                            @keyframes spin {
+                                0% { transform: rotate(0deg); }
+                                100% { transform: rotate(360deg); }
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            <p>Exécution du code en cours...</p>
+                        </div>
+                    </body>
+                    </html>
+                `);
+                iframeDoc.close();
                 
                 // Si c'est du PHP ou Python, exécuter côté serveur
                 if (language === 'php' || language === 'python') {
+                    console.log('Envoi de la requête à /exercices/' + language + '/run');
                     fetch(`/exercices/${language}/run`, {
                         method: 'POST',
                         headers: {
@@ -526,16 +584,20 @@
                         body: JSON.stringify({ code: code })
                     })
                     .then(response => {
+                        console.log('Réponse reçue, status:', response.status);
                         // Vérifier si la réponse est du JSON
                         const contentType = response.headers.get('content-type');
+                        console.log('Content-Type:', contentType);
                         if (!contentType || !contentType.includes('application/json')) {
                             return response.text().then(text => {
+                                console.error('Réponse non-JSON:', text.substring(0, 500));
                                 throw new Error('Réponse non-JSON reçue: ' + text.substring(0, 200));
                             });
                         }
                         return response.json();
                     })
                     .then(data => {
+                        console.log('Données reçues:', data);
                         iframeDoc.open();
                         
                         if (data.error) {
@@ -608,7 +670,8 @@
                         hideMessages();
                     })
                     .catch(error => {
-                        console.error('Error:', error);
+                        console.error('Erreur complète:', error);
+                        console.error('Stack:', error.stack);
                         iframeDoc.open();
                         iframeDoc.write(`
                             <!DOCTYPE html>

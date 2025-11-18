@@ -330,106 +330,92 @@ class PageController extends Controller
             try {
                 // Créer un fichier temporaire pour exécuter le code Python
                 $tempFile = tempnam(sys_get_temp_dir(), 'python_exercise_') . '.py';
+                $errorFile = $tempFile . '.err';
+                
+                // Préparer le code avec flush automatique
+                $codeToWrite = $code;
+                
+                // Ajouter import sys et flush si nécessaire
+                if (!preg_match('/\bimport\s+sys\b/i', $codeToWrite)) {
+                    $codeToWrite = "import sys\n" . $codeToWrite;
+                }
+                
+                // Ajouter flush à la fin pour forcer l'affichage
+                if (!preg_match('/sys\.stdout\.flush\(\)/i', $codeToWrite)) {
+                    $codeToWrite .= "\nsys.stdout.flush()";
+                }
                 
                 // Écrire le code dans le fichier temporaire
-                if (file_put_contents($tempFile, $code) === false) {
+                if (file_put_contents($tempFile, $codeToWrite) === false) {
                     throw new \Exception('Impossible d\'écrire dans le fichier temporaire');
                 }
                 
-                // Exécuter le code Python avec un timeout
                 // Essayer différentes commandes Python
                 $pythonCommands = ['python3', 'python'];
-                $process = null;
-                $pipes = null;
                 $command = null;
+                $pythonCmd = null;
                 
-                foreach ($pythonCommands as $pythonCmd) {
-                    $descriptorspec = [
-                        0 => ['pipe', 'r'],  // stdin
-                        1 => ['pipe', 'w'],  // stdout
-                        2 => ['pipe', 'w']   // stderr
-                    ];
-                    
-                    $command = $pythonCmd . ' ' . escapeshellarg($tempFile);
-                    $process = @proc_open($command, $descriptorspec, $pipes);
-                    
-                    if (is_resource($process)) {
-                        break; // Commande trouvée, sortir de la boucle
+                foreach ($pythonCommands as $cmd) {
+                    // Tester si la commande existe
+                    $testCmd = $cmd . ' --version 2>&1';
+                    $testOutput = @shell_exec($testCmd);
+                    if ($testOutput !== null && strpos($testOutput, 'Python') !== false) {
+                        $pythonCmd = $cmd;
+                        break;
                     }
                 }
                 
-                if (!is_resource($process)) {
-                    throw new \Exception('Impossible d\'exécuter Python. Vérifiez que Python est installé sur le serveur (python3 ou python).');
+                if ($pythonCmd === null) {
+                    throw new \Exception('Python n\'est pas installé ou non accessible sur le serveur.');
                 }
                 
-                // Fermer stdin
-                fclose($pipes[0]);
+                // Exécuter Python avec unbuffered et redirection d'erreur
+                $env = $_ENV;
+                $env['PYTHONUNBUFFERED'] = '1';
+                $envString = '';
+                foreach ($env as $key => $value) {
+                    $envString .= escapeshellarg($key) . '=' . escapeshellarg($value) . ' ';
+                }
                 
-                // Lire stdout et stderr avec un timeout
-                stream_set_blocking($pipes[1], false);
-                stream_set_blocking($pipes[2], false);
+                // Utiliser exec() pour obtenir le code de retour
+                $command = $pythonCmd . ' -u ' . escapeshellarg($tempFile);
+                $outputLines = [];
+                $returnValue = 0;
                 
-                $output = '';
+                // Exécuter avec exec() pour capturer stdout et stderr
+                exec($command . ' 2>&1', $outputLines, $returnValue);
+                
+                // Joindre toutes les lignes de sortie
+                $output = implode("\n", $outputLines);
+                
+                // Séparer stdout et stderr si nécessaire
                 $stderr = '';
-                $startTime = time();
-                $timeout = 5; // 5 secondes
-                
-                // Lire les pipes de manière non-bloquante
-                while (true) {
-                    $read = [$pipes[1], $pipes[2]];
-                    $write = null;
-                    $except = null;
-                    
-                    if (stream_select($read, $write, $except, 0, 200000) === false) {
-                        break;
+                if ($returnValue !== 0) {
+                    // Si erreur, essayer de lire le fichier d'erreur
+                    if (file_exists($errorFile)) {
+                        $stderr = file_get_contents($errorFile);
+                        @unlink($errorFile);
                     }
-                    
-                    foreach ($read as $pipe) {
-                        if ($pipe === $pipes[1]) {
-                            $chunk = stream_get_contents($pipe);
-                            if ($chunk !== false) {
-                                $output .= $chunk;
-                            }
-                        } elseif ($pipe === $pipes[2]) {
-                            $chunk = stream_get_contents($pipe);
-                            if ($chunk !== false) {
-                                $stderr .= $chunk;
-                            }
-                        }
+                    // Si pas de fichier d'erreur, utiliser la sortie comme erreur
+                    if (empty($stderr) && !empty($output) && preg_match('/Error|Exception|Traceback/i', $output)) {
+                        $stderr = $output;
+                        $output = '';
                     }
-                    
-                    // Vérifier le statut du processus
-                    $status = proc_get_status($process);
-                    if (!$status['running']) {
-                        break;
-                    }
-                    
-                    // Timeout
-                    if (time() - $startTime > $timeout) {
-                        proc_terminate($process);
-                        break;
-                    }
-                    
-                    usleep(100000); // 0.1 seconde
                 }
                 
-                // Lire le reste
-                $output .= stream_get_contents($pipes[1]);
-                $stderr .= stream_get_contents($pipes[2]);
-                
-                fclose($pipes[1]);
-                fclose($pipes[2]);
-                
-                // Obtenir le code de retour
-                $returnValue = proc_close($process);
+                // Nettoyer le fichier d'erreur s'il existe
+                if (file_exists($errorFile)) {
+                    @unlink($errorFile);
+                }
                 
                 // Supprimer le fichier temporaire
                 @unlink($tempFile);
                 
                 // Nettoyer la sortie
-                $output = trim($output);
+                $output = $output !== null ? rtrim($output, "\r\n") : '';
                 $stderr = trim($stderr);
                 
+                // Si le code de retour n'est pas 0 ou s'il y a des erreurs
                 if ($returnValue !== 0 || !empty($stderr)) {
                     $error = $stderr ?: 'Erreur lors de l\'exécution du code Python (code de retour: ' . $returnValue . ')';
                 }

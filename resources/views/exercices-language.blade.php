@@ -174,6 +174,26 @@
             </p>
         </div>
 
+        <!-- Stats Section -->
+        <div class="mb-12 grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="bg-gradient-to-br from-cyan-500/10 to-teal-500/10 border border-cyan-500/20 rounded-xl p-6 text-center">
+                <div class="text-4xl font-bold text-cyan-400 mb-2">{{ count($exercises) }}+</div>
+                <div class="text-gray-300">Exercices</div>
+            </div>
+            <div class="bg-gradient-to-br from-green-500/10 to-emerald-500/10 border border-green-500/20 rounded-xl p-6 text-center">
+                <div class="text-4xl font-bold text-green-400 mb-2">{{ collect($exercises)->where('difficulty', 'Facile')->count() }}</div>
+                <div class="text-gray-300">Facile</div>
+            </div>
+            <div class="bg-gradient-to-br from-yellow-500/10 to-amber-500/10 border border-yellow-500/20 rounded-xl p-6 text-center">
+                <div class="text-4xl font-bold text-yellow-400 mb-2">{{ collect($exercises)->where('difficulty', 'Moyen')->count() }}</div>
+                <div class="text-gray-300">Moyen</div>
+            </div>
+            <div class="bg-gradient-to-br from-red-500/10 to-rose-500/10 border border-red-500/20 rounded-xl p-6 text-center">
+                <div class="text-4xl font-bold text-red-400 mb-2">{{ collect($exercises)->where('difficulty', 'Difficile')->count() }}</div>
+                <div class="text-gray-300">Difficile</div>
+            </div>
+        </div>
+
         @if(count($exercises) > 0)
         <!-- Filtres par niveau -->
         <div class="mb-8 flex flex-wrap gap-4 items-center">
