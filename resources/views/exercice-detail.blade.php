@@ -623,12 +623,23 @@
                         } else {
                             // Envelopper la sortie dans du HTML
                             let output = data.output || '';
-                            // Nettoyer les espaces en début/fin et les lignes vides
+                            // Nettoyer agressivement tous les espaces en début/fin
                             output = output.trim();
+                            // Supprimer tous les caractères d'espacement Unicode invisibles
+                            output = output.replace(/^[\s\u00A0\u2000-\u200B\u2028\u2029\u202F\u205F\u3000]+/g, '');
+                            output = output.replace(/[\s\u00A0\u2000-\u200B\u2028\u2029\u202F\u205F\u3000]+$/g, '');
                             // Supprimer les espaces en début de chaque ligne
                             if (output) {
                                 const lines = output.split('\n');
-                                output = lines.map(line => line.trimStart()).join('\n').trim();
+                                const cleanedLines = [];
+                                for (let line of lines) {
+                                    // Supprimer tous les espaces, tabulations et caractères invisibles en début
+                                    const cleaned = line.replace(/^[\s\t\r\u00A0\u2000-\u200B\u2028\u2029\u202F\u205F\u3000]+/g, '');
+                                    cleanedLines.push(cleaned);
+                                }
+                                output = cleanedLines.join('\n').trim();
+                                // Supprimer une dernière fois tous les espaces invisibles
+                                output = output.replace(/^[\s\u00A0\u2000-\u200B\u2028\u2029\u202F\u205F\u3000]+/g, '');
                             }
                             const hasOutput = output.length > 0;
                             const darkMode = window.isDarkMode || document.body.classList.contains('dark-mode');
@@ -640,6 +651,15 @@
                                     <meta charset="UTF-8">
                                     <title>Résultat</title>
                                     <style>
+                                        * {
+                                            margin: 0;
+                                            padding: 0;
+                                            box-sizing: border-box;
+                                        }
+                                        html, body {
+                                            margin: 0;
+                                            padding: 0;
+                                        }
                                         body {
                                             font-family: 'Courier New', 'Consolas', 'Monaco', monospace;
                                             padding: 20px;
@@ -647,16 +667,18 @@
                                             color: ${darkMode ? '#e2e8f0' : '#333'};
                                             white-space: pre-wrap;
                                             word-wrap: break-word;
+                                            line-height: 1.5;
                                         }
                                         .no-output {
                                             color: #999;
                                             font-style: italic;
                                             font-family: Arial, sans-serif;
+                                            margin: 0;
+                                            padding: 0;
                                         }
                                     </style>
                                 </head>
-                                <body>
-                                    ${hasOutput ? output : '<p class="no-output">Aucune sortie. Le code s\'est exécuté sans erreur mais n\'a rien affiché. Utilisez print() pour afficher des résultats.</p>'}
+                                <body>${hasOutput ? output : '<p class="no-output">Aucune sortie. Le code s\'est exécuté sans erreur mais n\'a rien affiché. Utilisez print() pour afficher des résultats.</p>'}
                                 </body>
                                 </html>
                             `);

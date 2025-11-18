@@ -482,17 +482,26 @@ class PageController extends Controller
                 @unlink($tempFile);
                 
                 // Nettoyer et encoder la sortie en UTF-8
-                // Supprimer les espaces en début et fin, et les lignes vides en début/fin
-                $output = $output !== null ? trim($output, "\r\n ") : '';
+                // Supprimer tous les espaces, tabulations et retours à la ligne en début/fin
+                $output = $output !== null ? trim($output) : '';
                 // Supprimer les espaces en début de chaque ligne (indentation indésirable)
                 if (!empty($output)) {
+                    // Supprimer tous les caractères d'espacement Unicode en début/fin
+                    $output = preg_replace('/^[\s\x{00A0}\x{2000}-\x{200B}\x{2028}\x{2029}\x{202F}\x{205F}\x{3000}]+/u', '', $output);
+                    $output = preg_replace('/[\s\x{00A0}\x{2000}-\x{200B}\x{2028}\x{2029}\x{202F}\x{205F}\x{3000}]+$/u', '', $output);
+                    
                     $lines = explode("\n", $output);
-                    $cleanedLines = array_map(function($line) {
-                        return ltrim($line, " \t");
-                    }, $lines);
+                    $cleanedLines = [];
+                    foreach ($lines as $line) {
+                        // Supprimer tous les espaces, tabulations et caractères invisibles en début de ligne
+                        $cleanedLine = preg_replace('/^[\s\t\r\x{00A0}\x{2000}-\x{200B}\x{2028}\x{2029}\x{202F}\x{205F}\x{3000}]+/u', '', $line);
+                        $cleanedLines[] = $cleanedLine;
+                    }
                     $output = implode("\n", $cleanedLines);
-                    // Retrim pour supprimer les lignes vides en début/fin
-                    $output = trim($output, "\r\n");
+                    // Retrim pour supprimer les lignes vides en début/fin et tous les espaces
+                    $output = trim($output);
+                    // Supprimer une dernière fois tous les espaces invisibles
+                    $output = preg_replace('/^[\s\x{00A0}\x{2000}-\x{200B}\x{2028}\x{2029}\x{202F}\x{205F}\x{3000}]+/u', '', $output);
                 }
                 $stderr = trim($stderr);
                 
