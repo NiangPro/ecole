@@ -313,12 +313,34 @@
                         <p class="text-gray-300 leading-relaxed mb-6">
                             Voici l'histoire d'un développeur passionné qui a suivi une voie conventionnelle pour arriver à son métier actuel. 
                             Issu d'une famille modeste, dès mon plus jeune âge, j'étais fasciné par la technologie et passais des heures sur mon 
-                            ordinateur personnel à explorer différents programmes et langages de programmation.
+                            ordinateur personnel à explorer différents programmes et langages de programmation. Cette curiosité précoce m'a conduit à 
+                            découvrir le monde fascinant du développement web, où chaque ligne de code représente une possibilité infinie de création.
+                        </p>
+                        <p class="text-gray-300 leading-relaxed mb-6">
+                            Mon parcours académique a commencé par un Baccalauréat Scientifique au Lycée Seydina Limamou Laye, où j'ai développé 
+                            une solide base en mathématiques et en logique. Cette formation m'a préparé pour ma Licence Professionnelle en Génie Logiciel 
+                            à l'Institut Supérieur d'Informatique, où j'ai approfondi mes connaissances en programmation, algorithmes et architecture logicielle. 
+                            J'ai ensuite complété ma formation par une spécialisation en Développement Web & Mobile à l'Access Code School, où j'ai maîtrisé 
+                            les technologies modernes du développement web.
                         </p>
                         <p class="text-gray-300 leading-relaxed mb-6">
                             Au fil du temps, ma passion est devenue évidente auprès de mes collègues qui ont commencé à me confier des projets liés 
                             au développement web. Petit-à-petit, je me suis constitué un portefeuille impressionnant avec diverses réalisations allant 
-                            du simple site vitrine jusqu'à la création complète d'applications complexes.
+                            du simple site vitrine jusqu'à la création complète d'applications complexes. Chaque projet a été une opportunité d'apprendre, 
+                            de grandir et de perfectionner mes compétences techniques et créatives.
+                        </p>
+                        <p class="text-gray-300 leading-relaxed mb-6">
+                            Aujourd'hui, avec plus de 5 ans d'expérience professionnelle chez Sunucode, j'ai eu l'opportunité de travailler sur des projets 
+                            variés et stimulants. J'ai développé des applications web complexes utilisant Laravel, React et Vue.js, formé et accompagné 
+                            de nombreux développeurs juniors, et géré des projets d'envergure nécessitant une architecture logicielle solide. Cette expérience 
+                            m'a permis de comprendre que le développement web ne se limite pas à écrire du code, mais implique également la résolution 
+                            de problèmes complexes, la collaboration en équipe, et la transmission de connaissances.
+                        </p>
+                        <p class="text-gray-300 leading-relaxed mb-6">
+                            C'est cette passion pour l'enseignement et le partage de connaissances qui m'a poussé à créer NiangProgrammeur, une plateforme 
+                            entièrement gratuite dédiée à l'apprentissage du développement web. Mon objectif est de démocratiser l'accès à l'éducation 
+                            en programmation, particulièrement en Afrique, où les ressources éducatives de qualité sont parfois limitées. Je crois fermement 
+                            que tout le monde devrait avoir la possibilité d'apprendre à coder, indépendamment de sa situation financière ou géographique.
                         </p>
                         
                         <!-- Contact Info -->
@@ -356,7 +378,9 @@
             <span class="gradient-text">Compétences & Capacités</span>
         </h2>
         <p class="text-center text-gray-400 mb-16 max-w-2xl mx-auto">
-            Maîtrise des technologies modernes du développement web
+            Maîtrise approfondie des technologies modernes du développement web, acquise à travers des années d'expérience pratique, 
+            de formation continue et de projets réels. Chaque technologie que je maîtrise a été apprise et perfectionnée dans le cadre 
+            de projets concrets, garantissant une compréhension pratique et applicable.
         </p>
         
         <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
@@ -402,7 +426,9 @@
             <span class="gradient-text">Mes Formations</span>
         </h2>
         <p class="text-center text-gray-400 mb-16 max-w-2xl mx-auto">
-            L'éducation ne se limite pas seulement au domaine scolaire mais englobe également l'apprentissage tout au long de la vie
+            L'éducation ne se limite pas seulement au domaine scolaire mais englobe également l'apprentissage tout au long de la vie. 
+            Mon parcours éducatif reflète ma conviction que l'apprentissage est un processus continu qui ne s'arrête jamais. Chaque 
+            formation que j'ai suivie m'a apporté des compétences précieuses et m'a préparé pour les défis professionnels à venir.
         </p>
         
         <div class="max-w-4xl mx-auto space-y-8">
@@ -460,7 +486,9 @@
             <span class="gradient-text">Expériences Professionnelles</span>
         </h2>
         <p class="text-center text-gray-400 mb-16 max-w-2xl mx-auto">
-            Mon parcours professionnel dans le développement web
+            Mon parcours professionnel dans le développement web témoigne d'une évolution constante, de l'apprentissage des bases 
+            à la maîtrise des technologies avancées. Chaque expérience professionnelle a contribué à façonner mon expertise et ma 
+            vision du développement web moderne.
         </p>
         
         <div class="max-w-4xl mx-auto">
@@ -494,15 +522,33 @@
                         <div class="space-y-3">
                             <p class="text-gray-300 leading-relaxed">
                                 <i class="fas fa-check-circle text-green-400 mr-2"></i>
-                                Développement d'applications web complexes avec Laravel, React et Vue.js
+                                Développement d'applications web complexes avec Laravel, React et Vue.js, incluant la conception de 
+                                systèmes backend robustes, la création d'interfaces utilisateur modernes et réactives, et l'intégration 
+                                d'APIs RESTful pour des solutions complètes et performantes.
                             </p>
                             <p class="text-gray-300 leading-relaxed">
                                 <i class="fas fa-check-circle text-green-400 mr-2"></i>
-                                Formation et accompagnement de développeurs juniors
+                                Formation et accompagnement de développeurs juniors, avec la création de programmes de mentorat, 
+                                l'organisation de sessions de code review, et le partage de bonnes pratiques pour accélérer leur 
+                                progression professionnelle et technique.
                             </p>
                             <p class="text-gray-300 leading-relaxed">
                                 <i class="fas fa-check-circle text-green-400 mr-2"></i>
-                                Gestion de projets et architecture logicielle
+                                Gestion de projets et architecture logicielle, incluant la planification de sprints, la coordination 
+                                d'équipes multidisciplinaires, la conception d'architectures scalables, et l'optimisation des performances 
+                                pour garantir la qualité et la maintenabilité des applications.
+                            </p>
+                            <p class="text-gray-300 leading-relaxed">
+                                <i class="fas fa-check-circle text-green-400 mr-2"></i>
+                                Développement de solutions e-commerce et applications métier sur mesure, avec intégration de systèmes 
+                                de paiement, gestion de stocks, et interfaces d'administration complètes pour répondre aux besoins 
+                                spécifiques des clients.
+                            </p>
+                            <p class="text-gray-300 leading-relaxed">
+                                <i class="fas fa-check-circle text-green-400 mr-2"></i>
+                                Optimisation SEO et performance web, avec l'implémentation de techniques avancées de référencement, 
+                                l'optimisation des temps de chargement, et l'amélioration de l'expérience utilisateur pour maximiser 
+                                la visibilité et l'engagement.
                             </p>
                         </div>
                     </div>

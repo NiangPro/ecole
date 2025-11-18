@@ -608,21 +608,38 @@ class PageController extends Controller
             // Récupérer la sortie
             $output = ob_get_clean();
             
+            // Nettoyer immédiatement les espaces en début/fin
+            if ($output !== null && $output !== false) {
+                $output = trim($output);
+            }
+            
             // Supprimer le fichier temporaire
             @unlink($tempFile);
             
         } catch (\ParseError $e) {
             $error = 'Erreur de syntaxe : ' . $e->getMessage();
             $output = ob_get_clean();
+            if ($output !== null && $output !== false) {
+                $output = trim($output);
+            }
         } catch (\Error $e) {
             $error = 'Erreur : ' . $e->getMessage();
             $output = ob_get_clean();
+            if ($output !== null && $output !== false) {
+                $output = trim($output);
+            }
         } catch (\Exception $e) {
             $error = 'Exception : ' . $e->getMessage();
             $output = ob_get_clean();
+            if ($output !== null && $output !== false) {
+                $output = trim($output);
+            }
         } catch (\Throwable $e) {
             $error = 'Erreur : ' . $e->getMessage();
             $output = ob_get_clean();
+            if ($output !== null && $output !== false) {
+                $output = trim($output);
+            }
         }
         
         // Nettoyer le fichier temporaire en cas d'erreur
@@ -635,6 +652,10 @@ class PageController extends Controller
         $output = $output !== null ? trim($output) : '';
         // Supprimer les espaces en début de chaque ligne (indentation indésirable)
         if (!empty($output)) {
+            // Supprimer tous les espaces avant la première balise HTML (DOCTYPE, html, head, body, form, etc.)
+            // Utiliser une regex plus agressive qui supprime tout avant n'importe quelle balise HTML
+            $output = preg_replace('/^[\s\n\r\t\x{00A0}\x{2000}-\x{200B}\x{2028}\x{2029}\x{202F}\x{205F}\x{3000}]+(?=<[!\/]?[a-z])/iu', '', $output);
+            
             // Supprimer tous les caractères d'espacement Unicode en début/fin
             $output = preg_replace('/^[\s\x{00A0}\x{2000}-\x{200B}\x{2028}\x{2029}\x{202F}\x{205F}\x{3000}]+/u', '', $output);
             $output = preg_replace('/[\s\x{00A0}\x{2000}-\x{200B}\x{2028}\x{2029}\x{202F}\x{205F}\x{3000}]+$/u', '', $output);
@@ -649,8 +670,8 @@ class PageController extends Controller
             $output = implode("\n", $cleanedLines);
             // Retrim pour supprimer les lignes vides en début/fin et tous les espaces
             $output = trim($output);
-            // Supprimer une dernière fois tous les espaces invisibles
-            $output = preg_replace('/^[\s\x{00A0}\x{2000}-\x{200B}\x{2028}\x{2029}\x{202F}\x{205F}\x{3000}]+/u', '', $output);
+            // Supprimer une dernière fois tous les espaces invisibles avant toute balise HTML
+            $output = preg_replace('/^[\s\n\r\t\x{00A0}\x{2000}-\x{200B}\x{2028}\x{2029}\x{202F}\x{205F}\x{3000}]+(?=<[!\/]?[a-z])/iu', '', $output);
         }
         
         // Encoder en UTF-8 pour éviter les erreurs JSON
@@ -3080,7 +3101,12 @@ if ($age >= 18) {
                     'points' => 20,
                     'instruction' => 'Affichez les nombres de 1 à 5 avec une boucle for.',
                     'description' => 'Utilisez une boucle for en PHP.',
-                    'startCode' => '<html>
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Boucles PHP</title>
+</head>
 <body>
 
 <?php
@@ -3090,7 +3116,12 @@ if ($age >= 18) {
 
 </body>
 </html>',
-                    'solution' => '<html>
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Boucles PHP</title>
+</head>
 <body>
 
 <?php
@@ -5682,7 +5713,7 @@ print(carres)',
                 'slug' => 'html5',
                 'icon' => 'fab fa-html5',
                 'color' => '#e34c26',
-                'description' => 'Apprenez les fondamentaux du web avec HTML5. Structure, sémantique et bonnes pratiques.',
+                'description' => 'Apprenez les fondamentaux du web avec HTML5, le langage de balisage standard pour créer des pages web. Cette formation complète couvre la structure HTML, les balises sémantiques, les formulaires, les tableaux, les médias, et les bonnes pratiques pour créer des sites web accessibles et optimisés pour le SEO. Vous découvrirez également les nouvelles fonctionnalités HTML5 comme les APIs natives, le stockage local, et la géolocalisation.',
                 'route' => route('formations.html5')
             ],
             [
@@ -5690,7 +5721,7 @@ print(carres)',
                 'slug' => 'css3',
                 'icon' => 'fab fa-css3-alt',
                 'color' => '#264de4',
-                'description' => 'Créez des designs modernes et responsives avec CSS3, Flexbox et Grid.',
+                'description' => 'Créez des designs modernes et responsives avec CSS3, le langage de style qui transforme vos pages HTML en interfaces visuellement attrayantes. Cette formation approfondie couvre les sélecteurs avancés, les animations CSS, les transitions, Flexbox pour les layouts flexibles, CSS Grid pour les grilles complexes, les variables CSS, et les techniques de responsive design. Vous apprendrez également à créer des designs adaptatifs pour tous les appareils, des smartphones aux écrans 4K.',
                 'route' => route('formations.css3')
             ],
             [
@@ -5698,7 +5729,7 @@ print(carres)',
                 'slug' => 'javascript',
                 'icon' => 'fab fa-js',
                 'color' => '#f0db4f',
-                'description' => 'Maîtrisez JavaScript ES6+, DOM manipulation et programmation asynchrone.',
+                'description' => 'Maîtrisez JavaScript ES6+, le langage de programmation le plus utilisé au monde pour créer des applications web interactives. Cette formation complète couvre les fondamentaux (variables, fonctions, objets, tableaux), les fonctionnalités modernes ES6+ (arrow functions, destructuring, modules, classes), la manipulation du DOM, les événements, la programmation asynchrone (Promises, async/await), les APIs modernes (Fetch, LocalStorage), et les frameworks JavaScript populaires. Vous développerez des compétences essentielles pour créer des applications web dynamiques et interactives.',
                 'route' => route('formations.javascript')
             ],
             [
@@ -5706,7 +5737,7 @@ print(carres)',
                 'slug' => 'php',
                 'icon' => 'fab fa-php',
                 'color' => '#8993be',
-                'description' => 'Développez des applications web dynamiques avec PHP et MySQL.',
+                'description' => 'Développez des applications web dynamiques et performantes avec PHP, le langage de programmation côté serveur le plus populaire. Cette formation complète couvre la syntaxe PHP, les variables, les fonctions, la programmation orientée objet (OOP), la gestion des formulaires, les sessions et cookies, l\'intégration avec MySQL pour les bases de données, la sécurité web, et les frameworks PHP modernes comme Laravel. Vous apprendrez à créer des sites web dynamiques, des systèmes de gestion de contenu, et des applications web complètes.',
                 'route' => route('formations.php')
             ],
             [
@@ -5714,7 +5745,7 @@ print(carres)',
                 'slug' => 'bootstrap',
                 'icon' => 'fab fa-bootstrap',
                 'color' => '#7952b3',
-                'description' => 'Créez rapidement des interfaces responsives avec le framework Bootstrap.',
+                'description' => 'Créez rapidement des interfaces responsives et professionnelles avec Bootstrap, le framework CSS le plus populaire au monde. Cette formation pratique couvre le système de grille responsive, les composants Bootstrap (boutons, cartes, modales, carrousels), les utilitaires CSS, la personnalisation avec Sass, l\'intégration de JavaScript Bootstrap, et les meilleures pratiques pour créer des interfaces modernes. Vous apprendrez à développer des sites web responsive rapidement, sans avoir à écrire beaucoup de CSS personnalisé.',
                 'route' => route('formations.bootstrap')
             ],
             [
@@ -5722,7 +5753,7 @@ print(carres)',
                 'slug' => 'git',
                 'icon' => 'fab fa-git-alt',
                 'color' => '#f34f29',
-                'description' => 'Gérez vos projets avec Git et GitHub. Versioning et collaboration.',
+                'description' => 'Gérez efficacement vos projets de développement avec Git, le système de contrôle de version le plus utilisé au monde, et GitHub, la plateforme de collaboration pour développeurs. Cette formation pratique couvre les commandes Git essentielles (commit, push, pull, merge), la gestion des branches, la résolution de conflits, les pull requests sur GitHub, la collaboration en équipe, et les workflows Git avancés. Vous apprendrez à travailler en équipe, à gérer l\'historique de vos projets, et à contribuer à des projets open source.',
                 'route' => route('formations.git')
             ],
             [
@@ -5730,7 +5761,7 @@ print(carres)',
                 'slug' => 'wordpress',
                 'icon' => 'fab fa-wordpress',
                 'color' => '#21759b',
-                'description' => 'Créez des sites web professionnels avec WordPress. Thèmes et plugins.',
+                'description' => 'Créez des sites web professionnels et puissants avec WordPress, le système de gestion de contenu (CMS) qui alimente plus de 43% des sites web dans le monde. Cette formation complète couvre l\'installation et la configuration, la gestion du contenu (pages, articles, médias), la personnalisation avec des thèmes, le développement de thèmes personnalisés, la création de plugins, l\'optimisation SEO, la sécurité, et les meilleures pratiques WordPress. Vous apprendrez à créer des sites web professionnels sans avoir besoin de coder, et à personnaliser WordPress selon vos besoins spécifiques.',
                 'route' => route('formations.wordpress')
             ],
             [
@@ -5738,7 +5769,7 @@ print(carres)',
                 'slug' => 'ia',
                 'icon' => 'fas fa-robot',
                 'color' => '#06b6d4',
-                'description' => 'Découvrez l\'IA, le Machine Learning et les applications pratiques.',
+                'description' => 'Découvrez l\'Intelligence Artificielle (IA), le Machine Learning et leurs applications pratiques dans le développement web moderne. Cette formation complète couvre les concepts fondamentaux de l\'IA, le Machine Learning (apprentissage supervisé et non supervisé), le Deep Learning, le traitement du langage naturel (NLP), la vision par ordinateur, les APIs d\'IA (OpenAI, TensorFlow), et l\'intégration de l\'IA dans les applications web. Vous apprendrez à créer des applications intelligentes qui peuvent comprendre, apprendre et s\'adapter, ouvrant de nouvelles possibilités dans le développement web.',
                 'route' => route('formations.ia')
             ],
             [
@@ -5746,7 +5777,7 @@ print(carres)',
                 'slug' => 'python',
                 'icon' => 'fab fa-python',
                 'color' => '#3776ab',
-                'description' => 'Apprenez Python, le langage de programmation polyvalent pour le web, la data science et l\'IA.',
+                'description' => 'Apprenez Python, le langage de programmation polyvalent et puissant utilisé pour le développement web, la data science, l\'intelligence artificielle, et bien plus encore. Cette formation complète couvre la syntaxe Python, les structures de données (listes, dictionnaires, tuples), les fonctions et classes, les modules et packages, le développement web avec Flask et Django, l\'analyse de données avec Pandas, le Machine Learning avec scikit-learn, et les bonnes pratiques Python. Python est reconnu pour sa simplicité et sa lisibilité, ce qui en fait un excellent choix pour les débutants et les développeurs expérimentés.',
                 'route' => route('formations.python')
             ],
         ];

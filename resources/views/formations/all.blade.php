@@ -352,7 +352,11 @@
             Toutes les Formations
         </h1>
         <p class="hero-subtitle">
-            Découvrez notre collection complète de formations en développement web et programmation
+            Découvrez notre collection complète de formations en développement web et programmation. Chaque formation a été soigneusement 
+            conçue pour vous guider pas à pas, des concepts fondamentaux aux techniques avancées. Que vous soyez débutant ou développeur 
+            expérimenté, nos cours interactifs, exercices pratiques et quiz vous permettront d'acquérir les compétences nécessaires pour 
+            réussir dans le développement web moderne. Toutes nos formations sont entièrement gratuites et accessibles 24/7, sans aucune 
+            limitation de temps ou de contenu.
         </p>
     </div>
 </section>
@@ -383,7 +387,11 @@
     
     <h2 class="section-title">Nos Formations</h2>
     <p class="section-subtitle">
-        Choisissez la formation qui correspond à vos besoins et commencez votre parcours d'apprentissage dès aujourd'hui
+        Choisissez la formation qui correspond à vos besoins et commencez votre parcours d'apprentissage dès aujourd'hui. Chaque formation 
+        comprend des leçons détaillées avec exemples de code, des exercices pratiques pour renforcer vos compétences, des quiz pour tester 
+        vos connaissances, et des projets réels pour mettre en pratique ce que vous avez appris. Nos formations sont régulièrement mises à 
+        jour pour refléter les dernières technologies et meilleures pratiques de l'industrie. Que vous souhaitiez devenir développeur frontend, 
+        backend, full-stack, ou vous spécialiser dans une technologie spécifique, nous avons la formation qu'il vous faut.
     </p>
     
     <div class="formations-grid">

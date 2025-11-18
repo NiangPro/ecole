@@ -158,7 +158,10 @@
                 <span class="gradient-text">Prenez Contact</span>
             </h1>
             <p class="text-xl text-gray-400 max-w-2xl mx-auto">
-                Une question ? Un projet ? N'hésitez pas à me contacter. Je serais ravi d'échanger avec vous !
+                Une question sur nos formations ? Un projet de développement web à réaliser ? Besoin de conseils pour votre carrière 
+                de développeur ? N'hésitez pas à me contacter. Je serais ravi d'échanger avec vous et de vous accompagner dans votre 
+                parcours. Que vous soyez un débutant cherchant des conseils, un développeur expérimenté souhaitant collaborer, ou une 
+                entreprise à la recherche de solutions web, je suis là pour vous aider.
             </p>
         </div>
         
@@ -242,7 +245,11 @@
                         </div>
                         <div>
                             <h3 class="text-2xl font-bold mb-2">Email</h3>
-                            <p class="text-gray-400 mb-3">Envoyez-moi un email, je réponds généralement sous 24h</p>
+                            <p class="text-gray-400 mb-3">
+                                Envoyez-moi un email pour toute question, demande de devis, ou proposition de collaboration. 
+                                Je réponds généralement sous 24 heures, souvent même plus rapidement pour les demandes urgentes. 
+                                N'hésitez pas à détailler votre projet ou votre question pour que je puisse vous apporter la meilleure réponse possible.
+                            </p>
                             <a href="mailto:{{ $siteSettings->contact_email ?? 'NiangProgrammeur@gmail.com' }}" 
                                class="text-cyan-400 hover:text-cyan-300 font-semibold text-lg flex items-center gap-2">
                                 {{ $siteSettings->contact_email ?? 'NiangProgrammeur@gmail.com' }}
@@ -260,7 +267,11 @@
                         </div>
                         <div>
                             <h3 class="text-2xl font-bold mb-2">Téléphone</h3>
-                            <p class="text-gray-400 mb-3">Appelez-moi pour une discussion rapide</p>
+                            <p class="text-gray-400 mb-3">
+                                Appelez-moi pour une discussion rapide et directe. Idéal pour les questions urgentes, les clarifications 
+                                rapides, ou si vous préférez échanger verbalement. Je suis disponible du lundi au vendredi de 9h à 18h (heure de Dakar). 
+                                Pour les appels internationaux, vous pouvez également me joindre via WhatsApp pour une communication plus flexible.
+                            </p>
                             <a href="tel:{{ $siteSettings->contact_phone ?? '+221783123657' }}" 
                                class="text-teal-400 hover:text-teal-300 font-semibold text-lg flex items-center gap-2">
                                 {{ $siteSettings->contact_phone ?? '+221 78 312 36 57' }}
@@ -278,7 +289,12 @@
                         </div>
                         <div>
                             <h3 class="text-2xl font-bold mb-2">Localisation</h3>
-                            <p class="text-gray-400 mb-3">Basé au Sénégal</p>
+                            <p class="text-gray-400 mb-3">
+                                Basé au Sénégal, à Dakar, je travaille avec des clients et des apprenants du monde entier grâce aux 
+                                technologies modernes de communication. Que vous soyez en Afrique, en Europe, en Amérique ou ailleurs, 
+                                la distance n'est pas un obstacle pour collaborer ou apprendre ensemble. Je propose également des sessions 
+                                de formation en ligne et des consultations à distance pour votre plus grande flexibilité.
+                            </p>
                             <p class="text-purple-400 font-semibold text-lg">
                                 {{ $siteSettings->contact_address ?? 'Dakar, Sénégal' }}
                             </p>

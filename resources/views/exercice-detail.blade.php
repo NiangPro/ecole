@@ -625,6 +625,9 @@
                             let output = data.output || '';
                             // Nettoyer agressivement tous les espaces en début/fin
                             output = output.trim();
+                            // Supprimer tous les espaces avant la première balise HTML (DOCTYPE, html, head, body, form, etc.)
+                            // Utiliser une regex plus agressive qui supprime tout avant n'importe quelle balise HTML
+                            output = output.replace(/^[\s\n\r\t\u00A0\u2000-\u200B\u2028\u2029\u202F\u205F\u3000]+(?=<[!\/]?[a-z])/gi, '');
                             // Supprimer tous les caractères d'espacement Unicode invisibles
                             output = output.replace(/^[\s\u00A0\u2000-\u200B\u2028\u2029\u202F\u205F\u3000]+/g, '');
                             output = output.replace(/[\s\u00A0\u2000-\u200B\u2028\u2029\u202F\u205F\u3000]+$/g, '');
@@ -638,8 +641,8 @@
                                     cleanedLines.push(cleaned);
                                 }
                                 output = cleanedLines.join('\n').trim();
-                                // Supprimer une dernière fois tous les espaces invisibles
-                                output = output.replace(/^[\s\u00A0\u2000-\u200B\u2028\u2029\u202F\u205F\u3000]+/g, '');
+                                // Supprimer une dernière fois tous les espaces invisibles avant toute balise HTML
+                                output = output.replace(/^[\s\n\r\t\u00A0\u2000-\u200B\u2028\u2029\u202F\u205F\u3000]+(?=<[!\/]?[a-z])/gi, '');
                             }
                             const hasOutput = output.length > 0;
                             const darkMode = window.isDarkMode || document.body.classList.contains('dark-mode');

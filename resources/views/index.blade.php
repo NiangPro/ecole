@@ -20,6 +20,51 @@
         overflow-x: hidden;
     }
     
+    /* Scrollbar personnalisée */
+    body {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(6, 182, 212, 0.6) rgba(6, 182, 212, 0.1);
+    }
+    
+    body::-webkit-scrollbar {
+        width: 10px;
+    }
+    
+    body::-webkit-scrollbar-track {
+        background: rgba(6, 182, 212, 0.1);
+        border-radius: 10px;
+    }
+    
+    body::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #06b6d4, #14b8a6);
+        border-radius: 10px;
+        border: 2px solid transparent;
+        background-clip: padding-box;
+    }
+    
+    body::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #14b8a6, #06b6d4);
+        background-clip: padding-box;
+    }
+    
+    body.dark-mode {
+        scrollbar-color: rgba(6, 182, 212, 0.7) rgba(15, 23, 42, 0.5);
+    }
+    
+    body.dark-mode::-webkit-scrollbar-track {
+        background: rgba(15, 23, 42, 0.5);
+    }
+    
+    body.dark-mode::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #06b6d4, #14b8a6);
+        background-clip: padding-box;
+    }
+    
+    body.dark-mode::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, #14b8a6, #06b6d4);
+        background-clip: padding-box;
+    }
+    
     /* Dark Mode Styles */
     body.dark-mode {
         background: #0a0a0f !important;
@@ -199,7 +244,7 @@
         color: rgba(255, 255, 255, 0.95);
         margin-bottom: 40px;
         line-height: 1.6;
-        max-width: 900px;
+        max-width: 1100px;
         margin-left: auto;
         margin-right: auto;
         text-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
@@ -263,8 +308,8 @@
     .stats-section {
         position: relative;
         z-index: 2;
-        padding: 80px 20px;
-        margin: 60px 0;
+        padding: 40px 20px;
+        margin: 30px 0;
     }
     
     .stats-grid {
@@ -446,7 +491,7 @@
         text-align: center;
         font-size: 1.1rem;
         color: rgba(30, 41, 59, 0.7);
-        max-width: 700px;
+        max-width: 1100px;
         margin: 0 auto 40px;
     }
     
@@ -663,7 +708,12 @@
         </h1>
         
         <p class="subtitle">
-            La meilleure plateforme gratuite pour apprendre le développement web. Maîtrisez HTML, CSS, JavaScript, PHP, Laravel et bien plus encore avec nos tutoriels interactifs, exemples pratiques et exercices.
+            La meilleure plateforme gratuite pour apprendre le développement web. Maîtrisez HTML, CSS, JavaScript, PHP, Laravel, Python et bien 
+            plus encore avec nos tutoriels interactifs, exemples pratiques et exercices. Notre mission est de démocratiser l'accès à l'éducation 
+            en programmation, particulièrement en Afrique, en offrant des formations de qualité professionnelle accessibles à tous, sans aucun 
+            frais. Que vous soyez débutant complet ou développeur expérimenté souhaitant vous perfectionner, nos cours progressifs vous guideront 
+            vers la maîtrise des technologies modernes du développement web. Apprenez à votre rythme, pratiquez avec plus de 100 exercices interactifs, 
+            et testez vos connaissances avec nos quiz détaillés.
         </p>
         
         <div class="cta-buttons">
@@ -720,7 +770,12 @@
 <section class="exercices-quiz-section" style="position: relative; z-index: 2; padding: 80px 20px; max-width: 1600px; margin: 0 auto;">
     <h2 class="section-title">Pratiquez avec nos Exercices & Quiz</h2>
     <p class="section-subtitle">
-        Renforcez vos compétences avec des exercices pratiques et testez vos connaissances avec nos quiz interactifs
+        Renforcez vos compétences avec des exercices pratiques et testez vos connaissances avec nos quiz interactifs. La pratique est essentielle 
+        pour maîtriser le développement web, c'est pourquoi nous proposons plus de 100 exercices interactifs couvrant tous les niveaux, du débutant 
+        à l'expert. Chaque exercice vous permet d'écrire du code directement dans votre navigateur, de tester vos solutions en temps réel, et de 
+        recevoir des feedbacks immédiats. Nos quiz détaillés vous aident à évaluer votre compréhension des concepts clés, avec des explications 
+        pour chaque réponse. Cette approche pratique garantit que vous ne vous contentez pas de mémoriser, mais que vous comprenez vraiment 
+        comment appliquer vos connaissances dans des situations réelles.
     </p>
     
     <div style="display: grid; grid-template-columns: {{ isset($sidebarAds) && $sidebarAds->count() > 0 ? '1fr 300px' : '1fr' }}; gap: 30px; margin-bottom: 60px; align-items: start;">
@@ -733,7 +788,10 @@
             </div>
                 <h3 style="font-size: 1.3rem; font-weight: 700; color: #fff; margin-bottom: 12px;">Exercices Pratiques</h3>
                 <p style="color: rgba(255, 255, 255, 0.7); line-height: 1.7; margin-bottom: 20px; font-size: 0.9rem;">
-                Plus de 100 exercices interactifs pour chaque technologie. Écrivez du code directement dans votre navigateur et validez vos solutions en temps réel.
+                Plus de 100 exercices interactifs couvrant 9 technologies différentes, répartis en trois niveaux de difficulté (Facile, Moyen, Difficile). 
+                Chaque exercice comprend un énoncé clair, un code de départ, et une solution détaillée. Écrivez du code directement dans votre navigateur 
+                avec notre éditeur intégré, exécutez-le en temps réel, et recevez des feedbacks immédiats. Les exercices progressent naturellement, vous 
+                permettant de construire vos compétences étape par étape, de la syntaxe de base aux concepts avancés.
             </p>
                 <a href="{{ route('exercices') }}" class="tech-link" style="display: inline-flex; align-items: center; gap: 8px; color: #06b6d4; font-weight: 600; text-decoration: none; font-size: 0.9rem;">
                 Commencer les exercices <i class="fas fa-arrow-right"></i>
@@ -747,7 +805,10 @@
             </div>
                 <h3 style="font-size: 1.3rem; font-weight: 700; color: #fff; margin-bottom: 12px;">Quiz Interactifs</h3>
                 <p style="color: rgba(255, 255, 255, 0.7); line-height: 1.7; margin-bottom: 20px; font-size: 0.9rem;">
-                Testez vos connaissances avec nos quiz détaillés. Obtenez un score et des explications pour chaque question pour progresser rapidement.
+                Testez vos connaissances avec nos quiz détaillés couvrant toutes les technologies enseignées. Chaque quiz comprend des questions 
+                variées (choix multiples, vrai/faux, questions à développement) qui évaluent votre compréhension des concepts clés. Obtenez un 
+                score détaillé à la fin, avec des explications complètes pour chaque question, qu'elle soit correcte ou incorrecte. Cette approche 
+                vous permet d'identifier vos points forts et vos faiblesses, et de cibler vos révisions pour progresser rapidement et efficacement.
             </p>
                 <a href="{{ route('quiz') }}" class="tech-link" style="display: inline-flex; align-items: center; gap: 8px; color: #a855f7; font-weight: 600; text-decoration: none; font-size: 0.9rem;">
                 Faire un quiz <i class="fas fa-arrow-right"></i>
