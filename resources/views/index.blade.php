@@ -686,7 +686,7 @@
             <div class="stat-icon">
                 <i class="fas fa-graduation-cap" style="color: #06b6d4;"></i>
             </div>
-            <div class="stat-number">8+</div>
+            <div class="stat-number">9+</div>
             <div class="stat-label">Technologies</div>
         </div>
         
@@ -1111,6 +1111,18 @@
                 Découvrez l'IA, le Machine Learning et les applications pratiques.
             </p>
             <a href="{{ route('formations.ia') }}" class="tech-link">
+                Commencer <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+        
+        <!-- Python -->
+        <div class="tech-card">
+            <i class="fab fa-python tech-icon" style="color: #3776ab;"></i>
+            <h3 class="tech-name">Python</h3>
+            <p class="tech-desc">
+                Apprenez Python, le langage de programmation polyvalent pour le web, la data science et l'IA.
+            </p>
+            <a href="{{ route('formations.python') }}" class="tech-link">
                 Commencer <i class="fas fa-arrow-right"></i>
             </a>
         </div>

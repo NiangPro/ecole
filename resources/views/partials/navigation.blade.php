@@ -767,6 +767,15 @@
                             <div class="dropdown-item-desc">IA & ML</div>
                         </div>
                     </a>
+                    <a href="{{ route('formations.python') }}" class="dropdown-item">
+                        <div class="dropdown-item-icon" style="background: rgba(55, 118, 171, 0.1);">
+                            <i class="fab fa-python" style="color: #3776ab;"></i>
+                        </div>
+                        <div class="dropdown-item-content">
+                            <div class="dropdown-item-title">Python</div>
+                            <div class="dropdown-item-desc">Programmation</div>
+                        </div>
+                    </a>
                 </div>
             </li>
             
@@ -982,6 +991,9 @@
                 </a>
                 <a href="{{ route('formations.ia') }}" class="mobile-dropdown-item">
                     <i class="fas fa-robot" style="color: #06b6d4;"></i> Intelligence Artificielle
+                </a>
+                <a href="{{ route('formations.python') }}" class="mobile-dropdown-item">
+                    <i class="fab fa-python" style="color: #3776ab;"></i> Python
                 </a>
             </div>
         </li>

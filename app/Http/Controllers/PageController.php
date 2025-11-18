@@ -109,6 +109,7 @@ class PageController extends Controller
             ['name' => 'Git', 'slug' => 'git', 'icon' => 'fab fa-git-alt', 'color' => 'red', 'exercises' => 15],
             ['name' => 'WordPress', 'slug' => 'wordpress', 'icon' => 'fab fa-wordpress', 'color' => 'blue', 'exercises' => 18],
             ['name' => 'IA', 'slug' => 'ia', 'icon' => 'fas fa-robot', 'color' => 'green', 'exercises' => 12],
+            ['name' => 'Python', 'slug' => 'python', 'icon' => 'fab fa-python', 'color' => 'blue', 'exercises' => 22],
         ];
         
         return view('exercices', compact('languages'));
@@ -4611,6 +4612,233 @@ Applications :
                     'hint' => 'Hyperparamètres clés : learning rate, batch size, nombre d\'epochs, nombre de couches, nombre de neurones, fonction d\'activation.'
                 ],
             ],
+            'python' => [
+                1 => [
+                    'title' => 'Syntaxe de base Python',
+                    'difficulty' => 'Facile',
+                    'points' => 10,
+                    'instruction' => 'Affichez le message "Bonjour Python !" en utilisant la fonction print().',
+                    'description' => 'La fonction print() est la fonction de base pour afficher du texte en Python. Elle permet d\'afficher des chaînes de caractères, des variables, et des expressions. C\'est l\'une des premières fonctions que vous apprendrez en Python.',
+                    'startCode' => '# Affichez "Bonjour Python !"
+',
+                    'solution' => '# Affichez "Bonjour Python !"
+print("Bonjour Python !")',
+                    'hint' => 'Utilisez print("Bonjour Python !") pour afficher le message.'
+                ],
+                2 => [
+                    'title' => 'Variables Python',
+                    'difficulty' => 'Facile',
+                    'points' => 10,
+                    'instruction' => 'Créez une variable nom avec la valeur "Python" et affichez-la.',
+                    'description' => 'En Python, les variables sont créées simplement en leur assignant une valeur. Pas besoin de déclarer le type. Python est un langage à typage dynamique.',
+                    'startCode' => '# Créez une variable nom avec la valeur "Python"
+# Affichez la variable
+',
+                    'solution' => '# Créez une variable nom avec la valeur "Python"
+nom = "Python"
+# Affichez la variable
+print(nom)',
+                    'hint' => 'Créez la variable avec nom = "Python" puis utilisez print(nom) pour l\'afficher.'
+                ],
+                3 => [
+                    'title' => 'Types de données Python',
+                    'difficulty' => 'Facile',
+                    'points' => 10,
+                    'instruction' => 'Créez trois variables : un entier (age = 25), un décimal (prix = 19.99), et une chaîne (nom = "Python").',
+                    'description' => 'Python a plusieurs types de données : int (entiers), float (décimaux), str (chaînes de caractères), bool (booléens), list (listes), dict (dictionnaires), etc.',
+                    'startCode' => '# Créez les trois variables
+',
+                    'solution' => '# Créez les trois variables
+age = 25
+prix = 19.99
+nom = "Python"',
+                    'hint' => 'age = 25 (int), prix = 19.99 (float), nom = "Python" (str).'
+                ],
+                4 => [
+                    'title' => 'Opérateurs Python',
+                    'difficulty' => 'Facile',
+                    'points' => 10,
+                    'instruction' => 'Calculez la somme de 10 et 5, puis affichez le résultat.',
+                    'description' => 'Python supporte les opérateurs arithmétiques : + (addition), - (soustraction), * (multiplication), / (division), // (division entière), % (modulo), ** (puissance).',
+                    'startCode' => '# Calculez 10 + 5 et affichez le résultat
+',
+                    'solution' => '# Calculez 10 + 5 et affichez le résultat
+resultat = 10 + 5
+print(resultat)',
+                    'hint' => 'Utilisez resultat = 10 + 5 puis print(resultat).'
+                ],
+                5 => [
+                    'title' => 'Commentaires Python',
+                    'difficulty' => 'Facile',
+                    'points' => 8,
+                    'instruction' => 'Ajoutez un commentaire expliquant ce que fait le code suivant.',
+                    'description' => 'Les commentaires en Python commencent par #. Ils permettent d\'expliquer le code et ne sont pas exécutés. Les commentaires sont essentiels pour rendre le code lisible.',
+                    'startCode' => 'nom = "Python"
+print(nom)',
+                    'solution' => '# Définit une variable nom avec la valeur "Python"
+nom = "Python"
+# Affiche la valeur de la variable nom
+print(nom)',
+                    'hint' => 'Ajoutez des commentaires avec # avant chaque ligne pour expliquer ce qu\'elle fait.'
+                ],
+                6 => [
+                    'title' => 'Conditions if/elif/else',
+                    'difficulty' => 'Moyen',
+                    'points' => 15,
+                    'instruction' => 'Créez une condition qui affiche "Majeur" si age >= 18, sinon "Mineur".',
+                    'description' => 'Les structures conditionnelles permettent d\'exécuter du code selon certaines conditions. if teste une condition, elif teste une autre condition si la première est fausse, else exécute le code si toutes les conditions sont fausses.',
+                    'startCode' => 'age = 20
+# Ajoutez la condition
+',
+                    'solution' => 'age = 20
+# Ajoutez la condition
+if age >= 18:
+    print("Majeur")
+else:
+    print("Mineur")',
+                    'hint' => 'Utilisez if age >= 18: print("Majeur") else: print("Mineur"). N\'oubliez pas les deux-points et l\'indentation !'
+                ],
+                7 => [
+                    'title' => 'Boucles for et while',
+                    'difficulty' => 'Moyen',
+                    'points' => 18,
+                    'instruction' => 'Utilisez une boucle for pour afficher les nombres de 1 à 5.',
+                    'description' => 'Les boucles permettent de répéter du code. La boucle for itère sur une séquence (liste, chaîne, range). La boucle while répète tant qu\'une condition est vraie.',
+                    'startCode' => '# Affichez les nombres de 1 à 5 avec une boucle for
+',
+                    'solution' => '# Affichez les nombres de 1 à 5 avec une boucle for
+for i in range(1, 6):
+    print(i)',
+                    'hint' => 'Utilisez for i in range(1, 6): print(i). range(1, 6) génère les nombres de 1 à 5.'
+                ],
+                8 => [
+                    'title' => 'Fonctions Python',
+                    'difficulty' => 'Moyen',
+                    'points' => 18,
+                    'instruction' => 'Créez une fonction saluer(nom) qui retourne "Bonjour, [nom] !" et appelez-la avec "Python".',
+                    'description' => 'Les fonctions permettent de réutiliser du code. On définit une fonction avec def. Les fonctions peuvent prendre des paramètres et retourner des valeurs avec return.',
+                    'startCode' => '# Créez la fonction saluer
+# Appelez-la avec "Python"
+',
+                    'solution' => '# Créez la fonction saluer
+def saluer(nom):
+    return f"Bonjour, {nom} !"
+
+# Appelez-la avec "Python"
+print(saluer("Python"))',
+                    'hint' => 'def saluer(nom): return f"Bonjour, {nom} !" puis print(saluer("Python")).'
+                ],
+                9 => [
+                    'title' => 'Listes Python',
+                    'difficulty' => 'Moyen',
+                    'points' => 18,
+                    'instruction' => 'Créez une liste fruits avec ["pomme", "banane", "orange"] et affichez le premier élément.',
+                    'description' => 'Les listes sont des collections ordonnées et modifiables. On accède aux éléments par index (commence à 0). Les listes supportent de nombreuses méthodes : append(), remove(), sort(), etc.',
+                    'startCode' => '# Créez la liste fruits
+# Affichez le premier élément
+',
+                    'solution' => '# Créez la liste fruits
+fruits = ["pomme", "banane", "orange"]
+# Affichez le premier élément
+print(fruits[0])',
+                    'hint' => 'fruits = ["pomme", "banane", "orange"] puis print(fruits[0]) pour le premier élément.'
+                ],
+                10 => [
+                    'title' => 'Dictionnaires Python',
+                    'difficulty' => 'Moyen',
+                    'points' => 20,
+                    'instruction' => 'Créez un dictionnaire personne avec les clés "nom" et "age", puis affichez la valeur de "nom".',
+                    'description' => 'Les dictionnaires stockent des paires clé-valeur. On accède aux valeurs par leur clé. Les dictionnaires sont très utiles pour représenter des données structurées.',
+                    'startCode' => '# Créez le dictionnaire personne
+# Affichez la valeur de "nom"
+',
+                    'solution' => '# Créez le dictionnaire personne
+personne = {"nom": "Python", "age": 30}
+# Affichez la valeur de "nom"
+print(personne["nom"])',
+                    'hint' => 'personne = {"nom": "Python", "age": 30} puis print(personne["nom"]).'
+                ],
+                11 => [
+                    'title' => 'Programmation Orientée Objet',
+                    'difficulty' => 'Difficile',
+                    'points' => 30,
+                    'instruction' => 'Créez une classe Personne avec un constructeur __init__ qui prend nom et age, puis créez un objet personne1.',
+                    'description' => 'La POO permet de créer des classes et des objets. Une classe est un modèle, un objet est une instance. Le constructeur __init__ est appelé lors de la création d\'un objet. self représente l\'instance.',
+                    'startCode' => '# Créez la classe Personne
+# Créez un objet personne1
+',
+                    'solution' => '# Créez la classe Personne
+class Personne:
+    def __init__(self, nom, age):
+        self.nom = nom
+        self.age = age
+
+# Créez un objet personne1
+personne1 = Personne("Python", 30)
+print(personne1.nom)',
+                    'hint' => 'class Personne: def __init__(self, nom, age): self.nom = nom; self.age = age puis personne1 = Personne("Python", 30).'
+                ],
+                12 => [
+                    'title' => 'Modules et packages',
+                    'difficulty' => 'Difficile',
+                    'points' => 25,
+                    'instruction' => 'Importez le module math et utilisez math.sqrt(16) pour calculer la racine carrée de 16.',
+                    'description' => 'Les modules permettent d\'organiser le code et de réutiliser des fonctions. Python a une vaste bibliothèque standard. On importe avec import. On peut aussi importer des fonctions spécifiques avec from module import fonction.',
+                    'startCode' => '# Importez math et calculez sqrt(16)
+',
+                    'solution' => '# Importez math et calculez sqrt(16)
+import math
+resultat = math.sqrt(16)
+print(resultat)',
+                    'hint' => 'import math puis resultat = math.sqrt(16) et print(resultat).'
+                ],
+                13 => [
+                    'title' => 'Gestion des exceptions',
+                    'difficulty' => 'Difficile',
+                    'points' => 28,
+                    'instruction' => 'Utilisez try/except pour gérer une erreur de division par zéro.',
+                    'description' => 'Les exceptions permettent de gérer les erreurs. try exécute le code, except capture les exceptions. C\'est essentiel pour créer des programmes robustes.',
+                    'startCode' => '# Gérer la division par zéro avec try/except
+a = 10
+b = 0
+',
+                    'solution' => '# Gérer la division par zéro avec try/except
+a = 10
+b = 0
+try:
+    resultat = a / b
+    print(resultat)
+except ZeroDivisionError:
+    print("Erreur : Division par zéro !")',
+                    'hint' => 'try: resultat = a / b; print(resultat) except ZeroDivisionError: print("Erreur : Division par zéro !").'
+                ],
+                14 => [
+                    'title' => 'Manipulation de fichiers',
+                    'difficulty' => 'Difficile',
+                    'points' => 28,
+                    'instruction' => 'Écrivez "Bonjour Python !" dans un fichier texte nommé "fichier.txt".',
+                    'description' => 'Python permet de lire et écrire dans des fichiers. On utilise open() avec les modes "r" (lecture), "w" (écriture), "a" (ajout). Il est recommandé d\'utiliser with pour garantir la fermeture du fichier.',
+                    'startCode' => '# Écrivez dans le fichier
+',
+                    'solution' => '# Écrivez dans le fichier
+with open("fichier.txt", "w") as f:
+    f.write("Bonjour Python !")',
+                    'hint' => 'with open("fichier.txt", "w") as f: f.write("Bonjour Python !").'
+                ],
+                15 => [
+                    'title' => 'Compréhensions de listes et générateurs',
+                    'difficulty' => 'Difficile',
+                    'points' => 30,
+                    'instruction' => 'Créez une liste des carrés des nombres de 1 à 5 en utilisant une compréhension de liste.',
+                    'description' => 'Les compréhensions de listes permettent de créer des listes de manière concise. Syntaxe : [expression for item in iterable]. Les générateurs sont similaires mais utilisent () au lieu de [] et sont plus efficaces en mémoire.',
+                    'startCode' => '# Créez la liste des carrés avec une compréhension
+',
+                    'solution' => '# Créez la liste des carrés avec une compréhension
+carres = [x**2 for x in range(1, 6)]
+print(carres)',
+                    'hint' => 'carres = [x**2 for x in range(1, 6)] crée [1, 4, 9, 16, 25].'
+                ],
+            ],
         ];
 
         return $allExercises[$language][$id] ?? null;
@@ -4780,6 +5008,26 @@ Applications :
                 ['title' => 'Computer Vision', 'difficulty' => 'Difficile', 'points' => 28],
                 ['title' => 'Optimisation et hyperparamètres', 'difficulty' => 'Difficile', 'points' => 30],
             ],
+            'python' => [
+                // Niveau Facile (5 exercices)
+                ['title' => 'Syntaxe de base Python', 'difficulty' => 'Facile', 'points' => 10],
+                ['title' => 'Variables Python', 'difficulty' => 'Facile', 'points' => 10],
+                ['title' => 'Types de données Python', 'difficulty' => 'Facile', 'points' => 10],
+                ['title' => 'Opérateurs Python', 'difficulty' => 'Facile', 'points' => 10],
+                ['title' => 'Commentaires Python', 'difficulty' => 'Facile', 'points' => 8],
+                // Niveau Moyen (5 exercices)
+                ['title' => 'Conditions if/elif/else', 'difficulty' => 'Moyen', 'points' => 15],
+                ['title' => 'Boucles for et while', 'difficulty' => 'Moyen', 'points' => 18],
+                ['title' => 'Fonctions Python', 'difficulty' => 'Moyen', 'points' => 18],
+                ['title' => 'Listes Python', 'difficulty' => 'Moyen', 'points' => 18],
+                ['title' => 'Dictionnaires Python', 'difficulty' => 'Moyen', 'points' => 20],
+                // Niveau Difficile (5 exercices)
+                ['title' => 'Programmation Orientée Objet', 'difficulty' => 'Difficile', 'points' => 30],
+                ['title' => 'Modules et packages', 'difficulty' => 'Difficile', 'points' => 25],
+                ['title' => 'Gestion des exceptions', 'difficulty' => 'Difficile', 'points' => 28],
+                ['title' => 'Manipulation de fichiers', 'difficulty' => 'Difficile', 'points' => 28],
+                ['title' => 'Compréhensions de listes et générateurs', 'difficulty' => 'Difficile', 'points' => 30],
+            ],
         ];
 
         return $allExercises[$language] ?? [];
@@ -4796,6 +5044,7 @@ Applications :
             ['name' => 'Git', 'slug' => 'git', 'icon' => 'fab fa-git-alt', 'color' => 'red', 'questions' => 15],
             ['name' => 'WordPress', 'slug' => 'wordpress', 'icon' => 'fab fa-wordpress', 'color' => 'blue', 'questions' => 15],
             ['name' => 'IA', 'slug' => 'ia', 'icon' => 'fas fa-robot', 'color' => 'green', 'questions' => 15],
+            ['name' => 'Python', 'slug' => 'python', 'icon' => 'fab fa-python', 'color' => 'blue', 'questions' => 20],
         ];
         
         return view('quiz', compact('languages'));
@@ -5037,6 +5286,28 @@ Applications :
                 ['question' => 'Que signifie overfitting ?', 'options' => ['Surapprentissage', 'Sous-apprentissage', 'Apprentissage optimal', 'Apprentissage rapide'], 'correct' => 0],
                 ['question' => 'Quelle technique réduit l\'overfitting ?', 'options' => ['Dropout', 'Augmentation', 'Compilation', 'Optimisation'], 'correct' => 0],
             ],
+            'python' => [
+                ['question' => 'Qui a créé Python ?', 'options' => ['Guido van Rossum', 'James Gosling', 'Brendan Eich', 'Dennis Ritchie'], 'correct' => 0],
+                ['question' => 'En quelle année Python a-t-il été créé ?', 'options' => ['1989', '1991', '1995', '2000'], 'correct' => 1],
+                ['question' => 'Comment afficher du texte en Python ?', 'options' => ['print()', 'echo()', 'display()', 'show()'], 'correct' => 0],
+                ['question' => 'Comment créer une variable en Python ?', 'options' => ['var x = 5', 'x = 5', 'variable x = 5', 'def x = 5'], 'correct' => 1],
+                ['question' => 'Comment créer un commentaire sur une ligne ?', 'options' => ['// commentaire', '# commentaire', '/* commentaire */', '-- commentaire'], 'correct' => 1],
+                ['question' => 'Comment créer une liste ?', 'options' => ['list = []', 'list = ()', 'list = {}', 'list = <>'], 'correct' => 0],
+                ['question' => 'Comment créer un dictionnaire ?', 'options' => ['dict = []', 'dict = ()', 'dict = {}', 'dict = <>'], 'correct' => 2],
+                ['question' => 'Comment créer une fonction ?', 'options' => ['function ma_fonction()', 'def ma_fonction()', 'func ma_fonction()', 'create ma_fonction()'], 'correct' => 1],
+                ['question' => 'Quelle méthode ajoute un élément à une liste ?', 'options' => ['add()', 'append()', 'insert()', 'push()'], 'correct' => 1],
+                ['question' => 'Comment créer une boucle for ?', 'options' => ['for i in range(5)', 'for (i = 0; i < 5; i++)', 'for i = 0 to 5', 'loop i in 5'], 'correct' => 0],
+                ['question' => 'Comment créer une condition if ?', 'options' => ['if x > 5:', 'if (x > 5)', 'if x > 5 then', 'if (x > 5) {'], 'correct' => 0],
+                ['question' => 'Quelle fonction retourne la longueur d\'une liste ?', 'options' => ['length()', 'len()', 'size()', 'count()'], 'correct' => 1],
+                ['question' => 'Comment importer un module ?', 'options' => ['import module', 'include module', 'require module', 'load module'], 'correct' => 0],
+                ['question' => 'Quelle méthode convertit une chaîne en entier ?', 'options' => ['int()', 'toInt()', 'parseInt()', 'integer()'], 'correct' => 0],
+                ['question' => 'Comment créer une classe ?', 'options' => ['class MaClasse:', 'create class MaClasse', 'new class MaClasse', 'define class MaClasse'], 'correct' => 0],
+                ['question' => 'Quelle méthode lit un fichier ?', 'options' => ['read()', 'open().read()', 'file_read()', 'get_file()'], 'correct' => 1],
+                ['question' => 'Comment créer un tuple ?', 'options' => ['tuple = []', 'tuple = ()', 'tuple = {}', 'tuple = <>'], 'correct' => 1],
+                ['question' => 'Quelle méthode divise une chaîne ?', 'options' => ['split()', 'divide()', 'separate()', 'cut()'], 'correct' => 0],
+                ['question' => 'Comment créer un ensemble (set) ?', 'options' => ['set = []', 'set = ()', 'set = {}', 'set = set()'], 'correct' => 3],
+                ['question' => 'Quelle fonction génère un nombre aléatoire ?', 'options' => ['random.random()', 'rand()', 'Math.random()', 'random()'], 'correct' => 0],
+            ],
         ];
 
         return $allQuestions[$language] ?? [];
@@ -5114,6 +5385,11 @@ Applications :
     public function php()
     {
         return view('formations.php');
+    }
+
+    public function python()
+    {
+        return view('formations.python');
     }
 
     public function bootstrap()

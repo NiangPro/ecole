@@ -42,6 +42,7 @@ Route::get('/formations/bootstrap', [PageController::class, 'bootstrap'])->name(
 Route::get('/formations/git', [PageController::class, 'git'])->name('formations.git');
 Route::get('/formations/wordpress', [PageController::class, 'wordpress'])->name('formations.wordpress');
 Route::get('/formations/ia', [PageController::class, 'ia'])->name('formations.ia');
+Route::get('/formations/python', [PageController::class, 'python'])->name('formations.python');
 
 // Routes Emplois
 Route::get('/emplois', [PageController::class, 'emplois'])->name('emplois');
