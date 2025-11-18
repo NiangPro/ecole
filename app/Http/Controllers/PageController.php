@@ -9,7 +9,7 @@ class PageController extends Controller
 {
     public function index()
     {
-        // Cache les 3 derniers articles publiés (15 minutes) - Optimisé avec select()
+        // Cache les 6 derniers articles publiés (15 minutes) - Optimisé avec select()
         $latestJobs = \Illuminate\Support\Facades\Cache::remember('latest_jobs', 900, function () {
             return \App\Models\JobArticle::where('status', 'published')
                 ->with('category:id,name,slug')
@@ -17,7 +17,7 @@ class PageController extends Controller
                 ->orderBy('published_at', 'desc')
                 ->orderBy('updated_at', 'desc')
                 ->orderBy('created_at', 'desc')
-                ->take(3)
+                ->take(6)
                 ->get();
         });
         

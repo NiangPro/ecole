@@ -38,6 +38,12 @@
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
+        background-attachment: fixed;
+        filter: brightness(0.7);
+    }
+    
+    body:not(.dark-mode) .offers-hero {
+        filter: brightness(0.6) !important;
     }
     
     .offers-hero-overlay {

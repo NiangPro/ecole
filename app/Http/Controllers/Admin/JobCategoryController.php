@@ -102,13 +102,25 @@ class JobCategoryController extends Controller
         $validated['is_active'] = $request->has('is_active');
 
         // Gérer l'upload d'image si c'est une image interne
-        if ($validated['image_type'] === 'internal' && $request->hasFile('image_file')) {
-            // Supprimer l'ancienne image si elle existe
-            if ($category->image && Storage::disk('public')->exists($category->image)) {
-                Storage::disk('public')->delete($category->image);
+        if ($validated['image_type'] === 'internal') {
+            if ($request->hasFile('image_file')) {
+                // Supprimer l'ancienne image si elle existe
+                if ($category->image && $category->image_type === 'internal' && Storage::disk('public')->exists($category->image)) {
+                    Storage::disk('public')->delete($category->image);
+                }
+                $path = $request->file('image_file')->store('category-images', 'public');
+                $validated['image'] = $path;
+            } else {
+                // Si pas de nouveau fichier mais type interne, garder l'ancienne image si elle existe
+                if ($category->image_type === 'internal' && $category->image) {
+                    $validated['image'] = $category->image;
+                }
             }
-            $path = $request->file('image_file')->store('category-images', 'public');
-            $validated['image'] = $path;
+        } else {
+            // Si type externe, utiliser l'URL fournie ou garder l'ancienne si pas de nouvelle URL
+            if (empty($validated['image']) && $category->image_type === 'external' && $category->image) {
+                $validated['image'] = $category->image;
+            }
         }
 
         $category->update($validated);

@@ -735,6 +735,239 @@
         -webkit-text-fill-color: transparent !important;
     }
     
+    /* ============================================
+       FORMATIONS CARDS ULTRA MODERNES
+       ============================================ */
+    
+    .formations-grid-modern {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 30px;
+    }
+    
+    @media (max-width: 1024px) {
+        .formations-grid-modern {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .formations-grid-modern {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    .formation-card-modern {
+        position: relative;
+        background: rgba(15, 23, 42, 0.7);
+        backdrop-filter: blur(20px);
+        border: 2px solid rgba(6, 182, 212, 0.2);
+        border-radius: 24px;
+        overflow: hidden;
+        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    }
+    
+    body:not(.dark-mode) .formation-card-modern {
+        background: rgba(255, 255, 255, 0.9) !important;
+        border-color: rgba(6, 182, 212, 0.25) !important;
+        box-shadow: 0 10px 40px rgba(6, 182, 212, 0.15) !important;
+    }
+    
+    .formation-card-modern:hover {
+        transform: translateY(-10px) scale(1.02);
+        border-color: rgba(6, 182, 212, 0.5);
+        box-shadow: 0 25px 60px rgba(6, 182, 212, 0.4);
+    }
+    
+    .formation-card-glow {
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(6, 182, 212, 0.3) 0%, transparent 70%);
+        opacity: 0;
+        transition: opacity 0.5s ease;
+        pointer-events: none;
+    }
+    
+    .formation-card-modern:hover .formation-card-glow {
+        opacity: 1;
+    }
+    
+    .formation-card-image-wrapper {
+        position: relative;
+        width: 100%;
+        height: 250px;
+        overflow: hidden;
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2));
+    }
+    
+    .formation-card-image-wrapper.no-image {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .formation-card-image-wrapper.no-image::before {
+        content: '🏫';
+        font-size: 4rem;
+        opacity: 0.3;
+    }
+    
+    .formation-card-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        filter: brightness(0.9) contrast(1.1);
+    }
+    
+    .formation-card-modern:hover .formation-card-image {
+        transform: scale(1.15) rotate(2deg);
+        filter: brightness(1) contrast(1.2);
+    }
+    
+    .formation-card-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0.7) 100%);
+        transition: background 0.5s ease;
+    }
+    
+    .formation-card-modern:hover .formation-card-overlay {
+        background: linear-gradient(180deg, transparent 0%, rgba(6, 182, 212, 0.2) 30%, rgba(0, 0, 0, 0.8) 100%);
+    }
+    
+    .formation-card-badge {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.9), rgba(20, 184, 166, 0.9));
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: white;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 8px 24px rgba(6, 182, 212, 0.4);
+        z-index: 2;
+        transition: all 0.4s ease;
+    }
+    
+    .formation-card-modern:hover .formation-card-badge {
+        transform: scale(1.1) rotate(5deg);
+        box-shadow: 0 12px 32px rgba(6, 182, 212, 0.6);
+    }
+    
+    .formation-card-content {
+        padding: 30px;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .formation-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 15px;
+        gap: 15px;
+    }
+    
+    .formation-card-school {
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: #fff;
+        line-height: 1.3;
+        flex: 1;
+    }
+    
+    body:not(.dark-mode) .formation-card-school {
+        color: rgba(30, 41, 59, 0.95) !important;
+    }
+    
+    .formation-card-period {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 12px;
+        background: rgba(6, 182, 212, 0.15);
+        border: 1px solid rgba(6, 182, 212, 0.3);
+        border-radius: 12px;
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #06b6d4;
+        white-space: nowrap;
+    }
+    
+    .formation-card-period i {
+        font-size: 0.75rem;
+    }
+    
+    .formation-card-degree {
+        font-size: 1rem;
+        color: rgba(255, 255, 255, 0.8);
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+    
+    body:not(.dark-mode) .formation-card-degree {
+        color: rgba(30, 41, 59, 0.8) !important;
+    }
+    
+    .formation-card-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+    }
+    
+    .formation-card-progress {
+        flex: 1;
+        height: 6px;
+        background: rgba(6, 182, 212, 0.2);
+        border-radius: 10px;
+        overflow: hidden;
+    }
+    
+    .formation-card-progress-bar {
+        height: 100%;
+        background: linear-gradient(90deg, #06b6d4, #14b8a6);
+        border-radius: 10px;
+        transition: width 0.6s ease;
+        box-shadow: 0 0 10px rgba(6, 182, 212, 0.5);
+    }
+    
+    .formation-card-status {
+        padding: 6px 14px;
+        background: rgba(34, 197, 94, 0.2);
+        border: 1px solid rgba(34, 197, 94, 0.4);
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #22c55e;
+        white-space: nowrap;
+    }
+    
+    @media (max-width: 768px) {
+        .formation-card-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .formation-card-school {
+            font-size: 1.2rem;
+        }
+    }
+    
     /* Mode clair - Email et Téléphone dans les cartes de contact */
     body:not(.dark-mode) a[href^="mailto:"],
     body:not(.dark-mode) a[href^="tel:"] {
@@ -991,7 +1224,7 @@
     </div>
 </section>
 
-<!-- Formation Section -->
+<!-- Formation Section - Design Ultra Moderne -->
 <section class="py-20 bg-gray-900">
     <div class="container mx-auto px-6">
         <h2 class="text-5xl font-bold text-center mb-4">
@@ -1003,50 +1236,66 @@
             formation que j'ai suivie m'a apporté des compétences précieuses et m'a préparé pour les défis professionnels à venir.
         </p>
         
-        <div class="max-w-4xl mx-auto space-y-8">
-            @php
-                $formations = [
-                    [
-                        'school' => 'Access Code School',
-                        'degree' => 'Spécialisation Développeur Web & Mobile',
-                        'period' => '2019-2020',
-                        'icon' => 'fas fa-code',
-                        'color' => 'cyan'
-                    ],
-                    [
-                        'school' => 'Institut Supérieur D\'Informatique',
-                        'degree' => 'Licence Professionnelle Génie Logiciel',
-                        'period' => '2016-2019',
-                        'icon' => 'fas fa-graduation-cap',
-                        'color' => 'teal'
-                    ],
-                    [
-                        'school' => 'Lycée Seydina Limamou Laye',
-                        'degree' => 'Baccalauréat Scientifique S2',
-                        'period' => '2013-2016',
-                        'icon' => 'fas fa-school',
-                        'color' => 'purple'
-                    ],
-                ];
-            @endphp
-            
-            @foreach($formations as $formation)
-            <div class="bg-gradient-to-br from-gray-800/50 to-black/50 backdrop-blur-xl rounded-2xl p-8 border border-{{ $formation['color'] }}-500/30 hover:border-{{ $formation['color'] }}-500/60 transition">
-                <div class="flex items-start gap-6">
-                    <div class="w-16 h-16 bg-{{ $formation['color'] }}-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
-                        <i class="{{ $formation['icon'] }} text-{{ $formation['color'] }}-400 text-2xl"></i>
+        <div class="max-w-7xl mx-auto">
+            <div class="formations-grid-modern">
+                @php
+                    $formations = [
+                        [
+                            'school' => 'Access Code School',
+                            'degree' => 'Spécialisation Développeur Web & Mobile',
+                            'period' => '2019-2020',
+                            'icon' => 'fas fa-code',
+                            'color' => 'cyan',
+                            'image' => 'https://cdn-s-www.estrepublicain.fr/images/0285FB16-360C-4210-92C8-B4FA09471706/NW_raw/au-senegal-la-jeune-generation-est-rompue-aux-metiers-du-numerique-elle-apprend-tres-vite-1669215275.jpg'
+                        ],
+                        [
+                            'school' => 'Institut Supérieur D\'Informatique',
+                            'degree' => 'Licence Professionnelle Génie Logiciel',
+                            'period' => '2016-2019',
+                            'icon' => 'fas fa-graduation-cap',
+                            'color' => 'teal',
+                            'image' => 'https://www.groupeisi.com/wp-content/uploads/2018/12/ISI-KM-2-1024x683.jpg'
+                        ],
+                        [
+                            'school' => 'Lycée Seydina Limamou Laye',
+                            'degree' => 'Baccalauréat Scientifique S2',
+                            'period' => '2013-2016',
+                            'icon' => 'fas fa-school',
+                            'color' => 'purple',
+                            'image' => 'https://www.ecolesausenegal.org/uploads/articles/images/1599178281.jpg'
+                        ],
+                    ];
+                @endphp
+                
+                @foreach($formations as $formation)
+                <div class="formation-card-modern">
+                    <div class="formation-card-image-wrapper">
+                        <img src="{{ $formation['image'] }}" alt="{{ $formation['school'] }}" class="formation-card-image" loading="lazy" onerror="this.style.display='none'; this.parentElement.classList.add('no-image');">
+                        <div class="formation-card-overlay"></div>
+                        <div class="formation-card-badge">
+                            <i class="{{ $formation['icon'] }}"></i>
+                        </div>
                     </div>
-                    <div class="flex-1">
-                        <h3 class="text-2xl font-bold mb-2">{{ $formation['school'] }}</h3>
-                        <p class="text-lg text-{{ $formation['color'] }}-400 mb-2">{{ $formation['degree'] }}</p>
-                        <p class="text-gray-500 flex items-center gap-2">
-                            <i class="fas fa-calendar"></i>
-                            {{ $formation['period'] }}
-                        </p>
+                    <div class="formation-card-content">
+                        <div class="formation-card-header">
+                            <h3 class="formation-card-school">{{ $formation['school'] }}</h3>
+                            <div class="formation-card-period">
+                                <i class="fas fa-calendar"></i>
+                                <span>{{ $formation['period'] }}</span>
+                            </div>
+                        </div>
+                        <p class="formation-card-degree">{{ $formation['degree'] }}</p>
+                        <div class="formation-card-footer">
+                            <div class="formation-card-progress">
+                                <div class="formation-card-progress-bar" style="width: {{ 100 - ($loop->index * 10) }}%"></div>
+                            </div>
+                            <span class="formation-card-status">Diplômé</span>
+                        </div>
                     </div>
+                    <div class="formation-card-glow"></div>
                 </div>
+                @endforeach
             </div>
-            @endforeach
         </div>
     </div>
 </section>

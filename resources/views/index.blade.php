@@ -1259,6 +1259,18 @@
         gap: 25px;
     }
     
+    @media (max-width: 1200px) {
+        .latest-jobs-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .latest-jobs-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+    
     /* Mode jour - cards des dernières opportunités */
     .latest-job-card {
         background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.95)) !important;

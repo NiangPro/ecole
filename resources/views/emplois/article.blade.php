@@ -72,6 +72,12 @@
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
+        background-attachment: fixed;
+        filter: brightness(0.7);
+    }
+    
+    body:not(.dark-mode) .article-hero {
+        filter: brightness(0.6) !important;
     }
     
     .article-hero-image {
@@ -780,6 +786,125 @@
     
     body:not(.dark-mode) .modern-sidebar-ad-cta {
         color: #06b6d4 !important;
+    }
+    
+    /* ============================================
+       DARK MODE - SECTIONS PUBLICITÉ & COMMENTAIRES
+       ============================================ */
+    
+    /* Section Commentaires - Dark Mode */
+    .comments-section {
+        background: rgba(15, 23, 42, 0.6) !important;
+        backdrop-filter: blur(20px) !important;
+        border-color: rgba(6, 182, 212, 0.2) !important;
+    }
+    
+    body:not(.dark-mode) .comments-section {
+        background: rgba(255, 255, 255, 0.9) !important;
+        border-color: rgba(6, 182, 212, 0.25) !important;
+    }
+    
+    .comments-title {
+        color: #06b6d4 !important;
+    }
+    
+    body:not(.dark-mode) .comments-title {
+        color: rgba(30, 41, 59, 0.95) !important;
+    }
+    
+    /* Formulaire de commentaire */
+    .comment-form-wrapper {
+        background: rgba(51, 65, 85, 0.5) !important;
+        border-color: rgba(6, 182, 212, 0.3) !important;
+    }
+    
+    body:not(.dark-mode) .comment-form-wrapper {
+        background: rgba(255, 255, 255, 0.9) !important;
+        border-color: rgba(6, 182, 212, 0.25) !important;
+    }
+    
+    .comment-form-wrapper label {
+        color: rgba(255, 255, 255, 0.9) !important;
+    }
+    
+    body:not(.dark-mode) .comment-form-wrapper label {
+        color: rgba(30, 41, 59, 0.9) !important;
+    }
+    
+    .comment-form-wrapper input,
+    .comment-form-wrapper textarea {
+        background: rgba(51, 65, 85, 0.7) !important;
+        border-color: rgba(6, 182, 212, 0.4) !important;
+        color: #fff !important;
+    }
+    
+    body:not(.dark-mode) .comment-form-wrapper input,
+    body:not(.dark-mode) .comment-form-wrapper textarea {
+        background: rgba(255, 255, 255, 0.95) !important;
+        border-color: rgba(6, 182, 212, 0.3) !important;
+        color: rgba(30, 41, 59, 0.9) !important;
+    }
+    
+    .comment-form-wrapper input::placeholder,
+    .comment-form-wrapper textarea::placeholder {
+        color: rgba(255, 255, 255, 0.5) !important;
+    }
+    
+    body:not(.dark-mode) .comment-form-wrapper input::placeholder,
+    body:not(.dark-mode) .comment-form-wrapper textarea::placeholder {
+        color: rgba(30, 41, 59, 0.5) !important;
+    }
+    
+    /* Commentaires individuels */
+    .comments-section > div > div[style*="background: linear-gradient"] {
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(20, 184, 166, 0.1)) !important;
+        border-color: rgba(6, 182, 212, 0.3) !important;
+    }
+    
+    body:not(.dark-mode) .comments-section > div > div[style*="background: linear-gradient"] {
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.05), rgba(20, 184, 166, 0.05)) !important;
+        border-color: rgba(6, 182, 212, 0.2) !important;
+    }
+    
+    .comments-section h5 {
+        color: #fff !important;
+    }
+    
+    body:not(.dark-mode) .comments-section h5 {
+        color: rgba(30, 41, 59, 0.95) !important;
+    }
+    
+    .comments-section p {
+        color: rgba(255, 255, 255, 0.9) !important;
+    }
+    
+    body:not(.dark-mode) .comments-section p {
+        color: rgba(30, 41, 59, 0.85) !important;
+    }
+    
+    .comments-section > div > div[style*="background: rgba(51, 65, 85, 0.4)"] {
+        background: rgba(51, 65, 85, 0.4) !important;
+    }
+    
+    body:not(.dark-mode) .comments-section > div > div[style*="background: rgba(51, 65, 85, 0.4)"] {
+        background: rgba(6, 182, 212, 0.05) !important;
+    }
+    
+    .comments-section span[style*="color: rgba(255, 255, 255, 0.6)"] {
+        color: rgba(255, 255, 255, 0.6) !important;
+    }
+    
+    body:not(.dark-mode) .comments-section span[style*="color: rgba(255, 255, 255, 0.6)"] {
+        color: rgba(30, 41, 59, 0.6) !important;
+    }
+    
+    /* Titre "Derniers commentaires" */
+    .comments-section h4 {
+        color: #06b6d4 !important;
+    }
+    
+    body:not(.dark-mode) .comments-section h4 {
+        color: rgba(30, 41, 59, 0.95) !important;
     }
     
     @media (max-width: 1400px) {

@@ -662,6 +662,8 @@
                                         html, body {
                                             margin: 0;
                                             padding: 0;
+                                            width: 100%;
+                                            height: 100%;
                                         }
                                         body {
                                             font-family: 'Courier New', 'Consolas', 'Monaco', monospace;
@@ -671,6 +673,7 @@
                                             white-space: pre-wrap;
                                             word-wrap: break-word;
                                             line-height: 1.5;
+                                            display: block;
                                         }
                                         .no-output {
                                             color: #999;
