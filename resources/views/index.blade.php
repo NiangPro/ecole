@@ -471,7 +471,7 @@
     .tech-section {
         position: relative;
         z-index: 2;
-        padding: 80px 20px;
+        padding: 50px 20px;
         max-width: 1200px;
         margin: 0 auto;
     }
@@ -767,7 +767,7 @@
 </section>
 
 <!-- Exercices & Quiz Section -->
-<section class="exercices-quiz-section" style="position: relative; z-index: 2; padding: 80px 20px; max-width: 1600px; margin: 0 auto;">
+<section class="exercices-quiz-section" style="position: relative; z-index: 2; padding: 50px 20px; max-width: 1600px; margin: 0 auto;">
     <h2 class="section-title">Pratiquez avec nos Exercices & Quiz</h2>
     <p class="section-subtitle">
         Renforcez vos compétences avec des exercices pratiques et testez vos connaissances avec nos quiz interactifs. La pratique est essentielle 
@@ -778,7 +778,7 @@
         comment appliquer vos connaissances dans des situations réelles.
     </p>
     
-    <div style="display: grid; grid-template-columns: {{ isset($sidebarAds) && $sidebarAds->count() > 0 ? '1fr 300px' : '1fr' }}; gap: 30px; margin-bottom: 60px; align-items: start;">
+    <div style="display: grid; grid-template-columns: {{ isset($sidebarAds) && $sidebarAds->count() > 0 ? '1fr 300px' : '1fr' }}; gap: 30px; margin-bottom: 30px; align-items: start;">
         <!-- Cards Exercices & Quiz -->
         <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px;">
         <!-- Exercices Card -->
@@ -844,7 +844,7 @@
 
 <!-- Section Publicitaire Moderne après Exercices & Quiz -->
 @if(isset($homepageAds) && $homepageAds->count() > 0)
-<section style="position: relative; z-index: 2; padding: 60px 20px; max-width: 1600px; margin: 0 auto;">
+<section style="position: relative; z-index: 2; padding: 40px 20px; max-width: 1600px; margin: 0 auto;">
     <div class="modern-ads-container">
         @foreach($homepageAds as $ad)
         <div class="modern-ad-card">
@@ -1192,7 +1192,7 @@
 
 <!-- Latest Jobs Section -->
 @if(isset($latestJobs) && $latestJobs->count() > 0)
-<section class="latest-jobs-section" style="position: relative; z-index: 2; padding: 80px 20px; max-width: 1600px; margin: 0 auto;">
+<section class="latest-jobs-section" style="position: relative; z-index: 2; padding: 50px 20px; max-width: 1600px; margin: 0 auto;">
     <div style="text-align: center; margin-bottom: 50px;">
         <h2 class="section-title">💼 Dernières Opportunités d'Emploi</h2>
         <p class="section-subtitle">

@@ -206,6 +206,502 @@
         color: rgba(30, 41, 59, 0.9) !important;
     }
     
+    /* ============================================
+       DESIGN ULTRA MODERNE - SECTION À PROPOS
+       ============================================ */
+    
+    .modern-about-container {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 60px;
+        align-items: start;
+        margin-top: 40px;
+    }
+    
+    @media (max-width: 968px) {
+        .modern-about-container {
+            grid-template-columns: 1fr;
+            gap: 40px;
+        }
+    }
+    
+    /* Avatar Section Moderne */
+    .avatar-section-modern {
+        position: sticky;
+        top: 100px;
+    }
+    
+    .avatar-wrapper-modern {
+        position: relative;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .avatar-glow {
+        position: absolute;
+        width: 320px;
+        height: 320px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.4), rgba(20, 184, 166, 0.4));
+        filter: blur(40px);
+        animation: pulse-glow 3s ease-in-out infinite;
+        z-index: 0;
+    }
+    
+    @keyframes pulse-glow {
+        0%, 100% {
+            transform: scale(1);
+            opacity: 0.6;
+        }
+        50% {
+            transform: scale(1.1);
+            opacity: 0.8;
+        }
+    }
+    
+    .avatar-image-modern {
+        position: relative;
+        width: 280px;
+        height: 280px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 4px solid transparent;
+        background: linear-gradient(135deg, #06b6d4, #14b8a6) padding-box,
+                    linear-gradient(135deg, rgba(6, 182, 212, 0.3), rgba(20, 184, 166, 0.3)) border-box;
+        box-shadow: 0 20px 60px rgba(6, 182, 212, 0.4),
+                    0 0 0 20px rgba(6, 182, 212, 0.1),
+                    inset 0 0 60px rgba(6, 182, 212, 0.2);
+        z-index: 1;
+        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    
+    .avatar-image-modern:hover {
+        transform: scale(1.05) rotate(5deg);
+        box-shadow: 0 30px 80px rgba(6, 182, 212, 0.5),
+                    0 0 0 25px rgba(6, 182, 212, 0.15);
+    }
+    
+    .avatar-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: brightness(1.05) contrast(1.1);
+    }
+    
+    .status-badge-modern {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #22c55e, #16a34a);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 4px solid rgba(15, 23, 42, 0.95);
+        box-shadow: 0 8px 24px rgba(34, 197, 94, 0.4);
+        z-index: 2;
+        animation: float-badge 3s ease-in-out infinite;
+    }
+    
+    @keyframes float-badge {
+        0%, 100% {
+            transform: translateY(0px);
+        }
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+    
+    .status-pulse {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        background: rgba(34, 197, 94, 0.6);
+        animation: pulse-ring 2s ease-out infinite;
+    }
+    
+    @keyframes pulse-ring {
+        0% {
+            transform: scale(1);
+            opacity: 1;
+        }
+        100% {
+            transform: scale(1.5);
+            opacity: 0;
+        }
+    }
+    
+    .status-badge-modern i {
+        color: white;
+        font-size: 1.5rem;
+        z-index: 1;
+        position: relative;
+    }
+    
+    .floating-elements {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+    }
+    
+    .float-element {
+        position: absolute;
+        width: 50px;
+        height: 50px;
+        background: rgba(6, 182, 212, 0.2);
+        backdrop-filter: blur(10px);
+        border: 2px solid rgba(6, 182, 212, 0.3);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: #06b6d4;
+        animation: float-around 20s linear infinite;
+    }
+    
+    .float-element.float-1 {
+        top: 10%;
+        left: -10%;
+        animation-delay: 0s;
+    }
+    
+    .float-element.float-2 {
+        top: 50%;
+        right: -15%;
+        animation-delay: 5s;
+    }
+    
+    .float-element.float-3 {
+        bottom: 20%;
+        left: -10%;
+        animation-delay: 10s;
+    }
+    
+    .float-element.float-4 {
+        top: 30%;
+        right: -10%;
+        animation-delay: 15s;
+    }
+    
+    @keyframes float-around {
+        0%, 100% {
+            transform: translate(0, 0) rotate(0deg);
+        }
+        25% {
+            transform: translate(20px, -20px) rotate(90deg);
+        }
+        50% {
+            transform: translate(-10px, -30px) rotate(180deg);
+        }
+        75% {
+            transform: translate(-20px, 10px) rotate(270deg);
+        }
+    }
+    
+    /* Content Section Moderne */
+    .content-section-modern {
+        position: relative;
+    }
+    
+    .content-header-modern {
+        text-align: center;
+        margin-bottom: 50px;
+    }
+    
+    .badge-modern {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 20px;
+        background: rgba(6, 182, 212, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(6, 182, 212, 0.3);
+        border-radius: 50px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #06b6d4;
+        margin-bottom: 20px;
+    }
+    
+    .badge-dot {
+        width: 8px;
+        height: 8px;
+        background: #06b6d4;
+        border-radius: 50%;
+        animation: pulse-dot 2s ease-in-out infinite;
+    }
+    
+    @keyframes pulse-dot {
+        0%, 100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+        50% {
+            opacity: 0.5;
+            transform: scale(1.2);
+        }
+    }
+    
+    .title-modern {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        font-size: 3rem;
+        font-weight: 900;
+        margin: 0;
+    }
+    
+    .title-line {
+        flex: 1;
+        height: 3px;
+        background: linear-gradient(90deg, transparent, #06b6d4, transparent);
+        border-radius: 2px;
+    }
+    
+    .title-text {
+        background: linear-gradient(135deg, #06b6d4, #14b8a6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    /* Timeline Cards */
+    .timeline-cards {
+        position: relative;
+        padding-left: 40px;
+    }
+    
+    .timeline-cards::before {
+        content: '';
+        position: absolute;
+        left: 15px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: linear-gradient(180deg, #06b6d4, #14b8a6);
+        border-radius: 2px;
+    }
+    
+    .timeline-card {
+        position: relative;
+        margin-bottom: 40px;
+        padding-left: 40px;
+    }
+    
+    .timeline-marker {
+        position: absolute;
+        left: -25px;
+        top: 20px;
+        width: 20px;
+        height: 20px;
+        background: linear-gradient(135deg, #06b6d4, #14b8a6);
+        border-radius: 50%;
+        border: 4px solid rgba(15, 23, 42, 0.95);
+        box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.2),
+                    0 4px 12px rgba(6, 182, 212, 0.3);
+        z-index: 2;
+    }
+    
+    .timeline-content {
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(6, 182, 212, 0.2);
+        border-radius: 24px;
+        padding: 30px;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .timeline-content::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(6, 182, 212, 0.1), transparent);
+        transition: left 0.6s;
+    }
+    
+    .timeline-card:hover .timeline-content {
+        transform: translateX(10px);
+        border-color: rgba(6, 182, 212, 0.5);
+        box-shadow: 0 20px 40px rgba(6, 182, 212, 0.2);
+    }
+    
+    .timeline-card:hover .timeline-content::before {
+        left: 100%;
+    }
+    
+    body:not(.dark-mode) .timeline-content {
+        background: rgba(255, 255, 255, 0.7) !important;
+        border-color: rgba(6, 182, 212, 0.3) !important;
+    }
+    
+    .timeline-icon {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2));
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        color: #06b6d4;
+        margin-bottom: 20px;
+        border: 2px solid rgba(6, 182, 212, 0.3);
+    }
+    
+    .timeline-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #06b6d4;
+        margin-bottom: 15px;
+    }
+    
+    body:not(.dark-mode) .timeline-title {
+        color: rgba(30, 41, 59, 0.95) !important;
+    }
+    
+    .timeline-text {
+        color: rgba(255, 255, 255, 0.8);
+        line-height: 1.8;
+        font-size: 1rem;
+    }
+    
+    body:not(.dark-mode) .timeline-text {
+        color: rgba(30, 41, 59, 0.85) !important;
+    }
+    
+    /* Contact Cards Moderne */
+    .contact-cards-modern {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        margin-top: 40px;
+    }
+    
+    .contact-card-modern {
+        position: relative;
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(6, 182, 212, 0.2);
+        border-radius: 20px;
+        padding: 25px;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        overflow: hidden;
+    }
+    
+    body:not(.dark-mode) .contact-card-modern {
+        background: rgba(255, 255, 255, 0.7) !important;
+        border-color: rgba(6, 182, 212, 0.3) !important;
+    }
+    
+    .contact-hover-effect {
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(6, 182, 212, 0.1), transparent);
+        transition: left 0.6s;
+    }
+    
+    .contact-card-modern:hover {
+        transform: translateY(-5px);
+        border-color: rgba(6, 182, 212, 0.5);
+        box-shadow: 0 15px 40px rgba(6, 182, 212, 0.3);
+    }
+    
+    .contact-card-modern:hover .contact-hover-effect {
+        left: 100%;
+    }
+    
+    .contact-icon-wrapper {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2));
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: #06b6d4;
+        border: 2px solid rgba(6, 182, 212, 0.3);
+        flex-shrink: 0;
+    }
+    
+    .contact-info {
+        flex: 1;
+    }
+    
+    .contact-label {
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.6);
+        margin-bottom: 5px;
+    }
+    
+    body:not(.dark-mode) .contact-label {
+        color: rgba(30, 41, 59, 0.6) !important;
+    }
+    
+    .contact-value {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #06b6d4;
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+    
+    .contact-value:hover {
+        color: #14b8a6;
+    }
+    
+    @media (max-width: 768px) {
+        .modern-about-container {
+            gap: 30px;
+        }
+        
+        .avatar-section-modern {
+            position: relative;
+            top: 0;
+        }
+        
+        .avatar-image-modern {
+            width: 220px;
+            height: 220px;
+        }
+        
+        .title-modern {
+            font-size: 2rem;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .title-line {
+            width: 100px;
+        }
+        
+        .timeline-cards {
+            padding-left: 30px;
+        }
+        
+        .contact-cards-modern {
+            grid-template-columns: 1fr;
+        }
+    }
+    
     body:not(.dark-mode) .text-xl {
         color: rgba(30, 41, 59, 0.8) !important;
     }
@@ -291,78 +787,154 @@
             </p>
         </div>
         
-        <!-- Profile Card -->
-        <div class="max-w-6xl mx-auto">
-            <div class="bg-gradient-to-br from-gray-900/90 to-black/90 backdrop-blur-xl rounded-3xl p-8 md:p-12 border border-cyan-500/30 shadow-2xl">
-                <div class="grid md:grid-cols-3 gap-8 items-center">
-                    <!-- Avatar -->
-                    <div class="flex justify-center">
-                        <div class="relative">
-                            <div class="w-64 h-64 rounded-full overflow-hidden shadow-2xl border-4 border-cyan-500/30">
-                                <img src="{{ asset('images/about.jpg') }}" alt="Bassirou Niang" class="w-full h-full object-cover">
+        <!-- Profile Card - Design Ultra Moderne -->
+        <div class="max-w-7xl mx-auto">
+            <div class="modern-about-container">
+                <!-- Avatar Section avec effet Glassmorphism -->
+                <div class="avatar-section-modern">
+                    <div class="avatar-wrapper-modern">
+                        <div class="avatar-glow"></div>
+                        <div class="avatar-image-modern">
+                            <img src="{{ asset('images/about.jpg') }}" alt="Bassirou Niang" class="avatar-img">
+                        </div>
+                        <div class="status-badge-modern">
+                            <div class="status-pulse"></div>
+                            <i class="fas fa-check"></i>
+                        </div>
+                        <div class="floating-elements">
+                            <div class="float-element float-1"><i class="fab fa-html5"></i></div>
+                            <div class="float-element float-2"><i class="fab fa-js"></i></div>
+                            <div class="float-element float-3"><i class="fab fa-laravel"></i></div>
+                            <div class="float-element float-4"><i class="fab fa-react"></i></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Content Section avec Cards Modulaires -->
+                <div class="content-section-modern">
+                    <div class="content-header-modern">
+                        <div class="badge-modern">
+                            <span class="badge-dot"></span>
+                            <span>Développeur Full-Stack</span>
+                        </div>
+                        <h2 class="title-modern">
+                            <span class="title-line"></span>
+                            <span class="title-text">À propos de moi</span>
+                            <span class="title-line"></span>
+                        </h2>
+                    </div>
+                    
+                    <!-- Timeline Cards -->
+                    <div class="timeline-cards">
+                        <div class="timeline-card">
+                            <div class="timeline-marker"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-icon">
+                                    <i class="fas fa-seedling"></i>
+                                </div>
+                                <h3 class="timeline-title">Les Débuts</h3>
+                                <p class="timeline-text">
+                                    Voici l'histoire d'un développeur passionné qui a suivi une voie conventionnelle pour arriver à son métier actuel. 
+                                    Issu d'une famille modeste, dès mon plus jeune âge, j'étais fasciné par la technologie et passais des heures sur mon 
+                                    ordinateur personnel à explorer différents programmes et langages de programmation. Cette curiosité précoce m'a conduit à 
+                                    découvrir le monde fascinant du développement web, où chaque ligne de code représente une possibilité infinie de création.
+                                </p>
                             </div>
-                            <div class="absolute -bottom-4 -right-4 w-20 h-20 bg-green-500 rounded-full border-4 border-black flex items-center justify-center">
-                                <i class="fas fa-check text-white text-2xl"></i>
+                        </div>
+                        
+                        <div class="timeline-card">
+                            <div class="timeline-marker"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-icon">
+                                    <i class="fas fa-graduation-cap"></i>
+                                </div>
+                                <h3 class="timeline-title">Formation Académique</h3>
+                                <p class="timeline-text">
+                                    Mon parcours académique a commencé par un Baccalauréat Scientifique au Lycée Seydina Limamou Laye, où j'ai développé 
+                                    une solide base en mathématiques et en logique. Cette formation m'a préparé pour ma Licence Professionnelle en Génie Logiciel 
+                                    à l'Institut Supérieur d'Informatique, où j'ai approfondi mes connaissances en programmation, algorithmes et architecture logicielle. 
+                                    J'ai ensuite complété ma formation par une spécialisation en Développement Web & Mobile à l'Access Code School, où j'ai maîtrisé 
+                                    les technologies modernes du développement web.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-card">
+                            <div class="timeline-marker"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-icon">
+                                    <i class="fas fa-code"></i>
+                                </div>
+                                <h3 class="timeline-title">Expérience Professionnelle</h3>
+                                <p class="timeline-text">
+                                    Au fil du temps, ma passion est devenue évidente auprès de mes collègues qui ont commencé à me confier des projets liés 
+                                    au développement web. Petit-à-petit, je me suis constitué un portefeuille impressionnant avec diverses réalisations allant 
+                                    du simple site vitrine jusqu'à la création complète d'applications complexes. Chaque projet a été une opportunité d'apprendre, 
+                                    de grandir et de perfectionner mes compétences techniques et créatives.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-card">
+                            <div class="timeline-marker"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-icon">
+                                    <i class="fas fa-briefcase"></i>
+                                </div>
+                                <h3 class="timeline-title">Chez Sunucode</h3>
+                                <p class="timeline-text">
+                                    Aujourd'hui, avec plus de 5 ans d'expérience professionnelle chez Sunucode, j'ai eu l'opportunité de travailler sur des projets 
+                                    variés et stimulants. J'ai développé des applications web complexes utilisant Laravel, React et Vue.js, formé et accompagné 
+                                    de nombreux développeurs juniors, et géré des projets d'envergure nécessitant une architecture logicielle solide. Cette expérience 
+                                    m'a permis de comprendre que le développement web ne se limite pas à écrire du code, mais implique également la résolution 
+                                    de problèmes complexes, la collaboration en équipe, et la transmission de connaissances.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-card">
+                            <div class="timeline-marker"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-icon">
+                                    <i class="fas fa-heart"></i>
+                                </div>
+                                <h3 class="timeline-title">NiangProgrammeur</h3>
+                                <p class="timeline-text">
+                                    C'est cette passion pour l'enseignement et le partage de connaissances qui m'a poussé à créer NiangProgrammeur, une plateforme 
+                                    entièrement gratuite dédiée à l'apprentissage du développement web. Mon objectif est de démocratiser l'accès à l'éducation 
+                                    en programmation, particulièrement en Afrique, où les ressources éducatives de qualité sont parfois limitées. Je crois fermement 
+                                    que tout le monde devrait avoir la possibilité d'apprendre à coder, indépendamment de sa situation financière ou géographique.
+                                </p>
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Info -->
-                    <div class="md:col-span-2">
-                        <h2 class="text-4xl font-bold mb-4 gradient-text">À propos de moi</h2>
-                        <p class="text-gray-300 leading-relaxed mb-6">
-                            Voici l'histoire d'un développeur passionné qui a suivi une voie conventionnelle pour arriver à son métier actuel. 
-                            Issu d'une famille modeste, dès mon plus jeune âge, j'étais fasciné par la technologie et passais des heures sur mon 
-                            ordinateur personnel à explorer différents programmes et langages de programmation. Cette curiosité précoce m'a conduit à 
-                            découvrir le monde fascinant du développement web, où chaque ligne de code représente une possibilité infinie de création.
-                        </p>
-                        <p class="text-gray-300 leading-relaxed mb-6">
-                            Mon parcours académique a commencé par un Baccalauréat Scientifique au Lycée Seydina Limamou Laye, où j'ai développé 
-                            une solide base en mathématiques et en logique. Cette formation m'a préparé pour ma Licence Professionnelle en Génie Logiciel 
-                            à l'Institut Supérieur d'Informatique, où j'ai approfondi mes connaissances en programmation, algorithmes et architecture logicielle. 
-                            J'ai ensuite complété ma formation par une spécialisation en Développement Web & Mobile à l'Access Code School, où j'ai maîtrisé 
-                            les technologies modernes du développement web.
-                        </p>
-                        <p class="text-gray-300 leading-relaxed mb-6">
-                            Au fil du temps, ma passion est devenue évidente auprès de mes collègues qui ont commencé à me confier des projets liés 
-                            au développement web. Petit-à-petit, je me suis constitué un portefeuille impressionnant avec diverses réalisations allant 
-                            du simple site vitrine jusqu'à la création complète d'applications complexes. Chaque projet a été une opportunité d'apprendre, 
-                            de grandir et de perfectionner mes compétences techniques et créatives.
-                        </p>
-                        <p class="text-gray-300 leading-relaxed mb-6">
-                            Aujourd'hui, avec plus de 5 ans d'expérience professionnelle chez Sunucode, j'ai eu l'opportunité de travailler sur des projets 
-                            variés et stimulants. J'ai développé des applications web complexes utilisant Laravel, React et Vue.js, formé et accompagné 
-                            de nombreux développeurs juniors, et géré des projets d'envergure nécessitant une architecture logicielle solide. Cette expérience 
-                            m'a permis de comprendre que le développement web ne se limite pas à écrire du code, mais implique également la résolution 
-                            de problèmes complexes, la collaboration en équipe, et la transmission de connaissances.
-                        </p>
-                        <p class="text-gray-300 leading-relaxed mb-6">
-                            C'est cette passion pour l'enseignement et le partage de connaissances qui m'a poussé à créer NiangProgrammeur, une plateforme 
-                            entièrement gratuite dédiée à l'apprentissage du développement web. Mon objectif est de démocratiser l'accès à l'éducation 
-                            en programmation, particulièrement en Afrique, où les ressources éducatives de qualité sont parfois limitées. Je crois fermement 
-                            que tout le monde devrait avoir la possibilité d'apprendre à coder, indépendamment de sa situation financière ou géographique.
-                        </p>
+                    <!-- Contact Cards Moderne -->
+                    <div class="contact-cards-modern">
+                        <div class="contact-card-modern">
+                            <div class="contact-icon-wrapper">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="contact-info">
+                                <p class="contact-label">Email</p>
+                                <a href="mailto:NiangProgrammeur@gmail.com" class="contact-value">
+                                    NiangProgrammeur@gmail.com
+                                </a>
+                            </div>
+                            <div class="contact-hover-effect"></div>
+                        </div>
                         
-                        <!-- Contact Info -->
-                        <div class="grid sm:grid-cols-2 gap-4 mt-8">
-                            <div class="flex items-center gap-3 p-4 bg-black/50 rounded-xl border border-cyan-500/20">
-                                <i class="fas fa-envelope text-cyan-400 text-2xl"></i>
-                                <div>
-                                    <p class="text-xs text-gray-500">Email</p>
-                                    <a href="mailto:NiangProgrammeur@gmail.com" class="text-sm font-semibold hover:text-cyan-400 transition">
-                                        NiangProgrammeur@gmail.com
-                                    </a>
-                                </div>
+                        <div class="contact-card-modern">
+                            <div class="contact-icon-wrapper">
+                                <i class="fas fa-phone"></i>
                             </div>
-                            <div class="flex items-center gap-3 p-4 bg-black/50 rounded-xl border border-cyan-500/20">
-                                <i class="fas fa-phone text-teal-400 text-2xl"></i>
-                                <div>
-                                    <p class="text-xs text-gray-500">Téléphone</p>
-                                    <a href="tel:+221783123657" class="text-sm font-semibold hover:text-cyan-400 transition">
-                                        +221 78 312 36 57
-                                    </a>
-                                </div>
+                            <div class="contact-info">
+                                <p class="contact-label">Téléphone</p>
+                                <a href="tel:+221783123657" class="contact-value">
+                                    +221 78 312 36 57
+                                </a>
                             </div>
+                            <div class="contact-hover-effect"></div>
                         </div>
                     </div>
                 </div>
