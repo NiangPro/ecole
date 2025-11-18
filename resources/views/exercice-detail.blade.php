@@ -3,6 +3,10 @@
 @section('title', 'Exercice ' . $id . ' - ' . $exercise['title'] . ' | NiangProgrammeur')
 
 @section('styles')
+<!-- CodeMirror CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/eclipse.min.css">
 <style>
     body {
         overflow-x: hidden;
@@ -44,34 +48,123 @@
         box-shadow: 0 10px 40px rgba(6, 182, 212, 0.1) !important;
     }
     
-    .code-editor {
+    /* CodeMirror Editor Styles */
+    .CodeMirror {
         width: 100%;
         min-height: 400px;
-        background: #1e1e1e;
-        color: #d4d4d4;
         border: 2px solid rgba(6, 182, 212, 0.3);
         border-radius: 10px;
-        padding: 1rem;
-        font-family: 'Courier New', monospace;
         font-size: 14px;
         line-height: 1.6;
-        resize: vertical;
+        font-family: 'Courier New', 'Consolas', 'Monaco', monospace;
     }
     
-    body:not(.dark-mode) .code-editor {
-        background: #f8fafc !important;
-        color: rgba(30, 41, 59, 0.9) !important;
-        border-color: rgba(6, 182, 212, 0.3) !important;
-    }
-    
-    .code-editor:focus {
-        outline: none;
+    .CodeMirror:focus-within {
         border-color: rgba(6, 182, 212, 0.6);
         box-shadow: 0 0 20px rgba(6, 182, 212, 0.2);
     }
     
-    body:not(.dark-mode) .code-editor:focus {
+    body:not(.dark-mode) .CodeMirror:focus-within {
         box-shadow: 0 0 20px rgba(6, 182, 212, 0.15) !important;
+    }
+    
+    /* CodeMirror Scrollbar */
+    .CodeMirror-scroll {
+        min-height: 400px;
+    }
+    
+    .CodeMirror-vscrollbar {
+        overflow-x: hidden;
+        overflow-y: scroll;
+    }
+    
+    /* CodeMirror Line Numbers */
+    .CodeMirror-linenumber {
+        color: #858585;
+        padding: 0 10px 0 5px;
+    }
+    
+    body:not(.dark-mode) .CodeMirror-linenumber {
+        color: #999 !important;
+    }
+    
+    /* CodeMirror Cursor */
+    .CodeMirror-cursor {
+        border-left: 2px solid #06b6d4;
+    }
+    
+    body:not(.dark-mode) .CodeMirror-cursor {
+        border-left-color: #06b6d4 !important;
+    }
+    
+    /* CodeMirror Selection */
+    .CodeMirror-selected {
+        background: rgba(6, 182, 212, 0.3) !important;
+    }
+    
+    body:not(.dark-mode) .CodeMirror-selected {
+        background: rgba(6, 182, 212, 0.2) !important;
+    }
+    
+    /* Amélioration de la coloration syntaxique HTML */
+    /* Balises HTML - couleur bleue/cyan */
+    .cm-tag {
+        color: #569cd6 !important;
+        font-weight: 500;
+    }
+    
+    body:not(.dark-mode) .cm-tag {
+        color: #0066cc !important;
+    }
+    
+    /* Attributs HTML - couleur jaune/orange */
+    .cm-attribute {
+        color: #9cdcfe !important;
+    }
+    
+    body:not(.dark-mode) .cm-attribute {
+        color: #d97706 !important;
+    }
+    
+    /* Valeurs d'attributs - couleur verte */
+    .cm-string {
+        color: #ce9178 !important;
+    }
+    
+    body:not(.dark-mode) .cm-string {
+        color: #008000 !important;
+    }
+    
+    /* Contenu texte - couleur blanche/gris */
+    .cm-meta {
+        color: #d4d4d4 !important;
+    }
+    
+    body:not(.dark-mode) .cm-meta {
+        color: #333333 !important;
+    }
+    
+    /* Commentaires - couleur grise */
+    .cm-comment {
+        color: #6a9955 !important;
+        font-style: italic;
+    }
+    
+    body:not(.dark-mode) .cm-comment {
+        color: #6a737d !important;
+    }
+    
+    /* Hide textarea but keep it in DOM for CodeMirror */
+    #codeEditor {
+        position: absolute;
+        left: -9999px;
+        opacity: 0;
+        width: 1px;
+        height: 1px;
+    }
+    
+    .code-editor-wrapper {
+        position: relative;
     }
     
     .result-frame {
@@ -228,7 +321,9 @@
                         <i class="fas fa-undo mr-2"></i>Réinitialiser
                     </button>
                 </div>
-                <textarea id="codeEditor" class="code-editor" spellcheck="false">{{ $exercise['startCode'] }}</textarea>
+                <div class="code-editor-wrapper">
+                    <textarea id="codeEditor" spellcheck="false">{{ $exercise['startCode'] }}</textarea>
+                </div>
                 
                 <div class="mt-4 flex gap-3">
                     <button onclick="runCode()" class="flex-1 px-6 py-3 bg-gradient-to-r from-cyan-500 to-teal-600 text-white font-bold rounded-lg hover:shadow-lg hover:scale-105 transition">
@@ -271,199 +366,314 @@
         </div>
     </div>
 </section>
+@endsection
 
+@section('scripts')
+<!-- CodeMirror JS - Chargement séquentiel -->
 <script>
-    const startCode = @json($exercise['startCode']);
-    const language = @json($language);
-    const exerciseId = @json($id);
-    
-    function resetCode() {
-        document.getElementById('codeEditor').value = startCode;
-        hideMessages();
+    // Charger les scripts CodeMirror de manière séquentielle
+    function loadScript(src, callback) {
+        const script = document.createElement('script');
+        script.src = src;
+        script.onload = callback;
+        script.onerror = function() {
+            console.error('Erreur lors du chargement de:', src);
+            if (callback) callback();
+        };
+        document.head.appendChild(script);
     }
     
-    function runCode() {
-        const code = document.getElementById('codeEditor').value;
-        const iframe = document.getElementById('resultFrame');
-        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-        
-        // Si c'est du PHP, exécuter côté serveur
-        if (language === 'php') {
-            fetch(`/exercices/${language}/run`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({ code: code })
-            })
-            .then(response => response.json())
-            .then(data => {
-                iframeDoc.open();
-                
-                if (data.error) {
-                    iframeDoc.write(`
-                        <!DOCTYPE html>
-                        <html>
-                        <head>
-                            <meta charset="UTF-8">
-                            <title>Erreur</title>
-                            <style>
-                                body {
-                                    font-family: Arial, sans-serif;
-                                    padding: 20px;
-                                    background: #fee;
-                                    color: #c33;
-                                }
-                                .error {
-                                    background: #fcc;
-                                    border: 2px solid #c33;
-                                    padding: 15px;
-                                    border-radius: 5px;
-                                }
-                            </style>
-                        </head>
-                        <body>
-                            <div class="error">
-                                <h3>Erreur PHP :</h3>
-                                <pre>${data.error}</pre>
-                            </div>
-                        </body>
-                        </html>
-                    `);
-                } else {
-                    // Envelopper la sortie PHP dans du HTML
-                    iframeDoc.write(`
-                        <!DOCTYPE html>
-                        <html>
-                        <head>
-                            <meta charset="UTF-8">
-                            <title>Résultat</title>
-                            <style>
-                                body {
-                                    font-family: Arial, sans-serif;
-                                    padding: 20px;
-                                    background: white;
-                                    color: #333;
-                                }
-                            </style>
-                        </head>
-                        <body>
-                            ${data.output || '<p style="color: #999;">Aucune sortie</p>'}
-                        </body>
-                        </html>
-                    `);
-                }
-                
-                iframeDoc.close();
-                hideMessages();
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                iframeDoc.open();
-                iframeDoc.write(`
-                    <!DOCTYPE html>
-                    <html>
-                    <head>
-                        <meta charset="UTF-8">
-                        <title>Erreur</title>
-                        <style>
-                            body {
-                                font-family: Arial, sans-serif;
-                                padding: 20px;
-                                background: #fee;
-                                color: #c33;
-                            }
-                        </style>
-                    </head>
-                    <body>
-                        <p>Erreur lors de l'exécution : ${error.message}</p>
-                    </body>
-                    </html>
-                `);
-                iframeDoc.close();
+    // Charger tous les scripts CodeMirror
+    loadScript('https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js', function() {
+        loadScript('https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/xml/xml.min.js', function() {
+            loadScript('https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/htmlmixed/htmlmixed.min.js', function() {
+                loadScript('https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js', function() {
+                    loadScript('https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js', function() {
+                        loadScript('https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/clike/clike.min.js', function() {
+                            loadScript('https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/php/php.min.js', function() {
+                                // Tous les scripts sont chargés, initialiser CodeMirror
+                                initCodeMirror();
+                            });
+                        });
+                    });
+                });
             });
-        } else {
-            // Pour HTML/CSS/JS, afficher directement
-            iframeDoc.open();
-            iframeDoc.write(code);
-            iframeDoc.close();
-            hideMessages();
-        }
-    }
-    
-    function submitCode() {
-        const code = document.getElementById('codeEditor').value;
-        
-        fetch(`/exercices/${language}/${exerciseId}/submit`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: JSON.stringify({ code: code })
-        })
-        .then(response => response.json())
-        .then(data => {
-            hideMessages();
-            
-            if (data.correct) {
-                document.getElementById('successMessage').style.display = 'block';
-                
-                // Scroll to success message
-                document.getElementById('successMessage').scrollIntoView({ behavior: 'smooth', block: 'center' });
-                
-                // Confetti effect (optional)
-                setTimeout(() => {
-                    // Auto-redirect to next exercise after 3 seconds
-                    @if($id < 5)
-                    setTimeout(() => {
-                        window.location.href = '{{ route('exercices.detail', [$language, $id + 1]) }}';
-                    }, 3000);
-                    @endif
-                }, 500);
-            } else {
-                document.getElementById('errorMessage').style.display = 'block';
-                document.getElementById('errorText').textContent = data.message;
-                
-                // Scroll to error message
-                document.getElementById('errorMessage').scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('Une erreur est survenue. Veuillez réessayer.');
         });
-    }
-    
-    function hideMessages() {
-        document.getElementById('successMessage').style.display = 'none';
-        document.getElementById('errorMessage').style.display = 'none';
-    }
-    
-    // Auto-run code on load
-    window.addEventListener('load', () => {
-        runCode();
     });
     
-    // Keyboard shortcuts
-    document.getElementById('codeEditor').addEventListener('keydown', (e) => {
-        // Ctrl/Cmd + Enter to run
-        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-            e.preventDefault();
-            runCode();
+    // Fonction pour initialiser CodeMirror
+    function initCodeMirror() {
+        // Vérifier que CodeMirror est chargé
+        if (typeof CodeMirror === 'undefined') {
+            console.error('CodeMirror n\'est pas chargé');
+            return;
         }
         
-        // Tab key for indentation
-        if (e.key === 'Tab') {
-            e.preventDefault();
-            const start = e.target.selectionStart;
-            const end = e.target.selectionEnd;
-            const value = e.target.value;
-            
-            e.target.value = value.substring(0, start) + '  ' + value.substring(end);
-            e.target.selectionStart = e.target.selectionEnd = start + 2;
+        console.log('CodeMirror chargé, initialisation...');
+        
+        const startCode = @json($exercise['startCode']);
+        const language = @json($language);
+        const exerciseId = @json($id);
+        
+        // Déterminer le mode CodeMirror selon la langue
+        let codeMirrorMode = 'htmlmixed';
+        if (language === 'css3' || language === 'css') {
+            codeMirrorMode = 'css';
+        } else if (language === 'javascript' || language === 'js') {
+            codeMirrorMode = 'javascript';
+        } else if (language === 'php') {
+            codeMirrorMode = 'application/x-httpd-php';
+        } else if (language === 'html5' || language === 'html') {
+            codeMirrorMode = 'htmlmixed';
         }
-    });
+        
+        // Déterminer le thème selon le mode sombre
+        const isDarkMode = document.body.classList.contains('dark-mode');
+        const codeMirrorTheme = isDarkMode ? 'monokai' : 'eclipse';
+        
+        // Attendre un peu pour s'assurer que le textarea est dans le DOM
+        setTimeout(function() {
+            const textarea = document.getElementById('codeEditor');
+            if (!textarea) {
+                console.error('Textarea codeEditor non trouvé');
+                return;
+            }
+            
+            // Initialiser CodeMirror
+            const codeEditor = CodeMirror.fromTextArea(textarea, {
+                mode: codeMirrorMode,
+                theme: codeMirrorTheme,
+                lineNumbers: true,
+                lineWrapping: true,
+                indentUnit: 2,
+                indentWithTabs: false,
+                tabSize: 2,
+                autofocus: false,
+                matchBrackets: true,
+                autoCloseBrackets: true,
+                autoCloseTags: true,
+                foldGutter: true,
+                gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
+                extraKeys: {
+                    'Ctrl-Space': 'autocomplete',
+                    'Ctrl-/': 'toggleComment',
+                    'Ctrl-Enter': function() {
+                        runCode();
+                    },
+                    'Cmd-Enter': function() {
+                        runCode();
+                    },
+                    'Tab': function(cm) {
+                        if (cm.somethingSelected()) {
+                            cm.indentSelection('add');
+                        } else {
+                            cm.replaceSelection('  ', 'end');
+                        }
+                    },
+                    'Shift-Tab': function(cm) {
+                        cm.indentSelection('subtract');
+                    }
+                }
+            });
+            
+            // Stocker l'instance globalement
+            window.codeEditorInstance = codeEditor;
+            
+            // Synchroniser CodeMirror avec le textarea pour les soumissions
+            codeEditor.on('change', function(cm) {
+                cm.save();
+            });
+            
+            // Adapter le thème si le mode sombre change
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (mutation.attributeName === 'class') {
+                        const isDark = document.body.classList.contains('dark-mode');
+                        codeEditor.setOption('theme', isDark ? 'monokai' : 'eclipse');
+                    }
+                });
+            });
+            observer.observe(document.body, { attributes: true });
+            
+            // Fonctions globales
+            window.resetCode = function() {
+                codeEditor.setValue(startCode);
+                hideMessages();
+            };
+            
+            window.runCode = function() {
+                const code = codeEditor.getValue();
+                const iframe = document.getElementById('resultFrame');
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                
+                // Si c'est du PHP, exécuter côté serveur
+                if (language === 'php') {
+                    fetch(`/exercices/${language}/run`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({ code: code })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        iframeDoc.open();
+                        
+                        if (data.error) {
+                            iframeDoc.write(`
+                                <!DOCTYPE html>
+                                <html>
+                                <head>
+                                    <meta charset="UTF-8">
+                                    <title>Erreur</title>
+                                    <style>
+                                        body {
+                                            font-family: Arial, sans-serif;
+                                            padding: 20px;
+                                            background: #fee;
+                                            color: #c33;
+                                        }
+                                        .error {
+                                            background: #fcc;
+                                            border: 2px solid #c33;
+                                            padding: 15px;
+                                            border-radius: 5px;
+                                        }
+                                    </style>
+                                </head>
+                                <body>
+                                    <div class="error">
+                                        <h3>Erreur PHP :</h3>
+                                        <pre>${data.error}</pre>
+                                    </div>
+                                </body>
+                                </html>
+                            `);
+                        } else {
+                            // Envelopper la sortie PHP dans du HTML
+                            iframeDoc.write(`
+                                <!DOCTYPE html>
+                                <html>
+                                <head>
+                                    <meta charset="UTF-8">
+                                    <title>Résultat</title>
+                                    <style>
+                                        body {
+                                            font-family: Arial, sans-serif;
+                                            padding: 20px;
+                                            background: white;
+                                            color: #333;
+                                        }
+                                    </style>
+                                </head>
+                                <body>
+                                    ${data.output || '<p style="color: #999;">Aucune sortie</p>'}
+                                </body>
+                                </html>
+                            `);
+                        }
+                        
+                        iframeDoc.close();
+                        hideMessages();
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        iframeDoc.open();
+                        iframeDoc.write(`
+                            <!DOCTYPE html>
+                            <html>
+                            <head>
+                                <meta charset="UTF-8">
+                                <title>Erreur</title>
+                                <style>
+                                    body {
+                                        font-family: Arial, sans-serif;
+                                        padding: 20px;
+                                        background: #fee;
+                                        color: #c33;
+                                    }
+                                </style>
+                            </head>
+                            <body>
+                                <p>Erreur lors de l'exécution : ${error.message}</p>
+                            </body>
+                            </html>
+                        `);
+                        iframeDoc.close();
+                    });
+                } else {
+                    // Pour HTML/CSS/JS, afficher directement
+                    iframeDoc.open();
+                    iframeDoc.write(code);
+                    iframeDoc.close();
+                    hideMessages();
+                }
+            };
+            
+            window.submitCode = function() {
+                const code = codeEditor.getValue();
+                
+                fetch(`/exercices/${language}/${exerciseId}/submit`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ code: code })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    hideMessages();
+                    
+                    if (data.correct) {
+                        document.getElementById('successMessage').style.display = 'block';
+                        
+                        // Scroll to success message
+                        document.getElementById('successMessage').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        
+                        // Confetti effect (optional)
+                        setTimeout(() => {
+                            // Auto-redirect to next exercise after 3 seconds
+                            @if($id < 5)
+                            setTimeout(() => {
+                                window.location.href = '{{ route('exercices.detail', [$language, $id + 1]) }}';
+                            }, 3000);
+                            @endif
+                        }, 500);
+                    } else {
+                        document.getElementById('errorMessage').style.display = 'block';
+                        document.getElementById('errorText').textContent = data.message;
+                        
+                        // Scroll to error message
+                        document.getElementById('errorMessage').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Une erreur est survenue. Veuillez réessayer.');
+                });
+            };
+            
+            window.hideMessages = function() {
+                document.getElementById('successMessage').style.display = 'none';
+                document.getElementById('errorMessage').style.display = 'none';
+            };
+            
+            // Auto-run code on load
+            setTimeout(() => {
+                runCode();
+            }, 200);
+        }, 100);
+    }
+    
+    // S'assurer que le DOM est prêt avant d'initialiser
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+            // Les scripts seront chargés après le DOM
+        });
+    } else {
+        // DOM déjà chargé, les scripts se chargeront automatiquement
+    }
 </script>
 @endsection
