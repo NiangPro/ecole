@@ -695,7 +695,7 @@
                     <i class="fas fa-chevron-down dropdown-icon"></i>
                 </a>
                 <div class="dropdown-menu">
-                    <a href="{{ route('formations.all') }}" class="dropdown-item">
+                    <a href="{{ route('formations.all') }}" class="dropdown-item" data-parent-active="formations">
                         <div class="dropdown-item-icon" style="background: rgba(6, 182, 212, 0.1);">
                             <i class="fas fa-graduation-cap" style="color: #06b6d4;"></i>
                         </div>
@@ -704,7 +704,7 @@
                             <div class="dropdown-item-desc">Voir toutes les formations</div>
                         </div>
                     </a>
-                    <a href="{{ route('formations.html5') }}" class="dropdown-item">
+                    <a href="{{ route('formations.html5') }}" class="dropdown-item" data-parent-active="formations">
                         <div class="dropdown-item-icon" style="background: rgba(227, 76, 38, 0.1);">
                             <i class="fab fa-html5" style="color: #e34c26;"></i>
                         </div>
@@ -713,7 +713,7 @@
                             <div class="dropdown-item-desc">Structure web</div>
                         </div>
                     </a>
-                    <a href="{{ route('formations.css3') }}" class="dropdown-item">
+                    <a href="{{ route('formations.css3') }}" class="dropdown-item" data-parent-active="formations">
                         <div class="dropdown-item-icon" style="background: rgba(38, 77, 228, 0.1);">
                             <i class="fab fa-css3-alt" style="color: #264de4;"></i>
                         </div>
@@ -722,7 +722,7 @@
                             <div class="dropdown-item-desc">Style & design</div>
                         </div>
                     </a>
-                    <a href="{{ route('formations.javascript') }}" class="dropdown-item">
+                    <a href="{{ route('formations.javascript') }}" class="dropdown-item" data-parent-active="formations">
                         <div class="dropdown-item-icon" style="background: rgba(240, 219, 79, 0.1);">
                             <i class="fab fa-js" style="color: #f0db4f;"></i>
                         </div>
@@ -731,7 +731,7 @@
                             <div class="dropdown-item-desc">Interactivité</div>
                         </div>
                     </a>
-                    <a href="{{ route('formations.php') }}" class="dropdown-item">
+                    <a href="{{ route('formations.php') }}" class="dropdown-item" data-parent-active="formations">
                         <div class="dropdown-item-icon" style="background: rgba(137, 147, 190, 0.1);">
                             <i class="fab fa-php" style="color: #8993be;"></i>
                         </div>
@@ -740,7 +740,7 @@
                             <div class="dropdown-item-desc">Backend</div>
                         </div>
                     </a>
-                    <a href="{{ route('formations.bootstrap') }}" class="dropdown-item">
+                    <a href="{{ route('formations.bootstrap') }}" class="dropdown-item" data-parent-active="formations">
                         <div class="dropdown-item-icon" style="background: rgba(121, 82, 179, 0.1);">
                             <i class="fab fa-bootstrap" style="color: #7952b3;"></i>
                         </div>
@@ -749,7 +749,7 @@
                             <div class="dropdown-item-desc">Framework CSS</div>
                         </div>
                     </a>
-                    <a href="{{ route('formations.git') }}" class="dropdown-item">
+                    <a href="{{ route('formations.git') }}" class="dropdown-item" data-parent-active="formations">
                         <div class="dropdown-item-icon" style="background: rgba(243, 79, 41, 0.1);">
                             <i class="fab fa-git-alt" style="color: #f34f29;"></i>
                         </div>
@@ -769,7 +769,7 @@
                     <i class="fas fa-chevron-down dropdown-icon"></i>
                 </a>
                 <div class="dropdown-menu">
-                    <a href="{{ route('exercices') }}" class="dropdown-item">
+                    <a href="{{ route('exercices') }}" class="dropdown-item" data-parent-active="pratique">
                         <div class="dropdown-item-icon" style="background: rgba(6, 182, 212, 0.1);">
                             <i class="fas fa-laptop-code" style="color: #06b6d4;"></i>
                         </div>
@@ -778,7 +778,7 @@
                             <div class="dropdown-item-desc">Pratiquer le code</div>
                         </div>
                     </a>
-                    <a href="{{ route('quiz') }}" class="dropdown-item">
+                    <a href="{{ route('quiz') }}" class="dropdown-item" data-parent-active="pratique">
                         <div class="dropdown-item-icon" style="background: rgba(168, 85, 247, 0.1);">
                             <i class="fas fa-question-circle" style="color: #a855f7;"></i>
                         </div>
@@ -798,7 +798,7 @@
                     <i class="fas fa-chevron-down dropdown-icon"></i>
                 </a>
                 <div class="dropdown-menu">
-                    <a href="{{ route('emplois') }}" class="dropdown-item">
+                    <a href="{{ route('emplois') }}" class="dropdown-item" data-parent-active="emplois">
                         <div class="dropdown-item-icon" style="background: rgba(34, 197, 94, 0.1);">
                             <i class="fas fa-search" style="color: #22c55e;"></i>
                         </div>
@@ -809,7 +809,7 @@
                     </a>
                     @if(isset($jobCategories) && $jobCategories->count() > 0)
                         @foreach($jobCategories as $category)
-                        <a href="{{ route('emplois.offres') }}?category={{ $category->slug }}" class="dropdown-item">
+                        <a href="{{ route('emplois.offres') }}?category={{ $category->slug }}" class="dropdown-item" data-parent-active="emplois">
                             <div class="dropdown-item-icon" style="background: rgba(6, 182, 212, 0.1);">
                                 @if($category->icon)
                                     <i class="{{ $category->icon }}" style="color: #06b6d4;"></i>
@@ -824,7 +824,7 @@
                         </a>
                         @endforeach
                     @else
-                        <a href="{{ route('emplois.offres') }}" class="dropdown-item">
+                        <a href="{{ route('emplois.offres') }}" class="dropdown-item" data-parent-active="emplois">
                             <div class="dropdown-item-icon" style="background: rgba(59, 130, 246, 0.1);">
                                 <i class="fas fa-briefcase" style="color: #3b82f6;"></i>
                             </div>
@@ -833,7 +833,7 @@
                                 <div class="dropdown-item-desc">Emplois disponibles</div>
                             </div>
                         </a>
-                        <a href="{{ route('emplois.bourses') }}" class="dropdown-item">
+                        <a href="{{ route('emplois.bourses') }}" class="dropdown-item" data-parent-active="emplois">
                             <div class="dropdown-item-icon" style="background: rgba(168, 85, 247, 0.1);">
                                 <i class="fas fa-graduation-cap" style="color: #a855f7;"></i>
                             </div>
@@ -842,7 +842,7 @@
                                 <div class="dropdown-item-desc">Financez vos études</div>
                             </div>
                         </a>
-                        <a href="{{ route('emplois.candidature') }}" class="dropdown-item">
+                        <a href="{{ route('emplois.candidature') }}" class="dropdown-item" data-parent-active="emplois">
                             <div class="dropdown-item-icon" style="background: rgba(236, 72, 153, 0.1);">
                                 <i class="fas fa-paper-plane" style="color: #ec4899;"></i>
                             </div>
@@ -851,7 +851,7 @@
                                 <div class="dropdown-item-desc">Faites-vous connaître</div>
                             </div>
                         </a>
-                        <a href="{{ route('emplois.opportunites') }}" class="dropdown-item">
+                        <a href="{{ route('emplois.opportunites') }}" class="dropdown-item" data-parent-active="emplois">
                             <div class="dropdown-item-icon" style="background: rgba(251, 191, 36, 0.1);">
                                 <i class="fas fa-star" style="color: #fbbf24;"></i>
                             </div>
@@ -1178,4 +1178,63 @@
             e.stopPropagation();
         });
     }
+    
+    // Ajouter la classe active sur le parent du dropdown quand on clique sur un élément
+    document.querySelectorAll('.dropdown-item[data-parent-active]').forEach(item => {
+        item.addEventListener('click', function() {
+            const parentId = this.getAttribute('data-parent-active');
+            const parentDropdown = this.closest('.dropdown');
+            
+            if (parentDropdown) {
+                // Retirer active de tous les autres dropdowns
+                document.querySelectorAll('.dropdown').forEach(dropdown => {
+                    dropdown.querySelector('.navbar-link')?.classList.remove('active');
+                });
+                
+                // Ajouter active au parent
+                const parentLink = parentDropdown.querySelector('.navbar-link');
+                if (parentLink) {
+                    parentLink.classList.add('active');
+                }
+            }
+        });
+    });
+    
+    // Vérifier l'URL actuelle et activer le parent si nécessaire
+    document.addEventListener('DOMContentLoaded', function() {
+        const currentPath = window.location.pathname;
+        
+        // Vérifier les routes de formations
+        if (currentPath.includes('/formations/')) {
+            const formationsDropdown = document.querySelector('.dropdown:has([href*="/formations/"])');
+            if (formationsDropdown) {
+                const parentLink = formationsDropdown.querySelector('.navbar-link');
+                if (parentLink) {
+                    parentLink.classList.add('active');
+                }
+            }
+        }
+        
+        // Vérifier les routes de pratique (exercices/quiz)
+        if (currentPath.includes('/exercices/') || currentPath.includes('/quiz/')) {
+            const pratiqueDropdown = document.querySelector('.dropdown:has([href*="/exercices"], [href*="/quiz"])');
+            if (pratiqueDropdown) {
+                const parentLink = pratiqueDropdown.querySelector('.navbar-link');
+                if (parentLink) {
+                    parentLink.classList.add('active');
+                }
+            }
+        }
+        
+        // Vérifier les routes d'emplois
+        if (currentPath.includes('/emplois/')) {
+            const emploisDropdown = document.querySelector('.dropdown:has([href*="/emplois"])');
+            if (emploisDropdown) {
+                const parentLink = emploisDropdown.querySelector('.navbar-link');
+                if (parentLink) {
+                    parentLink.classList.add('active');
+                }
+            }
+        }
+    });
 </script>

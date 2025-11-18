@@ -446,6 +446,26 @@
                 <i class="fas fa-chart-bar text-xl"></i>
                 <span>Statistiques</span>
             </a>
+            
+            <!-- Menu Dropdown Emplois -->
+            <div class="sidebar-dropdown {{ request()->routeIs('admin.jobs.*') ? 'active' : '' }}">
+                <button class="sidebar-item sidebar-dropdown-toggle" onclick="toggleSidebarDropdown('jobs')">
+                    <i class="fas fa-briefcase text-xl"></i>
+                    <span>Emplois</span>
+                    <i class="fas fa-chevron-down ml-auto text-sm dropdown-icon" id="jobs-icon"></i>
+                </button>
+                <div class="sidebar-dropdown-menu" id="jobs-dropdown" style="display: {{ request()->routeIs('admin.jobs.*') ? 'block' : 'none' }};">
+                    <a href="{{ route('admin.jobs.categories.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.jobs.categories.*') ? 'active' : '' }}">
+                        <i class="fas fa-folder"></i>
+                        <span>Catégories</span>
+                    </a>
+                    <a href="{{ route('admin.jobs.articles.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.jobs.articles.*') ? 'active' : '' }}">
+                        <i class="fas fa-newspaper"></i>
+                        <span>Articles</span>
+                    </a>
+                </div>
+            </div>
+            
             <a href="{{ route('admin.messages') }}" class="sidebar-item {{ request()->routeIs('admin.messages') ? 'active' : '' }}">
                 <i class="fas fa-envelope text-xl"></i>
                 <span>Messages</span>
@@ -497,25 +517,6 @@
                 <i class="fas fa-history text-xl"></i>
                 <span>Logs</span>
             </a>
-            
-            <!-- Menu Dropdown Emplois -->
-            <div class="sidebar-dropdown {{ request()->routeIs('admin.jobs.*') ? 'active' : '' }}">
-                <button class="sidebar-item sidebar-dropdown-toggle" onclick="toggleSidebarDropdown('jobs')">
-                    <i class="fas fa-briefcase text-xl"></i>
-                    <span>Emplois</span>
-                    <i class="fas fa-chevron-down ml-auto text-sm dropdown-icon" id="jobs-icon"></i>
-                </button>
-                <div class="sidebar-dropdown-menu" id="jobs-dropdown" style="display: {{ request()->routeIs('admin.jobs.*') ? 'block' : 'none' }};">
-                    <a href="{{ route('admin.jobs.categories.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.jobs.categories.*') ? 'active' : '' }}">
-                        <i class="fas fa-folder"></i>
-                        <span>Catégories</span>
-                    </a>
-                    <a href="{{ route('admin.jobs.articles.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.jobs.articles.*') ? 'active' : '' }}">
-                        <i class="fas fa-newspaper"></i>
-                        <span>Articles</span>
-                    </a>
-                </div>
-            </div>
             
             <a href="{{ route('admin.settings') }}" class="sidebar-item {{ request()->routeIs('admin.settings') ? 'active' : '' }}">
                 <i class="fas fa-cog text-xl"></i>

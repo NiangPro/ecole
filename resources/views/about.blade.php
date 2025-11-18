@@ -1182,6 +1182,353 @@
         color: #f59e0b !important;
     }
     
+    /* ============================================
+       EXPÉRIENCES SECTION ULTRA MODERNE
+       ============================================ */
+    
+    .experience-card-modern {
+        position: relative;
+        background: rgba(15, 23, 42, 0.8);
+        backdrop-filter: blur(20px);
+        border: 2px solid rgba(6, 182, 212, 0.2);
+        border-radius: 32px;
+        padding: 40px;
+        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    }
+    
+    body:not(.dark-mode) .experience-card-modern {
+        background: rgba(255, 255, 255, 0.95) !important;
+        border-color: rgba(6, 182, 212, 0.25) !important;
+        box-shadow: 0 20px 60px rgba(6, 182, 212, 0.2) !important;
+    }
+    
+    .experience-card-glow {
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(6, 182, 212, 0.2) 0%, transparent 70%);
+        opacity: 0;
+        transition: opacity 0.5s ease;
+        pointer-events: none;
+    }
+    
+    .experience-card-modern:hover {
+        transform: translateY(-10px);
+        border-color: rgba(6, 182, 212, 0.5);
+        box-shadow: 0 30px 80px rgba(6, 182, 212, 0.4);
+    }
+    
+    .experience-card-modern:hover .experience-card-glow {
+        opacity: 1;
+    }
+    
+    .experience-card-header {
+        display: flex;
+        align-items: center;
+        gap: 25px;
+        margin-bottom: 35px;
+        padding-bottom: 30px;
+        border-bottom: 2px solid rgba(6, 182, 212, 0.1);
+        flex-wrap: wrap;
+    }
+    
+    .experience-company-logo {
+        position: relative;
+        width: 90px;
+        height: 90px;
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2));
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid rgba(6, 182, 212, 0.3);
+        flex-shrink: 0;
+        transition: all 0.4s ease;
+    }
+    
+    .logo-glow {
+        position: absolute;
+        inset: -2px;
+        background: linear-gradient(135deg, #06b6d4, #14b8a6);
+        border-radius: 20px;
+        opacity: 0;
+        transition: opacity 0.4s ease;
+        z-index: -1;
+        filter: blur(10px);
+    }
+    
+    .experience-card-modern:hover .experience-company-logo {
+        transform: scale(1.1) rotate(5deg);
+        border-color: rgba(6, 182, 212, 0.6);
+    }
+    
+    .experience-card-modern:hover .logo-glow {
+        opacity: 0.5;
+    }
+    
+    .experience-company-logo i {
+        font-size: 2.5rem;
+        color: #06b6d4;
+    }
+    
+    .experience-company-info {
+        flex: 1;
+        min-width: 200px;
+    }
+    
+    .experience-company-name {
+        font-size: 2rem;
+        font-weight: 900;
+        color: #fff;
+        margin-bottom: 8px;
+        background: linear-gradient(135deg, #06b6d4, #14b8a6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    body:not(.dark-mode) .experience-company-name {
+        background: linear-gradient(135deg, #06b6d4, #14b8a6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    
+    .experience-company-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #06b6d4;
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .experience-company-link:hover {
+        color: #14b8a6;
+        transform: translateX(3px);
+    }
+    
+    .experience-badges {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+    
+    .experience-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 18px;
+        border-radius: 16px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        border: 2px solid;
+        transition: all 0.3s ease;
+    }
+    
+    .experience-badge-active {
+        background: rgba(34, 197, 94, 0.15);
+        border-color: rgba(34, 197, 94, 0.4);
+        color: #22c55e;
+    }
+    
+    .experience-badge-fulltime {
+        background: rgba(6, 182, 212, 0.15);
+        border-color: rgba(6, 182, 212, 0.4);
+        color: #06b6d4;
+    }
+    
+    .experience-card-body {
+        margin-bottom: 30px;
+    }
+    
+    .experience-role {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #06b6d4;
+        margin-bottom: 20px;
+    }
+    
+    .experience-role i {
+        font-size: 1.5rem;
+    }
+    
+    .experience-period {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 35px;
+        font-size: 1rem;
+    }
+    
+    body:not(.dark-mode) .experience-period {
+        color: rgba(30, 41, 59, 0.7) !important;
+    }
+    
+    .period-text {
+        font-weight: 700;
+    }
+    
+    .period-separator {
+        color: rgba(255, 255, 255, 0.3);
+    }
+    
+    .period-duration {
+        color: #22c55e;
+        font-weight: 600;
+    }
+    
+    .experience-achievements {
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+    }
+    
+    .achievement-item {
+        display: flex;
+        gap: 20px;
+        padding: 25px;
+        background: rgba(6, 182, 212, 0.05);
+        border: 1px solid rgba(6, 182, 212, 0.15);
+        border-radius: 20px;
+        transition: all 0.3s ease;
+    }
+    
+    .achievement-item:hover {
+        background: rgba(6, 182, 212, 0.1);
+        border-color: rgba(6, 182, 212, 0.3);
+        transform: translateX(5px);
+    }
+    
+    .achievement-icon {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.1));
+        border: 2px solid rgba(34, 197, 94, 0.3);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        color: #22c55e;
+        font-size: 1.3rem;
+    }
+    
+    .achievement-content {
+        flex: 1;
+    }
+    
+    .achievement-title {
+        font-size: 1.2rem;
+        font-weight: 800;
+        color: #fff;
+        margin-bottom: 10px;
+    }
+    
+    body:not(.dark-mode) .achievement-title {
+        color: rgba(30, 41, 59, 0.95) !important;
+    }
+    
+    .achievement-description {
+        color: rgba(255, 255, 255, 0.7);
+        line-height: 1.7;
+        font-size: 0.95rem;
+    }
+    
+    body:not(.dark-mode) .achievement-description {
+        color: rgba(30, 41, 59, 0.7) !important;
+    }
+    
+    .experience-card-footer {
+        padding-top: 30px;
+        border-top: 2px solid rgba(6, 182, 212, 0.1);
+    }
+    
+    .experience-stats {
+        display: flex;
+        justify-content: space-around;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+    
+    .stat-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        padding: 20px;
+        background: rgba(6, 182, 212, 0.08);
+        border: 1px solid rgba(6, 182, 212, 0.2);
+        border-radius: 16px;
+        min-width: 120px;
+        transition: all 0.3s ease;
+    }
+    
+    .stat-item:hover {
+        background: rgba(6, 182, 212, 0.15);
+        border-color: rgba(6, 182, 212, 0.4);
+        transform: translateY(-5px);
+    }
+    
+    .stat-item i {
+        font-size: 1.8rem;
+        color: #06b6d4;
+    }
+    
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 900;
+        background: linear-gradient(135deg, #06b6d4, #14b8a6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .stat-label {
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.6);
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    body:not(.dark-mode) .stat-label {
+        color: rgba(30, 41, 59, 0.6) !important;
+    }
+    
+    @media (max-width: 768px) {
+        .experience-card-modern {
+            padding: 25px;
+        }
+        
+        .experience-card-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .experience-company-logo {
+            width: 70px;
+            height: 70px;
+        }
+        
+        .experience-stats {
+            flex-direction: column;
+        }
+        
+        .stat-item {
+            width: 100%;
+        }
+    }
+    
     /* Mode clair - Bouton "Me contacter" */
     body:not(.dark-mode) .bg-gray-800,
     body:not(.dark-mode) .hover\:bg-gray-700:hover {
@@ -1411,7 +1758,9 @@
                         ['name' => 'JavaScript & TypeScript', 'level' => 90, 'icon' => 'fab fa-js', 'color' => 'from-yellow-500 to-orange-500', 'iconColor' => '#f7df1e'],
                         ['name' => 'PHP & Laravel', 'level' => 88, 'icon' => 'fab fa-php', 'color' => 'from-purple-500 to-pink-500', 'iconColor' => '#777bb4'],
                         ['name' => 'React & Vue.js', 'level' => 85, 'icon' => 'fab fa-react', 'color' => 'from-blue-500 to-cyan-500', 'iconColor' => '#61dafb'],
+                        ['name' => 'React Native', 'level' => 83, 'icon' => 'fab fa-react', 'color' => 'from-blue-400 to-cyan-400', 'iconColor' => '#61dafb'],
                         ['name' => 'Node.js & Express', 'level' => 82, 'icon' => 'fab fa-node', 'color' => 'from-green-500 to-teal-500', 'iconColor' => '#339933'],
+                        ['name' => 'Java', 'level' => 80, 'icon' => 'fab fa-java', 'color' => 'from-orange-600 to-red-600', 'iconColor' => '#ed8b00'],
                         ['name' => 'Git & GitHub', 'level' => 92, 'icon' => 'fab fa-git-alt', 'color' => 'from-red-500 to-orange-500', 'iconColor' => '#f05032'],
                         ['name' => 'WordPress', 'level' => 87, 'icon' => 'fab fa-wordpress', 'color' => 'from-blue-600 to-cyan-600', 'iconColor' => '#21759b'],
                         ['name' => 'Intelligence Artificielle', 'level' => 75, 'icon' => 'fas fa-brain', 'color' => 'from-purple-600 to-pink-600', 'iconColor' => '#9333ea'],
@@ -1538,96 +1887,162 @@
     </div>
 </section>
 
-<!-- Expériences Section -->
-<section class="py-20 bg-gradient-to-b from-gray-900 to-black">
-    <div class="container mx-auto px-6">
-        <h2 class="text-5xl font-bold text-center mb-4">
-            <span class="gradient-text">Expériences Professionnelles</span>
-        </h2>
-        <p class="text-center text-gray-400 mb-16 max-w-2xl mx-auto">
-            Mon parcours professionnel dans le développement web témoigne d'une évolution constante, de l'apprentissage des bases 
-            à la maîtrise des technologies avancées. Chaque expérience professionnelle a contribué à façonner mon expertise et ma 
-            vision du développement web moderne.
-        </p>
+<!-- Expériences Section - Design Ultra Moderne -->
+<section class="py-20 bg-gradient-to-b from-gray-900 to-black relative overflow-hidden">
+    <!-- Background Effects -->
+    <div class="absolute inset-0 opacity-5">
+        <div class="absolute top-1/4 right-0 w-96 h-96 bg-cyan-500 rounded-full filter blur-3xl"></div>
+        <div class="absolute bottom-1/4 left-0 w-96 h-96 bg-teal-500 rounded-full filter blur-3xl"></div>
+    </div>
+    
+    <div class="container mx-auto px-6 relative z-10">
+        <div class="text-center mb-16">
+            <div class="inline-flex items-center gap-3 mb-4">
+                <div class="w-1 h-12 bg-gradient-to-b from-cyan-500 to-teal-500 rounded-full"></div>
+                <h2 class="text-5xl md:text-6xl font-black">
+                    <span class="gradient-text">Expériences Professionnelles</span>
+                </h2>
+                <div class="w-1 h-12 bg-gradient-to-b from-cyan-500 to-teal-500 rounded-full"></div>
+            </div>
+            <p class="text-center text-gray-400 mb-16 max-w-3xl mx-auto text-lg">
+                Mon parcours professionnel dans le développement web témoigne d'une évolution constante, de l'apprentissage des bases 
+                à la maîtrise des technologies avancées. Chaque expérience professionnelle a contribué à façonner mon expertise et ma 
+                vision du développement web moderne.
+            </p>
+        </div>
         
-        <div class="max-w-4xl mx-auto">
-            <div class="bg-gray-900/50 backdrop-blur-xl rounded-2xl p-8 border border-cyan-500/20 hover:border-cyan-500/50 transition">
-                <div class="flex flex-col md:flex-row md:items-start justify-between gap-6">
-                    <div class="flex-1">
-                        <div class="flex items-center gap-4 mb-4">
-                            <div class="w-16 h-16 bg-gradient-to-br from-cyan-500 to-teal-600 rounded-xl flex items-center justify-center flex-shrink-0">
-                                <i class="fas fa-building text-white text-2xl"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-3xl font-bold mb-1">Sunucode</h3>
-                                <a href="https://sunucode.com/" target="_blank" class="text-cyan-400 hover:text-cyan-300 transition text-sm flex items-center gap-2">
-                                    <i class="fas fa-external-link-alt"></i>
-                                    sunucode.com
-                                </a>
-                            </div>
-                        </div>
-                        
-                        <p class="text-xl text-cyan-400 mb-3 font-semibold">
-                            <i class="fas fa-code mr-2"></i>Développeur Full-Stack & Formateur
-                        </p>
-                        
-                        <p class="text-gray-400 flex items-center gap-2 mb-6">
-                            <i class="fas fa-calendar-alt"></i>
-                            <span class="font-semibold">2020 - Présent</span>
-                            <span class="text-gray-600">•</span>
-                            <span class="text-green-400">{{ \Carbon\Carbon::parse('2020-01-01')->diffForHumans(null, true) }}</span>
-                        </p>
-                        
-                        <div class="space-y-3">
-                            <p class="text-gray-300 leading-relaxed">
-                                <i class="fas fa-check-circle text-green-400 mr-2"></i>
-                                Développement d'applications web complexes avec Laravel, React et Vue.js, incluant la conception de 
-                                systèmes backend robustes, la création d'interfaces utilisateur modernes et réactives, et l'intégration 
-                                d'APIs RESTful pour des solutions complètes et performantes.
-                            </p>
-                            <p class="text-gray-300 leading-relaxed">
-                                <i class="fas fa-check-circle text-green-400 mr-2"></i>
-                                Formation et accompagnement de développeurs juniors, avec la création de programmes de mentorat, 
-                                l'organisation de sessions de code review, et le partage de bonnes pratiques pour accélérer leur 
-                                progression professionnelle et technique.
-                            </p>
-                            <p class="text-gray-300 leading-relaxed">
-                                <i class="fas fa-check-circle text-green-400 mr-2"></i>
-                                Gestion de projets et architecture logicielle, incluant la planification de sprints, la coordination 
-                                d'équipes multidisciplinaires, la conception d'architectures scalables, et l'optimisation des performances 
-                                pour garantir la qualité et la maintenabilité des applications.
-                            </p>
-                            <p class="text-gray-300 leading-relaxed">
-                                <i class="fas fa-check-circle text-green-400 mr-2"></i>
-                                Développement de solutions e-commerce et applications métier sur mesure, avec intégration de systèmes 
-                                de paiement, gestion de stocks, et interfaces d'administration complètes pour répondre aux besoins 
-                                spécifiques des clients.
-                            </p>
-                            <p class="text-gray-300 leading-relaxed">
-                                <i class="fas fa-check-circle text-green-400 mr-2"></i>
-                                Optimisation SEO et performance web, avec l'implémentation de techniques avancées de référencement, 
-                                l'optimisation des temps de chargement, et l'amélioration de l'expérience utilisateur pour maximiser 
-                                la visibilité et l'engagement.
-                            </p>
-                        </div>
+        <div class="max-w-6xl mx-auto">
+            <div class="experience-card-modern">
+                <div class="experience-card-glow"></div>
+                <div class="experience-card-header">
+                    <div class="experience-company-logo">
+                        <div class="logo-glow"></div>
+                        <i class="fas fa-building"></i>
                     </div>
-                    
-                    <div class="flex flex-col gap-3">
-                        <span class="px-6 py-3 bg-green-500/20 text-green-400 rounded-xl text-sm font-bold text-center border border-green-500/30">
-                            <i class="fas fa-briefcase mr-2"></i>En cours
+                    <div class="experience-company-info">
+                        <h3 class="experience-company-name">Sunucode</h3>
+                        <a href="https://sunucode.com/" target="_blank" class="experience-company-link">
+                            <i class="fas fa-external-link-alt"></i>
+                            <span>sunucode.com</span>
+                        </a>
+                    </div>
+                    <div class="experience-badges">
+                        <span class="experience-badge experience-badge-active">
+                            <i class="fas fa-briefcase"></i>
+                            <span>En cours</span>
                         </span>
-                        <span class="px-6 py-3 bg-cyan-500/20 text-cyan-400 rounded-xl text-sm font-bold text-center border border-cyan-500/30">
-                            <i class="fas fa-clock mr-2"></i>Temps plein
+                        <span class="experience-badge experience-badge-fulltime">
+                            <i class="fas fa-clock"></i>
+                            <span>Temps plein</span>
                         </span>
                     </div>
                 </div>
-            </div>
-            
-            <div class="text-center mt-8">
-                <p class="text-gray-500 text-sm">
-                    <i class="fas fa-info-circle mr-2"></i>
-                    Plus de {{ \Carbon\Carbon::parse('2020-01-01')->diffInYears() }} ans d'expérience professionnelle
-                </p>
+                
+                <div class="experience-card-body">
+                    <div class="experience-role">
+                        <i class="fas fa-code"></i>
+                        <span>Développeur Full-Stack & Formateur</span>
+                    </div>
+                    
+                    <div class="experience-period">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span class="period-text">2020 - Présent</span>
+                        <span class="period-separator">•</span>
+                        <span class="period-duration">{{ \Carbon\Carbon::parse('2020-01-01')->diffForHumans(null, true) }}</span>
+                    </div>
+                    
+                    <div class="experience-achievements">
+                        <div class="achievement-item">
+                            <div class="achievement-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="achievement-content">
+                                <h4 class="achievement-title">Développement Full-Stack</h4>
+                                <p class="achievement-description">
+                                    Développement d'applications web complexes avec Laravel, React et Vue.js, incluant la conception de 
+                                    systèmes backend robustes, la création d'interfaces utilisateur modernes et réactives, et l'intégration 
+                                    d'APIs RESTful pour des solutions complètes et performantes.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="achievement-item">
+                            <div class="achievement-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="achievement-content">
+                                <h4 class="achievement-title">Formation & Mentorat</h4>
+                                <p class="achievement-description">
+                                    Formation et accompagnement de développeurs juniors, avec la création de programmes de mentorat, 
+                                    l'organisation de sessions de code review, et le partage de bonnes pratiques pour accélérer leur 
+                                    progression professionnelle et technique.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="achievement-item">
+                            <div class="achievement-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="achievement-content">
+                                <h4 class="achievement-title">Gestion de Projets</h4>
+                                <p class="achievement-description">
+                                    Gestion de projets et architecture logicielle, incluant la planification de sprints, la coordination 
+                                    d'équipes multidisciplinaires, la conception d'architectures scalables, et l'optimisation des performances 
+                                    pour garantir la qualité et la maintenabilité des applications.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="achievement-item">
+                            <div class="achievement-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="achievement-content">
+                                <h4 class="achievement-title">Solutions E-commerce</h4>
+                                <p class="achievement-description">
+                                    Développement de solutions e-commerce et applications métier sur mesure, avec intégration de systèmes 
+                                    de paiement, gestion de stocks, et interfaces d'administration complètes pour répondre aux besoins 
+                                    spécifiques des clients.
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="achievement-item">
+                            <div class="achievement-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="achievement-content">
+                                <h4 class="achievement-title">Optimisation & SEO</h4>
+                                <p class="achievement-description">
+                                    Optimisation SEO et performance web, avec l'implémentation de techniques avancées de référencement, 
+                                    l'optimisation des temps de chargement, et l'amélioration de l'expérience utilisateur pour maximiser 
+                                    la visibilité et l'engagement.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="experience-card-footer">
+                    <div class="experience-stats">
+                        <div class="stat-item">
+                            <i class="fas fa-calendar-check"></i>
+                            <span class="stat-value">{{ \Carbon\Carbon::parse('2020-01-01')->diffInYears() }}+</span>
+                            <span class="stat-label">Années</span>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-project-diagram"></i>
+                            <span class="stat-value">50+</span>
+                            <span class="stat-label">Projets</span>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-users"></i>
+                            <span class="stat-value">20+</span>
+                            <span class="stat-label">Formés</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
