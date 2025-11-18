@@ -630,10 +630,51 @@ class PageController extends Controller
             @unlink($tempFile);
         }
         
+        // Nettoyer et encoder la sortie en UTF-8 (comme pour Python)
+        // Supprimer tous les espaces, tabulations et retours à la ligne en début/fin
+        $output = $output !== null ? trim($output) : '';
+        // Supprimer les espaces en début de chaque ligne (indentation indésirable)
+        if (!empty($output)) {
+            // Supprimer tous les caractères d'espacement Unicode en début/fin
+            $output = preg_replace('/^[\s\x{00A0}\x{2000}-\x{200B}\x{2028}\x{2029}\x{202F}\x{205F}\x{3000}]+/u', '', $output);
+            $output = preg_replace('/[\s\x{00A0}\x{2000}-\x{200B}\x{2028}\x{2029}\x{202F}\x{205F}\x{3000}]+$/u', '', $output);
+            
+            $lines = explode("\n", $output);
+            $cleanedLines = [];
+            foreach ($lines as $line) {
+                // Supprimer tous les espaces, tabulations et caractères invisibles en début de ligne
+                $cleanedLine = preg_replace('/^[\s\t\r\x{00A0}\x{2000}-\x{200B}\x{2028}\x{2029}\x{202F}\x{205F}\x{3000}]+/u', '', $line);
+                $cleanedLines[] = $cleanedLine;
+            }
+            $output = implode("\n", $cleanedLines);
+            // Retrim pour supprimer les lignes vides en début/fin et tous les espaces
+            $output = trim($output);
+            // Supprimer une dernière fois tous les espaces invisibles
+            $output = preg_replace('/^[\s\x{00A0}\x{2000}-\x{200B}\x{2028}\x{2029}\x{202F}\x{205F}\x{3000}]+/u', '', $output);
+        }
+        
+        // Encoder en UTF-8 pour éviter les erreurs JSON
+        if (!empty($output)) {
+            // Détecter et convertir l'encodage si nécessaire
+            if (!mb_check_encoding($output, 'UTF-8')) {
+                $output = mb_convert_encoding($output, 'UTF-8', mb_detect_encoding($output, ['UTF-8', 'ISO-8859-1', 'Windows-1252'], true));
+            }
+            // Nettoyer les caractères invalides UTF-8
+            $output = mb_convert_encoding($output, 'UTF-8', 'UTF-8');
+        }
+        
+        if (!empty($error)) {
+            // Encoder aussi les erreurs en UTF-8
+            if (!mb_check_encoding($error, 'UTF-8')) {
+                $error = mb_convert_encoding($error, 'UTF-8', mb_detect_encoding($error, ['UTF-8', 'ISO-8859-1', 'Windows-1252'], true));
+            }
+            $error = mb_convert_encoding($error, 'UTF-8', 'UTF-8');
+        }
+        
         return response()->json([
             'output' => $output,
             'error' => $error
-        ]);
+        ], 200, [], JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_IGNORE);
     }
 
     private function checkAnswer($exercise, $userCode)
@@ -2872,7 +2913,12 @@ echo "Bonjour PHP";
                     'points' => 10,
                     'instruction' => 'Créez une variable $nom avec votre prénom et affichez-la.',
                     'description' => 'Les variables PHP commencent par $.',
-                    'startCode' => '<html>
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Variables PHP</title>
+</head>
 <body>
 
 <?php
@@ -2882,7 +2928,12 @@ echo "Bonjour PHP";
 
 </body>
 </html>',
-                    'solution' => '<html>
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Variables PHP</title>
+</head>
 <body>
 
 <?php
