@@ -345,44 +345,114 @@ class PageController extends Controller
                     $codeToWrite .= "\nsys.stdout.flush()";
                 }
                 
-                // Écrire le code dans le fichier temporaire
-                if (file_put_contents($tempFile, $codeToWrite) === false) {
+                // Écrire le code dans le fichier temporaire avec encodage UTF-8
+                // S'assurer que le code est en UTF-8 avant écriture
+                if (!mb_check_encoding($codeToWrite, 'UTF-8')) {
+                    $codeToWrite = mb_convert_encoding($codeToWrite, 'UTF-8', mb_detect_encoding($codeToWrite, ['UTF-8', 'ISO-8859-1', 'Windows-1252'], true));
+                }
+                
+                // Écrire en UTF-8 sans BOM (Python préfère sans BOM)
+                if (file_put_contents($tempFile, $codeToWrite, LOCK_EX) === false) {
                     throw new \Exception('Impossible d\'écrire dans le fichier temporaire');
                 }
                 
                 // Essayer différentes commandes Python
                 $pythonCommands = ['python3', 'python'];
-                $command = null;
                 $pythonCmd = null;
                 
-                foreach ($pythonCommands as $cmd) {
-                    // Tester si la commande existe
-                    $testCmd = $cmd . ' --version 2>&1';
-                    $testOutput = @shell_exec($testCmd);
-                    if ($testOutput !== null && strpos($testOutput, 'Python') !== false) {
-                        $pythonCmd = $cmd;
-                        break;
+                // Sur Windows, chercher aussi dans les emplacements courants
+                if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                    // Chemins courants pour Python sur Windows
+                    $windowsPaths = [
+                        'C:\\Python39\\python.exe',
+                        'C:\\Python310\\python.exe',
+                        'C:\\Python311\\python.exe',
+                        'C:\\Python312\\python.exe',
+                        'C:\\Python313\\python.exe',
+                        'C:\\Program Files\\Python39\\python.exe',
+                        'C:\\Program Files\\Python310\\python.exe',
+                        'C:\\Program Files\\Python311\\python.exe',
+                        'C:\\Program Files\\Python312\\python.exe',
+                        'C:\\Program Files\\Python313\\python.exe',
+                        'C:\\Program Files (x86)\\Python39\\python.exe',
+                        'C:\\Program Files (x86)\\Python310\\python.exe',
+                        'C:\\Program Files (x86)\\Python311\\python.exe',
+                        'C:\\Program Files (x86)\\Python312\\python.exe',
+                        'C:\\Program Files (x86)\\Python313\\python.exe',
+                        'C:\\Users\\' . getenv('USERNAME') . '\\AppData\\Local\\Programs\\Python\\Python39\\python.exe',
+                        'C:\\Users\\' . getenv('USERNAME') . '\\AppData\\Local\\Programs\\Python\\Python310\\python.exe',
+                        'C:\\Users\\' . getenv('USERNAME') . '\\AppData\\Local\\Programs\\Python\\Python311\\python.exe',
+                        'C:\\Users\\' . getenv('USERNAME') . '\\AppData\\Local\\Programs\\Python\\Python312\\python.exe',
+                        'C:\\Users\\' . getenv('USERNAME') . '\\AppData\\Local\\Programs\\Python\\Python313\\python.exe',
+                    ];
+                    
+                    // Chercher dans les chemins Windows
+                    foreach ($windowsPaths as $path) {
+                        if (file_exists($path)) {
+                            $testCmd = escapeshellarg($path) . ' --version 2>&1';
+                            $testOutput = @shell_exec($testCmd);
+                            if ($testOutput !== null && strpos($testOutput, 'Python') !== false) {
+                                $pythonCmd = $path;
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+                // Si pas trouvé, essayer les commandes standard
+                if ($pythonCmd === null) {
+                    foreach ($pythonCommands as $cmd) {
+                        // Tester si la commande existe
+                        $testCmd = $cmd . ' --version 2>&1';
+                        $testOutput = @shell_exec($testCmd);
+                        if ($testOutput !== null && strpos($testOutput, 'Python') !== false) {
+                            $pythonCmd = $cmd;
+                            break;
+                        }
                     }
                 }
                 
                 if ($pythonCmd === null) {
-                    throw new \Exception('Python n\'est pas installé ou non accessible sur le serveur.');
+                    // Message d'erreur plus informatif
+                    $errorMsg = 'Python n\'est pas installé ou non accessible sur le serveur. ';
+                    if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                        $errorMsg .= 'Sur Windows, assurez-vous que Python est installé et ajouté au PATH, ou installez Python depuis python.org';
+                    } else {
+                        $errorMsg .= 'Installez Python avec: sudo apt-get install python3 (Linux) ou brew install python3 (Mac)';
+                    }
+                    throw new \Exception($errorMsg);
                 }
                 
                 // Exécuter Python avec unbuffered et redirection d'erreur
                 $env = $_ENV;
                 $env['PYTHONUNBUFFERED'] = '1';
+                $env['PYTHONIOENCODING'] = 'utf-8';
                 $envString = '';
                 foreach ($env as $key => $value) {
                     $envString .= escapeshellarg($key) . '=' . escapeshellarg($value) . ' ';
                 }
                 
                 // Utiliser exec() pour obtenir le code de retour
-                $command = $pythonCmd . ' -u ' . escapeshellarg($tempFile);
+                // Forcer l'encodage UTF-8 avec PYTHONIOENCODING
+                // Si c'est un chemin complet (Windows), utiliser directement
+                if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' && strpos($pythonCmd, '\\') !== false) {
+                    // Chemin complet Windows, utiliser directement avec escapeshellarg
+                    $command = escapeshellarg($pythonCmd) . ' -u -X utf8 ' . escapeshellarg($tempFile);
+                } else {
+                    // Commande standard (python ou python3)
+                    $command = $pythonCmd . ' -u -X utf8 ' . escapeshellarg($tempFile);
+                }
+                
                 $outputLines = [];
                 $returnValue = 0;
                 
                 // Exécuter avec exec() pour capturer stdout et stderr
+                // Utiliser chcp 65001 sur Windows pour forcer UTF-8 dans le terminal
+                if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                    // Sur Windows, forcer UTF-8 dans le terminal
+                    $command = 'chcp 65001 >nul 2>&1 && ' . $command;
+                }
+                
                 exec($command . ' 2>&1', $outputLines, $returnValue);
                 
                 // Joindre toutes les lignes de sortie
@@ -411,9 +481,27 @@ class PageController extends Controller
                 // Supprimer le fichier temporaire
                 @unlink($tempFile);
                 
-                // Nettoyer la sortie
+                // Nettoyer et encoder la sortie en UTF-8
                 $output = $output !== null ? rtrim($output, "\r\n") : '';
                 $stderr = trim($stderr);
+                
+                // Encoder en UTF-8 pour éviter les erreurs JSON
+                if (!empty($output)) {
+                    // Détecter et convertir l'encodage si nécessaire
+                    if (!mb_check_encoding($output, 'UTF-8')) {
+                        $output = mb_convert_encoding($output, 'UTF-8', mb_detect_encoding($output, ['UTF-8', 'ISO-8859-1', 'Windows-1252'], true));
+                    }
+                    // Nettoyer les caractères invalides UTF-8
+                    $output = mb_convert_encoding($output, 'UTF-8', 'UTF-8');
+                }
+                
+                if (!empty($stderr)) {
+                    // Encoder aussi les erreurs en UTF-8
+                    if (!mb_check_encoding($stderr, 'UTF-8')) {
+                        $stderr = mb_convert_encoding($stderr, 'UTF-8', mb_detect_encoding($stderr, ['UTF-8', 'ISO-8859-1', 'Windows-1252'], true));
+                    }
+                    $stderr = mb_convert_encoding($stderr, 'UTF-8', 'UTF-8');
+                }
                 
                 // Si le code de retour n'est pas 0 ou s'il y a des erreurs
                 if ($returnValue !== 0 || !empty($stderr)) {
@@ -427,10 +515,22 @@ class PageController extends Controller
                 }
             }
             
+            // S'assurer que les valeurs sont des chaînes UTF-8 valides avant JSON
+            $output = $output ?? '';
+            $error = $error ?? null;
+            
+            // Nettoyer une dernière fois pour garantir UTF-8 valide
+            if (!empty($output) && !mb_check_encoding($output, 'UTF-8')) {
+                $output = mb_convert_encoding($output, 'UTF-8', 'UTF-8');
+            }
+            if (!empty($error) && !mb_check_encoding($error, 'UTF-8')) {
+                $error = mb_convert_encoding($error, 'UTF-8', 'UTF-8');
+            }
+            
             return response()->json([
                 'output' => $output,
                 'error' => $error
-            ]);
+            ], 200, [], JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_IGNORE);
         }
         
         // Sécurité : Ne permettre l'exécution que pour PHP
