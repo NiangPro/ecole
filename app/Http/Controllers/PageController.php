@@ -150,41 +150,30 @@ class PageController extends Controller
         
         $selectedExercises = [];
         
-        // Si on a peu d'exercices (moins de 10), les prendre tous pour éviter les 404
-        $totalExercises = count($allExercises);
-        
-        if ($totalExercises <= 10) {
-            // Prendre tous les exercices mais les mélanger
-            foreach ($allExercises as $index => $exercise) {
-                $selectedExercises[] = array_merge($exercise, ['original_index' => $index + 1]);
+        // Prendre TOUS les exercices de chaque niveau (5 Facile + 5 Moyen + 5 Difficile = 15)
+        // Facile: tous les exercices (5)
+        if (count($byDifficulty['Facile']) > 0) {
+            foreach ($byDifficulty['Facile'] as $exercise) {
+                $selectedExercises[] = $exercise;
             }
-            shuffle($selectedExercises);
-        } else {
-            // Sélectionner des exercices de chaque niveau seulement si on a beaucoup d'exercices
-            // Facile: 2-3 exercices
-            $facileCount = min(3, count($byDifficulty['Facile']));
-            if ($facileCount > 0) {
-                $facileSelected = $this->selectRandomExercises($byDifficulty['Facile'], $facileCount);
-                $selectedExercises = array_merge($selectedExercises, $facileSelected);
-            }
-            
-            // Moyen: 2-3 exercices
-            $moyenCount = min(3, count($byDifficulty['Moyen']));
-            if ($moyenCount > 0) {
-                $moyenSelected = $this->selectRandomExercises($byDifficulty['Moyen'], $moyenCount);
-                $selectedExercises = array_merge($selectedExercises, $moyenSelected);
-            }
-            
-            // Difficile: 1-2 exercices
-            $difficileCount = min(2, count($byDifficulty['Difficile']));
-            if ($difficileCount > 0) {
-                $difficileSelected = $this->selectRandomExercises($byDifficulty['Difficile'], $difficileCount);
-                $selectedExercises = array_merge($selectedExercises, $difficileSelected);
-            }
-            
-            // Mélanger l'ordre pour plus de variété
-            shuffle($selectedExercises);
         }
+        
+        // Moyen: tous les exercices (5)
+        if (count($byDifficulty['Moyen']) > 0) {
+            foreach ($byDifficulty['Moyen'] as $exercise) {
+                $selectedExercises[] = $exercise;
+            }
+        }
+        
+        // Difficile: tous les exercices (5)
+        if (count($byDifficulty['Difficile']) > 0) {
+            foreach ($byDifficulty['Difficile'] as $exercise) {
+                $selectedExercises[] = $exercise;
+            }
+        }
+        
+        // Mélanger l'ordre pour plus de variété
+        shuffle($selectedExercises);
         
         // Réindexer pour les URLs
         foreach ($selectedExercises as $index => &$exercise) {
@@ -507,7 +496,7 @@ class PageController extends Controller
 </html>',
                     'hint' => 'Utilisez <a href="URL" target="_blank">Texte</a> pour créer un lien qui s\'ouvre dans un nouvel onglet. La structure est : <a href="https://www.google.com" target="_blank">Aller sur Google</a>'
                 ],
-                4 => [
+                6 => [
                     'title' => 'Les images',
                     'difficulty' => 'Moyen',
                     'points' => 15,
@@ -543,7 +532,7 @@ class PageController extends Controller
 </html>',
                     'hint' => 'Utilisez <img src="..." alt="..." width="..."> pour ajouter une image. La structure est : <img src="logo.png" alt="Logo du site" width="200">'
                 ],
-                5 => [
+                7 => [
                     'title' => 'Les listes',
                     'difficulty' => 'Moyen',
                     'points' => 20,
@@ -583,7 +572,7 @@ class PageController extends Controller
 </html>',
                     'hint' => 'Utilisez <ul> pour la liste non ordonnée et <li> pour chaque élément. La structure est : <ul><li>HTML</li><li>CSS</li><li>JavaScript</li></ul>'
                 ],
-                6 => [
+                8 => [
                     'title' => 'Les tableaux HTML5',
                     'difficulty' => 'Moyen',
                     'points' => 20,
@@ -640,7 +629,7 @@ class PageController extends Controller
 </html>',
                     'hint' => 'Structurez le tableau avec <table><thead><tr><th>Nom</th><th>Age</th></tr></thead><tbody><tr><td>...</td></tr></tbody></table>'
                 ],
-                7 => [
+                11 => [
                     'title' => 'Formulaires HTML5 avancés',
                     'difficulty' => 'Difficile',
                     'points' => 25,
@@ -699,7 +688,7 @@ J\'accepte les conditions
 </html>',
                     'hint' => 'Utilisez <form> avec <input type="text|email|date">, <select>, <input type="checkbox">, et <button type="submit">. Ajoutez required et placeholder aux inputs.'
                 ],
-                8 => [
+                12 => [
                     'title' => 'Éléments sémantiques HTML5',
                     'difficulty' => 'Difficile',
                     'points' => 25,
@@ -761,7 +750,7 @@ J\'accepte les conditions
 </html>',
                     'hint' => 'Structurez avec <header>, <nav>, <main>, <article>, <section>, <aside>, et <footer>. Chaque élément a un rôle sémantique spécifique.'
                 ],
-                9 => [
+                13 => [
                     'title' => 'Accessibilité HTML5',
                     'difficulty' => 'Difficile',
                     'points' => 30,
@@ -819,6 +808,250 @@ J\'accepte les conditions
 </html>',
                     'hint' => 'Ajoutez role="banner|navigation|main|contentinfo", aria-label, aria-required, et liez les <label> avec for/id. Utilisez alt descriptif sur les images.'
                 ],
+                4 => [
+                    'title' => 'Les titres HTML',
+                    'difficulty' => 'Facile',
+                    'points' => 10,
+                    'instruction' => 'Créez une structure de titres hiérarchique avec h1, h2 et h3. Le h1 doit contenir "Titre principal", le h2 "Sous-titre" et le h3 "Sous-sous-titre".',
+                    'description' => 'Les titres HTML (h1 à h6) structurent le contenu de manière hiérarchique. h1 est le titre principal (un seul par page), h2 pour les sections, h3 pour les sous-sections. La hiérarchie est importante pour le SEO et l\'accessibilité.',
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Titres HTML</title>
+</head>
+<body>
+
+
+
+</body>
+</html>',
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Titres HTML</title>
+</head>
+<body>
+
+<h1>Titre principal</h1>
+<h2>Sous-titre</h2>
+<h3>Sous-sous-titre</h3>
+
+</body>
+</html>',
+                    'hint' => 'Utilisez <h1>Titre principal</h1>, <h2>Sous-titre</h2>, et <h3>Sous-sous-titre</h3> pour créer la hiérarchie des titres.'
+                ],
+                5 => [
+                    'title' => 'Les sauts de ligne',
+                    'difficulty' => 'Facile',
+                    'points' => 10,
+                    'instruction' => 'Créez deux lignes de texte séparées en utilisant la balise de saut de ligne. La première ligne doit dire "Première ligne" et la deuxième "Deuxième ligne".',
+                    'description' => 'La balise <br> crée un saut de ligne dans le texte. C\'est une balise auto-fermante (<br> ou <br />). Contrairement à <p>, <br> ne crée pas d\'espacement vertical, juste un retour à la ligne. Utilisez-la pour forcer un saut de ligne dans un paragraphe.',
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Sauts de ligne</title>
+</head>
+<body>
+
+<p>Première ligne Deuxième ligne</p>
+
+</body>
+</html>',
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Sauts de ligne</title>
+</head>
+<body>
+
+<p>Première ligne<br>Deuxième ligne</p>
+
+</body>
+</html>',
+                    'hint' => 'Utilisez <br> entre les deux lignes pour créer un saut de ligne. La structure est : <p>Première ligne<br>Deuxième ligne</p>'
+                ],
+                9 => [
+                    'title' => 'Les formulaires de base',
+                    'difficulty' => 'Moyen',
+                    'points' => 18,
+                    'instruction' => 'Créez un formulaire avec un champ texte (nom), un champ email, et un bouton submit. Utilisez les balises <form>, <input>, <label> et <button>.',
+                    'description' => 'Les formulaires HTML permettent de collecter des données utilisateur. <form> contient les champs, <label> améliore l\'accessibilité, <input> crée les champs (type="text", type="email"), et <button type="submit"> envoie le formulaire. L\'attribut for dans <label> doit correspondre à l\'id de l\'input.',
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Formulaire de base</title>
+</head>
+<body>
+
+<h1>Contact</h1>
+
+
+
+</body>
+</html>',
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Formulaire de base</title>
+</head>
+<body>
+
+<h1>Contact</h1>
+
+<form>
+<label for="nom">Nom :</label>
+<input type="text" id="nom" name="nom">
+
+<label for="email">Email :</label>
+<input type="email" id="email" name="email">
+
+<button type="submit">Envoyer</button>
+</form>
+
+</body>
+</html>',
+                    'hint' => 'Utilisez <form> pour contenir le formulaire, <label for="id"> pour les étiquettes, <input type="text|email" id="..." name="..."> pour les champs, et <button type="submit"> pour le bouton.'
+                ],
+                10 => [
+                    'title' => 'Les citations et abréviations',
+                    'difficulty' => 'Moyen',
+                    'points' => 15,
+                    'instruction' => 'Créez une citation avec <blockquote> et une abréviation avec <abbr>. La citation doit dire "Le code est poésie" et l\'abréviation "HTML" avec le titre "HyperText Markup Language".',
+                    'description' => 'Les balises sémantiques enrichissent le sens du contenu. <blockquote> crée une citation longue (bloc), <q> pour les citations courtes (inline), <abbr> pour les abréviations avec l\'attribut title pour la définition complète. Ces balises améliorent l\'accessibilité et le SEO.',
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Citations et abréviations</title>
+</head>
+<body>
+
+<h1>Citations</h1>
+
+
+
+</body>
+</html>',
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Citations et abréviations</title>
+</head>
+<body>
+
+<h1>Citations</h1>
+
+<blockquote>Le code est poésie</blockquote>
+
+<p>J\'apprends <abbr title="HyperText Markup Language">HTML</abbr>.</p>
+
+</body>
+</html>',
+                    'hint' => 'Utilisez <blockquote>Le code est poésie</blockquote> pour la citation et <abbr title="HyperText Markup Language">HTML</abbr> pour l\'abréviation.'
+                ],
+                14 => [
+                    'title' => 'Métadonnées et SEO HTML5',
+                    'difficulty' => 'Difficile',
+                    'points' => 28,
+                    'instruction' => 'Créez une page HTML5 optimisée pour le SEO avec : meta description, meta keywords, Open Graph (og:title, og:description), et un lien canonique. Ajoutez aussi un schema.org de type "Article".',
+                    'description' => 'Le SEO (Search Engine Optimization) améliore la visibilité dans les moteurs de recherche. Les meta tags (description, keywords) fournissent des informations aux moteurs. Open Graph améliore le partage sur les réseaux sociaux. Schema.org structure les données pour les moteurs de recherche. C\'est essentiel pour le référencement moderne.',
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Article SEO</title>
+</head>
+<body>
+
+<h1>Mon article</h1>
+<p>Contenu de l\'article...</p>
+
+</body>
+</html>',
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Article SEO</title>
+    <meta name="description" content="Description de l\'article pour le SEO">
+    <meta name="keywords" content="HTML5, SEO, Web">
+    <link rel="canonical" href="https://example.com/article">
+    <meta property="og:title" content="Article SEO">
+    <meta property="og:description" content="Description de l\'article">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "Mon article",
+      "author": {
+        "@type": "Person",
+        "name": "Auteur"
+      }
+    }
+    </script>
+</head>
+<body>
+
+<h1>Mon article</h1>
+<p>Contenu de l\'article...</p>
+
+</body>
+</html>',
+                    'hint' => 'Ajoutez <meta name="description">, <meta name="keywords">, <link rel="canonical">, <meta property="og:title|og:description">, et un <script type="application/ld+json"> avec le schema.org.'
+                ],
+                15 => [
+                    'title' => 'Multimédia HTML5 (audio/vidéo)',
+                    'difficulty' => 'Difficile',
+                    'points' => 30,
+                    'instruction' => 'Intégrez une vidéo HTML5 avec les attributs controls, autoplay, loop, et poster. Ajoutez aussi une piste audio avec <audio> et controls. Utilisez <source> pour plusieurs formats (mp4, webm pour vidéo).',
+                    'description' => 'HTML5 introduit <video> et <audio> pour intégrer du multimédia natif. controls affiche les contrôles, autoplay démarre automatiquement, loop répète, poster définit une image de prévisualisation. <source> permet de spécifier plusieurs formats pour la compatibilité. C\'est la méthode moderne pour le multimédia web.',
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Multimédia HTML5</title>
+</head>
+<body>
+
+<h1>Vidéo et Audio</h1>
+
+
+
+</body>
+</html>',
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Multimédia HTML5</title>
+</head>
+<body>
+
+<h1>Vidéo et Audio</h1>
+
+<video controls autoplay loop poster="preview.jpg" width="640" height="360">
+<source src="video.mp4" type="video/mp4">
+<source src="video.webm" type="video/webm">
+Votre navigateur ne supporte pas la vidéo.
+</video>
+
+<audio controls>
+<source src="audio.mp3" type="audio/mpeg">
+<source src="audio.ogg" type="audio/ogg">
+Votre navigateur ne supporte pas l\'audio.
+</audio>
+
+</body>
+</html>',
+                    'hint' => 'Utilisez <video controls autoplay loop poster="..."> avec <source> pour les formats, et <audio controls> avec <source> pour l\'audio. Ajoutez un texte de fallback entre les balises.'
+                ],
             ],
             'css3' => [
                 1 => [
@@ -863,7 +1096,7 @@ J\'accepte les conditions
 </html>',
                     'hint' => 'Utilisez color: blue; dans le sélecteur p. La syntaxe est : color: valeur;'
                 ],
-                2 => [
+                6 => [
                     'title' => 'Flexbox - Centrage',
                     'difficulty' => 'Moyen',
                     'points' => 20,
@@ -927,7 +1160,7 @@ J\'accepte les conditions
 </html>',
                     'hint' => 'Utilisez display: flex pour activer Flexbox, justify-content: center pour centrer horizontalement, et align-items: center pour centrer verticalement.'
                 ],
-                3 => [
+                7 => [
                     'title' => 'Grid Layout',
                     'difficulty' => 'Moyen',
                     'points' => 20,
@@ -989,7 +1222,7 @@ J\'accepte les conditions
 </html>',
                     'hint' => 'Utilisez display: grid pour activer Grid, et grid-template-columns: 1fr 1fr 1fr pour créer 3 colonnes égales.'
                 ],
-                4 => [
+                11 => [
                     'title' => 'Animations CSS',
                     'difficulty' => 'Difficile',
                     'points' => 25,
@@ -1047,7 +1280,7 @@ J\'accepte les conditions
 </html>',
                     'hint' => 'Complétez le @keyframes avec to { transform: rotate(360deg); } et ajoutez animation: rotate 2s linear infinite; à .box.'
                 ],
-                5 => [
+                8 => [
                     'title' => 'Responsive Design',
                     'difficulty' => 'Moyen',
                     'points' => 15,
@@ -1095,7 +1328,7 @@ J\'accepte les conditions
 </html>',
                     'hint' => 'Utilisez @media (max-width: 600px) { p { color: red; } } pour appliquer le style rouge sur les écrans de moins de 600px.'
                 ],
-                6 => [
+                12 => [
                     'title' => 'CSS Variables',
                     'difficulty' => 'Difficile',
                     'points' => 25,
@@ -1148,7 +1381,7 @@ J\'accepte les conditions
 </html>',
                     'hint' => 'Définissez les variables dans :root avec --primary-color: blue; et --spacing: 20px; puis utilisez-les avec var(--primary-color) et var(--spacing).'
                 ],
-                7 => [
+                13 => [
                     'title' => 'Advanced Grid Layout',
                     'difficulty' => 'Difficile',
                     'points' => 30,
@@ -1226,6 +1459,421 @@ J\'accepte les conditions
 </body>
 </html>',
                     'hint' => 'Utilisez grid-template-columns: 200px 1fr 200px; grid-template-areas pour nommer les zones, et grid-area pour assigner les éléments aux zones.'
+                ],
+                2 => [
+                    'title' => 'Couleurs et arrière-plans',
+                    'difficulty' => 'Facile',
+                    'points' => 10,
+                    'instruction' => 'Changez la couleur de fond de la div en bleu et la couleur du texte en blanc.',
+                    'description' => 'Les propriétés background-color et color contrôlent respectivement la couleur de fond et du texte. Les valeurs peuvent être des noms (blue, white), des codes hex (#0000FF, #FFFFFF), ou des valeurs RGB/rgba. C\'est la base du style CSS.',
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Couleurs CSS</title>
+    <style>
+    .box {
+      padding: 20px;
+      
+    }
+    </style>
+</head>
+<body>
+
+<div class="box">Texte dans la boîte</div>
+
+</body>
+</html>',
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Couleurs CSS</title>
+    <style>
+    .box {
+      padding: 20px;
+      background-color: blue;
+      color: white;
+    }
+    </style>
+</head>
+<body>
+
+<div class="box">Texte dans la boîte</div>
+
+</body>
+</html>',
+                    'hint' => 'Utilisez background-color: blue; pour le fond et color: white; pour le texte.'
+                ],
+                3 => [
+                    'title' => 'Marges et padding',
+                    'difficulty' => 'Facile',
+                    'points' => 10,
+                    'instruction' => 'Ajoutez un padding de 20px et une marge de 10px à la div.',
+                    'description' => 'Le padding crée un espacement interne (entre le contenu et la bordure), tandis que margin crée un espacement externe (entre l\'élément et les autres éléments). Les valeurs peuvent être en px, em, rem, ou %. C\'est fondamental pour le layout CSS.',
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Marges et Padding</title>
+    <style>
+    .box {
+      background: lightblue;
+      
+    }
+    </style>
+</head>
+<body>
+
+<div class="box">Contenu</div>
+
+</body>
+</html>',
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Marges et Padding</title>
+    <style>
+    .box {
+      background: lightblue;
+      padding: 20px;
+      margin: 10px;
+    }
+    </style>
+</head>
+<body>
+
+<div class="box">Contenu</div>
+
+</body>
+</html>',
+                    'hint' => 'Utilisez padding: 20px; pour l\'espacement interne et margin: 10px; pour l\'espacement externe.'
+                ],
+                4 => [
+                    'title' => 'Bordures CSS',
+                    'difficulty' => 'Facile',
+                    'points' => 10,
+                    'instruction' => 'Ajoutez une bordure solide de 2px de couleur rouge autour de la div.',
+                    'description' => 'La propriété border crée une bordure autour d\'un élément. La syntaxe est : border: width style color. Les styles courants sont solid, dashed, dotted, double. border peut être défini globalement ou par côté (border-top, border-left, etc.).',
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Bordures CSS</title>
+    <style>
+    .box {
+      padding: 20px;
+      background: lightgray;
+      
+    }
+    </style>
+</head>
+<body>
+
+<div class="box">Contenu avec bordure</div>
+
+</body>
+</html>',
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Bordures CSS</title>
+    <style>
+    .box {
+      padding: 20px;
+      background: lightgray;
+      border: 2px solid red;
+    }
+    </style>
+</head>
+<body>
+
+<div class="box">Contenu avec bordure</div>
+
+</body>
+</html>',
+                    'hint' => 'Utilisez border: 2px solid red; pour créer une bordure de 2px, solide, rouge.'
+                ],
+                5 => [
+                    'title' => 'Polices et texte',
+                    'difficulty' => 'Facile',
+                    'points' => 12,
+                    'instruction' => 'Changez la police en Arial, la taille en 18px, et mettez le texte en gras.',
+                    'description' => 'Les propriétés de texte CSS contrôlent l\'apparence du texte. font-family définit la police, font-size la taille, font-weight l\'épaisseur (normal, bold), font-style le style (normal, italic). C\'est essentiel pour la typographie web.',
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Polices CSS</title>
+    <style>
+    p {
+      
+    }
+    </style>
+</head>
+<body>
+
+<p>Texte à styliser</p>
+
+</body>
+</html>',
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Polices CSS</title>
+    <style>
+    p {
+      font-family: Arial, sans-serif;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    </style>
+</head>
+<body>
+
+<p>Texte à styliser</p>
+
+</body>
+</html>',
+                    'hint' => 'Utilisez font-family: Arial, sans-serif; font-size: 18px; font-weight: bold;'
+                ],
+                9 => [
+                    'title' => 'Pseudo-classes et pseudo-éléments',
+                    'difficulty' => 'Moyen',
+                    'points' => 18,
+                    'instruction' => 'Changez la couleur du lien en rouge au survol (hover) et ajoutez un soulignement à la première ligne du paragraphe avec ::first-line.',
+                    'description' => 'Les pseudo-classes (:hover, :active, :focus) ciblent des états d\'éléments. Les pseudo-éléments (::before, ::after, ::first-line, ::first-letter) ciblent des parties d\'éléments. :hover s\'active au survol, ::first-line cible la première ligne. C\'est puissant pour les interactions.',
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Pseudo-classes</title>
+    <style>
+    a {
+      color: blue;
+    }
+    
+    </style>
+</head>
+<body>
+
+<a href="#">Lien</a>
+<p>Première ligne du paragraphe. Deuxième ligne du paragraphe.</p>
+
+</body>
+</html>',
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Pseudo-classes</title>
+    <style>
+    a {
+      color: blue;
+    }
+    a:hover {
+      color: red;
+    }
+    p::first-line {
+      text-decoration: underline;
+    }
+    </style>
+</head>
+<body>
+
+<a href="#">Lien</a>
+<p>Première ligne du paragraphe. Deuxième ligne du paragraphe.</p>
+
+</body>
+</html>',
+                    'hint' => 'Utilisez a:hover { color: red; } pour le survol et p::first-line { text-decoration: underline; } pour la première ligne.'
+                ],
+                10 => [
+                    'title' => 'Transitions CSS',
+                    'difficulty' => 'Moyen',
+                    'points' => 20,
+                    'instruction' => 'Créez une transition fluide de 0.5s sur le changement de couleur de fond du bouton au survol.',
+                    'description' => 'Les transitions CSS créent des animations fluides entre deux états. transition définit la propriété, la durée, et le timing-function. C\'est plus simple que les animations pour des changements d\'état. Les transitions améliorent l\'expérience utilisateur.',
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Transitions CSS</title>
+    <style>
+    button {
+      background: blue;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      
+    }
+    button:hover {
+      background: red;
+    }
+    </style>
+</head>
+<body>
+
+<button>Survolez-moi</button>
+
+</body>
+</html>',
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Transitions CSS</title>
+    <style>
+    button {
+      background: blue;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      transition: background 0.5s;
+    }
+    button:hover {
+      background: red;
+    }
+    </style>
+</head>
+<body>
+
+<button>Survolez-moi</button>
+
+</body>
+</html>',
+                    'hint' => 'Ajoutez transition: background 0.5s; au bouton pour créer une transition fluide de 0.5 secondes sur la couleur de fond.'
+                ],
+                14 => [
+                    'title' => 'Transformations CSS 3D',
+                    'difficulty' => 'Difficile',
+                    'points' => 28,
+                    'instruction' => 'Créez une transformation 3D qui fait tourner la div de 45 degrés sur l\'axe Y (rotateY) avec une perspective de 1000px sur le conteneur parent.',
+                    'description' => 'Les transformations 3D CSS créent des effets de profondeur. transform: rotateY() fait tourner sur l\'axe Y, perspective sur le parent crée la profondeur 3D. transform-style: preserve-3d maintient la 3D. C\'est avancé mais puissant pour les effets visuels.',
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Transformations 3D</title>
+    <style>
+    .container {
+      width: 200px;
+      height: 200px;
+      
+    }
+    .box {
+      width: 100%;
+      height: 100%;
+      background: cyan;
+      
+    }
+    </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="box"></div>
+</div>
+
+</body>
+</html>',
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Transformations 3D</title>
+    <style>
+    .container {
+      width: 200px;
+      height: 200px;
+      perspective: 1000px;
+    }
+    .box {
+      width: 100%;
+      height: 100%;
+      background: cyan;
+      transform: rotateY(45deg);
+    }
+    </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="box"></div>
+</div>
+
+</body>
+</html>',
+                    'hint' => 'Ajoutez perspective: 1000px; au conteneur et transform: rotateY(45deg); à la box pour créer la rotation 3D.'
+                ],
+                15 => [
+                    'title' => 'CSS Architecture (BEM, SMACSS)',
+                    'difficulty' => 'Difficile',
+                    'points' => 30,
+                    'instruction' => 'Créez une structure CSS suivant la méthodologie BEM (Block Element Modifier). Créez un bloc "card", un élément "card__title", et un modificateur "card--highlighted".',
+                    'description' => 'BEM (Block Element Modifier) est une méthodologie de nommage CSS. Block = composant indépendant, Element = partie du bloc (__element), Modifier = variation (--modifier). SMACSS organise le CSS en catégories (Base, Layout, Module, State, Theme). C\'est essentiel pour maintenir du CSS à grande échelle.',
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>BEM CSS</title>
+    <style>
+    /* Créez les classes BEM */
+    
+    </style>
+</head>
+<body>
+
+<div class="card">
+  <h2 class="">Titre de la carte</h2>
+  <p>Contenu</p>
+</div>
+
+<div class="">
+  <h2 class="">Titre mis en évidence</h2>
+  <p>Contenu</p>
+</div>
+
+</body>
+</html>',
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>BEM CSS</title>
+    <style>
+    .card {
+      border: 1px solid #ccc;
+      padding: 20px;
+    }
+    .card__title {
+      color: #333;
+      font-size: 24px;
+    }
+    .card--highlighted {
+      background: yellow;
+      border-color: orange;
+    }
+    </style>
+</head>
+<body>
+
+<div class="card">
+  <h2 class="card__title">Titre de la carte</h2>
+  <p>Contenu</p>
+</div>
+
+<div class="card card--highlighted">
+  <h2 class="card__title">Titre mis en évidence</h2>
+  <p>Contenu</p>
+</div>
+
+</body>
+</html>',
+                    'hint' => 'Utilisez .card pour le bloc, .card__title pour l\'élément, et .card--highlighted pour le modificateur. Appliquez card et card--highlighted ensemble sur la deuxième div.'
                 ],
             ],
             'javascript' => [
@@ -1312,6 +1960,152 @@ document.getElementById("demo").innerHTML = resultat;
                     'hint' => 'Créez function additionner(a, b) { return a + b; }'
                 ],
                 3 => [
+                    'title' => 'Conditions if/else',
+                    'difficulty' => 'Facile',
+                    'points' => 12,
+                    'instruction' => 'Créez une condition if/else qui affiche "Majeur" si l\'âge est >= 18, sinon "Mineur".',
+                    'description' => 'Les conditions if/else permettent d\'exécuter du code de manière conditionnelle. if (condition) exécute le code si la condition est vraie, else exécute le code alternatif. Les opérateurs de comparaison (==, ===, <, >, <=, >=) comparent des valeurs. C\'est fondamental pour la logique de programmation.',
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Conditions JavaScript</title>
+</head>
+<body>
+
+<p id="demo"></p>
+
+<script>
+let age = 20;
+
+
+document.getElementById("demo").innerHTML = statut;
+</script>
+
+</body>
+</html>',
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Conditions JavaScript</title>
+</head>
+<body>
+
+<p id="demo"></p>
+
+<script>
+let age = 20;
+let statut;
+
+if (age >= 18) {
+  statut = "Majeur";
+} else {
+  statut = "Mineur";
+}
+
+document.getElementById("demo").innerHTML = statut;
+</script>
+
+</body>
+</html>',
+                    'hint' => 'Utilisez if (age >= 18) { statut = "Majeur"; } else { statut = "Mineur"; } pour créer la condition.'
+                ],
+                4 => [
+                    'title' => 'Boucles for et while',
+                    'difficulty' => 'Facile',
+                    'points' => 12,
+                    'instruction' => 'Affichez les nombres de 1 à 5 en utilisant une boucle for.',
+                    'description' => 'Les boucles répètent du code. for (initialisation; condition; incrément) répète tant que la condition est vraie. while (condition) répète aussi, mais l\'incrément doit être géré manuellement. Les boucles sont essentielles pour traiter des collections de données.',
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Boucles JavaScript</title>
+</head>
+<body>
+
+<p id="demo"></p>
+
+<script>
+let texte = "";
+
+
+document.getElementById("demo").innerHTML = texte;
+</script>
+
+</body>
+</html>',
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Boucles JavaScript</title>
+</head>
+<body>
+
+<p id="demo"></p>
+
+<script>
+let texte = "";
+
+for (let i = 1; i <= 5; i++) {
+  texte += i + " ";
+}
+
+document.getElementById("demo").innerHTML = texte;
+</script>
+
+</body>
+</html>',
+                    'hint' => 'Utilisez for (let i = 1; i <= 5; i++) { texte += i + " "; } pour créer la boucle.'
+                ],
+                5 => [
+                    'title' => 'Opérateurs JavaScript',
+                    'difficulty' => 'Facile',
+                    'points' => 10,
+                    'instruction' => 'Utilisez les opérateurs arithmétiques pour calculer et afficher le résultat de (10 + 5) * 2.',
+                    'description' => 'Les opérateurs JavaScript effectuent des opérations. + (addition), - (soustraction), * (multiplication), / (division), % (modulo). Les opérateurs de comparaison (==, ===, !=, !==, <, >, <=, >=) comparent des valeurs. Les opérateurs logiques (&&, ||, !) combinent des conditions.',
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Opérateurs JavaScript</title>
+</head>
+<body>
+
+<p id="demo"></p>
+
+<script>
+let resultat = 
+
+
+document.getElementById("demo").innerHTML = resultat;
+</script>
+
+</body>
+</html>',
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Opérateurs JavaScript</title>
+</head>
+<body>
+
+<p id="demo"></p>
+
+<script>
+let resultat = (10 + 5) * 2;
+
+document.getElementById("demo").innerHTML = resultat;
+</script>
+
+</body>
+</html>',
+                    'hint' => 'Utilisez let resultat = (10 + 5) * 2; pour calculer. Les parenthèses contrôlent l\'ordre des opérations.'
+                ],
+                6 => [
                     'title' => 'DOM Manipulation',
                     'difficulty' => 'Moyen',
                     'points' => 20,
@@ -1346,7 +2140,7 @@ bouton.addEventListener("click", function() {
 </html>',
                     'hint' => 'Utilisez bouton.addEventListener("click", function() { bouton.innerHTML = "Cliqué !"; });'
                 ],
-                4 => [
+                7 => [
                     'title' => 'Tableaux et boucles',
                     'difficulty' => 'Moyen',
                     'points' => 20,
@@ -1388,7 +2182,168 @@ document.getElementById("demo").innerHTML = texte;
 </html>',
                     'hint' => 'Utilisez for (let i = 0; i < fruits.length; i++) { texte += fruits[i] + " "; }'
                 ],
-                5 => [
+                8 => [
+                    'title' => 'Événements JavaScript',
+                    'difficulty' => 'Moyen',
+                    'points' => 18,
+                    'instruction' => 'Créez un événement qui change la couleur de fond de la div en rouge quand on passe la souris dessus (mouseover) et en bleu quand on la quitte (mouseout).',
+                    'description' => 'Les événements JavaScript permettent d\'interagir avec la page. addEventListener attache un gestionnaire d\'événement. mouseover se déclenche au survol, mouseout à la sortie. Les événements sont essentiels pour créer des interfaces interactives.',
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Événements JavaScript</title>
+    <style>
+    .box {
+      width: 200px;
+      height: 200px;
+      background: gray;
+    }
+    </style>
+</head>
+<body>
+
+<div class="box" id="maBox"></div>
+
+<script>
+let box = document.getElementById("maBox");
+
+
+</script>
+
+</body>
+</html>',
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Événements JavaScript</title>
+    <style>
+    .box {
+      width: 200px;
+      height: 200px;
+      background: gray;
+    }
+    </style>
+</head>
+<body>
+
+<div class="box" id="maBox"></div>
+
+<script>
+let box = document.getElementById("maBox");
+
+box.addEventListener("mouseover", function() {
+  box.style.backgroundColor = "red";
+});
+
+box.addEventListener("mouseout", function() {
+  box.style.backgroundColor = "blue";
+});
+</script>
+
+</body>
+</html>',
+                    'hint' => 'Utilisez addEventListener("mouseover", ...) pour le survol et addEventListener("mouseout", ...) pour la sortie. Modifiez box.style.backgroundColor.'
+                ],
+                9 => [
+                    'title' => 'Manipulation de chaînes',
+                    'difficulty' => 'Moyen',
+                    'points' => 15,
+                    'instruction' => 'Concaténez deux chaînes "Bonjour" et "Monde" avec un espace entre elles, puis convertissez le résultat en majuscules.',
+                    'description' => 'Les chaînes JavaScript ont de nombreuses méthodes. + concatène, toUpperCase() met en majuscules, toLowerCase() en minuscules, length retourne la longueur, substring() extrait une partie, indexOf() trouve une position. C\'est essentiel pour manipuler du texte.',
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Manipulation de chaînes</title>
+</head>
+<body>
+
+<p id="demo"></p>
+
+<script>
+let chaine1 = "Bonjour";
+let chaine2 = "Monde";
+let resultat = 
+
+
+document.getElementById("demo").innerHTML = resultat;
+</script>
+
+</body>
+</html>',
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Manipulation de chaînes</title>
+</head>
+<body>
+
+<p id="demo"></p>
+
+<script>
+let chaine1 = "Bonjour";
+let chaine2 = "Monde";
+let resultat = (chaine1 + " " + chaine2).toUpperCase();
+
+document.getElementById("demo").innerHTML = resultat;
+</script>
+
+</body>
+</html>',
+                    'hint' => 'Utilisez (chaine1 + " " + chaine2).toUpperCase() pour concaténer avec un espace et convertir en majuscules.'
+                ],
+                10 => [
+                    'title' => 'Fonctions fléchées',
+                    'difficulty' => 'Moyen',
+                    'points' => 20,
+                    'instruction' => 'Convertissez la fonction normale en fonction fléchée (arrow function). La fonction doit multiplier deux nombres.',
+                    'description' => 'Les fonctions fléchées (=>) sont une syntaxe concise introduite en ES6. (a, b) => a + b est équivalent à function(a, b) { return a + b; }. Elles n\'ont pas leur propre this, ce qui est utile pour les callbacks. C\'est la syntaxe moderne recommandée.',
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Fonctions fléchées</title>
+</head>
+<body>
+
+<p id="demo"></p>
+
+<script>
+function multiplier(a, b) {
+  return a * b;
+}
+
+let resultat = multiplier(5, 3);
+document.getElementById("demo").innerHTML = resultat;
+</script>
+
+</body>
+</html>',
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Fonctions fléchées</title>
+</head>
+<body>
+
+<p id="demo"></p>
+
+<script>
+const multiplier = (a, b) => a * b;
+
+let resultat = multiplier(5, 3);
+document.getElementById("demo").innerHTML = resultat;
+</script>
+
+</body>
+</html>',
+                    'hint' => 'Remplacez function multiplier(a, b) { return a * b; } par const multiplier = (a, b) => a * b;'
+                ],
+                11 => [
                     'title' => 'Objets JavaScript',
                     'difficulty' => 'Difficile',
                     'points' => 30,
@@ -1435,7 +2390,7 @@ document.getElementById("demo").innerHTML = personne.nom;
 </html>',
                     'hint' => 'Créez let personne = { nom: "Marie", age: 25 }; pour définir l\'objet, puis accédez à la propriété avec personne.nom.'
                 ],
-                6 => [
+                12 => [
                     'title' => 'Promises et Async/Await',
                     'difficulty' => 'Difficile',
                     'points' => 28,
@@ -1487,7 +2442,7 @@ chargerDonnees();
 </html>',
                     'hint' => 'Créez async function chargerDonnees() { const response = await fetch("URL"); const data = await response.json(); document.getElementById("demo").innerHTML = data.title; } puis appelez chargerDonnees();'
                 ],
-                7 => [
+                13 => [
                     'title' => 'Closures et Scope',
                     'difficulty' => 'Difficile',
                     'points' => 30,
@@ -1537,6 +2492,94 @@ document.getElementById("demo").innerHTML = incrementer();
 </body>
 </html>',
                     'hint' => 'Créez function creerCompteur() { let compteur = 0; return function() { compteur++; return compteur; }; } puis const incrementer = creerCompteur(); et appelez incrementer().'
+                ],
+                14 => [
+                    'title' => 'Destructuring et Spread',
+                    'difficulty' => 'Difficile',
+                    'points' => 25,
+                    'instruction' => 'Utilisez le destructuring pour extraire "nom" et "age" de l\'objet personne, puis utilisez le spread operator pour copier le tableau fruits dans un nouveau tableau.',
+                    'description' => 'Le destructuring extrait des valeurs d\'objets ou tableaux. const {nom, age} = personne extrait les propriétés. Le spread operator (...) copie ou fusionne des tableaux/objets. const nouveau = [...ancien] copie un tableau. C\'est une syntaxe moderne ES6 très utilisée.',
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Destructuring et Spread</title>
+</head>
+<body>
+
+<p id="demo"></p>
+
+<script>
+let personne = { nom: "Jean", age: 30, ville: "Paris" };
+let fruits = ["Pomme", "Banane"];
+
+// Utilisez le destructuring pour extraire nom et age
+
+
+// Utilisez le spread pour copier fruits dans nouveauFruits
+
+
+document.getElementById("demo").innerHTML = nom + " " + age + " - " + nouveauFruits.join(", ");
+</script>
+
+</body>
+</html>',
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Destructuring et Spread</title>
+</head>
+<body>
+
+<p id="demo"></p>
+
+<script>
+let personne = { nom: "Jean", age: 30, ville: "Paris" };
+let fruits = ["Pomme", "Banane"];
+
+// Utilisez le destructuring pour extraire nom et age
+const { nom, age } = personne;
+
+// Utilisez le spread pour copier fruits dans nouveauFruits
+const nouveauFruits = [...fruits];
+
+document.getElementById("demo").innerHTML = nom + " " + age + " - " + nouveauFruits.join(", ");
+</script>
+
+</body>
+</html>',
+                    'hint' => 'Utilisez const { nom, age } = personne; pour le destructuring et const nouveauFruits = [...fruits]; pour le spread.'
+                ],
+                15 => [
+                    'title' => 'Modules ES6 (import/export)',
+                    'difficulty' => 'Difficile',
+                    'points' => 28,
+                    'instruction' => 'Créez un module qui exporte une fonction "multiplier" et importez-la dans le script principal. Utilisez export et import.',
+                    'description' => 'Les modules ES6 permettent d\'organiser le code en fichiers séparés. export expose des fonctions/variables, import les importe. C\'est la méthode moderne pour structurer du JavaScript. Les modules améliorent la maintenabilité et permettent le tree-shaking.',
+                    'startCode' => '/* math.js */
+// Exportez la fonction multiplier
+
+
+/* main.js */
+// Importez la fonction multiplier
+
+
+let resultat = multiplier(5, 3);
+console.log(resultat);',
+                    'solution' => '/* math.js */
+// Exportez la fonction multiplier
+export function multiplier(a, b) {
+  return a * b;
+}
+
+/* main.js */
+// Importez la fonction multiplier
+import { multiplier } from "./math.js";
+
+let resultat = multiplier(5, 3);
+console.log(resultat);',
+                    'hint' => 'Utilisez export function multiplier(a, b) { return a * b; } dans math.js et import { multiplier } from "./math.js"; dans main.js.'
                 ],
             ],
             'php' => [
@@ -1595,6 +2638,102 @@ echo $nom;
                     'hint' => 'Créez $nom = "Pierre"; puis echo $nom;'
                 ],
                 3 => [
+                    'title' => 'Opérateurs PHP',
+                    'difficulty' => 'Facile',
+                    'points' => 10,
+                    'instruction' => 'Utilisez les opérateurs arithmétiques pour calculer et afficher le résultat de (10 + 5) * 2.',
+                    'description' => 'Les opérateurs PHP effectuent des opérations. + (addition), - (soustraction), * (multiplication), / (division), % (modulo). Les opérateurs de comparaison (==, ===, !=, !==, <, >, <=, >=) comparent des valeurs. Les opérateurs logiques (&&, ||, !) combinent des conditions.',
+                    'startCode' => '<html>
+<body>
+
+<?php
+$resultat = 
+
+
+echo $resultat;
+?>
+
+</body>
+</html>',
+                    'solution' => '<html>
+<body>
+
+<?php
+$resultat = (10 + 5) * 2;
+
+echo $resultat;
+?>
+
+</body>
+</html>',
+                    'hint' => 'Utilisez $resultat = (10 + 5) * 2; pour calculer. Les parenthèses contrôlent l\'ordre des opérations.'
+                ],
+                4 => [
+                    'title' => 'Chaînes de caractères PHP',
+                    'difficulty' => 'Facile',
+                    'points' => 12,
+                    'instruction' => 'Concaténez deux chaînes "Bonjour" et "PHP" avec un point (.), puis affichez le résultat en majuscules avec strtoupper().',
+                    'description' => 'Les chaînes PHP peuvent être concaténées avec le point (.). strtoupper() met en majuscules, strtolower() en minuscules, strlen() retourne la longueur, substr() extrait une partie, strpos() trouve une position. C\'est essentiel pour manipuler du texte.',
+                    'startCode' => '<html>
+<body>
+
+<?php
+$chaine1 = "Bonjour";
+$chaine2 = "PHP";
+$resultat = 
+
+
+echo $resultat;
+?>
+
+</body>
+</html>',
+                    'solution' => '<html>
+<body>
+
+<?php
+$chaine1 = "Bonjour";
+$chaine2 = "PHP";
+$resultat = strtoupper($chaine1 . " " . $chaine2);
+
+echo $resultat;
+?>
+
+</body>
+</html>',
+                    'hint' => 'Utilisez $resultat = strtoupper($chaine1 . " " . $chaine2); pour concaténer avec un espace et convertir en majuscules.'
+                ],
+                5 => [
+                    'title' => 'Commentaires PHP',
+                    'difficulty' => 'Facile',
+                    'points' => 8,
+                    'instruction' => 'Ajoutez un commentaire sur une ligne et un commentaire sur plusieurs lignes dans le code PHP.',
+                    'description' => 'Les commentaires PHP documentent le code. // crée un commentaire sur une ligne, # aussi, /* */ crée un commentaire multi-lignes. Les commentaires ne sont pas exécutés. C\'est essentiel pour la maintenabilité du code.',
+                    'startCode' => '<html>
+<body>
+
+<?php
+echo "Hello World";
+?>
+
+</body>
+</html>',
+                    'solution' => '<html>
+<body>
+
+<?php
+// Commentaire sur une ligne
+/* Commentaire
+   sur plusieurs
+   lignes */
+echo "Hello World";
+?>
+
+</body>
+</html>',
+                    'hint' => 'Utilisez // pour un commentaire sur une ligne et /* */ pour un commentaire multi-lignes.'
+                ],
+                6 => [
                     'title' => 'Conditions PHP',
                     'difficulty' => 'Moyen',
                     'points' => 15,
@@ -1627,7 +2766,7 @@ if ($age >= 18) {
 </html>',
                     'hint' => 'Utilisez if ($age >= 18) { echo "Majeur"; } else { echo "Mineur"; }'
                 ],
-                4 => [
+                7 => [
                     'title' => 'Boucles PHP',
                     'difficulty' => 'Moyen',
                     'points' => 20,
@@ -1656,7 +2795,121 @@ for ($i = 1; $i <= 5; $i++) {
 </html>',
                     'hint' => 'Utilisez for ($i = 1; $i <= 5; $i++) { echo $i . " "; }'
                 ],
-                5 => [
+                8 => [
+                    'title' => 'Fonctions PHP',
+                    'difficulty' => 'Moyen',
+                    'points' => 18,
+                    'instruction' => 'Créez une fonction "calculerCarre" qui prend un nombre en paramètre et retourne son carré. Appelez la fonction avec 5 et affichez le résultat.',
+                    'description' => 'Les fonctions PHP organisent le code réutilisable. function nomFonction($param) { return valeur; } définit une fonction. return retourne une valeur. Les fonctions peuvent avoir des paramètres par défaut. C\'est essentiel pour éviter la duplication de code.',
+                    'startCode' => '<html>
+<body>
+
+<?php
+
+
+$resultat = calculerCarre(5);
+echo $resultat;
+?>
+
+</body>
+</html>',
+                    'solution' => '<html>
+<body>
+
+<?php
+function calculerCarre($nombre) {
+  return $nombre * $nombre;
+}
+
+$resultat = calculerCarre(5);
+echo $resultat;
+?>
+
+</body>
+</html>',
+                    'hint' => 'Créez function calculerCarre($nombre) { return $nombre * $nombre; } puis appelez calculerCarre(5).'
+                ],
+                9 => [
+                    'title' => 'Tableaux simples PHP',
+                    'difficulty' => 'Moyen',
+                    'points' => 18,
+                    'instruction' => 'Créez un tableau simple avec 3 fruits, puis affichez chaque fruit avec une boucle foreach.',
+                    'description' => 'Les tableaux PHP simples sont indexés numériquement. array() ou [] crée un tableau. foreach parcourt tous les éléments. count() retourne le nombre d\'éléments. Les tableaux sont fondamentaux en PHP.',
+                    'startCode' => '<html>
+<body>
+
+<?php
+
+
+?>
+
+</body>
+</html>',
+                    'solution' => '<html>
+<body>
+
+<?php
+$fruits = array("Pomme", "Banane", "Orange");
+
+foreach ($fruits as $fruit) {
+  echo $fruit . "<br>";
+}
+?>
+
+</body>
+</html>',
+                    'hint' => 'Créez $fruits = array("Pomme", "Banane", "Orange"); puis foreach ($fruits as $fruit) { echo $fruit . "<br>"; }'
+                ],
+                10 => [
+                    'title' => 'Formulaires PHP (GET/POST)',
+                    'difficulty' => 'Moyen',
+                    'points' => 20,
+                    'instruction' => 'Créez un formulaire HTML avec un champ texte "nom" et un bouton submit. Traitez le formulaire en PHP : si le formulaire est soumis (POST), affichez "Bonjour [nom]".',
+                    'description' => 'Les formulaires PHP collectent des données utilisateur. $_POST contient les données POST, $_GET contient les données GET. isset() vérifie si une variable existe. Les formulaires sont essentiels pour l\'interaction utilisateur.',
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Formulaire PHP</title>
+</head>
+<body>
+
+<form method="POST">
+  <input type="text" name="nom" placeholder="Votre nom">
+  <button type="submit">Envoyer</button>
+</form>
+
+<?php
+
+
+?>
+
+</body>
+</html>',
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Formulaire PHP</title>
+</head>
+<body>
+
+<form method="POST">
+  <input type="text" name="nom" placeholder="Votre nom">
+  <button type="submit">Envoyer</button>
+</form>
+
+<?php
+if (isset($_POST["nom"])) {
+  echo "Bonjour " . $_POST["nom"];
+}
+?>
+
+</body>
+</html>',
+                    'hint' => 'Utilisez if (isset($_POST["nom"])) { echo "Bonjour " . $_POST["nom"]; } pour traiter le formulaire.'
+                ],
+                11 => [
                     'title' => 'Tableaux PHP',
                     'difficulty' => 'Difficile',
                     'points' => 25,
@@ -1703,7 +2956,7 @@ foreach ($fruits as $fruit => $prix) {
 </html>',
                     'hint' => 'Créez $fruits = array("Pomme" => 2.50, "Banane" => 1.80, "Orange" => 3.00); puis foreach ($fruits as $fruit => $prix) { echo $fruit . " : " . $prix . "€<br>"; }'
                 ],
-                6 => [
+                12 => [
                     'title' => 'POO en PHP',
                     'difficulty' => 'Difficile',
                     'points' => 30,
@@ -1770,7 +3023,7 @@ echo "Age : " . $personne->getAge();
 </html>',
                     'hint' => 'Créez class Personne { private $nom, $age; public function __construct($nom, $age) { $this->nom = $nom; $this->age = $age; } public function getNom() { return $this->nom; } } puis $personne = new Personne("Jean", 25);'
                 ],
-                7 => [
+                13 => [
                     'title' => 'Les sessions PHP',
                     'difficulty' => 'Difficile',
                     'points' => 28,
@@ -1811,6 +3064,95 @@ echo "Utilisateur : " . $_SESSION["utilisateur"];
 </body>
 </html>',
                     'hint' => 'Utilisez session_start(); au début, puis $_SESSION["utilisateur"] = "admin"; pour stocker, et $_SESSION["utilisateur"] pour récupérer.'
+                ],
+                14 => [
+                    'title' => 'Traitement des fichiers PHP',
+                    'difficulty' => 'Difficile',
+                    'points' => 28,
+                    'instruction' => 'Créez un fichier "test.txt" avec le contenu "Hello PHP", puis lisez et affichez son contenu. Utilisez file_put_contents() pour écrire et file_get_contents() pour lire.',
+                    'description' => 'PHP peut lire et écrire des fichiers. file_put_contents() écrit dans un fichier, file_get_contents() lit un fichier. fopen(), fwrite(), fread(), fclose() offrent plus de contrôle. file_exists() vérifie l\'existence. C\'est essentiel pour la gestion de fichiers.',
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Traitement fichiers PHP</title>
+</head>
+<body>
+
+<?php
+
+
+?>
+
+</body>
+</html>',
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Traitement fichiers PHP</title>
+</head>
+<body>
+
+<?php
+file_put_contents("test.txt", "Hello PHP");
+
+$contenu = file_get_contents("test.txt");
+echo $contenu;
+?>
+
+</body>
+</html>',
+                    'hint' => 'Utilisez file_put_contents("test.txt", "Hello PHP"); pour écrire et $contenu = file_get_contents("test.txt"); pour lire.'
+                ],
+                15 => [
+                    'title' => 'Exceptions et gestion d\'erreurs',
+                    'difficulty' => 'Difficile',
+                    'points' => 30,
+                    'instruction' => 'Créez une fonction qui divise deux nombres. Utilisez try/catch pour gérer l\'exception si le diviseur est 0. Affichez un message d\'erreur approprié.',
+                    'description' => 'Les exceptions PHP gèrent les erreurs de manière élégante. try exécute du code, catch capture les exceptions. throw lance une exception. Exception est la classe de base. C\'est la méthode moderne pour gérer les erreurs.',
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Exceptions PHP</title>
+</head>
+<body>
+
+<?php
+
+
+?>
+
+</body>
+</html>',
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Exceptions PHP</title>
+</head>
+<body>
+
+<?php
+function diviser($a, $b) {
+  if ($b == 0) {
+    throw new Exception("Division par zéro impossible");
+  }
+  return $a / $b;
+}
+
+try {
+  echo diviser(10, 2) . "<br>";
+  echo diviser(10, 0);
+} catch (Exception $e) {
+  echo "Erreur : " . $e->getMessage();
+}
+?>
+
+</body>
+</html>',
+                    'hint' => 'Utilisez if ($b == 0) { throw new Exception("..."); } dans la fonction, et try { ... } catch (Exception $e) { ... } pour gérer l\'exception.'
                 ],
             ],
             'bootstrap' => [
@@ -1895,6 +3237,136 @@ echo "Utilisateur : " . $_SESSION["utilisateur"];
                     'hint' => 'Ajoutez les classes "btn btn-primary" au bouton.'
                 ],
                 3 => [
+                    'title' => 'Typographie Bootstrap',
+                    'difficulty' => 'Facile',
+                    'points' => 10,
+                    'instruction' => 'Utilisez les classes Bootstrap pour créer un titre h1 avec la classe "display-1", un paragraphe avec "lead", et un texte en gras avec "fw-bold".',
+                    'description' => 'Bootstrap fournit des classes typographiques prédéfinies. display-1 à display-6 créent de grands titres, lead met en évidence un paragraphe, fw-bold met en gras, text-muted assombrit le texte. C\'est la base de la typographie Bootstrap.',
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typographie Bootstrap</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5">
+  <h1 class="">Titre principal</h1>
+  <p class="">Paragraphe important</p>
+  <p class="">Texte en gras</p>
+</div>
+
+</body>
+</html>',
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typographie Bootstrap</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5">
+  <h1 class="display-1">Titre principal</h1>
+  <p class="lead">Paragraphe important</p>
+  <p class="fw-bold">Texte en gras</p>
+</div>
+
+</body>
+</html>',
+                    'hint' => 'Utilisez display-1 pour le h1, lead pour le paragraphe important, et fw-bold pour le texte en gras.'
+                ],
+                4 => [
+                    'title' => 'Couleurs Bootstrap',
+                    'difficulty' => 'Facile',
+                    'points' => 10,
+                    'instruction' => 'Créez trois divs avec les classes de couleur de texte Bootstrap : text-primary (bleu), text-success (vert), et text-danger (rouge).',
+                    'description' => 'Bootstrap fournit des classes de couleurs contextuelles. text-primary (bleu), text-success (vert), text-danger (rouge), text-warning (jaune), text-info (cyan), text-dark (noir), text-light (blanc). bg-* crée des couleurs de fond. C\'est la palette de couleurs Bootstrap.',
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Couleurs Bootstrap</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5">
+  <p class="">Texte bleu</p>
+  <p class="">Texte vert</p>
+  <p class="">Texte rouge</p>
+</div>
+
+</body>
+</html>',
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Couleurs Bootstrap</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5">
+  <p class="text-primary">Texte bleu</p>
+  <p class="text-success">Texte vert</p>
+  <p class="text-danger">Texte rouge</p>
+</div>
+
+</body>
+</html>',
+                    'hint' => 'Utilisez text-primary pour le bleu, text-success pour le vert, et text-danger pour le rouge.'
+                ],
+                5 => [
+                    'title' => 'Alertes Bootstrap',
+                    'difficulty' => 'Facile',
+                    'points' => 12,
+                    'instruction' => 'Créez trois alertes Bootstrap : une alerte de succès (success), une d\'information (info), et une d\'avertissement (warning). Utilisez la classe "alert".',
+                    'description' => 'Les alertes Bootstrap affichent des messages contextuels. alert est la classe de base, alert-success (vert), alert-info (bleu), alert-warning (jaune), alert-danger (rouge). alert-dismissible permet de fermer l\'alerte. C\'est essentiel pour les notifications utilisateur.',
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alertes Bootstrap</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5">
+  
+</div>
+
+</body>
+</html>',
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alertes Bootstrap</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5">
+  <div class="alert alert-success">Opération réussie !</div>
+  <div class="alert alert-info">Information importante</div>
+  <div class="alert alert-warning">Attention requise</div>
+</div>
+
+</body>
+</html>',
+                    'hint' => 'Utilisez <div class="alert alert-success|info|warning"> pour créer les alertes.'
+                ],
+                6 => [
                     'title' => 'Card Bootstrap',
                     'difficulty' => 'Moyen',
                     'points' => 15,
@@ -1936,7 +3408,7 @@ echo "Utilisateur : " . $_SESSION["utilisateur"];
 </html>',
                     'hint' => 'Ajoutez "card-body" à la div et "card-title" au h5.'
                 ],
-                4 => [
+                7 => [
                     'title' => 'Navbar Bootstrap',
                     'difficulty' => 'Moyen',
                     'points' => 20,
@@ -1982,7 +3454,155 @@ echo "Utilisateur : " . $_SESSION["utilisateur"];
 </html>',
                     'hint' => 'Ajoutez "navbar-brand" au logo et "nav-link" au lien.'
                 ],
-                5 => [
+                8 => [
+                    'title' => 'Formulaires Bootstrap',
+                    'difficulty' => 'Moyen',
+                    'points' => 18,
+                    'instruction' => 'Créez un formulaire Bootstrap avec un champ texte (form-control), un label (form-label), et un bouton submit (btn-primary). Utilisez les classes form-group ou mb-3 pour l\'espacement.',
+                    'description' => 'Bootstrap stylise les formulaires avec des classes dédiées. form-control stylise les inputs, form-label pour les labels, form-select pour les selects, form-check pour les checkboxes. mb-3 ajoute une marge en bas. C\'est essentiel pour des formulaires professionnels.',
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulaires Bootstrap</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5">
+  <form>
+    
+  </form>
+</div>
+
+</body>
+</html>',
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulaires Bootstrap</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5">
+  <form>
+    <div class="mb-3">
+      <label for="nom" class="form-label">Nom</label>
+      <input type="text" class="form-control" id="nom" name="nom">
+    </div>
+    <button type="submit" class="btn btn-primary">Envoyer</button>
+  </form>
+</div>
+
+</body>
+</html>',
+                    'hint' => 'Utilisez <div class="mb-3">, <label class="form-label">, <input class="form-control">, et <button class="btn btn-primary">.'
+                ],
+                9 => [
+                    'title' => 'Badges et boutons groupés',
+                    'difficulty' => 'Moyen',
+                    'points' => 15,
+                    'instruction' => 'Créez un badge "Nouveau" avec la classe badge bg-primary, et un groupe de boutons avec btn-group contenant 3 boutons.',
+                    'description' => 'Les badges Bootstrap affichent de petites étiquettes. badge bg-primary|success|danger crée des badges colorés. btn-group groupe des boutons horizontalement, btn-group-vertical verticalement. C\'est utile pour les tags et les groupes d\'actions.',
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Badges et boutons groupés</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5">
+  <h1>Article <span class=""></span></h1>
+  
+  <div class="">
+    <button class="btn btn-outline-primary">Gauche</button>
+    <button class="btn btn-outline-primary">Centre</button>
+    <button class="btn btn-outline-primary">Droite</button>
+  </div>
+</div>
+
+</body>
+</html>',
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Badges et boutons groupés</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5">
+  <h1>Article <span class="badge bg-primary">Nouveau</span></h1>
+  
+  <div class="btn-group">
+    <button class="btn btn-outline-primary">Gauche</button>
+    <button class="btn btn-outline-primary">Centre</button>
+    <button class="btn btn-outline-primary">Droite</button>
+  </div>
+</div>
+
+</body>
+</html>',
+                    'hint' => 'Utilisez <span class="badge bg-primary"> pour le badge et <div class="btn-group"> pour grouper les boutons.'
+                ],
+                10 => [
+                    'title' => 'Listes et groupes Bootstrap',
+                    'difficulty' => 'Moyen',
+                    'points' => 15,
+                    'instruction' => 'Créez une liste groupée Bootstrap (list-group) avec 3 éléments (list-group-item). Ajoutez un élément actif (active) et un élément désactivé (disabled).',
+                    'description' => 'Les listes groupées Bootstrap affichent des listes stylisées. list-group contient la liste, list-group-item chaque élément. active met en évidence, disabled désactive. list-group-flush enlève les bordures. C\'est utile pour les menus et les listes de contenu.',
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listes Bootstrap</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5">
+  <ul class="">
+    <li class="">Élément 1</li>
+    <li class="">Élément 2</li>
+    <li class="">Élément 3</li>
+  </ul>
+</div>
+
+</body>
+</html>',
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listes Bootstrap</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5">
+  <ul class="list-group">
+    <li class="list-group-item active">Élément 1</li>
+    <li class="list-group-item">Élément 2</li>
+    <li class="list-group-item disabled">Élément 3</li>
+  </ul>
+</div>
+
+</body>
+</html>',
+                    'hint' => 'Utilisez <ul class="list-group"> et <li class="list-group-item active|disabled"> pour créer la liste groupée.'
+                ],
+                11 => [
                     'title' => 'Responsive Bootstrap',
                     'difficulty' => 'Difficile',
                     'points' => 20,
@@ -2030,7 +3650,7 @@ echo "Utilisateur : " . $_SESSION["utilisateur"];
 </html>',
                     'hint' => 'Utilisez "col-12 col-md-6 col-lg-4" pour chaque colonne. col-12 = mobile, col-md-6 = tablette, col-lg-4 = desktop.'
                 ],
-                6 => [
+                12 => [
                     'title' => 'Customisation Bootstrap',
                     'difficulty' => 'Difficile',
                     'points' => 25,
@@ -2061,7 +3681,7 @@ $font-family-base: "Arial", sans-serif;
 }',
                     'hint' => 'Définissez $primary: #06b6d4; et $font-family-base: "Arial", sans-serif; avant @import. Utilisez $primary dans .custom-btn.'
                 ],
-                7 => [
+                13 => [
                     'title' => 'Bootstrap avec JavaScript',
                     'difficulty' => 'Difficile',
                     'points' => 28,
@@ -2138,6 +3758,121 @@ $font-family-base: "Arial", sans-serif;
 </html>',
                     'hint' => 'Ajoutez data-bs-toggle="modal" data-bs-target="#maModale" au bouton, tabindex="-1" à la modale, et data-bs-dismiss="modal" aux boutons de fermeture.'
                 ],
+                14 => [
+                    'title' => 'Carousel et composants avancés',
+                    'difficulty' => 'Difficile',
+                    'points' => 28,
+                    'instruction' => 'Créez un carousel Bootstrap avec 3 slides. Utilisez carousel, carousel-inner, carousel-item, et les contrôles (carousel-control-prev, carousel-control-next). Ajoutez aussi les indicateurs (carousel-indicators).',
+                    'description' => 'Le carousel Bootstrap crée un diaporama d\'images. carousel contient le carousel, carousel-inner les slides, carousel-item chaque slide. carousel-control-prev/next ajoutent les flèches, carousel-indicators les points. data-bs-ride="carousel" active l\'auto-play. C\'est un composant avancé très utilisé.',
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carousel Bootstrap</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5">
+  <div id="monCarousel" class="carousel slide" data-bs-ride="carousel">
+    
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>',
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carousel Bootstrap</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5">
+  <div id="monCarousel" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+      <button type="button" data-bs-target="#monCarousel" data-bs-slide-to="0" class="active"></button>
+      <button type="button" data-bs-target="#monCarousel" data-bs-slide-to="1"></button>
+      <button type="button" data-bs-target="#monCarousel" data-bs-slide-to="2"></button>
+    </div>
+    <div class="carousel-inner">
+      <div class="carousel-item active">
+        <div class="d-block w-100 bg-primary" style="height: 300px;">Slide 1</div>
+      </div>
+      <div class="carousel-item">
+        <div class="d-block w-100 bg-success" style="height: 300px;">Slide 2</div>
+      </div>
+      <div class="carousel-item">
+        <div class="d-block w-100 bg-danger" style="height: 300px;">Slide 3</div>
+      </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#monCarousel" data-bs-slide="prev">
+      <span class="carousel-control-prev-icon"></span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#monCarousel" data-bs-slide="next">
+      <span class="carousel-control-next-icon"></span>
+    </button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>',
+                    'hint' => 'Utilisez carousel-indicators pour les points, carousel-inner pour les slides, carousel-item pour chaque slide, et carousel-control-prev/next pour les flèches.'
+                ],
+                15 => [
+                    'title' => 'Système de grille avancé Bootstrap',
+                    'difficulty' => 'Difficile',
+                    'points' => 30,
+                    'instruction' => 'Créez une grille Bootstrap complexe avec offset : 3 colonnes de 2 colonnes chacune (col-md-2), avec un offset de 2 colonnes (offset-md-2) pour la première colonne. Utilisez row et col-md-2 offset-md-2.',
+                    'description' => 'Le système de grille Bootstrap avancé permet des layouts complexes. offset-* décale les colonnes, order-* change l\'ordre, align-self-* aligne verticalement. Les offsets créent des espaces sans colonnes vides. C\'est puissant pour des layouts asymétriques.',
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grille avancée Bootstrap</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5">
+  <div class="row">
+    <div class="">Colonne 1</div>
+    <div class="">Colonne 2</div>
+    <div class="">Colonne 3</div>
+  </div>
+</div>
+
+</body>
+</html>',
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grille avancée Bootstrap</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-2 offset-md-2 bg-primary p-3">Colonne 1</div>
+    <div class="col-md-2 bg-success p-3">Colonne 2</div>
+    <div class="col-md-2 bg-danger p-3">Colonne 3</div>
+  </div>
+</div>
+
+</body>
+</html>',
+                    'hint' => 'Utilisez col-md-2 offset-md-2 pour la première colonne (décalée de 2), et col-md-2 pour les autres colonnes.'
+                ],
             ],
             'git' => [
                 1 => [
@@ -2171,6 +3906,26 @@ $font-family-base: "Arial", sans-serif;
                     'hint' => 'Utilisez git commit -m suivi du message entre guillemets.'
                 ],
                 4 => [
+                    'title' => 'Voir l\'historique Git',
+                    'difficulty' => 'Facile',
+                    'points' => 10,
+                    'instruction' => 'Quelle commande affiche l\'historique des commits Git avec les messages et les auteurs ?',
+                    'description' => 'git log affiche l\'historique des commits. git log --oneline affiche une version compacte, git log --graph affiche un graphique, git log --all affiche toutes les branches. C\'est essentiel pour comprendre l\'historique du projet.',
+                    'startCode' => 'git ',
+                    'solution' => 'git log',
+                    'hint' => 'La commande est git log. Utilisez git log --oneline pour une version compacte.'
+                ],
+                5 => [
+                    'title' => 'Vérifier le statut Git',
+                    'difficulty' => 'Facile',
+                    'points' => 10,
+                    'instruction' => 'Quelle commande affiche le statut actuel du dépôt Git (fichiers modifiés, ajoutés, etc.) ?',
+                    'description' => 'git status affiche l\'état actuel du dépôt. Il montre les fichiers modifiés, ajoutés au staging, et non suivis. C\'est la commande la plus utilisée pour voir ce qui a changé. git status -s affiche une version courte.',
+                    'startCode' => 'git ',
+                    'solution' => 'git status',
+                    'hint' => 'La commande est git status. Utilisez git status -s pour une version courte.'
+                ],
+                6 => [
                     'title' => 'Créer une branche',
                     'difficulty' => 'Moyen',
                     'points' => 15,
@@ -2180,7 +3935,7 @@ $font-family-base: "Arial", sans-serif;
                     'solution' => 'git checkout -b develop',
                     'hint' => 'Utilisez git checkout -b develop. -b crée la branche et checkout y bascule.'
                 ],
-                5 => [
+                11 => [
                     'title' => 'Fusionner des branches',
                     'difficulty' => 'Difficile',
                     'points' => 20,
@@ -2190,7 +3945,7 @@ $font-family-base: "Arial", sans-serif;
                     'solution' => 'git merge feature',
                     'hint' => 'Assurez-vous d\'être sur main, puis utilisez git merge feature pour fusionner.'
                 ],
-                6 => [
+                12 => [
                     'title' => 'Résoudre les conflits',
                     'difficulty' => 'Difficile',
                     'points' => 25,
@@ -2213,7 +3968,7 @@ git add fichier.txt
 git commit -m "Résolution du conflit"',
                     'hint' => 'Supprimez les marqueurs <<<<<<, ======, >>>>>>, gardez le code correct, puis git add fichier.txt et git commit.'
                 ],
-                7 => [
+                13 => [
                     'title' => 'Git rebase',
                     'difficulty' => 'Difficile',
                     'points' => 28,
@@ -2223,6 +3978,76 @@ git commit -m "Résolution du conflit"',
 git ',
                     'solution' => 'git rebase main',
                     'hint' => 'Sur la branche feature, utilisez git rebase main pour réappliquer les commits sur main.'
+                ],
+                7 => [
+                    'title' => 'Changer de branche',
+                    'difficulty' => 'Moyen',
+                    'points' => 15,
+                    'instruction' => 'Basculez sur la branche "develop" en utilisant la commande appropriée.',
+                    'description' => 'git checkout bascule sur une branche existante. git switch (nouvelle syntaxe) fait la même chose. git checkout -b crée et bascule. C\'est essentiel pour travailler sur différentes fonctionnalités en parallèle.',
+                    'startCode' => 'git ',
+                    'solution' => 'git checkout develop',
+                    'hint' => 'Utilisez git checkout develop ou git switch develop pour basculer sur la branche develop.'
+                ],
+                8 => [
+                    'title' => 'Cloner un dépôt distant',
+                    'difficulty' => 'Moyen',
+                    'points' => 18,
+                    'instruction' => 'Clonez le dépôt distant "https://github.com/user/repo.git" dans un dossier local.',
+                    'description' => 'git clone copie un dépôt distant localement. git clone URL crée un dossier avec le nom du dépôt, git clone URL nom crée un dossier avec un nom personnalisé. C\'est la première étape pour travailler sur un projet existant.',
+                    'startCode' => 'git ',
+                    'solution' => 'git clone https://github.com/user/repo.git',
+                    'hint' => 'Utilisez git clone suivi de l\'URL du dépôt. git clone https://github.com/user/repo.git'
+                ],
+                9 => [
+                    'title' => 'Pousser vers un dépôt distant',
+                    'difficulty' => 'Moyen',
+                    'points' => 18,
+                    'instruction' => 'Poussez la branche "main" vers le dépôt distant "origin".',
+                    'description' => 'git push envoie les commits locaux vers le dépôt distant. git push origin main pousse la branche main vers origin. git push -u origin main configure le tracking. C\'est essentiel pour partager le code.',
+                    'startCode' => 'git ',
+                    'solution' => 'git push origin main',
+                    'hint' => 'Utilisez git push origin main pour pousser la branche main vers origin. git push -u origin main configure le tracking.'
+                ],
+                10 => [
+                    'title' => 'Récupérer les changements (pull)',
+                    'difficulty' => 'Moyen',
+                    'points' => 18,
+                    'instruction' => 'Récupérez et fusionnez les changements du dépôt distant "origin" dans la branche actuelle.',
+                    'description' => 'git pull récupère et fusionne les changements du dépôt distant. C\'est équivalent à git fetch suivi de git merge. git pull origin main récupère depuis origin/main. C\'est essentiel pour synchroniser avec le dépôt distant.',
+                    'startCode' => 'git ',
+                    'solution' => 'git pull origin main',
+                    'hint' => 'Utilisez git pull origin main pour récupérer et fusionner les changements. git pull est équivalent à git fetch + git merge.'
+                ],
+                14 => [
+                    'title' => 'Git stash (mise de côté)',
+                    'difficulty' => 'Difficile',
+                    'points' => 25,
+                    'instruction' => 'Mettez de côté les modifications en cours avec git stash, puis récupérez-les avec git stash pop.',
+                    'description' => 'git stash sauvegarde temporairement les modifications non commitées. git stash sauvegarde, git stash list liste les stashes, git stash pop récupère et supprime le dernier stash, git stash apply récupère sans supprimer. C\'est utile pour changer de branche sans committer.',
+                    'startCode' => '/* Vous avez des modifications non commitées */
+git 
+
+/* Changez de branche, travaillez, puis revenez */
+
+git ',
+                    'solution' => '/* Mettre de côté */
+git stash
+
+/* Après avoir changé de branche et travaillé, récupérer */
+git stash pop',
+                    'hint' => 'Utilisez git stash pour sauvegarder, puis git stash pop pour récupérer. git stash list affiche tous les stashes.'
+                ],
+                15 => [
+                    'title' => 'Annuler des changements Git',
+                    'difficulty' => 'Difficile',
+                    'points' => 28,
+                    'instruction' => 'Annulez les modifications non commitées dans le fichier "fichier.txt" avec git checkout ou git restore.',
+                    'description' => 'git restore (nouveau) ou git checkout -- (ancien) annule les modifications non commitées. git reset --hard annule tout, git reset --soft annule le commit mais garde les modifications. Attention : ces commandes sont destructives. C\'est utile pour corriger des erreurs.',
+                    'startCode' => '/* Vous avez modifié fichier.txt mais voulez annuler */
+git ',
+                    'solution' => 'git restore fichier.txt',
+                    'hint' => 'Utilisez git restore fichier.txt (nouveau) ou git checkout -- fichier.txt (ancien) pour annuler les modifications. git restore . annule tout.'
                 ],
             ],
             'wordpress' => [
@@ -2263,6 +4088,36 @@ if (have_posts()) {
                     'hint' => 'Utilisez the_title() pour afficher le titre. Cette fonction doit être appelée dans The Loop.'
                 ],
                 3 => [
+                    'title' => 'Afficher le contenu',
+                    'difficulty' => 'Facile',
+                    'points' => 10,
+                    'instruction' => 'Affichez le contenu de l\'article dans un élément <div> en utilisant la fonction WordPress appropriée.',
+                    'description' => 'WordPress fournit the_content() pour afficher le contenu de l\'article. Il existe aussi get_the_content() qui retourne le contenu sans l\'afficher. Ces fonctions doivent être utilisées dans The Loop. C\'est la base de l\'affichage de contenu.',
+                    'startCode' => '<div><?php  ?></div>',
+                    'solution' => '<div><?php the_content(); ?></div>',
+                    'hint' => 'Utilisez the_content() pour afficher le contenu. Cette fonction doit être appelée dans The Loop.'
+                ],
+                4 => [
+                    'title' => 'Afficher la date',
+                    'difficulty' => 'Facile',
+                    'points' => 10,
+                    'instruction' => 'Affichez la date de publication de l\'article en utilisant the_date() ou get_the_date().',
+                    'description' => 'WordPress fournit the_date() pour afficher la date de publication. get_the_date() retourne la date sans l\'afficher. On peut formater la date avec des paramètres. C\'est essentiel pour afficher les métadonnées des articles.',
+                    'startCode' => '<p>Publié le : <?php  ?></p>',
+                    'solution' => '<p>Publié le : <?php the_date(); ?></p>',
+                    'hint' => 'Utilisez the_date() pour afficher la date. Utilisez the_date(\'d/m/Y\') pour formater la date.'
+                ],
+                5 => [
+                    'title' => 'Afficher l\'auteur',
+                    'difficulty' => 'Facile',
+                    'points' => 12,
+                    'instruction' => 'Affichez le nom de l\'auteur de l\'article en utilisant the_author() ou get_the_author().',
+                    'description' => 'WordPress fournit the_author() pour afficher le nom de l\'auteur. get_the_author() retourne le nom sans l\'afficher. the_author_meta() permet d\'accéder à d\'autres informations de l\'auteur. C\'est essentiel pour afficher les crédits.',
+                    'startCode' => '<p>Auteur : <?php  ?></p>',
+                    'solution' => '<p>Auteur : <?php the_author(); ?></p>',
+                    'hint' => 'Utilisez the_author() pour afficher le nom de l\'auteur. Cette fonction doit être appelée dans The Loop.'
+                ],
+                6 => [
                     'title' => 'Image à la une',
                     'difficulty' => 'Moyen',
                     'points' => 15,
@@ -2280,7 +4135,7 @@ if (has_post_thumbnail()) {
 ?>',
                     'hint' => 'Utilisez the_post_thumbnail(\'medium\') pour afficher l\'image avec la taille medium.'
                 ],
-                4 => [
+                7 => [
                     'title' => 'Menu WordPress',
                     'difficulty' => 'Moyen',
                     'points' => 18,
@@ -2298,7 +4153,98 @@ wp_nav_menu(array(
 ?>',
                     'hint' => 'Utilisez \'primary\' comme theme_location. Cet emplacement doit être enregistré dans functions.php avec register_nav_menus().'
                 ],
-                5 => [
+                8 => [
+                    'title' => 'Widgets WordPress',
+                    'difficulty' => 'Moyen',
+                    'points' => 18,
+                    'instruction' => 'Enregistrez une zone de widgets (sidebar) avec register_sidebar() dans functions.php, puis affichez-la dans le template avec dynamic_sidebar().',
+                    'description' => 'Les widgets WordPress permettent d\'ajouter du contenu dynamique dans les sidebars. register_sidebar() enregistre une zone, dynamic_sidebar() l\'affiche. is_active_sidebar() vérifie si des widgets sont actifs. C\'est essentiel pour les thèmes personnalisables.',
+                    'startCode' => '/* functions.php */
+<?php
+function mon_theme_widgets() {
+  
+}
+add_action(\'widgets_init\', \'mon_theme_widgets\');
+?>
+
+/* sidebar.php */
+<?php
+
+
+?>',
+                    'solution' => '/* functions.php */
+<?php
+function mon_theme_widgets() {
+  register_sidebar(array(
+    \'name\' => \'Sidebar principale\',
+    \'id\' => \'sidebar-1\'
+  ));
+}
+add_action(\'widgets_init\', \'mon_theme_widgets\');
+?>
+
+/* sidebar.php */
+<?php
+if (is_active_sidebar(\'sidebar-1\')) {
+  dynamic_sidebar(\'sidebar-1\');
+}
+?>',
+                    'hint' => 'Utilisez register_sidebar(array(\'name\' => \'...\', \'id\' => \'...\')) dans functions.php, et dynamic_sidebar(\'id\') dans le template.'
+                ],
+                9 => [
+                    'title' => 'Catégories et tags',
+                    'difficulty' => 'Moyen',
+                    'points' => 15,
+                    'instruction' => 'Affichez les catégories et les tags de l\'article en utilisant the_category() et the_tags().',
+                    'description' => 'WordPress utilise les catégories et tags pour organiser le contenu. the_category() affiche les catégories, the_tags() affiche les tags. get_the_category() et get_the_tags() retournent les données. C\'est essentiel pour la navigation et l\'organisation.',
+                    'startCode' => '<?php
+if (have_posts()) {
+  while (have_posts()) {
+    the_post();
+    the_title();
+    
+  }
+}
+?>',
+                    'solution' => '<?php
+if (have_posts()) {
+  while (have_posts()) {
+    the_post();
+    the_title();
+    the_category(\', \');
+    the_tags(\'Tags: \', \', \');
+  }
+}
+?>',
+                    'hint' => 'Utilisez the_category(\', \') pour afficher les catégories séparées par des virgules, et the_tags(\'Tags: \', \', \') pour les tags.'
+                ],
+                10 => [
+                    'title' => 'Pagination WordPress',
+                    'difficulty' => 'Moyen',
+                    'points' => 20,
+                    'instruction' => 'Ajoutez la pagination WordPress en utilisant the_posts_pagination() ou paginate_links().',
+                    'description' => 'La pagination WordPress divise les articles en pages. the_posts_pagination() affiche la pagination moderne, paginate_links() offre plus de contrôle. previous_posts_link() et next_posts_link() créent des liens simples. C\'est essentiel pour naviguer entre les pages d\'articles.',
+                    'startCode' => '<?php
+if (have_posts()) {
+  while (have_posts()) {
+    the_post();
+    the_title();
+  }
+  
+}
+?>',
+                    'solution' => '<?php
+if (have_posts()) {
+  while (have_posts()) {
+    the_post();
+    the_title();
+  }
+  the_posts_pagination();
+}
+?>',
+                    'hint' => 'Utilisez the_posts_pagination() après The Loop pour afficher la pagination. previous_posts_link() et next_posts_link() créent des liens simples.'
+                ],
+                11 => [
                     'title' => 'Custom Post Type',
                     'difficulty' => 'Difficile',
                     'points' => 20,
@@ -2326,7 +4272,7 @@ add_action(\'init\', \'create_portfolio_post_type\');
 ?>',
                     'hint' => 'Utilisez "portfolio" comme premier paramètre, et ajoutez has_archive => true et supports => array(\'title\', \'editor\', \'thumbnail\').'
                 ],
-                6 => [
+                12 => [
                     'title' => 'Les actions et filtres',
                     'difficulty' => 'Difficile',
                     'points' => 25,
@@ -2351,7 +4297,7 @@ add_filter(\'the_content\', \'ajouter_signature\');
 ?>',
                     'hint' => 'Créez function ajouter_signature($content) { $content .= "..."; return $content; } puis add_filter(\'the_content\', \'ajouter_signature\');'
                 ],
-                7 => [
+                13 => [
                     'title' => 'Créer un thème complet',
                     'difficulty' => 'Difficile',
                     'points' => 30,
@@ -2402,6 +4348,72 @@ add_action(\'after_setup_theme\', \'mon_theme_setup\');
 ?>',
                     'hint' => 'Ajoutez Theme Name, Author, Version dans style.css. Créez index.php avec The Loop. Ajoutez add_theme_support() dans functions.php.'
                 ],
+                14 => [
+                    'title' => 'Taxonomies personnalisées',
+                    'difficulty' => 'Difficile',
+                    'points' => 28,
+                    'instruction' => 'Enregistrez une taxonomie personnalisée "genre" pour le custom post type "livre" avec register_taxonomy(). La taxonomie doit être hiérarchique (comme les catégories).',
+                    'description' => 'Les taxonomies personnalisées organisent les custom post types. register_taxonomy() crée une taxonomie, hierarchical => true crée une taxonomie hiérarchique (comme catégories), false crée une taxonomie non-hiérarchique (comme tags). C\'est essentiel pour organiser du contenu personnalisé.',
+                    'startCode' => '<?php
+function creer_taxonomie_genre() {
+  
+}
+add_action(\'init\', \'creer_taxonomie_genre\');
+?>',
+                    'solution' => '<?php
+function creer_taxonomie_genre() {
+  register_taxonomy(\'genre\', \'livre\', array(
+    \'labels\' => array(\'name\' => \'Genres\'),
+    \'hierarchical\' => true,
+    \'public\' => true
+  ));
+}
+add_action(\'init\', \'creer_taxonomie_genre\');
+?>',
+                    'hint' => 'Utilisez register_taxonomy(\'genre\', \'livre\', array(\'hierarchical\' => true, ...)) pour créer une taxonomie hiérarchique.'
+                ],
+                15 => [
+                    'title' => 'Meta boxes personnalisées',
+                    'difficulty' => 'Difficile',
+                    'points' => 30,
+                    'instruction' => 'Créez une meta box personnalisée "Prix" pour les articles en utilisant add_meta_box(), et sauvegardez les données avec save_post. Affichez le champ dans l\'éditeur.',
+                    'description' => 'Les meta boxes ajoutent des champs personnalisés aux articles. add_meta_box() crée la meta box, save_post sauvegarde les données, get_post_meta() récupère les valeurs. C\'est essentiel pour ajouter des métadonnées personnalisées aux articles.',
+                    'startCode' => '<?php
+function ajouter_meta_box_prix() {
+  
+}
+add_action(\'add_meta_boxes\', \'ajouter_meta_box_prix\');
+
+function sauvegarder_prix($post_id) {
+  
+}
+add_action(\'save_post\', \'sauvegarder_prix\');
+?>',
+                    'solution' => '<?php
+function ajouter_meta_box_prix() {
+  add_meta_box(
+    \'prix_meta_box\',
+    \'Prix\',
+    \'afficher_meta_box_prix\',
+    \'post\'
+  );
+}
+add_action(\'add_meta_boxes\', \'ajouter_meta_box_prix\');
+
+function afficher_meta_box_prix($post) {
+  $prix = get_post_meta($post->ID, \'_prix\', true);
+  echo \'<input type="text" name="prix" value="\' . esc_attr($prix) . \'">\';
+}
+
+function sauvegarder_prix($post_id) {
+  if (isset($_POST[\'prix\'])) {
+    update_post_meta($post_id, \'_prix\', sanitize_text_field($_POST[\'prix\']));
+  }
+}
+add_action(\'save_post\', \'sauvegarder_prix\');
+?>',
+                    'hint' => 'Utilisez add_meta_box() pour créer, une fonction callback pour afficher, et save_post pour sauvegarder avec update_post_meta().'
+                ],
             ],
             'ia' => [
                 1 => [
@@ -2429,6 +4441,40 @@ add_action(\'after_setup_theme\', \'mon_theme_setup\');
                     'hint' => 'Le troisième type est l\'apprentissage par renforcement (reinforcement learning).'
                 ],
                 3 => [
+                    'title' => 'Types d\'apprentissage',
+                    'difficulty' => 'Facile',
+                    'points' => 10,
+                    'instruction' => 'Complétez : L\'apprentissage ___ utilise des données étiquetées pour entraîner un modèle.',
+                    'description' => 'L\'apprentissage supervisé utilise des données étiquetées (input et output connus). L\'apprentissage non supervisé trouve des patterns sans étiquettes. L\'apprentissage par renforcement apprend par essais et erreurs avec des récompenses. C\'est la base de la classification des algorithmes ML.',
+                    'startCode' => 'L\'apprentissage ___ utilise des données étiquetées pour entraîner un modèle.',
+                    'solution' => 'L\'apprentissage supervisé utilise des données étiquetées pour entraîner un modèle.',
+                    'hint' => 'L\'apprentissage supervisé utilise des données avec des étiquettes (labels). Réponse : supervisé.'
+                ],
+                4 => [
+                    'title' => 'Données et datasets',
+                    'difficulty' => 'Facile',
+                    'points' => 10,
+                    'instruction' => 'Complétez : Un ___ est un ensemble de données utilisé pour entraîner un modèle d\'IA.',
+                    'description' => 'Un dataset est une collection de données structurées. Le dataset d\'entraînement entraîne le modèle, le dataset de test évalue les performances, le dataset de validation ajuste les hyperparamètres. La qualité du dataset détermine la qualité du modèle. C\'est fondamental en ML.',
+                    'startCode' => 'Un ___ est un ensemble de données utilisé pour entraîner un modèle d\'IA.',
+                    'solution' => 'Un dataset est un ensemble de données utilisé pour entraîner un modèle d\'IA.',
+                    'hint' => 'Un dataset est un ensemble de données. Réponse : dataset.'
+                ],
+                5 => [
+                    'title' => 'Algorithmes de base',
+                    'difficulty' => 'Facile',
+                    'points' => 12,
+                    'instruction' => 'Citez 2 algorithmes de Machine Learning couramment utilisés pour la classification.',
+                    'description' => 'Les algorithmes ML de base incluent la régression linéaire (prédiction), la classification (KNN, SVM, Decision Tree), le clustering (K-means), et les réseaux de neurones. Chaque algorithme a ses forces et faiblesses selon le type de problème.',
+                    'startCode' => 'Algorithmes de classification :
+1. ___
+2. ___',
+                    'solution' => 'Algorithmes de classification :
+1. Decision Tree (Arbre de décision)
+2. K-Nearest Neighbors (KNN)',
+                    'hint' => 'Exemples d\'algorithmes de classification : Decision Tree, KNN, SVM, Naive Bayes, Random Forest.'
+                ],
+                6 => [
                     'title' => 'Réseaux de neurones',
                     'difficulty' => 'Moyen',
                     'points' => 15,
@@ -2438,7 +4484,7 @@ add_action(\'after_setup_theme\', \'mon_theme_setup\');
                     'solution' => 'Couche d\'entrée → Couches cachées → Couche de sortie',
                     'hint' => 'Les couches intermédiaires sont appelées "couches cachées" (hidden layers).'
                 ],
-                4 => [
+                7 => [
                     'title' => 'Deep Learning',
                     'difficulty' => 'Moyen',
                     'points' => 15,
@@ -2448,7 +4494,41 @@ add_action(\'after_setup_theme\', \'mon_theme_setup\');
                     'solution' => 'import tensorflow',
                     'hint' => 'La bibliothèque s\'appelle TensorFlow. Réponse : tensorflow.'
                 ],
-                5 => [
+                8 => [
+                    'title' => 'Entraînement d\'un modèle',
+                    'difficulty' => 'Moyen',
+                    'points' => 18,
+                    'instruction' => 'Complétez : L\'___ est le processus d\'ajustement des paramètres d\'un modèle pour minimiser l\'erreur.',
+                    'description' => 'L\'entraînement (training) ajuste les paramètres du modèle pour minimiser l\'erreur. L\'epoch est une passe complète sur le dataset. Le batch size est le nombre d\'échantillons traités avant la mise à jour. Le learning rate contrôle la vitesse d\'apprentissage. C\'est le cœur du ML.',
+                    'startCode' => 'L\'___ est le processus d\'ajustement des paramètres d\'un modèle pour minimiser l\'erreur.',
+                    'solution' => 'L\'entraînement (training) est le processus d\'ajustement des paramètres d\'un modèle pour minimiser l\'erreur.',
+                    'hint' => 'L\'entraînement (training) ajuste les paramètres. Réponse : entraînement ou training.'
+                ],
+                9 => [
+                    'title' => 'Évaluation de performance',
+                    'difficulty' => 'Moyen',
+                    'points' => 18,
+                    'instruction' => 'Citez 2 métriques utilisées pour évaluer les performances d\'un modèle de classification.',
+                    'description' => 'Les métriques évaluent les performances. Accuracy (précision globale), Precision (précision des prédictions positives), Recall (taux de détection), F1-score (moyenne harmonique). Pour la régression : MSE, MAE, R². Le choix dépend du problème. C\'est essentiel pour valider un modèle.',
+                    'startCode' => 'Métriques de classification :
+1. ___
+2. ___',
+                    'solution' => 'Métriques de classification :
+1. Accuracy (Précision)
+2. F1-score',
+                    'hint' => 'Métriques courantes : Accuracy, Precision, Recall, F1-score, Confusion Matrix.'
+                ],
+                10 => [
+                    'title' => 'Bibliothèques Python (TensorFlow, PyTorch)',
+                    'difficulty' => 'Moyen',
+                    'points' => 20,
+                    'instruction' => 'Complétez : ___ est une bibliothèque Python open-source développée par Facebook pour le Deep Learning.',
+                    'description' => 'TensorFlow (Google) et PyTorch (Facebook) sont les deux principales bibliothèques de Deep Learning. TensorFlow est plus mature, PyTorch est plus flexible. Keras est une API haut niveau sur TensorFlow. Scikit-learn est pour le ML classique. C\'est essentiel pour développer en IA.',
+                    'startCode' => '___ est une bibliothèque Python open-source développée par Facebook pour le Deep Learning.',
+                    'solution' => 'PyTorch est une bibliothèque Python open-source développée par Facebook pour le Deep Learning.',
+                    'hint' => 'PyTorch est développé par Facebook. TensorFlow est développé par Google. Réponse : PyTorch.'
+                ],
+                11 => [
                     'title' => 'Applications IA',
                     'difficulty' => 'Difficile',
                     'points' => 18,
@@ -2462,7 +4542,7 @@ add_action(\'after_setup_theme\', \'mon_theme_setup\');
 3. Assistants virtuels',
                     'hint' => 'Exemples : reconnaissance vocale (Siri), voitures autonomes (Tesla), assistants virtuels (ChatGPT).'
                 ],
-                6 => [
+                12 => [
                     'title' => 'Natural Language Processing',
                     'difficulty' => 'Difficile',
                     'points' => 25,
@@ -2480,7 +4560,7 @@ Applications :
 2. Chatbots et assistants vocaux',
                     'hint' => 'NLP = Natural Language Processing. Applications : traduction, chatbots, analyse de sentiment, etc.'
                 ],
-                7 => [
+                13 => [
                     'title' => 'Éthique de l\'IA',
                     'difficulty' => 'Difficile',
                     'points' => 30,
@@ -2496,6 +4576,40 @@ Applications :
 3. Confidentialité et protection des données',
                     'hint' => 'Principes : transparence, équité, confidentialité, responsabilité, robustesse.'
                 ],
+                14 => [
+                    'title' => 'Computer Vision',
+                    'difficulty' => 'Difficile',
+                    'points' => 28,
+                    'instruction' => 'Expliquez ce qu\'est la Computer Vision et donnez 2 applications concrètes.',
+                    'description' => 'La Computer Vision permet aux machines de comprendre les images. Applications : reconnaissance d\'objets, classification d\'images, détection de visages, OCR (reconnaissance de texte), voitures autonomes, imagerie médicale. Les CNN (Convolutional Neural Networks) sont la base. C\'est un domaine en pleine expansion.',
+                    'startCode' => 'Computer Vision signifie : ___
+
+Applications :
+1. ___
+2. ___',
+                    'solution' => 'Computer Vision signifie : Vision par ordinateur (analyse et compréhension d\'images par les machines)
+
+Applications :
+1. Reconnaissance d\'objets et classification d\'images
+2. Détection de visages et OCR (reconnaissance de texte)',
+                    'hint' => 'Computer Vision = Vision par ordinateur. Applications : reconnaissance d\'objets, classification, OCR, voitures autonomes, imagerie médicale.'
+                ],
+                15 => [
+                    'title' => 'Optimisation et hyperparamètres',
+                    'difficulty' => 'Difficile',
+                    'points' => 30,
+                    'instruction' => 'Citez 3 hyperparamètres importants à ajuster lors de l\'entraînement d\'un réseau de neurones.',
+                    'description' => 'Les hyperparamètres contrôlent l\'entraînement. Learning rate (vitesse d\'apprentissage), batch size (taille des lots), nombre d\'epochs (itérations), nombre de couches, nombre de neurones par couche. L\'optimisation des hyperparamètres améliore les performances. C\'est un processus itératif.',
+                    'startCode' => 'Hyperparamètres importants :
+1. ___
+2. ___
+3. ___',
+                    'solution' => 'Hyperparamètres importants :
+1. Learning rate (taux d\'apprentissage)
+2. Batch size (taille des lots)
+3. Nombre d\'epochs (itérations)',
+                    'hint' => 'Hyperparamètres clés : learning rate, batch size, nombre d\'epochs, nombre de couches, nombre de neurones, fonction d\'activation.'
+                ],
             ],
         ];
 
@@ -2507,102 +4621,164 @@ Applications :
         // Exemples d'exercices par langage
         $allExercises = [
             'html5' => [
-                // Niveau Facile
+                // Niveau Facile (5 exercices)
                 ['title' => 'Les balises de base', 'difficulty' => 'Facile', 'points' => 10],
                 ['title' => 'Les paragraphes', 'difficulty' => 'Facile', 'points' => 10],
                 ['title' => 'Les liens', 'difficulty' => 'Facile', 'points' => 15],
-                // Niveau Moyen
+                ['title' => 'Les titres HTML', 'difficulty' => 'Facile', 'points' => 10],
+                ['title' => 'Les sauts de ligne', 'difficulty' => 'Facile', 'points' => 10],
+                // Niveau Moyen (5 exercices)
                 ['title' => 'Les images', 'difficulty' => 'Moyen', 'points' => 15],
                 ['title' => 'Les listes', 'difficulty' => 'Moyen', 'points' => 20],
                 ['title' => 'Les tableaux HTML5', 'difficulty' => 'Moyen', 'points' => 20],
-                // Niveau Difficile
+                ['title' => 'Les formulaires de base', 'difficulty' => 'Moyen', 'points' => 18],
+                ['title' => 'Les citations et abréviations', 'difficulty' => 'Moyen', 'points' => 15],
+                // Niveau Difficile (5 exercices)
                 ['title' => 'Formulaires HTML5 avancés', 'difficulty' => 'Difficile', 'points' => 25],
                 ['title' => 'Éléments sémantiques HTML5', 'difficulty' => 'Difficile', 'points' => 25],
                 ['title' => 'Accessibilité HTML5', 'difficulty' => 'Difficile', 'points' => 30],
+                ['title' => 'Métadonnées et SEO HTML5', 'difficulty' => 'Difficile', 'points' => 28],
+                ['title' => 'Multimédia HTML5 (audio/vidéo)', 'difficulty' => 'Difficile', 'points' => 30],
             ],
             'css3' => [
-                // Niveau Facile
+                // Niveau Facile (5 exercices)
                 ['title' => 'Les sélecteurs CSS', 'difficulty' => 'Facile', 'points' => 10],
-                // Niveau Moyen
+                ['title' => 'Couleurs et arrière-plans', 'difficulty' => 'Facile', 'points' => 10],
+                ['title' => 'Marges et padding', 'difficulty' => 'Facile', 'points' => 10],
+                ['title' => 'Bordures CSS', 'difficulty' => 'Facile', 'points' => 10],
+                ['title' => 'Polices et texte', 'difficulty' => 'Facile', 'points' => 12],
+                // Niveau Moyen (5 exercices)
                 ['title' => 'Flexbox - Centrage', 'difficulty' => 'Moyen', 'points' => 20],
                 ['title' => 'Grid Layout', 'difficulty' => 'Moyen', 'points' => 20],
                 ['title' => 'Responsive Design', 'difficulty' => 'Moyen', 'points' => 15],
-                // Niveau Difficile
+                ['title' => 'Pseudo-classes et pseudo-éléments', 'difficulty' => 'Moyen', 'points' => 18],
+                ['title' => 'Transitions CSS', 'difficulty' => 'Moyen', 'points' => 20],
+                // Niveau Difficile (5 exercices)
                 ['title' => 'Animations CSS', 'difficulty' => 'Difficile', 'points' => 25],
                 ['title' => 'CSS Variables', 'difficulty' => 'Difficile', 'points' => 25],
                 ['title' => 'Advanced Grid Layout', 'difficulty' => 'Difficile', 'points' => 30],
+                ['title' => 'Transformations CSS 3D', 'difficulty' => 'Difficile', 'points' => 28],
+                ['title' => 'CSS Architecture (BEM, SMACSS)', 'difficulty' => 'Difficile', 'points' => 30],
             ],
             'javascript' => [
-                // Niveau Facile
+                // Niveau Facile (5 exercices)
                 ['title' => 'Variables et types', 'difficulty' => 'Facile', 'points' => 10],
                 ['title' => 'Fonctions', 'difficulty' => 'Facile', 'points' => 15],
-                // Niveau Moyen
+                ['title' => 'Conditions if/else', 'difficulty' => 'Facile', 'points' => 12],
+                ['title' => 'Boucles for et while', 'difficulty' => 'Facile', 'points' => 12],
+                ['title' => 'Opérateurs JavaScript', 'difficulty' => 'Facile', 'points' => 10],
+                // Niveau Moyen (5 exercices)
                 ['title' => 'DOM Manipulation', 'difficulty' => 'Moyen', 'points' => 20],
                 ['title' => 'Tableaux et boucles', 'difficulty' => 'Moyen', 'points' => 20],
-                // Niveau Difficile
+                ['title' => 'Événements JavaScript', 'difficulty' => 'Moyen', 'points' => 18],
+                ['title' => 'Manipulation de chaînes', 'difficulty' => 'Moyen', 'points' => 15],
+                ['title' => 'Fonctions fléchées', 'difficulty' => 'Moyen', 'points' => 20],
+                // Niveau Difficile (5 exercices)
                 ['title' => 'Objets JavaScript', 'difficulty' => 'Difficile', 'points' => 30],
                 ['title' => 'Promises et Async/Await', 'difficulty' => 'Difficile', 'points' => 28],
                 ['title' => 'Closures et Scope', 'difficulty' => 'Difficile', 'points' => 30],
+                ['title' => 'Destructuring et Spread', 'difficulty' => 'Difficile', 'points' => 25],
+                ['title' => 'Modules ES6 (import/export)', 'difficulty' => 'Difficile', 'points' => 28],
             ],
             'php' => [
-                // Niveau Facile
+                // Niveau Facile (5 exercices)
                 ['title' => 'Syntaxe de base PHP', 'difficulty' => 'Facile', 'points' => 10],
                 ['title' => 'Variables PHP', 'difficulty' => 'Facile', 'points' => 10],
-                // Niveau Moyen
+                ['title' => 'Opérateurs PHP', 'difficulty' => 'Facile', 'points' => 10],
+                ['title' => 'Chaînes de caractères PHP', 'difficulty' => 'Facile', 'points' => 12],
+                ['title' => 'Commentaires PHP', 'difficulty' => 'Facile', 'points' => 8],
+                // Niveau Moyen (5 exercices)
                 ['title' => 'Conditions PHP', 'difficulty' => 'Moyen', 'points' => 15],
                 ['title' => 'Boucles PHP', 'difficulty' => 'Moyen', 'points' => 20],
-                // Niveau Difficile
+                ['title' => 'Fonctions PHP', 'difficulty' => 'Moyen', 'points' => 18],
+                ['title' => 'Tableaux simples PHP', 'difficulty' => 'Moyen', 'points' => 18],
+                ['title' => 'Formulaires PHP (GET/POST)', 'difficulty' => 'Moyen', 'points' => 20],
+                // Niveau Difficile (5 exercices)
                 ['title' => 'Tableaux PHP', 'difficulty' => 'Difficile', 'points' => 25],
                 ['title' => 'POO en PHP', 'difficulty' => 'Difficile', 'points' => 30],
                 ['title' => 'Les sessions PHP', 'difficulty' => 'Difficile', 'points' => 28],
+                ['title' => 'Traitement des fichiers PHP', 'difficulty' => 'Difficile', 'points' => 28],
+                ['title' => 'Exceptions et gestion d\'erreurs', 'difficulty' => 'Difficile', 'points' => 30],
             ],
             'bootstrap' => [
-                // Niveau Facile
+                // Niveau Facile (5 exercices)
                 ['title' => 'Grille Bootstrap', 'difficulty' => 'Facile', 'points' => 10],
                 ['title' => 'Bouton Bootstrap', 'difficulty' => 'Facile', 'points' => 10],
-                // Niveau Moyen
+                ['title' => 'Typographie Bootstrap', 'difficulty' => 'Facile', 'points' => 10],
+                ['title' => 'Couleurs Bootstrap', 'difficulty' => 'Facile', 'points' => 10],
+                ['title' => 'Alertes Bootstrap', 'difficulty' => 'Facile', 'points' => 12],
+                // Niveau Moyen (5 exercices)
                 ['title' => 'Card Bootstrap', 'difficulty' => 'Moyen', 'points' => 15],
                 ['title' => 'Navbar Bootstrap', 'difficulty' => 'Moyen', 'points' => 20],
-                // Niveau Difficile
+                ['title' => 'Formulaires Bootstrap', 'difficulty' => 'Moyen', 'points' => 18],
+                ['title' => 'Badges et boutons groupés', 'difficulty' => 'Moyen', 'points' => 15],
+                ['title' => 'Listes et groupes Bootstrap', 'difficulty' => 'Moyen', 'points' => 15],
+                // Niveau Difficile (5 exercices)
                 ['title' => 'Responsive Bootstrap', 'difficulty' => 'Difficile', 'points' => 20],
                 ['title' => 'Customisation Bootstrap', 'difficulty' => 'Difficile', 'points' => 25],
                 ['title' => 'Bootstrap avec JavaScript', 'difficulty' => 'Difficile', 'points' => 28],
+                ['title' => 'Carousel et composants avancés', 'difficulty' => 'Difficile', 'points' => 28],
+                ['title' => 'Système de grille avancé Bootstrap', 'difficulty' => 'Difficile', 'points' => 30],
             ],
             'git' => [
-                // Niveau Facile
+                // Niveau Facile (5 exercices)
                 ['title' => 'Initialiser un dépôt Git', 'difficulty' => 'Facile', 'points' => 10],
                 ['title' => 'Ajouter des fichiers', 'difficulty' => 'Facile', 'points' => 10],
                 ['title' => 'Créer un commit', 'difficulty' => 'Facile', 'points' => 15],
-                // Niveau Moyen
+                ['title' => 'Voir l\'historique Git', 'difficulty' => 'Facile', 'points' => 10],
+                ['title' => 'Vérifier le statut Git', 'difficulty' => 'Facile', 'points' => 10],
+                // Niveau Moyen (5 exercices)
                 ['title' => 'Créer une branche', 'difficulty' => 'Moyen', 'points' => 15],
-                // Niveau Difficile
+                ['title' => 'Changer de branche', 'difficulty' => 'Moyen', 'points' => 15],
+                ['title' => 'Cloner un dépôt distant', 'difficulty' => 'Moyen', 'points' => 18],
+                ['title' => 'Pousser vers un dépôt distant', 'difficulty' => 'Moyen', 'points' => 18],
+                ['title' => 'Récupérer les changements (pull)', 'difficulty' => 'Moyen', 'points' => 18],
+                // Niveau Difficile (5 exercices)
                 ['title' => 'Fusionner des branches', 'difficulty' => 'Difficile', 'points' => 20],
                 ['title' => 'Résoudre les conflits', 'difficulty' => 'Difficile', 'points' => 25],
                 ['title' => 'Git rebase', 'difficulty' => 'Difficile', 'points' => 28],
+                ['title' => 'Git stash (mise de côté)', 'difficulty' => 'Difficile', 'points' => 25],
+                ['title' => 'Annuler des changements Git', 'difficulty' => 'Difficile', 'points' => 28],
             ],
             'wordpress' => [
-                // Niveau Facile
+                // Niveau Facile (5 exercices)
                 ['title' => 'The Loop WordPress', 'difficulty' => 'Facile', 'points' => 10],
                 ['title' => 'Afficher le titre', 'difficulty' => 'Facile', 'points' => 10],
-                // Niveau Moyen
+                ['title' => 'Afficher le contenu', 'difficulty' => 'Facile', 'points' => 10],
+                ['title' => 'Afficher la date', 'difficulty' => 'Facile', 'points' => 10],
+                ['title' => 'Afficher l\'auteur', 'difficulty' => 'Facile', 'points' => 12],
+                // Niveau Moyen (5 exercices)
                 ['title' => 'Image à la une', 'difficulty' => 'Moyen', 'points' => 15],
                 ['title' => 'Menu WordPress', 'difficulty' => 'Moyen', 'points' => 18],
-                // Niveau Difficile
+                ['title' => 'Widgets WordPress', 'difficulty' => 'Moyen', 'points' => 18],
+                ['title' => 'Catégories et tags', 'difficulty' => 'Moyen', 'points' => 15],
+                ['title' => 'Pagination WordPress', 'difficulty' => 'Moyen', 'points' => 20],
+                // Niveau Difficile (5 exercices)
                 ['title' => 'Custom Post Type', 'difficulty' => 'Difficile', 'points' => 20],
                 ['title' => 'Les actions et filtres', 'difficulty' => 'Difficile', 'points' => 25],
                 ['title' => 'Créer un thème complet', 'difficulty' => 'Difficile', 'points' => 30],
+                ['title' => 'Taxonomies personnalisées', 'difficulty' => 'Difficile', 'points' => 28],
+                ['title' => 'Meta boxes personnalisées', 'difficulty' => 'Difficile', 'points' => 30],
             ],
             'ia' => [
-                // Niveau Facile
+                // Niveau Facile (5 exercices)
                 ['title' => 'Concepts de base IA', 'difficulty' => 'Facile', 'points' => 10],
                 ['title' => 'Machine Learning', 'difficulty' => 'Facile', 'points' => 12],
-                // Niveau Moyen
+                ['title' => 'Types d\'apprentissage', 'difficulty' => 'Facile', 'points' => 10],
+                ['title' => 'Données et datasets', 'difficulty' => 'Facile', 'points' => 10],
+                ['title' => 'Algorithmes de base', 'difficulty' => 'Facile', 'points' => 12],
+                // Niveau Moyen (5 exercices)
                 ['title' => 'Réseaux de neurones', 'difficulty' => 'Moyen', 'points' => 15],
                 ['title' => 'Deep Learning', 'difficulty' => 'Moyen', 'points' => 15],
-                // Niveau Difficile
+                ['title' => 'Entraînement d\'un modèle', 'difficulty' => 'Moyen', 'points' => 18],
+                ['title' => 'Évaluation de performance', 'difficulty' => 'Moyen', 'points' => 18],
+                ['title' => 'Bibliothèques Python (TensorFlow, PyTorch)', 'difficulty' => 'Moyen', 'points' => 20],
+                // Niveau Difficile (5 exercices)
                 ['title' => 'Applications IA', 'difficulty' => 'Difficile', 'points' => 18],
                 ['title' => 'Natural Language Processing', 'difficulty' => 'Difficile', 'points' => 25],
                 ['title' => 'Éthique de l\'IA', 'difficulty' => 'Difficile', 'points' => 30],
+                ['title' => 'Computer Vision', 'difficulty' => 'Difficile', 'points' => 28],
+                ['title' => 'Optimisation et hyperparamètres', 'difficulty' => 'Difficile', 'points' => 30],
             ],
         ];
 
