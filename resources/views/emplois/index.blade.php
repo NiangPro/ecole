@@ -28,14 +28,28 @@
     }
     
     .jobs-hero {
-        background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%),
-                    url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80') center/cover no-repeat;
+        background-image: url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
         background-attachment: fixed;
+        background-color: rgba(15, 23, 42, 0.95);
         padding: 140px 20px 100px;
         text-align: center;
         position: relative;
         overflow: hidden;
         will-change: transform;
+    }
+    
+    .jobs-hero::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%);
+        z-index: 0;
     }
     
     @media (max-width: 768px) {
@@ -45,9 +59,16 @@
     }
     
     body:not(.dark-mode) .jobs-hero {
-        background: linear-gradient(135deg, rgba(30, 41, 59, 0.4) 0%, rgba(51, 65, 85, 0.5) 100%),
-                    url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80') center/cover no-repeat !important;
+        background-image: url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80') !important;
+        background-size: cover !important;
+        background-position: center !important;
+        background-repeat: no-repeat !important;
         background-attachment: fixed !important;
+        background-color: rgba(30, 41, 59, 0.4) !important;
+    }
+    
+    body:not(.dark-mode) .jobs-hero::after {
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.4) 0%, rgba(51, 65, 85, 0.5) 100%) !important;
     }
     
     .jobs-hero::before {
@@ -464,7 +485,7 @@
 @section('content')
 <!-- Hero Section -->
 <section class="jobs-hero">
-    <div class="container mx-auto">
+    <div class="container mx-auto relative z-10">
         <h1>🚀 Emplois & Opportunités</h1>
         <p>Trouvez votre prochaine opportunité de carrière au Sénégal. Nous publions les meilleures offres d'emploi, bourses d'études et opportunités professionnelles disponibles.</p>
     </div>

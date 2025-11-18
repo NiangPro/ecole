@@ -979,6 +979,209 @@
         color: #06b6d4 !important;
     }
     
+    /* ============================================
+       COMPÉTENCES SECTION ULTRA MODERNE
+       ============================================ */
+    
+    .skills-grid-modern {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 25px;
+    }
+    
+    @media (max-width: 768px) {
+        .skills-grid-modern {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    .skill-card-modern {
+        position: relative;
+        background: rgba(15, 23, 42, 0.8);
+        backdrop-filter: blur(20px);
+        border: 2px solid rgba(6, 182, 212, 0.2);
+        border-radius: 24px;
+        padding: 30px;
+        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        overflow: hidden;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+    }
+    
+    body:not(.dark-mode) .skill-card-modern {
+        background: rgba(255, 255, 255, 0.95) !important;
+        border-color: rgba(6, 182, 212, 0.25) !important;
+        box-shadow: 0 10px 40px rgba(6, 182, 212, 0.15) !important;
+    }
+    
+    .skill-card-glow {
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(6, 182, 212, 0.3) 0%, transparent 70%);
+        opacity: 0;
+        transition: opacity 0.5s ease;
+        pointer-events: none;
+    }
+    
+    .skill-card-modern:hover {
+        transform: translateY(-8px) scale(1.02);
+        border-color: rgba(6, 182, 212, 0.5);
+        box-shadow: 0 25px 60px rgba(6, 182, 212, 0.4);
+    }
+    
+    .skill-card-modern:hover .skill-card-glow {
+        opacity: 1;
+    }
+    
+    .skill-card-header {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 25px;
+    }
+    
+    .skill-icon-wrapper {
+        position: relative;
+        width: 70px;
+        height: 70px;
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2));
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid rgba(6, 182, 212, 0.3);
+        flex-shrink: 0;
+        transition: all 0.4s ease;
+    }
+    
+    .skill-card-modern:hover .skill-icon-wrapper {
+        transform: scale(1.1) rotate(5deg);
+        border-color: rgba(6, 182, 212, 0.6);
+        box-shadow: 0 8px 24px rgba(6, 182, 212, 0.4);
+    }
+    
+    .skill-icon {
+        font-size: 2rem;
+        color: #06b6d4;
+    }
+    
+    .skill-icon-svg {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .skill-info {
+        flex: 1;
+    }
+    
+    .skill-name {
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: #fff;
+        margin-bottom: 8px;
+        line-height: 1.3;
+    }
+    
+    body:not(.dark-mode) .skill-name {
+        color: rgba(30, 41, 59, 0.95) !important;
+    }
+    
+    .skill-level-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 4px 12px;
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2));
+        border: 1px solid rgba(6, 182, 212, 0.4);
+        border-radius: 12px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #06b6d4;
+    }
+    
+    .skill-progress-wrapper {
+        margin-bottom: 20px;
+    }
+    
+    .skill-progress-track {
+        width: 100%;
+        height: 10px;
+        background: rgba(6, 182, 212, 0.1);
+        border-radius: 10px;
+        overflow: hidden;
+        position: relative;
+    }
+    
+    .skill-progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #06b6d4, #14b8a6);
+        border-radius: 10px;
+        position: relative;
+        transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 0 15px rgba(6, 182, 212, 0.5);
+    }
+    
+    .skill-progress-glow {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        animation: progress-shine 2s infinite;
+    }
+    
+    @keyframes progress-shine {
+        0% {
+            transform: translateX(-100%);
+        }
+        100% {
+            transform: translateX(100%);
+        }
+    }
+    
+    .skill-card-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 15px;
+    }
+    
+    .skill-status {
+        padding: 6px 14px;
+        background: rgba(34, 197, 94, 0.2);
+        border: 1px solid rgba(34, 197, 94, 0.4);
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #22c55e;
+    }
+    
+    .skill-stars {
+        display: flex;
+        gap: 4px;
+    }
+    
+    .skill-stars .fa-star {
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.3);
+        transition: all 0.3s ease;
+    }
+    
+    .skill-stars .star-filled {
+        color: #fbbf24;
+        text-shadow: 0 0 8px rgba(251, 191, 36, 0.5);
+    }
+    
+    body:not(.dark-mode) .skill-stars .fa-star {
+        color: rgba(30, 41, 59, 0.3) !important;
+    }
+    
+    body:not(.dark-mode) .skill-stars .star-filled {
+        color: #f59e0b !important;
+    }
+    
     /* Mode clair - Bouton "Me contacter" */
     body:not(.dark-mode) .bg-gray-800,
     body:not(.dark-mode) .hover\:bg-gray-700:hover {
@@ -1176,50 +1379,85 @@
     </div>
 </section>
 
-<!-- Compétences Section -->
-<section class="py-20 bg-gradient-to-b from-black to-gray-900">
-    <div class="container mx-auto px-6">
-        <h2 class="text-5xl font-bold text-center mb-4">
-            <span class="gradient-text">Compétences & Capacités</span>
-        </h2>
-        <p class="text-center text-gray-400 mb-16 max-w-2xl mx-auto">
-            Maîtrise approfondie des technologies modernes du développement web, acquise à travers des années d'expérience pratique, 
-            de formation continue et de projets réels. Chaque technologie que je maîtrise a été apprise et perfectionnée dans le cadre 
-            de projets concrets, garantissant une compréhension pratique et applicable.
-        </p>
-        
-        <div class="max-w-4xl mx-auto grid md:grid-cols-2 gap-8">
-            @php
-                $skills = [
-                    ['name' => 'HTML5 & CSS3', 'level' => 95, 'icon' => 'fab fa-html5', 'color' => 'from-orange-500 to-red-500'],
-                    ['name' => 'JavaScript & TypeScript', 'level' => 90, 'icon' => 'fab fa-js', 'color' => 'from-yellow-500 to-orange-500'],
-                    ['name' => 'PHP & Laravel', 'level' => 88, 'icon' => 'fab fa-php', 'color' => 'from-purple-500 to-pink-500'],
-                    ['name' => 'React & Vue.js', 'level' => 85, 'icon' => 'fab fa-react', 'color' => 'from-blue-500 to-cyan-500'],
-                    ['name' => 'Node.js & Express', 'level' => 82, 'icon' => 'fab fa-node', 'color' => 'from-green-500 to-teal-500'],
-                    ['name' => 'Git & GitHub', 'level' => 92, 'icon' => 'fab fa-git-alt', 'color' => 'from-red-500 to-orange-500'],
-                    ['name' => 'WordPress', 'level' => 87, 'icon' => 'fab fa-wordpress', 'color' => 'from-blue-600 to-cyan-600'],
-                    ['name' => 'Intelligence Artificielle', 'level' => 75, 'icon' => 'fas fa-brain', 'color' => 'from-purple-600 to-pink-600'],
-                    ['name' => 'Python', 'level' => 80, 'icon' => 'fab fa-python', 'color' => 'from-blue-500 to-yellow-500'],
-                    ['name' => 'Flutter', 'level' => 78, 'icon' => 'fab fa-flutter', 'color' => 'from-cyan-500 to-blue-500'],
-                ];
-            @endphp
-            
-            @foreach($skills as $skill)
-            <div class="bg-gray-900/50 backdrop-blur-xl rounded-2xl p-6 border border-cyan-500/20 hover:border-cyan-500/50 transition">
-                <div class="flex items-center gap-4 mb-4">
-                    <div class="w-12 h-12 bg-gradient-to-br {{ $skill['color'] }} rounded-xl flex items-center justify-center">
-                        <i class="{{ $skill['icon'] }} text-white text-2xl"></i>
-                    </div>
-                    <div class="flex-1">
-                        <h3 class="font-bold text-lg">{{ $skill['name'] }}</h3>
-                        <p class="text-sm text-gray-400">{{ $skill['level'] }}%</p>
-                    </div>
-                </div>
-                <div class="skill-bar">
-                    <div class="skill-progress" style="width: {{ $skill['level'] }}%"></div>
-                </div>
+<!-- Compétences Section - Design Ultra Moderne -->
+<section class="py-20 bg-gradient-to-b from-black to-gray-900 relative overflow-hidden">
+    <!-- Background Effects -->
+    <div class="absolute inset-0 opacity-10">
+        <div class="absolute top-0 left-1/4 w-96 h-96 bg-cyan-500 rounded-full filter blur-3xl"></div>
+        <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-teal-500 rounded-full filter blur-3xl"></div>
+    </div>
+    
+    <div class="container mx-auto px-6 relative z-10">
+        <div class="text-center mb-16">
+            <div class="inline-flex items-center gap-3 mb-4">
+                <div class="w-1 h-12 bg-gradient-to-b from-cyan-500 to-teal-500 rounded-full"></div>
+                <h2 class="text-5xl md:text-6xl font-black">
+                    <span class="gradient-text">Compétences & Capacités</span>
+                </h2>
+                <div class="w-1 h-12 bg-gradient-to-b from-cyan-500 to-teal-500 rounded-full"></div>
             </div>
-            @endforeach
+            <p class="text-center text-gray-400 mb-16 max-w-3xl mx-auto text-lg">
+                Maîtrise approfondie des technologies modernes du développement web, acquise à travers des années d'expérience pratique, 
+                de formation continue et de projets réels. Chaque technologie que je maîtrise a été apprise et perfectionnée dans le cadre 
+                de projets concrets, garantissant une compréhension pratique et applicable.
+            </p>
+        </div>
+        
+        <div class="max-w-7xl mx-auto">
+            <div class="skills-grid-modern">
+                @php
+                    $skills = [
+                        ['name' => 'HTML5 & CSS3', 'level' => 95, 'icon' => 'fab fa-html5', 'color' => 'from-orange-500 to-red-500', 'iconColor' => '#e34c26'],
+                        ['name' => 'JavaScript & TypeScript', 'level' => 90, 'icon' => 'fab fa-js', 'color' => 'from-yellow-500 to-orange-500', 'iconColor' => '#f7df1e'],
+                        ['name' => 'PHP & Laravel', 'level' => 88, 'icon' => 'fab fa-php', 'color' => 'from-purple-500 to-pink-500', 'iconColor' => '#777bb4'],
+                        ['name' => 'React & Vue.js', 'level' => 85, 'icon' => 'fab fa-react', 'color' => 'from-blue-500 to-cyan-500', 'iconColor' => '#61dafb'],
+                        ['name' => 'Node.js & Express', 'level' => 82, 'icon' => 'fab fa-node', 'color' => 'from-green-500 to-teal-500', 'iconColor' => '#339933'],
+                        ['name' => 'Git & GitHub', 'level' => 92, 'icon' => 'fab fa-git-alt', 'color' => 'from-red-500 to-orange-500', 'iconColor' => '#f05032'],
+                        ['name' => 'WordPress', 'level' => 87, 'icon' => 'fab fa-wordpress', 'color' => 'from-blue-600 to-cyan-600', 'iconColor' => '#21759b'],
+                        ['name' => 'Intelligence Artificielle', 'level' => 75, 'icon' => 'fas fa-brain', 'color' => 'from-purple-600 to-pink-600', 'iconColor' => '#9333ea'],
+                        ['name' => 'Python', 'level' => 80, 'icon' => 'fab fa-python', 'color' => 'from-blue-500 to-yellow-500', 'iconColor' => '#3776ab'],
+                        ['name' => 'Flutter', 'level' => 78, 'icon' => 'flutter', 'color' => 'from-cyan-500 to-blue-500', 'iconColor' => '#02569b', 'isFlutter' => true],
+                    ];
+                @endphp
+                
+                @foreach($skills as $skill)
+                <div class="skill-card-modern">
+                    <div class="skill-card-glow"></div>
+                    <div class="skill-card-header">
+                        <div class="skill-icon-wrapper">
+                            @if(isset($skill['isFlutter']) && $skill['isFlutter'])
+                            <!-- Flutter Icon SVG - Logo Officiel -->
+                            <svg class="skill-icon-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M14.314 0L2.3 12l3.85 3.85L14.314 7.68l3.85 3.85L13.02 16.68l-2.13-2.13-2.13 2.13L13.02 20.94l8.16-8.15 3.85 3.85L14.314 27.36L2.3 15.35l3.85-3.85L14.314 19.66l3.85-3.85L13.02 10.66l-2.13 2.13-2.13-2.13L13.02 6.4l8.16 8.15 3.85-3.85L14.314 0z" fill="#02569B"/>
+                                <path d="M14.314 0L2.3 12l3.85 3.85L14.314 7.68l3.85 3.85L13.02 16.68l-2.13-2.13-2.13 2.13L13.02 20.94l8.16-8.15 3.85 3.85L14.314 27.36L2.3 15.35l3.85-3.85L14.314 19.66l3.85-3.85L13.02 10.66l-2.13 2.13-2.13-2.13L13.02 6.4l8.16 8.15 3.85-3.85L14.314 0z" fill="#60CAFC"/>
+                            </svg>
+                            @else
+                            <i class="{{ $skill['icon'] }} skill-icon"></i>
+                            @endif
+                        </div>
+                        <div class="skill-info">
+                            <h3 class="skill-name">{{ $skill['name'] }}</h3>
+                            <div class="skill-level-badge">{{ $skill['level'] }}%</div>
+                        </div>
+                    </div>
+                    <div class="skill-progress-wrapper">
+                        <div class="skill-progress-track">
+                            <div class="skill-progress-fill" style="width: {{ $skill['level'] }}%">
+                                <div class="skill-progress-glow"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="skill-card-footer">
+                        <span class="skill-status">Maîtrisé</span>
+                        <div class="skill-stars">
+                            @for($i = 0; $i < 5; $i++)
+                                <i class="fas fa-star {{ $i < ($skill['level'] / 20) ? 'star-filled' : 'star-empty' }}"></i>
+                            @endfor
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
         </div>
     </div>
 </section>
