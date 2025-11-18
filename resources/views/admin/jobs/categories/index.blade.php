@@ -43,8 +43,17 @@
                 <tr class="border-b border-cyan-500/10 hover:bg-cyan-500/5 transition">
                     <td class="p-4">
                         <div class="flex items-center gap-3">
-                            @if($category->icon)
-                                <i class="{{ $category->icon }} text-cyan-400"></i>
+                            @if($category->image)
+                                <img src="{{ $category->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($category->image) : $category->image }}" 
+                                     alt="{{ $category->name }}" 
+                                     class="w-10 h-10 rounded-lg object-cover border-2 border-cyan-500/30"
+                                     style="min-width: 40px; min-height: 40px;"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-block';">
+                                <i class="{{ $category->icon ?? 'fas fa-folder' }} text-cyan-400" style="display: none;"></i>
+                            @elseif($category->icon)
+                                <i class="{{ $category->icon }} text-cyan-400 text-xl"></i>
+                            @else
+                                <i class="fas fa-folder text-cyan-400 text-xl"></i>
                             @endif
                             <span class="font-semibold">{{ $category->name }}</span>
                         </div>

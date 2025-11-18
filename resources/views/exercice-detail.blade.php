@@ -625,13 +625,15 @@
                             let output = data.output || '';
                             // Nettoyer agressivement tous les espaces en début/fin
                             output = output.trim();
-                            // Supprimer tous les espaces avant la première balise HTML (DOCTYPE, html, head, body, form, etc.)
-                            // Utiliser une regex plus agressive qui supprime tout avant n'importe quelle balise HTML
+                            
+                            // Étape 1 : Supprimer tous les espaces avant la première balise HTML
                             output = output.replace(/^[\s\n\r\t\u00A0\u2000-\u200B\u2028\u2029\u202F\u205F\u3000]+(?=<[!\/]?[a-z])/gi, '');
-                            // Supprimer tous les caractères d'espacement Unicode invisibles
+                            
+                            // Étape 2 : Supprimer tous les caractères d'espacement Unicode invisibles
                             output = output.replace(/^[\s\u00A0\u2000-\u200B\u2028\u2029\u202F\u205F\u3000]+/g, '');
                             output = output.replace(/[\s\u00A0\u2000-\u200B\u2028\u2029\u202F\u205F\u3000]+$/g, '');
-                            // Supprimer les espaces en début de chaque ligne
+                            
+                            // Étape 3 : Nettoyer ligne par ligne
                             if (output) {
                                 const lines = output.split('\n');
                                 const cleanedLines = [];
@@ -641,8 +643,17 @@
                                     cleanedLines.push(cleaned);
                                 }
                                 output = cleanedLines.join('\n').trim();
-                                // Supprimer une dernière fois tous les espaces invisibles avant toute balise HTML
+                                
+                                // Étape 4 : Supprimer une dernière fois tous les espaces invisibles avant toute balise HTML
                                 output = output.replace(/^[\s\n\r\t\u00A0\u2000-\u200B\u2028\u2029\u202F\u205F\u3000]+(?=<[!\/]?[a-z])/gi, '');
+                                
+                                // Étape 5 : Supprimer les espaces avant le DOCTYPE ou toute balise HTML au début
+                                output = output.replace(/^[\s\n\r\t\u00A0\u2000-\u200B\u2028\u2029\u202F\u205F\u3000]+/g, '');
+                                
+                                // Étape 6 : Si le contenu commence par du HTML, s'assurer qu'il n'y a pas d'espaces avant
+                                if (/^[\s\n\r\t]/.test(output)) {
+                                    output = output.replace(/^\s+/, '');
+                                }
                             }
                             const hasOutput = output.length > 0;
                             const darkMode = window.isDarkMode || document.body.classList.contains('dark-mode');

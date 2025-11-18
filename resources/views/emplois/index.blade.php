@@ -47,6 +47,7 @@
     body:not(.dark-mode) .jobs-hero {
         background: linear-gradient(135deg, rgba(30, 41, 59, 0.4) 0%, rgba(51, 65, 85, 0.5) 100%),
                     url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80') center/cover no-repeat !important;
+        background-attachment: fixed !important;
     }
     
     .jobs-hero::before {

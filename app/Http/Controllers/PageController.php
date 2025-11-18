@@ -652,14 +652,15 @@ class PageController extends Controller
         $output = $output !== null ? trim($output) : '';
         // Supprimer les espaces en début de chaque ligne (indentation indésirable)
         if (!empty($output)) {
-            // Supprimer tous les espaces avant la première balise HTML (DOCTYPE, html, head, body, form, etc.)
-            // Utiliser une regex plus agressive qui supprime tout avant n'importe quelle balise HTML
+            // Étape 1 : Supprimer tous les espaces avant la première balise HTML (DOCTYPE, html, head, body, form, etc.)
+            // Utiliser une regex très agressive qui supprime tout avant n'importe quelle balise HTML
             $output = preg_replace('/^[\s\n\r\t\x{00A0}\x{2000}-\x{200B}\x{2028}\x{2029}\x{202F}\x{205F}\x{3000}]+(?=<[!\/]?[a-z])/iu', '', $output);
             
-            // Supprimer tous les caractères d'espacement Unicode en début/fin
+            // Étape 2 : Supprimer tous les caractères d'espacement Unicode en début/fin
             $output = preg_replace('/^[\s\x{00A0}\x{2000}-\x{200B}\x{2028}\x{2029}\x{202F}\x{205F}\x{3000}]+/u', '', $output);
             $output = preg_replace('/[\s\x{00A0}\x{2000}-\x{200B}\x{2028}\x{2029}\x{202F}\x{205F}\x{3000}]+$/u', '', $output);
             
+            // Étape 3 : Nettoyer ligne par ligne
             $lines = explode("\n", $output);
             $cleanedLines = [];
             foreach ($lines as $line) {
@@ -668,10 +669,20 @@ class PageController extends Controller
                 $cleanedLines[] = $cleanedLine;
             }
             $output = implode("\n", $cleanedLines);
-            // Retrim pour supprimer les lignes vides en début/fin et tous les espaces
+            
+            // Étape 4 : Retrim pour supprimer les lignes vides en début/fin
             $output = trim($output);
-            // Supprimer une dernière fois tous les espaces invisibles avant toute balise HTML
+            
+            // Étape 5 : Supprimer une dernière fois tous les espaces invisibles avant toute balise HTML
             $output = preg_replace('/^[\s\n\r\t\x{00A0}\x{2000}-\x{200B}\x{2028}\x{2029}\x{202F}\x{205F}\x{3000}]+(?=<[!\/]?[a-z])/iu', '', $output);
+            
+            // Étape 6 : Supprimer les espaces avant le DOCTYPE ou toute balise HTML au début
+            $output = preg_replace('/^[\s\n\r\t\x{00A0}\x{2000}-\x{200B}\x{2028}\x{2029}\x{202F}\x{205F}\x{3000}]+/u', '', $output);
+            
+            // Étape 7 : Si le contenu commence par du HTML, s'assurer qu'il n'y a pas d'espaces avant
+            if (preg_match('/^[\s\n\r\t]/u', $output)) {
+                $output = ltrim($output);
+            }
         }
         
         // Encoder en UTF-8 pour éviter les erreurs JSON
