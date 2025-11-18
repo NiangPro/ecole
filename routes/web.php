@@ -124,6 +124,7 @@ Route::prefix('admin/ads')->name('admin.ads.')->group(function () {
 // Routes Réalisations Admin
 Route::prefix('admin/achievements')->name('admin.achievements.')->group(function () {
     Route::resource('', \App\Http\Controllers\Admin\AchievementController::class)->parameters(['' => 'achievement']);
+    Route::post('/toggle-section', [\App\Http\Controllers\Admin\AchievementController::class, 'toggleSection'])->name('toggle-section');
 });
 
 // API pour tracking des clics publicitaires

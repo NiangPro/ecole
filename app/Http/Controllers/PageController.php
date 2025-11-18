@@ -44,7 +44,8 @@ class PageController extends Controller
     public function about()
     {
         $achievements = \App\Models\Achievement::visible()->ordered()->get();
-        return view('about', compact('achievements'));
+        $showAchievementsSection = \App\Models\SiteSetting::get('show_achievements_section', true);
+        return view('about', compact('achievements', 'showAchievementsSection'));
     }
     
     public function contact()

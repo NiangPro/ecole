@@ -19,6 +19,7 @@ class SiteSetting extends Model
         'youtube_url',
         'github_url',
         'google_analytics_id',
+        'show_achievements_section',
     ];
 
     public static function get($key, $default = null)

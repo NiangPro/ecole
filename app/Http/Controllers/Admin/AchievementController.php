@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Achievement;
+use App\Models\SiteSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -20,7 +21,8 @@ class AchievementController extends Controller
         }
 
         $achievements = Achievement::ordered()->get();
-        return view('admin.achievements.index', compact('achievements'));
+        $showSection = SiteSetting::get('show_achievements_section', true);
+        return view('admin.achievements.index', compact('achievements', 'showSection'));
     }
 
     /**
@@ -170,5 +172,24 @@ class AchievementController extends Controller
 
         return redirect()->route('admin.achievements.index')
             ->with('success', 'Réalisation supprimée avec succès');
+    }
+
+    /**
+     * Toggle the visibility of the achievements section on the about page.
+     */
+    public function toggleSection()
+    {
+        if (!session('admin_logged_in')) {
+            return redirect()->route('admin.login');
+        }
+
+        $settings = SiteSetting::firstOrNew();
+        $settings->show_achievements_section = !$settings->show_achievements_section;
+        $settings->save();
+
+        return redirect()->route('admin.achievements.index')
+            ->with('success', $settings->show_achievements_section 
+                ? 'Section "Mes Réalisations" affichée' 
+                : 'Section "Mes Réalisations" masquée');
     }
 }

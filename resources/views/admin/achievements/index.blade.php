@@ -8,9 +8,18 @@
         <h3 class="text-3xl font-bold mb-2">Réalisations</h3>
         <p class="text-gray-400">Gérez vos réalisations et projets</p>
     </div>
-    <a href="{{ route('admin.achievements.create') }}" class="px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-black font-semibold rounded-lg transition">
-        <i class="fas fa-plus mr-2"></i>Nouvelle réalisation
-    </a>
+    <div class="flex gap-3">
+        <form action="{{ route('admin.achievements.toggle-section') }}" method="POST" class="inline">
+            @csrf
+            <button type="submit" class="px-4 py-2 {{ $showSection ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-green-500 hover:bg-green-600' }} text-black font-semibold rounded-lg transition flex items-center gap-2">
+                <i class="fas {{ $showSection ? 'fa-eye-slash' : 'fa-eye' }}"></i>
+                <span>{{ $showSection ? 'Masquer la section' : 'Afficher la section' }}</span>
+            </button>
+        </form>
+        <a href="{{ route('admin.achievements.create') }}" class="px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-black font-semibold rounded-lg transition">
+            <i class="fas fa-plus mr-2"></i>Nouvelle réalisation
+        </a>
+    </div>
 </div>
 
 @if(session('success'))

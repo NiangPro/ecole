@@ -736,6 +736,310 @@
     }
     
     /* ============================================
+       RÉALISATIONS SECTION ULTRA MODERNE - CARDS OVERLAY
+       ============================================ */
+    
+    .achievements-section-ultra {
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #0f0f23 100%);
+        position: relative;
+    }
+    
+    body:not(.dark-mode) .achievements-section-ultra {
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
+    }
+    
+    /* Animated Background Orbs */
+    .achievements-bg-animated {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        z-index: 0;
+    }
+    
+    .bg-orb {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(80px);
+        opacity: 0.3;
+        animation: float-orb 20s ease-in-out infinite;
+    }
+    
+    .bg-orb-1 {
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, #06b6d4, transparent);
+        top: -200px;
+        left: -200px;
+        animation-delay: 0s;
+    }
+    
+    .bg-orb-2 {
+        width: 600px;
+        height: 600px;
+        background: radial-gradient(circle, #14b8a6, transparent);
+        bottom: -300px;
+        right: -300px;
+        animation-delay: 7s;
+    }
+    
+    .bg-orb-3 {
+        width: 400px;
+        height: 400px;
+        background: radial-gradient(circle, #8b5cf6, transparent);
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        animation-delay: 14s;
+    }
+    
+    @keyframes float-orb {
+        0%, 100% {
+            transform: translate(0, 0) scale(1);
+        }
+        33% {
+            transform: translate(50px, -50px) scale(1.1);
+        }
+        66% {
+            transform: translate(-30px, 30px) scale(0.9);
+        }
+    }
+    
+    /* Title Gradient */
+    .achievements-title-gradient {
+        background: linear-gradient(135deg, #06b6d4 0%, #14b8a6 50%, #8b5cf6 100%);
+        background-size: 200% 200%;
+        animation: gradient-shift 4s ease infinite;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    /* Achievements Grid */
+    .achievements-grid-ultra {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 30px;
+        position: relative;
+        z-index: 1;
+    }
+    
+    @media (max-width: 768px) {
+        .achievements-grid-ultra {
+            grid-template-columns: 1fr;
+            gap: 25px;
+        }
+    }
+    
+    /* Achievement Card */
+    .achievement-card-ultra {
+        position: relative;
+        height: 450px;
+        border-radius: 24px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        transform-style: preserve-3d;
+    }
+    
+    .achievement-card-ultra:hover {
+        transform: translateY(-10px) scale(1.02);
+    }
+    
+    /* Card Background */
+    .achievement-card-bg {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+    }
+    
+    .achievement-bg-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    
+    .achievement-card-ultra:hover .achievement-bg-image {
+        transform: scale(1.15);
+    }
+    
+    .achievement-bg-placeholder {
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #06b6d4 0%, #14b8a6 100%);
+    }
+    
+    .achievement-bg-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.7) 100%);
+        z-index: 1;
+    }
+    
+    .achievement-bg-gradient {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.3) 0%, rgba(20, 184, 166, 0.3) 100%);
+        opacity: 0;
+        transition: opacity 0.5s ease;
+        z-index: 2;
+    }
+    
+    .achievement-card-ultra:hover .achievement-bg-gradient {
+        opacity: 1;
+    }
+    
+    /* Card Overlay Content */
+    .achievement-card-overlay {
+        position: absolute;
+        inset: 0;
+        z-index: 3;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding: 30px;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, transparent 60%);
+        transition: background 0.5s ease;
+    }
+    
+    .achievement-card-ultra:hover .achievement-card-overlay {
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, transparent 50%);
+    }
+    
+    /* Icon Badge */
+    .achievement-icon-badge {
+        position: absolute;
+        top: 25px;
+        right: 25px;
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.9), rgba(20, 184, 166, 0.9));
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 8px 32px rgba(6, 182, 212, 0.4);
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        z-index: 4;
+    }
+    
+    .achievement-icon-badge i {
+        font-size: 24px;
+        color: #fff;
+    }
+    
+    .achievement-card-ultra:hover .achievement-icon-badge {
+        transform: scale(1.15) rotate(5deg);
+        box-shadow: 0 12px 40px rgba(6, 182, 212, 0.6);
+    }
+    
+    /* Title */
+    .achievement-title-ultra {
+        font-size: 28px;
+        font-weight: 800;
+        color: #fff;
+        margin-bottom: 12px;
+        line-height: 1.2;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        transition: transform 0.3s ease;
+    }
+    
+    body:not(.dark-mode) .achievement-title-ultra {
+        color: #fff !important;
+        text-shadow: 0 2px 15px rgba(0, 0, 0, 0.8);
+    }
+    
+    .achievement-card-ultra:hover .achievement-title-ultra {
+        transform: translateX(5px);
+    }
+    
+    /* Description */
+    .achievement-description-ultra {
+        font-size: 15px;
+        color: rgba(255, 255, 255, 0.85);
+        line-height: 1.6;
+        margin-bottom: 20px;
+        text-shadow: 0 1px 5px rgba(0, 0, 0, 0.5);
+        opacity: 0.9;
+    }
+    
+    body:not(.dark-mode) .achievement-description-ultra {
+        color: rgba(255, 255, 255, 0.95) !important;
+        text-shadow: 0 1px 8px rgba(0, 0, 0, 0.8);
+    }
+    
+    /* Link Button */
+    .achievement-link-ultra {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 24px;
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.9), rgba(20, 184, 166, 0.9));
+        backdrop-filter: blur(10px);
+        color: #fff;
+        font-weight: 700;
+        font-size: 15px;
+        border-radius: 12px;
+        text-decoration: none;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 4px 20px rgba(6, 182, 212, 0.3);
+        width: fit-content;
+    }
+    
+    .achievement-link-ultra:hover {
+        transform: translateX(5px) scale(1.05);
+        box-shadow: 0 6px 30px rgba(6, 182, 212, 0.5);
+        background: linear-gradient(135deg, rgba(6, 182, 212, 1), rgba(20, 184, 166, 1));
+    }
+    
+    .achievement-link-ultra i {
+        transition: transform 0.3s ease;
+    }
+    
+    .achievement-link-ultra:hover i {
+        transform: translateX(5px);
+    }
+    
+    /* Glow Effect */
+    .achievement-glow-effect {
+        position: absolute;
+        inset: -2px;
+        border-radius: 24px;
+        background: linear-gradient(135deg, #06b6d4, #14b8a6, #8b5cf6);
+        opacity: 0;
+        filter: blur(20px);
+        transition: opacity 0.5s ease;
+        z-index: -1;
+    }
+    
+    .achievement-card-ultra:hover .achievement-glow-effect {
+        opacity: 0.6;
+    }
+    
+    /* Light Mode Adjustments */
+    body:not(.dark-mode) .achievement-card-overlay {
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, transparent 60%);
+    }
+    
+    body:not(.dark-mode) .achievement-card-ultra:hover .achievement-card-overlay {
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, transparent 50%);
+    }
+    
+    /* Light Mode - Section Title and Description */
+    body:not(.dark-mode) .achievements-section-ultra .text-gray-400 {
+        color: rgba(30, 41, 59, 0.8) !important;
+    }
+    
+    body:not(.dark-mode) .achievements-section-ultra h2 {
+        color: rgba(30, 41, 59, 0.95) !important;
+    }
+    
+    body:not(.dark-mode) .achievements-section-ultra p {
+        color: rgba(30, 41, 59, 0.7) !important;
+    }
+    
+    /* ============================================
        FORMATIONS CARDS ULTRA MODERNES
        ============================================ */
     
@@ -1811,59 +2115,79 @@
     </div>
 </section>
 
-<!-- Réalisations Section - Design Ultra Moderne -->
-@if(isset($achievements) && $achievements->count() > 0)
-<section class="py-20 bg-gradient-to-b from-gray-900 to-black relative overflow-hidden">
-    <!-- Background Effects -->
-    <div class="absolute inset-0 opacity-10">
-        <div class="absolute top-0 right-1/4 w-96 h-96 bg-cyan-500 rounded-full filter blur-3xl"></div>
-        <div class="absolute bottom-0 left-1/4 w-96 h-96 bg-teal-500 rounded-full filter blur-3xl"></div>
+<!-- Réalisations Section - Design Ultra Moderne avec Cards Overlay -->
+@if(isset($showAchievementsSection) && $showAchievementsSection && isset($achievements) && $achievements->count() > 0)
+<section class="achievements-section-ultra py-24 relative overflow-hidden">
+    <!-- Animated Background -->
+    <div class="achievements-bg-animated">
+        <div class="bg-orb bg-orb-1"></div>
+        <div class="bg-orb bg-orb-2"></div>
+        <div class="bg-orb bg-orb-3"></div>
     </div>
     
     <div class="container mx-auto px-6 relative z-10">
-        <div class="text-center mb-16">
-            <div class="inline-flex items-center gap-3 mb-4">
-                <div class="w-1 h-12 bg-gradient-to-b from-cyan-500 to-teal-500 rounded-full"></div>
-                <h2 class="text-5xl md:text-6xl font-black">
-                    <span class="gradient-text">Mes Réalisations</span>
+        <!-- Section Header -->
+        <div class="text-center mb-20">
+            <div class="inline-flex items-center gap-4 mb-6">
+                <div class="w-1.5 h-16 bg-gradient-to-b from-cyan-400 via-teal-400 to-cyan-400 rounded-full animate-pulse"></div>
+                <h2 class="text-6xl md:text-7xl font-black tracking-tight">
+                    <span class="achievements-title-gradient">Mes Réalisations</span>
                 </h2>
-                <div class="w-1 h-12 bg-gradient-to-b from-cyan-500 to-teal-500 rounded-full"></div>
+                <div class="w-1.5 h-16 bg-gradient-to-b from-cyan-400 via-teal-400 to-cyan-400 rounded-full animate-pulse"></div>
             </div>
-            <p class="text-center text-gray-400 mb-16 max-w-3xl mx-auto text-lg">
+            <p class="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
                 Découvrez quelques-unes de mes réalisations et projets qui témoignent de mon expertise et de ma passion pour le développement web.
             </p>
         </div>
         
+        <!-- Achievements Grid -->
         <div class="max-w-7xl mx-auto">
-            <div class="achievements-grid-modern">
-                @foreach($achievements as $achievement)
-                <div class="achievement-card-modern">
-                    <div class="achievement-card-glow"></div>
+            <div class="achievements-grid-ultra">
+                @foreach($achievements as $index => $achievement)
+                <div class="achievement-card-ultra" data-index="{{ $index }}">
+                    <!-- Image Background with Overlay -->
                     @if($achievement->image)
-                    <div class="achievement-image-wrapper">
-                        <img src="{{ $achievement->image_url }}" alt="{{ $achievement->title }}" class="achievement-image">
-                        <div class="achievement-image-overlay"></div>
+                    <div class="achievement-card-bg">
+                        <img src="{{ $achievement->image_url }}" alt="{{ $achievement->title }}" class="achievement-bg-image">
+                        <div class="achievement-bg-overlay"></div>
+                        <div class="achievement-bg-gradient"></div>
+                    </div>
+                    @else
+                    <div class="achievement-card-bg">
+                        <div class="achievement-bg-placeholder"></div>
+                        <div class="achievement-bg-overlay"></div>
+                        <div class="achievement-bg-gradient"></div>
                     </div>
                     @endif
-                    <div class="achievement-card-content">
-                        <div class="achievement-header">
-                            @if($achievement->icon)
-                            <div class="achievement-icon-wrapper">
-                                <i class="{{ $achievement->icon }}"></i>
-                            </div>
-                            @endif
-                            <h3 class="achievement-title">{{ $achievement->title }}</h3>
+                    
+                    <!-- Card Content Overlay -->
+                    <div class="achievement-card-overlay">
+                        <!-- Icon Badge -->
+                        @if($achievement->icon)
+                        <div class="achievement-icon-badge">
+                            <i class="{{ $achievement->icon }}"></i>
                         </div>
-                        @if($achievement->description)
-                        <p class="achievement-description">{{ $achievement->description }}</p>
                         @endif
+                        
+                        <!-- Title -->
+                        <h3 class="achievement-title-ultra">{{ $achievement->title }}</h3>
+                        
+                        <!-- Description -->
+                        @if($achievement->description)
+                        <p class="achievement-description-ultra">{{ Str::limit($achievement->description, 150) }}</p>
+                        @endif
+                        
+                        <!-- Link Button -->
                         @if($achievement->link_url)
-                        <a href="{{ $achievement->link_url }}" target="_blank" class="achievement-link">
+                        <a href="{{ $achievement->link_url }}" target="_blank" rel="noopener noreferrer" class="achievement-link-ultra">
                             <span>Voir le projet</span>
                             <i class="fas fa-arrow-right"></i>
                         </a>
                         @endif
                     </div>
+                    
+                    <!-- Glow Effect -->
+                    <div class="achievement-glow-effect"></div>
                 </div>
                 @endforeach
             </div>
