@@ -106,7 +106,7 @@
         font-size: 1.2rem;
         color: #475569 !important;
         margin-bottom: 60px;
-        max-width: 700px;
+        max-width: 1100px;
         margin-left: auto;
         margin-right: auto;
     }

@@ -517,6 +517,10 @@
                 <i class="fas fa-history text-xl"></i>
                 <span>Logs</span>
             </a>
+            <a href="{{ route('admin.achievements.index') }}" class="sidebar-item {{ request()->routeIs('admin.achievements.*') ? 'active' : '' }}">
+                <i class="fas fa-trophy text-xl"></i>
+                <span>Réalisations</span>
+            </a>
             
             <a href="{{ route('admin.settings') }}" class="sidebar-item {{ request()->routeIs('admin.settings') ? 'active' : '' }}">
                 <i class="fas fa-cog text-xl"></i>

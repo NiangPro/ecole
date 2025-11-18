@@ -1811,6 +1811,67 @@
     </div>
 </section>
 
+<!-- Réalisations Section - Design Ultra Moderne -->
+@if(isset($achievements) && $achievements->count() > 0)
+<section class="py-20 bg-gradient-to-b from-gray-900 to-black relative overflow-hidden">
+    <!-- Background Effects -->
+    <div class="absolute inset-0 opacity-10">
+        <div class="absolute top-0 right-1/4 w-96 h-96 bg-cyan-500 rounded-full filter blur-3xl"></div>
+        <div class="absolute bottom-0 left-1/4 w-96 h-96 bg-teal-500 rounded-full filter blur-3xl"></div>
+    </div>
+    
+    <div class="container mx-auto px-6 relative z-10">
+        <div class="text-center mb-16">
+            <div class="inline-flex items-center gap-3 mb-4">
+                <div class="w-1 h-12 bg-gradient-to-b from-cyan-500 to-teal-500 rounded-full"></div>
+                <h2 class="text-5xl md:text-6xl font-black">
+                    <span class="gradient-text">Mes Réalisations</span>
+                </h2>
+                <div class="w-1 h-12 bg-gradient-to-b from-cyan-500 to-teal-500 rounded-full"></div>
+            </div>
+            <p class="text-center text-gray-400 mb-16 max-w-3xl mx-auto text-lg">
+                Découvrez quelques-unes de mes réalisations et projets qui témoignent de mon expertise et de ma passion pour le développement web.
+            </p>
+        </div>
+        
+        <div class="max-w-7xl mx-auto">
+            <div class="achievements-grid-modern">
+                @foreach($achievements as $achievement)
+                <div class="achievement-card-modern">
+                    <div class="achievement-card-glow"></div>
+                    @if($achievement->image)
+                    <div class="achievement-image-wrapper">
+                        <img src="{{ $achievement->image_url }}" alt="{{ $achievement->title }}" class="achievement-image">
+                        <div class="achievement-image-overlay"></div>
+                    </div>
+                    @endif
+                    <div class="achievement-card-content">
+                        <div class="achievement-header">
+                            @if($achievement->icon)
+                            <div class="achievement-icon-wrapper">
+                                <i class="{{ $achievement->icon }}"></i>
+                            </div>
+                            @endif
+                            <h3 class="achievement-title">{{ $achievement->title }}</h3>
+                        </div>
+                        @if($achievement->description)
+                        <p class="achievement-description">{{ $achievement->description }}</p>
+                        @endif
+                        @if($achievement->link_url)
+                        <a href="{{ $achievement->link_url }}" target="_blank" class="achievement-link">
+                            <span>Voir le projet</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                        @endif
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+    </div>
+</section>
+@endif
+
 <!-- Formation Section - Design Ultra Moderne -->
 <section class="py-20 bg-gray-900">
     <div class="container mx-auto px-6">
@@ -2028,17 +2089,17 @@
                     <div class="experience-stats">
                         <div class="stat-item">
                             <i class="fas fa-calendar-check"></i>
-                            <span class="stat-value">{{ \Carbon\Carbon::parse('2020-01-01')->diffInYears() }}+</span>
+                            <span class="stat-value">{{ number_format(\Carbon\Carbon::parse('2020-01-01')->diffInDays() / 365.25, 2, '.', '') }}</span>
                             <span class="stat-label">Années</span>
                         </div>
                         <div class="stat-item">
                             <i class="fas fa-project-diagram"></i>
-                            <span class="stat-value">50+</span>
+                            <span class="stat-value">120+</span>
                             <span class="stat-label">Projets</span>
                         </div>
                         <div class="stat-item">
                             <i class="fas fa-users"></i>
-                            <span class="stat-value">20+</span>
+                            <span class="stat-value">300+</span>
                             <span class="stat-label">Formés</span>
                         </div>
                     </div>

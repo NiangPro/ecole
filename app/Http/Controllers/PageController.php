@@ -43,7 +43,8 @@ class PageController extends Controller
 
     public function about()
     {
-        return view('about');
+        $achievements = \App\Models\Achievement::visible()->ordered()->get();
+        return view('about', compact('achievements'));
     }
     
     public function contact()

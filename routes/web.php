@@ -121,6 +121,11 @@ Route::prefix('admin/ads')->name('admin.ads.')->group(function () {
     Route::resource('', \App\Http\Controllers\Admin\AdController::class)->parameters(['' => 'ad']);
 });
 
+// Routes Réalisations Admin
+Route::prefix('admin/achievements')->name('admin.achievements.')->group(function () {
+    Route::resource('', \App\Http\Controllers\Admin\AchievementController::class)->parameters(['' => 'achievement']);
+});
+
 // API pour tracking des clics publicitaires
 Route::post('/api/ads/{id}/click', function($id) {
     $ad = \App\Models\Ad::find($id);
