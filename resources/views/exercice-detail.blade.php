@@ -509,16 +509,10 @@
                 hideMessages();
             };
             
-            // Vérifier que la fonction est bien définie
-            console.log('Initialisation de runCode pour language:', language);
-            
             window.runCode = function() {
-                console.log('runCode appelé, language:', language);
                 const code = codeEditor.getValue();
-                console.log('Code récupéré:', code.substring(0, 100));
                 const iframe = document.getElementById('resultFrame');
                 if (!iframe) {
-                    console.error('iframe non trouvé');
                     return;
                 }
                 const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
@@ -573,7 +567,6 @@
                 
                 // Si c'est du PHP ou Python, exécuter côté serveur
                 if (language === 'php' || language === 'python') {
-                    console.log('Envoi de la requête à /exercices/' + language + '/run');
                     fetch(`/exercices/${language}/run`, {
                         method: 'POST',
                         headers: {
@@ -584,20 +577,16 @@
                         body: JSON.stringify({ code: code })
                     })
                     .then(response => {
-                        console.log('Réponse reçue, status:', response.status);
                         // Vérifier si la réponse est du JSON
                         const contentType = response.headers.get('content-type');
-                        console.log('Content-Type:', contentType);
                         if (!contentType || !contentType.includes('application/json')) {
                             return response.text().then(text => {
-                                console.error('Réponse non-JSON:', text.substring(0, 500));
                                 throw new Error('Réponse non-JSON reçue: ' + text.substring(0, 200));
                             });
                         }
                         return response.json();
                     })
                     .then(data => {
-                        console.log('Données reçues:', data);
                         iframeDoc.open();
                         
                         if (data.error) {
@@ -633,8 +622,15 @@
                             `);
                         } else {
                             // Envelopper la sortie dans du HTML
-                            const output = data.output || '';
-                            const hasOutput = output.trim().length > 0;
+                            let output = data.output || '';
+                            // Nettoyer les espaces en début/fin et les lignes vides
+                            output = output.trim();
+                            // Supprimer les espaces en début de chaque ligne
+                            if (output) {
+                                const lines = output.split('\n');
+                                output = lines.map(line => line.trimStart()).join('\n').trim();
+                            }
+                            const hasOutput = output.length > 0;
                             const darkMode = window.isDarkMode || document.body.classList.contains('dark-mode');
                             
                             iframeDoc.write(`
@@ -670,8 +666,6 @@
                         hideMessages();
                     })
                     .catch(error => {
-                        console.error('Erreur complète:', error);
-                        console.error('Stack:', error.stack);
                         iframeDoc.open();
                         iframeDoc.write(`
                             <!DOCTYPE html>

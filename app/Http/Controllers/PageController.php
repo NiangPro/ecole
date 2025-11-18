@@ -482,7 +482,18 @@ class PageController extends Controller
                 @unlink($tempFile);
                 
                 // Nettoyer et encoder la sortie en UTF-8
-                $output = $output !== null ? rtrim($output, "\r\n") : '';
+                // Supprimer les espaces en début et fin, et les lignes vides en début/fin
+                $output = $output !== null ? trim($output, "\r\n ") : '';
+                // Supprimer les espaces en début de chaque ligne (indentation indésirable)
+                if (!empty($output)) {
+                    $lines = explode("\n", $output);
+                    $cleanedLines = array_map(function($line) {
+                        return ltrim($line, " \t");
+                    }, $lines);
+                    $output = implode("\n", $cleanedLines);
+                    // Retrim pour supprimer les lignes vides en début/fin
+                    $output = trim($output, "\r\n");
+                }
                 $stderr = trim($stderr);
                 
                 // Encoder en UTF-8 pour éviter les erreurs JSON
