@@ -512,11 +512,30 @@
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
+                            'Accept': 'application/json',
                             'X-CSRF-TOKEN': '{{ csrf_token() }}'
                         },
                         body: JSON.stringify({ code: code })
                     })
-                    .then(response => response.json())
+                    .then(response => {
+                        // Vérifier si la réponse est du JSON
+                        const contentType = response.headers.get('content-type');
+                        if (!contentType || !contentType.includes('application/json')) {
+                            // Si ce n'est pas du JSON, lire le texte pour voir l'erreur
+                            return response.text().then(text => {
+                                throw new Error('La réponse du serveur n\'est pas du JSON. Réponse: ' + text.substring(0, 200));
+                            });
+                        }
+                        
+                        // Vérifier le statut HTTP
+                        if (!response.ok) {
+                            return response.text().then(text => {
+                                throw new Error(`Erreur HTTP ${response.status}: ${text.substring(0, 200)}`);
+                            });
+                        }
+                        
+                        return response.json();
+                    })
                     .then(data => {
                         iframeDoc.open();
                         
@@ -593,10 +612,26 @@
                                         background: #fee;
                                         color: #c33;
                                     }
+                                    .error {
+                                        background: #fcc;
+                                        border: 2px solid #c33;
+                                        padding: 15px;
+                                        border-radius: 5px;
+                                    }
+                                    pre {
+                                        white-space: pre-wrap;
+                                        word-wrap: break-word;
+                                    }
                                 </style>
                             </head>
                             <body>
-                                <p>Erreur lors de l'exécution : ${error.message}</p>
+                                <div class="error">
+                                    <h3>Erreur lors de l'exécution :</h3>
+                                    <pre>${error.message}</pre>
+                                    <p style="margin-top: 15px; font-size: 12px; color: #999;">
+                                        Vérifiez que le code PHP est correct et que le serveur répond correctement.
+                                    </p>
+                                </div>
                             </body>
                             </html>
                         `);
@@ -660,9 +695,47 @@
                 document.getElementById('errorMessage').style.display = 'none';
             };
             
-            // Auto-run code on load
+            // Auto-run code on load (sauf pour PHP qui nécessite une exécution serveur)
             setTimeout(() => {
-                runCode();
+                if (language !== 'php') {
+                    runCode();
+                } else {
+                    // Pour PHP, afficher un message dans l'iframe indiquant qu'il faut exécuter le code
+                    const iframe = document.getElementById('resultFrame');
+                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                    iframeDoc.open();
+                    iframeDoc.write(`
+                        <!DOCTYPE html>
+                        <html>
+                        <head>
+                            <meta charset="UTF-8">
+                            <title>Résultat</title>
+                            <style>
+                                body {
+                                    font-family: Arial, sans-serif;
+                                    padding: 20px;
+                                    background: white;
+                                    color: #333;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    min-height: 100vh;
+                                }
+                                .message {
+                                    text-align: center;
+                                    color: #666;
+                                }
+                            </style>
+                        </head>
+                        <body>
+                            <div class="message">
+                                <p>Cliquez sur "Exécuter le code" pour voir le résultat</p>
+                            </div>
+                        </body>
+                        </html>
+                    `);
+                    iframeDoc.close();
+                }
             }, 200);
         }, 100);
     }

@@ -205,6 +205,11 @@ class PageController extends Controller
 
     public function exerciceDetail($language, $id)
     {
+        // Si c'est une requête POST, rediriger vers GET (pour les formulaires PHP)
+        if (request()->isMethod('post')) {
+            return redirect()->route('exercices.detail', [$language, $id]);
+        }
+        
         // Récupérer tous les exercices pour trouver celui correspondant à l'index d'affichage
         $allExercises = $this->getExercisesByLanguage($language);
         
@@ -296,6 +301,14 @@ class PageController extends Controller
     {
         $code = $request->input('code');
         
+        // Vérifier que le code n'est pas vide
+        if (empty($code) || !is_string($code)) {
+            return response()->json([
+                'output' => '',
+                'error' => 'Le code ne peut pas être vide.'
+            ], 400);
+        }
+        
         // Sécurité : Ne permettre l'exécution que pour PHP
         if ($language !== 'php') {
             // Pour les autres langages (HTML, CSS, JS), retourner le code tel quel
@@ -331,52 +344,65 @@ class PageController extends Controller
             ]);
         }
         
-        // Capturer la sortie
-        ob_start();
+        // Initialiser les variables
         $error = null;
         $output = '';
+        $tempFile = null;
         
         try {
-            // Créer un fichier temporaire pour exécuter le code PHP
-            $tempFile = tempnam(sys_get_temp_dir(), 'php_exercise_');
+            // Créer un fichier temporaire avec extension .php pour exécuter le code PHP
+            $tempFile = tempnam(sys_get_temp_dir(), 'php_exercise_') . '.php';
             
             // Écrire le code dans le fichier temporaire
             if (file_put_contents($tempFile, $code) === false) {
                 throw new \Exception('Impossible d\'écrire dans le fichier temporaire');
             }
             
+            // Démarrer la capture de sortie
+            ob_start();
+            
             // Exécuter le code PHP
-            include $tempFile;
+            try {
+                include $tempFile;
+                $output = ob_get_clean();
+            } catch (\ParseError $e) {
+                $output = ob_get_clean() ?: '';
+                throw $e;
+            } catch (\Error $e) {
+                $output = ob_get_clean() ?: '';
+                throw $e;
+            } catch (\Exception $e) {
+                $output = ob_get_clean() ?: '';
+                throw $e;
+            }
             
-            // Récupérer la sortie
-            $output = ob_get_clean();
-            
-            // Supprimer le fichier temporaire
-            @unlink($tempFile);
+            // Si aucune sortie n'a été générée, c'est normal pour certains codes PHP
+            // (par exemple, si le code ne fait que définir des variables)
             
         } catch (\ParseError $e) {
-            $error = 'Erreur de syntaxe : ' . $e->getMessage();
-            $output = ob_get_clean();
+            $error = 'Erreur de syntaxe : ' . $e->getMessage() . ' (ligne ' . $e->getLine() . ')';
         } catch (\Error $e) {
-            $error = 'Erreur : ' . $e->getMessage();
-            $output = ob_get_clean();
+            $error = 'Erreur : ' . $e->getMessage() . ' (ligne ' . $e->getLine() . ')';
         } catch (\Exception $e) {
             $error = 'Exception : ' . $e->getMessage();
-            $output = ob_get_clean();
         } catch (\Throwable $e) {
             $error = 'Erreur : ' . $e->getMessage();
-            $output = ob_get_clean();
+        } finally {
+            // Nettoyer le fichier temporaire
+            if ($tempFile && file_exists($tempFile)) {
+                @unlink($tempFile);
+            }
+            // S'assurer que tous les buffers de sortie sont nettoyés
+            while (ob_get_level() > 0) {
+                ob_end_clean();
+            }
         }
         
-        // Nettoyer le fichier temporaire en cas d'erreur
-        if (isset($tempFile) && file_exists($tempFile)) {
-            @unlink($tempFile);
-        }
-        
+        // Toujours retourner du JSON, même en cas d'erreur
         return response()->json([
-            'output' => $output,
+            'output' => $output ?? '',
             'error' => $error
-        ]);
+        ], 200, [], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     }
 
     private function checkAnswer($exercise, $userCode)
@@ -2589,7 +2615,12 @@ console.log(resultat);',
                     'points' => 10,
                     'instruction' => 'Affichez "Bonjour PHP" avec echo.',
                     'description' => 'Utilisez la balise PHP et echo pour afficher du texte.',
-                    'startCode' => '<html>
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Syntaxe de base PHP</title>
+</head>
 <body>
 
 <?php
@@ -2598,7 +2629,12 @@ console.log(resultat);',
 
 </body>
 </html>',
-                    'solution' => '<html>
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Syntaxe de base PHP</title>
+</head>
 <body>
 
 <?php
@@ -2615,7 +2651,12 @@ echo "Bonjour PHP";
                     'points' => 10,
                     'instruction' => 'Créez une variable $nom avec votre prénom et affichez-la.',
                     'description' => 'Les variables PHP commencent par $.',
-                    'startCode' => '<html>
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Variables PHP</title>
+</head>
 <body>
 
 <?php
@@ -2625,7 +2666,12 @@ echo "Bonjour PHP";
 
 </body>
 </html>',
-                    'solution' => '<html>
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Variables PHP</title>
+</head>
 <body>
 
 <?php
@@ -2643,7 +2689,12 @@ echo $nom;
                     'points' => 10,
                     'instruction' => 'Utilisez les opérateurs arithmétiques pour calculer et afficher le résultat de (10 + 5) * 2.',
                     'description' => 'Les opérateurs PHP effectuent des opérations. + (addition), - (soustraction), * (multiplication), / (division), % (modulo). Les opérateurs de comparaison (==, ===, !=, !==, <, >, <=, >=) comparent des valeurs. Les opérateurs logiques (&&, ||, !) combinent des conditions.',
-                    'startCode' => '<html>
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Opérateurs PHP</title>
+</head>
 <body>
 
 <?php
@@ -2655,7 +2706,12 @@ echo $resultat;
 
 </body>
 </html>',
-                    'solution' => '<html>
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Opérateurs PHP</title>
+</head>
 <body>
 
 <?php
@@ -2674,7 +2730,12 @@ echo $resultat;
                     'points' => 12,
                     'instruction' => 'Concaténez deux chaînes "Bonjour" et "PHP" avec un point (.), puis affichez le résultat en majuscules avec strtoupper().',
                     'description' => 'Les chaînes PHP peuvent être concaténées avec le point (.). strtoupper() met en majuscules, strtolower() en minuscules, strlen() retourne la longueur, substr() extrait une partie, strpos() trouve une position. C\'est essentiel pour manipuler du texte.',
-                    'startCode' => '<html>
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Chaînes de caractères PHP</title>
+</head>
 <body>
 
 <?php
@@ -2688,7 +2749,12 @@ echo $resultat;
 
 </body>
 </html>',
-                    'solution' => '<html>
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Chaînes de caractères PHP</title>
+</head>
 <body>
 
 <?php
@@ -2709,7 +2775,12 @@ echo $resultat;
                     'points' => 8,
                     'instruction' => 'Ajoutez un commentaire sur une ligne et un commentaire sur plusieurs lignes dans le code PHP.',
                     'description' => 'Les commentaires PHP documentent le code. // crée un commentaire sur une ligne, # aussi, /* */ crée un commentaire multi-lignes. Les commentaires ne sont pas exécutés. C\'est essentiel pour la maintenabilité du code.',
-                    'startCode' => '<html>
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Commentaires PHP</title>
+</head>
 <body>
 
 <?php
@@ -2718,7 +2789,12 @@ echo "Hello World";
 
 </body>
 </html>',
-                    'solution' => '<html>
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Commentaires PHP</title>
+</head>
 <body>
 
 <?php
@@ -2739,7 +2815,12 @@ echo "Hello World";
                     'points' => 15,
                     'instruction' => 'Affichez "Majeur" si $age >= 18, sinon "Mineur".',
                     'description' => 'Utilisez if/else en PHP.',
-                    'startCode' => '<html>
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Conditions PHP</title>
+</head>
 <body>
 
 <?php
@@ -2750,7 +2831,12 @@ $age = 20;
 
 </body>
 </html>',
-                    'solution' => '<html>
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Conditions PHP</title>
+</head>
 <body>
 
 <?php
@@ -2772,7 +2858,12 @@ if ($age >= 18) {
                     'points' => 20,
                     'instruction' => 'Affichez les nombres de 1 à 5 avec une boucle for.',
                     'description' => 'Utilisez une boucle for en PHP.',
-                    'startCode' => '<html>
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Boucles PHP</title>
+</head>
 <body>
 
 <?php
@@ -2782,7 +2873,12 @@ if ($age >= 18) {
 
 </body>
 </html>',
-                    'solution' => '<html>
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Boucles PHP</title>
+</head>
 <body>
 
 <?php
@@ -2801,7 +2897,12 @@ for ($i = 1; $i <= 5; $i++) {
                     'points' => 18,
                     'instruction' => 'Créez une fonction "calculerCarre" qui prend un nombre en paramètre et retourne son carré. Appelez la fonction avec 5 et affichez le résultat.',
                     'description' => 'Les fonctions PHP organisent le code réutilisable. function nomFonction($param) { return valeur; } définit une fonction. return retourne une valeur. Les fonctions peuvent avoir des paramètres par défaut. C\'est essentiel pour éviter la duplication de code.',
-                    'startCode' => '<html>
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Fonctions PHP</title>
+</head>
 <body>
 
 <?php
@@ -2813,7 +2914,12 @@ echo $resultat;
 
 </body>
 </html>',
-                    'solution' => '<html>
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Fonctions PHP</title>
+</head>
 <body>
 
 <?php
@@ -2835,7 +2941,12 @@ echo $resultat;
                     'points' => 18,
                     'instruction' => 'Créez un tableau simple avec 3 fruits, puis affichez chaque fruit avec une boucle foreach.',
                     'description' => 'Les tableaux PHP simples sont indexés numériquement. array() ou [] crée un tableau. foreach parcourt tous les éléments. count() retourne le nombre d\'éléments. Les tableaux sont fondamentaux en PHP.',
-                    'startCode' => '<html>
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Tableaux simples PHP</title>
+</head>
 <body>
 
 <?php
@@ -2845,7 +2956,12 @@ echo $resultat;
 
 </body>
 </html>',
-                    'solution' => '<html>
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Tableaux simples PHP</title>
+</head>
 <body>
 
 <?php

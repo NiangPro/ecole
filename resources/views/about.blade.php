@@ -298,8 +298,8 @@
                     <!-- Avatar -->
                     <div class="flex justify-center">
                         <div class="relative">
-                            <div class="w-64 h-64 bg-gradient-to-br from-cyan-500 to-teal-600 rounded-full flex items-center justify-center shadow-2xl">
-                                <i class="fas fa-user-tie text-8xl text-white"></i>
+                            <div class="w-64 h-64 bg-gradient-to-br from-cyan-500 to-teal-600 rounded-full flex items-center justify-center shadow-2xl overflow-hidden">
+                                <img src="{{ asset('images/about.jpg') }}" alt="Bassirou Niang" class="w-full h-full object-cover rounded-full">
                             </div>
                             <div class="absolute -bottom-4 -right-4 w-20 h-20 bg-green-500 rounded-full border-4 border-black flex items-center justify-center">
                                 <i class="fas fa-check text-white text-2xl"></i>
@@ -367,6 +367,8 @@
                     ['name' => 'PHP & Laravel', 'level' => 88, 'icon' => 'fab fa-php', 'color' => 'from-purple-500 to-pink-500'],
                     ['name' => 'React & Vue.js', 'level' => 85, 'icon' => 'fab fa-react', 'color' => 'from-blue-500 to-cyan-500'],
                     ['name' => 'Node.js & Express', 'level' => 82, 'icon' => 'fab fa-node', 'color' => 'from-green-500 to-teal-500'],
+                    ['name' => 'Python', 'level' => 80, 'icon' => 'fab fa-python', 'color' => 'from-blue-600 to-yellow-500'],
+                    ['name' => 'Flutter', 'level' => 78, 'icon' => 'fas fa-mobile-alt', 'color' => 'from-cyan-500 to-blue-500'],
                     ['name' => 'Git & GitHub', 'level' => 92, 'icon' => 'fab fa-git-alt', 'color' => 'from-red-500 to-orange-500'],
                     ['name' => 'WordPress', 'level' => 87, 'icon' => 'fab fa-wordpress', 'color' => 'from-blue-600 to-cyan-600'],
                     ['name' => 'Intelligence Artificielle', 'level' => 75, 'icon' => 'fas fa-brain', 'color' => 'from-purple-600 to-pink-600'],
