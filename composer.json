@@ -27,7 +27,8 @@
         },
         "files": [
             "app/Helpers/AssetHelper.php",
-            "app/Helpers/CdnHelper.php"
+            "app/Helpers/CdnHelper.php",
+            "app/Helpers/MarkdownHelper.php"
         ]
     },
     "autoload-dev": {

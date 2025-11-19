@@ -10,7 +10,7 @@
         : url(asset('images/logo.png'));
 @endphp
 <div class="share-buttons" role="complementary" aria-label="Partager l'article" style="display: flex; align-items: center; gap: 15px; padding: 25px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 16px; margin: 40px 0;">
-    <span style="font-weight: 700; color: #06b6d4; font-size: 1rem; margin-right: 10px;">
+    <span class="share-label" style="font-weight: 700; color: #06b6d4; font-size: 1rem; margin-right: 10px;">
         <i class="fas fa-share-alt" aria-hidden="true"></i> <span>Partager :</span>
     </span>
     
@@ -64,9 +64,46 @@
 </div>
 
 <style>
+    /* Dark Mode Styles (par défaut) */
+    .share-buttons {
+        background: rgba(15, 23, 42, 0.6) !important;
+        border: 1px solid rgba(6, 182, 212, 0.2) !important;
+    }
+    
+    .share-label {
+        color: #06b6d4 !important;
+    }
+    
+    /* Light Mode Styles */
+    body:not(.dark-mode) .share-buttons {
+        background: rgba(255, 255, 255, 0.95) !important;
+        border: 1px solid rgba(6, 182, 212, 0.25) !important;
+        box-shadow: 0 8px 24px rgba(6, 182, 212, 0.1) !important;
+    }
+    
+    body:not(.dark-mode) .share-label {
+        color: #0891b2 !important;
+    }
+    
     .share-btn:hover {
         transform: translateY(-3px) scale(1.1);
         box-shadow: 0 6px 20px rgba(6, 182, 212, 0.4);
+    }
+    
+    body:not(.dark-mode) .share-btn:hover {
+        box-shadow: 0 6px 20px rgba(6, 182, 212, 0.3) !important;
+    }
+    
+    /* Bouton copier adapté pour light mode */
+    body:not(.dark-mode) .share-btn[onclick*="copyToClipboard"] {
+        background: rgba(6, 182, 212, 0.1) !important;
+        color: #0891b2 !important;
+        border: 1px solid rgba(6, 182, 212, 0.3) !important;
+    }
+    
+    body:not(.dark-mode) .share-btn[onclick*="copyToClipboard"]:hover {
+        background: rgba(6, 182, 212, 0.2) !important;
+        border-color: rgba(6, 182, 212, 0.5) !important;
     }
     
     .sr-only {
@@ -85,6 +122,14 @@
         .share-buttons {
             flex-wrap: wrap;
             justify-content: center;
+            padding: 20px 15px !important;
+        }
+        
+        .share-label {
+            width: 100%;
+            text-align: center;
+            margin-bottom: 10px;
+            margin-right: 0 !important;
         }
     }
 </style>

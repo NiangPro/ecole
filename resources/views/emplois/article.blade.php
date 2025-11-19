@@ -167,13 +167,13 @@
         margin-bottom: 40px;
         line-height: 1.9;
         font-size: 1.1rem;
-        color: rgba(255, 255, 255, 0.9);
+        color: rgba(255, 255, 255, 0.95);
     }
     
     body:not(.dark-mode) .article-content {
-        background: rgba(255, 255, 255, 0.9) !important;
+        background: rgba(255, 255, 255, 0.98) !important;
         border-color: rgba(6, 182, 212, 0.25) !important;
-        color: rgba(30, 41, 59, 0.9) !important;
+        color: rgba(30, 41, 59, 0.95) !important;
         box-shadow: 0 10px 40px rgba(6, 182, 212, 0.1) !important;
     }
     
@@ -181,43 +181,131 @@
         max-width: 100%;
         height: auto;
         border-radius: 12px;
-        margin: 20px 0;
+        margin: 25px 0;
         display: block;
         loading: lazy;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+    
+    body:not(.dark-mode) .article-content img {
+        box-shadow: 0 8px 24px rgba(6, 182, 212, 0.15) !important;
     }
     
     .article-content h2 {
         font-size: 2rem;
         font-weight: 800;
         color: #06b6d4;
-        margin: 40px 0 20px;
+        margin: 40px 0 25px;
         padding-bottom: 15px;
-        border-bottom: 2px solid rgba(6, 182, 212, 0.3);
+        border-bottom: 3px solid rgba(6, 182, 212, 0.4);
+        line-height: 1.3;
+    }
+    
+    body:not(.dark-mode) .article-content h2 {
+        color: #0891b2 !important;
+        border-bottom-color: rgba(6, 182, 212, 0.3) !important;
     }
     
     .article-content h3 {
         font-size: 1.5rem;
         font-weight: 700;
         color: #14b8a6;
-        margin: 30px 0 15px;
+        margin: 35px 0 20px;
+        line-height: 1.4;
+    }
+    
+    body:not(.dark-mode) .article-content h3 {
+        color: #0d9488 !important;
     }
     
     .article-content p {
         margin-bottom: 20px;
+        text-align: justify;
+        color: rgba(255, 255, 255, 0.95);
+    }
+    
+    body:not(.dark-mode) .article-content p {
+        color: rgba(30, 41, 59, 0.9) !important;
     }
     
     .article-content ul, .article-content ol {
-        margin: 20px 0;
-        padding-left: 30px;
+        margin: 25px 0;
+        padding-left: 35px;
+    }
+    
+    .article-content ul {
+        list-style-type: disc;
+    }
+    
+    .article-content ol {
+        list-style-type: decimal;
     }
     
     .article-content li {
-        margin-bottom: 10px;
+        margin-bottom: 12px;
+        line-height: 1.7;
+        color: rgba(255, 255, 255, 0.95);
+    }
+    
+    body:not(.dark-mode) .article-content li {
+        color: rgba(30, 41, 59, 0.9) !important;
     }
     
     .article-content strong {
         color: #06b6d4;
         font-weight: 700;
+    }
+    
+    body:not(.dark-mode) .article-content strong {
+        color: #0891b2 !important;
+    }
+    
+    .article-content a {
+        color: #06b6d4;
+        text-decoration: underline;
+        transition: color 0.3s ease;
+    }
+    
+    .article-content a:hover {
+        color: #22d3ee;
+    }
+    
+    body:not(.dark-mode) .article-content a {
+        color: #0891b2 !important;
+    }
+    
+    body:not(.dark-mode) .article-content a:hover {
+        color: #06b6d4 !important;
+    }
+    
+    .article-content blockquote {
+        border-left: 4px solid #06b6d4;
+        padding-left: 20px;
+        margin: 25px 0;
+        font-style: italic;
+        color: rgba(255, 255, 255, 0.8);
+    }
+    
+    body:not(.dark-mode) .article-content blockquote {
+        border-left-color: #06b6d4 !important;
+        color: rgba(30, 41, 59, 0.8) !important;
+        background: rgba(6, 182, 212, 0.05) !important;
+        padding: 15px 20px;
+        border-radius: 8px;
+    }
+    
+    .article-content code {
+        background: rgba(6, 182, 212, 0.1);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: 'Courier New', monospace;
+        font-size: 0.9em;
+        color: #06b6d4;
+    }
+    
+    body:not(.dark-mode) .article-content code {
+        background: rgba(6, 182, 212, 0.1) !important;
+        color: #0891b2 !important;
     }
     
     .related-articles {
@@ -407,7 +495,7 @@
             </a>
             
             <div class="article-content">
-                {!! $article->content !!}
+                {!! markdown_to_html($article->content) !!}
             </div>
             
             @include('partials.share-buttons', ['article' => $article])
@@ -748,26 +836,7 @@
     }
     
     /* Force text colors in light mode */
-    body:not(.dark-mode) .article-content h2,
-    body:not(.dark-mode) .article-content h3,
-    body:not(.dark-mode) .article-content p,
-    body:not(.dark-mode) .article-content li,
-    body:not(.dark-mode) .article-content ul,
-    body:not(.dark-mode) .article-content ol {
-        color: rgba(30, 41, 59, 0.9) !important;
-    }
-    
-    body:not(.dark-mode) .article-content h2 {
-        color: #06b6d4 !important;
-    }
-    
-    body:not(.dark-mode) .article-content h3 {
-        color: #14b8a6 !important;
-    }
-    
-    body:not(.dark-mode) .article-content strong {
-        color: #06b6d4 !important;
-    }
+    /* Styles light mode déjà définis plus haut dans .article-content */
     
     /* Buttons and links adaptation */
     body:not(.dark-mode) .back-button {
