@@ -60,71 +60,77 @@ Route::post('/comments/{id}/like', [\App\Http\Controllers\CommentController::cla
 
 
 // Routes Admin (pas de lien public)
+// Routes publiques (login)
 Route::get('/admin/login', [App\Http\Controllers\AdminController::class, 'showLogin'])->name('admin.login');
 Route::post('/admin/login', [App\Http\Controllers\AdminController::class, 'login'])->name('admin.login.post');
-Route::get('/admin/dashboard', [App\Http\Controllers\AdminController::class, 'dashboard'])->name('admin.dashboard');
-Route::get('/admin/profile', [App\Http\Controllers\AdminController::class, 'profile'])->name('admin.profile');
-Route::post('/admin/profile', [App\Http\Controllers\AdminController::class, 'updateProfile'])->name('admin.profile.update');
-Route::get('/admin/statistics', [App\Http\Controllers\AdminController::class, 'statistics'])->name('admin.statistics');
-Route::post('/admin/statistics/truncate', [App\Http\Controllers\AdminController::class, 'truncateStatistics'])->name('admin.statistics.truncate');
-Route::get('/admin/adsense', [App\Http\Controllers\AdminController::class, 'adsense'])->name('admin.adsense');
-Route::post('/admin/adsense', [App\Http\Controllers\AdminController::class, 'updateAdsense'])->name('admin.adsense.update');
-Route::get('/admin/adsense/check', [App\Http\Controllers\AdminController::class, 'adsenseCheck'])->name('admin.adsense.check');
-Route::get('/admin/backups', [App\Http\Controllers\AdminController::class, 'backups'])->name('admin.backups');
-Route::post('/admin/backups/create', [App\Http\Controllers\AdminController::class, 'createBackup'])->name('admin.backups.create');
-Route::get('/admin/backups/download/{filename}', [App\Http\Controllers\AdminController::class, 'downloadBackup'])->name('admin.backups.download');
-Route::delete('/admin/backups/{filename}', [App\Http\Controllers\AdminController::class, 'deleteBackup'])->name('admin.backups.delete');
-Route::get('/admin/users', [App\Http\Controllers\AdminController::class, 'users'])->name('admin.users');
-Route::get('/admin/users/create', [App\Http\Controllers\AdminController::class, 'createUser'])->name('admin.users.create');
-Route::post('/admin/users', [App\Http\Controllers\AdminController::class, 'storeUser'])->name('admin.users.store');
-Route::get('/admin/users/{id}/edit', [App\Http\Controllers\AdminController::class, 'editUser'])->name('admin.users.edit');
-Route::put('/admin/users/{id}', [App\Http\Controllers\AdminController::class, 'updateUser'])->name('admin.users.update');
-Route::delete('/admin/users/{id}', [App\Http\Controllers\AdminController::class, 'deleteUser'])->name('admin.users.delete');
-Route::get('/admin/messages', [App\Http\Controllers\AdminController::class, 'messages'])->name('admin.messages');
-Route::post('/admin/messages/{id}/mark-read', [App\Http\Controllers\AdminController::class, 'markAsRead'])->name('admin.messages.mark-read');
-Route::delete('/admin/messages/{id}', [App\Http\Controllers\AdminController::class, 'deleteMessage'])->name('admin.messages.delete');
 
-// Routes Commentaires Admin
-Route::prefix('admin/comments')->name('admin.comments.')->group(function () {
-    Route::get('/', [\App\Http\Controllers\Admin\CommentController::class, 'index'])->name('index');
-    Route::post('/{id}/approve', [\App\Http\Controllers\Admin\CommentController::class, 'approve'])->name('approve');
-    Route::post('/{id}/reject', [\App\Http\Controllers\Admin\CommentController::class, 'reject'])->name('reject');
-    Route::delete('/{id}', [\App\Http\Controllers\Admin\CommentController::class, 'delete'])->name('delete');
-    Route::get('/{id}/whatsapp-link', [\App\Http\Controllers\Admin\CommentController::class, 'getWhatsAppLink'])->name('whatsapp-link');
-    Route::get('/{id}/email-link', [\App\Http\Controllers\Admin\CommentController::class, 'getEmailLink'])->name('email-link');
-});
+// Routes protégées par middleware admin
+Route::middleware(['admin'])->group(function () {
+    Route::get('/admin/dashboard', [App\Http\Controllers\AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/admin/profile', [App\Http\Controllers\AdminController::class, 'profile'])->name('admin.profile');
+    Route::post('/admin/profile', [App\Http\Controllers\AdminController::class, 'updateProfile'])->name('admin.profile.update');
+    Route::get('/admin/statistics', [App\Http\Controllers\AdminController::class, 'statistics'])->name('admin.statistics');
+    Route::post('/admin/statistics/truncate', [App\Http\Controllers\AdminController::class, 'truncateStatistics'])->name('admin.statistics.truncate');
+    Route::get('/admin/adsense', [App\Http\Controllers\AdminController::class, 'adsense'])->name('admin.adsense');
+    Route::post('/admin/adsense', [App\Http\Controllers\AdminController::class, 'updateAdsense'])->name('admin.adsense.update');
+    Route::get('/admin/adsense/check', [App\Http\Controllers\AdminController::class, 'adsenseCheck'])->name('admin.adsense.check');
+    Route::get('/admin/backups', [App\Http\Controllers\AdminController::class, 'backups'])->name('admin.backups');
+    Route::post('/admin/backups/create', [App\Http\Controllers\AdminController::class, 'createBackup'])->name('admin.backups.create');
+    Route::get('/admin/backups/download/{filename}', [App\Http\Controllers\AdminController::class, 'downloadBackup'])->name('admin.backups.download');
+    Route::delete('/admin/backups/{filename}', [App\Http\Controllers\AdminController::class, 'deleteBackup'])->name('admin.backups.delete');
+    Route::get('/admin/users', [App\Http\Controllers\AdminController::class, 'users'])->name('admin.users');
+    Route::get('/admin/users/create', [App\Http\Controllers\AdminController::class, 'createUser'])->name('admin.users.create');
+    Route::post('/admin/users', [App\Http\Controllers\AdminController::class, 'storeUser'])->name('admin.users.store');
+    Route::get('/admin/users/{id}/edit', [App\Http\Controllers\AdminController::class, 'editUser'])->name('admin.users.edit');
+    Route::put('/admin/users/{id}', [App\Http\Controllers\AdminController::class, 'updateUser'])->name('admin.users.update');
+    Route::delete('/admin/users/{id}', [App\Http\Controllers\AdminController::class, 'deleteUser'])->name('admin.users.delete');
+    Route::get('/admin/messages', [App\Http\Controllers\AdminController::class, 'messages'])->name('admin.messages');
+    Route::post('/admin/messages/{id}/mark-read', [App\Http\Controllers\AdminController::class, 'markAsRead'])->name('admin.messages.mark-read');
+    Route::delete('/admin/messages/{id}', [App\Http\Controllers\AdminController::class, 'deleteMessage'])->name('admin.messages.delete');
+    Route::get('/admin/settings', [App\Http\Controllers\AdminController::class, 'settings'])->name('admin.settings');
+    Route::post('/admin/settings', [App\Http\Controllers\AdminController::class, 'updateSettings'])->name('admin.settings.update');
+    Route::get('/admin/logout', [App\Http\Controllers\AdminController::class, 'logout'])->name('admin.logout');
 
-// Routes Logs Admin
-Route::prefix('admin/logs')->name('admin.logs.')->group(function () {
-    Route::get('/', [\App\Http\Controllers\Admin\LogController::class, 'index'])->name('index');
-});
-Route::get('/admin/settings', [App\Http\Controllers\AdminController::class, 'settings'])->name('admin.settings');
-Route::post('/admin/settings', [App\Http\Controllers\AdminController::class, 'updateSettings'])->name('admin.settings.update');
+    // Routes Commentaires Admin
+    Route::prefix('admin/comments')->name('admin.comments.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\CommentController::class, 'index'])->name('index');
+        Route::post('/{id}/approve', [\App\Http\Controllers\Admin\CommentController::class, 'approve'])->name('approve');
+        Route::post('/{id}/reject', [\App\Http\Controllers\Admin\CommentController::class, 'reject'])->name('reject');
+        Route::delete('/{id}', [\App\Http\Controllers\Admin\CommentController::class, 'delete'])->name('delete');
+        Route::get('/{id}/whatsapp-link', [\App\Http\Controllers\Admin\CommentController::class, 'getWhatsAppLink'])->name('whatsapp-link');
+        Route::get('/{id}/email-link', [\App\Http\Controllers\Admin\CommentController::class, 'getEmailLink'])->name('email-link');
+    });
 
-// Newsletter Admin
-Route::get('/admin/newsletter', [\App\Http\Controllers\Admin\NewsletterController::class, 'index'])->name('admin.newsletter.index');
-Route::get('/admin/newsletter/export', [\App\Http\Controllers\Admin\NewsletterController::class, 'export'])->name('admin.newsletter.export');
-Route::post('/admin/newsletter/{id}/toggle', [\App\Http\Controllers\Admin\NewsletterController::class, 'toggleStatus'])->name('admin.newsletter.toggle');
-Route::delete('/admin/newsletter/{id}', [\App\Http\Controllers\Admin\NewsletterController::class, 'destroy'])->name('admin.newsletter.destroy');
+    // Routes Logs Admin
+    Route::prefix('admin/logs')->name('admin.logs.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\LogController::class, 'index'])->name('index');
+    });
 
-// Routes Emplois Admin
-Route::prefix('admin/jobs')->name('admin.jobs.')->group(function () {
-    // Catégories
-    Route::resource('categories', \App\Http\Controllers\Admin\JobCategoryController::class);
-    
-    // Articles
-    Route::resource('articles', \App\Http\Controllers\Admin\JobArticleController::class);
-});
+    // Newsletter Admin
+    Route::get('/admin/newsletter', [\App\Http\Controllers\Admin\NewsletterController::class, 'index'])->name('admin.newsletter.index');
+    Route::get('/admin/newsletter/export', [\App\Http\Controllers\Admin\NewsletterController::class, 'export'])->name('admin.newsletter.export');
+    Route::post('/admin/newsletter/{id}/toggle', [\App\Http\Controllers\Admin\NewsletterController::class, 'toggleStatus'])->name('admin.newsletter.toggle');
+    Route::delete('/admin/newsletter/{id}', [\App\Http\Controllers\Admin\NewsletterController::class, 'destroy'])->name('admin.newsletter.destroy');
 
-// Routes Publicités Admin
-Route::prefix('admin/ads')->name('admin.ads.')->group(function () {
-    Route::resource('', \App\Http\Controllers\Admin\AdController::class)->parameters(['' => 'ad']);
-});
+    // Routes Emplois Admin
+    Route::prefix('admin/jobs')->name('admin.jobs.')->group(function () {
+        // Catégories
+        Route::resource('categories', \App\Http\Controllers\Admin\JobCategoryController::class);
+        
+        // Articles
+        Route::resource('articles', \App\Http\Controllers\Admin\JobArticleController::class);
+    });
 
-// Routes Réalisations Admin
-Route::prefix('admin/achievements')->name('admin.achievements.')->group(function () {
-    Route::resource('', \App\Http\Controllers\Admin\AchievementController::class)->parameters(['' => 'achievement']);
-    Route::post('/toggle-section', [\App\Http\Controllers\Admin\AchievementController::class, 'toggleSection'])->name('toggle-section');
+    // Routes Publicités Admin
+    Route::prefix('admin/ads')->name('admin.ads.')->group(function () {
+        Route::resource('', \App\Http\Controllers\Admin\AdController::class)->parameters(['' => 'ad']);
+    });
+
+    // Routes Réalisations Admin
+    Route::prefix('admin/achievements')->name('admin.achievements.')->group(function () {
+        Route::resource('', \App\Http\Controllers\Admin\AchievementController::class)->parameters(['' => 'achievement']);
+        Route::post('/toggle-section', [\App\Http\Controllers\Admin\AchievementController::class, 'toggleSection'])->name('toggle-section');
+    });
 });
 
 // API pour tracking des clics publicitaires

@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
 use App\Models\AdSenseSetting;
 use App\Models\Statistic;
 use App\Models\User;
@@ -25,28 +28,66 @@ class AdminController extends Controller
             'email' => 'required|email',
             'password' => 'required'
         ]);
+
+        // Rate limiting pour prévenir les attaques brute force
+        $key = Str::lower($request->email) . '|' . $request->ip();
         
-        // Compte test admin
-        $adminEmail = 'admin@niangprogrammeur.com';
-        $adminPassword = 'Admin@2025';
-        
-        if ($request->email === $adminEmail && $request->password === $adminPassword) {
-            session([
-                'admin_logged_in' => true,
-                'admin_email' => $adminEmail
-            ]);
-            
-            return redirect()->route('admin.dashboard');
+        if (RateLimiter::tooManyAttempts($key, 5)) {
+            $seconds = RateLimiter::availableIn($key);
+            return back()->with('error', "Trop de tentatives. Veuillez réessayer dans {$seconds} secondes.");
         }
-        
+
+        // Tentative d'authentification
+        $credentials = $request->only('email', 'password');
+        $remember = $request->boolean('remember');
+
+        if (Auth::attempt($credentials, $remember)) {
+            $user = Auth::user();
+
+            // Vérifier que l'utilisateur est admin
+            if (!$user->isAdmin()) {
+                Auth::logout();
+                RateLimiter::hit($key, 300); // 5 minutes
+                return back()->with('error', 'Accès refusé. Vous devez être administrateur.');
+            }
+
+            // Vérifier que le compte est actif
+            if (!$user->is_active) {
+                Auth::logout();
+                RateLimiter::hit($key, 300);
+                return back()->with('error', 'Votre compte a été désactivé.');
+            }
+
+            // Réinitialiser le rate limiter en cas de succès
+            RateLimiter::clear($key);
+
+            // Logger la connexion réussie
+            \Log::info('Admin login successful', [
+                'user_id' => $user->id,
+                'email' => $user->email,
+                'ip' => $request->ip(),
+            ]);
+
+            $request->session()->regenerate();
+
+            return redirect()->intended(route('admin.dashboard'));
+        }
+
+        // Incrémenter le rate limiter en cas d'échec
+        RateLimiter::hit($key, 300);
+
+        // Logger la tentative échouée
+        \Log::warning('Admin login failed', [
+            'email' => $request->email,
+            'ip' => $request->ip(),
+        ]);
+
         return back()->with('error', 'Email ou mot de passe incorrect');
     }
     
     public function dashboard()
     {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
+        // Le middleware AdminAuth s'occupe de la vérification
         
         // Publicités qui vont bientôt expirer (dans les 7 prochains jours) - Cache 5 minutes
         $expiringAds = Cache::remember('expiring_ads', 300, function () {
@@ -112,15 +153,11 @@ class AdminController extends Controller
     
     public function profile()
     {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
-        
-        // Pour l'instant, on utilise les données de session
-        // Plus tard, on pourra créer un vrai système d'authentification
+        // Le middleware AdminAuth s'occupe de la vérification
+        $user = Auth::user();
         $admin = (object)[
-            'name' => 'Administrateur',
-            'email' => session('admin_email'),
+            'name' => $user->name,
+            'email' => $user->email,
         ];
         
         return view('admin.profile', compact('admin'));
@@ -128,10 +165,6 @@ class AdminController extends Controller
     
     public function updateProfile(Request $request)
     {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
-        
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email',
@@ -139,28 +172,30 @@ class AdminController extends Controller
             'new_password' => 'nullable|min:6|confirmed',
         ]);
         
+        // Le middleware AdminAuth s'occupe de la vérification
+        $user = Auth::user();
+        
         // Vérifier le mot de passe actuel
         if ($request->filled('new_password')) {
-            if ($request->current_password !== 'Admin@2025') {
+            if (!Hash::check($request->current_password, $user->password)) {
                 return back()->with('error', 'Le mot de passe actuel est incorrect');
             }
             
-            // Ici, vous devriez mettre à jour le mot de passe dans la base de données
-            // Pour l'instant, on simule juste
+            $user->password = Hash::make($request->new_password);
         }
         
-        // Mettre à jour l'email en session
-        session(['admin_email' => $request->email]);
+        // Mettre à jour les informations
+        // Email mis à jour via Auth::user()
+        
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->save();
         
         return redirect()->route('admin.profile')->with('success', 'Profil mis à jour avec succès!');
     }
     
     public function adsense()
     {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
-        
         $settings = AdSenseSetting::first();
         
         return view('admin.adsense', compact('settings'));
@@ -168,10 +203,6 @@ class AdminController extends Controller
     
     public function updateAdsense(Request $request)
     {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
-        
         $request->validate([
             'publisher_id' => 'nullable|string|max:255',
             'adsense_code' => 'nullable|string',
@@ -194,12 +225,7 @@ class AdminController extends Controller
     }
     
     public function statistics(Request $request)
-    {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
-        
-        $filter = $request->get('filter', 'month');
+    {$filter = $request->get('filter', 'month');
         $year = $request->get('year', Carbon::now()->year);
         $month = $request->get('month', Carbon::now()->month);
         
@@ -312,12 +338,7 @@ class AdminController extends Controller
     }
     
     public function truncateStatistics()
-    {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
-        
-        Statistic::truncate();
+    {Statistic::truncate();
         
         // Vider tous les caches liés aux statistiques
         Cache::flush();
@@ -326,12 +347,7 @@ class AdminController extends Controller
     }
     
     public function users(Request $request)
-    {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
-        
-        $search = $request->get('search');
+    {$search = $request->get('search');
         $role = $request->get('role', '');
         $status = $request->get('status', '');
         $sortBy = $request->get('sort', 'created_at');
@@ -376,21 +392,11 @@ class AdminController extends Controller
     }
     
     public function createUser()
-    {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
-        
-        return view('admin.users.create');
+    {return view('admin.users.create');
     }
     
     public function storeUser(Request $request)
-    {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
-        
-        $request->validate([
+    {$request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6',
@@ -411,22 +417,12 @@ class AdminController extends Controller
     }
     
     public function editUser($id)
-    {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
-        
-        $user = User::findOrFail($id);
+    {$user = User::findOrFail($id);
         return view('admin.users.edit', compact('user'));
     }
     
     public function updateUser(Request $request, $id)
-    {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
-        
-        $user = User::findOrFail($id);
+    {$user = User::findOrFail($id);
         
         $request->validate([
             'name' => 'required|string|max:255',
@@ -450,24 +446,14 @@ class AdminController extends Controller
     }
     
     public function deleteUser($id)
-    {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
-        
-        $user = User::findOrFail($id);
+    {$user = User::findOrFail($id);
         $user->delete();
         
         return redirect()->route('admin.users')->with('success', 'Utilisateur supprimé avec succès!');
     }
     
     public function messages(Request $request)
-    {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
-        
-        $filter = $request->get('filter', 'all');
+    {$filter = $request->get('filter', 'all');
         
         $messages = ContactMessage::when($filter == 'unread', function($query) {
                         return $query->unread();
@@ -482,12 +468,7 @@ class AdminController extends Controller
     }
     
     public function markAsRead($id)
-    {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
-        
-        $message = ContactMessage::findOrFail($id);
+    {$message = ContactMessage::findOrFail($id);
         $message->is_read = true;
         $message->save();
         
@@ -495,35 +476,20 @@ class AdminController extends Controller
     }
     
     public function deleteMessage($id)
-    {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
-        
-        $message = ContactMessage::findOrFail($id);
+    {$message = ContactMessage::findOrFail($id);
         $message->delete();
         
         return back()->with('success', 'Message supprimé avec succès');
     }
     
     public function settings()
-    {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
-        
-        $settings = SiteSetting::first();
+    {$settings = SiteSetting::first();
         
         return view('admin.settings', compact('settings'));
     }
     
     public function updateSettings(Request $request)
-    {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
-        
-        $request->validate([
+    {$request->validate([
             'site_name' => 'required|string|max:255',
             'site_description' => 'nullable|string',
             'contact_email' => 'nullable|email',
@@ -550,19 +516,25 @@ class AdminController extends Controller
         return redirect()->route('admin.settings')->with('success', 'Paramètres mis à jour avec succès!');
     }
     
-    public function logout()
+    public function logout(Request $request)
     {
-        session()->forget(['admin_logged_in', 'admin_email']);
-        return redirect()->route('admin.login');
+        // Logger la déconnexion
+        if (Auth::check()) {
+            \Log::info('Admin logout', [
+                'user_id' => Auth::id(),
+                'email' => Auth::user()->email,
+            ]);
+        }
+
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('admin.login')->with('success', 'Déconnexion réussie');
     }
     
     public function backups()
-    {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
-        
-        $backupsPath = storage_path('app/backups');
+    {$backupsPath = storage_path('app/backups');
         $backups = [];
         
         if (is_dir($backupsPath)) {
@@ -586,12 +558,7 @@ class AdminController extends Controller
     }
     
     public function downloadBackup($filename)
-    {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
-        
-        $path = storage_path('app/backups/' . $filename);
+    {$path = storage_path('app/backups/' . $filename);
         
         if (!file_exists($path) || !preg_match('/^backup_.*\.sql\.gz$/', $filename)) {
             return redirect()->route('admin.backups')->with('error', 'Fichier de sauvegarde non trouvé');
@@ -601,12 +568,7 @@ class AdminController extends Controller
     }
     
     public function deleteBackup($filename)
-    {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
-        
-        $path = storage_path('app/backups/' . $filename);
+    {$path = storage_path('app/backups/' . $filename);
         
         if (!file_exists($path) || !preg_match('/^backup_.*\.sql\.gz$/', $filename)) {
             return redirect()->route('admin.backups')->with('error', 'Fichier de sauvegarde non trouvé');
@@ -618,23 +580,13 @@ class AdminController extends Controller
     }
     
     public function createBackup()
-    {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
-        
-        \Artisan::call('backup:database');
+    {\Artisan::call('backup:database');
         
         return redirect()->route('admin.backups')->with('success', 'Sauvegarde créée avec succès!');
     }
     
     public function adsenseCheck()
-    {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
-        
-        // Vérifier toutes les exigences AdSense
+    {// Vérifier toutes les exigences AdSense
         $checks = [
             'content_quality' => [
                 'title' => 'Qualité du contenu',
