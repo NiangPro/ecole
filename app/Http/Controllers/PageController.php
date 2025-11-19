@@ -610,9 +610,9 @@ class PageController extends Controller
             // Récupérer la sortie
             $output = ob_get_clean();
             
-            // Nettoyer immédiatement les espaces en début/fin
-            if ($output !== null && $output !== false) {
-                $output = trim($output);
+            // Vérifier que la sortie n'est pas vide avant nettoyage
+            if ($output === null || $output === false) {
+                $output = '';
             }
             
             // Supprimer le fichier temporaire
@@ -625,7 +625,19 @@ class PageController extends Controller
                 $output = trim($output);
             }
         } catch (\Error $e) {
-            $error = 'Erreur : ' . $e->getMessage();
+            $errorMessage = $e->getMessage();
+            // Améliorer les messages d'erreur pour qu'ils soient plus pédagogiques
+            if (strpos($errorMessage, 'Call to undefined function') !== false) {
+                // Extraire le nom de la fonction
+                if (preg_match('/Call to undefined function\s+([a-zA-Z_][a-zA-Z0-9_]*)/', $errorMessage, $matches)) {
+                    $functionName = $matches[1];
+                    $error = "La fonction '{$functionName}' n'a pas été définie. Vous devez créer cette fonction avec 'function {$functionName}(...)' avant de l'appeler.";
+                } else {
+                    $error = 'Erreur : ' . $errorMessage;
+                }
+            } else {
+                $error = 'Erreur : ' . $errorMessage;
+            }
             $output = ob_get_clean();
             if ($output !== null && $output !== false) {
                 $output = trim($output);
@@ -637,7 +649,19 @@ class PageController extends Controller
                 $output = trim($output);
             }
         } catch (\Throwable $e) {
-            $error = 'Erreur : ' . $e->getMessage();
+            $errorMessage = $e->getMessage();
+            // Améliorer les messages d'erreur pour qu'ils soient plus pédagogiques
+            if (strpos($errorMessage, 'Call to undefined function') !== false) {
+                // Extraire le nom de la fonction
+                if (preg_match('/Call to undefined function\s+([a-zA-Z_][a-zA-Z0-9_]*)/', $errorMessage, $matches)) {
+                    $functionName = $matches[1];
+                    $error = "La fonction '{$functionName}' n'a pas été définie. Vous devez créer cette fonction avec 'function {$functionName}(...)' avant de l'appeler.";
+                } else {
+                    $error = 'Erreur : ' . $errorMessage;
+                }
+            } else {
+                $error = 'Erreur : ' . $errorMessage;
+            }
             $output = ob_get_clean();
             if ($output !== null && $output !== false) {
                 $output = trim($output);
@@ -650,19 +674,22 @@ class PageController extends Controller
         }
         
         // Nettoyer et encoder la sortie en UTF-8 (comme pour Python)
+        // Vérifier que la sortie existe et n'est pas vide
+        if ($output === null || $output === false) {
+            $output = '';
+        }
+        
+        // Nettoyer et encoder la sortie en UTF-8 (MÊME LOGIQUE QUE PYTHON)
         // Supprimer tous les espaces, tabulations et retours à la ligne en début/fin
         $output = $output !== null ? trim($output) : '';
+        
         // Supprimer les espaces en début de chaque ligne (indentation indésirable)
         if (!empty($output)) {
-            // Étape 1 : Supprimer tous les espaces avant la première balise HTML (DOCTYPE, html, head, body, form, etc.)
-            // Utiliser une regex très agressive qui supprime tout avant n'importe quelle balise HTML
-            $output = preg_replace('/^[\s\n\r\t\x{00A0}\x{2000}-\x{200B}\x{2028}\x{2029}\x{202F}\x{205F}\x{3000}]+(?=<[!\/]?[a-z])/iu', '', $output);
-            
-            // Étape 2 : Supprimer tous les caractères d'espacement Unicode en début/fin
+            // Supprimer tous les caractères d'espacement Unicode en début/fin (comme Python)
             $output = preg_replace('/^[\s\x{00A0}\x{2000}-\x{200B}\x{2028}\x{2029}\x{202F}\x{205F}\x{3000}]+/u', '', $output);
             $output = preg_replace('/[\s\x{00A0}\x{2000}-\x{200B}\x{2028}\x{2029}\x{202F}\x{205F}\x{3000}]+$/u', '', $output);
             
-            // Étape 3 : Nettoyer ligne par ligne
+            // Nettoyer ligne par ligne (comme Python)
             $lines = explode("\n", $output);
             $cleanedLines = [];
             foreach ($lines as $line) {
@@ -672,18 +699,20 @@ class PageController extends Controller
             }
             $output = implode("\n", $cleanedLines);
             
-            // Étape 4 : Retrim pour supprimer les lignes vides en début/fin
+            // Retrim pour supprimer les lignes vides en début/fin et tous les espaces (comme Python)
             $output = trim($output);
             
-            // Étape 5 : Supprimer une dernière fois tous les espaces invisibles avant toute balise HTML
-            $output = preg_replace('/^[\s\n\r\t\x{00A0}\x{2000}-\x{200B}\x{2028}\x{2029}\x{202F}\x{205F}\x{3000}]+(?=<[!\/]?[a-z])/iu', '', $output);
+            // Supprimer une dernière fois tous les espaces invisibles (comme Python)
+            $output = preg_replace('/^[\s\x{00A0}\x{2000}-\x{200B}\x{2028}\x{2029}\x{202F}\x{205F}\x{3000}]+/u', '', $output);
             
-            // Étape 6 : Supprimer les espaces avant le DOCTYPE ou toute balise HTML au début
-            $output = preg_replace('/^[\s\n\r\t\x{00A0}\x{2000}-\x{200B}\x{2028}\x{2029}\x{202F}\x{205F}\x{3000}]+/u', '', $output);
-            
-            // Étape 7 : Si le contenu commence par du HTML, s'assurer qu'il n'y a pas d'espaces avant
-            if (preg_match('/^[\s\n\r\t]/u', $output)) {
-                $output = ltrim($output);
+            // ÉTAPE FINALE : Trouver le premier caractère non-blanc et supprimer TOUT avant (comme Python mais plus agressif)
+            if (!empty($output)) {
+                // Trouver le premier caractère non-blanc
+                $firstNonWhitespace = preg_match('/\S/u', $output, $matches, PREG_OFFSET_CAPTURE);
+                if ($firstNonWhitespace && isset($matches[0][1])) {
+                    // Supprimer tout avant ce caractère
+                    $output = substr($output, $matches[0][1]);
+                }
             }
         }
         
@@ -3153,7 +3182,12 @@ for ($i = 1; $i <= 5; $i++) {
                     'points' => 18,
                     'instruction' => 'Créez une fonction "calculerCarre" qui prend un nombre en paramètre et retourne son carré. Appelez la fonction avec 5 et affichez le résultat.',
                     'description' => 'Les fonctions PHP organisent le code réutilisable. function nomFonction($param) { return valeur; } définit une fonction. return retourne une valeur. Les fonctions peuvent avoir des paramètres par défaut. C\'est essentiel pour éviter la duplication de code.',
-                    'startCode' => '<html>
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Fonctions PHP</title>
+</head>
 <body>
 
 <?php
@@ -3165,7 +3199,12 @@ echo $resultat;
 
 </body>
 </html>',
-                    'solution' => '<html>
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Fonctions PHP</title>
+</head>
 <body>
 
 <?php

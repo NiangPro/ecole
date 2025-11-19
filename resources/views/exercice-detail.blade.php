@@ -623,82 +623,186 @@
                         } else {
                             // Envelopper la sortie dans du HTML
                             let output = data.output || '';
-                            // Nettoyer agressivement tous les espaces en début/fin
+                            
+                            // NETTOYAGE SIMPLIFIÉ (MÊME LOGIQUE QUE PYTHON)
+                            // Supprimer tous les espaces, tabulations et retours à la ligne en début/fin
                             output = output.trim();
                             
-                            // Étape 1 : Supprimer tous les espaces avant la première balise HTML
-                            output = output.replace(/^[\s\n\r\t\u00A0\u2000-\u200B\u2028\u2029\u202F\u205F\u3000]+(?=<[!\/]?[a-z])/gi, '');
-                            
-                            // Étape 2 : Supprimer tous les caractères d'espacement Unicode invisibles
-                            output = output.replace(/^[\s\u00A0\u2000-\u200B\u2028\u2029\u202F\u205F\u3000]+/g, '');
-                            output = output.replace(/[\s\u00A0\u2000-\u200B\u2028\u2029\u202F\u205F\u3000]+$/g, '');
-                            
-                            // Étape 3 : Nettoyer ligne par ligne
+                            // Supprimer les espaces en début de chaque ligne (indentation indésirable)
                             if (output) {
+                                // Supprimer tous les caractères d'espacement Unicode en début/fin (comme Python)
+                                output = output.replace(/^[\s\u00A0\u2000-\u200B\u2028\u2029\u202F\u205F\u3000]+/g, '');
+                                output = output.replace(/[\s\u00A0\u2000-\u200B\u2028\u2029\u202F\u205F\u3000]+$/g, '');
+                                
+                                // Nettoyer ligne par ligne (comme Python)
                                 const lines = output.split('\n');
                                 const cleanedLines = [];
                                 for (let line of lines) {
-                                    // Supprimer tous les espaces, tabulations et caractères invisibles en début
+                                    // Supprimer tous les espaces, tabulations et caractères invisibles en début de ligne
                                     const cleaned = line.replace(/^[\s\t\r\u00A0\u2000-\u200B\u2028\u2029\u202F\u205F\u3000]+/g, '');
                                     cleanedLines.push(cleaned);
                                 }
-                                output = cleanedLines.join('\n').trim();
+                                output = cleanedLines.join('\n');
                                 
-                                // Étape 4 : Supprimer une dernière fois tous les espaces invisibles avant toute balise HTML
-                                output = output.replace(/^[\s\n\r\t\u00A0\u2000-\u200B\u2028\u2029\u202F\u205F\u3000]+(?=<[!\/]?[a-z])/gi, '');
+                                // Retrim pour supprimer les lignes vides en début/fin et tous les espaces (comme Python)
+                                output = output.trim();
                                 
-                                // Étape 5 : Supprimer les espaces avant le DOCTYPE ou toute balise HTML au début
-                                output = output.replace(/^[\s\n\r\t\u00A0\u2000-\u200B\u2028\u2029\u202F\u205F\u3000]+/g, '');
+                                // Supprimer une dernière fois tous les espaces invisibles (comme Python)
+                                output = output.replace(/^[\s\u00A0\u2000-\u200B\u2028\u2029\u202F\u205F\u3000]+/g, '');
                                 
-                                // Étape 6 : Si le contenu commence par du HTML, s'assurer qu'il n'y a pas d'espaces avant
-                                if (/^[\s\n\r\t]/.test(output)) {
-                                    output = output.replace(/^\s+/, '');
+                                // ÉTAPE FINALE : Trouver le premier caractère non-blanc et supprimer TOUT avant
+                                const match = output.match(/\S/);
+                                if (match && match.index !== undefined) {
+                                    // Supprimer tout avant ce caractère
+                                    output = output.substring(match.index);
                                 }
                             }
                             const hasOutput = output.length > 0;
                             const darkMode = window.isDarkMode || document.body.classList.contains('dark-mode');
                             
-                            iframeDoc.write(`
-                                <!DOCTYPE html>
-                                <html>
-                                <head>
-                                    <meta charset="UTF-8">
-                                    <title>Résultat</title>
+                            // Vérifier si le output contient déjà une structure HTML complète (DOCTYPE, html, head, body)
+                            const hasFullHTML = /^\s*<!DOCTYPE\s+html\s*>/i.test(output) || /^\s*<html[\s>]/i.test(output);
+                            
+                            if (hasFullHTML) {
+                                // Si le output contient déjà du HTML complet, l'utiliser directement
+                                // Mais ajouter nos styles dans le head s'il existe
+                                let finalOutput = output;
+                                
+                                // Injecter nos styles dans le <head> si il existe
+                                const headStyle = `
                                     <style>
                                         * {
                                             margin: 0;
                                             padding: 0;
                                             box-sizing: border-box;
                                         }
-                                        html, body {
+                                        html {
                                             margin: 0;
                                             padding: 0;
+                                            height: 100%;
+                                            overflow: hidden;
+                                        }
+                                        html, body {
+                                            margin: 0 !important;
+                                            padding: 0 !important;
                                             width: 100%;
                                             height: 100%;
                                         }
                                         body {
-                                            font-family: 'Courier New', 'Consolas', 'Monaco', monospace;
-                                            padding: 20px;
-                                            background: ${darkMode ? '#1e293b' : 'white'};
-                                            color: ${darkMode ? '#e2e8f0' : '#333'};
-                                            white-space: pre-wrap;
-                                            word-wrap: break-word;
-                                            line-height: 1.5;
-                                            display: block;
+                                            padding: 0 !important;
+                                            margin: 0 !important;
+                                            padding-top: 0 !important;
+                                            margin-top: 0 !important;
                                         }
-                                        .no-output {
-                                            color: #999;
-                                            font-style: italic;
-                                            font-family: Arial, sans-serif;
-                                            margin: 0;
-                                            padding: 0;
+                                        body > *:first-child,
+                                        body > *:first-of-type {
+                                            margin-top: 0 !important;
+                                            padding-top: 0 !important;
+                                            margin: 0 !important;
+                                            padding: 0 !important;
+                                        }
+                                        body::before {
+                                            display: none !important;
+                                            content: none !important;
                                         }
                                     </style>
-                                </head>
-                                <body>${hasOutput ? output : '<p class="no-output">Aucune sortie. Le code s\'est exécuté sans erreur mais n\'a rien affiché. Utilisez print() pour afficher des résultats.</p>'}
-                                </body>
-                                </html>
-                            `);
+                                `;
+                                
+                                // Si un <head> existe, injecter les styles dedans
+                                if (/<head[^>]*>/i.test(finalOutput)) {
+                                    finalOutput = finalOutput.replace(/(<head[^>]*>)/i, '$1' + headStyle);
+                                } else if (/<html[^>]*>/i.test(finalOutput)) {
+                                    // Si pas de head, l'ajouter après <html>
+                                    finalOutput = finalOutput.replace(/(<html[^>]*>)/i, '$1<head>' + headStyle + '</head>');
+                                }
+                                
+                                // S'assurer que le body a les styles inline
+                                finalOutput = finalOutput.replace(/(<body[^>]*)/i, '$1 style="margin: 0 !important; padding: 0 !important; padding-top: 0 !important; margin-top: 0 !important;"');
+                                
+                                iframeDoc.write(finalOutput);
+                            } else {
+                                // Si pas de HTML complet, utiliser notre structure
+                                iframeDoc.write(`
+                                    <!DOCTYPE html>
+                                    <html>
+                                    <head>
+                                        <meta charset="UTF-8">
+                                        <title>Résultat</title>
+                                        <style>
+                                            * {
+                                                margin: 0;
+                                                padding: 0;
+                                                box-sizing: border-box;
+                                            }
+                                            html {
+                                                margin: 0;
+                                                padding: 0;
+                                                height: 100%;
+                                                overflow: hidden;
+                                            }
+                                            html, body {
+                                                margin: 0 !important;
+                                                padding: 0 !important;
+                                                width: 100%;
+                                                height: 100%;
+                                            }
+                                            body {
+                                                font-family: 'Courier New', 'Consolas', 'Monaco', monospace;
+                                                padding: 0 !important;
+                                                margin: 0 !important;
+                                                padding-top: 0 !important;
+                                                margin-top: 0 !important;
+                                                background: ${darkMode ? '#1e293b' : 'white'};
+                                                color: ${darkMode ? '#e2e8f0' : '#333'};
+                                                white-space: pre-wrap;
+                                                word-wrap: break-word;
+                                                line-height: 1.5;
+                                                display: block;
+                                                overflow: auto;
+                                                position: relative;
+                                                top: 0 !important;
+                                            }
+                                            
+                                            /* Forcer l'absence d'espace en haut pour TOUS les éléments */
+                                            body > *:first-child,
+                                            body > *:first-of-type {
+                                                margin-top: 0 !important;
+                                                padding-top: 0 !important;
+                                                margin: 0 !important;
+                                                padding: 0 !important;
+                                            }
+                                            
+                                            /* Supprimer tout espace avant le premier élément */
+                                            body::before {
+                                                display: none !important;
+                                                content: none !important;
+                                            }
+                                            
+                                            /* Si le contenu commence par du HTML (DOCTYPE, html, etc.), s'assurer qu'il n'y a pas d'espace */
+                                            html > body {
+                                                margin: 0 !important;
+                                                padding: 0 !important;
+                                            }
+                                            
+                                            /* Supprimer tout espace avant le DOCTYPE ou html */
+                                            html:first-child {
+                                                margin: 0 !important;
+                                                padding: 0 !important;
+                                            }
+                                            .no-output {
+                                                color: #999;
+                                                font-style: italic;
+                                                font-family: Arial, sans-serif;
+                                                margin: 0;
+                                                padding: 0;
+                                            }
+                                        </style>
+                                    </head>
+                                    <body style="margin: 0 !important; padding: 0 !important; padding-top: 0 !important; margin-top: 0 !important;">${hasOutput ? output : '<p class="no-output">Aucune sortie. Le code s\'est exécuté sans erreur mais n\'a rien affiché. Utilisez print() pour afficher des résultats.</p>'}
+                                    </body>
+                                    </html>
+                                `);
+                            }
                         }
                         
                         iframeDoc.close();
