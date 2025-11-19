@@ -965,8 +965,24 @@
     }
     
     body:not(.dark-mode) .achievement-description-ultra {
-        color: rgba(255, 255, 255, 0.95) !important;
-        text-shadow: 0 1px 8px rgba(0, 0, 0, 0.8);
+        color: rgba(255, 255, 255, 0.9) !important;
+        text-shadow: 0 2px 12px rgba(0, 0, 0, 1), 0 1px 3px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 0, 0, 0.9) !important;
+        font-weight: 500 !important;
+        opacity: 0.9 !important;
+    }
+    
+    /* Force white color for all text in achievement description in light mode - Multiple selectors for maximum specificity */
+    body:not(.dark-mode) .achievement-card-overlay .achievement-description-ultra,
+    body:not(.dark-mode) .achievements-section-ultra .achievement-description-ultra,
+    body:not(.dark-mode) .achievement-card-ultra .achievement-description-ultra,
+    body:not(.dark-mode) .achievement-description-ultra {
+        color: rgba(255, 255, 255, 0.9) !important;
+        -webkit-text-fill-color: rgba(255, 255, 255, 0.9) !important;
+    }
+    
+    /* Override any general paragraph styles in light mode for achievement descriptions */
+    body:not(.dark-mode) .achievement-card-overlay p.achievement-description-ultra {
+        color: rgba(255, 255, 255, 0.9) !important;
     }
     
     /* Link Button */
@@ -1019,11 +1035,29 @@
     
     /* Light Mode Adjustments */
     body:not(.dark-mode) .achievement-card-overlay {
-        background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, transparent 60%);
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.85) 40%, transparent 70%);
     }
     
     body:not(.dark-mode) .achievement-card-ultra:hover .achievement-card-overlay {
-        background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, transparent 50%);
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.98) 0%, rgba(0, 0, 0, 0.9) 40%, transparent 60%);
+    }
+    
+    /* Light Mode - Enhanced overlay for description area */
+    body:not(.dark-mode) .achievement-card-overlay::before {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 60%;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.85), transparent);
+        pointer-events: none;
+        z-index: 0;
+    }
+    
+    body:not(.dark-mode) .achievement-card-overlay > * {
+        position: relative;
+        z-index: 1;
     }
     
     /* Light Mode - Section Title and Description */
@@ -1035,8 +1069,14 @@
         color: rgba(30, 41, 59, 0.95) !important;
     }
     
-    body:not(.dark-mode) .achievements-section-ultra p {
+    /* General paragraph in achievements section - but NOT the description in cards */
+    body:not(.dark-mode) .achievements-section-ultra > .container > .text-center p {
         color: rgba(30, 41, 59, 0.7) !important;
+    }
+    
+    /* EXCEPTION: Force white for achievement description in cards */
+    body:not(.dark-mode) .achievements-section-ultra p.achievement-description-ultra {
+        color: rgba(255, 255, 255, 0.9) !important;
     }
     
     /* ============================================
