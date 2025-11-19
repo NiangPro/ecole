@@ -13,7 +13,6 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [
             \App\Http\Middleware\TrackVisit::class,
-            \App\Http\Middleware\LogErrors::class,
         ]);
         
         // Alias pour le middleware admin
@@ -22,17 +21,5 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        // Logger toutes les exceptions non gérées
-        $exceptions->report(function (\Throwable $e) {
-            \Log::error('Unhandled Exception', [
-                'message' => $e->getMessage(),
-                'file' => $e->getFile(),
-                'line' => $e->getLine(),
-                'trace' => $e->getTraceAsString(),
-                'url' => request()->fullUrl(),
-                'method' => request()->method(),
-                'ip' => request()->ip(),
-                'user_id' => auth()->id(),
-            ]);
-        });
+        //
     })->create();

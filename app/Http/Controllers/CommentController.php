@@ -66,22 +66,14 @@ class CommentController extends Controller
             return back()->with('error', 'Type de contenu invalide.');
         }
 
-        // Sanitizer les données avant sauvegarde
-        $sanitized = \App\Services\SanitizationService::sanitizeArray($request->all(), [
-            'name' => 'sanitizeName',
-            'email' => 'sanitizeEmail',
-            'phone' => 'sanitizePhone',
-            'content' => 'sanitizeContent',
-        ]);
-        
         $comment = Comment::create([
             'user_id' => null, // Toujours anonyme maintenant
-            'name' => $sanitized['name'],
-            'email' => $sanitized['email'],
-            'phone' => $sanitized['phone'] ?? null,
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone' => $request->phone,
             'commentable_type' => $commentableType,
             'commentable_id' => $commentableId,
-            'content' => $sanitized['content'],
+            'content' => $request->content,
             'parent_id' => $request->parent_id,
             'status' => 'pending', // En attente de modération
             'ip_address' => $request->ip(),
