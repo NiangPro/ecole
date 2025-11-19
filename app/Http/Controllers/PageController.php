@@ -84,13 +84,22 @@ class PageController extends Controller
 
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email',
+            'email' => 'required|email|max:255',
             'phone' => 'nullable|string|max:20',
             'subject' => 'required|string|max:255',
-            'message' => 'required|string',
+            'message' => 'required|string|min:10|max:5000',
         ]);
         
-        ContactMessage::create($request->all());
+        // Sanitizer les données avant sauvegarde
+        $sanitized = \App\Services\SanitizationService::sanitizeArray($request->all(), [
+            'name' => 'sanitizeName',
+            'email' => 'sanitizeEmail',
+            'phone' => 'sanitizePhone',
+            'subject' => 'sanitizeString',
+            'message' => 'sanitizeContent',
+        ]);
+        
+        ContactMessage::create($sanitized);
         
         return back()->with('success', 'Votre message a été envoyé avec succès! Nous vous répondrons dans les plus brefs délais.');
     }

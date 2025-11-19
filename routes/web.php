@@ -12,8 +12,8 @@ Route::get('/sitemap-articles.xml', [\App\Http\Controllers\SitemapController::cl
 
 Route::get('/', [PageController::class, 'index'])->name('home');
 Route::get('/search', [PageController::class, 'search'])->middleware('throttle:30,1')->name('search');
-Route::post('/contact', [PageController::class, 'sendContact'])->middleware('throttle:5,1')->name('contact.send');
-Route::post('/newsletter/subscribe', [PageController::class, 'newsletterSubscribe'])->middleware('throttle:10,1')->name('newsletter.subscribe');
+Route::post('/contact', [PageController::class, 'sendContact'])->middleware('throttle:3,1')->name('contact.send');
+Route::post('/newsletter/subscribe', [PageController::class, 'newsletterSubscribe'])->middleware('throttle:5,1')->name('newsletter.subscribe');
 Route::get('/about', [PageController::class, 'about'])->name('about');
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 Route::post('/contact', [PageController::class, 'sendContact'])->name('contact.send');
@@ -22,7 +22,7 @@ Route::get('/exercices', [PageController::class, 'exercices'])->name('exercices'
 Route::get('/exercices/{language}', [PageController::class, 'exercicesLanguage'])->name('exercices.language');
 Route::get('/exercices/{language}/{id}', [PageController::class, 'exerciceDetail'])->name('exercices.detail');
 Route::post('/exercices/{language}/{id}/submit', [PageController::class, 'exerciceSubmit'])->name('exercices.submit');
-Route::post('/exercices/{language}/run', [PageController::class, 'runCode'])->middleware('throttle:30,1')->name('exercices.run');
+Route::post('/exercices/{language}/run', [PageController::class, 'runCode'])->middleware('throttle:20,1')->name('exercices.run');
 Route::get('/quiz', [PageController::class, 'quiz'])->name('quiz');
 Route::get('/quiz/{language}', [PageController::class, 'quizLanguage'])->name('quiz.language');
 Route::post('/quiz/{language}/submit', [PageController::class, 'quizSubmit'])->name('quiz.submit');
@@ -54,8 +54,8 @@ Route::get('/emplois/opportunites', [PageController::class, 'opportunites'])->na
 Route::get('/emplois/concours', [PageController::class, 'concours'])->name('emplois.concours');
 Route::get('/emplois/article/{slug}', [PageController::class, 'showArticle'])->name('emplois.article');
 
-// Commentaires (publiques - avec rate limiting)
-Route::post('/comments', [\App\Http\Controllers\CommentController::class, 'store'])->middleware('throttle:5,15')->name('comments.store');
+// Commentaires (publiques - avec rate limiting renforcé)
+Route::post('/comments', [\App\Http\Controllers\CommentController::class, 'store'])->middleware('throttle:3,15')->name('comments.store');
 Route::post('/comments/{id}/like', [\App\Http\Controllers\CommentController::class, 'like'])->middleware('throttle:10,1')->name('comments.like');
 
 
