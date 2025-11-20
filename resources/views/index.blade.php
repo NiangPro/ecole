@@ -467,122 +467,320 @@
         color: rgba(255, 255, 255, 0.95);
     }
     
-    /* Technologies Section */
+    /* Technologies Section - Ultra Modern Design */
     .tech-section {
         position: relative;
         z-index: 2;
-        padding: 50px 20px;
-        max-width: 1200px;
+        padding: 100px 20px;
+        max-width: 1400px;
         margin: 0 auto;
+        overflow: hidden;
+    }
+    
+    .tech-section::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle at 30% 30%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
+                    radial-gradient(circle at 70% 70%, rgba(20, 184, 166, 0.15) 0%, transparent 50%);
+        animation: rotateGradient 20s linear infinite;
+        pointer-events: none;
+    }
+    
+    @keyframes rotateGradient {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
     }
     
     .section-title {
         font-family: 'Orbitron', sans-serif;
-        font-size: clamp(1.8rem, 4vw, 2.5rem);
+        font-size: clamp(2.5rem, 5vw, 4rem);
         font-weight: 900;
         text-align: center;
-        margin-bottom: 15px;
-        background: linear-gradient(135deg, #06b6d4, #14b8a6);
+        margin-bottom: 20px;
+        background: linear-gradient(135deg, #06b6d4 0%, #14b8a6 50%, #8b5cf6 100%);
+        background-size: 200% 200%;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: gradientShift 5s ease infinite;
+        position: relative;
+        z-index: 1;
+        text-shadow: 0 0 40px rgba(6, 182, 212, 0.3);
+    }
+    
+    @keyframes gradientShift {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
     }
     
     .section-subtitle {
         text-align: center;
-        font-size: 1.1rem;
+        font-size: clamp(1rem, 2vw, 1.3rem);
         color: rgba(30, 41, 59, 0.7);
-        max-width: 1100px;
-        margin: 0 auto 40px;
+        max-width: 800px;
+        margin: 0 auto 60px;
+        line-height: 1.8;
+        position: relative;
+        z-index: 1;
     }
     
     body.dark-mode .section-subtitle {
-        color: rgba(255, 255, 255, 0.6);
+        color: rgba(255, 255, 255, 0.7);
     }
     
     .tech-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 30px;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 35px;
+        position: relative;
+        z-index: 1;
     }
     
     .tech-card {
         position: relative;
-        background: linear-gradient(135deg, rgba(6, 182, 212, 0.08) 0%, rgba(20, 184, 166, 0.05) 100%);
-        border: 2px solid rgba(6, 182, 212, 0.2);
-        border-radius: 24px;
-        padding: 40px;
-        backdrop-filter: blur(20px);
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        background: rgba(255, 255, 255, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 32px;
+        padding: 45px 35px;
+        backdrop-filter: blur(30px) saturate(180%);
+        -webkit-backdrop-filter: blur(30px) saturate(180%);
+        transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
         cursor: pointer;
         overflow: hidden;
-        box-shadow: 0 10px 40px rgba(6, 182, 212, 0.1);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1),
+                    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+        transform-style: preserve-3d;
+        perspective: 1000px;
     }
     
     body.dark-mode .tech-card {
-        background: rgba(15, 23, 42, 0.7);
-        border: 1px solid rgba(6, 182, 212, 0.3);
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
+                    0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+    }
+    
+    .tech-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, 
+            rgba(6, 182, 212, 0.1) 0%, 
+            rgba(20, 184, 166, 0.1) 50%,
+            rgba(139, 92, 246, 0.1) 100%);
+        opacity: 0;
+        transition: opacity 0.5s ease;
+        border-radius: 32px;
+        z-index: 0;
+    }
+    
+    .tech-card:hover::before {
+        opacity: 1;
     }
     
     .tech-card::after {
         content: '';
         position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(6, 182, 212, 0.1), transparent);
-        transition: left 0.6s;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: conic-gradient(from 0deg, 
+            transparent 0deg,
+            rgba(6, 182, 212, 0.1) 90deg,
+            transparent 180deg,
+            rgba(20, 184, 166, 0.1) 270deg,
+            transparent 360deg);
+        animation: rotateBorder 4s linear infinite;
+        opacity: 0;
+        transition: opacity 0.5s ease;
     }
     
     .tech-card:hover::after {
-        left: 100%;
+        opacity: 1;
+    }
+    
+    @keyframes rotateBorder {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
     }
     
     .tech-card:hover {
-        transform: translateY(-10px) scale(1.02);
+        transform: translateY(-15px) rotateX(5deg) rotateY(-5deg) scale(1.03);
         border-color: rgba(6, 182, 212, 0.5);
-        box-shadow: 0 30px 80px rgba(6, 182, 212, 0.3);
+        box-shadow: 0 25px 60px rgba(6, 182, 212, 0.25),
+                    0 0 40px rgba(6, 182, 212, 0.15),
+                    0 0 0 1px rgba(6, 182, 212, 0.2) inset;
+    }
+    
+    body.dark-mode .tech-card:hover {
+        box-shadow: 0 25px 60px rgba(6, 182, 212, 0.4),
+                    0 0 50px rgba(6, 182, 212, 0.2),
+                    0 0 0 1px rgba(6, 182, 212, 0.3) inset;
+    }
+    
+    .tech-icon-wrapper {
+        position: relative;
+        width: 100px;
+        height: 100px;
+        margin: 0 auto 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1;
+    }
+    
+    .tech-icon-wrapper::before {
+        content: '';
+        position: absolute;
+        inset: -10px;
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2));
+        border-radius: 50%;
+        opacity: 0;
+        transition: all 0.5s ease;
+        filter: blur(20px);
+    }
+    
+    .tech-card:hover .tech-icon-wrapper::before {
+        opacity: 1;
+        transform: scale(1.2);
     }
     
     .tech-icon {
-        font-size: 4rem;
-        margin-bottom: 20px;
+        font-size: 4.5rem;
         display: block;
+        position: relative;
+        z-index: 1;
+        transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
+    }
+    
+    .tech-card:hover .tech-icon {
+        transform: scale(1.15) rotateY(15deg);
+        filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.25));
     }
     
     .tech-name {
-        font-size: 1.8rem;
-        font-weight: 700;
-        margin-bottom: 15px;
-        color: rgba(30, 41, 59, 0.9);
+        font-size: clamp(1.5rem, 2.5vw, 2rem);
+        font-weight: 800;
+        margin-bottom: 18px;
+        color: rgba(30, 41, 59, 0.95);
+        text-align: center;
+        position: relative;
+        z-index: 1;
+        letter-spacing: -0.5px;
+        transition: all 0.3s ease;
     }
     
     body.dark-mode .tech-name {
         color: #fff;
     }
     
+    .tech-card:hover .tech-name {
+        background: linear-gradient(135deg, #06b6d4, #14b8a6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
     .tech-desc {
-        color: rgba(30, 41, 59, 0.7);
-        line-height: 1.6;
-        margin-bottom: 20px;
+        color: rgba(30, 41, 59, 0.75);
+        line-height: 1.8;
+        margin-bottom: 28px;
+        text-align: center;
+        font-size: 1rem;
+        position: relative;
+        z-index: 1;
+        transition: color 0.3s ease;
     }
     
     body.dark-mode .tech-desc {
-        color: rgba(255, 255, 255, 0.6);
+        color: rgba(255, 255, 255, 0.7);
     }
     
     .tech-link {
-        color: #06b6d4;
+        color: #fff;
         text-decoration: none;
-        font-weight: 600;
+        font-weight: 700;
         display: inline-flex;
         align-items: center;
-        gap: 8px;
-        transition: gap 0.3s;
+        justify-content: center;
+        gap: 10px;
+        padding: 14px 32px;
+        background: linear-gradient(135deg, #06b6d4, #14b8a6);
+        border-radius: 50px;
+        transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        position: relative;
+        z-index: 1;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+        text-transform: uppercase;
+        font-size: 0.85rem;
+        letter-spacing: 0.5px;
+        width: 100%;
+    }
+    
+    .tech-link::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        transition: left 0.5s ease;
+    }
+    
+    .tech-link:hover::before {
+        left: 100%;
     }
     
     .tech-link:hover {
-        gap: 12px;
+        gap: 15px;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(6, 182, 212, 0.5);
+        background: linear-gradient(135deg, #14b8a6, #06b6d4);
+    }
+    
+    .tech-link i {
+        transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    
+    .tech-link:hover i {
+        transform: translateX(5px);
+    }
+    
+    /* Floating particles effect */
+    .tech-card .particle {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        background: rgba(6, 182, 212, 0.6);
+        border-radius: 50%;
+        pointer-events: none;
+        opacity: 0;
+        animation: floatParticle 3s ease-in-out infinite;
+    }
+    
+    @keyframes floatParticle {
+        0%, 100% {
+            transform: translateY(0) translateX(0);
+            opacity: 0;
+        }
+        50% {
+            opacity: 1;
+        }
+    }
+    
+    .tech-card:hover .particle {
+        animation: floatParticle 2s ease-in-out infinite;
     }
     
     /* Scroll Indicator */
@@ -655,11 +853,26 @@
         }
         
         .tech-section {
-            padding: 40px 20px;
+            padding: 60px 20px;
         }
         
         .tech-grid {
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+        
+        .tech-card {
+            padding: 35px 25px;
+        }
+        
+        .tech-icon-wrapper {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 25px;
+        }
+        
+        .tech-icon {
+            font-size: 3.5rem;
         }
     }
     
@@ -681,8 +894,40 @@
             font-size: 1.8rem;
         }
         
+        .tech-section {
+            padding: 40px 15px;
+        }
+        
+        .tech-grid {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        
         .tech-card {
-            padding: 30px;
+            padding: 25px 18px;
+        }
+        
+        .tech-icon-wrapper {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 20px;
+        }
+        
+        .tech-icon {
+            font-size: 2.5rem;
+        }
+        
+        .tech-name {
+            font-size: 1.4rem;
+        }
+        
+        .tech-desc {
+            font-size: 0.9rem;
+        }
+        
+        .tech-link {
+            padding: 12px 24px;
+            font-size: 0.8rem;
         }
     }
 </style>
@@ -793,15 +1038,15 @@
                 avec notre éditeur intégré, exécutez-le en temps réel, et recevez des feedbacks immédiats. Les exercices progressent naturellement, vous 
                 permettant de construire vos compétences étape par étape, de la syntaxe de base aux concepts avancés.
             </p>
-                <a href="{{ route('exercices') }}" class="tech-link" style="display: inline-flex; align-items: center; gap: 8px; color: #06b6d4; font-weight: 600; text-decoration: none; font-size: 0.9rem;">
+                <a href="{{ route('exercices') }}" class="exercices-quiz-btn exercices-btn" style="display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 14px 28px; background: linear-gradient(135deg, #06b6d4, #14b8a6); color: #fff; font-weight: 700; text-decoration: none; font-size: 0.95rem; border-radius: 50px; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(6, 182, 212, 0.4); text-transform: uppercase; letter-spacing: 0.5px;">
                 Commencer les exercices <i class="fas fa-arrow-right"></i>
             </a>
         </div>
         
         <!-- Quiz Card -->
             <div class="stat-card" style="text-align: left; padding: 30px;">
-                <div style="width: 60px; height: 60px; background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(168, 85, 247, 0.2)); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
-                    <i class="fas fa-question-circle" style="font-size: 1.8rem; color: #a855f7;"></i>
+                <div style="width: 60px; height: 60px; background: linear-gradient(135deg, rgba(20, 184, 166, 0.2), rgba(6, 182, 212, 0.2)); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
+                    <i class="fas fa-question-circle" style="font-size: 1.8rem; color: #14b8a6;"></i>
             </div>
                 <h3 style="font-size: 1.3rem; font-weight: 700; color: #fff; margin-bottom: 12px;">Quiz Interactifs</h3>
                 <p style="color: rgba(255, 255, 255, 0.7); line-height: 1.7; margin-bottom: 20px; font-size: 0.9rem;">
@@ -810,7 +1055,7 @@
                 score détaillé à la fin, avec des explications complètes pour chaque question, qu'elle soit correcte ou incorrecte. Cette approche 
                 vous permet d'identifier vos points forts et vos faiblesses, et de cibler vos révisions pour progresser rapidement et efficacement.
             </p>
-                <a href="{{ route('quiz') }}" class="tech-link" style="display: inline-flex; align-items: center; gap: 8px; color: #a855f7; font-weight: 600; text-decoration: none; font-size: 0.9rem;">
+                <a href="{{ route('quiz') }}" class="exercices-quiz-btn quiz-btn" style="display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 14px 28px; background: linear-gradient(135deg, #14b8a6, #06b6d4); color: #fff; font-weight: 700; text-decoration: none; font-size: 0.95rem; border-radius: 50px; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(20, 184, 166, 0.4); text-transform: uppercase; letter-spacing: 0.5px;">
                 Faire un quiz <i class="fas fa-arrow-right"></i>
             </a>
         </div>
@@ -1070,22 +1315,55 @@
             }
         }).catch(err => console.log('Ad click tracking error:', err));
     }
+    
+    // Animation au scroll pour les cartes tech
+    document.addEventListener('DOMContentLoaded', function() {
+        const techCards = document.querySelectorAll('.tech-card');
+        
+        // Observer pour l'animation au scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }, index * 100);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+        
+        techCards.forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(card);
+        });
+    });
 </script>
 
-<!-- Technologies Section -->
+<!-- Technologies Section - Ultra Modern Design -->
 <section id="technologies" class="tech-section">
     <h2 class="section-title">Technologies Enseignées</h2>
     <p class="section-subtitle">
-        Maîtrisez les technologies les plus demandées du marché avec nos formations complètes et pratiques
+        Maîtrisez les technologies les plus demandées du marché avec nos formations complètes et pratiques. 
+        Chaque technologie est enseignée avec des projets réels et des exercices interactifs.
     </p>
     
     <div class="tech-grid">
         <!-- HTML5 -->
         <div class="tech-card">
-            <i class="fab fa-html5 tech-icon" style="color: #e34c26;"></i>
+            <div class="tech-icon-wrapper">
+                <i class="fab fa-html5 tech-icon" style="color: #e34c26;"></i>
+            </div>
             <h3 class="tech-name">HTML5</h3>
             <p class="tech-desc">
-                Apprenez les fondamentaux du web avec HTML5. Structure, sémantique et bonnes pratiques.
+                Apprenez les fondamentaux du web avec HTML5. Structure, sémantique et bonnes pratiques pour créer des sites modernes.
             </p>
             <a href="{{ route('formations.html5') }}" class="tech-link">
                 Commencer <i class="fas fa-arrow-right"></i>
@@ -1094,10 +1372,12 @@
         
         <!-- CSS3 -->
         <div class="tech-card">
-            <i class="fab fa-css3-alt tech-icon" style="color: #264de4;"></i>
+            <div class="tech-icon-wrapper">
+                <i class="fab fa-css3-alt tech-icon" style="color: #264de4;"></i>
+            </div>
             <h3 class="tech-name">CSS3</h3>
             <p class="tech-desc">
-                Créez des designs modernes et responsives avec CSS3, Flexbox et Grid.
+                Créez des designs modernes et responsives avec CSS3, Flexbox, Grid et les animations avancées.
             </p>
             <a href="{{ route('formations.css3') }}" class="tech-link">
                 Commencer <i class="fas fa-arrow-right"></i>
@@ -1106,10 +1386,12 @@
         
         <!-- JavaScript -->
         <div class="tech-card">
-            <i class="fab fa-js tech-icon" style="color: #f0db4f;"></i>
+            <div class="tech-icon-wrapper">
+                <i class="fab fa-js tech-icon" style="color: #f0db4f;"></i>
+            </div>
             <h3 class="tech-name">JavaScript</h3>
             <p class="tech-desc">
-                Maîtrisez JavaScript ES6+, DOM manipulation et programmation asynchrone.
+                Maîtrisez JavaScript ES6+, DOM manipulation, programmation asynchrone et les frameworks modernes.
             </p>
             <a href="{{ route('formations.javascript') }}" class="tech-link">
                 Commencer <i class="fas fa-arrow-right"></i>
@@ -1118,10 +1400,12 @@
         
         <!-- PHP -->
         <div class="tech-card">
-            <i class="fab fa-php tech-icon" style="color: #8993be;"></i>
+            <div class="tech-icon-wrapper">
+                <i class="fab fa-php tech-icon" style="color: #8993be;"></i>
+            </div>
             <h3 class="tech-name">PHP</h3>
             <p class="tech-desc">
-                Développez des applications web dynamiques avec PHP et MySQL.
+                Développez des applications web dynamiques avec PHP, MySQL, et les frameworks Laravel et Symfony.
             </p>
             <a href="{{ route('formations.php') }}" class="tech-link">
                 Commencer <i class="fas fa-arrow-right"></i>
@@ -1130,10 +1414,12 @@
         
         <!-- Bootstrap -->
         <div class="tech-card">
-            <i class="fab fa-bootstrap tech-icon" style="color: #7952b3;"></i>
+            <div class="tech-icon-wrapper">
+                <i class="fab fa-bootstrap tech-icon" style="color: #7952b3;"></i>
+            </div>
             <h3 class="tech-name">Bootstrap</h3>
             <p class="tech-desc">
-                Créez rapidement des interfaces responsives avec le framework Bootstrap.
+                Créez rapidement des interfaces responsives et modernes avec le framework Bootstrap 5.
             </p>
             <a href="{{ route('formations.bootstrap') }}" class="tech-link">
                 Commencer <i class="fas fa-arrow-right"></i>
@@ -1142,10 +1428,12 @@
         
         <!-- Git -->
         <div class="tech-card">
-            <i class="fab fa-git-alt tech-icon" style="color: #f34f29;"></i>
+            <div class="tech-icon-wrapper">
+                <i class="fab fa-git-alt tech-icon" style="color: #f34f29;"></i>
+            </div>
             <h3 class="tech-name">Git</h3>
             <p class="tech-desc">
-                Gérez vos projets avec Git et GitHub. Versioning et collaboration.
+                Gérez vos projets avec Git et GitHub. Versioning, collaboration et workflows professionnels.
             </p>
             <a href="{{ route('formations.git') }}" class="tech-link">
                 Commencer <i class="fas fa-arrow-right"></i>
@@ -1154,10 +1442,12 @@
         
         <!-- WordPress -->
         <div class="tech-card">
-            <i class="fab fa-wordpress tech-icon" style="color: #21759b;"></i>
+            <div class="tech-icon-wrapper">
+                <i class="fab fa-wordpress tech-icon" style="color: #21759b;"></i>
+            </div>
             <h3 class="tech-name">WordPress</h3>
             <p class="tech-desc">
-                Créez des sites web professionnels avec WordPress. Thèmes et plugins.
+                Créez des sites web professionnels avec WordPress. Développement de thèmes et plugins personnalisés.
             </p>
             <a href="{{ route('formations.wordpress') }}" class="tech-link">
                 Commencer <i class="fas fa-arrow-right"></i>
@@ -1166,10 +1456,12 @@
         
         <!-- IA -->
         <div class="tech-card">
-            <i class="fas fa-robot tech-icon" style="color: #06b6d4;"></i>
+            <div class="tech-icon-wrapper">
+                <i class="fas fa-robot tech-icon" style="color: #06b6d4;"></i>
+            </div>
             <h3 class="tech-name">Intelligence Artificielle</h3>
             <p class="tech-desc">
-                Découvrez l'IA, le Machine Learning et les applications pratiques.
+                Découvrez l'IA, le Machine Learning, le Deep Learning et leurs applications pratiques dans le développement.
             </p>
             <a href="{{ route('formations.ia') }}" class="tech-link">
                 Commencer <i class="fas fa-arrow-right"></i>
@@ -1178,10 +1470,12 @@
         
         <!-- Python -->
         <div class="tech-card">
-            <i class="fab fa-python tech-icon" style="color: #3776ab;"></i>
+            <div class="tech-icon-wrapper">
+                <i class="fab fa-python tech-icon" style="color: #3776ab;"></i>
+            </div>
             <h3 class="tech-name">Python</h3>
             <p class="tech-desc">
-                Apprenez Python, le langage de programmation polyvalent pour le web, la data science et l'IA.
+                Apprenez Python, le langage de programmation polyvalent pour le web, la data science, l'IA et l'automatisation.
             </p>
             <a href="{{ route('formations.python') }}" class="tech-link">
                 Commencer <i class="fas fa-arrow-right"></i>
@@ -1361,6 +1655,52 @@
     
     body.dark-mode .stat-card p {
         color: rgba(255, 255, 255, 0.7) !important;
+    }
+    
+    /* Styles pour les boutons Exercices & Quiz */
+    .exercices-quiz-btn {
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+        max-width: 100%;
+    }
+    
+    .exercices-quiz-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        transition: left 0.5s ease;
+    }
+    
+    .exercices-quiz-btn:hover::before {
+        left: 100%;
+    }
+    
+    .exercices-quiz-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(6, 182, 212, 0.5) !important;
+    }
+    
+    .exercices-btn:hover {
+        background: linear-gradient(135deg, #14b8a6, #06b6d4) !important;
+        box-shadow: 0 8px 25px rgba(6, 182, 212, 0.5) !important;
+    }
+    
+    .quiz-btn:hover {
+        background: linear-gradient(135deg, #06b6d4, #14b8a6) !important;
+        box-shadow: 0 8px 25px rgba(20, 184, 166, 0.5) !important;
+    }
+    
+    .exercices-quiz-btn i {
+        transition: transform 0.3s ease;
+    }
+    
+    .exercices-quiz-btn:hover i {
+        transform: translateX(5px);
     }
     
     @media (max-width: 1024px) {
