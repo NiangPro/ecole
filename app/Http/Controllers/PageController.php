@@ -298,6 +298,8 @@ class PageController extends Controller
     public function runCode(Request $request, $language)
     {
         $code = $request->input('code');
+        $postData = $request->input('post_data', []);
+        $getData = $request->input('get_data', []);
         
         // Exécution Python
         if ($language === 'python') {
@@ -595,9 +597,27 @@ class PageController extends Controller
         $error = null;
         $output = '';
         
+        // Sauvegarder les valeurs originales
+        $originalPost = $_POST;
+        $originalGet = $_GET;
+        $originalServer = $_SERVER;
+        
         try {
             // Créer un fichier temporaire pour exécuter le code PHP
             $tempFile = tempnam(sys_get_temp_dir(), 'php_exercise_');
+            
+            // Simuler $_POST et $_GET si des données sont fournies
+            if (!empty($postData)) {
+                $_POST = $postData;
+                $_SERVER['REQUEST_METHOD'] = 'POST';
+            }
+            
+            if (!empty($getData)) {
+                $_GET = $getData;
+                if (empty($postData)) {
+                    $_SERVER['REQUEST_METHOD'] = 'GET';
+                }
+            }
             
             // Écrire le code dans le fichier temporaire
             if (file_put_contents($tempFile, $code) === false) {
@@ -666,11 +686,16 @@ class PageController extends Controller
             if ($output !== null && $output !== false) {
                 $output = trim($output);
             }
-        }
-        
-        // Nettoyer le fichier temporaire en cas d'erreur
-        if (isset($tempFile) && file_exists($tempFile)) {
-            @unlink($tempFile);
+        } finally {
+            // Restaurer TOUJOURS les valeurs originales, même en cas d'erreur
+            $_POST = $originalPost;
+            $_GET = $originalGet;
+            $_SERVER = $originalServer;
+            
+            // Nettoyer le fichier temporaire en cas d'erreur
+            if (isset($tempFile) && file_exists($tempFile)) {
+                @unlink($tempFile);
+            }
         }
         
         // Nettoyer et encoder la sortie en UTF-8 (comme pour Python)

@@ -720,6 +720,11 @@
                                 finalOutput = finalOutput.replace(/(<body[^>]*)/i, '$1 style="margin: 0 !important; padding: 0 !important; padding-top: 0 !important; margin-top: 0 !important;"');
                                 
                                 iframeDoc.write(finalOutput);
+                                
+                                // Intercepter les formulaires et liens après écriture
+                                setTimeout(() => {
+                                    interceptFormsAndLinks(iframeDoc);
+                                }, 100);
                             } else {
                                 // Si pas de HTML complet, utiliser notre structure
                                 iframeDoc.write(`
@@ -803,6 +808,15 @@
                                     </html>
                                 `);
                             }
+                        }
+                        
+                        // Intercepter les formulaires et les liens dans l'iframe
+                        if (iframeDoc.readyState === 'complete') {
+                            interceptFormsAndLinks(iframeDoc);
+                        } else {
+                            iframeDoc.addEventListener('load', () => {
+                                interceptFormsAndLinks(iframeDoc);
+                            });
                         }
                         
                         iframeDoc.close();
@@ -898,6 +912,295 @@
                 document.getElementById('successMessage').style.display = 'none';
                 document.getElementById('errorMessage').style.display = 'none';
             };
+            
+            // Fonction pour intercepter les formulaires et les liens dans l'iframe
+            function interceptFormsAndLinks(iframeDoc) {
+                try {
+                    const iframeWindow = iframeDoc.defaultView || iframeDoc.parentWindow;
+                    const iframeBody = iframeDoc.body;
+                    
+                    if (!iframeBody) return;
+                    
+                    // Intercepter les formulaires
+                    const forms = iframeBody.querySelectorAll('form');
+                    forms.forEach(form => {
+                        form.addEventListener('submit', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            
+                            const formData = new FormData(form);
+                            const postData = {};
+                            formData.forEach((value, key) => {
+                                postData[key] = value;
+                            });
+                            
+                            // Récupérer la méthode du formulaire
+                            const method = (form.method || 'GET').toUpperCase();
+                            
+                            // Si c'est GET, récupérer les paramètres de l'action
+                            let getData = {};
+                            if (method === 'GET' && form.action) {
+                                try {
+                                    const url = new URL(form.action, window.location.origin);
+                                    url.searchParams.forEach((value, key) => {
+                                        getData[key] = value;
+                                    });
+                                } catch (err) {
+                                    // Si l'URL n'est pas valide, ignorer
+                                }
+                            }
+                            
+                            // Exécuter le code avec les données POST/GET
+                            const code = codeEditor.getValue();
+                            runCodeWithFormData(code, method === 'POST' ? postData : {}, method === 'GET' ? getData : {});
+                        });
+                    });
+                    
+                    // Intercepter les liens avec paramètres GET
+                    const links = iframeBody.querySelectorAll('a[href]');
+                    links.forEach(link => {
+                        link.addEventListener('click', function(e) {
+                            const href = link.getAttribute('href');
+                            
+                            // Si le lien contient des paramètres GET (?) ou pointe vers une autre page
+                            if (href && (href.includes('?') || href.startsWith('http') || href.startsWith('/'))) {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                
+                                // Extraire les paramètres GET de l'URL
+                                let getData = {};
+                                try {
+                                    const url = new URL(href, window.location.origin);
+                                    url.searchParams.forEach((value, key) => {
+                                        getData[key] = value;
+                                    });
+                                } catch (err) {
+                                    // Si l'URL n'est pas valide, essayer de parser manuellement
+                                    if (href.includes('?')) {
+                                        const parts = href.split('?');
+                                        if (parts.length > 1) {
+                                            const params = parts[1].split('&');
+                                            params.forEach(param => {
+                                                const [key, value] = param.split('=');
+                                                if (key) {
+                                                    getData[decodeURIComponent(key)] = value ? decodeURIComponent(value) : '';
+                                                }
+                                            });
+                                        }
+                                    }
+                                }
+                                
+                                // Exécuter le code avec les paramètres GET
+                                const code = codeEditor.getValue();
+                                runCodeWithFormData(code, {}, getData);
+                            }
+                        });
+                    });
+                } catch (err) {
+                    console.error('Erreur lors de l\'interception des formulaires/liens:', err);
+                }
+            }
+            
+            // Fonction pour exécuter le code avec des données POST/GET
+            function runCodeWithFormData(code, postData, getData) {
+                const iframe = document.getElementById('resultFrame');
+                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                
+                // Afficher un indicateur de chargement
+                iframeDoc.open();
+                iframeDoc.write(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <meta charset="UTF-8">
+                        <title>Chargement...</title>
+                        <style>
+                            body {
+                                font-family: Arial, sans-serif;
+                                padding: 20px;
+                                background: #f0f0f0;
+                                color: #333;
+                                text-align: center;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <p>⏳ Traitement du formulaire...</p>
+                    </body>
+                    </html>
+                `);
+                iframeDoc.close();
+                
+                // Envoyer les données au backend
+                fetch(`/exercices/${language}/run`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        code: code,
+                        post_data: postData,
+                        get_data: getData
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Réutiliser la logique d'affichage existante
+                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                    const darkMode = window.isDarkMode || document.body.classList.contains('dark-mode');
+                    
+                    if (data.error) {
+                        iframeDoc.open();
+                        iframeDoc.write(`
+                            <!DOCTYPE html>
+                            <html>
+                            <head>
+                                <meta charset="UTF-8">
+                                <title>Erreur</title>
+                                <style>
+                                    body {
+                                        font-family: Arial, sans-serif;
+                                        padding: 20px;
+                                        background: #fee;
+                                        color: #c33;
+                                    }
+                                    .error {
+                                        background: #fcc;
+                                        border: 2px solid #c33;
+                                        padding: 15px;
+                                        border-radius: 5px;
+                                    }
+                                </style>
+                            </head>
+                            <body>
+                                <div class="error">
+                                    <h3>Erreur ${langName} :</h3>
+                                    <pre>${data.error}</pre>
+                                </div>
+                            </body>
+                            </html>
+                        `);
+                        iframeDoc.close();
+                    } else {
+                        // Utiliser la même logique que runCode() pour afficher le résultat
+                        let output = data.output || '';
+                        
+                        // Nettoyage (même logique que dans runCode)
+                        output = output.trim();
+                        if (output) {
+                            output = output.replace(/^[\s\u00A0\u2000-\u200B\u2028\u2029\u202F\u205F\u3000]+/g, '');
+                            output = output.replace(/[\s\u00A0\u2000-\u200B\u2028\u2029\u202F\u205F\u3000]+$/g, '');
+                            
+                            const lines = output.split('\n');
+                            const cleanedLines = [];
+                            for (let line of lines) {
+                                const cleaned = line.replace(/^[\s\t\r\u00A0\u2000-\u200B\u2028\u2029\u202F\u205F\u3000]+/g, '');
+                                cleanedLines.push(cleaned);
+                            }
+                            output = cleanedLines.join('\n');
+                            output = output.trim();
+                            output = output.replace(/^[\s\u00A0\u2000-\u200B\u2028\u2029\u202F\u205F\u3000]+/g, '');
+                            
+                            const match = output.match(/\S/);
+                            if (match && match.index !== undefined) {
+                                output = output.substring(match.index);
+                            }
+                        }
+                        
+                        const hasOutput = output.length > 0;
+                        const hasFullHTML = /^\s*<!DOCTYPE\s+html\s*>/i.test(output) || /^\s*<html[\s>]/i.test(output);
+                        
+                        if (hasFullHTML) {
+                            let finalOutput = output;
+                            const headStyle = `
+                                <style>
+                                    * { margin: 0; padding: 0; box-sizing: border-box; }
+                                    html, body { margin: 0 !important; padding: 0 !important; width: 100%; height: 100%; }
+                                    body { padding: 0 !important; margin: 0 !important; }
+                                </style>
+                            `;
+                            
+                            if (/<head[^>]*>/i.test(finalOutput)) {
+                                finalOutput = finalOutput.replace(/(<head[^>]*>)/i, '$1' + headStyle);
+                            } else if (/<html[^>]*>/i.test(finalOutput)) {
+                                finalOutput = finalOutput.replace(/(<html[^>]*>)/i, '$1<head>' + headStyle + '</head>');
+                            }
+                            
+                            finalOutput = finalOutput.replace(/(<body[^>]*)/i, '$1 style="margin: 0 !important; padding: 0 !important;"');
+                            
+                            iframeDoc.open();
+                            iframeDoc.write(finalOutput);
+                            iframeDoc.close();
+                            
+                            // Réintercepter après le chargement
+                            setTimeout(() => {
+                                interceptFormsAndLinks(iframeDoc);
+                            }, 100);
+                        } else {
+                            iframeDoc.open();
+                            iframeDoc.write(`
+                                <!DOCTYPE html>
+                                <html>
+                                <head>
+                                    <meta charset="UTF-8">
+                                    <title>Résultat</title>
+                                    <style>
+                                        * { margin: 0; padding: 0; box-sizing: border-box; }
+                                        html, body { margin: 0 !important; padding: 0 !important; width: 100%; height: 100%; }
+                                        body {
+                                            font-family: 'Courier New', 'Consolas', 'Monaco', monospace;
+                                            padding: 0 !important;
+                                            margin: 0 !important;
+                                            background: ${darkMode ? '#1e293b' : 'white'};
+                                            color: ${darkMode ? '#e2e8f0' : '#333'};
+                                            white-space: pre-wrap;
+                                            word-wrap: break-word;
+                                            line-height: 1.5;
+                                        }
+                                    </style>
+                                </head>
+                                <body style="margin: 0 !important; padding: 0 !important;">${hasOutput ? output : '<p class="no-output">Aucune sortie.</p>'}
+                                </body>
+                                </html>
+                            `);
+                            iframeDoc.close();
+                            
+                            // Réintercepter après le chargement
+                            setTimeout(() => {
+                                interceptFormsAndLinks(iframeDoc);
+                            }, 100);
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                    iframeDoc.open();
+                    iframeDoc.write(`
+                        <!DOCTYPE html>
+                        <html>
+                        <head>
+                            <meta charset="UTF-8">
+                            <title>Erreur</title>
+                            <style>
+                                body {
+                                    font-family: Arial, sans-serif;
+                                    padding: 20px;
+                                    background: #fee;
+                                    color: #c33;
+                                }
+                            </style>
+                        </head>
+                        <body>
+                            <h3>Erreur lors de l'exécution :</h3>
+                            <pre>${error.message}</pre>
+                        </body>
+                        </html>
+                    `);
+                    iframeDoc.close();
+                });
+            }
             
             // Auto-run code on load
             setTimeout(() => {
