@@ -7,10 +7,18 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use App\Models\JobArticle;
+use App\Services\ArticleGeneratorService;
 use Carbon\Carbon;
 
 class ArticleSeederController extends Controller
 {
+    protected $articleGenerator;
+
+    public function __construct(ArticleGeneratorService $articleGenerator)
+    {
+        $this->articleGenerator = $articleGenerator;
+    }
+
     public function index()
     {
         $stats = [
@@ -29,7 +37,7 @@ class ArticleSeederController extends Controller
     {
         $request->validate([
             'count' => 'required|integer|min:1|max:50',
-            'category_id' => 'nullable|exists:categories,id',
+            'category_id' => 'nullable|exists:job_categories,id',
             'days' => 'nullable|integer|min:0|max:30',
         ]);
 
@@ -38,15 +46,26 @@ class ArticleSeederController extends Controller
         $days = $request->input('days', 3);
 
         try {
-            $command = "articles:seed --count={$count} --days={$days}";
-            if ($categoryId) {
-                $command .= " --category={$categoryId}";
+            // Utiliser le nouveau service pour générer les articles
+            $result = $this->articleGenerator->generateArticles($count, $categoryId, $days);
+
+            $message = "✅ {$result['count']} article(s) créé(s) avec succès !\n\n";
+            
+            if (!empty($result['created'])) {
+                $message .= "Articles créés :\n";
+                foreach ($result['created'] as $article) {
+                    $message .= "• {$article->title}\n";
+                }
             }
 
-            Artisan::call($command);
-            $output = Artisan::output();
+            if (!empty($result['errors'])) {
+                $message .= "\n⚠️ Erreurs rencontrées :\n";
+                foreach ($result['errors'] as $error) {
+                    $message .= "• {$error}\n";
+                }
+            }
 
-            return back()->with('success', "✅ {$count} article(s) créé(s) avec succès !\n" . $output);
+            return back()->with('success', $message);
         } catch (\Exception $e) {
             return back()->with('error', '❌ Erreur lors de la création des articles : ' . $e->getMessage());
         }

@@ -417,7 +417,7 @@
                 <i class="fas fa-seedling"></i>
                 Générateur d'Articles Ultra Moderne
             </h1>
-            <p>Créez automatiquement des articles d'emploi avec des données réalistes et optimisées pour le SEO</p>
+            <p>Recherchez les articles les plus récents sur le web, reformulez-les avec optimisation SEO et visibilité, et créez automatiquement des articles d'emploi avec images illustratives</p>
         </div>
     </div>
 
@@ -492,8 +492,13 @@
     <div class="form-section-ultra mb-8">
         <h4 class="section-title-ultra">
             <i class="fas fa-magic"></i>
-            Créer des Articles Automatiquement
+            Générer des Articles depuis le Web
         </h4>
+        <p style="color: rgba(255, 255, 255, 0.8); margin-bottom: 30px; font-size: 1.05rem; line-height: 1.7; position: relative; z-index: 1;">
+            <i class="fas fa-info-circle" style="color: #06b6d4; margin-right: 8px;"></i>
+            Le système recherche automatiquement les articles les plus récents sur le web, les reformule en tenant compte du SEO et de la visibilité, 
+            et génère des articles avec des images illustratives. Les articles sont optimisés pour un score SEO et de lisibilité élevés.
+        </p>
         <form action="{{ route('admin.jobs.seeder.seed') }}" method="POST" id="seederForm">
             @csrf
             <div class="form-group-ultra">
