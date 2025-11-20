@@ -20,3 +20,10 @@ Schedule::command('view:clear')->dailyAt('01:00')->withoutOverlapping();
 
 // Planifier la régénération du sitemap tous les jours à 3h du matin
 Schedule::command('sitemap:generate')->dailyAt('03:00')->withoutOverlapping();
+
+// Planifier la création automatique d'articles d'emploi tous les jours à 4h du matin
+// Crée 5 nouveaux articles par jour
+Schedule::command('articles:seed --count=5 --days=3')->dailyAt('04:00')->withoutOverlapping();
+
+// Optionnel : Créer des articles toutes les 6 heures (4 fois par jour)
+// Schedule::command('articles:seed --count=2 --days=1')->everySixHours()->withoutOverlapping();

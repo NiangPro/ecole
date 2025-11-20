@@ -14,10 +14,7 @@ class JobArticleController extends Controller
 {
     public function index(Request $request)
     {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
-
+        // Le middleware AdminAuth gère déjà l'authentification
         $query = JobArticle::with('category');
         
         // Filtre par recherche (titre)
@@ -66,10 +63,7 @@ class JobArticleController extends Controller
 
     public function create()
     {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
-
+        // Le middleware AdminAuth gère déjà l'authentification
         $categories = Category::where('is_active', true)
             ->orderBy('name')
             ->get();
@@ -79,10 +73,7 @@ class JobArticleController extends Controller
 
     public function store(Request $request)
     {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
-
+        // Le middleware AdminAuth gère déjà l'authentification
         $validated = $request->validate([
             'category_id' => 'required|exists:job_categories,id',
             'title' => 'required|string|max:255',
@@ -143,10 +134,7 @@ class JobArticleController extends Controller
 
     public function show($id)
     {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
-
+        // Le middleware AdminAuth gère déjà l'authentification
         $article = JobArticle::with('category')->findOrFail($id);
         
         // S'assurer que meta_keywords est un array
@@ -167,10 +155,7 @@ class JobArticleController extends Controller
 
     public function edit($id)
     {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
-
+        // Le middleware AdminAuth gère déjà l'authentification
         $article = JobArticle::findOrFail($id);
         
         // S'assurer que meta_keywords est un array
@@ -195,10 +180,7 @@ class JobArticleController extends Controller
 
     public function update(Request $request, $id)
     {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
-
+        // Le middleware AdminAuth gère déjà l'authentification
         $article = JobArticle::findOrFail($id);
 
         $validated = $request->validate([
@@ -300,10 +282,7 @@ class JobArticleController extends Controller
 
     public function destroy($id)
     {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
-
+        // Le middleware AdminAuth gère déjà l'authentification
         $article = JobArticle::findOrFail($id);
         $articleTitle = $article->title;
 

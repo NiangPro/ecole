@@ -463,6 +463,10 @@
                         <i class="fas fa-newspaper"></i>
                         <span>Articles</span>
                     </a>
+                    <a href="{{ route('admin.jobs.seeder.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.jobs.seeder.*') ? 'active' : '' }}">
+                        <i class="fas fa-seedling"></i>
+                        <span>Générateur d'Articles</span>
+                    </a>
                 </div>
             </div>
             

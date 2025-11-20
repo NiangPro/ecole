@@ -857,9 +857,22 @@
                     });
                 } else {
                     // Pour HTML/CSS/JS, afficher directement
+                    // Pour JavaScript, s'assurer que le code est exécuté
                     iframeDoc.open();
                     iframeDoc.write(code);
                     iframeDoc.close();
+                    
+                    // Attendre que l'iframe soit chargé pour intercepter les formulaires/liens
+                    setTimeout(() => {
+                        try {
+                            if (typeof interceptFormsAndLinks === 'function') {
+                                interceptFormsAndLinks(iframeDoc);
+                            }
+                        } catch (e) {
+                            // Ignorer si la fonction n'existe pas encore
+                        }
+                    }, 200);
+                    
                     hideMessages();
                 }
             };

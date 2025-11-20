@@ -119,6 +119,10 @@ Route::middleware(['admin'])->group(function () {
         
         // Articles
         Route::resource('articles', \App\Http\Controllers\Admin\JobArticleController::class);
+        
+        // Seeder d'articles
+        Route::get('seeder', [\App\Http\Controllers\Admin\ArticleSeederController::class, 'index'])->name('seeder.index');
+        Route::post('seeder/seed', [\App\Http\Controllers\Admin\ArticleSeederController::class, 'seed'])->name('seeder.seed');
     });
 
     // Routes Publicités Admin
