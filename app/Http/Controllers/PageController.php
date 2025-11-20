@@ -2463,6 +2463,7 @@ document.getElementById("demo").innerHTML = texte;
 <p id="demo"></p>
 
 <script>
+// Complétez cette ligne pour calculer (10 + 5) * 2
 let resultat = 
 
 

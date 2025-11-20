@@ -154,6 +154,65 @@
         color: #6a737d !important;
     }
     
+    /* Désactiver les erreurs de balises dans CodeMirror - Masquer toutes les erreurs rouges */
+    .CodeMirror .cm-error,
+    .CodeMirror .cm-tag.cm-error,
+    .CodeMirror .cm-tag.cm-bracket.cm-error,
+    .CodeMirror span.cm-error,
+    .CodeMirror .cm-error.cm-tag,
+    .CodeMirror .cm-error.cm-bracket,
+    .CodeMirror .cm-error.cm-tag-name,
+    .CodeMirror span[class*="error"] {
+        color: inherit !important;
+        background: transparent !important;
+        text-decoration: none !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+    
+    /* Forcer la couleur normale pour les balises (pas rouge) - Override toutes les erreurs */
+    .CodeMirror .cm-tag,
+    .CodeMirror .cm-tag.cm-error,
+    .CodeMirror .cm-tag.cm-bracket.cm-error {
+        color: #f472b6 !important;
+    }
+    
+    body:not(.dark-mode) .CodeMirror .cm-tag,
+    body:not(.dark-mode) .CodeMirror .cm-tag.cm-error,
+    body:not(.dark-mode) .CodeMirror .cm-tag.cm-bracket.cm-error {
+        color: #c026d3 !important;
+    }
+    
+    .CodeMirror .cm-tag.cm-bracket,
+    .CodeMirror .cm-tag.cm-bracket.cm-error {
+        color: #94a3b8 !important;
+    }
+    
+    body:not(.dark-mode) .CodeMirror .cm-tag.cm-bracket,
+    body:not(.dark-mode) .CodeMirror .cm-tag.cm-bracket.cm-error {
+        color: #64748b !important;
+    }
+    
+    /* S'assurer que les balises fermantes ne sont pas en rouge */
+    .CodeMirror .cm-tag.cm-tag-name,
+    .CodeMirror .cm-tag.cm-tag-name.cm-error {
+        color: #f472b6 !important;
+    }
+    
+    body:not(.dark-mode) .CodeMirror .cm-tag.cm-tag-name,
+    body:not(.dark-mode) .CodeMirror .cm-tag.cm-tag-name.cm-error {
+        color: #c026d3 !important;
+    }
+    
+    /* S'assurer que les balises fermantes ne sont pas en rouge */
+    .CodeMirror .cm-tag.cm-tag-name {
+        color: #f472b6 !important;
+    }
+    
+    body:not(.dark-mode) .CodeMirror .cm-tag.cm-tag-name {
+        color: #c026d3 !important;
+    }
+    
     /* Hide textarea but keep it in DOM for CodeMirror */
     #codeEditor {
         position: absolute;
@@ -413,16 +472,17 @@
         
         console.log('CodeMirror chargé, initialisation...');
         
-        const startCode = @json($exercise['startCode']);
-        const language = @json($language);
-        const exerciseId = @json($id);
-        
+    const startCode = @json($exercise['startCode']);
+    const language = @json($language);
+    const exerciseId = @json($id);
+    
         // Déterminer le mode CodeMirror selon la langue
         let codeMirrorMode = 'htmlmixed';
         if (language === 'css3' || language === 'css') {
             codeMirrorMode = 'css';
         } else if (language === 'javascript' || language === 'js') {
-            codeMirrorMode = 'javascript';
+            // Pour JavaScript, utiliser htmlmixed car les exercices contiennent du HTML avec des scripts
+            codeMirrorMode = 'htmlmixed';
         } else if (language === 'php') {
             codeMirrorMode = 'application/x-httpd-php';
         } else if (language === 'python') {
@@ -461,6 +521,8 @@
                 autoCloseTags: true,
                 foldGutter: true,
                 gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
+                // Options pour mieux gérer le HTML avec JavaScript
+                matchTags: { bothTags: true },
                 extraKeys: {
                     'Ctrl-Space': 'autocomplete',
                     'Ctrl-/': 'toggleComment',
@@ -511,14 +573,14 @@
             
             window.runCode = function() {
                 const code = codeEditor.getValue();
-                const iframe = document.getElementById('resultFrame');
+        const iframe = document.getElementById('resultFrame');
                 if (!iframe) {
                     return;
                 }
-                const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
-                
+        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+        
                 // Afficher un message de chargement
-                iframeDoc.open();
+        iframeDoc.open();
                 iframeDoc.write(`
                     <!DOCTYPE html>
                     <html>
@@ -563,8 +625,8 @@
                     </body>
                     </html>
                 `);
-                iframeDoc.close();
-                
+        iframeDoc.close();
+        
                 // Si c'est du PHP ou Python, exécuter côté serveur
                 if (language === 'php' || language === 'python') {
                     fetch(`/exercices/${language}/run`, {
@@ -820,7 +882,7 @@
                         }
                         
                         iframeDoc.close();
-                        hideMessages();
+        hideMessages();
                     })
                     .catch(error => {
                         iframeDoc.open();
@@ -857,21 +919,99 @@
                     });
                 } else {
                     // Pour HTML/CSS/JS, afficher directement
-                    // Pour JavaScript, s'assurer que le code est exécuté
-                    iframeDoc.open();
-                    iframeDoc.write(code);
-                    iframeDoc.close();
+                    // Le JavaScript sera exécuté automatiquement par le navigateur
                     
-                    // Attendre que l'iframe soit chargé pour intercepter les formulaires/liens
-                    setTimeout(() => {
-                        try {
-                            if (typeof interceptFormsAndLinks === 'function') {
-                                interceptFormsAndLinks(iframeDoc);
+                    try {
+                        // Écrire directement le code dans l'iframe
+                        // IMPORTANT: Le JavaScript dans les balises <script> s'exécutera automatiquement
+                        // quand on appelle iframeDoc.close() après iframeDoc.write()
+                        iframeDoc.open();
+                        iframeDoc.write(code);
+                        iframeDoc.close(); // Cette ligne déclenche l'exécution du JavaScript
+                        
+                        // Le JavaScript s'exécute automatiquement lors du close()
+                        // Attendre que l'iframe soit complètement chargé pour intercepter les formulaires
+                        const setupInterception = () => {
+                            try {
+                                const currentDoc = iframe.contentDocument || iframe.contentWindow.document;
+                                if (currentDoc && currentDoc.body) {
+                                    // Ajouter un gestionnaire d'erreurs simple dans l'iframe
+                                    try {
+                                        const iframeWindow = currentDoc.defaultView || currentDoc.parentWindow;
+                                        if (iframeWindow) {
+                                            iframeWindow.addEventListener('error', function(e) {
+                                                console.error('Erreur JavaScript dans l\'iframe:', e.error || e.message);
+                                                // Afficher l'erreur dans l'iframe si possible
+                                                if (currentDoc.body && !currentDoc.getElementById('js-error-display')) {
+                                                    const errorDiv = currentDoc.createElement('div');
+                                                    errorDiv.id = 'js-error-display';
+                                                    errorDiv.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; background: #fee; color: #c33; padding: 15px; border-bottom: 2px solid #c33; z-index: 10000; font-family: monospace; font-size: 12px;';
+                                                    errorDiv.innerHTML = '<strong>⚠️ Erreur JavaScript:</strong> ' + (e.error ? e.error.message : e.message || 'Erreur inconnue');
+                                                    currentDoc.body.insertBefore(errorDiv, currentDoc.body.firstChild);
+                                                    setTimeout(() => {
+                                                        if (errorDiv.parentNode) {
+                                                            errorDiv.parentNode.removeChild(errorDiv);
+                                                        }
+                                                    }, 10000);
+                                                }
+                                            }, true);
+                                        }
+                                    } catch (err) {
+                                        // Ignorer les erreurs de gestionnaire
+                                    }
+                                    
+                                    // Attendre un peu pour que tous les scripts s'exécutent
+                                    setTimeout(() => {
+                                        try {
+                                            if (typeof interceptFormsAndLinks === 'function') {
+                                                interceptFormsAndLinks(currentDoc);
+                                            }
+                                        } catch (e) {
+                                            // Ignorer les erreurs d'interception
+                                        }
+                                    }, 200);
+                                } else {
+                                    // Réessayer si pas encore prêt
+                                    setTimeout(setupInterception, 50);
+                                }
+                            } catch (e) {
+                                // Ignorer les erreurs
                             }
-                        } catch (e) {
-                            // Ignorer si la fonction n'existe pas encore
-                        }
-                    }, 200);
+                        };
+                        
+                        // Utiliser l'événement load de l'iframe
+                        iframe.addEventListener('load', function() {
+                            setTimeout(setupInterception, 150);
+                        }, { once: true });
+                        
+                        // Si déjà chargé, exécuter immédiatement
+                        setTimeout(setupInterception, 300);
+                    } catch (e) {
+                        console.error('Erreur lors de l\'écriture dans l\'iframe:', e);
+                        iframeDoc.open();
+                        iframeDoc.write(`
+                            <!DOCTYPE html>
+                            <html>
+                            <head>
+                                <meta charset="UTF-8">
+                                <title>Erreur</title>
+                                <style>
+                                    body {
+                                        font-family: Arial, sans-serif;
+                                        padding: 20px;
+                                        background: #fee;
+                                        color: #c33;
+                                    }
+                                </style>
+                            </head>
+                            <body>
+                                <h3>Erreur lors du chargement :</h3>
+                                <pre>${e.message}</pre>
+                            </body>
+                            </html>
+                        `);
+                        iframeDoc.close();
+                    }
                     
                     hideMessages();
                 }
@@ -879,51 +1019,51 @@
             
             window.submitCode = function() {
                 const code = codeEditor.getValue();
-                
-                fetch(`/exercices/${language}/${exerciseId}/submit`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({ code: code })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    hideMessages();
-                    
-                    if (data.correct) {
-                        document.getElementById('successMessage').style.display = 'block';
-                        
-                        // Scroll to success message
-                        document.getElementById('successMessage').scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        
-                        // Confetti effect (optional)
-                        setTimeout(() => {
-                            // Auto-redirect to next exercise after 3 seconds
-                            @if($id < 5)
-                            setTimeout(() => {
-                                window.location.href = '{{ route('exercices.detail', [$language, $id + 1]) }}';
-                            }, 3000);
-                            @endif
-                        }, 500);
-                    } else {
-                        document.getElementById('errorMessage').style.display = 'block';
-                        document.getElementById('errorText').textContent = data.message;
-                        
-                        // Scroll to error message
-                        document.getElementById('errorMessage').scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Une erreur est survenue. Veuillez réessayer.');
-                });
-            };
+        
+        fetch(`/exercices/${language}/${exerciseId}/submit`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({ code: code })
+        })
+        .then(response => response.json())
+        .then(data => {
+            hideMessages();
             
+            if (data.correct) {
+                document.getElementById('successMessage').style.display = 'block';
+                
+                // Scroll to success message
+                document.getElementById('successMessage').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                
+                // Confetti effect (optional)
+                setTimeout(() => {
+                    // Auto-redirect to next exercise after 3 seconds
+                    @if($id < 5)
+                    setTimeout(() => {
+                        window.location.href = '{{ route('exercices.detail', [$language, $id + 1]) }}';
+                    }, 3000);
+                    @endif
+                }, 500);
+            } else {
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('errorText').textContent = data.message;
+                
+                // Scroll to error message
+                document.getElementById('errorMessage').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Une erreur est survenue. Veuillez réessayer.');
+        });
+            };
+    
             window.hideMessages = function() {
-                document.getElementById('successMessage').style.display = 'none';
-                document.getElementById('errorMessage').style.display = 'none';
+        document.getElementById('successMessage').style.display = 'none';
+        document.getElementById('errorMessage').style.display = 'none';
             };
             
             // Fonction pour intercepter les formulaires et les liens dans l'iframe
@@ -977,7 +1117,7 @@
                             
                             // Si le lien contient des paramètres GET (?) ou pointe vers une autre page
                             if (href && (href.includes('?') || href.startsWith('http') || href.startsWith('/'))) {
-                                e.preventDefault();
+            e.preventDefault();
                                 e.stopPropagation();
                                 
                                 // Extraire les paramètres GET de l'URL
