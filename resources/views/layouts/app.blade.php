@@ -169,6 +169,12 @@
     <!-- Cookie Banner -->
     @include('partials.cookie-banner')
     
+    <!-- Back to Top Button -->
+    <button id="back-to-top" class="back-to-top-button" onclick="scrollToTop()" title="Retour en haut" aria-label="Retour en haut">
+        <i class="fas fa-arrow-up"></i>
+        <span class="back-to-top-tooltip">Retour en haut</span>
+    </button>
+    
     <!-- Dark Mode Toggle Button -->
     <div id="dark-mode-widget" class="dark-mode-widget">
         <button id="dark-mode-toggle" class="dark-mode-button" onclick="toggleDarkMode()" title="Basculer le mode sombre">
@@ -220,6 +226,98 @@
         </div>
     </div>
     <style>
+        /* Back to Top Button */
+        .back-to-top-button {
+            position: fixed;
+            bottom: 140px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #06b6d4, #14b8a6);
+            border: 2px solid rgba(6, 182, 212, 0.3);
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(6, 182, 212, 0.4);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 9999;
+            opacity: 0;
+            transform: translateY(20px) scale(0.8);
+        }
+        
+        .back-to-top-button.show {
+            display: flex;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        
+        .back-to-top-button:hover {
+            transform: translateY(-5px) scale(1.1);
+            box-shadow: 0 8px 30px rgba(6, 182, 212, 0.6);
+            border-color: rgba(6, 182, 212, 0.6);
+            background: linear-gradient(135deg, #14b8a6, #06b6d4);
+        }
+        
+        .back-to-top-button:active {
+            transform: translateY(-3px) scale(1.05);
+        }
+        
+        .back-to-top-tooltip {
+            position: absolute;
+            right: 60px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(15, 23, 42, 0.95);
+            color: #fff;
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 11px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+        }
+        
+        body:not(.dark-mode) .back-to-top-tooltip {
+            background: rgba(255, 255, 255, 0.95) !important;
+            color: rgba(30, 41, 59, 0.9) !important;
+            border-color: rgba(6, 182, 212, 0.3) !important;
+        }
+        
+        .back-to-top-button:hover .back-to-top-tooltip {
+            opacity: 1;
+        }
+        
+        body:not(.dark-mode) .back-to-top-button {
+            background: linear-gradient(135deg, #06b6d4, #14b8a6) !important;
+            border-color: rgba(6, 182, 212, 0.4) !important;
+            box-shadow: 0 4px 20px rgba(6, 182, 212, 0.3) !important;
+        }
+        
+        body:not(.dark-mode) .back-to-top-button:hover {
+            box-shadow: 0 8px 30px rgba(6, 182, 212, 0.5) !important;
+        }
+        
+        @media (max-width: 768px) {
+            .back-to-top-button {
+                bottom: 130px;
+                right: 15px;
+                width: 45px;
+                height: 45px;
+                font-size: 18px;
+            }
+            
+            .back-to-top-tooltip {
+                display: none;
+            }
+        }
+        
         /* Dark Mode Widget */
         .dark-mode-widget {
             position: fixed;
@@ -536,6 +634,26 @@
         }
     </style>
     <script>
+        // Back to Top Button
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        // Afficher/masquer le bouton back to top au scroll
+        window.addEventListener('scroll', function() {
+            const backToTopButton = document.getElementById('back-to-top');
+            if (backToTopButton) {
+                if (window.pageYOffset > 300) {
+                    backToTopButton.classList.add('show');
+                } else {
+                    backToTopButton.classList.remove('show');
+                }
+            }
+        });
+        
         // Dark Mode Toggle
         function toggleDarkMode() {
             const body = document.body;
