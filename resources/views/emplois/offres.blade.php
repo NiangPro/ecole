@@ -359,24 +359,30 @@
         color: rgba(30, 41, 59, 0.7) !important;
     }
     
-    /* Pagination moderne */
+    /* Pagination Ultra Moderne */
     .pagination-wrapper {
         margin-top: 80px;
         display: flex;
         justify-content: center;
+        align-items: center;
+        position: relative;
     }
     
     .pagination {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
         list-style: none;
         padding: 0;
         margin: 0;
+        flex-wrap: wrap;
+        justify-content: center;
     }
     
     .pagination li {
-        display: inline-block;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
     }
     
     .pagination a,
@@ -384,25 +390,131 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        min-width: 45px;
-        height: 45px;
-        padding: 0 15px;
-        background: rgba(15, 23, 42, 0.7);
-        border: 2px solid rgba(6, 182, 212, 0.2);
-        border-radius: 12px;
-        color: rgba(255, 255, 255, 0.8);
+        min-width: 50px;
+        height: 50px;
+        padding: 0 18px;
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.8) 0%, rgba(30, 41, 59, 0.8) 100%);
+        border: 2px solid rgba(6, 182, 212, 0.3);
+        border-radius: 16px;
+        color: rgba(255, 255, 255, 0.9);
         text-decoration: none;
-        font-weight: 600;
-        font-size: 0.95rem;
-        transition: all 0.3s ease;
-        backdrop-filter: blur(10px);
+        font-weight: 700;
+        font-size: 1rem;
+        font-family: 'Poppins', sans-serif;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        backdrop-filter: blur(20px);
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .pagination a i,
+    .pagination span i {
+        font-size: 0.9rem;
+        transition: transform 0.3s ease;
+    }
+    
+    .pagination a:hover i {
+        transform: translateX(-3px);
+    }
+    
+    .pagination a[rel="next"]:hover i {
+        transform: translateX(3px);
+    }
+    
+    .pagination a::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(6, 182, 212, 0.2), transparent);
+        transition: left 0.5s ease;
+    }
+    
+    .pagination a:hover::before {
+        left: 100%;
     }
     
     body:not(.dark-mode) .pagination a,
     body:not(.dark-mode) .pagination span {
-        background: rgba(255, 255, 255, 0.9) !important;
-        border-color: rgba(6, 182, 212, 0.25) !important;
-        color: rgba(30, 41, 59, 0.8) !important;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.95) 100%) !important;
+        border-color: rgba(6, 182, 212, 0.3) !important;
+        color: rgba(30, 41, 59, 0.9) !important;
+        box-shadow: 0 4px 15px rgba(6, 182, 212, 0.15) !important;
+    }
+    
+    .pagination a:hover {
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.25) 0%, rgba(20, 184, 166, 0.25) 100%);
+        border-color: rgba(6, 182, 212, 0.6);
+        color: #06b6d4;
+        transform: translateY(-5px) scale(1.05);
+        box-shadow: 0 12px 30px rgba(6, 182, 212, 0.4);
+    }
+    
+    body:not(.dark-mode) .pagination a:hover {
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(20, 184, 166, 0.15) 100%) !important;
+        border-color: rgba(6, 182, 212, 0.5) !important;
+        color: #06b6d4 !important;
+        box-shadow: 0 12px 30px rgba(6, 182, 212, 0.3) !important;
+    }
+    
+    .pagination .active span {
+        background: linear-gradient(135deg, #06b6d4 0%, #14b8a6 50%, #8b5cf6 100%);
+        background-size: 200% auto;
+        border-color: rgba(6, 182, 212, 0.8);
+        color: #fff;
+        font-weight: 900;
+        box-shadow: 0 8px 25px rgba(6, 182, 212, 0.5), 0 0 40px rgba(139, 92, 246, 0.3);
+        animation: gradientShift 3s ease infinite;
+        position: relative;
+        z-index: 1;
+    }
+    
+    @keyframes gradientShift {
+        0%, 100% { background-position: 0% center; }
+        50% { background-position: 100% center; }
+    }
+    
+    body:not(.dark-mode) .pagination .active span {
+        background: linear-gradient(135deg, #06b6d4 0%, #14b8a6 50%, #8b5cf6 100%) !important;
+        background-size: 200% auto !important;
+        color: #fff !important;
+        box-shadow: 0 8px 25px rgba(6, 182, 212, 0.6), 0 0 40px rgba(139, 92, 246, 0.4) !important;
+    }
+    
+    .pagination .active span::after {
+        content: '';
+        position: absolute;
+        inset: -2px;
+        border-radius: 16px;
+        padding: 2px;
+        background: linear-gradient(135deg, #06b6d4, #14b8a6, #8b5cf6);
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        z-index: -1;
+        opacity: 0.6;
+        animation: rotateBorder 3s linear infinite;
+    }
+    
+    @keyframes rotateBorder {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    .pagination .disabled span {
+        opacity: 0.3;
+        cursor: not-allowed;
+        background: rgba(15, 23, 42, 0.3) !important;
+        border-color: rgba(6, 182, 212, 0.1) !important;
+    }
+    
+    body:not(.dark-mode) .pagination .disabled span {
+        background: rgba(248, 250, 252, 0.5) !important;
+        border-color: rgba(6, 182, 212, 0.1) !important;
+        color: rgba(30, 41, 59, 0.4) !important;
     }
     
     /* Buttons adaptation */
@@ -416,25 +528,33 @@
         border-color: rgba(6, 182, 212, 0.3) !important;
     }
     
-    .pagination a:hover {
-        background: rgba(6, 182, 212, 0.2);
-        border-color: rgba(6, 182, 212, 0.5);
-        color: #06b6d4;
-        transform: translateY(-3px);
-        box-shadow: 0 8px 20px rgba(6, 182, 212, 0.3);
+    /* Responsive pagination */
+    @media (max-width: 768px) {
+        .pagination {
+            gap: 8px;
+        }
+        
+        .pagination a,
+        .pagination span {
+            min-width: 44px;
+            height: 44px;
+            padding: 0 12px;
+            font-size: 0.9rem;
+        }
     }
     
-    .pagination .active span {
-        background: linear-gradient(135deg, #06b6d4, #14b8a6);
-        border-color: rgba(6, 182, 212, 0.6);
-        color: #000;
-        font-weight: 700;
-        box-shadow: 0 4px 15px rgba(6, 182, 212, 0.4);
-    }
-    
-    .pagination .disabled span {
-        opacity: 0.4;
-        cursor: not-allowed;
+    @media (max-width: 480px) {
+        .pagination {
+            gap: 6px;
+        }
+        
+        .pagination a,
+        .pagination span {
+            min-width: 40px;
+            height: 40px;
+            padding: 0 10px;
+            font-size: 0.85rem;
+        }
     }
     
     @media (max-width: 1200px) {
@@ -545,7 +665,7 @@
     
     @if($articles->hasPages())
     <div class="pagination-wrapper">
-        {{ $articles->links() }}
+        {{ $articles->links('pagination::bootstrap-4') }}
     </div>
     @endif
     

@@ -5979,7 +5979,11 @@ print(carres)',
                 $query->where('category_id', $category->id);
             }
             
-            return $query->orderBy('published_at', 'desc')->paginate(10);
+            // Trier du plus récent au plus ancien avec plusieurs critères
+            return $query->orderBy('published_at', 'desc')
+                ->orderBy('updated_at', 'desc')
+                ->orderBy('created_at', 'desc')
+                ->paginate(10);
         });
         
         return view('emplois.offres', compact('articles', 'category'));

@@ -120,46 +120,81 @@ class ArticleGeneratorService
     }
 
     /**
-     * Recherche des articles récents sur le web
+     * Recherche des articles récents sur les sites sénégalais spécifiques
      */
     private function searchRecentArticles(int $count = 10): array
     {
         $articles = [];
 
-        // Essayer d'abord avec NewsAPI
-        if ($this->newsApiKey) {
-            try {
-                $response = Http::timeout(10)->get('https://newsapi.org/v2/everything', [
-                    'q' => 'emploi recrutement travail Sénégal',
-                    'language' => 'fr',
-                    'sortBy' => 'publishedAt',
-                    'pageSize' => min($count, 100),
-                    'apiKey' => $this->newsApiKey
-                ]);
+        // Sites sénégalais à scraper
+        $sites = [
+            [
+                'url' => 'https://directiondesbourses.sn/',
+                'name' => 'Direction des Bourses',
+                'type' => 'bourses'
+            ],
+            [
+                'url' => 'https://concoursn.com/',
+                'name' => 'Concoursn',
+                'type' => 'concours'
+            ],
+            [
+                'url' => 'https://www.sgee-sn.org/',
+                'name' => 'SGEE',
+                'type' => 'bourses'
+            ],
+            [
+                'url' => 'https://www.emploidakar.com/',
+                'name' => 'Emploi Dakar',
+                'type' => 'emploi'
+            ],
+            [
+                'url' => 'https://www.emploisenegal.com/',
+                'name' => 'Emplois Sénégal',
+                'type' => 'emploi'
+            ],
+            [
+                'url' => 'https://www.guichetjeunesse.sn/',
+                'name' => 'Guichet Jeunesse',
+                'type' => 'emploi'
+            ],
+            [
+                'url' => 'https://senegalservices.sn/',
+                'name' => 'Sénégal Services',
+                'type' => 'services'
+            ],
+            [
+                'url' => 'https://samabac.sn/',
+                'name' => 'SAMABAC',
+                'type' => 'concours'
+            ],
+            [
+                'url' => 'https://guindima.sn/',
+                'name' => 'Guindima',
+                'type' => 'emploi'
+            ]
+        ];
 
-                if ($response->successful()) {
-                    $data = $response->json();
-                    if (isset($data['articles'])) {
-                        foreach ($data['articles'] as $article) {
-                            if (!empty($article['title']) && !empty($article['content'])) {
-                                $articles[] = [
-                                    'title' => $article['title'],
-                                    'content' => $article['content'] ?? $article['description'] ?? '',
-                                    'source' => $article['source']['name'] ?? 'Source inconnue',
-                                    'url' => $article['url'] ?? '',
-                                    'publishedAt' => $article['publishedAt'] ?? now(),
-                                    'image' => $article['urlToImage'] ?? null
-                                ];
-                            }
-                        }
-                    }
-                }
+        // Scraper chaque site avec pause entre les requêtes
+        foreach ($sites as $index => $site) {
+            if (count($articles) >= $count) {
+                break;
+            }
+
+            // Pause entre les requêtes pour ne pas surcharger les serveurs
+            if ($index > 0) {
+                sleep(2); // 2 secondes entre chaque site
+            }
+
+            try {
+                $siteArticles = $this->scrapeSite($site, $count - count($articles));
+                $articles = array_merge($articles, $siteArticles);
             } catch (\Exception $e) {
-                Log::warning('Erreur NewsAPI: ' . $e->getMessage());
+                Log::warning("Erreur lors du scraping de {$site['name']}: " . $e->getMessage());
             }
         }
 
-        // Si pas assez d'articles, utiliser Google News RSS
+        // Si pas assez d'articles, essayer Google News RSS en dernier recours
         if (count($articles) < $count) {
             try {
                 $rssArticles = $this->fetchGoogleNewsRSS($count - count($articles));
@@ -170,6 +205,444 @@ class ArticleGeneratorService
         }
 
         return array_slice($articles, 0, $count);
+    }
+
+    /**
+     * Scrape un site spécifique pour extraire les articles
+     */
+    private function scrapeSite(array $site, int $maxArticles = 5): array
+    {
+        $articles = [];
+
+        try {
+            $response = Http::timeout(20)
+                ->retry(2, 1000) // 2 tentatives avec 1 seconde de délai
+                ->withHeaders([
+                    'User-Agent' => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                    'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+                    'Accept-Language' => 'fr-FR,fr;q=0.9,en;q=0.8',
+                    'Accept-Encoding' => 'gzip, deflate, br',
+                    'Connection' => 'keep-alive',
+                    'Upgrade-Insecure-Requests' => '1',
+                ])
+                ->get($site['url']);
+
+            if (!$response->successful()) {
+                Log::warning("Échec de la requête HTTP pour {$site['name']}: Status " . $response->status());
+                return $articles;
+            }
+
+            $html = $response->body();
+            
+            if (empty($html) || mb_strlen($html) < 500) {
+                Log::warning("Contenu HTML trop court ou vide pour {$site['name']}");
+                return $articles;
+            }
+            
+            // Utiliser DOMDocument pour parser le HTML
+            libxml_use_internal_errors(true);
+            $dom = new \DOMDocument('1.0', 'UTF-8');
+            
+            // Convertir l'encodage si nécessaire
+            if (!mb_check_encoding($html, 'UTF-8')) {
+                $html = mb_convert_encoding($html, 'UTF-8', 'auto');
+            }
+            
+            @$dom->loadHTML('<?xml encoding="UTF-8">' . $html);
+            libxml_clear_errors();
+            
+            $xpath = new \DOMXPath($dom);
+
+            // Stratégies de scraping selon le site
+            switch ($site['name']) {
+                case 'Direction des Bourses':
+                    $articles = $this->scrapeDirectionBourses($xpath, $site, $maxArticles);
+                    break;
+                case 'Concoursn':
+                    $articles = $this->scrapeConcoursn($xpath, $site, $maxArticles);
+                    break;
+                case 'SGEE':
+                    $articles = $this->scrapeSGEE($xpath, $site, $maxArticles);
+                    break;
+                case 'Emploi Dakar':
+                case 'Emplois Sénégal':
+                case 'Guindima':
+                    $articles = $this->scrapeEmploiSites($xpath, $site, $maxArticles);
+                    break;
+                case 'Guichet Jeunesse':
+                    $articles = $this->scrapeGuichetJeunesse($xpath, $site, $maxArticles);
+                    break;
+                case 'Sénégal Services':
+                    $articles = $this->scrapeSenegalServices($xpath, $site, $maxArticles);
+                    break;
+                case 'SAMABAC':
+                    $articles = $this->scrapeSAMABAC($xpath, $site, $maxArticles);
+                    break;
+                default:
+                    $articles = $this->scrapeGeneric($xpath, $site, $maxArticles);
+            }
+
+        } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            Log::warning("Erreur de connexion pour {$site['name']}: " . $e->getMessage());
+        } catch (\Exception $e) {
+            Log::warning("Erreur lors du scraping de {$site['name']}: " . $e->getMessage() . " | Trace: " . $e->getTraceAsString());
+        }
+
+        return $articles;
+    }
+
+    /**
+     * Scrape Direction des Bourses
+     */
+    private function scrapeDirectionBourses(\DOMXPath $xpath, array $site, int $maxArticles): array
+    {
+        $articles = [];
+        
+        // Chercher les articles/communiqués - plusieurs stratégies
+        $queries = [
+            "//article",
+            "//div[contains(@class, 'post')]",
+            "//div[contains(@class, 'article')]",
+            "//div[contains(@class, 'communique')]",
+            "//h2[contains(text(), 'bourse') or contains(text(), 'communiqué')]",
+            "//h3[contains(text(), 'bourse') or contains(text(), 'communiqué')]",
+            "//div[contains(@class, 'content')]//h2",
+            "//div[contains(@class, 'content')]//h3"
+        ];
+        
+        $allNodes = [];
+        foreach ($queries as $query) {
+            $nodes = $xpath->query($query);
+            foreach ($nodes as $node) {
+                $allNodes[] = $node;
+            }
+        }
+        
+        // Dédupliquer et trier
+        $uniqueNodes = [];
+        $seenTitles = [];
+        foreach ($allNodes as $node) {
+            $title = trim($node->textContent);
+            $titleKey = mb_strtolower($title);
+            
+            if (!isset($seenTitles[$titleKey]) && mb_strlen($title) >= 20 && mb_strlen($title) <= 200) {
+                // Filtrer les éléments non pertinents
+                if (stripos($title, 'menu') === false && 
+                    stripos($title, 'navigation') === false &&
+                    stripos($title, 'footer') === false &&
+                    stripos($title, 'header') === false) {
+                    $uniqueNodes[] = $node;
+                    $seenTitles[$titleKey] = true;
+                }
+            }
+        }
+        
+        foreach ($uniqueNodes as $index => $node) {
+            if (count($articles) >= $maxArticles) break;
+            
+            $title = trim($node->textContent);
+            
+            // Chercher le contenu associé
+            $content = $this->extractContentFromNode($xpath, $node);
+            
+            if (empty($content) || mb_strlen($content) < 100) {
+                // Générer un contenu plus riche et varié basé sur le titre
+                $content = $this->generateRichContentFromTitle($title, 'bourses');
+            }
+            
+            $articles[] = [
+                'title' => $title,
+                'content' => mb_substr($content, 0, 1000),
+                'source' => $site['name'],
+                'url' => $site['url'],
+                'publishedAt' => now()->subDays(rand(0, 7)),
+                'image' => null
+            ];
+        }
+        
+        return $articles;
+    }
+    
+    /**
+     * Extrait le contenu d'un nœud et ses éléments enfants
+     */
+    private function extractContentFromNode(\DOMXPath $xpath, \DOMNode $node): string
+    {
+        $content = '';
+        
+        // Chercher dans le parent
+        $parent = $node->parentNode;
+        if ($parent) {
+            $contentNodes = $xpath->query(".//p | .//div[contains(@class, 'content')] | .//div[contains(@class, 'description')] | .//div[contains(@class, 'text')]", $parent);
+            foreach ($contentNodes as $contentNode) {
+                $text = trim($contentNode->textContent);
+                if (mb_strlen($text) > 50) {
+                    $content .= $text . ' ';
+                }
+            }
+        }
+        
+        // Si pas de contenu, chercher dans les éléments suivants
+        if (empty($content)) {
+            $nextSibling = $node->nextSibling;
+            $maxDepth = 5;
+            $depth = 0;
+            
+            while ($nextSibling && $depth < $maxDepth) {
+                if ($nextSibling->nodeType === XML_ELEMENT_NODE) {
+                    $text = trim($nextSibling->textContent);
+                    if (mb_strlen($text) > 100) {
+                        $content = $text;
+                        break;
+                    }
+                }
+                $nextSibling = $nextSibling->nextSibling;
+                $depth++;
+            }
+        }
+        
+        return trim($content);
+    }
+
+    /**
+     * Scrape Concoursn
+     */
+    private function scrapeConcoursn(\DOMXPath $xpath, array $site, int $maxArticles): array
+    {
+        $articles = [];
+        
+        // Chercher les offres de recrutement et concours - plusieurs stratégies
+        $queries = [
+            "//article",
+            "//div[contains(@class, 'post')]",
+            "//div[contains(@class, 'job')]",
+            "//div[contains(@class, 'offre')]",
+            "//h2[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'recrute') or contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'concours')]",
+            "//h3[contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), 'recrute')]",
+            "//a[contains(@href, 'recrutement') or contains(@href, 'concours')]"
+        ];
+        
+        $allNodes = [];
+        foreach ($queries as $query) {
+            try {
+                $nodes = $xpath->query($query);
+                foreach ($nodes as $node) {
+                    $allNodes[] = $node;
+                }
+            } catch (\Exception $e) {
+                // Ignorer les erreurs de requête XPath
+            }
+        }
+        
+        // Dédupliquer
+        $uniqueNodes = [];
+        $seenTitles = [];
+        foreach ($allNodes as $node) {
+            $title = trim($node->textContent);
+            $titleKey = mb_strtolower($title);
+            
+            if (!isset($seenTitles[$titleKey]) && mb_strlen($title) >= 15 && mb_strlen($title) <= 200) {
+                if (stripos($title, 'menu') === false && 
+                    stripos($title, 'navigation') === false &&
+                    stripos($title, 'accueil') === false) {
+                    $uniqueNodes[] = $node;
+                    $seenTitles[$titleKey] = true;
+                }
+            }
+        }
+        
+        foreach ($uniqueNodes as $index => $node) {
+            if (count($articles) >= $maxArticles) break;
+            
+            $title = trim($node->textContent);
+            
+            // Chercher le contenu
+            $content = $this->extractContentFromNode($xpath, $node);
+            
+            if (empty($content) || mb_strlen($content) < 100) {
+                // Générer un contenu plus riche et varié basé sur le titre
+                $content = $this->generateRichContentFromTitle($title, 'concours');
+            }
+            
+            $articles[] = [
+                'title' => $title,
+                'content' => mb_substr($content, 0, 1000),
+                'source' => $site['name'],
+                'url' => $site['url'],
+                'publishedAt' => now()->subDays(rand(0, 14)),
+                'image' => null
+            ];
+        }
+        
+        return $articles;
+    }
+
+    /**
+     * Scrape SGEE
+     */
+    private function scrapeSGEE(\DOMXPath $xpath, array $site, int $maxArticles): array
+    {
+        $articles = [];
+        
+        // Chercher les actualités et communiqués
+        $nodes = $xpath->query("//div[contains(@class, 'post')] | //article | //h2 | //h3 | //div[contains(@class, 'actualite')]");
+        
+        foreach ($nodes as $index => $node) {
+            if (count($articles) >= $maxArticles) break;
+            
+            $title = trim($node->textContent);
+            if (mb_strlen($title) < 20 || mb_strlen($title) > 200) continue;
+            
+            // Filtrer les titres non pertinents
+            if (stripos($title, 'menu') !== false || 
+                stripos($title, 'navigation') !== false ||
+                stripos($title, 'footer') !== false) {
+                continue;
+            }
+            
+            // Générer un contenu plus riche
+            $content = $this->generateRichContentFromTitle($title, 'bourses');
+            if (empty($content)) {
+                $content = "Actualité du Service de Gestion des Etudiants Sénégalais à l'Étranger. " . $title;
+            }
+            
+            $articles[] = [
+                'title' => $title,
+                'content' => mb_substr($content, 0, 1000),
+                'source' => $site['name'],
+                'url' => $site['url'],
+                'publishedAt' => now()->subDays(rand(0, 10)),
+                'image' => null
+            ];
+        }
+        
+        return $articles;
+    }
+
+    /**
+     * Scrape sites d'emploi génériques
+     */
+    private function scrapeEmploiSites(\DOMXPath $xpath, array $site, int $maxArticles): array
+    {
+        $articles = [];
+        
+        // Chercher les offres d'emploi
+        $nodes = $xpath->query("//div[contains(@class, 'job')] | //div[contains(@class, 'offre')] | //article | //h2 | //h3 | //a[contains(@href, 'emploi') or contains(@href, 'recrutement')]");
+        
+        foreach ($nodes as $index => $node) {
+            if (count($articles) >= $maxArticles) break;
+            
+            $title = trim($node->textContent);
+            if (mb_strlen($title) < 15 || mb_strlen($title) > 200) continue;
+            
+            // Filtrer les liens de navigation
+            if (stripos($title, 'accueil') !== false || 
+                stripos($title, 'contact') !== false ||
+                stripos($title, 'menu') !== false) {
+                continue;
+            }
+            
+            // Générer un contenu plus riche si pas assez de contenu extrait
+            if (empty($content) || mb_strlen($content) < 100) {
+                $content = $this->generateRichContentFromTitle($title, 'emploi');
+            }
+            if (empty($content)) {
+                $content = "Offre d'emploi au Sénégal. " . $title;
+            }
+            
+            // Chercher plus de détails
+            $parent = $node->parentNode;
+            if ($parent) {
+                $details = $xpath->query(".//p | .//div[contains(@class, 'description')]", $parent);
+                foreach ($details as $detail) {
+                    $text = trim($detail->textContent);
+                    if (mb_strlen($text) > 50) {
+                        $content .= ' ' . $text;
+                    }
+                }
+            }
+            
+            $articles[] = [
+                'title' => $title,
+                'content' => mb_substr($content, 0, 1000),
+                'source' => $site['name'],
+                'url' => $site['url'],
+                'publishedAt' => now()->subDays(rand(0, 30)),
+                'image' => null
+            ];
+        }
+        
+        return $articles;
+    }
+
+    /**
+     * Scrape Guichet Jeunesse
+     */
+    private function scrapeGuichetJeunesse(\DOMXPath $xpath, array $site, int $maxArticles): array
+    {
+        return $this->scrapeEmploiSites($xpath, $site, $maxArticles);
+    }
+
+    /**
+     * Scrape Sénégal Services
+     */
+    private function scrapeSenegalServices(\DOMXPath $xpath, array $site, int $maxArticles): array
+    {
+        return $this->scrapeEmploiSites($xpath, $site, $maxArticles);
+    }
+
+    /**
+     * Scrape SAMABAC
+     */
+    private function scrapeSAMABAC(\DOMXPath $xpath, array $site, int $maxArticles): array
+    {
+        return $this->scrapeConcoursn($xpath, $site, $maxArticles);
+    }
+
+    /**
+     * Scrape générique pour sites non spécifiques
+     */
+    private function scrapeGeneric(\DOMXPath $xpath, array $site, int $maxArticles): array
+    {
+        $articles = [];
+        
+        // Chercher les titres et articles
+        $nodes = $xpath->query("//h1 | //h2 | //h3 | //article | //div[contains(@class, 'post')] | //div[contains(@class, 'article')]");
+        
+        foreach ($nodes as $index => $node) {
+            if (count($articles) >= $maxArticles) break;
+            
+            $title = trim($node->textContent);
+            if (mb_strlen($title) < 20 || mb_strlen($title) > 200) continue;
+            
+            // Filtrer les éléments de navigation
+            $skipWords = ['menu', 'navigation', 'footer', 'header', 'accueil', 'contact', 'à propos'];
+            $shouldSkip = false;
+            foreach ($skipWords as $word) {
+                if (stripos($title, $word) !== false) {
+                    $shouldSkip = true;
+                    break;
+                }
+            }
+            if ($shouldSkip) continue;
+            
+            // Générer un contenu plus riche
+            $content = $this->generateRichContentFromTitle($title, $site['type'] ?? 'general');
+            if (empty($content)) {
+                $content = "Information du site {$site['name']}. " . $title;
+            }
+            
+            $articles[] = [
+                'title' => $title,
+                'content' => mb_substr($content, 0, 1000),
+                'source' => $site['name'],
+                'url' => $site['url'],
+                'publishedAt' => now()->subDays(rand(0, 15)),
+                'image' => null
+            ];
+        }
+        
+        return $articles;
     }
 
     /**
@@ -274,10 +747,13 @@ class ArticleGeneratorService
         $content = preg_replace('/\s+/', ' ', $content);
         $content = trim($content);
 
-        // Si le contenu est trop court, l'enrichir
-        if (mb_strlen($content) < 500) {
+        // Si le contenu est trop court ou trop générique, l'enrichir avec du contenu varié
+        if (mb_strlen($content) < 500 || $this->isGenericContent($content)) {
             $content = $this->enrichContent($content, $category);
         }
+
+        // Ajouter de la variété dans la reformulation
+        $content = $this->addVarietyToContent($content, $category);
 
         // Structurer le contenu avec des titres
         $content = $this->structureContent($content);
@@ -285,6 +761,66 @@ class ArticleGeneratorService
         // Optimiser pour le SEO
         $content = $this->optimizeContentForSeo($content, $category);
 
+        return $content;
+    }
+
+    /**
+     * Vérifie si le contenu est trop générique
+     */
+    private function isGenericContent(string $content): bool
+    {
+        $genericPhrases = [
+            'pour plus d\'informations',
+            'consultez le site',
+            'offre d\'emploi ou concours',
+            'informations sur les',
+        ];
+        
+        $contentLower = mb_strtolower($content);
+        foreach ($genericPhrases as $phrase) {
+            if (stripos($contentLower, $phrase) !== false && mb_strlen($content) < 300) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
+    /**
+     * Ajoute de la variété au contenu
+     */
+    private function addVarietyToContent(string $content, Category $category): string
+    {
+        // Phrases d'introduction variées
+        $introductions = [
+            "Le Sénégal offre de nombreuses opportunités dans ce domaine.",
+            "Cette opportunité s'inscrit dans le cadre du développement du secteur au Sénégal.",
+            "Les candidats intéressés peuvent postuler pour cette offre.",
+            "Cette annonce concerne les opportunités disponibles au Sénégal.",
+            "Le marché de l'emploi sénégalais présente cette opportunité.",
+            "Cette offre s'adresse aux candidats qualifiés au Sénégal.",
+        ];
+        
+        // Phrases de conclusion variées
+        $conclusions = [
+            "Les candidats doivent être motivés et posséder les compétences requises.",
+            "Cette opportunité représente une excellente chance de développement professionnel.",
+            "Les conditions d'éligibilité sont détaillées dans l'annonce complète.",
+            "Les postulants doivent respecter les critères établis.",
+            "Cette offre est ouverte à tous les candidats éligibles.",
+            "Les modalités de candidature sont précisées dans l'annonce.",
+        ];
+        
+        // Ajouter une introduction variée si le contenu est court
+        if (mb_strlen($content) < 400) {
+            $intro = $introductions[array_rand($introductions)];
+            $content = $intro . ' ' . $content;
+        }
+        
+        // Ajouter une conclusion variée
+        $conclusion = $conclusions[array_rand($conclusions)];
+        $content .= ' ' . $conclusion;
+        
         return $content;
     }
 
@@ -332,22 +868,65 @@ class ArticleGeneratorService
     }
 
     /**
-     * Enrichit le contenu s'il est trop court
+     * Enrichit le contenu s'il est trop court avec du contenu varié
      */
     private function enrichContent(string $content, Category $category): string
     {
-        $enrichments = [
-            "\n\n## Opportunités de Carrière\n\n",
-            "Le secteur de l'emploi au Sénégal offre de nombreuses opportunités pour les candidats qualifiés. ",
-            "\n\n## Comment Postuler\n\n",
-            "Pour postuler à ces offres, il est recommandé de préparer un CV détaillé et une lettre de motivation adaptée. ",
-            "\n\n## Compétences Requises\n\n",
-            "Les employeurs recherchent généralement des candidats avec des compétences spécifiques et une expérience pertinente. ",
-        ];
-
+        // Sections variées selon le type de contenu
+        $sections = [];
+        
+        // Détecter le type de contenu
+        $contentLower = mb_strtolower($content);
+        
+        if (stripos($contentLower, 'bourse') !== false) {
+            $sections[] = [
+                'title' => '## Critères d\'Éligibilité',
+                'content' => 'Les bourses sont attribuées selon des critères spécifiques incluant les performances académiques, la situation sociale et les besoins du secteur. Les candidats doivent remplir les conditions requises pour être éligibles.'
+            ];
+            $sections[] = [
+                'title' => '## Processus de Candidature',
+                'content' => 'Le processus de candidature nécessite la préparation de documents administratifs complets. Les dossiers doivent être déposés dans les délais impartis avec toutes les pièces justificatives requises.'
+            ];
+        } elseif (stripos($contentLower, 'emploi') !== false || stripos($contentLower, 'recrutement') !== false) {
+            $sections[] = [
+                'title' => '## Profil Recherché',
+                'content' => 'Le profil recherché correspond à un candidat possédant les compétences techniques et les qualités personnelles nécessaires pour le poste. Une expérience dans le domaine est généralement appréciée.'
+            ];
+            $sections[] = [
+                'title' => '## Modalités de Candidature',
+                'content' => 'Les candidats intéressés doivent soumettre leur dossier de candidature comprenant un CV détaillé, une lettre de motivation et les documents justificatifs requis. Les modalités précises sont indiquées dans l\'annonce complète.'
+            ];
+        } elseif (stripos($contentLower, 'concours') !== false) {
+            $sections[] = [
+                'title' => '## Conditions de Participation',
+                'content' => 'Le concours est ouvert aux candidats remplissant les conditions d\'âge, de diplôme et d\'expérience requises. Les modalités d\'inscription et les épreuves sont détaillées dans le règlement du concours.'
+            ];
+            $sections[] = [
+                'title' => '## Calendrier du Concours',
+                'content' => 'Les dates importantes du concours incluent la période d\'inscription, les dates des épreuves écrites et orales, ainsi que la publication des résultats. Les candidats doivent respecter ces échéances.'
+            ];
+        } else {
+            // Sections génériques
+            $sections[] = [
+                'title' => '## Informations Importantes',
+                'content' => 'Cette opportunité s\'adresse aux candidats qualifiés et motivés. Les détails complets sont disponibles dans l\'annonce officielle.'
+            ];
+            $sections[] = [
+                'title' => '## Comment Postuler',
+                'content' => 'Pour postuler, les candidats doivent suivre les instructions fournies dans l\'annonce. Il est important de respecter les délais et de fournir tous les documents requis.'
+            ];
+        }
+        
+        // Ajouter 1-2 sections aléatoirement pour varier
+        $selectedSections = array_rand($sections, min(2, count($sections)));
+        if (!is_array($selectedSections)) {
+            $selectedSections = [$selectedSections];
+        }
+        
         $enriched = $content;
-        foreach ($enrichments as $enrichment) {
-            $enriched .= $enrichment;
+        foreach ($selectedSections as $index) {
+            $section = $sections[$index];
+            $enriched .= "\n\n" . $section['title'] . "\n\n" . $section['content'];
         }
 
         return $enriched;
@@ -447,7 +1026,10 @@ class ArticleGeneratorService
         // Essayer d'abord Unsplash
         if ($this->unsplashApiKey) {
             try {
-                $query = urlencode('business office work ' . $category->name);
+                // Générer des mots-clés variés basés sur le titre et la catégorie
+                $keywords = $this->extractImageKeywords($title, $category);
+                $query = urlencode($keywords);
+                
                 $response = Http::timeout(10)->get('https://api.unsplash.com/photos/random', [
                     'query' => $query,
                     'orientation' => 'landscape',
@@ -465,8 +1047,150 @@ class ArticleGeneratorService
             }
         }
 
-        // Fallback: utiliser une image placeholder
-        return 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=800&h=600&fit=crop';
+        // Fallback: utiliser des images placeholder variées basées sur le titre
+        return $this->getVariedPlaceholderImage($title, $category);
+    }
+
+    /**
+     * Extrait des mots-clés pour la recherche d'image
+     */
+    private function extractImageKeywords(string $title, Category $category): string
+    {
+        $keywords = [];
+        
+        // Mots-clés basés sur le titre
+        $titleLower = mb_strtolower($title);
+        
+        if (stripos($titleLower, 'bourse') !== false || stripos($titleLower, 'boursier') !== false) {
+            $keywords[] = 'education student scholarship';
+        }
+        if (stripos($titleLower, 'emploi') !== false || stripos($titleLower, 'recrutement') !== false || stripos($titleLower, 'travail') !== false) {
+            $keywords[] = 'business office work professional';
+        }
+        if (stripos($titleLower, 'concours') !== false) {
+            $keywords[] = 'competition exam test';
+        }
+        if (stripos($titleLower, 'formation') !== false || stripos($titleLower, 'formation') !== false) {
+            $keywords[] = 'training learning education';
+        }
+        if (stripos($titleLower, 'santé') !== false || stripos($titleLower, 'medecin') !== false) {
+            $keywords[] = 'healthcare medical hospital';
+        }
+        if (stripos($titleLower, 'ingénieur') !== false || stripos($titleLower, 'technique') !== false) {
+            $keywords[] = 'engineering technology';
+        }
+        if (stripos($titleLower, 'enseignant') !== false || stripos($titleLower, 'professeur') !== false) {
+            $keywords[] = 'teacher education classroom';
+        }
+        
+        // Ajouter le nom de la catégorie
+        if ($category) {
+            $categoryName = mb_strtolower($category->name);
+            $keywords[] = $categoryName;
+        }
+        
+        // Mots-clés par défaut
+        if (empty($keywords)) {
+            $keywords[] = 'business professional Senegal';
+        }
+        
+        return implode(' ', array_unique($keywords));
+    }
+
+    /**
+     * Génère une image placeholder variée basée sur le titre
+     */
+    private function getVariedPlaceholderImage(string $title, Category $category): string
+    {
+        // Liste d'images Unsplash variées (gratuites, pas besoin d'API)
+        $images = [
+            // Business/Emploi
+            'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=800&h=600&fit=crop',
+            'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&h=600&fit=crop',
+            'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&h=600&fit=crop',
+            'https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&h=600&fit=crop',
+            'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=800&h=600&fit=crop',
+            
+            // Éducation/Bourses
+            'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800&h=600&fit=crop',
+            'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=800&h=600&fit=crop',
+            'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?w=800&h=600&fit=crop',
+            'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=800&h=600&fit=crop',
+            'https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=800&h=600&fit=crop',
+            
+            // Concours/Examens
+            'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800&h=600&fit=crop',
+            'https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=800&h=600&fit=crop',
+            'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?w=800&h=600&fit=crop',
+            'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=800&h=600&fit=crop',
+            'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&h=600&fit=crop',
+            
+            // Général
+            'https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&h=600&fit=crop',
+            'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=800&h=600&fit=crop',
+            'https://images.unsplash.com/photo-1551434678-e076c223a692?w=800&h=600&fit=crop',
+            'https://images.unsplash.com/photo-1556761175-4b46a572b786?w=800&h=600&fit=crop',
+            'https://images.unsplash.com/photo-1552664730-d307ca884978?w=800&h=600&fit=crop',
+        ];
+        
+        // Utiliser un hash du titre pour sélectionner une image de manière déterministe mais variée
+        $hash = crc32($title . ($category ? $category->name : ''));
+        $index = abs($hash) % count($images);
+        
+        return $images[$index];
+    }
+
+    /**
+     * Génère un contenu riche et varié à partir d'un titre
+     */
+    private function generateRichContentFromTitle(string $title, string $type = 'general'): string
+    {
+        $titleLower = mb_strtolower($title);
+        $content = '';
+        
+        // Contenu varié selon le type
+        if ($type === 'bourses' || stripos($titleLower, 'bourse') !== false) {
+            $variations = [
+                "Les bourses d'études au Sénégal représentent une opportunité importante pour les étudiants méritants. ",
+                "Le système de bourses sénégalais permet à de nombreux étudiants de poursuivre leurs études dans de bonnes conditions. ",
+                "Les allocations d'études sont attribuées selon des critères précis incluant les performances académiques et la situation sociale. ",
+            ];
+            $content = $variations[array_rand($variations)];
+            $content .= "Cette annonce concerne " . $title . ". Les candidats éligibles peuvent bénéficier de cette opportunité pour leur parcours académique. ";
+            $content .= "Les modalités d'attribution et les conditions d'éligibilité sont détaillées dans l'annonce officielle.";
+            
+        } elseif ($type === 'concours' || stripos($titleLower, 'concours') !== false) {
+            $variations = [
+                "Les concours publics au Sénégal offrent des opportunités de carrière dans la fonction publique. ",
+                "Ce concours permet aux candidats qualifiés d'accéder à des postes dans l'administration sénégalaise. ",
+                "Les épreuves de sélection sont organisées pour recruter les meilleurs profils selon les besoins du service public. ",
+            ];
+            $content = $variations[array_rand($variations)];
+            $content .= "L'annonce " . $title . " est ouverte aux candidats remplissant les conditions requises. ";
+            $content .= "Les inscriptions se font selon un calendrier précis et les épreuves sont organisées dans différents centres au Sénégal.";
+            
+        } elseif (stripos($titleLower, 'emploi') !== false || stripos($titleLower, 'recrutement') !== false) {
+            $variations = [
+                "Le marché de l'emploi au Sénégal présente de nombreuses opportunités pour les candidats qualifiés. ",
+                "Cette offre d'emploi s'adresse aux professionnels possédant les compétences recherchées. ",
+                "Les entreprises sénégalaises recrutent activement pour renforcer leurs équipes et développer leurs activités. ",
+            ];
+            $content = $variations[array_rand($variations)];
+            $content .= "L'offre " . $title . " concerne un poste nécessitant des qualifications spécifiques. ";
+            $content .= "Les candidats intéressés doivent soumettre leur dossier de candidature avec un CV détaillé et une lettre de motivation.";
+            
+        } else {
+            $variations = [
+                "Cette opportunité au Sénégal s'adresse aux candidats qualifiés et motivés. ",
+                "Le Sénégal offre de nombreuses possibilités de développement professionnel et académique. ",
+                "Cette annonce concerne une opportunité importante pour les candidats éligibles au Sénégal. ",
+            ];
+            $content = $variations[array_rand($variations)];
+            $content .= $title . " représente une chance pour les candidats de progresser dans leur parcours. ";
+            $content .= "Les détails complets et les modalités de candidature sont disponibles dans l'annonce officielle.";
+        }
+        
+        return $content;
     }
 
     /**
