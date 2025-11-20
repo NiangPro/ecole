@@ -8,14 +8,14 @@
         right: 0;
         width: 100%;
         z-index: 9999;
-        background: rgba(51, 65, 85, 0.9);
+        background: black;
         backdrop-filter: blur(20px);
         border-bottom: 1px solid rgba(6, 182, 212, 0.3);
         transition: all 0.3s ease;
     }
     
     .navbar-modern.scrolled {
-        background: rgba(51, 65, 85, 0.95);
+        background: black;
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
     }
     
@@ -682,7 +682,7 @@
         <ul class="navbar-menu">
             <li class="navbar-item">
                 <a href="{{ route('home') }}" class="navbar-link {{ request()->routeIs('home') ? 'active' : '' }}">
-                    <i class="fas fa-home"></i>
+                    <!-- <i class="fas fa-home"></i> -->
                     Accueil
                 </a>
             </li>
@@ -690,7 +690,7 @@
             <!-- Dropdown Formations -->
             <li class="navbar-item dropdown">
                 <a href="#" class="navbar-link dropdown-toggle">
-                    <i class="fas fa-graduation-cap"></i>
+                    <!-- <i class="fas fa-graduation-cap"></i> -->
                     Formations
                     <i class="fas fa-chevron-down dropdown-icon"></i>
                 </a>
@@ -764,7 +764,7 @@
             <!-- Dropdown Pratique -->
             <li class="navbar-item dropdown">
                 <a href="#" class="navbar-link dropdown-toggle">
-                    <i class="fas fa-code"></i>
+                    <!-- <i class="fas fa-code"></i> -->
                     Pratique
                     <i class="fas fa-chevron-down dropdown-icon"></i>
                 </a>
@@ -793,7 +793,7 @@
             <!-- Dropdown Emplois -->
             <li class="navbar-item dropdown">
                 <a href="#" class="navbar-link dropdown-toggle">
-                    <i class="fas fa-briefcase"></i>
+                    <!-- <i class="fas fa-briefcase"></i> -->
                     Emplois
                     <i class="fas fa-chevron-down dropdown-icon"></i>
                 </a>
@@ -866,7 +866,7 @@
             
             <li class="navbar-item">
                 <a href="{{ route('about') }}" class="navbar-link {{ request()->routeIs('about') ? 'active' : '' }}">
-                    <i class="fas fa-info-circle"></i>
+                    <!-- <i class="fas fa-info-circle"></i> -->
                     À propos
                 </a>
             </li>
