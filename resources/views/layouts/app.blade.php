@@ -229,15 +229,15 @@
         /* Back to Top Button */
         .back-to-top-button {
             position: fixed;
-            bottom: 140px;
+            bottom: 120px;
             right: 20px;
-            width: 50px;
-            height: 50px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             background: linear-gradient(135deg, #06b6d4, #14b8a6);
             border: 2px solid rgba(6, 182, 212, 0.3);
             color: #fff;
-            font-size: 20px;
+            font-size: 16px;
             cursor: pointer;
             display: none;
             align-items: center;
@@ -306,11 +306,16 @@
         
         @media (max-width: 768px) {
             .back-to-top-button {
-                bottom: 130px;
+                bottom: 110px;
                 right: 15px;
-                width: 45px;
-                height: 45px;
-                font-size: 18px;
+                width: 38px;
+                height: 38px;
+                font-size: 14px;
+            }
+            
+            .dark-mode-widget {
+                bottom: 60px;
+                right: 15px;
             }
             
             .back-to-top-tooltip {
@@ -321,19 +326,19 @@
         /* Dark Mode Widget */
         .dark-mode-widget {
             position: fixed;
-            bottom: 80px;
+            bottom: 70px;
             right: 20px;
             z-index: 9998;
         }
         
         .dark-mode-button {
-            width: 50px;
-            height: 50px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             background: linear-gradient(135deg, #334155, #475569);
             border: 2px solid rgba(6, 182, 212, 0.3);
             color: #fff;
-            font-size: 20px;
+            font-size: 16px;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -434,8 +439,8 @@
         
         .whatsapp-button {
             position: relative;
-            width: 50px;
-            height: 50px;
+            width: 40px;
+            height: 40px;
             background: linear-gradient(135deg, #25D366, #128C7E);
             border-radius: 50%;
             display: flex;
@@ -453,7 +458,7 @@
         }
         
         .whatsapp-button i {
-            font-size: 26px;
+            font-size: 18px;
             color: #fff;
             z-index: 1;
         }

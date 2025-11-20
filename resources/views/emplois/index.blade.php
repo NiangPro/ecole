@@ -28,19 +28,38 @@
     }
     
     .jobs-hero {
-        background-image: url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+        background-image: url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?ixlib=rb-4.0.3&auto=format&fit=crop&w=3840&q=100');
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
         background-attachment: fixed;
-        background-color: rgba(15, 23, 42, 0.95);
-        padding: 140px 20px 100px;
+        padding: 100px 20px 60px;
         text-align: center;
         position: relative;
         overflow: hidden;
-        will-change: transform;
+        min-height: 450px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
     
+    /* Parallax effect container */
+    .jobs-hero-parallax {
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background-image: url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?ixlib=rb-4.0.3&auto=format&fit=crop&w=3840&q=100');
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        will-change: transform;
+        transition: transform 0.1s ease-out;
+        filter: brightness(1.1) contrast(1.05);
+    }
+    
+    /* Overlay pour améliorer la lisibilité */
     .jobs-hero::after {
         content: '';
         position: absolute;
@@ -48,27 +67,12 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%);
-        z-index: 0;
-    }
-    
-    @media (max-width: 768px) {
-        .jobs-hero {
-            background-attachment: scroll !important;
-        }
-    }
-    
-    body:not(.dark-mode) .jobs-hero {
-        background-image: url('https://images.unsplash.com/photo-1521737604893-d14cc237f11d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80') !important;
-        background-size: cover !important;
-        background-position: center !important;
-        background-repeat: no-repeat !important;
-        background-attachment: fixed !important;
-        background-color: rgba(30, 41, 59, 0.4) !important;
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.75) 50%, rgba(15, 23, 42, 0.85) 100%);
+        z-index: 1;
     }
     
     body:not(.dark-mode) .jobs-hero::after {
-        background: linear-gradient(135deg, rgba(30, 41, 59, 0.4) 0%, rgba(51, 65, 85, 0.5) 100%) !important;
+        background: linear-gradient(135deg, rgba(248, 250, 252, 0.85) 0%, rgba(241, 245, 249, 0.75) 50%, rgba(226, 232, 240, 0.85) 100%) !important;
     }
     
     .jobs-hero::before {
@@ -79,52 +83,111 @@
         right: 0;
         bottom: 0;
         background: 
-            radial-gradient(circle at 20% 30%, rgba(6, 182, 212, 0.25), transparent 50%),
-            radial-gradient(circle at 80% 70%, rgba(20, 184, 166, 0.25), transparent 50%),
-            rgba(15, 23, 42, 0.7);
+            radial-gradient(circle at 20% 30%, rgba(6, 182, 212, 0.2), transparent 50%),
+            radial-gradient(circle at 80% 70%, rgba(20, 184, 166, 0.2), transparent 50%);
         pointer-events: none;
+        z-index: 2;
     }
     
     body:not(.dark-mode) .jobs-hero::before {
         background: 
-            radial-gradient(circle at 20% 30%, rgba(6, 182, 212, 0.2), transparent 50%),
-            radial-gradient(circle at 80% 70%, rgba(20, 184, 166, 0.2), transparent 50%),
-            rgba(30, 41, 59, 0.6) !important;
+            radial-gradient(circle at 20% 30%, rgba(6, 182, 212, 0.15), transparent 50%),
+            radial-gradient(circle at 80% 70%, rgba(20, 184, 166, 0.15), transparent 50%);
+    }
+    
+    @media (max-width: 768px) {
+        .jobs-hero {
+            background-attachment: scroll !important;
+        }
+    }
+    
+    .jobs-hero-content {
+        max-width: 900px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 2;
     }
     
     .jobs-hero h1 {
-        font-size: clamp(3rem, 6vw, 5rem);
+        font-size: clamp(2.5rem, 5vw, 4rem);
         font-weight: 900;
-        background: linear-gradient(135deg, #06b6d4, #14b8a6, #06b6d4);
-        background-size: 200% auto;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        margin-bottom: 25px;
-        position: relative;
-        z-index: 1;
-        animation: gradient 3s ease infinite;
+        color: #ffffff;
+        margin-bottom: 20px;
+        line-height: 1.2;
+        letter-spacing: -0.02em;
     }
     
-    @keyframes gradient {
-        0%, 100% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
+    body:not(.dark-mode) .jobs-hero h1 {
+        color: #1e293b !important;
     }
     
-    .jobs-hero p {
-        font-size: 1.4rem;
-        color: rgba(255, 255, 255, 0.95);
-        max-width: 800px;
-        margin: 0 auto;
-        position: relative;
-        z-index: 1;
-        line-height: 1.8;
-        text-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+    .jobs-hero-subtitle {
+        font-size: clamp(1.1rem, 2vw, 1.3rem);
+        color: rgba(255, 255, 255, 0.9);
+        max-width: 700px;
+        margin: 0 auto 40px;
+        line-height: 1.7;
+        font-weight: 400;
     }
     
-    body:not(.dark-mode) .jobs-hero p {
-        color: rgba(255, 255, 255, 0.95) !important;
-        text-shadow: 0 1px 5px rgba(0, 0, 0, 0.3) !important;
+    body:not(.dark-mode) .jobs-hero-subtitle {
+        color: rgba(30, 41, 59, 0.8) !important;
+    }
+    
+    .jobs-hero-buttons {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 40px;
+    }
+    
+    .jobs-hero-btn {
+        padding: 16px 32px;
+        font-size: 1rem;
+        font-weight: 700;
+        border-radius: 12px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 2px solid transparent;
+    }
+    
+    .jobs-hero-btn-primary {
+        background: linear-gradient(135deg, #06b6d4, #14b8a6);
+        color: #000;
+        box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+    }
+    
+    .jobs-hero-btn-primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(6, 182, 212, 0.5);
+    }
+    
+    .jobs-hero-btn-secondary {
+        background: rgba(255, 255, 255, 0.1);
+        color: #ffffff;
+        border-color: rgba(255, 255, 255, 0.3);
+        backdrop-filter: blur(10px);
+    }
+    
+    body:not(.dark-mode) .jobs-hero-btn-secondary {
+        background: rgba(255, 255, 255, 0.9) !important;
+        color: #1e293b !important;
+        border-color: rgba(6, 182, 212, 0.3) !important;
+    }
+    
+    .jobs-hero-btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: rgba(255, 255, 255, 0.5);
+        transform: translateY(-3px);
+    }
+    
+    body:not(.dark-mode) .jobs-hero-btn-secondary:hover {
+        background: rgba(255, 255, 255, 1) !important;
+        border-color: rgba(6, 182, 212, 0.5) !important;
     }
     
     .jobs-grid {
@@ -467,16 +530,27 @@
         }
         
         .jobs-hero {
-            padding: 120px 20px 80px;
+            padding: 80px 20px 50px;
+            min-height: 350px;
             background-attachment: scroll;
         }
         
         .jobs-hero h1 {
-            font-size: 2.5rem;
+            font-size: 2rem;
         }
         
-        .jobs-hero p {
-            font-size: 1.1rem;
+        .jobs-hero-subtitle {
+            font-size: 1rem;
+        }
+        
+        .jobs-hero-buttons {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .jobs-hero-btn {
+            width: 100%;
+            justify-content: center;
         }
     }
 </style>
@@ -484,10 +558,21 @@
 
 @section('content')
 <!-- Hero Section -->
-<section class="jobs-hero">
-    <div class="container mx-auto relative z-10">
-        <h1>🚀 Emplois & Opportunités</h1>
-        <p>Trouvez votre prochaine opportunité de carrière au Sénégal. Nous publions les meilleures offres d'emploi, bourses d'études et opportunités professionnelles disponibles.</p>
+<section class="jobs-hero" id="jobsHero">
+    <div class="jobs-hero-parallax" id="parallaxBg"></div>
+    <div class="jobs-hero-content">
+        <h1>Votre avenir commence ici</h1>
+        <p class="jobs-hero-subtitle">Découvrez toutes les informations sur les opportunités professionnelles au Sénégal en un seul endroit. Offres d'emploi, bourses d'études, concours et opportunités de carrière.</p>
+        <div class="jobs-hero-buttons">
+            <a href="{{ route('emplois.offres') }}" class="jobs-hero-btn jobs-hero-btn-primary">
+                <i class="fas fa-briefcase"></i>
+                Explorer les offres
+            </a>
+            <a href="{{ route('emplois.bourses') }}" class="jobs-hero-btn jobs-hero-btn-secondary">
+                <i class="fas fa-graduation-cap"></i>
+                Voir les bourses
+            </a>
+        </div>
     </div>
 </section>
 
@@ -588,4 +673,58 @@
     </div>
 </div>
 @endif
+
+@push('scripts')
+<script>
+    // Effet Parallaxe pour la section hero
+    document.addEventListener('DOMContentLoaded', function() {
+        const hero = document.getElementById('jobsHero');
+        const parallaxBg = document.getElementById('parallaxBg');
+        
+        if (!hero || !parallaxBg) return;
+        
+        let ticking = false;
+        
+        function updateParallax() {
+            const scrolled = window.pageYOffset;
+            const heroTop = hero.offsetTop;
+            const heroHeight = hero.offsetHeight;
+            const windowHeight = window.innerHeight;
+            
+            // Calculer si la section hero est visible
+            const heroBottom = heroTop + heroHeight;
+            const isVisible = scrolled + windowHeight > heroTop && scrolled < heroBottom;
+            
+            if (isVisible) {
+                // Calculer le pourcentage de scroll dans la section hero
+                const scrollProgress = (scrolled - heroTop + windowHeight) / (heroHeight + windowHeight);
+                const parallaxOffset = scrollProgress * 100;
+                
+                // Appliquer la transformation avec un effet de parallaxe
+                parallaxBg.style.transform = `translateY(${parallaxOffset * 0.5}px) scale(1.1)`;
+            }
+            
+            ticking = false;
+        }
+        
+        function requestTick() {
+            if (!ticking) {
+                window.requestAnimationFrame(updateParallax);
+                ticking = true;
+            }
+        }
+        
+        // Écouter le scroll
+        window.addEventListener('scroll', requestTick, { passive: true });
+        
+        // Initialiser au chargement
+        updateParallax();
+        
+        // Réinitialiser sur resize
+        window.addEventListener('resize', function() {
+            updateParallax();
+        }, { passive: true });
+    });
+</script>
+@endpush
 @endsection
