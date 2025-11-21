@@ -283,6 +283,53 @@
         font-weight: bold;
         z-index: 1;
     }
+    
+    /* Bouton de copie - Même taille que le label Python */
+    .copy-code-btn {
+        position: absolute;
+        top: 10px;
+        right: 100px;
+        background: #3776ab;
+        color: white;
+        border: none;
+        padding: 2px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 12px;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        z-index: 10;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        white-space: nowrap;
+        height: auto;
+        line-height: 1.4;
+    }
+    
+    .copy-code-btn:hover {
+        background: #2A5A87;
+        transform: translateY(-1px);
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+    }
+    
+    .copy-code-btn:active {
+        transform: translateY(0);
+    }
+    
+    .copy-code-btn.copied {
+        background: rgba(34, 197, 94, 0.9);
+        padding: 2px 10px;
+    }
+    
+    .copy-code-btn.copied:hover {
+        background: rgba(34, 197, 94, 1);
+    }
+    
+    .copy-code-btn i {
+        font-size: 12px;
+    }
     .code-box pre {
         margin: 0;
         padding: 0;
@@ -1403,6 +1450,76 @@ except Exception as e:
         if (typeof Prism !== 'undefined') {
             Prism.highlightAll();
         }
+    });
+    
+    // Fonction pour copier le code
+    function copyCodeToClipboard(button, codeElement) {
+        const codeText = codeElement.innerText || codeElement.textContent;
+        
+        navigator.clipboard.writeText(codeText).then(function() {
+            const originalHTML = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check"></i>';
+            button.classList.add('copied');
+            button.setAttribute('title', 'Copié !');
+            
+            setTimeout(function() {
+                button.innerHTML = originalHTML;
+                button.classList.remove('copied');
+                button.setAttribute('title', 'Copier le code');
+            }, 2000);
+        }).catch(function(err) {
+            console.error('Erreur lors de la copie:', err);
+            const textArea = document.createElement('textarea');
+            textArea.value = codeText;
+            textArea.style.position = 'fixed';
+            textArea.style.opacity = '0';
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                const originalHTML = button.innerHTML;
+                button.innerHTML = '<i class="fas fa-check"></i>';
+                button.classList.add('copied');
+                button.setAttribute('title', 'Copié !');
+                setTimeout(function() {
+                    button.innerHTML = originalHTML;
+                    button.classList.remove('copied');
+                    button.setAttribute('title', 'Copier le code');
+                }, 2000);
+            } catch (err) {
+                console.error('Erreur lors de la copie (fallback):', err);
+                alert('Impossible de copier le code. Veuillez le sélectionner manuellement.');
+            }
+            document.body.removeChild(textArea);
+        });
+    }
+    
+    // Ajouter les boutons de copie à tous les blocs de code
+    document.addEventListener('DOMContentLoaded', function() {
+        const codeBoxes = document.querySelectorAll('.code-box');
+        
+        codeBoxes.forEach(function(codeBox) {
+            if (codeBox.querySelector('.copy-code-btn')) {
+                return;
+            }
+            
+            const codeElement = codeBox.querySelector('code');
+            if (!codeElement) {
+                return;
+            }
+            
+            const copyButton = document.createElement('button');
+            copyButton.className = 'copy-code-btn';
+            copyButton.innerHTML = '<i class="fas fa-copy"></i>';
+            copyButton.setAttribute('aria-label', 'Copier le code');
+            copyButton.setAttribute('title', 'Copier le code');
+            
+            copyButton.addEventListener('click', function() {
+                copyCodeToClipboard(copyButton, codeElement);
+            });
+            
+            codeBox.appendChild(copyButton);
+        });
     });
 </script>
 @endsection

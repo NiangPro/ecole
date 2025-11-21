@@ -2163,7 +2163,7 @@
         text-align: left;
         transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative;
-        overflow: hidden;
+        overflow: visible;
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     }
     
@@ -2179,6 +2179,8 @@
         animation: shimmer-border 3s linear infinite;
         opacity: 0;
         transition: opacity 0.3s ease;
+        pointer-events: none;
+        z-index: 1;
     }
     
     .exercices-quiz-card:hover::before {
@@ -2195,6 +2197,8 @@
         background: radial-gradient(circle, rgba(6, 182, 212, 0.1) 0%, transparent 70%);
         opacity: 0;
         transition: opacity 0.4s ease;
+        pointer-events: none;
+        z-index: 1;
     }
     
     .exercices-quiz-card:hover {
@@ -2231,6 +2235,8 @@
         transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative;
         overflow: hidden;
+        z-index: 2;
+        pointer-events: none;
     }
     
     .exercices-quiz-icon-wrapper::before {
@@ -2240,6 +2246,7 @@
         background: linear-gradient(135deg, rgba(6, 182, 212, 0.3), rgba(20, 184, 166, 0.3));
         opacity: 0;
         transition: opacity 0.3s ease;
+        pointer-events: none;
     }
     
     .exercices-quiz-card:hover .exercices-quiz-icon-wrapper {
@@ -2278,6 +2285,9 @@
         color: #fff;
         margin-bottom: 15px;
         transition: color 0.3s ease;
+        position: relative;
+        z-index: 2;
+        pointer-events: none;
     }
     
     body:not(.dark-mode) .exercices-quiz-title {
@@ -2290,6 +2300,9 @@
         margin-bottom: 25px;
         font-size: 0.95rem;
         transition: color 0.3s ease;
+        position: relative;
+        z-index: 2;
+        pointer-events: none;
     }
     
     body:not(.dark-mode) .exercices-quiz-description {
@@ -2317,6 +2330,9 @@
         overflow: hidden;
         width: 100%;
         border: 2px solid transparent;
+        z-index: 10 !important;
+        pointer-events: auto !important;
+        cursor: pointer;
     }
     
     .quiz-btn {
@@ -2333,6 +2349,8 @@
         height: 100%;
         background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
         transition: left 0.6s ease;
+        pointer-events: none;
+        z-index: 1;
     }
     
     .exercices-quiz-btn:hover::before {

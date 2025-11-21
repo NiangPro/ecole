@@ -17,6 +17,7 @@
         background: #ffffff !important;
         color: #1e293b !important;
         overflow-x: hidden;
+        position: relative;
     }
     
     /* Dark Mode Styles */
@@ -30,13 +31,32 @@
         position: relative;
         padding: 120px 20px 80px;
         text-align: center;
-        background: linear-gradient(135deg, #06b6d4 0%, #14b8a6 100%);
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        background-image: url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1920&h=1080&fit=crop');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
         overflow: hidden;
         z-index: 1;
     }
     
+    body:not(.dark-mode) .hero-section {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        background-image: url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1920&h=1080&fit=crop');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
+    }
+    
     body.dark-mode .hero-section {
         background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        background-image: url('https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=1920&h=1080&fit=crop');
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+        background-repeat: no-repeat;
     }
     
     .hero-section::before {
@@ -46,9 +66,28 @@
         left: 0;
         right: 0;
         bottom: 0;
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.9) 100%);
+        z-index: 1;
+    }
+    
+    body:not(.dark-mode) .hero-section::before {
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.9) 100%);
+    }
+    
+    body.dark-mode .hero-section::before {
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.9) 100%);
+    }
+    
+    .hero-section::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
         background: url('data:image/svg+xml,<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="100" height="100" patternUnits="userSpaceOnUse"><path d="M 100 0 L 0 0 0 100" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
         opacity: 0.3;
-        z-index: -1;
+        z-index: 2;
     }
     
     .hero-title {
@@ -57,15 +96,20 @@
         font-weight: 900;
         color: white;
         margin-bottom: 20px;
-        text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
         animation: fadeInUp 0.8s ease;
+        position: relative;
+        z-index: 3;
     }
     
     .hero-subtitle {
         font-size: 1.5rem;
-        color: rgba(255, 255, 255, 0.9);
+        color: rgba(255, 255, 255, 0.95);
         margin-bottom: 40px;
         animation: fadeInUp 1s ease;
+        position: relative;
+        z-index: 3;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
     }
     
     @keyframes fadeInUp {
@@ -86,6 +130,12 @@
         padding: 80px 20px;
         position: relative;
         z-index: 2;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+    }
+    
+    body.dark-mode .formations-container {
+        background: rgba(10, 10, 15, 0.95);
     }
     
     .section-title {
@@ -346,7 +396,7 @@
 @section('content')
 <!-- Hero Section -->
 <section class="hero-section">
-    <div class="container">
+    <div class="container" style="position: relative; z-index: 3;">
         <h1 class="hero-title">
             <i class="fas fa-graduation-cap" style="margin-right: 15px;"></i>
             Toutes les Formations
