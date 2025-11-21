@@ -16,9 +16,7 @@ class AchievementController extends Controller
      */
     public function index()
     {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
+        // Le middleware AdminAuth gère déjà l'authentification
 
         $achievements = Achievement::ordered()->get();
         $showSection = SiteSetting::get('show_achievements_section', true);
@@ -30,9 +28,7 @@ class AchievementController extends Controller
      */
     public function create()
     {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
+        // Le middleware AdminAuth gère déjà l'authentification
 
         return view('admin.achievements.create');
     }
@@ -42,9 +38,7 @@ class AchievementController extends Controller
      */
     public function store(Request $request)
     {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
+        // Le middleware AdminAuth gère déjà l'authentification
 
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -79,9 +73,7 @@ class AchievementController extends Controller
      */
     public function show($id)
     {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
+        // Le middleware AdminAuth gère déjà l'authentification
 
         $achievement = Achievement::findOrFail($id);
         return view('admin.achievements.show', compact('achievement'));
@@ -92,9 +84,7 @@ class AchievementController extends Controller
      */
     public function edit($id)
     {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
+        // Le middleware AdminAuth gère déjà l'authentification
 
         $achievement = Achievement::findOrFail($id);
         return view('admin.achievements.edit', compact('achievement'));
@@ -105,9 +95,7 @@ class AchievementController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
+        // Le middleware AdminAuth gère déjà l'authentification
 
         $achievement = Achievement::findOrFail($id);
 
@@ -157,9 +145,7 @@ class AchievementController extends Controller
      */
     public function destroy($id)
     {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
+        // Le middleware AdminAuth gère déjà l'authentification
 
         $achievement = Achievement::findOrFail($id);
 
@@ -179,9 +165,7 @@ class AchievementController extends Controller
      */
     public function toggleSection()
     {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
+        // Le middleware AdminAuth gère déjà l'authentification
 
         $settings = SiteSetting::firstOrNew();
         $settings->show_achievements_section = !$settings->show_achievements_section;

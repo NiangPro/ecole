@@ -127,12 +127,26 @@ Route::middleware(['admin'])->group(function () {
 
     // Routes Publicités Admin
     Route::prefix('admin/ads')->name('admin.ads.')->group(function () {
-        Route::resource('', \App\Http\Controllers\Admin\AdController::class)->parameters(['' => 'ad']);
+        Route::get('/', [\App\Http\Controllers\Admin\AdController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\Admin\AdController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\Admin\AdController::class, 'store'])->name('store');
+        Route::get('/{ad}', [\App\Http\Controllers\Admin\AdController::class, 'show'])->name('show');
+        Route::get('/{ad}/edit', [\App\Http\Controllers\Admin\AdController::class, 'edit'])->name('edit');
+        Route::put('/{ad}', [\App\Http\Controllers\Admin\AdController::class, 'update'])->name('update');
+        Route::patch('/{ad}', [\App\Http\Controllers\Admin\AdController::class, 'update'])->name('update');
+        Route::delete('/{ad}', [\App\Http\Controllers\Admin\AdController::class, 'destroy'])->name('destroy');
     });
 
     // Routes Réalisations Admin
     Route::prefix('admin/achievements')->name('admin.achievements.')->group(function () {
-        Route::resource('', \App\Http\Controllers\Admin\AchievementController::class)->parameters(['' => 'achievement']);
+        Route::get('/', [\App\Http\Controllers\Admin\AchievementController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\Admin\AchievementController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\Admin\AchievementController::class, 'store'])->name('store');
+        Route::get('/{achievement}', [\App\Http\Controllers\Admin\AchievementController::class, 'show'])->name('show');
+        Route::get('/{achievement}/edit', [\App\Http\Controllers\Admin\AchievementController::class, 'edit'])->name('edit');
+        Route::put('/{achievement}', [\App\Http\Controllers\Admin\AchievementController::class, 'update'])->name('update');
+        Route::patch('/{achievement}', [\App\Http\Controllers\Admin\AchievementController::class, 'update'])->name('update');
+        Route::delete('/{achievement}', [\App\Http\Controllers\Admin\AchievementController::class, 'destroy'])->name('destroy');
         Route::post('/toggle-section', [\App\Http\Controllers\Admin\AchievementController::class, 'toggleSection'])->name('toggle-section');
     });
 });

@@ -12,28 +12,20 @@ class JobCategoryController extends Controller
 {
     public function index()
     {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
-
+        // Le middleware AdminAuth gère déjà l'authentification
         $categories = Category::orderBy('order')->orderBy('name')->get();
         return view('admin.jobs.categories.index', compact('categories'));
     }
 
     public function create()
     {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
-
+        // Le middleware AdminAuth gère déjà l'authentification
         return view('admin.jobs.categories.create');
     }
 
     public function store(Request $request)
     {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
+        // Le middleware AdminAuth gère déjà l'authentification
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -68,9 +60,7 @@ class JobCategoryController extends Controller
 
     public function edit($id)
     {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
+        // Le middleware AdminAuth gère déjà l'authentification
 
         $category = Category::findOrFail($id);
         return view('admin.jobs.categories.edit', compact('category'));
@@ -78,9 +68,7 @@ class JobCategoryController extends Controller
 
     public function update(Request $request, $id)
     {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
+        // Le middleware AdminAuth gère déjà l'authentification
 
         $category = Category::findOrFail($id);
 
@@ -131,9 +119,7 @@ class JobCategoryController extends Controller
 
     public function destroy($id)
     {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
+        // Le middleware AdminAuth gère déjà l'authentification
 
         $category = Category::findOrFail($id);
         

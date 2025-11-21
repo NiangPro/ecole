@@ -13,9 +13,7 @@ class AdController extends Controller
      */
     public function index()
     {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
+        // Le middleware AdminAuth gère déjà l'authentification
 
         $ads = Ad::orderBy('order')->orderBy('created_at', 'desc')->paginate(15);
 
@@ -27,9 +25,7 @@ class AdController extends Controller
      */
     public function create()
     {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
+        // Le middleware AdminAuth gère déjà l'authentification
 
         return view('admin.ads.create');
     }
@@ -39,9 +35,7 @@ class AdController extends Controller
      */
     public function store(Request $request)
     {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
+        // Le middleware AdminAuth gère déjà l'authentification
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
@@ -80,9 +74,7 @@ class AdController extends Controller
      */
     public function show($id)
     {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
+        // Le middleware AdminAuth gère déjà l'authentification
 
         $ad = Ad::findOrFail($id);
         return view('admin.ads.show', compact('ad'));
@@ -93,9 +85,7 @@ class AdController extends Controller
      */
     public function edit($id)
     {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
+        // Le middleware AdminAuth gère déjà l'authentification
 
         $ad = Ad::findOrFail($id);
         return view('admin.ads.edit', compact('ad'));
@@ -106,9 +96,7 @@ class AdController extends Controller
      */
     public function update(Request $request, $id)
     {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
+        // Le middleware AdminAuth gère déjà l'authentification
 
         $ad = Ad::findOrFail($id);
 
@@ -155,9 +143,7 @@ class AdController extends Controller
      */
     public function destroy($id)
     {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
+        // Le middleware AdminAuth gère déjà l'authentification
 
         $ad = Ad::findOrFail($id);
         $ad->delete();

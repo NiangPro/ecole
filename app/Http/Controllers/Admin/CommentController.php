@@ -12,9 +12,7 @@ class CommentController extends Controller
 {
     public function index(Request $request)
     {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
+        // Le middleware AdminAuth gère déjà l'authentification
 
         $search = $request->get('search');
         $status = $request->get('status', '');
@@ -56,9 +54,7 @@ class CommentController extends Controller
 
     public function approve($id)
     {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
+        // Le middleware AdminAuth gère déjà l'authentification
 
         $comment = Comment::findOrFail($id);
         $oldStatus = $comment->status;
@@ -80,9 +76,7 @@ class CommentController extends Controller
 
     public function reject($id)
     {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
+        // Le middleware AdminAuth gère déjà l'authentification
 
         $comment = Comment::findOrFail($id);
         $oldStatus = $comment->status;
@@ -104,9 +98,7 @@ class CommentController extends Controller
 
     public function delete($id)
     {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
+        // Le middleware AdminAuth gère déjà l'authentification
 
         $comment = Comment::with('commentable')->findOrFail($id);
         $commentType = $comment->commentable_type;

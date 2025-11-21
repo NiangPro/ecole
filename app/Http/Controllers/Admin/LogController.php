@@ -10,9 +10,7 @@ class LogController extends Controller
 {
     public function index(Request $request)
     {
-        if (!session('admin_logged_in')) {
-            return redirect()->route('admin.login');
-        }
+        // Le middleware AdminAuth gère déjà l'authentification
 
         $search = $request->get('search');
         $action = $request->get('action', '');
