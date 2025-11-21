@@ -518,8 +518,17 @@
             box-shadow: 0 4px 12px rgba(119, 123, 179, 0.3);
         }
         @media (max-width: 992px) {
+            .tutorial-content {
+                width: 100% !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+            }
+            
             .content-wrapper {
                 flex-direction: column;
+                width: 100% !important;
+                max-width: 100% !important;
+                padding: 0 !important;
             }
             
             /* Sidebar caché par défaut en mobile - FORCER avec toutes les propriétés */
@@ -568,8 +577,11 @@
             }
             
             .main-content {
-                width: 100%;
+                width: 100% !important;
+                max-width: 100% !important;
                 padding: 20px;
+                box-sizing: border-box;
+                margin: 0 !important;
             }
         }
         

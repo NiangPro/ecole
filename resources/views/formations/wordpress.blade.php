@@ -129,6 +129,84 @@
         transform: scaleY(1);
         background: white;
     }
+    
+    .sidebar-close-btn {
+        display: none;
+        align-items: center;
+        justify-content: center;
+        background: rgba(33, 117, 155, 0.1) !important;
+        border: 2px solid rgba(33, 117, 155, 0.3) !important;
+        transition: all 0.3s ease;
+    }
+    
+    .sidebar-close-btn:hover {
+        background: rgba(33, 117, 155, 0.2) !important;
+        border-color: rgba(33, 117, 155, 0.5) !important;
+        transform: rotate(90deg) scale(1.1);
+    }
+    
+    /* FORCER le sidebar à ne PAS être sticky en mobile - PROTECTION MAXIMALE */
+    @media (max-width: 992px) {
+        .sidebar,
+        .sidebar#tutorialSidebar,
+        aside.sidebar,
+        .content-wrapper .sidebar {
+            position: fixed !important;
+            top: auto !important;
+            align-self: auto !important;
+            flex-shrink: 0 !important;
+            width: 85% !important;
+            max-width: 400px !important;
+        }
+    }
+    
+    /* Menu Burger Mobile - Caché par défaut sur desktop */
+    .sidebar-toggle-btn {
+        display: none !important;
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #21759B, #1A5F7A);
+        border: none;
+        border-radius: 50%;
+        color: white;
+        font-size: 24px;
+        cursor: pointer;
+        z-index: 10000;
+        box-shadow: 0 8px 25px rgba(33, 117, 155, 0.4);
+        transition: all 0.3s ease;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .sidebar-toggle-btn:hover {
+        transform: scale(1.1);
+        box-shadow: 0 12px 35px rgba(33, 117, 155, 0.6);
+    }
+    
+    .sidebar-toggle-btn.active {
+        background: linear-gradient(135deg, #1A5F7A, #154A5F);
+        transform: rotate(90deg);
+    }
+    
+    .sidebar-overlay {
+        display: none !important;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(5px);
+        z-index: 9998;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .sidebar-overlay.active {
+        display: block !important;
+        opacity: 1;
+    }
+    
     .main-content {
         flex: 1;
         min-width: 0;
@@ -443,16 +521,74 @@
             .content-wrapper {
                 flex-direction: column;
             }
-            .sidebar {
-                width: 100%;
-                min-width: 100%;
-                position: relative;
-                top: 0;
-                height: auto;
-                max-height: none;
+            
+            /* Sidebar caché par défaut en mobile - FORCER avec toutes les propriétés */
+            .sidebar,
+            .sidebar#tutorialSidebar,
+            aside.sidebar {
+                display: none !important;
+                position: fixed !important;
+                bottom: 0 !important;
+                left: 0 !important;
+                width: 85% !important;
+                max-width: 400px !important;
+                height: 70vh !important;
+                max-height: 600px !important;
+                border-radius: 20px 20px 0 0 !important;
+                transform: translateY(100%) !important;
+                transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease !important;
+                z-index: 9999 !important;
+                box-shadow: 0 -10px 50px rgba(0, 0, 0, 0.3) !important;
+                overflow-y: auto !important;
+                overflow-x: hidden !important;
+                opacity: 0 !important;
+                visibility: hidden !important;
+                top: auto !important;
+                align-self: auto !important;
+                flex-shrink: 0 !important;
             }
+            
+            /* Sidebar visible quand actif */
+            .sidebar.active,
+            .sidebar#tutorialSidebar.active,
+            aside.sidebar.active {
+                display: block !important;
+                transform: translateY(0) !important;
+                opacity: 1 !important;
+                visibility: visible !important;
+            }
+            
+            /* Bouton burger visible en mobile - FORCER */
+            .sidebar-toggle-btn,
+            button.sidebar-toggle-btn,
+            #sidebarToggle {
+                display: flex !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+            }
+            
             .main-content {
-                max-width: 100%;
+                width: 100%;
+                padding: 20px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100% !important;
+                max-width: 100% !important;
+                height: 80vh;
+                max-height: 80vh;
+                border-radius: 25px 25px 0 0;
+            }
+            
+            .sidebar-toggle-btn {
+                display: flex !important;
+                width: 55px;
+                height: 55px;
+                font-size: 22px;
+                bottom: 15px;
+                left: 15px;
             }
         }
     }
@@ -469,9 +605,22 @@
 <!-- Content -->
 <div class="tutorial-content">
     <div class="content-wrapper">
+        <!-- Sidebar Toggle Button (Mobile) -->
+        <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Ouvrir le menu">
+            <i class="fas fa-bars" id="sidebarToggleIcon"></i>
+        </button>
+        
+        <!-- Sidebar Overlay (Mobile) -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        
         <!-- Sidebar -->
-        <aside class="sidebar">
-            <h3>WordPress Tutorial</h3>
+        <aside class="sidebar" id="tutorialSidebar">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid rgba(33, 117, 155, 0.2);">
+                <h3 style="margin: 0;">WordPress Tutorial</h3>
+                <button class="sidebar-close-btn" id="sidebarClose" style="display: none; background: none; border: none; color: #21759B; font-size: 24px; cursor: pointer; padding: 5px; width: 35px; height: 35px; border-radius: 50%; transition: all 0.3s ease;" aria-label="Fermer le menu">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
             <a href="#intro" class="active">Introduction WordPress</a>
             <a href="#install">Installation</a>
             <a href="#dashboard">Tableau de bord</a>
@@ -706,6 +855,249 @@
 @endsection
 
 @section('scripts')
+<script>
+    // SCRIPT DE GESTION MOBILE - DOIT S'EXÉCUTER EN PREMIER
+    (function() {
+        'use strict';
+        
+        // FLAG pour éviter les boucles infinies
+        let isApplyingStyles = false;
+        let hasInitialized = false;
+        
+        function isMobile() {
+            return window.innerWidth <= 992;
+        }
+        
+        function forceMobileSidebarState() {
+            // Éviter les appels récursifs
+            if (isApplyingStyles) {
+                return;
+            }
+            
+            const sidebar = document.getElementById('tutorialSidebar');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+            
+            if (!sidebar || !sidebarToggle) {
+                return;
+            }
+            
+            isApplyingStyles = true;
+            
+            try {
+                if (isMobile()) {
+                    // FORCER le sidebar à être caché avec styles inline
+                    if (!sidebar.classList.contains('active')) {
+                        const currentDisplay = window.getComputedStyle(sidebar).display;
+                        if (currentDisplay !== 'none') {
+                            sidebar.style.cssText = 'display: none !important; position: fixed !important; bottom: 0 !important; left: 0 !important; width: 85% !important; max-width: 400px !important; height: 70vh !important; max-height: 600px !important; border-radius: 20px 20px 0 0 !important; transform: translateY(100%) !important; z-index: 9999 !important; opacity: 0 !important; visibility: hidden !important; top: auto !important; align-self: auto !important;';
+                        }
+                    }
+                    
+                    // FORCER le bouton burger à être visible
+                    const toggleDisplay = window.getComputedStyle(sidebarToggle).display;
+                    if (toggleDisplay === 'none' || toggleDisplay === '') {
+                        sidebarToggle.style.cssText = 'display: flex !important; visibility: visible !important; opacity: 1 !important; position: fixed !important; bottom: 20px !important; left: 20px !important; width: 60px !important; height: 60px !important; background: linear-gradient(135deg, #21759B, #1A5F7A) !important; border: none !important; border-radius: 50% !important; color: white !important; font-size: 24px !important; cursor: pointer !important; z-index: 10000 !important; box-shadow: 0 8px 25px rgba(33, 117, 155, 0.4) !important; align-items: center !important; justify-content: center !important;';
+                    }
+                    
+                    // FORCER l'overlay à être caché
+                    if (sidebarOverlay && !sidebarOverlay.classList.contains('active')) {
+                        sidebarOverlay.style.cssText = 'display: none !important; opacity: 0 !important; visibility: hidden !important;';
+                    }
+                } else {
+                    // Desktop : restaurer les styles normaux
+                    if (sidebar.classList.contains('active')) {
+                        // Ne pas modifier si actif (peut être ouvert manuellement)
+                        return;
+                    }
+                    sidebar.style.cssText = '';
+                    sidebarToggle.style.cssText = 'display: none !important;';
+                }
+            } finally {
+                // Réinitialiser le flag après un court délai
+                setTimeout(function() {
+                    isApplyingStyles = false;
+                }, 50);
+            }
+        }
+        
+        // Fonction d'initialisation unique
+        function initMobileSidebar() {
+            if (hasInitialized) {
+                return;
+            }
+            hasInitialized = true;
+            
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function() {
+                    forceMobileSidebarState();
+                    // Une seule réexécution après un court délai
+                    setTimeout(forceMobileSidebarState, 300);
+                });
+            } else {
+                forceMobileSidebarState();
+                setTimeout(forceMobileSidebarState, 300);
+            }
+        }
+        
+        // Initialiser une seule fois
+        initMobileSidebar();
+        
+        // Surveiller les changements de taille (avec debounce)
+        let resizeTimer;
+        let lastWidth = window.innerWidth;
+        window.addEventListener('resize', function() {
+            const currentWidth = window.innerWidth;
+            // Ne réagir que si on change vraiment de mode (mobile/desktop)
+            const wasMobile = lastWidth <= 992;
+            const isNowMobile = currentWidth <= 992;
+            
+            if (wasMobile !== isNowMobile) {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(function() {
+                    hasInitialized = false; // Réinitialiser pour permettre la réinitialisation
+                    initMobileSidebar();
+                    lastWidth = currentWidth;
+                }, 200);
+            }
+        });
+    })();
+</script>
 <script src="{{ asset('js/sidebar-sticky.js') }}"></script>
 <script src="{{ asset('js/sidebar-navigation.js') }}"></script>
+<script>
+    // Gestion du menu burger mobile - S'exécute après les autres scripts
+    document.addEventListener('DOMContentLoaded', function() {
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const sidebar = document.getElementById('tutorialSidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const sidebarClose = document.getElementById('sidebarClose');
+        const toggleIcon = document.getElementById('sidebarToggleIcon');
+        
+        // Fonction pour vérifier si on est en mobile
+        function isMobile() {
+            return window.innerWidth <= 992;
+        }
+        
+        // S'assurer que le sidebar est caché par défaut en mobile
+        function initSidebar() {
+            if (isMobile() && sidebar) {
+                sidebar.classList.remove('active');
+                if (sidebarOverlay) sidebarOverlay.classList.remove('active');
+                if (sidebarClose) sidebarClose.style.display = 'none';
+                if (sidebarToggle) sidebarToggle.classList.remove('active');
+                
+                // FORCER le sidebar à être caché avec styles inline
+                sidebar.style.cssText = 'display: none !important; position: fixed !important; bottom: 0 !important; left: 0 !important; width: 85% !important; max-width: 400px !important; height: 70vh !important; max-height: 600px !important; border-radius: 20px 20px 0 0 !important; transform: translateY(100%) !important; z-index: 9999 !important; opacity: 0 !important; visibility: hidden !important; top: auto !important; align-self: auto !important;';
+                
+                // FORCER le bouton burger à être visible
+                if (sidebarToggle) {
+                    sidebarToggle.style.cssText = 'display: flex !important; visibility: visible !important; opacity: 1 !important; position: fixed !important; bottom: 20px !important; left: 20px !important; width: 60px !important; height: 60px !important; background: linear-gradient(135deg, #21759B, #1A5F7A) !important; border: none !important; border-radius: 50% !important; color: white !important; font-size: 24px !important; cursor: pointer !important; z-index: 10000 !important; box-shadow: 0 8px 25px rgba(33, 117, 155, 0.4) !important; align-items: center !important; justify-content: center !important;';
+                }
+            } else if (!isMobile() && sidebar) {
+                // Sur desktop, s'assurer que le sidebar est visible normalement
+                sidebar.classList.remove('active');
+                sidebar.style.cssText = '';
+                if (sidebarToggle) {
+                    sidebarToggle.style.cssText = 'display: none !important;';
+                }
+            }
+        }
+        
+        function openSidebar() {
+            if (!sidebar || !sidebarOverlay) return;
+            sidebar.classList.add('active');
+            sidebar.style.cssText = 'display: block !important; position: fixed !important; bottom: 0 !important; left: 0 !important; width: 85% !important; max-width: 400px !important; height: 70vh !important; max-height: 600px !important; border-radius: 20px 20px 0 0 !important; transform: translateY(0) !important; z-index: 9999 !important; opacity: 1 !important; visibility: visible !important; box-shadow: 0 -10px 50px rgba(0, 0, 0, 0.3) !important; overflow-y: auto !important; overflow-x: hidden !important;';
+            sidebarOverlay.classList.add('active');
+            if (sidebarOverlay) sidebarOverlay.style.cssText = 'display: block !important; opacity: 1 !important; visibility: visible !important;';
+            if (sidebarClose) sidebarClose.style.display = 'flex';
+            if (sidebarToggle) sidebarToggle.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeSidebar() {
+            if (!sidebar || !sidebarOverlay) return;
+            sidebar.classList.remove('active');
+            if (isMobile()) {
+                sidebar.style.cssText = 'display: none !important; position: fixed !important; bottom: 0 !important; left: 0 !important; width: 85% !important; max-width: 400px !important; height: 70vh !important; max-height: 600px !important; border-radius: 20px 20px 0 0 !important; transform: translateY(100%) !important; z-index: 9999 !important; opacity: 0 !important; visibility: hidden !important;';
+            }
+            sidebarOverlay.classList.remove('active');
+            if (sidebarOverlay) sidebarOverlay.style.cssText = 'display: none !important; opacity: 0 !important; visibility: hidden !important;';
+            if (sidebarClose) sidebarClose.style.display = 'none';
+            if (sidebarToggle) sidebarToggle.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        // Initialiser le sidebar au chargement (une seule fois)
+        let sidebarInitialized = false;
+        function initSidebarOnce() {
+            if (sidebarInitialized) return;
+            sidebarInitialized = true;
+            initSidebar();
+        }
+        
+        // Initialiser après un court délai pour laisser les autres scripts s'exécuter
+        setTimeout(initSidebarOnce, 100);
+        
+        if (sidebarToggle) {
+            sidebarToggle.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (sidebar && sidebar.classList.contains('active')) {
+                    closeSidebar();
+                } else {
+                    openSidebar();
+                }
+            });
+        }
+        
+        if (sidebarClose) {
+            sidebarClose.addEventListener('click', function(e) {
+                e.stopPropagation();
+                closeSidebar();
+            });
+        }
+        
+        if (sidebarOverlay) {
+            sidebarOverlay.addEventListener('click', closeSidebar);
+        }
+        
+        // Fermer le sidebar quand on clique sur un lien
+        if (sidebar) {
+            const sidebarLinks = sidebar.querySelectorAll('a');
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    if (isMobile()) {
+                        setTimeout(closeSidebar, 300);
+                    }
+                });
+            });
+        }
+        
+        // Fermer avec la touche Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && sidebar && sidebar.classList.contains('active')) {
+                closeSidebar();
+            }
+        });
+        
+        // Gérer le redimensionnement (avec debounce)
+        let resizeTimer;
+        let lastWidth = window.innerWidth;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(function() {
+                const currentWidth = window.innerWidth;
+                const wasMobile = lastWidth <= 992;
+                const isNowMobile = currentWidth <= 992;
+                
+                // Réinitialiser seulement si on change de mode
+                if (wasMobile !== isNowMobile) {
+                    sidebarInitialized = false;
+                    initSidebarOnce();
+                    lastWidth = currentWidth;
+                }
+            }, 200);
+        });
+    });
+</script>
 @endsection
