@@ -24,7 +24,14 @@ class SiteSetting extends Model
 
     public static function get($key, $default = null)
     {
-        $settings = self::first();
+        $settings = \Illuminate\Support\Facades\Cache::remember('site_settings', 3600, function () {
+            return self::first();
+        });
         return $settings ? ($settings->$key ?? $default) : $default;
+    }
+    
+    public static function clearCache()
+    {
+        \Illuminate\Support\Facades\Cache::forget('site_settings');
     }
 }

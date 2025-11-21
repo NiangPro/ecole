@@ -28,9 +28,223 @@
         min-height: calc(100vh - 200px);
     }
     
+    /* Empêcher le débordement */
+    .exercise-panel {
+        overflow: hidden;
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .code-editor-wrapper {
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+        box-sizing: border-box;
+    }
+    
+    .CodeMirror {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box;
+    }
+    
+    .result-frame {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box;
+        overflow-x: auto;
+        overflow-y: auto;
+    }
+    
     @media (max-width: 768px) {
+        section.py-20 {
+            padding-top: 100px !important;
+            padding-bottom: 40px !important;
+        }
+        
+        .container.mx-auto.px-6 {
+            padding-left: 16px !important;
+            padding-right: 16px !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box;
+        }
+        
         .exercise-container {
-            grid-template-columns: 1fr;
+            grid-template-columns: 1fr !important;
+            gap: 1.5rem !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box;
+        }
+        
+        .flex.items-center.justify-between.mb-3 {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 1rem !important;
+        }
+        
+        .flex.gap-2 {
+            width: 100% !important;
+            flex-direction: column !important;
+        }
+        
+        .flex.gap-2 a {
+            width: 100% !important;
+            text-align: center !important;
+        }
+        
+        h1.text-4xl {
+            font-size: 1.75rem !important;
+            line-height: 1.3 !important;
+        }
+        
+        .flex.items-center.gap-4 {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 1rem !important;
+        }
+        
+        .text-xl {
+            font-size: 1rem !important;
+        }
+        
+        .exercise-panel {
+            padding: 1.5rem !important;
+        }
+        
+        h3.text-xl {
+            font-size: 1.125rem !important;
+        }
+        
+        .code-editor-wrapper {
+            width: 100% !important;
+            max-width: 100% !important;
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+        }
+        
+        .CodeMirror {
+            min-height: 300px !important;
+            font-size: 12px !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            overflow-x: auto !important;
+            overflow-y: auto !important;
+        }
+        
+        .CodeMirror-scroll {
+            min-height: 300px !important;
+            overflow-x: auto !important;
+            overflow-y: auto !important;
+        }
+        
+        .CodeMirror-scrollbar {
+            overflow-x: auto !important;
+        }
+        
+        .result-frame {
+            min-height: 300px !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            overflow-x: auto !important;
+            overflow-y: auto !important;
+            box-sizing: border-box !important;
+        }
+        
+        /* Scroll horizontal dans l'iframe */
+        .result-frame iframe {
+            width: 100% !important;
+            max-width: 100% !important;
+            overflow-x: auto !important;
+            overflow-y: auto !important;
+        }
+        
+        .mt-4.flex.gap-3 {
+            flex-direction: column !important;
+            gap: 0.75rem !important;
+        }
+        
+        .exercise-buttons button,
+        .mt-4.flex.gap-3 button {
+            width: 100% !important;
+            padding: 0.75rem 1rem !important;
+            font-size: 0.875rem !important;
+        }
+        
+        .exercise-buttons button i,
+        .mt-4.flex.gap-3 button i {
+            font-size: 0.875rem !important;
+            margin-right: 0.5rem !important;
+        }
+        
+        .p-4 {
+            padding: 1rem !important;
+        }
+        
+        .text-sm {
+            font-size: 0.875rem !important;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        section.py-20 {
+            padding-top: 80px !important;
+            padding-bottom: 30px !important;
+        }
+        
+        h1.text-4xl {
+            font-size: 1.5rem !important;
+        }
+        
+        .exercise-panel {
+            padding: 1.25rem !important;
+        }
+        
+        .CodeMirror {
+            min-height: 250px !important;
+            font-size: 11px !important;
+        }
+        
+        .CodeMirror-scroll {
+            min-height: 250px !important;
+        }
+        
+        .result-frame {
+            min-height: 250px !important;
+        }
+        
+        .text-xl {
+            font-size: 0.9rem !important;
+        }
+        
+        .px-4.py-2 {
+            padding: 0.75rem 1rem !important;
+            font-size: 0.875rem !important;
+        }
+        
+        .px-6.py-3 {
+            padding: 0.75rem 0.875rem !important;
+            font-size: 0.8rem !important;
+        }
+        
+        .code-editor-wrapper {
+            width: 100% !important;
+            max-width: 100% !important;
+            overflow-x: auto !important;
+        }
+        
+        .CodeMirror {
+            width: 100% !important;
+            max-width: 100% !important;
+            overflow-x: auto !important;
+        }
+        
+        .result-frame {
+            width: 100% !important;
+            max-width: 100% !important;
+            overflow-x: auto !important;
         }
     }
     
@@ -805,13 +1019,19 @@
                                                 margin: 0;
                                                 padding: 0;
                                                 height: 100%;
-                                                overflow: hidden;
+                                                overflow-x: auto;
+                                                overflow-y: auto;
+                                                width: 100%;
                                             }
                                             html, body {
                                                 margin: 0 !important;
                                                 padding: 0 !important;
                                                 width: 100%;
+                                                min-width: 100%;
+                                                max-width: 100%;
                                                 height: 100%;
+                                                overflow-x: auto;
+                                                overflow-y: auto;
                                             }
                                             body {
                                                 font-family: 'Courier New', 'Consolas', 'Monaco', monospace;
@@ -825,9 +1045,13 @@
                                                 word-wrap: break-word;
                                                 line-height: 1.5;
                                                 display: block;
-                                                overflow: auto;
+                                                overflow-x: auto;
+                                                overflow-y: auto;
                                                 position: relative;
                                                 top: 0 !important;
+                                                width: 100%;
+                                                min-width: 100%;
+                                                max-width: 100%;
                                             }
                                             
                                             /* Forcer l'absence d'espace en haut pour TOUS les éléments */

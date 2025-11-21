@@ -139,6 +139,143 @@
     body:not(.dark-mode) .bg-gradient-to-br.from-purple-500.to-pink-600 .text-white {
         color: #fff !important;
     }
+    
+    /* Responsive Mobile */
+    @media (max-width: 768px) {
+        section.relative.min-h-screen {
+            padding-top: 100px !important;
+            padding-bottom: 40px !important;
+        }
+        
+        .container.mx-auto.px-6 {
+            padding-left: 16px !important;
+            padding-right: 16px !important;
+        }
+        
+        h1.text-6xl {
+            font-size: 2.5rem !important;
+            line-height: 1.2 !important;
+            margin-bottom: 1.5rem !important;
+        }
+        
+        .text-xl {
+            font-size: 1rem !important;
+            line-height: 1.6 !important;
+        }
+        
+        .max-w-4xl.mx-auto.text-center {
+            margin-bottom: 2rem !important;
+        }
+        
+        .max-w-6xl.mx-auto.grid {
+            gap: 1.5rem !important;
+        }
+        
+        .bg-gradient-to-br.from-gray-900\/90.to-black\/90 {
+            padding: 1.5rem !important;
+            border-radius: 1.5rem !important;
+        }
+        
+        h2.text-3xl {
+            font-size: 1.5rem !important;
+            margin-bottom: 1.5rem !important;
+        }
+        
+        .space-y-5 > * + * {
+            margin-top: 1rem !important;
+        }
+        
+        .contact-input {
+            padding: 0.75rem 1rem !important;
+            font-size: 0.9rem !important;
+        }
+        
+        textarea.contact-input {
+            min-height: 100px !important;
+        }
+        
+        .space-y-6 > * + * {
+            margin-top: 1.5rem !important;
+        }
+        
+        .flex.items-start.gap-6 {
+            flex-direction: column !important;
+            gap: 1rem !important;
+        }
+        
+        .w-16.h-16 {
+            width: 3.5rem !important;
+            height: 3.5rem !important;
+        }
+        
+        .text-2xl {
+            font-size: 1.25rem !important;
+        }
+        
+        .text-lg {
+            font-size: 1rem !important;
+        }
+        
+        .text-gray-400 {
+            font-size: 0.875rem !important;
+            line-height: 1.5 !important;
+        }
+        
+        .flex.flex-wrap.gap-4 {
+            gap: 0.75rem !important;
+        }
+        
+        .w-14.h-14 {
+            width: 3rem !important;
+            height: 3rem !important;
+        }
+        
+        .text-2xl {
+            font-size: 1.25rem !important;
+        }
+        
+        button.w-full {
+            padding: 0.875rem 1rem !important;
+            font-size: 0.9rem !important;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        section.relative.min-h-screen {
+            padding-top: 80px !important;
+            padding-bottom: 30px !important;
+        }
+        
+        h1.text-6xl {
+            font-size: 2rem !important;
+        }
+        
+        .text-xl {
+            font-size: 0.9rem !important;
+        }
+        
+        .bg-gradient-to-br.from-gray-900\/90.to-black\/90 {
+            padding: 1.25rem !important;
+        }
+        
+        h2.text-3xl {
+            font-size: 1.25rem !important;
+        }
+        
+        .w-16.h-16 {
+            width: 3rem !important;
+            height: 3rem !important;
+        }
+        
+        .text-2xl {
+            font-size: 1.125rem !important;
+        }
+        
+        .w-14.h-14 {
+            width: 2.75rem !important;
+            height: 2.75rem !important;
+        }
+    }
 </style>
 @endsection
 
@@ -307,7 +444,9 @@
                     <h3 class="text-2xl font-bold mb-6 gradient-text">Suivez-moi</h3>
                     <div class="flex flex-wrap gap-4">
                         @php
-                            $siteSettings = \App\Models\SiteSetting::first();
+                            $siteSettings = \Illuminate\Support\Facades\Cache::remember('site_settings', 3600, function () {
+                                return \App\Models\SiteSetting::first();
+                            });
                         @endphp
                         
                         @if($siteSettings && $siteSettings->facebook_url)

@@ -21,4 +21,9 @@ class AdSenseSetting extends Model
         'sidebar_banner' => 'boolean',
         'footer_banner' => 'boolean',
     ];
+    
+    public static function clearCache()
+    {
+        \Illuminate\Support\Facades\Cache::forget('adsense_settings');
+    }
 }

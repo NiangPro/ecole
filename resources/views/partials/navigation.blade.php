@@ -280,21 +280,21 @@
     
     /* CTA Button */
     .navbar-cta {
-        padding: 12px 24px;
+        padding: 8px 16px;
         background: linear-gradient(135deg, #06b6d4, #14b8a6);
         color: #000;
         text-decoration: none;
-        font-weight: 700;
-        border-radius: 12px;
-        font-size: 0.95rem;
+        font-weight: 600;
+        border-radius: 10px;
+        font-size: 0.85rem;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 6px;
         border: 2px solid transparent;
         position: relative;
         overflow: hidden;
-        box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+        box-shadow: 0 3px 12px rgba(6, 182, 212, 0.25);
     }
     
     .navbar-cta::before {

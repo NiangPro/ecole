@@ -221,6 +221,9 @@ class AdminController extends Controller
         $settings->footer_banner = $request->has('footer_banner');
         $settings->save();
         
+        // Invalider le cache
+        \App\Models\AdSenseSetting::clearCache();
+        
         return redirect()->route('admin.adsense')->with('success', 'Configuration AdSense mise à jour avec succès!');
     }
     
@@ -512,6 +515,9 @@ class AdminController extends Controller
         
         $settings->fill($request->all());
         $settings->save();
+        
+        // Invalider le cache
+        \App\Models\SiteSetting::clearCache();
         
         return redirect()->route('admin.settings')->with('success', 'Paramètres mis à jour avec succès!');
     }

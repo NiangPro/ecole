@@ -299,7 +299,9 @@
 </style>
 
 @php
-    $siteSettings = \App\Models\SiteSetting::first();
+    $siteSettings = \Illuminate\Support\Facades\Cache::remember('site_settings', 3600, function () {
+        return \App\Models\SiteSetting::first();
+    });
 @endphp
 
 <!-- Footer Ultra Moderne -->

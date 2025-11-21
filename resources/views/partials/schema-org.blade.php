@@ -1,6 +1,8 @@
 @php
 try {
-    $siteSettings = \App\Models\SiteSetting::first();
+    $siteSettings = \Illuminate\Support\Facades\Cache::remember('site_settings', 3600, function () {
+        return \App\Models\SiteSetting::first();
+    });
     $siteName = ($siteSettings && isset($siteSettings->site_name)) ? $siteSettings->site_name : 'NiangProgrammeur';
     $siteUrl = url('/');
     $description = ($siteSettings && isset($siteSettings->site_description)) ? $siteSettings->site_description : 'Plateforme de formation gratuite en développement web';

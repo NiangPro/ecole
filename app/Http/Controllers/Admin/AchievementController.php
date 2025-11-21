@@ -170,6 +170,9 @@ class AchievementController extends Controller
         $settings = SiteSetting::firstOrNew();
         $settings->show_achievements_section = !$settings->show_achievements_section;
         $settings->save();
+        
+        // Invalider le cache
+        \App\Models\SiteSetting::clearCache();
 
         return redirect()->route('admin.achievements.index')
             ->with('success', $settings->show_achievements_section 

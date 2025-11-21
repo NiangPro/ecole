@@ -132,8 +132,7 @@ Route::middleware(['admin'])->group(function () {
         Route::post('/', [\App\Http\Controllers\Admin\AdController::class, 'store'])->name('store');
         Route::get('/{ad}', [\App\Http\Controllers\Admin\AdController::class, 'show'])->name('show');
         Route::get('/{ad}/edit', [\App\Http\Controllers\Admin\AdController::class, 'edit'])->name('edit');
-        Route::put('/{ad}', [\App\Http\Controllers\Admin\AdController::class, 'update'])->name('update');
-        Route::patch('/{ad}', [\App\Http\Controllers\Admin\AdController::class, 'update'])->name('update');
+        Route::match(['put', 'patch'], '/{ad}', [\App\Http\Controllers\Admin\AdController::class, 'update'])->name('update');
         Route::delete('/{ad}', [\App\Http\Controllers\Admin\AdController::class, 'destroy'])->name('destroy');
     });
 
@@ -144,8 +143,7 @@ Route::middleware(['admin'])->group(function () {
         Route::post('/', [\App\Http\Controllers\Admin\AchievementController::class, 'store'])->name('store');
         Route::get('/{achievement}', [\App\Http\Controllers\Admin\AchievementController::class, 'show'])->name('show');
         Route::get('/{achievement}/edit', [\App\Http\Controllers\Admin\AchievementController::class, 'edit'])->name('edit');
-        Route::put('/{achievement}', [\App\Http\Controllers\Admin\AchievementController::class, 'update'])->name('update');
-        Route::patch('/{achievement}', [\App\Http\Controllers\Admin\AchievementController::class, 'update'])->name('update');
+        Route::match(['put', 'patch'], '/{achievement}', [\App\Http\Controllers\Admin\AchievementController::class, 'update'])->name('update');
         Route::delete('/{achievement}', [\App\Http\Controllers\Admin\AchievementController::class, 'destroy'])->name('destroy');
         Route::post('/toggle-section', [\App\Http\Controllers\Admin\AchievementController::class, 'toggleSection'])->name('toggle-section');
     });

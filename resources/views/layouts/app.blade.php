@@ -93,7 +93,8 @@
         }
     </script>
     @endif
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" media="print" onload="this.media='all'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"></noscript>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
@@ -102,7 +103,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     
     @php
-        $adsenseSettings = \App\Models\AdSenseSetting::first();
+        $adsenseSettings = \Illuminate\Support\Facades\Cache::remember('adsense_settings', 3600, function () {
+            return \App\Models\AdSenseSetting::first();
+        });
     @endphp
     
     @if($adsenseSettings && $adsenseSettings->adsense_code)
@@ -111,7 +114,9 @@
     
     <!-- Google Analytics -->
     @php
-        $siteSettings = \App\Models\SiteSetting::first();
+        $siteSettings = \Illuminate\Support\Facades\Cache::remember('site_settings', 3600, function () {
+            return \App\Models\SiteSetting::first();
+        });
         $gaId = $siteSettings->google_analytics_id ?? config('services.google_analytics.id');
     @endphp
     
@@ -185,8 +190,7 @@
     
     <!-- WhatsApp Chatbot Widget -->
     @php
-        $siteSettings = \App\Models\SiteSetting::first();
-        $whatsappNumber = $siteSettings->contact_phone ?? '+221783123657';
+        $whatsappNumber = \App\Models\SiteSetting::get('contact_phone', '+221783123657');
         // Nettoyer le numéro pour WhatsApp (enlever espaces, +, etc.)
         $whatsappNumber = preg_replace('/[^0-9]/', '', $whatsappNumber);
     @endphp
@@ -738,7 +742,7 @@
     @endif
     
     <!-- Toastr JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" defer></script>
     <script>
         // Configuration Toastr
         toastr.options = {
@@ -783,8 +787,8 @@
         });
     </script>
     
-    <script src="{{ asset('js/main.js') }}"></script>
-    <script src="{{ asset('js/pwa.js') }}"></script>
+    <script src="{{ asset('js/main.js') }}" defer></script>
+    <script src="{{ asset('js/pwa.js') }}" defer></script>
     @yield('scripts')
 </body>
 </html>
