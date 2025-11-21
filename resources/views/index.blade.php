@@ -532,6 +532,40 @@
         color: rgba(255, 255, 255, 0.7);
     }
     
+    /* Styles spécifiques pour la section Exercices & Quiz */
+    .exercices-quiz-section-title {
+        font-family: 'Orbitron', sans-serif;
+        font-size: clamp(1.8rem, 3vw, 2.5rem);
+        font-weight: 800;
+        text-align: center;
+        margin-bottom: 20px;
+        background: linear-gradient(135deg, #06b6d4 0%, #14b8a6 50%, #8b5cf6 100%);
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: gradientShift 5s ease infinite;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .exercices-quiz-section-subtitle {
+        text-align: center;
+        font-size: clamp(1rem, 2vw, 1.2rem);
+        color: rgba(30, 41, 59, 0.7);
+        width: 100%;
+        max-width: 100%;
+        margin: 0 auto 60px;
+        line-height: 1.8;
+        position: relative;
+        z-index: 1;
+        padding: 0 20px;
+    }
+    
+    body.dark-mode .exercices-quiz-section-subtitle {
+        color: rgba(255, 255, 255, 0.7);
+    }
+    
     .tech-grid {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -1013,8 +1047,8 @@
 
 <!-- Exercices & Quiz Section -->
 <section class="exercices-quiz-section" style="position: relative; z-index: 2; padding: 50px 20px; max-width: 1600px; margin: 0 auto;">
-    <h2 class="section-title">Pratiquez avec nos Exercices & Quiz</h2>
-    <p class="section-subtitle">
+    <h2 class="exercices-quiz-section-title">Pratiquez avec nos Exercices & Quiz</h2>
+    <p class="exercices-quiz-section-subtitle">
         Renforcez vos compétences avec des exercices pratiques et testez vos connaissances avec nos quiz interactifs. La pratique est essentielle 
         pour maîtriser le développement web, c'est pourquoi nous proposons plus de 100 exercices interactifs couvrant tous les niveaux, du débutant 
         à l'expert. Chaque exercice vous permet d'écrire du code directement dans votre navigateur, de tester vos solutions en temps réel, et de 
@@ -1023,39 +1057,39 @@
         comment appliquer vos connaissances dans des situations réelles.
     </p>
     
-    <div style="display: grid; grid-template-columns: {{ isset($sidebarAds) && $sidebarAds->count() > 0 ? '1fr 300px' : '1fr' }}; gap: 30px; margin-bottom: 30px; align-items: start;">
+    <div class="exercices-quiz-container">
         <!-- Cards Exercices & Quiz -->
-        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px;">
+        <div class="exercices-quiz-cards">
         <!-- Exercices Card -->
-            <div class="stat-card" style="text-align: left; padding: 30px;">
-                <div style="width: 60px; height: 60px; background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2)); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
-                    <i class="fas fa-code" style="font-size: 1.8rem; color: #06b6d4;"></i>
-            </div>
-                <h3 style="font-size: 1.3rem; font-weight: 700; color: #fff; margin-bottom: 12px;">Exercices Pratiques</h3>
-                <p style="color: rgba(255, 255, 255, 0.7); line-height: 1.7; margin-bottom: 20px; font-size: 0.9rem;">
+            <div class="exercices-quiz-card exercices-card">
+                <div class="exercices-quiz-icon-wrapper">
+                    <i class="fas fa-code"></i>
+                </div>
+                <h3 class="exercices-quiz-title">Exercices Pratiques</h3>
+                <p class="exercices-quiz-description">
                 Plus de 100 exercices interactifs couvrant 9 technologies différentes, répartis en trois niveaux de difficulté (Facile, Moyen, Difficile). 
                 Chaque exercice comprend un énoncé clair, un code de départ, et une solution détaillée. Écrivez du code directement dans votre navigateur 
                 avec notre éditeur intégré, exécutez-le en temps réel, et recevez des feedbacks immédiats. Les exercices progressent naturellement, vous 
                 permettant de construire vos compétences étape par étape, de la syntaxe de base aux concepts avancés.
             </p>
-                <a href="{{ route('exercices') }}" class="exercices-quiz-btn exercices-btn" style="display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 14px 28px; background: linear-gradient(135deg, #06b6d4, #14b8a6); color: #fff; font-weight: 700; text-decoration: none; font-size: 0.95rem; border-radius: 50px; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(6, 182, 212, 0.4); text-transform: uppercase; letter-spacing: 0.5px;">
+                <a href="{{ route('exercices') }}" class="exercices-quiz-btn exercices-btn">
                 Commencer les exercices <i class="fas fa-arrow-right"></i>
             </a>
         </div>
         
         <!-- Quiz Card -->
-            <div class="stat-card" style="text-align: left; padding: 30px;">
-                <div style="width: 60px; height: 60px; background: linear-gradient(135deg, rgba(20, 184, 166, 0.2), rgba(6, 182, 212, 0.2)); border-radius: 16px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px;">
-                    <i class="fas fa-question-circle" style="font-size: 1.8rem; color: #14b8a6;"></i>
-            </div>
-                <h3 style="font-size: 1.3rem; font-weight: 700; color: #fff; margin-bottom: 12px;">Quiz Interactifs</h3>
-                <p style="color: rgba(255, 255, 255, 0.7); line-height: 1.7; margin-bottom: 20px; font-size: 0.9rem;">
+            <div class="exercices-quiz-card quiz-card">
+                <div class="exercices-quiz-icon-wrapper quiz-icon-wrapper">
+                    <i class="fas fa-question-circle"></i>
+                </div>
+                <h3 class="exercices-quiz-title">Quiz Interactifs</h3>
+                <p class="exercices-quiz-description">
                 Testez vos connaissances avec nos quiz détaillés couvrant toutes les technologies enseignées. Chaque quiz comprend des questions 
                 variées (choix multiples, vrai/faux, questions à développement) qui évaluent votre compréhension des concepts clés. Obtenez un 
                 score détaillé à la fin, avec des explications complètes pour chaque question, qu'elle soit correcte ou incorrecte. Cette approche 
                 vous permet d'identifier vos points forts et vos faiblesses, et de cibler vos révisions pour progresser rapidement et efficacement.
             </p>
-                <a href="{{ route('quiz') }}" class="exercices-quiz-btn quiz-btn" style="display: inline-flex; align-items: center; justify-content: center; gap: 10px; padding: 14px 28px; background: linear-gradient(135deg, #14b8a6, #06b6d4); color: #fff; font-weight: 700; text-decoration: none; font-size: 0.95rem; border-radius: 50px; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(20, 184, 166, 0.4); text-transform: uppercase; letter-spacing: 0.5px;">
+                <a href="{{ route('quiz') }}" class="exercices-quiz-btn quiz-btn">
                 Faire un quiz <i class="fas fa-arrow-right"></i>
             </a>
         </div>
@@ -1087,35 +1121,66 @@
     </div>
 </section>
 
-<!-- Section Publicitaire Moderne après Exercices & Quiz -->
+<!-- Section Publicitaire Next-Gen après Exercices & Quiz -->
 @if(isset($homepageAds) && $homepageAds->count() > 0)
-<section style="position: relative; z-index: 2; padding: 40px 20px; max-width: 1600px; margin: 0 auto;">
-    <div class="modern-ads-container">
+<section class="nextgen-ads-section">
+    <div class="nextgen-ads-container">
         @foreach($homepageAds as $ad)
-        <div class="modern-ad-card">
-            <a href="{{ $ad->link_url ?? '#' }}" target="_blank" onclick="trackAdClick({{ $ad->id }})" class="modern-ad-link">
-                @if($ad->image)
-                <div class="modern-ad-image-wrapper">
-                    <img src="{{ $ad->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($ad->image) : $ad->image }}"
-                         loading="lazy"
-                         alt="{{ $ad->name ?? 'Publicité' }}" 
-                         alt="{{ $ad->name }} - Publicité" 
-                         class="modern-ad-image"
-                         loading="lazy"
-                         onerror="this.style.display='none'">
-                    <div class="modern-ad-overlay">
-                        <div class="modern-ad-content">
-                            <h3 class="modern-ad-title">{{ $ad->name }}</h3>
-                            @if($ad->description)
-                            <p class="modern-ad-description">{{ $ad->description }}</p>
-                            @endif
-                            <span class="modern-ad-cta">Découvrir <i class="fas fa-arrow-right"></i></span>
+        <article class="nextgen-ad-card" data-tilt>
+            <div class="ad-sponsor-label">
+                <i class="fas fa-star"></i>
+                <span>Partenariat</span>
+            </div>
+            <a href="{{ $ad->link_url ?? '#' }}" target="_blank" onclick="trackAdClick({{ $ad->id }})" class="nextgen-ad-link">
+                <div class="ad-background-pattern"></div>
+                <div class="ad-content-wrapper">
+                    @if($ad->image)
+                    <div class="ad-image-container">
+                        <div class="image-frame">
+                            <img src="{{ $ad->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($ad->image) : $ad->image }}"
+                                 alt="{{ $ad->name ?? 'Publicité' }}"
+                                 class="ad-main-image"
+                                 loading="lazy"
+                                 onerror="this.style.display='none'">
+                            <div class="image-reflection"></div>
+                        </div>
+                    </div>
+                    @endif
+                    <div class="ad-text-section">
+                        <div class="ad-title-container">
+                            <h2 class="ad-main-title">
+                                <span class="title-line">{{ $ad->name }}</span>
+                            </h2>
+                            <div class="title-underline"></div>
+                        </div>
+                        @if($ad->description)
+                        <p class="ad-subtitle">{{ $ad->description }}</p>
+                        @endif
+                        <div class="ad-stats">
+                            <div class="stat-bubble">
+                                <i class="fas fa-rocket"></i>
+                                <span>Innovant</span>
+                            </div>
+                            <div class="stat-bubble">
+                                <i class="fas fa-award"></i>
+                                <span>Certifié</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-                @endif
+                <div class="ad-action-bar">
+                    <button class="ad-action-btn" type="button">
+                        <span class="btn-text">Explorer</span>
+                        <span class="btn-icon">
+                            <i class="fas fa-arrow-right"></i>
+                        </span>
+                        <span class="btn-ripple"></span>
+                    </button>
+                </div>
+                <div class="ad-corner-accent"></div>
+                <div class="ad-hover-light"></div>
             </a>
-        </div>
+        </article>
         @php
             $ad->incrementImpressions();
         @endphp
@@ -1185,6 +1250,421 @@
     body.dark-mode .latest-jobs-grid > a > div {
         background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.9)) !important;
         border-color: rgba(6, 182, 212, 0.3) !important;
+    }
+    
+    /* Section Publicitaire Next-Gen - Design Ultra Moderne Alternatif */
+    .nextgen-ads-section {
+        position: relative;
+        z-index: 2;
+        padding: 100px 20px;
+        max-width: 1600px;
+        margin: 0 auto;
+    }
+    
+    .nextgen-ads-container {
+        display: flex;
+        flex-direction: column;
+        gap: 50px;
+    }
+    
+    .nextgen-ad-card {
+        position: relative;
+        perspective: 1000px;
+    }
+    
+    .nextgen-ad-link {
+        position: relative;
+        display: block;
+        text-decoration: none;
+        color: inherit;
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        border: 1px solid rgba(6, 182, 212, 0.15);
+        border-radius: 0;
+        padding: 0;
+        overflow: hidden;
+        transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        transform-style: preserve-3d;
+        clip-path: polygon(0 0, calc(100% - 60px) 0, 100% 60px, 100% 100%, 60px 100%, 0 calc(100% - 60px));
+    }
+    
+    body.dark-mode .nextgen-ad-link {
+        background: rgba(15, 23, 42, 0.3);
+        border-color: rgba(6, 182, 212, 0.2);
+    }
+    
+    .ad-background-pattern {
+        position: absolute;
+        inset: 0;
+        opacity: 0.03;
+        background-image: 
+            linear-gradient(45deg, rgba(6, 182, 212, 0.1) 25%, transparent 25%),
+            linear-gradient(-45deg, rgba(6, 182, 212, 0.1) 25%, transparent 25%),
+            linear-gradient(45deg, transparent 75%, rgba(6, 182, 212, 0.1) 75%),
+            linear-gradient(-45deg, transparent 75%, rgba(6, 182, 212, 0.1) 75%);
+        background-size: 40px 40px;
+        background-position: 0 0, 0 20px, 20px -20px, -20px 0px;
+        animation: pattern-move 20s linear infinite;
+    }
+    
+    @keyframes pattern-move {
+        0% { background-position: 0 0, 0 20px, 20px -20px, -20px 0px; }
+        100% { background-position: 40px 40px, 40px 60px, 60px 20px, 20px 40px; }
+    }
+    
+    .ad-sponsor-label {
+        position: absolute;
+        top: 30px;
+        right: 30px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        background: linear-gradient(135deg, #06b6d4, #14b8a6);
+        color: #000;
+        font-size: 0.75rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        z-index: 10;
+        clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 100%, 8px 100%);
+    }
+    
+    .ad-sponsor-label i {
+        animation: star-spin 3s linear infinite;
+    }
+    
+    @keyframes star-spin {
+        0%, 100% { transform: rotate(0deg) scale(1); }
+        50% { transform: rotate(180deg) scale(1.2); }
+    }
+    
+    .ad-content-wrapper {
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: 50px;
+        padding: 50px;
+        position: relative;
+        z-index: 2;
+    }
+    
+    /* Image Container avec effet 3D */
+    .ad-image-container {
+        position: relative;
+    }
+    
+    .image-frame {
+        position: relative;
+        width: 100%;
+        height: 280px;
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(20, 184, 166, 0.1));
+        border: 3px solid rgba(6, 182, 212, 0.2);
+        overflow: hidden;
+        transform-style: preserve-3d;
+        transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    
+    .ad-main-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+        filter: grayscale(20%) contrast(1.1);
+    }
+    
+    .image-reflection {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 50%;
+        background: linear-gradient(to top, rgba(6, 182, 212, 0.3), transparent);
+        opacity: 0;
+        transition: opacity 0.6s ease;
+    }
+    
+    .nextgen-ad-card:hover .image-frame {
+        transform: rotateY(5deg) rotateX(-5deg) scale(1.05);
+        border-color: rgba(6, 182, 212, 0.5);
+        box-shadow: 0 20px 60px rgba(6, 182, 212, 0.3);
+    }
+    
+    .nextgen-ad-card:hover .ad-main-image {
+        transform: scale(1.2);
+        filter: grayscale(0%) contrast(1.2);
+    }
+    
+    .nextgen-ad-card:hover .image-reflection {
+        opacity: 1;
+    }
+    
+    /* Text Section */
+    .ad-text-section {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    
+    .ad-title-container {
+        position: relative;
+        margin-bottom: 20px;
+    }
+    
+    .ad-main-title {
+        font-size: clamp(2rem, 4vw, 3.5rem);
+        font-weight: 900;
+        line-height: 1.1;
+        margin: 0;
+        position: relative;
+    }
+    
+    .title-line {
+        display: inline-block;
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), #06b6d4, #14b8a6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        background-size: 200% 200%;
+        animation: title-flow 4s ease infinite;
+        position: relative;
+    }
+    
+    @keyframes title-flow {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+    }
+    
+    body.dark-mode .title-line {
+        background: linear-gradient(135deg, #fff, #06b6d4, #14b8a6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .title-underline {
+        position: absolute;
+        bottom: -10px;
+        left: 0;
+        width: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #06b6d4, #14b8a6);
+        transition: width 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    
+    .nextgen-ad-card:hover .title-underline {
+        width: 100%;
+    }
+    
+    .ad-subtitle {
+        font-size: 1.2rem;
+        line-height: 1.8;
+        color: rgba(30, 41, 59, 0.7);
+        margin: 0 0 30px 0;
+        max-width: 600px;
+    }
+    
+    body.dark-mode .ad-subtitle {
+        color: rgba(255, 255, 255, 0.8);
+    }
+    
+    /* Stats Bubbles */
+    .ad-stats {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+    
+    .stat-bubble {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 20px;
+        background: rgba(6, 182, 212, 0.08);
+        border: 2px solid rgba(6, 182, 212, 0.2);
+        border-radius: 0;
+        clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+        font-size: 0.9rem;
+        font-weight: 700;
+        color: #06b6d4;
+        transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    
+    .stat-bubble i {
+        font-size: 1rem;
+    }
+    
+    .nextgen-ad-card:hover .stat-bubble {
+        background: rgba(6, 182, 212, 0.15);
+        border-color: rgba(6, 182, 212, 0.4);
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(6, 182, 212, 0.2);
+    }
+    
+    body.dark-mode .stat-bubble {
+        background: rgba(6, 182, 212, 0.12);
+        border-color: rgba(6, 182, 212, 0.25);
+    }
+    
+    /* Action Bar */
+    .ad-action-bar {
+        padding: 30px 50px;
+        background: rgba(6, 182, 212, 0.05);
+        border-top: 1px solid rgba(6, 182, 212, 0.1);
+        position: relative;
+    }
+    
+    body.dark-mode .ad-action-bar {
+        background: rgba(6, 182, 212, 0.08);
+        border-top-color: rgba(6, 182, 212, 0.15);
+    }
+    
+    .ad-action-btn {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px 40px;
+        background: linear-gradient(135deg, #06b6d4, #14b8a6);
+        color: #000;
+        border: none;
+        font-size: 1rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        cursor: pointer;
+        overflow: hidden;
+        clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+        transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    
+    .btn-ripple {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.5);
+        transform: scale(0);
+        animation: ripple 0.6s ease-out;
+        pointer-events: none;
+    }
+    
+    @keyframes ripple {
+        to {
+            transform: scale(4);
+            opacity: 0;
+        }
+    }
+    
+    .ad-action-btn:active .btn-ripple {
+        animation: ripple 0.6s ease-out;
+    }
+    
+    .btn-icon {
+        transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    
+    .nextgen-ad-card:hover .ad-action-btn {
+        transform: translateX(10px);
+        box-shadow: 0 10px 30px rgba(6, 182, 212, 0.4);
+    }
+    
+    .nextgen-ad-card:hover .btn-icon {
+        transform: translateX(8px);
+    }
+    
+    /* Accents */
+    .ad-corner-accent {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100px;
+        height: 100px;
+        background: linear-gradient(135deg, transparent 40%, rgba(6, 182, 212, 0.1) 50%, transparent 60%);
+        clip-path: polygon(100% 0, 100% 100%, 0 100%);
+        opacity: 0;
+        transition: opacity 0.6s ease;
+    }
+    
+    .nextgen-ad-card:hover .ad-corner-accent {
+        opacity: 1;
+    }
+    
+    .ad-hover-light {
+        position: absolute;
+        inset: -50px;
+        background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(6, 182, 212, 0.1), transparent 50%);
+        opacity: 0;
+        transition: opacity 0.6s ease;
+        pointer-events: none;
+        z-index: 1;
+    }
+    
+    .nextgen-ad-card:hover .ad-hover-light {
+        opacity: 1;
+    }
+    
+    .nextgen-ad-card:hover .nextgen-ad-link {
+        transform: translateY(-15px) rotateX(2deg);
+        border-color: rgba(6, 182, 212, 0.4);
+        box-shadow: 0 40px 100px rgba(6, 182, 212, 0.25);
+    }
+    
+    body.dark-mode .nextgen-ad-card:hover .nextgen-ad-link {
+        box-shadow: 0 40px 100px rgba(6, 182, 212, 0.4);
+    }
+    
+    /* Responsive Next-Gen Ads */
+    @media (max-width: 968px) {
+        .ad-content-wrapper {
+            grid-template-columns: 1fr;
+            gap: 30px;
+            padding: 40px 30px;
+        }
+        
+        .ad-image-container {
+            order: 2;
+        }
+        
+        .image-frame {
+            height: 300px;
+        }
+        
+        .ad-action-bar {
+            padding: 25px 30px;
+        }
+        
+        .ad-action-btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .nextgen-ads-section {
+            padding: 60px 15px;
+        }
+        
+        .ad-content-wrapper {
+            padding: 30px 20px;
+        }
+        
+        .ad-sponsor-label {
+            top: 20px;
+            right: 20px;
+            padding: 6px 12px;
+            font-size: 0.7rem;
+        }
+        
+        .ad-main-title {
+            font-size: 2rem;
+        }
+        
+        .ad-subtitle {
+            font-size: 1rem;
+        }
+        
+        .image-frame {
+            height: 250px;
+        }
     }
     
     body.dark-mode .modern-ad-overlay {
@@ -1484,6 +1964,74 @@
     </div>
 </section>
 
+<!-- Section Publicitaire Ultra Moderne après Technologies Enseignées -->
+@if(isset($homepageAds) && $homepageAds->count() > 0)
+<section class="nextgen-ads-section">
+    <div class="nextgen-ads-container">
+        @foreach($homepageAds as $ad)
+        <article class="nextgen-ad-card" data-tilt>
+            <div class="ad-sponsor-label">
+                <i class="fas fa-star"></i>
+                <span>Partenariat</span>
+            </div>
+            <a href="{{ $ad->link_url ?? '#' }}" target="_blank" onclick="trackAdClick({{ $ad->id }})" class="nextgen-ad-link">
+                <div class="ad-background-pattern"></div>
+                <div class="ad-content-wrapper">
+                    @if($ad->image)
+                    <div class="ad-image-container">
+                        <div class="image-frame">
+                            <img src="{{ $ad->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($ad->image) : $ad->image }}"
+                                 alt="{{ $ad->name ?? 'Publicité' }}"
+                                 class="ad-main-image"
+                                 loading="lazy"
+                                 onerror="this.style.display='none'">
+                            <div class="image-reflection"></div>
+                        </div>
+                    </div>
+                    @endif
+                    <div class="ad-text-section">
+                        <div class="ad-title-container">
+                            <h2 class="ad-main-title">
+                                <span class="title-line">{{ $ad->name }}</span>
+                            </h2>
+                            <div class="title-underline"></div>
+                        </div>
+                        @if($ad->description)
+                        <p class="ad-subtitle">{{ $ad->description }}</p>
+                        @endif
+                        <div class="ad-stats">
+                            <div class="stat-bubble">
+                                <i class="fas fa-rocket"></i>
+                                <span>Innovant</span>
+                            </div>
+                            <div class="stat-bubble">
+                                <i class="fas fa-award"></i>
+                                <span>Certifié</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ad-action-bar">
+                    <button class="ad-action-btn" type="button">
+                        <span class="btn-text">Explorer</span>
+                        <span class="btn-icon">
+                            <i class="fas fa-arrow-right"></i>
+                        </span>
+                        <span class="btn-ripple"></span>
+                    </button>
+                </div>
+                <div class="ad-corner-accent"></div>
+                <div class="ad-hover-light"></div>
+            </a>
+        </article>
+        @php
+            $ad->incrementImpressions();
+        @endphp
+        @endforeach
+    </div>
+</section>
+@endif
+
 <!-- Latest Jobs Section -->
 @if(isset($latestJobs) && $latestJobs->count() > 0)
 <section class="latest-jobs-section" style="position: relative; z-index: 2; padding: 50px 20px; max-width: 1600px; margin: 0 auto;">
@@ -1657,12 +2205,191 @@
         color: rgba(255, 255, 255, 0.7) !important;
     }
     
+    /* Container Exercices & Quiz */
+    .exercices-quiz-container {
+        display: grid;
+        grid-template-columns: {{ isset($sidebarAds) && $sidebarAds->count() > 0 ? '1fr 300px' : '1fr' }};
+        gap: 30px;
+        margin-bottom: 30px;
+        align-items: start;
+    }
+    
+    .exercices-quiz-cards {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 30px;
+    }
+    
+    /* Cards Exercices & Quiz Ultra Modernes */
+    .exercices-quiz-card {
+        background: linear-gradient(135deg, rgba(51, 65, 85, 0.6) 0%, rgba(71, 85, 105, 0.5) 100%);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 2px solid rgba(6, 182, 212, 0.2);
+        border-radius: 24px;
+        padding: 35px;
+        text-align: left;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    }
+    
+    .exercices-quiz-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #06b6d4, #14b8a6, #06b6d4);
+        background-size: 200% 100%;
+        animation: shimmer-border 3s linear infinite;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .exercices-quiz-card:hover::before {
+        opacity: 1;
+    }
+    
+    .exercices-quiz-card::after {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(6, 182, 212, 0.1) 0%, transparent 70%);
+        opacity: 0;
+        transition: opacity 0.4s ease;
+    }
+    
+    .exercices-quiz-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        border-color: rgba(6, 182, 212, 0.5);
+        box-shadow: 0 20px 60px rgba(6, 182, 212, 0.3);
+        background: linear-gradient(135deg, rgba(51, 65, 85, 0.8) 0%, rgba(71, 85, 105, 0.7) 100%);
+    }
+    
+    .exercices-quiz-card:hover::after {
+        opacity: 1;
+    }
+    
+    body:not(.dark-mode) .exercices-quiz-card {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.8) 100%);
+        border-color: rgba(6, 182, 212, 0.25);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+    }
+    
+    body:not(.dark-mode) .exercices-quiz-card:hover {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%);
+        box-shadow: 0 20px 60px rgba(6, 182, 212, 0.2);
+    }
+    
+    .exercices-quiz-icon-wrapper {
+        width: 70px;
+        height: 70px;
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2));
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 25px;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .exercices-quiz-icon-wrapper::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.3), rgba(20, 184, 166, 0.3));
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .exercices-quiz-card:hover .exercices-quiz-icon-wrapper {
+        transform: scale(1.1) rotate(5deg);
+        box-shadow: 0 8px 25px rgba(6, 182, 212, 0.4);
+    }
+    
+    .exercices-quiz-card:hover .exercices-quiz-icon-wrapper::before {
+        opacity: 1;
+    }
+    
+    .quiz-icon-wrapper {
+        background: linear-gradient(135deg, rgba(20, 184, 166, 0.2), rgba(6, 182, 212, 0.2));
+    }
+    
+    .exercices-quiz-icon-wrapper i {
+        font-size: 2rem;
+        color: #06b6d4;
+        position: relative;
+        z-index: 1;
+        transition: all 0.3s ease;
+    }
+    
+    .quiz-icon-wrapper i {
+        color: #14b8a6;
+    }
+    
+    .exercices-quiz-card:hover .exercices-quiz-icon-wrapper i {
+        transform: scale(1.2);
+        filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.6));
+    }
+    
+    .exercices-quiz-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 15px;
+        transition: color 0.3s ease;
+    }
+    
+    body:not(.dark-mode) .exercices-quiz-title {
+        color: rgba(30, 41, 59, 0.95);
+    }
+    
+    .exercices-quiz-description {
+        color: rgba(255, 255, 255, 0.75);
+        line-height: 1.8;
+        margin-bottom: 25px;
+        font-size: 0.95rem;
+        transition: color 0.3s ease;
+    }
+    
+    body:not(.dark-mode) .exercices-quiz-description {
+        color: rgba(30, 41, 59, 0.75);
+    }
+    
     /* Styles pour les boutons Exercices & Quiz */
     .exercices-quiz-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        padding: 16px 32px;
+        background: linear-gradient(135deg, #06b6d4, #14b8a6);
+        color: #fff;
+        font-weight: 700;
+        text-decoration: none;
+        font-size: 0.95rem;
+        border-radius: 50px;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 15px rgba(6, 182, 212, 0.4);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
         position: relative;
         overflow: hidden;
         width: 100%;
-        max-width: 100%;
+        border: 2px solid transparent;
+    }
+    
+    .quiz-btn {
+        background: linear-gradient(135deg, #14b8a6, #06b6d4);
+        box-shadow: 0 4px 15px rgba(20, 184, 166, 0.4);
     }
     
     .exercices-quiz-btn::before {
@@ -1673,7 +2400,7 @@
         width: 100%;
         height: 100%;
         background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-        transition: left 0.5s ease;
+        transition: left 0.6s ease;
     }
     
     .exercices-quiz-btn:hover::before {
@@ -1681,18 +2408,18 @@
     }
     
     .exercices-quiz-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(6, 182, 212, 0.5) !important;
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 12px 35px rgba(6, 182, 212, 0.6);
+        border-color: rgba(6, 182, 212, 0.5);
     }
     
     .exercices-btn:hover {
-        background: linear-gradient(135deg, #14b8a6, #06b6d4) !important;
-        box-shadow: 0 8px 25px rgba(6, 182, 212, 0.5) !important;
+        background: linear-gradient(135deg, #14b8a6, #06b6d4);
     }
     
     .quiz-btn:hover {
-        background: linear-gradient(135deg, #06b6d4, #14b8a6) !important;
-        box-shadow: 0 8px 25px rgba(20, 184, 166, 0.5) !important;
+        background: linear-gradient(135deg, #06b6d4, #14b8a6);
+        box-shadow: 0 12px 35px rgba(20, 184, 166, 0.6);
     }
     
     .exercices-quiz-btn i {
@@ -1700,7 +2427,50 @@
     }
     
     .exercices-quiz-btn:hover i {
-        transform: translateX(5px);
+        transform: translateX(8px);
+    }
+    
+    /* Responsive Exercices & Quiz */
+    @media (max-width: 1024px) {
+        .exercices-quiz-container {
+            grid-template-columns: 1fr;
+        }
+        
+        .exercices-quiz-cards {
+            grid-template-columns: 1fr;
+            gap: 25px;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .exercices-quiz-card {
+            padding: 25px;
+        }
+        
+        .exercices-quiz-icon-wrapper {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 20px;
+        }
+        
+        .exercices-quiz-icon-wrapper i {
+            font-size: 1.6rem;
+        }
+        
+        .exercices-quiz-title {
+            font-size: 1.2rem;
+            margin-bottom: 12px;
+        }
+        
+        .exercices-quiz-description {
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+        
+        .exercices-quiz-btn {
+            padding: 14px 28px;
+            font-size: 0.9rem;
+        }
     }
     
     @media (max-width: 1024px) {

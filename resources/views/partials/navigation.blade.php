@@ -1,6 +1,6 @@
 <!-- Navigation Ultra Moderne -->
 <style>
-    /* Navbar Styles */
+    /* Navbar Styles Ultra Moderne */
     .navbar-modern {
         position: fixed;
         top: 0;
@@ -8,15 +8,35 @@
         right: 0;
         width: 100%;
         z-index: 9999;
-        background: black;
-        backdrop-filter: blur(20px);
-        border-bottom: 1px solid rgba(6, 182, 212, 0.3);
-        transition: all 0.3s ease;
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.9) 100%);
+        backdrop-filter: blur(30px) saturate(180%);
+        -webkit-backdrop-filter: blur(30px) saturate(180%);
+        border-bottom: 2px solid rgba(6, 182, 212, 0.2);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .navbar-modern::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, rgba(6, 182, 212, 0.5), rgba(20, 184, 166, 0.5), rgba(6, 182, 212, 0.5), transparent);
+        background-size: 200% 100%;
+        animation: shimmer-top 3s linear infinite;
+    }
+    
+    @keyframes shimmer-top {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
     }
     
     .navbar-modern.scrolled {
-        background: black;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.98) 100%);
+        box-shadow: 0 10px 50px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(6, 182, 212, 0.1) inset;
+        border-bottom-color: rgba(6, 182, 212, 0.4);
     }
     
     .navbar-container {
@@ -76,24 +96,62 @@
     .navbar-link {
         display: flex;
         align-items: center;
-        gap: 5px;
-        padding: 8px 12px;
+        gap: 6px;
+        padding: 10px 16px;
         color: rgba(255, 255, 255, 0.9);
         text-decoration: none;
-        font-size: 0.85rem;
-        font-weight: 500;
-        border-radius: 8px;
-        transition: all 0.3s ease;
+        font-size: 0.9rem;
+        font-weight: 600;
+        border-radius: 12px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .navbar-link::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(6, 182, 212, 0.15), transparent);
+        transition: left 0.5s ease;
+    }
+    
+    .navbar-link:hover::before {
+        left: 100%;
     }
     
     .navbar-link:hover {
-        background: rgba(6, 182, 212, 0.1);
+        background: rgba(6, 182, 212, 0.12);
         color: #06b6d4;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(6, 182, 212, 0.2);
     }
     
     .navbar-link.active {
-        background: rgba(6, 182, 212, 0.15);
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.15));
         color: #06b6d4;
+        box-shadow: 0 2px 8px rgba(6, 182, 212, 0.3);
+        border: 1px solid rgba(6, 182, 212, 0.3);
+    }
+    
+    .navbar-link.active::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60%;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #06b6d4, transparent);
+        animation: pulse-line 2s ease-in-out infinite;
+    }
+    
+    @keyframes pulse-line {
+        0%, 100% { opacity: 0.5; width: 60%; }
+        50% { opacity: 1; width: 80%; }
     }
     
     /* Dropdown */
@@ -116,43 +174,78 @@
     
     .dropdown-menu {
         position: absolute;
-        top: calc(100% + 10px);
+        top: calc(100% + 15px);
         left: 0;
-        min-width: 280px;
-        background: rgba(51, 65, 85, 0.95);
-        backdrop-filter: blur(20px);
-        border: 1px solid rgba(6, 182, 212, 0.2);
-        border-radius: 16px;
-        padding: 8px;
+        min-width: 300px;
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.98) 0%, rgba(30, 41, 59, 0.95) 100%);
+        backdrop-filter: blur(30px) saturate(180%);
+        -webkit-backdrop-filter: blur(30px) saturate(180%);
+        border: 2px solid rgba(6, 182, 212, 0.25);
+        border-radius: 20px;
+        padding: 12px;
         opacity: 0;
         visibility: hidden;
-        transform: translateY(-10px);
-        transition: all 0.3s ease;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        transform: translateY(-15px) scale(0.95);
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 25px 70px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(6, 182, 212, 0.1) inset;
+        overflow: hidden;
+    }
+    
+    .dropdown-menu::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #06b6d4, #14b8a6, #06b6d4);
+        background-size: 200% 100%;
+        animation: shimmer-border 3s linear infinite;
     }
     
     .dropdown:hover .dropdown-menu {
         opacity: 1;
         visibility: visible;
-        transform: translateY(0);
+        transform: translateY(0) scale(1);
     }
     
     .dropdown-item {
         display: flex;
         align-items: center;
-        gap: 10px;
-        padding: 10px 14px;
-        color: rgba(255, 255, 255, 0.8);
+        gap: 12px;
+        padding: 12px 16px;
+        color: rgba(255, 255, 255, 0.85);
         text-decoration: none;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-        font-size: 0.85rem;
+        border-radius: 12px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        font-size: 0.9rem;
+        border: 1px solid transparent;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .dropdown-item::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: linear-gradient(180deg, #06b6d4, #14b8a6);
+        transform: scaleY(0);
+        transition: transform 0.3s ease;
     }
     
     .dropdown-item:hover {
-        background: rgba(6, 182, 212, 0.1);
+        background: rgba(6, 182, 212, 0.12);
         color: #06b6d4;
-        transform: translateX(5px);
+        transform: translateX(8px);
+        border-color: rgba(6, 182, 212, 0.3);
+        box-shadow: 0 4px 12px rgba(6, 182, 212, 0.15);
+    }
+    
+    .dropdown-item:hover::before {
+        transform: scaleY(1);
     }
     
     .dropdown-item-icon {
@@ -187,22 +280,42 @@
     
     /* CTA Button */
     .navbar-cta {
-        padding: 10px 20px;
+        padding: 12px 24px;
         background: linear-gradient(135deg, #06b6d4, #14b8a6);
         color: #000;
         text-decoration: none;
         font-weight: 700;
-        border-radius: 10px;
-        font-size: 0.9rem;
-        transition: all 0.3s ease;
+        border-radius: 12px;
+        font-size: 0.95rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         display: flex;
         align-items: center;
         gap: 8px;
+        border: 2px solid transparent;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+    }
+    
+    .navbar-cta::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+        transition: left 0.5s ease;
+    }
+    
+    .navbar-cta:hover::before {
+        left: 100%;
     }
     
     .navbar-cta:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 30px rgba(6, 182, 212, 0.4);
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 12px 35px rgba(6, 182, 212, 0.5);
+        border-color: rgba(6, 182, 212, 0.5);
     }
     
     /* Search Icon & Form */
@@ -654,18 +767,104 @@
             display: none;
         }
         
+        .navbar-search-container {
+            margin-right: 10px;
+        }
+        
+        .navbar-search-icon {
+            width: 36px;
+            height: 36px;
+            font-size: 0.9rem;
+            margin-right: 8px;
+        }
+        
         .navbar-search-form {
-            right: 10px;
-            width: calc(100vw - 20px);
-            max-width: 600px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            margin: 0;
+            width: 100%;
+            max-width: 100%;
+            border-radius: 0;
+            padding: 20px;
+            z-index: 10001;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.98) 0%, rgba(30, 41, 59, 0.98) 100%);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+        }
+        
+        .navbar-search-form::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .navbar-search-form.active::after {
+            opacity: 1;
+        }
+        
+        .navbar-search-form.active {
+            transform: translateY(0) scale(1);
+        }
+        
+        .search-header {
+            margin-bottom: 25px;
+            padding-bottom: 20px;
         }
         
         .search-wrapper {
             flex-direction: column;
+            gap: 15px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 18px 20px;
+            font-size: 1.1rem;
         }
         
         .search-button {
             width: 100%;
+            padding: 18px 28px;
+            font-size: 1rem;
+        }
+        
+        .search-hint {
+            margin-top: 20px;
+            padding: 15px;
+            font-size: 0.9rem;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .navbar-container {
+            padding: 0 15px;
+            height: 65px;
+        }
+        
+        .logo-text {
+            font-size: 0.95rem;
+        }
+        
+        .logo-image {
+            width: 35px;
+            height: 35px;
+        }
+        
+        .navbar-search-form {
+            padding: 15px;
         }
     }
 </style>
@@ -682,7 +881,6 @@
         <ul class="navbar-menu">
             <li class="navbar-item">
                 <a href="{{ route('home') }}" class="navbar-link {{ request()->routeIs('home') ? 'active' : '' }}">
-                    <!-- <i class="fas fa-home"></i> -->
                     Accueil
                 </a>
             </li>
@@ -690,7 +888,6 @@
             <!-- Dropdown Formations -->
             <li class="navbar-item dropdown">
                 <a href="#" class="navbar-link dropdown-toggle">
-                    <!-- <i class="fas fa-graduation-cap"></i> -->
                     Formations
                     <i class="fas fa-chevron-down dropdown-icon"></i>
                 </a>
@@ -764,7 +961,6 @@
             <!-- Dropdown Pratique -->
             <li class="navbar-item dropdown">
                 <a href="#" class="navbar-link dropdown-toggle">
-                    <!-- <i class="fas fa-code"></i> -->
                     Pratique
                     <i class="fas fa-chevron-down dropdown-icon"></i>
                 </a>
@@ -793,7 +989,6 @@
             <!-- Dropdown Emplois -->
             <li class="navbar-item dropdown">
                 <a href="#" class="navbar-link dropdown-toggle">
-                    <!-- <i class="fas fa-briefcase"></i> -->
                     Emplois
                     <i class="fas fa-chevron-down dropdown-icon"></i>
                 </a>
@@ -866,7 +1061,6 @@
             
             <li class="navbar-item">
                 <a href="{{ route('about') }}" class="navbar-link {{ request()->routeIs('about') ? 'active' : '' }}">
-                    <!-- <i class="fas fa-info-circle"></i> -->
                     À propos
                 </a>
             </li>
@@ -1128,6 +1322,7 @@
     function openSearchForm() {
         if (searchForm) {
             searchForm.classList.add('active');
+            document.body.style.overflow = 'hidden';
             setTimeout(() => {
                 if (navbarSearch) {
                     navbarSearch.focus();
@@ -1139,6 +1334,7 @@
     function closeSearchForm() {
         if (searchForm) {
             searchForm.classList.remove('active');
+            document.body.style.overflow = '';
             if (navbarSearch) {
                 navbarSearch.blur();
             }

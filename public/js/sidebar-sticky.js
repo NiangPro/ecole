@@ -1,8 +1,19 @@
 // Script pour forcer le sticky du sidebar sur les pages de formations
+// MODIFIÉ : Ne s'applique PAS en mobile (≤992px)
 (function() {
     'use strict';
     
+    // Fonction pour vérifier si on est en mobile
+    function isMobile() {
+        return window.innerWidth <= 992;
+    }
+    
     function initSidebarSticky() {
+        // NE RIEN FAIRE EN MOBILE
+        if (isMobile()) {
+            return;
+        }
+        
         const sidebar = document.querySelector('.sidebar');
         const contentWrapper = document.querySelector('.content-wrapper');
         
@@ -14,7 +25,7 @@
             tutorialContent.style.position = 'relative';
         }
         
-        // Forcer les styles nécessaires
+        // Forcer les styles nécessaires UNIQUEMENT EN DESKTOP
         sidebar.style.position = 'sticky';
         sidebar.style.top = '60px';
         sidebar.style.alignSelf = 'flex-start';
@@ -22,6 +33,11 @@
         
         // Fonction pour vérifier et corriger la position
         function enforceSticky() {
+            // NE RIEN FAIRE EN MOBILE
+            if (isMobile()) {
+                return;
+            }
+            
             const sidebarRect = sidebar.getBoundingClientRect();
             const wrapperRect = contentWrapper.getBoundingClientRect();
             const navbarHeight = 60;
@@ -41,6 +57,7 @@
         // Utiliser IntersectionObserver pour un meilleur contrôle
         if (window.IntersectionObserver) {
             const observer = new IntersectionObserver((entries) => {
+                if (isMobile()) return; // Ne rien faire en mobile
                 entries.forEach(entry => {
                     enforceSticky();
                 });
@@ -56,6 +73,7 @@
         // Écouter le scroll avec requestAnimationFrame pour performance
         let ticking = false;
         function onScroll() {
+            if (isMobile()) return; // Ne rien faire en mobile
             if (!ticking) {
                 window.requestAnimationFrame(function() {
                     enforceSticky();
@@ -67,7 +85,7 @@
         
         window.addEventListener('scroll', onScroll, { passive: true });
         
-        // Initialiser immédiatement
+        // Initialiser immédiatement (uniquement en desktop)
         enforceSticky();
         
         // Réinitialiser au resize
@@ -75,13 +93,25 @@
         window.addEventListener('resize', function() {
             clearTimeout(resizeTimer);
             resizeTimer = setTimeout(function() {
+                // Si on passe en mobile, ne rien faire
+                if (isMobile()) {
+                    return;
+                }
                 enforceSticky();
             }, 100);
         });
         
         // Forcer une mise à jour après un court délai pour s'assurer que tout est chargé
-        setTimeout(enforceSticky, 100);
-        setTimeout(enforceSticky, 500);
+        setTimeout(function() {
+            if (!isMobile()) {
+                enforceSticky();
+            }
+        }, 100);
+        setTimeout(function() {
+            if (!isMobile()) {
+                enforceSticky();
+            }
+        }, 500);
     }
     
     // Initialiser quand le DOM est prêt
@@ -93,6 +123,10 @@
     }
     
     // Réessayer après le chargement complet de la page
-    window.addEventListener('load', initSidebarSticky);
+    window.addEventListener('load', function() {
+        if (!isMobile()) {
+            initSidebarSticky();
+        }
+    });
 })();
 

@@ -306,16 +306,36 @@
         
         @media (max-width: 768px) {
             .back-to-top-button {
-                bottom: 110px;
-                right: 15px;
-                width: 38px;
-                height: 38px;
+                bottom: 120px;
+                right: 18px;
+                width: 36px;
+                height: 36px;
                 font-size: 14px;
+                z-index: 10000;
             }
             
             .dark-mode-widget {
-                bottom: 60px;
-                right: 15px;
+                bottom: 70px;
+                right: 12px;
+                z-index: 9999;
+            }
+            
+            .dark-mode-button {
+                width: 36px;
+                height: 36px;
+                font-size: 14px;
+            }
+            
+            .whatsapp-widget {
+                bottom: 10px;
+                right: 12px;
+                z-index: 9998;
+            }
+            
+            .whatsapp-button {
+                width: 36px;
+                height: 36px;
+                font-size: 16px;
             }
             
             .back-to-top-tooltip {
