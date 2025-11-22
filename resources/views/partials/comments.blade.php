@@ -4,6 +4,16 @@
         Commentaires ({{ $comments->count() }})
     </h3>
 
+    <!-- Message de succès -->
+    @if(session('success'))
+    <div class="comment-success-message" style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(16, 185, 129, 0.2)); border: 2px solid rgba(34, 197, 94, 0.5); border-radius: 12px; padding: 15px 20px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; animation: slideDown 0.3s ease-out;">
+        <div style="width: 40px; height: 40px; background: linear-gradient(135deg, #22c55e, #10b981); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <i class="fas fa-check" style="color: #fff; font-size: 1rem;"></i>
+        </div>
+        <p style="color: rgba(255, 255, 255, 0.95); font-weight: 600; margin: 0; flex: 1;">{{ session('success') }}</p>
+    </div>
+    @endif
+
     <!-- Formulaire de commentaire -->
     <div class="comment-form-wrapper" style="background: rgba(51, 65, 85, 0.5); border: 2px solid rgba(6, 182, 212, 0.3); border-radius: 16px; padding: 20px; margin-bottom: 25px;">
         <form action="{{ route('comments.store') }}" method="POST" class="comment-form" id="comment-form">
@@ -116,6 +126,32 @@
     <!-- Liste des commentaires -->
     
 </div>
+
+<style>
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .comment-success-message {
+        animation: slideDown 0.3s ease-out;
+    }
+    
+    body:not(.dark-mode) .comment-success-message {
+        background: linear-gradient(135deg, rgba(34, 197, 94, 0.15), rgba(16, 185, 129, 0.15)) !important;
+        border-color: rgba(34, 197, 94, 0.4) !important;
+    }
+    
+    body:not(.dark-mode) .comment-success-message p {
+        color: rgba(30, 41, 59, 0.95) !important;
+    }
+</style>
 
 <script>
 function replyToComment(commentId) {

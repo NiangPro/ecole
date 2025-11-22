@@ -741,50 +741,55 @@
     </script>
     @endif
     
-    <!-- Toastr JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js" defer></script>
+    <!-- Toastr JS (conservé pour d'autres fonctionnalités si nécessaire) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script>
-        // Configuration Toastr
-        toastr.options = {
-            "closeButton": true,
-            "debug": false,
-            "newestOnTop": true,
-            "progressBar": true,
-            "positionClass": "toast-top-right",
-            "preventDuplicates": false,
-            "onclick": null,
-            "showDuration": "300",
-            "hideDuration": "1000",
-            "timeOut": "5000",
-            "extendedTimeOut": "1000",
-            "showEasing": "swing",
-            "hideEasing": "linear",
-            "showMethod": "fadeIn",
-            "hideMethod": "fadeOut"
-        };
+        // Configuration Toastr (pour d'autres messages si nécessaire)
+        (function() {
+            function initToastr() {
+                if (typeof toastr === 'undefined') {
+                    setTimeout(initToastr, 100);
+                    return;
+                }
 
-        // Attendre que le DOM soit chargé
-        document.addEventListener('DOMContentLoaded', function() {
-            // Afficher les messages de succès
-            @if(session('success'))
-                toastr.success('{{ addslashes(session('success')) }}', 'Succès');
-            @endif
+                toastr.options = {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": true,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "5000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                };
 
-            // Afficher les messages d'erreur
-            @if(session('error'))
-                toastr.error('{{ addslashes(session('error')) }}', 'Erreur');
-            @endif
+                // Afficher les messages d'erreur, info et warning (mais pas success pour les commentaires)
+                @if(session('error'))
+                    toastr.error('{{ addslashes(session('error')) }}', 'Erreur');
+                @endif
 
-            // Afficher les messages d'info
-            @if(session('info'))
-                toastr.info('{{ addslashes(session('info')) }}', 'Information');
-            @endif
+                @if(session('info'))
+                    toastr.info('{{ addslashes(session('info')) }}', 'Information');
+                @endif
 
-            // Afficher les messages d'avertissement
-            @if(session('warning'))
-                toastr.warning('{{ addslashes(session('warning')) }}', 'Attention');
-            @endif
-        });
+                @if(session('warning'))
+                    toastr.warning('{{ addslashes(session('warning')) }}', 'Attention');
+                @endif
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initToastr);
+            } else {
+                initToastr();
+            }
+        })();
     </script>
     
     <script src="{{ asset('js/main.js') }}" defer></script>

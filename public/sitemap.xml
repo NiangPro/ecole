@@ -1,261 +1,501 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>http://localhost</loc>
-    <lastmod>2025-11-14</lastmod>
+    <loc>https://niangprogrammeur.com</loc>
+    <lastmod>2025-11-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>http://localhost/about</loc>
-    <lastmod>2025-11-14</lastmod>
+    <loc>https://niangprogrammeur.com/about</loc>
+    <lastmod>2025-11-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>http://localhost/contact</loc>
-    <lastmod>2025-11-14</lastmod>
+    <loc>https://niangprogrammeur.com/contact</loc>
+    <lastmod>2025-11-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>http://localhost/faq</loc>
-    <lastmod>2025-11-14</lastmod>
+    <loc>https://niangprogrammeur.com/faq</loc>
+    <lastmod>2025-11-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>http://localhost/privacy-policy</loc>
-    <lastmod>2025-11-14</lastmod>
+    <loc>https://niangprogrammeur.com/privacy-policy</loc>
+    <lastmod>2025-11-21</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>http://localhost/legal</loc>
-    <lastmod>2025-11-14</lastmod>
+    <loc>https://niangprogrammeur.com/legal</loc>
+    <lastmod>2025-11-21</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>http://localhost/terms</loc>
-    <lastmod>2025-11-14</lastmod>
+    <loc>https://niangprogrammeur.com/terms</loc>
+    <lastmod>2025-11-21</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>http://localhost/formations/html5</loc>
-    <lastmod>2025-11-14</lastmod>
+    <loc>https://niangprogrammeur.com/formations/html5</loc>
+    <lastmod>2025-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>http://localhost/formations/css3</loc>
-    <lastmod>2025-11-14</lastmod>
+    <loc>https://niangprogrammeur.com/formations/css3</loc>
+    <lastmod>2025-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>http://localhost/formations/javascript</loc>
-    <lastmod>2025-11-14</lastmod>
+    <loc>https://niangprogrammeur.com/formations/javascript</loc>
+    <lastmod>2025-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>http://localhost/formations/php</loc>
-    <lastmod>2025-11-14</lastmod>
+    <loc>https://niangprogrammeur.com/formations/php</loc>
+    <lastmod>2025-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>http://localhost/formations/bootstrap</loc>
-    <lastmod>2025-11-14</lastmod>
+    <loc>https://niangprogrammeur.com/formations/bootstrap</loc>
+    <lastmod>2025-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>http://localhost/formations/git</loc>
-    <lastmod>2025-11-14</lastmod>
+    <loc>https://niangprogrammeur.com/formations/git</loc>
+    <lastmod>2025-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>http://localhost/formations/wordpress</loc>
-    <lastmod>2025-11-14</lastmod>
+    <loc>https://niangprogrammeur.com/formations/wordpress</loc>
+    <lastmod>2025-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>http://localhost/formations/ia</loc>
-    <lastmod>2025-11-14</lastmod>
+    <loc>https://niangprogrammeur.com/formations/ia</loc>
+    <lastmod>2025-11-21</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>http://localhost/emplois</loc>
-    <lastmod>2025-11-14</lastmod>
+    <loc>https://niangprogrammeur.com/emplois</loc>
+    <lastmod>2025-11-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>http://localhost/emplois/offres</loc>
-    <lastmod>2025-11-14</lastmod>
+    <loc>https://niangprogrammeur.com/emplois/offres</loc>
+    <lastmod>2025-11-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>http://localhost/emplois/bourses</loc>
-    <lastmod>2025-11-14</lastmod>
+    <loc>https://niangprogrammeur.com/emplois/bourses</loc>
+    <lastmod>2025-11-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>http://localhost/emplois/article/10-conseils-developper-carriere-professionnelle-senegal</loc>
-    <lastmod>2025-11-13</lastmod>
-    <changefreq>weekly</changefreq>
+    <loc>https://niangprogrammeur.com/emplois/candidature-spontanee</loc>
+    <lastmod>2025-11-21</lastmod>
+    <changefreq>daily</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>http://localhost/emplois/article/stages-formations-professionnelles-senegal-2025</loc>
+    <loc>https://niangprogrammeur.com/emplois/opportunites</loc>
+    <lastmod>2025-11-21</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/emploi-et-travail-au-senegal-1763668241-6315</loc>
+    <lastmod>2025-11-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/offre-demploi-avis-de-recrutement-a-la-giz-bureau-de-dakar-1763665718-2801</loc>
+    <lastmod>2025-11-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/emploi-au-senegal-les-10-entreprises-qui-recrutent-massiveme-1763665719-4877</loc>
+    <lastmod>2025-11-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/actualites-de-votre-bourse-au-senegal-1763668525-9131</loc>
+    <lastmod>2025-11-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/actualites-de-votre-bourse-au-senegal-1763668239-2290</loc>
+    <lastmod>2025-11-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/recrutement-offres-demploi-opportunites-au-senegal-2025-1763652791-1</loc>
+    <lastmod>2025-11-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/offres-demploi-bourses-detudes-carrieres-au-senegal-2025-1763652791-2</loc>
+    <lastmod>2025-11-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/emploi-candidature-spontanee-recrutement-actif-2025-1763652791-3</loc>
+    <lastmod>2025-11-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/recrutement-opportunites-professionnelles-opportunites-au-senegal-2025-1763652791-4</loc>
+    <lastmod>2025-11-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/offres-demploi-conseils-carriere-carrieres-au-senegal-2025-1763652791-5</loc>
+    <lastmod>2025-11-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/recrutement-offres-demploi-opportunites-au-senegal-2025-1763650640-1</loc>
+    <lastmod>2025-11-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/concours-fonction-publique-2025-recrutements-dans-ladministration-senegalaise-1763559685-5</loc>
+    <lastmod>2025-11-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/stages-professionnels-tech-opportunites-pour-jeunes-talents-au-senegal-1763559685-3</loc>
+    <lastmod>2025-11-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/formation-continue-developpez-vos-competences-professionnelles-1763505227-4</loc>
+    <lastmod>2025-11-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/emploi-public-concours-et-recrutements-dans-la-fonction-publique-1763505227-5</loc>
+    <lastmod>2025-11-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/stages-en-entreprise-au-senegal-guide-complet-pour-trouver-un-stage</loc>
+    <lastmod>2025-11-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/bourses-privees-et-fondations-au-senegal-guide-des-opportunites-2025</loc>
+    <lastmod>2025-11-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/bourses-francaises-pour-etudiants-senegalais-programmes-eiffel-et-autres</loc>
+    <lastmod>2025-11-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/stages-professionnels-opportunites-pour-jeunes-diplomes-1763505227-3</loc>
+    <lastmod>2025-11-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/startups-tech-rejoignez-lecosysteme-entrepreneurial-senegalais-1763505227-6</loc>
+    <lastmod>2025-11-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/formation-continue-tech-certifications-professionnelles-au-senegal-2025-1763559685-4</loc>
+    <lastmod>2025-11-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/formations-professionnelles-certifiantes-au-senegal-guide-2025</loc>
+    <lastmod>2025-11-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/programmes-de-volontariat-et-benevolat-au-senegal-opportunites</loc>
+    <lastmod>2025-11-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/freelance-et-travail-independant-au-senegal-opportunites-2025</loc>
+    <lastmod>2025-11-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/concours-dentree-dans-les-ecoles-de-formation-sanitaire-du-senegal-2025</loc>
+    <lastmod>2025-11-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/bourses-chinoises-pour-etudiants-senegalais-opportunites-detudes-en-chine</loc>
+    <lastmod>2025-11-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/recrutement-developpeurs-full-stack-opportunites-tech-au-senegal-2025-1763559685-1</loc>
+    <lastmod>2025-11-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/metiers-de-la-sante-au-senegal-2025-formation-et-recrutement</loc>
+    <lastmod>2025-11-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/bourses-dexcellence-2025-financement-etudes-superieures-au-senegal-1763559685-2</loc>
+    <lastmod>2025-11-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/concours-fonction-publique-senegal-2025</loc>
+    <lastmod>2025-11-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/sonatel-recrute-opportunites-de-carriere-dans-les-telecommunications-au-senegal</loc>
+    <lastmod>2025-11-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/stages-et-formations-professionnelles-au-senegal-opportunites-2025</loc>
+    <lastmod>2025-11-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/10-conseils-developper-carriere-professionnelle-senegal</loc>
+    <lastmod>2025-11-13</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/concours-ena-senegal-2025</loc>
+    <lastmod>2025-11-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/opportunites-de-developpement-web-au-senegal-recrutement-actif-1763505227-1</loc>
+    <lastmod>2025-11-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/bourses-detudes-2025-opportunites-pour-etudiants-senegalais-1763505227-2</loc>
+    <lastmod>2025-11-12</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/bourses-etudes-senegal-guide-2025</loc>
     <lastmod>2025-11-14</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
-    <loc>http://localhost/emplois/article/bourses-etudes-senegal-guide-2025</loc>
+    <loc>https://niangprogrammeur.com/emplois/article/secteur-minier-senegal-opportunites-emploi-ingenieurs-techniciens</loc>
+    <lastmod>2025-11-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/candidature-spontanee-email-conseils-email-efficace</loc>
     <lastmod>2025-11-13</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
-    <loc>http://localhost/emplois/article/secteur-minier-senegal-opportunites-emploi-ingenieurs-techniciens</loc>
+    <loc>https://niangprogrammeur.com/emplois/article/concours-entreprises-publiques-senegal-2025</loc>
+    <lastmod>2025-11-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/bourses-etudes-2025-financement-pour-masters-et-doctorats</loc>
+    <lastmod>2025-11-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/top-10-entreprises-recrutent-senegal-2025</loc>
     <lastmod>2025-11-13</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
-    <loc>http://localhost/emplois/article/candidature-spontanee-email-conseils-email-efficace</loc>
+    <loc>https://niangprogrammeur.com/emplois/article/startups-tech-senegal-entreprises-recrutent-developpeurs</loc>
+    <lastmod>2025-11-15</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/suivi-candidature-spontanee-quand-comment-relancer</loc>
+    <lastmod>2025-11-18</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/reconversion-professionnelle-senegal-guide-complet-2025</loc>
+    <lastmod>2025-11-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/candidature-spontanee-efficace-senegal</loc>
     <lastmod>2025-11-13</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
-    <loc>http://localhost/emplois/article/top-10-entreprises-recrutent-senegal-2025</loc>
+    <loc>https://niangprogrammeur.com/emplois/article/cv-et-lettre-de-motivation-2025-regles-dor</loc>
+    <lastmod>2025-11-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://niangprogrammeur.com/emplois/article/banques-senegalaises-recrutent-2025-guide-opportunites</loc>
     <lastmod>2025-11-13</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
-    <loc>http://localhost/emplois/article/bourses-privees-fondations-senegal-guide-opportunites-2025</loc>
+    <loc>https://niangprogrammeur.com/emplois/article/cibler-entreprises-candidature-spontanee-senegal</loc>
     <lastmod>2025-11-13</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
-    <loc>http://localhost/emplois/article/programmes-volontariat-benevolat-senegal-opportunites</loc>
-    <lastmod>2025-11-14</lastmod>
+    <loc>https://niangprogrammeur.com/emplois/article/concours-forces-securite-senegal-2025</loc>
+    <lastmod>2025-11-17</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
-    <loc>http://localhost/emplois/article/startups-tech-senegal-entreprises-recrutent-developpeurs</loc>
+    <loc>https://niangprogrammeur.com/emplois/article/equilibre-vie-professionnelle-personnelle-senegal-conseils</loc>
     <lastmod>2025-11-13</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
-    <loc>http://localhost/emplois/article/suivi-candidature-spontanee-quand-comment-relancer</loc>
+    <loc>https://niangprogrammeur.com/emplois/article/modele-candidature-spontanee-entreprises-senegalaises</loc>
     <lastmod>2025-11-13</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
-    <loc>http://localhost/emplois/article/reconversion-professionnelle-senegal-guide-complet-2025</loc>
+    <loc>https://niangprogrammeur.com/emplois/article/linkedin-senegal-optimiser-profil-emploi</loc>
     <lastmod>2025-11-13</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
-    <loc>http://localhost/emplois/article/candidature-spontanee-efficace-senegal</loc>
-    <lastmod>2025-11-13</lastmod>
+    <loc>https://niangprogrammeur.com/emplois/article/bourses-excellence-gouvernement-senegalais-2025-postuler</loc>
+    <lastmod>2025-11-15</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
-    <loc>http://localhost/emplois/article/bourses-chinoises-etudiants-senegalais-opportunites-etudes-chine</loc>
-    <lastmod>2025-11-13</lastmod>
+    <loc>https://niangprogrammeur.com/emplois/article/secteur-bancaire-senegal-2025-recrutement-et-carrieres</loc>
+    <lastmod>2025-11-19</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
-    <loc>http://localhost/emplois/article/freelance-travail-independant-senegal-opportunites-2025</loc>
-    <lastmod>2025-11-13</lastmod>
+    <loc>https://niangprogrammeur.com/emplois/article/negocier-salaire-senegal-guide-pratique-2025</loc>
+    <lastmod>2025-11-17</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
-    <loc>http://localhost/emplois/article/banques-senegalaises-recrutent-2025-guide-opportunites</loc>
-    <lastmod>2025-11-13</lastmod>
+    <loc>https://niangprogrammeur.com/emplois/article/secteur-energetique-senegal-2025-opportunites-energies-renouvelables</loc>
+    <lastmod>2025-11-16</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
-    <loc>http://localhost/emplois/article/cibler-entreprises-candidature-spontanee-senegal</loc>
-    <lastmod>2025-11-13</lastmod>
+    <loc>https://niangprogrammeur.com/emplois/article/teletravail-au-senegal-guide-complet-2025</loc>
+    <lastmod>2025-11-16</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
-    <loc>http://localhost/emplois/article/bourses-francaises-etudiants-senegalais-programmes-eiffel</loc>
-    <lastmod>2025-11-13</lastmod>
+    <loc>https://niangprogrammeur.com/emplois/article/candidature-spontanee-efficace-techniques-2025</loc>
+    <lastmod>2025-11-16</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
-    <loc>http://localhost/emplois/article/equilibre-vie-professionnelle-personnelle-senegal-conseils</loc>
-    <lastmod>2025-11-13</lastmod>
+    <loc>https://niangprogrammeur.com/emplois/article/entrepreneuriat-digital-au-senegal-tendances-2025</loc>
+    <lastmod>2025-11-16</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
-    <loc>http://localhost/emplois/article/sonatel-recrute-opportunites-telecommunications-senegal</loc>
-    <lastmod>2025-11-13</lastmod>
+    <loc>https://niangprogrammeur.com/emplois/article/opportunites-tech-au-senegal-2025-metiers-en-forte-demande</loc>
+    <lastmod>2025-11-16</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
-    <loc>http://localhost/emplois/article/formations-professionnelles-certifiantes-senegal-guide-2025</loc>
-    <lastmod>2025-11-13</lastmod>
+    <loc>https://niangprogrammeur.com/emplois/article/metiers-du-marketing-digital-2025-competences-cles</loc>
+    <lastmod>2025-11-16</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
   <url>
-    <loc>http://localhost/emplois/article/modele-candidature-spontanee-entreprises-senegalaises</loc>
-    <lastmod>2025-11-13</lastmod>
+    <loc>https://niangprogrammeur.com/emplois/article/concours-fonction-publique-senegal-2025-guide-complet</loc>
+    <lastmod>2025-11-16</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>http://localhost/emplois/article/linkedin-senegal-optimiser-profil-emploi</loc>
-    <lastmod>2025-11-13</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>http://localhost/emplois/article/bourses-excellence-gouvernement-senegalais-2025-postuler</loc>
-    <lastmod>2025-11-13</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>http://localhost/emplois/article/stages-entreprise-senegal-guide-complet-trouver-stage</loc>
-    <lastmod>2025-11-13</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>http://localhost/emplois/article/negocier-salaire-senegal-guide-pratique-2025</loc>
-    <lastmod>2025-11-13</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.7</priority>
   </url>
 </urlset>

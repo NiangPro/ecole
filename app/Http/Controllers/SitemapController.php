@@ -13,7 +13,9 @@ class SitemapController extends Controller
         $sitemap = '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
         $sitemap .= '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . PHP_EOL;
         
-        $baseUrl = rtrim(config('app.url', 'http://localhost:8000'), '/');
+        // Forcer l'URL de production pour le sitemap
+        // Toujours utiliser le domaine de production pour le sitemap
+        $baseUrl = 'https://niangprogrammeur.com';
         
         $sitemap .= '  <sitemap>' . PHP_EOL;
         $sitemap .= '    <loc>' . htmlspecialchars($baseUrl . '/sitemap-pages.xml', ENT_XML1, 'UTF-8') . '</loc>' . PHP_EOL;
@@ -35,7 +37,9 @@ class SitemapController extends Controller
         $sitemap = '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
         $sitemap .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">' . PHP_EOL;
         
-        $baseUrl = rtrim(config('app.url', 'http://localhost:8000'), '/');
+        // Forcer l'URL de production pour le sitemap
+        // Toujours utiliser le domaine de production pour le sitemap
+        $baseUrl = 'https://niangprogrammeur.com';
         
         // Pages principales
         $pages = [
@@ -92,7 +96,9 @@ class SitemapController extends Controller
         $sitemap = '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
         $sitemap .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">' . PHP_EOL;
         
-        $baseUrl = rtrim(config('app.url', 'http://localhost:8000'), '/');
+        // Forcer l'URL de production pour le sitemap
+        // Toujours utiliser le domaine de production pour le sitemap
+        $baseUrl = 'https://niangprogrammeur.com';
         
         try {
             $articles = JobArticle::where('status', 'published')

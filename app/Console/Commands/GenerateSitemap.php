@@ -14,8 +14,9 @@ class GenerateSitemap extends Command
         $sitemap = '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
         $sitemap .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . PHP_EOL;
         
-        // Utiliser l'URL de l'application, enlever le trailing slash
-        $baseUrl = rtrim(config('app.url', 'http://localhost:8000'), '/');
+        // Forcer l'URL de production pour le sitemap
+        // Toujours utiliser le domaine de production pour le sitemap
+        $baseUrl = 'https://niangprogrammeur.com';
         
         // Pages principales
         $pages = [

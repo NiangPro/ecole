@@ -1,17 +1,21 @@
 @extends('admin.layout')
 
 @section('content')
-<div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 mb-8">
-    <h3 class="text-3xl font-bold">Statistiques du site</h3>
+<div class="mb-8">
+    <!-- En-tête avec titre et bouton -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+        <h3 class="text-3xl font-bold">Statistiques du site</h3>
+        
+        <form action="{{ route('admin.statistics.truncate') }}" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir vider complètement la table statistics ? Cette action est irréversible.');" class="w-full sm:w-auto">
+            @csrf
+            <button type="submit" class="w-full sm:w-auto px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition">
+                <i class="fas fa-trash mr-2"></i>Vider la table
+            </button>
+        </form>
+    </div>
     
-    <form action="{{ route('admin.statistics.truncate') }}" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir vider complètement la table statistics ? Cette action est irréversible.');" class="ml-auto">
-        @csrf
-        <button type="submit" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg transition">
-            <i class="fas fa-trash mr-2"></i>Vider la table
-        </button>
-    </form>
-    
-    <div class="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
+    <!-- Filtres -->
+    <div class="flex flex-col sm:flex-row gap-3 w-full">
         <div class="flex gap-3">
             <a href="{{ route('admin.statistics', ['filter' => 'day', 'year' => $year]) }}" 
                class="px-4 py-2 rounded-lg font-semibold transition {{ $filter == 'day' ? 'bg-cyan-500 text-black' : 'bg-gray-700 text-gray-300 hover:bg-gray-600' }}">

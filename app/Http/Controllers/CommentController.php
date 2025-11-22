@@ -47,6 +47,19 @@ class CommentController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'phone' => 'nullable|string|max:20',
+        ], [
+            'name.required' => 'Le champ nom est obligatoire.',
+            'name.string' => 'Le nom doit être une chaîne de caractères.',
+            'name.max' => 'Le nom ne peut pas dépasser 255 caractères.',
+            'email.required' => 'Le champ email est obligatoire.',
+            'email.email' => 'L\'email doit être une adresse email valide.',
+            'email.max' => 'L\'email ne peut pas dépasser 255 caractères.',
+            'content.required' => 'Le champ commentaire est obligatoire.',
+            'content.string' => 'Le commentaire doit être une chaîne de caractères.',
+            'content.min' => 'Le commentaire doit contenir au moins 10 caractères.',
+            'content.max' => 'Le commentaire ne peut pas dépasser 2000 caractères.',
+            'phone.string' => 'Le téléphone doit être une chaîne de caractères.',
+            'phone.max' => 'Le téléphone ne peut pas dépasser 20 caractères.',
         ]);
 
         // Rate limiting : 5 commentaires par 15 minutes par IP

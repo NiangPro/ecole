@@ -92,10 +92,19 @@
                 </div>
                 
                 <div class="flex gap-2">
+                    @if($message->phone)
+                    <a href="{{ $message->getWhatsAppUrl() }}" 
+                       target="_blank" 
+                       class="px-4 py-2 bg-green-500/20 text-green-400 rounded-lg hover:bg-green-500/30 transition"
+                       title="Répondre par WhatsApp">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                    @endif
+                    
                     @if(!$message->is_read)
                     <form action="{{ route('admin.messages.mark-read', $message->id) }}" method="POST">
                         @csrf
-                        <button type="submit" class="px-4 py-2 bg-green-500/20 text-green-400 rounded-lg hover:bg-green-500/30 transition">
+                        <button type="submit" class="px-4 py-2 bg-green-500/20 text-green-400 rounded-lg hover:bg-green-500/30 transition" title="Marquer comme lu">
                             <i class="fas fa-check"></i>
                         </button>
                     </form>
@@ -105,7 +114,7 @@
                           onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce message ?')">
                         @csrf
                         @method('DELETE')
-                        <button type="submit" class="px-4 py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition">
+                        <button type="submit" class="px-4 py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition" title="Supprimer">
                             <i class="fas fa-trash"></i>
                         </button>
                     </form>

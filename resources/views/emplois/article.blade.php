@@ -982,7 +982,7 @@
         }
     }
     
-    @media (max-width: 1200px) {
+    @media (max-width: 1200px) and (min-width: 769px) {
         .article-container > div[style*="grid-template-columns: 1fr 350px"] {
             grid-template-columns: 1fr !important;
         }
@@ -1003,6 +1003,31 @@
         
         .related-articles-title {
             font-size: 2rem;
+        }
+        
+        /* En mobile, afficher les sections publicité et commentaires sous le contenu */
+        .article-container > div[style*="grid-template-columns"] {
+            grid-template-columns: 1fr !important;
+        }
+        
+        .article-container > div {
+            grid-template-columns: 1fr !important;
+        }
+        
+        /* Ajuster la sidebar pour mobile */
+        .article-container > div > aside {
+            position: relative !important;
+            top: auto !important;
+            margin-top: 30px;
+        }
+        
+        /* Ajuster les publicités pour mobile */
+        .modern-sidebar-ad {
+            margin-bottom: 20px;
+        }
+        
+        .modern-sidebar-ad-image-wrapper {
+            min-height: 300px !important;
         }
     }
 </style>
