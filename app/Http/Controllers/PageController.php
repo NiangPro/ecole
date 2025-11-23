@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\ContactMessage;
+use Illuminate\Support\Facades\Http;
 
 class PageController extends Controller
 {
@@ -304,9 +305,10 @@ class PageController extends Controller
         // Exécution Python
         if ($language === 'python') {
             // Sécurité : Vérifier que le code ne contient pas de fonctions dangereuses
+            // Note: input() est autorisé pour les exercices, mais sera limité à une valeur par défaut
             $dangerousFunctions = [
                 'exec', 'eval', 'compile', '__import__', 'open', 'file',
-                'input', 'raw_input', 'execfile', 'reload', '__builtin__',
+                'execfile', 'reload', '__builtin__',
                 'subprocess', 'os.system', 'os.popen', 'popen2', 'commands',
                 'socket', 'urllib', 'urllib2', 'httplib', 'ftplib', 'telnetlib'
             ];
@@ -330,6 +332,13 @@ class PageController extends Controller
             
             $output = '';
             $error = null;
+            
+            // Détecter si input() est utilisé dans le code
+            $usesInput = preg_match('/\binput\s*\(/i', $code);
+            $stdinData = "test\n"; // Valeur par défaut pour input() si utilisé (avec \n pour terminer l'entrée)
+            
+            // Si input() est utilisé, privilégier l'API externe qui gère mieux stdin
+            $preferApiForInput = $usesInput;
             
             try {
                 // Créer un fichier temporaire pour exécuter le code Python
@@ -361,10 +370,60 @@ class PageController extends Controller
                 }
                 
                 // Essayer différentes commandes Python
-                $pythonCommands = ['python3', 'python'];
                 $pythonCmd = null;
                 
-                // Sur Windows, chercher aussi dans les emplacements courants
+                // Sur Linux/Unix (serveurs hébergés), essayer d'abord les chemins standards
+                if (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
+                    // Chemins standards sur Linux/Unix
+                    $linuxPaths = [
+                        '/usr/bin/python3',
+                        '/usr/local/bin/python3',
+                        '/bin/python3',
+                        '/opt/python3/bin/python3',
+                        '/usr/bin/python',
+                        '/usr/local/bin/python',
+                        '/bin/python',
+                    ];
+                    
+                    // Chercher dans les chemins Linux standards
+                    foreach ($linuxPaths as $path) {
+                        if (file_exists($path) && is_executable($path)) {
+                            // Tester si Python fonctionne
+                            $testCmd = escapeshellarg($path) . ' --version 2>&1';
+                            $testOutput = @shell_exec($testCmd);
+                            if ($testOutput !== null && (strpos($testOutput, 'Python') !== false || strpos($testOutput, 'python') !== false)) {
+                                $pythonCmd = $path;
+                                break;
+                            }
+                        }
+                    }
+                    
+                    // Si pas trouvé, utiliser 'which' pour trouver Python
+                    if ($pythonCmd === null) {
+                        $whichCmd = 'which python3 2>/dev/null';
+                        $whichOutput = @shell_exec($whichCmd);
+                        if (!empty($whichOutput)) {
+                            $pythonPath = trim($whichOutput);
+                            if (file_exists($pythonPath) && is_executable($pythonPath)) {
+                                $pythonCmd = $pythonPath;
+                            }
+                        }
+                    }
+                    
+                    // Si toujours pas trouvé, essayer 'which python'
+                    if ($pythonCmd === null) {
+                        $whichCmd = 'which python 2>/dev/null';
+                        $whichOutput = @shell_exec($whichCmd);
+                        if (!empty($whichOutput)) {
+                            $pythonPath = trim($whichOutput);
+                            if (file_exists($pythonPath) && is_executable($pythonPath)) {
+                                $pythonCmd = $pythonPath;
+                            }
+                        }
+                    }
+                }
+                
+                // Sur Windows, chercher dans les emplacements courants
                 if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
                     // Chemins courants pour Python sur Windows
                     $windowsPaths = [
@@ -403,31 +462,137 @@ class PageController extends Controller
                     }
                 }
                 
-                // Si pas trouvé, essayer les commandes standard
+                // Si pas trouvé, essayer les commandes standard (python3, python)
                 if ($pythonCmd === null) {
+                    $pythonCommands = ['python3', 'python'];
                     foreach ($pythonCommands as $cmd) {
                         // Tester si la commande existe
                         $testCmd = $cmd . ' --version 2>&1';
                         $testOutput = @shell_exec($testCmd);
-                        if ($testOutput !== null && strpos($testOutput, 'Python') !== false) {
+                        if ($testOutput !== null && (strpos($testOutput, 'Python') !== false || strpos($testOutput, 'python') !== false)) {
                             $pythonCmd = $cmd;
                             break;
                         }
                     }
                 }
                 
-                if ($pythonCmd === null) {
-                    // Message d'erreur plus informatif
-                    $errorMsg = 'Python n\'est pas installé ou non accessible sur le serveur. ';
-                    if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
-                        $errorMsg .= 'Sur Windows, assurez-vous que Python est installé et ajouté au PATH, ou installez Python depuis python.org';
-                    } else {
-                        $errorMsg .= 'Installez Python avec: sudo apt-get install python3 (Linux) ou brew install python3 (Mac)';
+                // Si Python n'est pas trouvé localement OU si input() est utilisé, utiliser une API externe
+                // (L'API externe gère mieux stdin pour input() que l'exécution locale)
+                if ($pythonCmd === null || $usesInput) {
+                    // Utiliser Piston API (gratuite et open source) pour exécuter Python
+                    try {
+                        // Nettoyer le code (enlever les ajouts sys si présents)
+                        $cleanCode = $code;
+                        
+                        // Préparer la requête pour Piston API
+                        $pistonApiUrl = 'https://emkc.org/api/v2/piston/execute';
+                        
+                        // Utiliser stdin si input() est détecté
+                        $stdinForApi = $usesInput ? $stdinData : '';
+                        
+                        $response = Http::timeout(10)->post($pistonApiUrl, [
+                            'language' => 'python',
+                            'version' => '3.10.0',
+                            'files' => [
+                                [
+                                    'name' => 'main.py',
+                                    'content' => $cleanCode
+                                ]
+                            ],
+                            'stdin' => $stdinForApi,
+                            'args' => []
+                        ]);
+                        
+                        if ($response->successful()) {
+                            $result = $response->json();
+                            
+                            if (isset($result['run'])) {
+                                $run = $result['run'];
+                                $output = $run['stdout'] ?? '';
+                                $stderr = $run['stderr'] ?? '';
+                                
+                                // Nettoyer la sortie
+                                $output = trim($output);
+                                $stderr = trim($stderr);
+                                
+                                // Si code de retour non zéro ou stderr présent, considérer comme erreur
+                                if (!empty($stderr) || ($run['code'] ?? 0) !== 0) {
+                                    $error = !empty($stderr) ? $stderr : 'Erreur lors de l\'exécution du code Python';
+                                }
+                            } else {
+                                $error = 'Erreur lors de l\'exécution via API externe';
+                            }
+                            
+                            // Nettoyer les fichiers temporaires
+                            if (isset($tempFile) && file_exists($tempFile)) {
+                                @unlink($tempFile);
+                            }
+                            if (isset($errorFile) && file_exists($errorFile)) {
+                                @unlink($errorFile);
+                            }
+                            
+                            // Sortir de la boucle try, le code a été exécuté via API
+                            goto python_executed;
+                        } else {
+                            throw new \Exception('Impossible de se connecter à l\'API d\'exécution Python');
+                        }
+                    } catch (\Exception $apiException) {
+                        // Si l'API Piston échoue, essayer une instance alternative
+                        try {
+                            // Alternative: utiliser une autre instance de Piston API
+                            $pistonApiUrlAlt = 'https://emkc.org/api/v2/piston/execute';
+                            
+                            $response = Http::timeout(10)->post($pistonApiUrlAlt, [
+                                'language' => 'python',
+                                'version' => '*', // Utiliser la dernière version disponible
+                                'files' => [
+                                    [
+                                        'name' => 'main.py',
+                                        'content' => $cleanCode
+                                    ]
+                                ],
+                                'stdin' => $usesInput ? $stdinData : '',
+                                'args' => []
+                            ]);
+                            
+                            if ($response->successful()) {
+                                $result = $response->json();
+                                
+                                if (isset($result['run'])) {
+                                    $run = $result['run'];
+                                    $output = $run['stdout'] ?? '';
+                                    $stderr = $run['stderr'] ?? '';
+                                    
+                                    // Nettoyer la sortie
+                                    $output = trim($output);
+                                    $stderr = trim($stderr);
+                                    
+                                    // Si code de retour non zéro ou stderr présent, considérer comme erreur
+                                    if (!empty($stderr) || ($run['code'] ?? 0) !== 0) {
+                                        $error = !empty($stderr) ? $stderr : 'Erreur lors de l\'exécution du code Python';
+                                    }
+                                    
+                                    // Nettoyer les fichiers temporaires
+                                    if (isset($tempFile) && file_exists($tempFile)) {
+                                        @unlink($tempFile);
+                                    }
+                                    if (isset($errorFile) && file_exists($errorFile)) {
+                                        @unlink($errorFile);
+                                    }
+                                    
+                                    goto python_executed;
+                                }
+                            }
+                        } catch (\Exception $altApiException) {
+                            // Si toutes les APIs échouent, retourner l'erreur
+                            $errorMsg = 'Python n\'est pas installé localement et l\'API externe n\'est pas disponible. ';
+                            $errorMsg .= 'Contactez votre hébergeur pour installer Python3. Erreur API: ' . $apiException->getMessage();
+                            throw new \Exception($errorMsg);
+                        }
                     }
-                    throw new \Exception($errorMsg);
                 }
                 
-                // Exécuter Python avec unbuffered et redirection d'erreur
+                // Exécuter Python localement si trouvé
                 $env = $_ENV;
                 $env['PYTHONUNBUFFERED'] = '1';
                 $env['PYTHONIOENCODING'] = 'utf-8';
@@ -457,13 +622,90 @@ class PageController extends Controller
                     $command = 'chcp 65001 >nul 2>&1 && ' . $command;
                 }
                 
-                exec($command . ' 2>&1', $outputLines, $returnValue);
+                // Si input() est utilisé, utiliser proc_open pour passer stdin correctement
+                if ($usesInput) {
+                    // Créer un fichier stdin temporaire
+                    $stdinFile = $tempFile . '.stdin';
+                    file_put_contents($stdinFile, $stdinData, LOCK_EX);
+                    
+                    // Construire la commande Python de base (sans redirection stdin)
+                    if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' && strpos($pythonCmd, '\\') !== false) {
+                        // Chemin complet Windows
+                        $baseCommand = escapeshellarg($pythonCmd) . ' -u -X utf8 ' . escapeshellarg($tempFile);
+                    } else {
+                        // Commande standard (python ou python3)
+                        $baseCommand = $pythonCmd . ' -u -X utf8 ' . escapeshellarg($tempFile);
+                    }
+                    
+                    // Utiliser proc_open avec stdin depuis fichier
+                    $descriptorspec = [
+                        0 => ['file', $stdinFile, 'r'], // stdin depuis le fichier
+                        1 => ['pipe', 'w'], // stdout
+                        2 => ['pipe', 'w']  // stderr
+                    ];
+                    
+                    $process = @proc_open($baseCommand, $descriptorspec, $pipes);
+                    
+                    if (is_resource($process) && isset($pipes) && is_array($pipes)) {
+                        // Fermer stdin (déjà ouvert depuis le fichier)
+                        if (isset($pipes[0]) && is_resource($pipes[0])) {
+                            fclose($pipes[0]);
+                        }
+                        
+                        // Lire stdout
+                        $stdoutContent = '';
+                        if (isset($pipes[1]) && is_resource($pipes[1])) {
+                            $stdoutContent = stream_get_contents($pipes[1]);
+                            fclose($pipes[1]);
+                        }
+                        
+                        // Lire stderr
+                        $stderrContent = '';
+                        if (isset($pipes[2]) && is_resource($pipes[2])) {
+                            $stderrContent = stream_get_contents($pipes[2]);
+                            fclose($pipes[2]);
+                        }
+                        
+                        // Obtenir le code de retour
+                        $returnValue = proc_close($process);
+                        
+                        // Convertir en tableau de lignes
+                        $outputLines = !empty($stdoutContent) ? explode("\n", $stdoutContent) : [];
+                        if (!empty($stderrContent)) {
+                            $stderr = $stderrContent;
+                        }
+                    } else {
+                        // Fallback: utiliser exec avec redirection stdin
+                        // Reconstruire la commande de base
+                        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' && strpos($pythonCmd, '\\') !== false) {
+                            $fallbackCommand = escapeshellarg($pythonCmd) . ' -u -X utf8 ' . escapeshellarg($tempFile);
+                        } else {
+                            $fallbackCommand = $pythonCmd . ' -u -X utf8 ' . escapeshellarg($tempFile);
+                        }
+                        
+                        // Rediriger stdin depuis le fichier
+                        if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
+                            // Windows: utiliser type et pipe
+                            $fallbackCommand = 'type ' . escapeshellarg($stdinFile) . ' | ' . $fallbackCommand;
+                        } else {
+                            // Linux/Unix: utiliser redirection <
+                            $fallbackCommand = $fallbackCommand . ' < ' . escapeshellarg($stdinFile);
+                        }
+                        
+                        exec($fallbackCommand . ' 2>&1', $outputLines, $returnValue);
+                    }
+                } else {
+                    // Pas d'input: utiliser exec normal
+                    exec($command . ' 2>&1', $outputLines, $returnValue);
+                }
                 
                 // Joindre toutes les lignes de sortie
                 $output = implode("\n", $outputLines);
                 
                 // Séparer stdout et stderr si nécessaire
-                $stderr = '';
+                if (!isset($stderr)) {
+                    $stderr = '';
+                }
                 if ($returnValue !== 0) {
                     // Si erreur, essayer de lire le fichier d'erreur
                     if (file_exists($errorFile)) {
@@ -482,8 +724,15 @@ class PageController extends Controller
                     @unlink($errorFile);
                 }
                 
+                // Supprimer le fichier stdin temporaire s'il existe
+                if ($usesInput && isset($stdinFile) && file_exists($stdinFile)) {
+                    @unlink($stdinFile);
+                }
+                
                 // Supprimer le fichier temporaire
                 @unlink($tempFile);
+                
+                python_executed:
                 
                 // Nettoyer et encoder la sortie en UTF-8
                 // Supprimer tous les espaces, tabulations et retours à la ligne en début/fin
@@ -528,8 +777,8 @@ class PageController extends Controller
                 }
                 
                 // Si le code de retour n'est pas 0 ou s'il y a des erreurs
-                if ($returnValue !== 0 || !empty($stderr)) {
-                    $error = $stderr ?: 'Erreur lors de l\'exécution du code Python (code de retour: ' . $returnValue . ')';
+                if ((isset($returnValue) && $returnValue !== 0) || !empty($stderr)) {
+                    $error = $stderr ?: (isset($returnValue) ? 'Erreur lors de l\'exécution du code Python (code de retour: ' . $returnValue . ')' : 'Erreur lors de l\'exécution du code Python');
                 }
                 
             } catch (\Exception $e) {
