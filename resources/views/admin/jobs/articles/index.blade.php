@@ -268,6 +268,8 @@
                             <a href="{{ route('admin.jobs.articles.edit', $article->id) }}" class="px-3 py-1 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-400 rounded transition" title="Modifier">
                                 <i class="fas fa-edit"></i>
                             </a>
+                            @auth
+                            @if(Auth::user()->isAdmin())
                             <form action="{{ route('admin.jobs.articles.destroy', $article->id) }}" method="POST" class="inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet article ?');">
                                 @csrf
                                 @method('DELETE')
@@ -275,6 +277,8 @@
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </form>
+                            @endif
+                            @endauth
                         </div>
                     </td>
                 </tr>

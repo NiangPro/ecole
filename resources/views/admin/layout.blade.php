@@ -442,10 +442,15 @@
                 <i class="fas fa-chart-line text-xl"></i>
                 <span>Dashboard</span>
             </a>
+            
+            @auth
+            @if(Auth::user()->isAdmin())
             <a href="{{ route('admin.statistics') }}" class="sidebar-item {{ request()->routeIs('admin.statistics') ? 'active' : '' }}">
                 <i class="fas fa-chart-bar text-xl"></i>
                 <span>Statistiques</span>
             </a>
+            @endif
+            @endauth
             
             <!-- Menu Dropdown Emplois -->
             <div class="sidebar-dropdown {{ request()->routeIs('admin.jobs.*') ? 'active' : '' }}">
@@ -463,13 +468,19 @@
                         <i class="fas fa-newspaper"></i>
                         <span>Articles</span>
                     </a>
+                    @auth
+                    @if(Auth::user()->isAdmin())
                     <a href="{{ route('admin.jobs.seeder.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.jobs.seeder.*') ? 'active' : '' }}">
                         <i class="fas fa-seedling"></i>
                         <span>Générateur d'Articles</span>
                     </a>
+                    @endif
+                    @endauth
                 </div>
             </div>
             
+            @auth
+            @if(Auth::user()->isAdmin())
             <a href="{{ route('admin.messages') }}" class="sidebar-item {{ request()->routeIs('admin.messages') ? 'active' : '' }}">
                 <i class="fas fa-envelope text-xl"></i>
                 <span>Messages</span>
@@ -480,6 +491,9 @@
                     <span class="ml-auto px-2 py-1 bg-red-500 text-white text-xs rounded-full">{{ $unreadCount }}</span>
                 @endif
             </a>
+            @endif
+            @endauth
+            
             <a href="{{ route('admin.comments.index') }}" class="sidebar-item {{ request()->routeIs('admin.comments.*') ? 'active' : '' }}">
                 <i class="fas fa-comments text-xl"></i>
                 <span>Commentaires</span>
@@ -490,6 +504,9 @@
                     <span class="ml-auto px-2 py-1 bg-yellow-500 text-white text-xs rounded-full">{{ $pendingComments }}</span>
                 @endif
             </a>
+            
+            @auth
+            @if(Auth::user()->isAdmin())
             <a href="{{ route('admin.adsense') }}" class="sidebar-item {{ request()->routeIs('admin.adsense*') ? 'active' : '' }}">
                 <i class="fab fa-google text-xl"></i>
                 <span>Google AdSense</span>
@@ -530,6 +547,9 @@
                 <i class="fas fa-cog text-xl"></i>
                 <span>Paramètres</span>
             </a>
+            @endif
+            @endauth
+            
             <a href="{{ route('admin.logout') }}" class="sidebar-item" style="margin-top: 2rem; color: #ef4444;">
                 <i class="fas fa-sign-out-alt text-xl"></i>
                 <span>Déconnexion</span>
@@ -552,8 +572,8 @@
                         <i class="fas fa-user-shield"></i>
                     </div>
                     <div class="hidden sm:block text-left">
-                        <p class="font-semibold text-sm">Admin</p>
-                        <p class="text-xs text-gray-400">{{ session('admin_email') }}</p>
+                        <p class="font-semibold text-sm">@auth{{ explode(' ', Auth::user()->name)[0] }}@else Admin @endauth</p>
+                        <p class="text-xs text-gray-400">@auth{{ Auth::user()->email }}@else{{ session('admin_email') }}@endauth</p>
                     </div>
                     <i class="fas fa-chevron-down text-sm"></i>
                 </div>
@@ -567,10 +587,14 @@
                         <i class="fas fa-globe"></i>
                         <span>Voir le site</span>
                     </a>
+                    @auth
+                    @if(Auth::user()->isAdmin())
                     <a href="{{ route('admin.settings') }}" class="dropdown-item">
                         <i class="fas fa-cog"></i>
                         <span>Paramètres</span>
                     </a>
+                    @endif
+                    @endauth
                     <div class="dropdown-divider"></div>
                     <a href="{{ route('admin.logout') }}" class="dropdown-item danger">
                         <i class="fas fa-sign-out-alt"></i>

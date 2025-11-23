@@ -756,6 +756,8 @@
 </div>
 
 <!-- Actions Rapides -->
+@auth
+@if(Auth::user()->isAdmin())
 <div class="content-section-modern mb-8">
     <h4 class="section-title-modern">
         <i class="fas fa-bolt"></i>
@@ -827,6 +829,8 @@
         </a>
     </div>
 </div>
+@endif
+@endauth
 
 <!-- Statistiques par pays et navigateurs -->
 <div class="grid md:grid-cols-2 gap-6">

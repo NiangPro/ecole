@@ -1149,8 +1149,8 @@
                         // Écrire directement le code dans l'iframe
                         // IMPORTANT: Le JavaScript dans les balises <script> s'exécutera automatiquement
                         // quand on appelle iframeDoc.close() après iframeDoc.write()
-                        iframeDoc.open();
-                        iframeDoc.write(code);
+        iframeDoc.open();
+        iframeDoc.write(code);
                         iframeDoc.close(); // Cette ligne déclenche l'exécution du JavaScript
                         
                         // Le JavaScript s'exécute automatiquement lors du close()
@@ -1234,13 +1234,13 @@
                             </body>
                             </html>
                         `);
-                        iframeDoc.close();
+        iframeDoc.close();
                     }
-                    
-                    hideMessages();
-                }
+        
+        hideMessages();
+    }
             };
-            
+    
             window.submitCode = function() {
                 const code = codeEditor.getValue();
         

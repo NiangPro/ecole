@@ -1,0 +1,124 @@
+================================================================================
+MODIFICATIONS - ACCÈS UTILISATEURS NORMaux AU PANEL ADMIN
+Date: 2025-01-27
+================================================================================
+
+DESCRIPTION DU PROJET:
+---------------------
+Modification du système d'authentification admin pour permettre aux utilisateurs 
+normaux (non-admin) de se connecter via /admin/login et d'accéder au dashboard 
+admin avec des restrictions spécifiques.
+
+OBJECTIFS:
+----------
+1. Permettre aux utilisateurs normaux de se connecter via /admin/login
+2. Rediriger automatiquement vers le dashboard admin après connexion
+3. Afficher seulement les sections Dashboard, Emplois et Commentaires dans le sidebar pour les utilisateurs normaux
+4. Cacher l'élément "Paramètres" dans le dropdown user du header pour les utilisateurs normaux
+5. Cacher tous les boutons de suppression pour les utilisateurs normaux dans les sections accessibles
+
+FICHIERS MODIFIÉS:
+------------------
+
+1. app/Http/Controllers/AdminController.php
+   - Suppression de la vérification qui empêchait les utilisateurs normaux de se connecter
+   - Les utilisateurs normaux peuvent maintenant se connecter via /admin/login
+   - La redirection vers le dashboard est déjà en place (ligne 73)
+
+2. app/Http/Middleware/AdminAuth.php
+   - Modification pour permettre l'accès aux utilisateurs normaux
+   - Ajout d'une liste de routes autorisées pour les utilisateurs normaux
+   - Redirection vers le dashboard si un utilisateur normal tente d'accéder à une route non autorisée
+   - Routes autorisées pour utilisateurs normaux:
+     * admin.dashboard
+     * admin.comments.* (index, approve, reject, whatsapp-link, email-link)
+     * admin.jobs.categories.index
+     * admin.jobs.articles.* (index, show, edit, create, store, update)
+     * admin.jobs.seeder.index
+     * admin.profile, admin.profile.update
+     * admin.logout
+
+3. resources/views/admin/layout.blade.php
+   - Modification du sidebar pour afficher conditionnellement les éléments selon le rôle
+   - Sections visibles pour tous: Dashboard, Emplois, Commentaires, Déconnexion
+   - Sections visibles uniquement pour admins: Statistiques, Messages, Google AdSense, 
+     Sauvegardes, Publicités, Utilisateurs, Newsletter, Logs, Réalisations, Paramètres
+   - Modification du dropdown user dans le header pour cacher "Paramètres" pour les utilisateurs normaux
+
+4. resources/views/admin/comments/index.blade.php
+   - Ajout de condition @auth/@if(Auth::user()->isAdmin()) autour du bouton de suppression
+   - Le bouton "Supprimer" n'est visible que pour les administrateurs
+
+5. resources/views/admin/jobs/articles/index.blade.php
+   - Ajout de condition @auth/@if(Auth::user()->isAdmin()) autour du bouton de suppression
+   - Le bouton "Supprimer" n'est visible que pour les administrateurs
+
+6. resources/views/admin/jobs/categories/index.blade.php
+   - Ajout de condition @auth/@if(Auth::user()->isAdmin()) autour du bouton de suppression
+   - Le bouton "Supprimer" n'est visible que pour les administrateurs
+
+DÉTAILS TECHNIQUES:
+------------------
+
+Authentification:
+- Les utilisateurs normaux peuvent maintenant se connecter via /admin/login
+- La vérification du rôle admin a été supprimée dans AdminController::login()
+- Seule la vérification du statut actif (is_active) est conservée
+
+Middleware AdminAuth:
+- Vérifie toujours l'authentification et le statut actif
+- Pour les utilisateurs normaux, vérifie si la route demandée est dans la liste autorisée
+- Redirige vers le dashboard avec un message d'erreur si accès non autorisé
+
+Vues:
+- Utilisation de @auth et @if(Auth::user()->isAdmin()) pour afficher conditionnellement les éléments
+- Les boutons de suppression sont cachés pour les utilisateurs normaux
+- Le menu sidebar s'adapte automatiquement selon le rôle
+
+SÉCURITÉ:
+--------
+- Les utilisateurs normaux ne peuvent accéder qu'aux routes explicitement autorisées
+- Les routes de suppression (DELETE) sont protégées par le middleware et ne sont pas accessibles
+- Les boutons de suppression sont cachés dans l'interface mais les routes restent protégées côté serveur
+- Les utilisateurs normaux ne peuvent pas accéder aux sections sensibles (statistiques, utilisateurs, paramètres, etc.)
+
+TESTS RECOMMANDÉS:
+-----------------
+1. Connexion d'un utilisateur normal via /admin/login
+2. Vérification de la redirection vers le dashboard
+3. Vérification que seules les sections Dashboard, Emplois et Commentaires sont visibles
+4. Vérification que le bouton "Paramètres" est caché dans le dropdown user
+5. Vérification que les boutons de suppression sont cachés dans les sections accessibles
+6. Tentative d'accès à une route non autorisée (doit rediriger vers le dashboard)
+7. Vérification que les administrateurs conservent tous leurs accès
+
+NOTES:
+------
+- Les utilisateurs normaux peuvent toujours créer et modifier des articles d'emplois
+- Les utilisateurs normaux peuvent approuver/rejeter des commentaires
+- Les utilisateurs normaux peuvent accéder à leur profil
+- Toutes les fonctionnalités de suppression sont réservées aux administrateurs
+
+MODIFICATIONS SUPPLÉMENTAIRES (Date: 2025-01-27):
+------------------------------------------------
+
+7. resources/views/admin/dashboard.blade.php
+   - Ajout de condition @auth/@if(Auth::user()->isAdmin()) autour de la section "Actions Rapides"
+   - La section "Actions Rapides" n'est visible que pour les administrateurs
+   - Les utilisateurs normaux ne voient pas cette section dans le dashboard
+
+8. resources/views/admin/layout.blade.php
+   - Ajout de condition @auth/@if(Auth::user()->isAdmin()) autour de "Générateur d'Articles" dans le dropdown Emplois
+   - "Générateur d'Articles" n'est visible que pour les administrateurs dans le sidebar
+   - Remplacement du texte "Admin" par le prénom de l'utilisateur connecté dans le dropdown user du header
+   - Utilisation de explode(' ', Auth::user()->name)[0] pour extraire le prénom
+   - L'email affiché utilise Auth::user()->email au lieu de session('admin_email')
+
+DÉTAILS DES NOUVELLES RESTRICTIONS:
+-----------------------------------
+- Section "Actions Rapides" : Cachée pour les utilisateurs normaux dans le dashboard
+- "Générateur d'Articles" : Caché dans le menu dropdown Emplois pour les utilisateurs normaux
+- Affichage personnalisé : Le prénom de l'utilisateur remplace "Admin" dans le header
+
+================================================================================
+

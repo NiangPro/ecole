@@ -197,6 +197,8 @@
                         </button>
                     </div>
                     
+                    @auth
+                    @if(Auth::user()->isAdmin())
                     <form action="{{ route('admin.comments.delete', $comment->id) }}" method="POST" 
                           onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?')">
                         @csrf
@@ -205,6 +207,8 @@
                             <i class="fas fa-trash mr-2"></i>Supprimer
                         </button>
                     </form>
+                    @endif
+                    @endauth
                 </div>
             </div>
         </div>

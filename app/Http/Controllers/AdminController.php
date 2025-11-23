@@ -44,13 +44,6 @@ class AdminController extends Controller
         if (Auth::attempt($credentials, $remember)) {
             $user = Auth::user();
 
-            // Vérifier que l'utilisateur est admin
-            if (!$user->isAdmin()) {
-                Auth::logout();
-                RateLimiter::hit($key, 300); // 5 minutes
-                return back()->with('error', 'Accès refusé. Vous devez être administrateur.');
-            }
-
             // Vérifier que le compte est actif
             if (!$user->is_active) {
                 Auth::logout();
