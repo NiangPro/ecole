@@ -52,7 +52,12 @@ Route::get('/emplois/bourses', [PageController::class, 'bourses'])->name('emploi
 Route::get('/emplois/candidature-spontanee', [PageController::class, 'candidatureSpontanee'])->name('emplois.candidature');
 Route::get('/emplois/opportunites', [PageController::class, 'opportunites'])->name('emplois.opportunites');
 Route::get('/emplois/concours', [PageController::class, 'concours'])->name('emplois.concours');
-Route::get('/emplois/article/{slug}', [PageController::class, 'showArticle'])->name('emplois.article');
+// Route spécifique avant la route avec paramètre pour éviter les conflits
+Route::get('/emplois/articles-recents', [PageController::class, 'recentArticles'])->name('emplois.recent-articles');
+// Route avec paramètre - exclut "articles-recents" pour éviter les conflits
+Route::get('/emplois/article/{slug}', [PageController::class, 'showArticle'])
+    ->where('slug', '^(?!articles-recents$).+')
+    ->name('emplois.article');
 
 // Commentaires (publiques - avec rate limiting)
 Route::post('/comments', [\App\Http\Controllers\CommentController::class, 'store'])->middleware('throttle:5,15')->name('comments.store');

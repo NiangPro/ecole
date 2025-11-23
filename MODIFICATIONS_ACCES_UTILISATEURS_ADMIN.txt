@@ -120,5 +120,75 @@ DÉTAILS DES NOUVELLES RESTRICTIONS:
 - "Générateur d'Articles" : Caché dans le menu dropdown Emplois pour les utilisateurs normaux
 - Affichage personnalisé : Le prénom de l'utilisateur remplace "Admin" dans le header
 
+NOUVELLE PAGE PUBLIQUE - 70 ARTICLES RÉCENTS (Date: 2025-01-27):
+----------------------------------------------------------------
+
+11. app/Http/Controllers/PageController.php
+    - Ajout de la méthode recentArticles() pour récupérer les 70 articles les plus récents
+    - Cache de 15 minutes pour optimiser les performances
+    - Récupération avec relations (category) et sélection optimisée des colonnes
+    - Tri par published_at puis created_at pour garantir l'ordre chronologique
+    - Seuls les articles publiés (status = 'published') sont inclus
+    - Sélection des colonnes nécessaires pour le SEO (meta_title, meta_description, etc.)
+
+12. routes/web.php
+    - Ajout de la route publique GET /emplois/articles-recents
+    - Nom de route: emplois.recent-articles
+    - Accessible sans authentification
+
+13. resources/views/emplois/recent-articles.blade.php
+    - Nouvelle vue publique pour afficher les 70 articles les plus récents
+    - Optimisation SEO complète :
+      * Meta tags (title, description, keywords)
+      * Open Graph tags pour les réseaux sociaux
+      * Canonical URL
+      * Meta robots (index, follow)
+      * Schema.org structured data (Article)
+      * URLs propres et descriptives
+    - Conformité Google AdSense :
+      * Contenu de qualité original
+      * Structure claire et organisée
+      * Navigation facile
+      * Informations complètes sur chaque article
+      * Liens externes avec rel="noopener noreferrer"
+    - Design moderne et responsive :
+      * Hero section avec gradient
+      * Cards avec effets hover
+      * Numérotation des articles
+      * Badge SEO pour les articles optimisés
+      * Bouton de copie d'URL avec feedback
+      * Design adaptatif mobile
+    - Fonctionnalités :
+      * Affichage du numéro d'ordre (1-70)
+      * Titre cliquable vers l'article
+      * URL complète cliquable (ouvre dans nouvel onglet)
+      * Catégorie, date de publication, nombre de vues
+      * Meta description ou excerpt
+      * Badge "SEO Optimisé" si meta_title existe
+      * Bouton pour copier l'URL
+    - JavaScript :
+      * Fonction copyToClipboard() avec fallback pour navigateurs anciens
+      * Support de toastr pour les notifications
+    - Accessibilité :
+      * Structure sémantique HTML5
+      * Attributs ARIA appropriés
+      * Liens avec titres descriptifs
+    - Performance :
+      * Cache côté serveur (15 minutes)
+      * Sélection optimisée des colonnes
+      * Lazy loading possible pour les images
+
+CARACTÉRISTIQUES DE LA PAGE:
+---------------------------
+- URL: /emplois/articles-recents
+- Route: emplois.recent-articles
+- Accessible publiquement (sans authentification)
+- Optimisée pour le SEO (meta tags, structured data, URLs propres)
+- Conforme aux exigences Google AdSense
+- Design moderne, responsive et accessible
+- Performance optimisée avec cache
+- Fonctionnalité de copie d'URL
+- Affichage de 70 articles maximum
+
 ================================================================================
 

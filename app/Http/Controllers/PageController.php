@@ -6176,6 +6176,22 @@ print(carres)',
         return view('search', compact('query', 'results', 'categories', 'category', 'dateFilter', 'sortBy'));
     }
 
+    public function recentArticles()
+    {
+        // Cache les 70 articles les plus récents avec optimisation SEO (15 minutes)
+        $recentArticles = \Illuminate\Support\Facades\Cache::remember('recent_articles_70_seo', 900, function () {
+            return \App\Models\JobArticle::where('status', 'published')
+                ->with('category:id,name,slug')
+                ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views', 'meta_title', 'meta_description', 'created_at')
+                ->orderBy('published_at', 'desc')
+                ->orderBy('created_at', 'desc')
+                ->take(70)
+                ->get();
+        });
+        
+        return view('emplois.recent-articles', compact('recentArticles'));
+    }
+
     public function showArticle($slug)
     {
         // Cache l'article avec sélection optimisée (30 minutes)
