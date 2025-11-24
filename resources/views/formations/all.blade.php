@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Toutes les Formations | NiangProgrammeur')
+@section('title', trans('app.formations.title') . ' | NiangProgrammeur')
 
 @section('styles')
 <style>
@@ -399,14 +399,10 @@
     <div class="container" style="position: relative; z-index: 3;">
         <h1 class="hero-title">
             <i class="fas fa-graduation-cap" style="margin-right: 15px;"></i>
-            Toutes les Formations
+            {{ trans('app.formations.title') }}
         </h1>
         <p class="hero-subtitle">
-            Découvrez notre collection complète de formations en développement web et programmation. Chaque formation a été soigneusement 
-            conçue pour vous guider pas à pas, des concepts fondamentaux aux techniques avancées. Que vous soyez débutant ou développeur 
-            expérimenté, nos cours interactifs, exercices pratiques et quiz vous permettront d'acquérir les compétences nécessaires pour 
-            réussir dans le développement web moderne. Toutes nos formations sont entièrement gratuites et accessibles 24/7, sans aucune 
-            limitation de temps ou de contenu.
+            {{ trans('app.formations.subtitle') }} {{ trans('app.formations.subtitle_rest') }}
         </p>
     </div>
 </section>
@@ -418,43 +414,39 @@
         <div class="stats-grid">
             <div class="stat-card">
                 <div class="stat-number">{{ count($formations) }}+</div>
-                <div class="stat-label">Formations</div>
+                <div class="stat-label">{{ trans('app.formations.stats.formations') }}</div>
             </div>
             <div class="stat-card">
                 <div class="stat-number">100+</div>
-                <div class="stat-label">Exercices</div>
+                <div class="stat-label">{{ trans('app.formations.stats.exercices') }}</div>
             </div>
             <div class="stat-card">
                 <div class="stat-number">24/7</div>
-                <div class="stat-label">Disponible</div>
+                <div class="stat-label">{{ trans('app.formations.stats.available') }}</div>
             </div>
             <div class="stat-card">
                 <div class="stat-number">100%</div>
-                <div class="stat-label">Gratuit</div>
+                <div class="stat-label">{{ trans('app.formations.stats.free') }}</div>
             </div>
         </div>
     </div>
     
-    <h2 class="section-title">Nos Formations</h2>
+    <h2 class="section-title">{{ trans('app.formations.section_title') }}</h2>
     <p class="section-subtitle">
-        Choisissez la formation qui correspond à vos besoins et commencez votre parcours d'apprentissage dès aujourd'hui. Chaque formation 
-        comprend des leçons détaillées avec exemples de code, des exercices pratiques pour renforcer vos compétences, des quiz pour tester 
-        vos connaissances, et des projets réels pour mettre en pratique ce que vous avez appris. Nos formations sont régulièrement mises à 
-        jour pour refléter les dernières technologies et meilleures pratiques de l'industrie. Que vous souhaitiez devenir développeur frontend, 
-        backend, full-stack, ou vous spécialiser dans une technologie spécifique, nous avons la formation qu'il vous faut.
+        {{ trans('app.formations.section_subtitle') }}
     </p>
     
     <div class="formations-grid">
         @foreach($formations as $formation)
         <a href="{{ $formation['route'] }}" class="formation-card">
             <div class="formation-badge">
-                <i class="fas fa-star"></i> Disponible
+                <i class="fas fa-star"></i> {{ trans('app.formations.available') }}
             </div>
             <i class="{{ $formation['icon'] }} formation-icon" style="color: {{ $formation['color'] }};"></i>
             <h3 class="formation-name">{{ $formation['name'] }}</h3>
             <p class="formation-description">{{ $formation['description'] }}</p>
             <span class="formation-link">
-                Commencer la formation
+                {{ trans('app.formations.start_learning') }}
                 <i class="fas fa-arrow-right"></i>
             </span>
         </a>

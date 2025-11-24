@@ -1,0 +1,196 @@
+<?php
+
+return [
+    // Navigation
+    'nav' => [
+        'home' => 'Home',
+        'formations' => 'Formations',
+        'exercices' => 'Exercises',
+        'quiz' => 'Quiz',
+        'contact' => 'Contact',
+    ],
+    
+    // Formations
+    'formations' => [
+        'title' => 'All Formations',
+        'subtitle' => 'Discover our complete collection of web development and programming courses. Each course has been carefully designed to guide you step by step, from fundamental concepts to advanced techniques.',
+        'subtitle_rest' => 'Whether you are a beginner or an experienced developer, our interactive courses, practical exercises and quizzes will allow you to acquire the skills necessary to succeed in modern web development. All our courses are completely free and accessible 24/7, without any time or content limitations.',
+        'all_formations' => 'All formations',
+        'see_all' => 'See all formations',
+        'start_learning' => 'Start the course',
+        'description' => 'Description',
+        'lessons' => 'Lessons',
+        'duration' => 'Duration',
+        'level' => 'Level',
+        'available' => 'Available',
+        'stats' => [
+            'formations' => 'Formations',
+            'exercices' => 'Exercises',
+            'available' => 'Available',
+            'free' => 'Free',
+        ],
+        'section_title' => 'Our Formations',
+        'section_subtitle' => 'Choose the course that meets your needs and start your learning journey today. Each course includes detailed lessons with code examples, practical exercises to strengthen your skills, quizzes to test your knowledge, and real projects to put what you have learned into practice. Our courses are regularly updated to reflect the latest technologies and industry best practices. Whether you want to become a frontend, backend, full-stack developer, or specialize in a specific technology, we have the course for you.',
+        'html5' => [
+            'title' => 'HTML5 Training',
+            'subtitle' => 'Master the basics of HTML5',
+            'explore_chapters' => 'Now that you know the basics, explore the other chapters in the left menu to deepen your HTML5 knowledge!',
+            'description' => 'Learn the fundamentals of the web with HTML5, the standard markup language for creating web pages. This comprehensive course covers HTML structure, semantic tags, forms, tables, media, and best practices for creating accessible and SEO-optimized websites. You will also discover new HTML5 features like native APIs, local storage, and geolocation.',
+        ],
+        'css3' => [
+            'description' => 'Create modern and responsive designs with CSS3, the style language that transforms your HTML pages into visually appealing interfaces. This in-depth course covers advanced selectors, CSS animations, transitions, Flexbox for flexible layouts, CSS Grid for complex grids, CSS variables, and responsive design techniques. You will also learn to create adaptive designs for all devices, from smartphones to 4K screens.',
+        ],
+        'javascript' => [
+            'description' => 'Master JavaScript ES6+, the world\'s most used programming language for creating interactive web applications. This comprehensive course covers fundamentals (variables, functions, objects, arrays), modern ES6+ features (arrow functions, destructuring, modules, classes), DOM manipulation, events, asynchronous programming (Promises, async/await), modern APIs (Fetch, LocalStorage), and popular JavaScript frameworks. You will develop essential skills to create dynamic and interactive web applications.',
+        ],
+        'php' => [
+            'description' => 'Develop dynamic and high-performance web applications with PHP, the most popular server-side programming language. This comprehensive course covers PHP syntax, variables, functions, object-oriented programming (OOP), form handling, sessions and cookies, MySQL database integration, web security, and modern PHP frameworks like Laravel. You will learn to create dynamic websites, content management systems, and complete web applications.',
+        ],
+        'bootstrap' => [
+            'description' => 'Quickly create responsive and professional interfaces with Bootstrap, the world\'s most popular CSS framework. This practical course covers the responsive grid system, Bootstrap components (buttons, cards, modals, carousels), CSS utilities, Sass customization, Bootstrap JavaScript integration, and best practices for creating modern interfaces. You will learn to develop responsive websites quickly, without writing much custom CSS.',
+        ],
+        'git' => [
+            'description' => 'Efficiently manage your development projects with Git, the world\'s most used version control system, and GitHub, the collaboration platform for developers. This practical course covers essential Git commands (commit, push, pull, merge), branch management, conflict resolution, GitHub pull requests, team collaboration, and advanced Git workflows. You will learn to work in teams, manage your project history, and contribute to open source projects.',
+        ],
+        'wordpress' => [
+            'description' => 'Create professional and powerful websites with WordPress, the content management system (CMS) that powers over 43% of websites worldwide. This comprehensive course covers installation and configuration, content management (pages, posts, media), theme customization, custom theme development, plugin creation, SEO optimization, security, and WordPress best practices. You will learn to create professional websites without needing to code, and customize WordPress according to your specific needs.',
+        ],
+        'ia' => [
+            'description' => 'Discover Artificial Intelligence (AI), Machine Learning and their practical applications in modern web development. This comprehensive course covers fundamental AI concepts, Machine Learning (supervised and unsupervised learning), Deep Learning, Natural Language Processing (NLP), computer vision, AI APIs (OpenAI, TensorFlow), and AI integration in web applications. You will learn to create intelligent applications that can understand, learn and adapt, opening new possibilities in web development.',
+        ],
+        'python' => [
+            'description' => 'Learn Python, the versatile and powerful programming language used for web development, data science, artificial intelligence, and much more. This comprehensive course covers Python syntax, data structures (lists, dictionaries, tuples), functions and classes, modules and packages, web development with Flask and Django, data analysis with Pandas, Machine Learning with scikit-learn, and Python best practices. Python is recognized for its simplicity and readability, making it an excellent choice for beginners and experienced developers.',
+        ],
+    ],
+    
+    // Exercices
+    'exercices' => [
+        'title' => 'Programming Exercises',
+        'subtitle' => 'Practice and improve your skills with our interactive exercises. Choose a language and start coding!',
+        'choose_language' => 'Languages',
+        'exercises_count' => 'exercises',
+        'start_exercise' => 'Start',
+        'back_to_exercices' => 'Back to exercises',
+        'all_exercices' => 'All exercises',
+        'exercise' => 'Exercise',
+        'exercises' => 'Exercises',
+        'practice_skills' => 'Practice your skills with these interactive exercises',
+        'available_exercices' => 'Available exercises',
+        'coming_soon' => 'Exercises coming soon',
+        'coming_soon_desc' => 'Exercises for :language will be added soon.',
+        'difficulty' => [
+            'easy' => 'Easy',
+            'medium' => 'Medium',
+            'hard' => 'Hard',
+            'all' => 'All',
+        ],
+        'stats' => [
+            'languages' => 'Languages',
+            'exercises' => 'Exercises',
+            'levels' => 'Levels',
+            'free' => 'Free',
+        ],
+        'filter_by_level' => 'Filter by level',
+        'points' => 'points',
+        'total_points' => 'Total points',
+        'progress' => 'Progress',
+        'tips' => [
+            'title' => 'Tips for success',
+            'read_carefully' => 'Read each statement carefully before starting',
+            'test_regularly' => 'Test your code regularly while working',
+            'check_docs' => 'Don\'t hesitate to consult the documentation if needed',
+            'take_time' => 'Take your time and don\'t get discouraged by difficulties',
+        ],
+        'detail' => [
+            'your_code' => 'Your code',
+            'reset' => 'Reset',
+            'run_code' => 'Run code',
+            'submit' => 'Submit',
+            'hint' => 'Hint',
+            'result' => 'Result',
+            'result_help' => 'Click "Run code" to see the result of your code. Click "Submit" to check if your answer is correct.',
+            'previous' => 'Previous',
+            'next' => 'Next',
+            'executing' => 'Executing code...',
+            'no_output' => 'No output. The code executed without errors but displayed nothing. Use print() to display results.',
+            'success_title' => 'Well done! 🎉',
+            'success_message' => 'Your answer is correct! You earned :points points.',
+            'error_title' => 'Not quite...',
+            'error_message' => 'Try again! You can do it.',
+        ],
+        'cta' => [
+            'title' => 'Ready to take on the challenge?',
+            'description' => 'Each completed exercise brings you closer to mastering web development. Start now and track your progress!',
+            'learn_more' => 'Learn more',
+            'contact' => 'Contact us',
+        ],
+        'html5' => [
+            'title' => 'HTML5 Exercises',
+            'subtitle' => 'Practice your HTML5 skills',
+        ],
+    ],
+    
+    // Quiz
+    'quiz' => [
+        'title' => 'Programming Quiz',
+        'subtitle' => 'Test your knowledge and measure your level with our interactive quizzes. Choose a language and take on the challenge!',
+        'choose_language' => 'Languages',
+        'questions_count' => 'questions',
+        'start_quiz' => 'Start quiz',
+        'back_to_quiz' => 'Back to quizzes',
+        'answer_questions' => 'Answer the :count questions below. Good luck!',
+        'submit_quiz' => 'Submit quiz',
+        'answer_all' => 'Please answer all questions before submitting the quiz.',
+        'stats' => [
+            'languages' => 'Languages',
+            'questions' => 'Questions',
+            'questions_per_quiz' => 'Questions/Quiz',
+            'free' => 'Free',
+        ],
+        'cta' => [
+            'title' => 'Ready to test your knowledge?',
+            'description' => 'Each quiz contains 20 multiple choice questions. Get your score and discover your strengths and weaknesses!',
+            'see_exercices' => 'See exercises',
+            'learn_more' => 'Learn more',
+        ],
+        'html5' => [
+            'title' => 'HTML5 Quiz',
+            'subtitle' => 'Test your HTML5 knowledge',
+        ],
+        'result' => [
+            'title' => 'Quiz Results',
+            'score' => 'Score',
+            'correct' => 'Correct',
+            'incorrect' => 'Incorrect',
+            'percentage' => 'Percentage',
+            'retry' => 'Retake quiz',
+            'back' => 'Other quizzes',
+            'do_exercices' => 'Do exercises',
+            'details' => 'Answer details',
+            'question' => 'Question',
+            'good_answer' => 'Correct answer!',
+            'your_answer' => 'Your answer:',
+            'correct_answer' => 'Correct answer:',
+            'no_answer' => 'No answer',
+            'excellent' => '🎉 Excellent work!',
+            'good' => '👍 Good work!',
+            'continue' => '📚 Keep learning!',
+            'dont_give_up' => '💪 Don\'t give up!',
+            'got_score' => 'You got :score/:total correct answers',
+            'continue_learning' => 'Continue your learning!',
+            'continue_learning_desc' => 'Practice with our interactive exercises or test yourself on other languages.',
+        ],
+    ],
+    
+    // Common
+    'common' => [
+        'loading' => 'Loading...',
+        'error' => 'Error',
+        'success' => 'Success',
+        'back' => 'Back',
+        'next' => 'Next',
+        'previous' => 'Previous',
+        'submit' => 'Submit',
+        'cancel' => 'Cancel',
+    ],
+];

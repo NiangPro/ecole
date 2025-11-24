@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Exercices de Programmation | NiangProgrammeur')
+@section('title', trans('app.exercices.title') . ' | NiangProgrammeur')
 @section('meta_description', 'Pratiquez vos compétences en programmation avec nos exercices interactifs. HTML5, CSS3, JavaScript, PHP, Bootstrap, Git, WordPress et IA.')
 @section('meta_keywords', 'exercices programmation, pratique code, exercices HTML, exercices CSS, exercices JavaScript, exercices PHP, quiz développement web')
 
@@ -125,11 +125,10 @@
         <!-- Header -->
         <div class="text-center mb-16">
             <h1 class="text-6xl font-bold mb-6 bg-gradient-to-r from-cyan-400 via-teal-500 to-cyan-400 bg-clip-text text-transparent">
-                Exercices de Programmation
+                {{ trans('app.exercices.title') }}
             </h1>
             <p class="text-xl text-gray-300 max-w-3xl mx-auto">
-                Pratiquez et améliorez vos compétences avec nos exercices interactifs. 
-                Choisissez un langage et commencez à coder !
+                {{ trans('app.exercices.subtitle') }}
             </p>
         </div>
 
@@ -137,19 +136,19 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-16">
             <div class="bg-gradient-to-br from-cyan-500/10 to-teal-500/10 border border-cyan-500/20 rounded-2xl p-6 text-center">
                 <div class="text-4xl font-bold text-cyan-400 mb-2">{{ count($languages) }}</div>
-                <div class="text-gray-400">Langages</div>
+                <div class="text-gray-400">{{ trans('app.exercices.choose_language') }}</div>
             </div>
             <div class="bg-gradient-to-br from-green-500/10 to-emerald-500/10 border border-green-500/20 rounded-2xl p-6 text-center">
                 <div class="text-4xl font-bold text-green-400 mb-2">{{ array_sum(array_column($languages, 'exercises')) }}</div>
-                <div class="text-gray-400">Exercices</div>
+                <div class="text-gray-400">{{ trans('app.exercices.stats.exercises') }}</div>
             </div>
             <div class="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-2xl p-6 text-center">
                 <div class="text-4xl font-bold text-purple-400 mb-2">3</div>
-                <div class="text-gray-400">Niveaux</div>
+                <div class="text-gray-400">{{ trans('app.exercices.stats.levels') }}</div>
             </div>
             <div class="bg-gradient-to-br from-orange-500/10 to-red-500/10 border border-orange-500/20 rounded-2xl p-6 text-center">
                 <div class="text-4xl font-bold text-orange-400 mb-2">100%</div>
-                <div class="text-gray-400">Gratuit</div>
+                <div class="text-gray-400">{{ trans('app.exercices.stats.free') }}</div>
             </div>
         </div>
 
@@ -167,18 +166,18 @@
                 
                 <div class="flex items-center justify-center gap-2 text-gray-400 mb-4">
                     <i class="fas fa-dumbbell text-cyan-400"></i>
-                    <span>{{ $lang['exercises'] }} exercices</span>
+                    <span>{{ $lang['exercises'] }} {{ trans('app.exercices.exercises_count') }}</span>
                 </div>
                 
                 <div class="flex items-center justify-center gap-2 text-sm">
-                    <span class="px-3 py-1 bg-green-500/10 text-green-400 rounded-full">Facile</span>
-                    <span class="px-3 py-1 bg-yellow-500/10 text-yellow-400 rounded-full">Moyen</span>
-                    <span class="px-3 py-1 bg-red-500/10 text-red-400 rounded-full">Difficile</span>
+                    <span class="px-3 py-1 bg-green-500/10 text-green-400 rounded-full">{{ trans('app.exercices.difficulty.easy') }}</span>
+                    <span class="px-3 py-1 bg-yellow-500/10 text-yellow-400 rounded-full">{{ trans('app.exercices.difficulty.medium') }}</span>
+                    <span class="px-3 py-1 bg-red-500/10 text-red-400 rounded-full">{{ trans('app.exercices.difficulty.hard') }}</span>
                 </div>
                 
                 <div class="mt-6 text-center">
                     <span class="inline-flex items-center gap-2 text-cyan-400 font-semibold group-hover:gap-4 transition-all">
-                        Commencer
+                        {{ trans('app.exercices.start_exercise') }}
                         <i class="fas fa-arrow-right"></i>
                     </span>
                 </div>
@@ -190,18 +189,17 @@
         <div class="mt-16 bg-gradient-to-r from-cyan-500/10 to-teal-500/10 border border-cyan-500/20 rounded-3xl p-12 text-center">
             <h2 class="text-3xl font-bold text-white mb-4">
                 <i class="fas fa-trophy text-yellow-400 mr-3"></i>
-                Prêt à relever le défi ?
+                {{ trans('app.exercices.cta.title') }}
             </h2>
             <p class="text-gray-300 text-lg mb-6 max-w-2xl mx-auto">
-                Chaque exercice complété vous rapproche de la maîtrise du développement web. 
-                Commencez maintenant et suivez votre progression !
+                {{ trans('app.exercices.cta.description') }}
             </p>
             <div class="flex flex-wrap gap-4 justify-center">
                 <a href="{{ route('about') }}" class="px-8 py-3 bg-gradient-to-r from-cyan-500 to-teal-600 text-white font-bold rounded-lg hover:shadow-lg hover:scale-105 transition">
-                    <i class="fas fa-info-circle mr-2"></i>En savoir plus
+                    <i class="fas fa-info-circle mr-2"></i>{{ trans('app.exercices.cta.learn_more') }}
                 </a>
                 <a href="{{ route('contact') }}" class="px-8 py-3 bg-white/10 border border-white/20 text-white font-bold rounded-lg hover:bg-white/20 transition">
-                    <i class="fas fa-envelope mr-2"></i>Nous contacter
+                    <i class="fas fa-envelope mr-2"></i>{{ trans('app.exercices.cta.contact') }}
                 </a>
             </div>
         </div>

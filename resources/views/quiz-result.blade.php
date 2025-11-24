@@ -120,7 +120,7 @@
 @endsection
 
 @section('content')
-<section class="py-20 relative overflow-hidden pt-32">
+<section class="py-20 relative overflow-hidden pt-8">
     <div class="container mx-auto px-6">
         <div class="result-container">
             <!-- Score Card -->
@@ -128,35 +128,35 @@
                 <div class="score-circle">
                     <div class="text-center">
                         <div class="text-6xl font-bold text-white">{{ number_format($percentage, 0) }}%</div>
-                        <div class="text-white text-lg">Score</div>
+                        <div class="text-white text-lg">{{ __('app.quiz.result.score') }}</div>
                     </div>
                 </div>
                 
                 <h1 class="text-4xl font-bold text-white mb-4">
                     @if($percentage >= 80)
-                        🎉 Excellent travail !
+                        {{ __('app.quiz.result.excellent') }}
                     @elseif($percentage >= 60)
-                        👍 Bon travail !
+                        {{ __('app.quiz.result.good') }}
                     @elseif($percentage >= 40)
-                        📚 Continuez à apprendre !
+                        {{ __('app.quiz.result.continue') }}
                     @else
-                        💪 Ne vous découragez pas !
+                        {{ __('app.quiz.result.dont_give_up') }}
                     @endif
                 </h1>
                 
                 <p class="text-2xl text-gray-300 mb-6">
-                    Vous avez obtenu <span class="text-purple-400 font-bold">{{ $score }}/{{ $total }}</span> bonnes réponses
+                    {{ str_replace([':score', ':total'], [$score, $total], __('app.quiz.result.got_score')) }}
                 </p>
                 
                 <div class="flex gap-4 justify-center flex-wrap">
                     <a href="{{ route('quiz.language', $language) }}" class="px-8 py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white font-bold rounded-lg hover:shadow-lg hover:scale-105 transition">
-                        <i class="fas fa-redo mr-2"></i>Refaire le quiz
+                        <i class="fas fa-redo mr-2"></i>{{ __('app.quiz.result.retry') }}
                     </a>
                     <a href="{{ route('quiz') }}" class="px-8 py-3 bg-white/10 border border-white/20 text-white font-bold rounded-lg hover:bg-white/20 transition">
-                        <i class="fas fa-arrow-left mr-2"></i>Autres quiz
+                        <i class="fas fa-arrow-left mr-2"></i>{{ __('app.quiz.result.back') }}
                     </a>
                     <a href="{{ route('exercices.language', $language) }}" class="px-8 py-3 bg-gradient-to-r from-cyan-500 to-teal-600 text-white font-bold rounded-lg hover:shadow-lg hover:scale-105 transition">
-                        <i class="fas fa-code mr-2"></i>Faire les exercices
+                        <i class="fas fa-code mr-2"></i>{{ __('app.quiz.result.do_exercices') }}
                     </a>
                 </div>
             </div>
@@ -165,7 +165,7 @@
             <div class="mb-8">
                 <h2 class="text-3xl font-bold text-white mb-6">
                     <i class="fas fa-list-check text-purple-400 mr-3"></i>
-                    Détails des réponses
+                    {{ __('app.quiz.result.details') }}
                 </h2>
             </div>
 
@@ -181,24 +181,24 @@
                     </div>
                     <div class="flex-1">
                         <h3 class="text-lg font-bold text-white mb-3">
-                            Question {{ $index + 1 }}: {{ $result['question'] }}
+                            {{ __('app.quiz.result.question') }} {{ $index + 1 }}: {{ $result['question'] }}
                         </h3>
                         
                         @if($result['isCorrect'])
                             <div class="flex items-center gap-2 text-green-400">
                                 <i class="fas fa-check-circle"></i>
-                                <span class="font-semibold">Bonne réponse !</span>
+                                <span class="font-semibold">{{ __('app.quiz.result.good_answer') }}</span>
                             </div>
                         @else
                             <div class="mb-2">
                                 <div class="flex items-center gap-2 text-red-400 mb-2">
                                     <i class="fas fa-times-circle"></i>
-                                    <span class="font-semibold">Votre réponse :</span>
-                                    <span>{{ $result['options'][$result['userAnswer']] ?? 'Aucune réponse' }}</span>
+                                    <span class="font-semibold">{{ __('app.quiz.result.your_answer') }}</span>
+                                    <span>{{ $result['options'][$result['userAnswer']] ?? __('app.quiz.result.no_answer') }}</span>
                                 </div>
                                 <div class="flex items-center gap-2 text-green-400">
                                     <i class="fas fa-check-circle"></i>
-                                    <span class="font-semibold">Bonne réponse :</span>
+                                    <span class="font-semibold">{{ __('app.quiz.result.correct_answer') }}</span>
                                     <span>{{ $result['options'][$result['correctAnswer']] }}</span>
                                 </div>
                             </div>
@@ -212,17 +212,17 @@
             <div class="mt-12 text-center">
                 <div class="bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-2xl p-8">
                     <h3 class="text-2xl font-bold text-white mb-4">
-                        Continuez votre apprentissage !
+                        {{ __('app.quiz.result.continue_learning') }}
                     </h3>
                     <p class="text-gray-300 mb-6">
-                        Pratiquez avec nos exercices interactifs ou testez-vous sur d'autres langages.
+                        {{ __('app.quiz.result.continue_learning_desc') }}
                     </p>
                     <div class="flex gap-4 justify-center flex-wrap">
                         <a href="{{ route('exercices') }}" class="px-6 py-3 bg-gradient-to-r from-cyan-500 to-teal-600 text-white font-bold rounded-lg hover:shadow-lg hover:scale-105 transition">
-                            <i class="fas fa-code mr-2"></i>Exercices
+                            <i class="fas fa-code mr-2"></i>{{ __('app.exercices.title') }}
                         </a>
                         <a href="{{ route('quiz') }}" class="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white font-bold rounded-lg hover:shadow-lg hover:scale-105 transition">
-                            <i class="fas fa-question-circle mr-2"></i>Quiz
+                            <i class="fas fa-question-circle mr-2"></i>{{ __('app.quiz.title') }}
                         </a>
                     </div>
                 </div>

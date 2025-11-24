@@ -202,6 +202,24 @@
                 <p class="text-red-400 text-sm mt-2">{{ $message }}</p>
             @enderror
         </div>
+
+        <div class="mb-6">
+            <label class="block text-gray-300 mb-2 font-semibold">
+                <i class="fab fa-microsoft mr-2 text-blue-400"></i>
+                Clé API Bing Webmaster
+            </label>
+            <input type="text" name="bing_api_key" 
+                   value="{{ old('bing_api_key', $settings->bing_api_key ?? '') }}" 
+                   class="input-admin" 
+                   placeholder="Votre clé API Bing">
+            <p class="text-gray-500 text-sm mt-2">
+                <i class="fas fa-lightbulb mr-1"></i>
+                Obtenez votre clé API depuis <a href="https://www.bing.com/webmasters" target="_blank" class="text-cyan-400 hover:underline">Bing Webmaster Tools</a>
+            </p>
+            @error('bing_api_key')
+                <p class="text-red-400 text-sm mt-2">{{ $message }}</p>
+            @enderror
+        </div>
     </div>
     
     <div class="flex gap-4 mt-6">

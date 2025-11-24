@@ -101,6 +101,172 @@ class PageController extends Controller
         return view('faq');
     }
 
+    public function setLocale($locale)
+    {
+        // Langues supportées
+        $supportedLocales = ['fr', 'en'];
+        
+        // Vérifier que la langue est supportée
+        if (!in_array($locale, $supportedLocales)) {
+            $locale = 'fr';
+        }
+        
+        // Sauvegarder la langue dans la session
+        session(['locale' => $locale]);
+        
+        // Forcer l'écriture de la session (important en production)
+        session()->save();
+        
+        // Récupérer le chemin de redirection depuis le paramètre 'redirect' (GET)
+        $redirectPath = request('redirect');
+        
+        // Si un chemin de redirection est fourni
+        if (!empty($redirectPath)) {
+            // Décoder le chemin si nécessaire
+            $redirectPath = urldecode($redirectPath);
+            
+            // Nettoyer le chemin (enlever les espaces, etc.)
+            $redirectPath = trim($redirectPath);
+            
+            // S'assurer que le chemin commence par /
+            if (strpos($redirectPath, '/') !== 0) {
+                $redirectPath = '/' . $redirectPath;
+            }
+            
+            // Vérifier que ce n'est pas une route protégée
+            if (!str_starts_with($redirectPath, '/admin') && 
+                !str_starts_with($redirectPath, '/lang')) {
+                
+                // Si c'est la racine, rediriger vers l'accueil
+                if ($redirectPath === '/') {
+                    return redirect()->route('home')
+                        ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
+                        ->header('Pragma', 'no-cache')
+                        ->header('Expires', '0');
+                }
+                
+                // Rediriger vers le chemin avec headers explicites pour la production
+                return redirect($redirectPath, 302)
+                    ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
+                    ->header('Pragma', 'no-cache')
+                    ->header('Expires', '0');
+            }
+        }
+        
+        // Sinon, utiliser le referer si disponible
+        $referer = request()->header('referer');
+        if ($referer) {
+            try {
+                // Extraire le chemin du referer
+                $refererUrl = parse_url($referer);
+                $refererPath = $refererUrl['path'] ?? null;
+                
+                // Si le referer contient /lang/, extraire le paramètre redirect
+                if ($refererPath && str_contains($refererPath, '/lang/')) {
+                    $query = $refererUrl['query'] ?? null;
+                    if ($query) {
+                        parse_str($query, $params);
+                        if (isset($params['redirect'])) {
+                            $refererPath = urldecode($params['redirect']);
+                            if (strpos($refererPath, '/') !== 0) {
+                                $refererPath = '/' . $refererPath;
+                            }
+                        } else {
+                            $refererPath = null;
+                        }
+                    }
+                }
+                
+                // Vérifier que le chemin est valide
+                if ($refererPath && 
+                    strpos($refererPath, '/') === 0 &&
+                    !str_starts_with($refererPath, '/admin') &&
+                    !str_starts_with($refererPath, '/lang')) {
+                    return redirect($refererPath, 302)
+                        ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
+                        ->header('Pragma', 'no-cache')
+                        ->header('Expires', '0');
+                }
+            } catch (\Exception $e) {
+                // Continuer vers le fallback
+            }
+        }
+        
+        // Fallback : rediriger vers l'accueil
+        return redirect()->route('home');
+    }
+
+    public function allLinks()
+    {
+        // Utiliser www.niangprogrammeur.com en production
+        $appUrl = url('/');
+        if (str_contains($appUrl, 'niangprogrammeur.com')) {
+            $baseUrl = 'https://www.niangprogrammeur.com';
+        } else {
+            $baseUrl = $appUrl;
+        }
+        $localUrl = 'http://127.0.0.1:8000';
+        $languages = [
+            ['name' => 'HTML5', 'slug' => 'html5'],
+            ['name' => 'CSS3', 'slug' => 'css3'],
+            ['name' => 'JavaScript', 'slug' => 'javascript'],
+            ['name' => 'PHP', 'slug' => 'php'],
+            ['name' => 'Bootstrap', 'slug' => 'bootstrap'],
+            ['name' => 'Git', 'slug' => 'git'],
+            ['name' => 'WordPress', 'slug' => 'wordpress'],
+            ['name' => 'IA', 'slug' => 'ia'],
+            ['name' => 'Python', 'slug' => 'python'],
+        ];
+        
+        // Récupérer les 49 derniers articles
+        $recentArticles = \App\Models\JobArticle::where('status', 'published')
+            ->orderBy('published_at', 'desc')
+            ->orderBy('created_at', 'desc')
+            ->take(49)
+            ->get(['slug']);
+        
+        // Générer tous les liens (production + local)
+        $allLinks = [];
+        
+        // URL de base
+        $allLinks[] = $baseUrl . '/';
+        $allLinks[] = $localUrl . '/';
+        
+        // Formations
+        $allLinks[] = $baseUrl . '/formations';
+        $allLinks[] = $localUrl . '/formations';
+        foreach($languages as $lang) {
+            $allLinks[] = $baseUrl . '/formations/' . $lang['slug'];
+            $allLinks[] = $localUrl . '/formations/' . $lang['slug'];
+        }
+        
+        // Exercices
+        $allLinks[] = $baseUrl . '/exercices';
+        $allLinks[] = $localUrl . '/exercices';
+        foreach($languages as $lang) {
+            $allLinks[] = $baseUrl . '/exercices/' . $lang['slug'];
+            $allLinks[] = $localUrl . '/exercices/' . $lang['slug'];
+        }
+        
+        // Quiz
+        $allLinks[] = $baseUrl . '/quiz';
+        $allLinks[] = $localUrl . '/quiz';
+        foreach($languages as $lang) {
+            $allLinks[] = $baseUrl . '/quiz/' . $lang['slug'];
+            $allLinks[] = $localUrl . '/quiz/' . $lang['slug'];
+        }
+        
+        // Articles (49 articles)
+        foreach($recentArticles as $article) {
+            $allLinks[] = $baseUrl . '/emplois/article/' . $article->slug;
+            $allLinks[] = $localUrl . '/emplois/article/' . $article->slug;
+        }
+        
+        $allLinksText = implode("\n", $allLinks);
+        
+        return view('all-links', compact('baseUrl', 'localUrl', 'languages', 'allLinksText', 'recentArticles'));
+    }
+
     public function exercices()
     {
         $languages = [
@@ -124,7 +290,7 @@ class PageController extends Controller
         
         // Varier les exercices par utilisateur (basé sur IP + session)
         $userIdentifier = md5(request()->ip() . session()->getId() . $language);
-        $exercises = $this->getVariedExercises($allExercises, $userIdentifier);
+        $exercises = !empty($allExercises) ? $this->getVariedExercises($allExercises, $userIdentifier) : [];
         
         return view('exercices-language', compact('language', 'exercises'));
     }
@@ -135,16 +301,34 @@ class PageController extends Controller
     private function getVariedExercises($allExercises, $userIdentifier)
     {
         // Organiser les exercices par niveau
+        // Utiliser les clés de traduction pour normaliser la difficulté
+        $easyKey = trans('app.exercices.difficulty.easy');
+        $mediumKey = trans('app.exercices.difficulty.medium');
+        $hardKey = trans('app.exercices.difficulty.hard');
+        
         $byDifficulty = [
-            'Facile' => [],
-            'Moyen' => [],
-            'Difficile' => []
+            $easyKey => [],
+            $mediumKey => [],
+            $hardKey => []
         ];
         
         foreach ($allExercises as $index => $exercise) {
-            $difficulty = $exercise['difficulty'] ?? 'Facile';
-            if (isset($byDifficulty[$difficulty])) {
-                $byDifficulty[$difficulty][] = array_merge($exercise, ['original_index' => $index + 1]);
+            $difficulty = $exercise['difficulty'] ?? $easyKey;
+            // Normaliser la difficulté en comparant avec les traductions
+            // Normaliser la difficulté pour qu'elle corresponde toujours à la traduction actuelle
+            if ($difficulty === $easyKey || $difficulty === 'Facile' || $difficulty === 'Easy') {
+                $exercise['difficulty'] = $easyKey; // S'assurer que la difficulté utilise la traduction
+                $byDifficulty[$easyKey][] = array_merge($exercise, ['original_index' => $index + 1]);
+            } elseif ($difficulty === $mediumKey || $difficulty === 'Moyen' || $difficulty === 'Medium') {
+                $exercise['difficulty'] = $mediumKey; // S'assurer que la difficulté utilise la traduction
+                $byDifficulty[$mediumKey][] = array_merge($exercise, ['original_index' => $index + 1]);
+            } elseif ($difficulty === $hardKey || $difficulty === 'Difficile' || $difficulty === 'Hard') {
+                $exercise['difficulty'] = $hardKey; // S'assurer que la difficulté utilise la traduction
+                $byDifficulty[$hardKey][] = array_merge($exercise, ['original_index' => $index + 1]);
+            } else {
+                // Par défaut, mettre dans facile
+                $exercise['difficulty'] = $easyKey;
+                $byDifficulty[$easyKey][] = array_merge($exercise, ['original_index' => $index + 1]);
             }
         }
         
@@ -156,22 +340,22 @@ class PageController extends Controller
         
         // Prendre TOUS les exercices de chaque niveau (5 Facile + 5 Moyen + 5 Difficile = 15)
         // Facile: tous les exercices (5)
-        if (count($byDifficulty['Facile']) > 0) {
-            foreach ($byDifficulty['Facile'] as $exercise) {
+        if (count($byDifficulty[$easyKey]) > 0) {
+            foreach ($byDifficulty[$easyKey] as $exercise) {
                 $selectedExercises[] = $exercise;
             }
         }
         
         // Moyen: tous les exercices (5)
-        if (count($byDifficulty['Moyen']) > 0) {
-            foreach ($byDifficulty['Moyen'] as $exercise) {
+        if (count($byDifficulty[$mediumKey]) > 0) {
+            foreach ($byDifficulty[$mediumKey] as $exercise) {
                 $selectedExercises[] = $exercise;
             }
         }
         
         // Difficile: tous les exercices (5)
-        if (count($byDifficulty['Difficile']) > 0) {
-            foreach ($byDifficulty['Difficile'] as $exercise) {
+        if (count($byDifficulty[$hardKey]) > 0) {
+            foreach ($byDifficulty[$hardKey] as $exercise) {
                 $selectedExercises[] = $exercise;
             }
         }
@@ -519,7 +703,7 @@ class PageController extends Controller
                                 if (!empty($stderr) || ($run['code'] ?? 0) !== 0) {
                                     $error = !empty($stderr) ? $stderr : 'Erreur lors de l\'exécution du code Python';
                                 }
-                            } else {
+                    } else {
                                 $error = 'Erreur lors de l\'exécution via API externe';
                             }
                             
@@ -587,7 +771,7 @@ class PageController extends Controller
                             // Si toutes les APIs échouent, retourner l'erreur
                             $errorMsg = 'Python n\'est pas installé localement et l\'API externe n\'est pas disponible. ';
                             $errorMsg .= 'Contactez votre hébergeur pour installer Python3. Erreur API: ' . $apiException->getMessage();
-                            throw new \Exception($errorMsg);
+                    throw new \Exception($errorMsg);
                         }
                     }
                 }
@@ -696,7 +880,7 @@ class PageController extends Controller
                     }
                 } else {
                     // Pas d'input: utiliser exec normal
-                    exec($command . ' 2>&1', $outputLines, $returnValue);
+                exec($command . ' 2>&1', $outputLines, $returnValue);
                 }
                 
                 // Joindre toutes les lignes de sortie
@@ -704,7 +888,7 @@ class PageController extends Controller
                 
                 // Séparer stdout et stderr si nécessaire
                 if (!isset($stderr)) {
-                    $stderr = '';
+                $stderr = '';
                 }
                 if ($returnValue !== 0) {
                     // Si erreur, essayer de lire le fichier d'erreur
@@ -1025,14 +1209,22 @@ class PageController extends Controller
 
     private function getExerciseDetail($language, $id)
     {
+        // Helper function to get translated exercise data
+        $getTranslated = function($key, $default) use ($language, $id) {
+            $translationKey = "exercises.{$language}.{$id}.{$key}";
+            $translated = trans($translationKey);
+            // If translation doesn't exist (returns the key itself), use default
+            return ($translated !== $translationKey && !empty($translated)) ? $translated : $default;
+        };
+        
         $allExercises = [
             'html5' => [
                 1 => [
-                    'title' => 'Les balises de base',
-                    'difficulty' => 'Facile',
+                    'title' => $getTranslated('title', 'Les balises de base'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
                     'points' => 10,
-                    'instruction' => 'Ajoutez un titre "Bienvenue" à la page HTML ci-dessous en utilisant la balise de titre de niveau 1.',
-                    'description' => 'Les balises de titre HTML permettent de structurer le contenu. La balise <h1> représente le titre principal de la page. Elle est importante pour le SEO et l\'accessibilité. Complétez le code pour afficher "Bienvenue" comme titre principal.',
+                    'instruction' => $getTranslated('instruction', 'Ajoutez un titre "Bienvenue" à la page HTML ci-dessous en utilisant la balise de titre de niveau 1.'),
+                    'description' => $getTranslated('description', 'Les balises de titre HTML permettent de structurer le contenu. La balise <h1> représente le titre principal de la page. Elle est importante pour le SEO et l\'accessibilité. Complétez le code pour afficher "Bienvenue" comme titre principal.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -1057,14 +1249,14 @@ class PageController extends Controller
 
 </body>
 </html>',
-                    'hint' => 'Utilisez la balise <h1> pour créer un titre de niveau 1. La structure est : <h1>Bienvenue</h1>'
+                    'hint' => $getTranslated('hint', 'Utilisez la balise <h1> pour créer un titre de niveau 1. La structure est : <h1>Bienvenue</h1>')
                 ],
                 2 => [
-                    'title' => 'Les paragraphes',
-                    'difficulty' => 'Facile',
+                    'title' => $getTranslated('title', 'Les paragraphes'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
                     'points' => 10,
-                    'instruction' => 'Ajoutez un paragraphe avec le texte "Ceci est un paragraphe." en utilisant la balise appropriée.',
-                    'description' => 'Les paragraphes en HTML permettent de structurer le texte. La balise <p> crée un bloc de texte séparé avec un espacement automatique. C\'est l\'élément de base pour afficher du contenu textuel sur une page web.',
+                    'instruction' => $getTranslated('instruction', 'Ajoutez un paragraphe avec le texte "Ceci est un paragraphe." en utilisant la balise appropriée.'),
+                    'description' => $getTranslated('description', 'Les paragraphes en HTML permettent de structurer le texte. La balise <p> crée un bloc de texte séparé avec un espacement automatique. C\'est l\'élément de base pour afficher du contenu textuel sur une page web.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -1093,14 +1285,14 @@ class PageController extends Controller
 
 </body>
 </html>',
-                    'hint' => 'Utilisez la balise <p> pour créer un paragraphe. La structure est : <p>Ceci est un paragraphe.</p>'
+                    'hint' => $getTranslated('hint', 'Utilisez la balise <p> pour créer un paragraphe. La structure est : <p>Ceci est un paragraphe.</p>')
                 ],
                 3 => [
-                    'title' => 'Les liens',
-                    'difficulty' => 'Facile',
+                    'title' => $getTranslated('title', 'Les liens'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
                     'points' => 15,
-                    'instruction' => 'Créez un lien hypertexte vers "https://www.google.com" avec le texte "Aller sur Google". Le lien doit s\'ouvrir dans un nouvel onglet.',
-                    'description' => 'Les liens HTML permettent de naviguer entre les pages. La balise <a> avec l\'attribut href crée un lien. L\'attribut target="_blank" ouvre le lien dans un nouvel onglet. Les liens sont essentiels pour la navigation web.',
+                    'instruction' => $getTranslated('instruction', 'Créez un lien hypertexte vers "https://www.google.com" avec le texte "Aller sur Google". Le lien doit s\'ouvrir dans un nouvel onglet.'),
+                    'description' => $getTranslated('description', 'Les liens HTML permettent de naviguer entre les pages. La balise <a> avec l\'attribut href crée un lien. L\'attribut target="_blank" ouvre le lien dans un nouvel onglet. Les liens sont essentiels pour la navigation web.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -1129,14 +1321,14 @@ class PageController extends Controller
 
 </body>
 </html>',
-                    'hint' => 'Utilisez <a href="URL" target="_blank">Texte</a> pour créer un lien qui s\'ouvre dans un nouvel onglet. La structure est : <a href="https://www.google.com" target="_blank">Aller sur Google</a>'
+                    'hint' => $getTranslated('hint', 'Utilisez <a href="URL" target="_blank">Texte</a> pour créer un lien qui s\'ouvre dans un nouvel onglet. La structure est : <a href="https://www.google.com" target="_blank">Aller sur Google</a>')
                 ],
                 6 => [
-                    'title' => 'Les images',
-                    'difficulty' => 'Moyen',
+                    'title' => $getTranslated('title', 'Les images'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
                     'points' => 15,
-                    'instruction' => 'Ajoutez une image avec la source "logo.png", le texte alternatif "Logo du site" et une largeur de 200 pixels.',
-                    'description' => 'Les images enrichissent le contenu web. La balise <img> est auto-fermante et nécessite les attributs src (source) et alt (texte alternatif pour l\'accessibilité). L\'attribut width permet de contrôler la taille de l\'image.',
+                    'instruction' => $getTranslated('instruction', 'Ajoutez une image avec la source "logo.png", le texte alternatif "Logo du site" et une largeur de 200 pixels.'),
+                    'description' => $getTranslated('description', 'Les images enrichissent le contenu web. La balise <img> est auto-fermante et nécessite les attributs src (source) et alt (texte alternatif pour l\'accessibilité). L\'attribut width permet de contrôler la taille de l\'image.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -1165,14 +1357,14 @@ class PageController extends Controller
 
 </body>
 </html>',
-                    'hint' => 'Utilisez <img src="..." alt="..." width="..."> pour ajouter une image. La structure est : <img src="logo.png" alt="Logo du site" width="200">'
+                    'hint' => $getTranslated('hint', 'Utilisez <img src="..." alt="..." width="..."> pour ajouter une image. La structure est : <img src="logo.png" alt="Logo du site" width="200">')
                 ],
                 7 => [
-                    'title' => 'Les listes',
-                    'difficulty' => 'Moyen',
+                    'title' => $getTranslated('title', 'Les listes'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
                     'points' => 20,
-                    'instruction' => 'Créez une liste non ordonnée avec trois éléments : "HTML", "CSS", "JavaScript". Ajoutez un titre "Langages web" avant la liste.',
-                    'description' => 'Les listes permettent d\'organiser l\'information. <ul> crée une liste non ordonnée (à puces), <ol> crée une liste ordonnée (numérotée). Chaque élément utilise la balise <li>. Les listes améliorent la lisibilité et la structure du contenu.',
+                    'instruction' => $getTranslated('instruction', 'Créez une liste non ordonnée avec trois éléments : "HTML", "CSS", "JavaScript". Ajoutez un titre "Langages web" avant la liste.'),
+                    'description' => $getTranslated('description', 'Les listes permettent d\'organiser l\'information. <ul> crée une liste non ordonnée (à puces), <ol> crée une liste ordonnée (numérotée). Chaque élément utilise la balise <li>. Les listes améliorent la lisibilité et la structure du contenu.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -1205,14 +1397,14 @@ class PageController extends Controller
 
 </body>
 </html>',
-                    'hint' => 'Utilisez <ul> pour la liste non ordonnée et <li> pour chaque élément. La structure est : <ul><li>HTML</li><li>CSS</li><li>JavaScript</li></ul>'
+                    'hint' => $getTranslated('hint', 'Utilisez <ul> pour la liste non ordonnée et <li> pour chaque élément. La structure est : <ul><li>HTML</li><li>CSS</li><li>JavaScript</li></ul>')
                 ],
                 8 => [
-                    'title' => 'Les tableaux HTML5',
-                    'difficulty' => 'Moyen',
+                    'title' => $getTranslated('title', 'Les tableaux HTML5'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
                     'points' => 20,
-                    'instruction' => 'Créez un tableau avec 2 colonnes (Nom, Age) et 3 lignes de données. Utilisez les balises <table>, <thead>, <tbody>, <tr>, <th> et <td>.',
-                    'description' => 'Les tableaux HTML permettent d\'organiser des données en lignes et colonnes. <table> crée le tableau, <thead> pour l\'en-tête, <tbody> pour le corps, <tr> pour les lignes, <th> pour les cellules d\'en-tête, et <td> pour les cellules de données.',
+                    'instruction' => $getTranslated('instruction', 'Créez un tableau avec 2 colonnes (Nom, Age) et 3 lignes de données. Utilisez les balises <table>, <thead>, <tbody>, <tr>, <th> et <td>.'),
+                    'description' => $getTranslated('description', 'Les tableaux HTML permettent d\'organiser des données en lignes et colonnes. <table> crée le tableau, <thead> pour l\'en-tête, <tbody> pour le corps, <tr> pour les lignes, <th> pour les cellules d\'en-tête, et <td> pour les cellules de données.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -1262,14 +1454,14 @@ class PageController extends Controller
 
 </body>
 </html>',
-                    'hint' => 'Structurez le tableau avec <table><thead><tr><th>Nom</th><th>Age</th></tr></thead><tbody><tr><td>...</td></tr></tbody></table>'
+                    'hint' => $getTranslated('hint', 'Structurez le tableau avec <table><thead><tr><th>Nom</th><th>Age</th></tr></thead><tbody><tr><td>...</td></tr></tbody></table>')
                 ],
                 11 => [
-                    'title' => 'Formulaires HTML5 avancés',
-                    'difficulty' => 'Difficile',
+                    'title' => $getTranslated('title', 'Formulaires HTML5 avancés'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
                     'points' => 25,
-                    'instruction' => 'Créez un formulaire complet avec : un champ texte (nom), un email (email), un champ date (date de naissance), un select (pays), une checkbox (conditions), et un bouton submit. Utilisez les attributs HTML5 required, placeholder et type appropriés.',
-                    'description' => 'Les formulaires HTML5 offrent de nouveaux types d\'input (email, date, etc.) et attributs (required, placeholder, pattern) pour améliorer l\'expérience utilisateur et la validation côté client. La balise <form> contient tous les champs, et <label> améliore l\'accessibilité.',
+                    'instruction' => $getTranslated('instruction', 'Créez un formulaire complet avec : un champ texte (nom), un email (email), un champ date (date de naissance), un select (pays), une checkbox (conditions), et un bouton submit. Utilisez les attributs HTML5 required, placeholder et type appropriés.'),
+                    'description' => $getTranslated('description', 'Les formulaires HTML5 offrent de nouveaux types d\'input (email, date, etc.) et attributs (required, placeholder, pattern) pour améliorer l\'expérience utilisateur et la validation côté client. La balise <form> contient tous les champs, et <label> améliore l\'accessibilité.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -1321,14 +1513,14 @@ J\'accepte les conditions
 
 </body>
 </html>',
-                    'hint' => 'Utilisez <form> avec <input type="text|email|date">, <select>, <input type="checkbox">, et <button type="submit">. Ajoutez required et placeholder aux inputs.'
+                    'hint' => $getTranslated('hint', 'Utilisez <form> avec <input type="text|email|date">, <select>, <input type="checkbox">, et <button type="submit">. Ajoutez required et placeholder aux inputs.')
                 ],
                 12 => [
-                    'title' => 'Éléments sémantiques HTML5',
-                    'difficulty' => 'Difficile',
+                    'title' => $getTranslated('title', 'Éléments sémantiques HTML5'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
                     'points' => 25,
-                    'instruction' => 'Créez une structure de page complète en utilisant les éléments sémantiques HTML5 : <header>, <nav>, <main>, <article>, <section>, <aside>, et <footer>. Ajoutez du contenu dans chaque section.',
-                    'description' => 'Les éléments sémantiques HTML5 (<header>, <nav>, <main>, <article>, <section>, <aside>, <footer>) donnent du sens au contenu et améliorent le SEO et l\'accessibilité. Ils remplacent les <div> génériques par des balises significatives.',
+                    'instruction' => $getTranslated('instruction', 'Créez une structure de page complète en utilisant les éléments sémantiques HTML5 : <header>, <nav>, <main>, <article>, <section>, <aside>, et <footer>. Ajoutez du contenu dans chaque section.'),
+                    'description' => $getTranslated('description', 'Les éléments sémantiques HTML5 (<header>, <nav>, <main>, <article>, <section>, <aside>, <footer>) donnent du sens au contenu et améliorent le SEO et l\'accessibilité. Ils remplacent les <div> génériques par des balises significatives.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -1383,14 +1575,14 @@ J\'accepte les conditions
 
 </body>
 </html>',
-                    'hint' => 'Structurez avec <header>, <nav>, <main>, <article>, <section>, <aside>, et <footer>. Chaque élément a un rôle sémantique spécifique.'
+                    'hint' => $getTranslated('hint', 'Structurez avec <header>, <nav>, <main>, <article>, <section>, <aside>, et <footer>. Chaque élément a un rôle sémantique spécifique.')
                 ],
                 13 => [
-                    'title' => 'Accessibilité HTML5',
-                    'difficulty' => 'Difficile',
+                    'title' => $getTranslated('title', 'Accessibilité HTML5'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
                     'points' => 30,
-                    'instruction' => 'Créez une page accessible avec : attributs ARIA appropriés (aria-label, role), balises <label> liées aux inputs, attribut alt sur les images, et structure de titres hiérarchique (h1, h2, h3).',
-                    'description' => 'L\'accessibilité web garantit que tous les utilisateurs peuvent accéder au contenu. Utilisez les attributs ARIA, les labels, les textes alternatifs, et une structure sémantique claire. C\'est essentiel pour les lecteurs d\'écran et le SEO.',
+                    'instruction' => $getTranslated('instruction', 'Créez une page accessible avec : attributs ARIA appropriés (aria-label, role), balises <label> liées aux inputs, attribut alt sur les images, et structure de titres hiérarchique (h1, h2, h3).'),
+                    'description' => $getTranslated('description', 'L\'accessibilité web garantit que tous les utilisateurs peuvent accéder au contenu. Utilisez les attributs ARIA, les labels, les textes alternatifs, et une structure sémantique claire. C\'est essentiel pour les lecteurs d\'écran et le SEO.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -1441,14 +1633,15 @@ J\'accepte les conditions
 
 </body>
 </html>',
-                    'hint' => 'Ajoutez role="banner|navigation|main|contentinfo", aria-label, aria-required, et liez les <label> avec for/id. Utilisez alt descriptif sur les images.'
+                    'hint' => $getTranslated('hint', 'Ajoutez role="banner|navigation|main|contentinfo", aria-label, aria-required, et liez les <label> avec for/id. Utilisez alt descriptif sur les images.')
                 ],
                 4 => [
-                    'title' => 'Les titres HTML',
-                    'difficulty' => 'Facile',
+                    'title' => $getTranslated('title', 'Les titres HTML'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
                     'points' => 10,
-                    'instruction' => 'Créez une structure de titres hiérarchique avec h1, h2 et h3. Le h1 doit contenir "Titre principal", le h2 "Sous-titre" et le h3 "Sous-sous-titre".',
-                    'description' => 'Les titres HTML (h1 à h6) structurent le contenu de manière hiérarchique. h1 est le titre principal (un seul par page), h2 pour les sections, h3 pour les sous-sections. La hiérarchie est importante pour le SEO et l\'accessibilité.',
+                    'instruction' => $getTranslated('instruction', 'Créez une structure de titres hiérarchique avec h1, h2 et h3. Le h1 doit contenir "Titre principal", le h2 "Sous-titre" et le h3 "Sous-sous-titre".'),
+                    'description' => $getTranslated('description', 'Les titres HTML (h1 à h6) structurent le contenu de manière hiérarchique. h1 est le titre principal (un seul par page), h2 pour les sections, h3 pour les sous-sections. La hiérarchie est importante pour le SEO et l\'accessibilité.'),
+                    'hint' => $getTranslated('hint', 'Utilisez <h1>Titre principal</h1>, <h2>Sous-titre</h2>, et <h3>Sous-sous-titre</h3> pour créer la hiérarchie des titres.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -1475,14 +1668,14 @@ J\'accepte les conditions
 
 </body>
 </html>',
-                    'hint' => 'Utilisez <h1>Titre principal</h1>, <h2>Sous-titre</h2>, et <h3>Sous-sous-titre</h3> pour créer la hiérarchie des titres.'
+                    'hint' => $getTranslated('hint', 'Utilisez <h1>Titre principal</h1>, <h2>Sous-titre</h2>, et <h3>Sous-sous-titre</h3> pour créer la hiérarchie des titres.')
                 ],
                 5 => [
-                    'title' => 'Les sauts de ligne',
-                    'difficulty' => 'Facile',
+                    'title' => $getTranslated('title', 'Les sauts de ligne'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
                     'points' => 10,
-                    'instruction' => 'Créez deux lignes de texte séparées en utilisant la balise de saut de ligne. La première ligne doit dire "Première ligne" et la deuxième "Deuxième ligne".',
-                    'description' => 'La balise <br> crée un saut de ligne dans le texte. C\'est une balise auto-fermante (<br> ou <br />). Contrairement à <p>, <br> ne crée pas d\'espacement vertical, juste un retour à la ligne. Utilisez-la pour forcer un saut de ligne dans un paragraphe.',
+                    'instruction' => $getTranslated('instruction', 'Créez deux lignes de texte séparées en utilisant la balise de saut de ligne. La première ligne doit dire "Première ligne" et la deuxième "Deuxième ligne".'),
+                    'description' => $getTranslated('description', 'La balise <br> crée un saut de ligne dans le texte. C\'est une balise auto-fermante (<br> ou <br />). Contrairement à <p>, <br> ne crée pas d\'espacement vertical, juste un retour à la ligne. Utilisez-la pour forcer un saut de ligne dans un paragraphe.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -1507,14 +1700,14 @@ J\'accepte les conditions
 
 </body>
 </html>',
-                    'hint' => 'Utilisez <br> entre les deux lignes pour créer un saut de ligne. La structure est : <p>Première ligne<br>Deuxième ligne</p>'
+                    'hint' => $getTranslated('hint', 'Utilisez <br> entre les deux lignes pour créer un saut de ligne. La structure est : <p>Première ligne<br>Deuxième ligne</p>')
                 ],
                 9 => [
-                    'title' => 'Les formulaires de base',
-                    'difficulty' => 'Moyen',
+                    'title' => $getTranslated('title', 'Les formulaires de base'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
                     'points' => 18,
-                    'instruction' => 'Créez un formulaire avec un champ texte (nom), un champ email, et un bouton submit. Utilisez les balises <form>, <input>, <label> et <button>.',
-                    'description' => 'Les formulaires HTML permettent de collecter des données utilisateur. <form> contient les champs, <label> améliore l\'accessibilité, <input> crée les champs (type="text", type="email"), et <button type="submit"> envoie le formulaire. L\'attribut for dans <label> doit correspondre à l\'id de l\'input.',
+                    'instruction' => $getTranslated('instruction', 'Créez un formulaire avec un champ texte (nom), un champ email, et un bouton submit. Utilisez les balises <form>, <input>, <label> et <button>.'),
+                    'description' => $getTranslated('description', 'Les formulaires HTML permettent de collecter des données utilisateur. <form> contient les champs, <label> améliore l\'accessibilité, <input> crée les champs (type="text", type="email"), et <button type="submit"> envoie le formulaire. L\'attribut for dans <label> doit correspondre à l\'id de l\'input.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -1551,14 +1744,14 @@ J\'accepte les conditions
 
 </body>
 </html>',
-                    'hint' => 'Utilisez <form> pour contenir le formulaire, <label for="id"> pour les étiquettes, <input type="text|email" id="..." name="..."> pour les champs, et <button type="submit"> pour le bouton.'
+                    'hint' => $getTranslated('hint', 'Utilisez <form> pour contenir le formulaire, <label for="id"> pour les étiquettes, <input type="text|email" id="..." name="..."> pour les champs, et <button type="submit"> pour le bouton.')
                 ],
                 10 => [
-                    'title' => 'Les citations et abréviations',
-                    'difficulty' => 'Moyen',
+                    'title' => $getTranslated('title', 'Les citations et abréviations'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
                     'points' => 15,
-                    'instruction' => 'Créez une citation avec <blockquote> et une abréviation avec <abbr>. La citation doit dire "Le code est poésie" et l\'abréviation "HTML" avec le titre "HyperText Markup Language".',
-                    'description' => 'Les balises sémantiques enrichissent le sens du contenu. <blockquote> crée une citation longue (bloc), <q> pour les citations courtes (inline), <abbr> pour les abréviations avec l\'attribut title pour la définition complète. Ces balises améliorent l\'accessibilité et le SEO.',
+                    'instruction' => $getTranslated('instruction', 'Créez une citation avec <blockquote> contenant "Le code est poésie" et une abréviation <abbr> pour "HTML" avec le titre "HyperText Markup Language".'),
+                    'description' => $getTranslated('description', 'Les citations et abréviations enrichissent le contenu. <blockquote> crée une citation, <q> crée une citation courte, <abbr> crée une abréviation avec title pour le texte complet. C\'est utile pour les références et les explications.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -1589,14 +1782,14 @@ J\'accepte les conditions
 
 </body>
 </html>',
-                    'hint' => 'Utilisez <blockquote>Le code est poésie</blockquote> pour la citation et <abbr title="HyperText Markup Language">HTML</abbr> pour l\'abréviation.'
+                    'hint' => $getTranslated('hint', 'Utilisez <blockquote>Le code est poésie</blockquote> pour la citation et <abbr title="HyperText Markup Language">HTML</abbr> pour l\'abréviation.')
                 ],
                 14 => [
-                    'title' => 'Métadonnées et SEO HTML5',
-                    'difficulty' => 'Difficile',
+                    'title' => $getTranslated('title', 'Métadonnées et SEO HTML5'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
                     'points' => 28,
-                    'instruction' => 'Créez une page HTML5 optimisée pour le SEO avec : meta description, meta keywords, Open Graph (og:title, og:description), et un lien canonique. Ajoutez aussi un schema.org de type "Article".',
-                    'description' => 'Le SEO (Search Engine Optimization) améliore la visibilité dans les moteurs de recherche. Les meta tags (description, keywords) fournissent des informations aux moteurs. Open Graph améliore le partage sur les réseaux sociaux. Schema.org structure les données pour les moteurs de recherche. C\'est essentiel pour le référencement moderne.',
+                    'instruction' => $getTranslated('instruction', 'Créez une page HTML5 optimisée pour le SEO avec : meta description, meta keywords, Open Graph (og:title, og:description), et un lien canonique. Ajoutez aussi un schema.org de type "Article".'),
+                    'description' => $getTranslated('description', 'Le SEO (Search Engine Optimization) améliore la visibilité dans les moteurs de recherche. Les meta tags (description, keywords) fournissent des informations aux moteurs. Open Graph améliore le partage sur les réseaux sociaux. Schema.org structure les données pour les moteurs de recherche. C\'est essentiel pour le référencement moderne.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -1639,14 +1832,14 @@ J\'accepte les conditions
 
 </body>
 </html>',
-                    'hint' => 'Ajoutez <meta name="description">, <meta name="keywords">, <link rel="canonical">, <meta property="og:title|og:description">, et un <script type="application/ld+json"> avec le schema.org.'
+                    'hint' => $getTranslated('hint', 'Ajoutez <meta name="description">, <meta name="keywords">, <link rel="canonical">, <meta property="og:title|og:description">, et un <script type="application/ld+json"> avec le schema.org.')
                 ],
                 15 => [
-                    'title' => 'Multimédia HTML5 (audio/vidéo)',
-                    'difficulty' => 'Difficile',
+                    'title' => $getTranslated('title', 'Multimédia HTML5 (audio/vidéo)'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
                     'points' => 30,
-                    'instruction' => 'Intégrez une vidéo HTML5 avec les attributs controls, autoplay, loop, et poster. Ajoutez aussi une piste audio avec <audio> et controls. Utilisez <source> pour plusieurs formats (mp4, webm pour vidéo).',
-                    'description' => 'HTML5 introduit <video> et <audio> pour intégrer du multimédia natif. controls affiche les contrôles, autoplay démarre automatiquement, loop répète, poster définit une image de prévisualisation. <source> permet de spécifier plusieurs formats pour la compatibilité. C\'est la méthode moderne pour le multimédia web.',
+                    'instruction' => $getTranslated('instruction', 'Intégrez une vidéo HTML5 avec les attributs controls, autoplay, loop, et poster. Ajoutez aussi une piste audio avec <audio> et controls. Utilisez <source> pour plusieurs formats (mp4, webm pour vidéo).'),
+                    'description' => $getTranslated('description', 'HTML5 introduit <video> et <audio> pour intégrer du multimédia natif. controls affiche les contrôles, autoplay démarre automatiquement, loop répète, poster définit une image de prévisualisation. <source> permet de spécifier plusieurs formats pour la compatibilité. C\'est la méthode moderne pour le multimédia web.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -1685,16 +1878,16 @@ Votre navigateur ne supporte pas l\'audio.
 
 </body>
 </html>',
-                    'hint' => 'Utilisez <video controls autoplay loop poster="..."> avec <source> pour les formats, et <audio controls> avec <source> pour l\'audio. Ajoutez un texte de fallback entre les balises.'
+                    'hint' => $getTranslated('hint', 'Utilisez <video controls autoplay loop poster="..."> avec <source> pour les formats, et <audio controls> avec <source> pour l\'audio. Ajoutez un texte de fallback entre les balises.')
                 ],
             ],
             'css3' => [
                 1 => [
-                    'title' => 'Les sélecteurs CSS',
-                    'difficulty' => 'Facile',
+                    'title' => $getTranslated('title', 'Les sélecteurs CSS'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
                     'points' => 10,
-                    'instruction' => 'Changez la couleur du texte du paragraphe en bleu en utilisant la propriété CSS color.',
-                    'description' => 'Les sélecteurs CSS permettent de cibler des éléments HTML pour leur appliquer des styles. La propriété color définit la couleur du texte. Les valeurs peuvent être des noms de couleurs (blue, red), des codes hexadécimaux (#0000FF), ou des valeurs RGB. Complétez le code pour que le paragraphe soit bleu.',
+                    'instruction' => $getTranslated('instruction', 'Changez la couleur du texte du paragraphe en bleu en utilisant la propriété CSS color.'),
+                    'description' => $getTranslated('description', 'Les sélecteurs CSS permettent de cibler des éléments HTML pour leur appliquer des styles. La propriété color définit la couleur du texte. Les valeurs peuvent être des noms de couleurs (blue, red), des codes hexadécimaux (#0000FF), ou des valeurs RGB. Complétez le code pour que le paragraphe soit bleu.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -1729,14 +1922,194 @@ Votre navigateur ne supporte pas l\'audio.
 
 </body>
 </html>',
-                    'hint' => 'Utilisez color: blue; dans le sélecteur p. La syntaxe est : color: valeur;'
+                    'hint' => $getTranslated('hint', 'Utilisez color: blue; dans le sélecteur p. La syntaxe est : color: valeur;')
+                ],
+                2 => [
+                    'title' => $getTranslated('title', 'Couleurs et arrière-plans'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 10,
+                    'instruction' => $getTranslated('instruction', 'Changez la couleur de fond de la div en bleu et la couleur du texte en blanc.'),
+                    'description' => $getTranslated('description', 'Les propriétés background-color et color contrôlent respectivement la couleur de fond et du texte. Les valeurs peuvent être des noms (blue, white), des codes hex (#0000FF, #FFFFFF), ou des valeurs RGB/rgba. C\'est la base du style CSS.'),
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Couleurs CSS</title>
+    <style>
+    .box {
+      padding: 20px;
+      
+    }
+    </style>
+</head>
+<body>
+
+<div class="box">Texte dans la boîte</div>
+
+</body>
+</html>',
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Couleurs CSS</title>
+    <style>
+    .box {
+      padding: 20px;
+      background-color: blue;
+      color: white;
+    }
+    </style>
+</head>
+<body>
+
+<div class="box">Texte dans la boîte</div>
+
+</body>
+</html>',
+                    'hint' => $getTranslated('hint', 'Utilisez background-color: blue; pour le fond et color: white; pour le texte.')
+                ],
+                3 => [
+                    'title' => $getTranslated('title', 'Marges et padding'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 10,
+                    'instruction' => $getTranslated('instruction', 'Ajoutez un padding de 20px et une marge de 10px à la div.'),
+                    'description' => $getTranslated('description', 'Le padding crée un espacement interne (entre le contenu et la bordure), tandis que margin crée un espacement externe (entre l\'élément et les autres éléments). Les valeurs peuvent être en px, em, rem, ou %. C\'est fondamental pour le layout CSS.'),
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Marges et Padding</title>
+    <style>
+    .box {
+      background: lightblue;
+      
+    }
+    </style>
+</head>
+<body>
+
+<div class="box">Contenu</div>
+
+</body>
+</html>',
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Marges et Padding</title>
+    <style>
+    .box {
+      background: lightblue;
+      padding: 20px;
+      margin: 10px;
+    }
+    </style>
+</head>
+<body>
+
+<div class="box">Contenu</div>
+
+</body>
+</html>',
+                    'hint' => $getTranslated('hint', 'Utilisez padding: 20px; pour l\'espacement interne et margin: 10px; pour l\'espacement externe.')
+                ],
+                4 => [
+                    'title' => $getTranslated('title', 'Bordures CSS'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 10,
+                    'instruction' => $getTranslated('instruction', 'Ajoutez une bordure solide de 2px de couleur rouge autour de la div.'),
+                    'description' => $getTranslated('description', 'La propriété border crée une bordure autour d\'un élément. La syntaxe est : border: width style color. Les styles courants sont solid, dashed, dotted, double. border peut être défini globalement ou par côté (border-top, border-left, etc.).'),
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Bordures CSS</title>
+    <style>
+    .box {
+      padding: 20px;
+      background: lightgray;
+      
+    }
+    </style>
+</head>
+<body>
+
+<div class="box">Contenu avec bordure</div>
+
+</body>
+</html>',
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Bordures CSS</title>
+    <style>
+    .box {
+      padding: 20px;
+      background: lightgray;
+      border: 2px solid red;
+    }
+    </style>
+</head>
+<body>
+
+<div class="box">Contenu avec bordure</div>
+
+</body>
+</html>',
+                    'hint' => $getTranslated('hint', 'Utilisez border: 2px solid red; pour créer une bordure de 2px, solide, rouge.')
+                ],
+                5 => [
+                    'title' => $getTranslated('title', 'Polices et texte'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 12,
+                    'instruction' => $getTranslated('instruction', 'Changez la police en Arial, la taille en 18px, et mettez le texte en gras.'),
+                    'description' => $getTranslated('description', 'Les propriétés de texte CSS contrôlent l\'apparence du texte. font-family définit la police, font-size la taille, font-weight l\'épaisseur (normal, bold), font-style le style (normal, italic). C\'est essentiel pour la typographie web.'),
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Polices CSS</title>
+    <style>
+    p {
+
+    }
+    </style>
+</head>
+<body>
+
+<p>Texte à styliser</p>
+
+</body>
+</html>',
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Polices CSS</title>
+    <style>
+    p {
+      font-family: Arial, sans-serif;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    </style>
+</head>
+<body>
+
+<p>Texte à styliser</p>
+
+</body>
+</html>',
+                    'hint' => $getTranslated('hint', 'Utilisez font-family: Arial, sans-serif; font-size: 18px; font-weight: bold;')
                 ],
                 6 => [
-                    'title' => 'Flexbox - Centrage',
-                    'difficulty' => 'Moyen',
+                    'title' => $getTranslated('title', 'Flexbox - Centrage'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
                     'points' => 20,
-                    'instruction' => 'Centrez horizontalement et verticalement la div bleue dans son conteneur en utilisant Flexbox.',
-                    'description' => 'Flexbox est un système de mise en page CSS moderne qui facilite l\'alignement et la distribution de l\'espace. display: flex active Flexbox, justify-content centre horizontalement, et align-items centre verticalement. C\'est la méthode moderne pour centrer des éléments.',
+                    'instruction' => $getTranslated('instruction', 'Centrez horizontalement et verticalement la div bleue dans son conteneur en utilisant Flexbox.'),
+                    'description' => $getTranslated('description', 'Flexbox est un système de mise en page CSS moderne qui facilite l\'alignement et la distribution de l\'espace. display: flex active Flexbox, justify-content centre horizontalement, et align-items centre verticalement. C\'est la méthode moderne pour centrer des éléments.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -1747,7 +2120,7 @@ Votre navigateur ne supporte pas l\'audio.
       height: 300px;
       border: 2px solid black;
       
-      
+    
       
     }
     .box {
@@ -1793,14 +2166,14 @@ Votre navigateur ne supporte pas l\'audio.
 
 </body>
 </html>',
-                    'hint' => 'Utilisez display: flex pour activer Flexbox, justify-content: center pour centrer horizontalement, et align-items: center pour centrer verticalement.'
+                    'hint' => $getTranslated('hint', 'Utilisez display: flex pour activer Flexbox, justify-content: center pour centrer horizontalement, et align-items: center pour centrer verticalement.')
                 ],
                 7 => [
-                    'title' => 'Grid Layout',
-                    'difficulty' => 'Moyen',
+                    'title' => $getTranslated('title', 'Grid Layout'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
                     'points' => 20,
-                    'instruction' => 'Créez une grille CSS avec 3 colonnes de largeur égale pour organiser les éléments.',
-                    'description' => 'CSS Grid est un système de mise en page bidimensionnel puissant. display: grid active Grid, et grid-template-columns définit les colonnes. L\'unité fr (fraction) distribue l\'espace disponible. Grid est idéal pour créer des layouts complexes.',
+                    'instruction' => $getTranslated('instruction', 'Créez une grille CSS avec 3 colonnes de largeur égale pour organiser les éléments.'),
+                    'description' => $getTranslated('description', 'CSS Grid est un système de mise en page bidimensionnel puissant. display: grid active Grid, et grid-template-columns définit les colonnes. L\'unité fr (fraction) distribue l\'espace disponible. Grid est idéal pour créer des layouts complexes.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -1855,14 +2228,169 @@ Votre navigateur ne supporte pas l\'audio.
 
 </body>
 </html>',
-                    'hint' => 'Utilisez display: grid pour activer Grid, et grid-template-columns: 1fr 1fr 1fr pour créer 3 colonnes égales.'
+                    'hint' => $getTranslated('hint', 'Utilisez display: grid pour activer Grid, et grid-template-columns: 1fr 1fr 1fr pour créer 3 colonnes égales.')
+                ],
+                8 => [
+                    'title' => $getTranslated('title', 'Responsive Design'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 15,
+                    'instruction' => $getTranslated('instruction', 'Rendez le texte rouge sur les petits écrans (largeur maximale 600px) en utilisant une media query.'),
+                    'description' => $getTranslated('description', 'Le responsive design adapte le design aux différentes tailles d\'écran. Les media queries (@media) permettent d\'appliquer des styles conditionnels selon la largeur de l\'écran. max-width définit la largeur maximale pour laquelle les styles s\'appliquent.'),
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Responsive Design</title>
+    <style>
+    p {
+      color: blue;
+    }
+
+    
+    </style>
+</head>
+<body>
+
+<p>Ce texte doit être rouge sur mobile.</p>
+
+</body>
+</html>',
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Responsive Design</title>
+    <style>
+    p {
+      color: blue;
+    }
+
+    @media (max-width: 600px) {
+      p { color: red; }
+    }
+    </style>
+</head>
+<body>
+
+<p>Ce texte doit être rouge sur mobile.</p>
+
+</body>
+</html>',
+                    'hint' => $getTranslated('hint', 'Utilisez @media (max-width: 600px) { p { color: red; } } pour appliquer le style rouge sur les écrans de moins de 600px.')
+                ],
+                9 => [
+                    'title' => $getTranslated('title', 'Pseudo-classes et pseudo-éléments'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 18,
+                    'instruction' => $getTranslated('instruction', 'Changez la couleur du lien en rouge au survol (hover) et ajoutez un soulignement à la première ligne du paragraphe avec ::first-line.'),
+                    'description' => $getTranslated('description', 'Les pseudo-classes (:hover, :active, :focus) ciblent des états d\'éléments. Les pseudo-éléments (::before, ::after, ::first-line, ::first-letter) ciblent des parties d\'éléments. :hover s\'active au survol, ::first-line cible la première ligne. C\'est puissant pour les interactions.'),
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Pseudo-classes</title>
+    <style>
+    a {
+      color: blue;
+    }
+    
+    </style>
+</head>
+<body>
+
+<a href="#">Lien</a>
+<p>Première ligne du paragraphe. Deuxième ligne du paragraphe.</p>
+
+</body>
+</html>',
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Pseudo-classes</title>
+    <style>
+    a {
+      color: blue;
+    }
+    a:hover {
+      color: red;
+    }
+    p::first-line {
+      text-decoration: underline;
+    }
+    </style>
+</head>
+<body>
+
+<a href="#">Lien</a>
+<p>Première ligne du paragraphe. Deuxième ligne du paragraphe.</p>
+
+</body>
+</html>',
+                    'hint' => $getTranslated('hint', 'Utilisez a:hover { color: red; } pour le survol et p::first-line { text-decoration: underline; } pour la première ligne.')
+                ],
+                10 => [
+                    'title' => $getTranslated('title', 'Transitions CSS'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 20,
+                    'instruction' => $getTranslated('instruction', 'Créez une transition fluide de 0.5s sur le changement de couleur de fond du bouton au survol.'),
+                    'description' => $getTranslated('description', 'Les transitions CSS créent des animations fluides entre deux états. transition définit la propriété, la durée, et le timing-function. C\'est plus simple que les animations pour des changements d\'état. Les transitions améliorent l\'expérience utilisateur.'),
+                    'startCode' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Transitions CSS</title>
+    <style>
+    button {
+      background: blue;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      
+    }
+    button:hover {
+      background: red;
+    }
+    </style>
+</head>
+<body>
+
+<button>Survolez-moi</button>
+
+</body>
+</html>',
+                    'solution' => '<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Transitions CSS</title>
+    <style>
+    button {
+      background: blue;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      transition: background 0.5s;
+    }
+    button:hover {
+      background: red;
+    }
+    </style>
+</head>
+<body>
+
+<button>Survolez-moi</button>
+
+</body>
+</html>',
+                    'hint' => $getTranslated('hint', 'Ajoutez transition: background 0.5s; au bouton pour créer une transition fluide de 0.5 secondes sur la couleur de fond.')
                 ],
                 11 => [
-                    'title' => 'Animations CSS',
-                    'difficulty' => 'Difficile',
+                    'title' => $getTranslated('title', 'Animations CSS'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
                     'points' => 25,
-                    'instruction' => 'Créez une animation CSS qui fait tourner la div violette en continu (rotation 360 degrés).',
-                    'description' => 'Les animations CSS permettent de créer des effets visuels fluides sans JavaScript. @keyframes définit les étapes de l\'animation, et la propriété animation applique l\'animation avec durée, timing-function et répétition. linear assure une vitesse constante, infinite répète indéfiniment.',
+                    'instruction' => $getTranslated('instruction', 'Créez une animation CSS qui fait tourner la div violette en continu (rotation 360 degrés).'),
+                    'description' => $getTranslated('description', 'Les animations CSS permettent de créer des effets visuels fluides sans JavaScript. @keyframes définit les étapes de l\'animation, et la propriété animation applique l\'animation avec durée, timing-function et répétition. linear assure une vitesse constante, infinite répète indéfiniment.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -1913,62 +2441,14 @@ Votre navigateur ne supporte pas l\'audio.
 
 </body>
 </html>',
-                    'hint' => 'Complétez le @keyframes avec to { transform: rotate(360deg); } et ajoutez animation: rotate 2s linear infinite; à .box.'
-                ],
-                8 => [
-                    'title' => 'Responsive Design',
-                    'difficulty' => 'Moyen',
-                    'points' => 15,
-                    'instruction' => 'Rendez le texte rouge sur les petits écrans (largeur maximale 600px) en utilisant une media query.',
-                    'description' => 'Le responsive design adapte le design aux différentes tailles d\'écran. Les media queries (@media) permettent d\'appliquer des styles conditionnels selon la largeur de l\'écran. max-width définit la largeur maximale pour laquelle les styles s\'appliquent.',
-                    'startCode' => '<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Responsive Design</title>
-    <style>
-    p {
-      color: blue;
-    }
-
-    
-    </style>
-</head>
-<body>
-
-<p>Ce texte doit être rouge sur mobile.</p>
-
-</body>
-</html>',
-                    'solution' => '<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Responsive Design</title>
-    <style>
-    p {
-      color: blue;
-    }
-
-    @media (max-width: 600px) {
-      p { color: red; }
-    }
-    </style>
-</head>
-<body>
-
-<p>Ce texte doit être rouge sur mobile.</p>
-
-</body>
-</html>',
-                    'hint' => 'Utilisez @media (max-width: 600px) { p { color: red; } } pour appliquer le style rouge sur les écrans de moins de 600px.'
+                    'hint' => $getTranslated('hint', 'Complétez le @keyframes avec to { transform: rotate(360deg); } et ajoutez animation: rotate 2s linear infinite; à .box.')
                 ],
                 12 => [
-                    'title' => 'CSS Variables',
-                    'difficulty' => 'Difficile',
+                    'title' => $getTranslated('title', 'CSS Variables'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
                     'points' => 25,
-                    'instruction' => 'Créez des variables CSS (--primary-color: blue, --spacing: 20px) et utilisez-les pour styliser les éléments. Changez la couleur de fond et le padding en utilisant var().',
-                    'description' => 'Les variables CSS (custom properties) permettent de stocker des valeurs réutilisables. Définies avec --nom-variable, elles sont accessibles via var(). Elles facilitent la maintenance et permettent de créer des thèmes dynamiques. Les variables sont héritées et peuvent être redéfinies.',
+                    'instruction' => $getTranslated('instruction', 'Créez des variables CSS (--primary-color: blue, --spacing: 20px) et utilisez-les pour styliser les éléments. Changez la couleur de fond et le padding en utilisant var().'),
+                    'description' => $getTranslated('description', 'Les variables CSS (custom properties) permettent de stocker des valeurs réutilisables. Définies avec --nom-variable, elles sont accessibles via var(). Elles facilitent la maintenance et permettent de créer des thèmes dynamiques. Les variables sont héritées et peuvent être redéfinies.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -2014,14 +2494,14 @@ Votre navigateur ne supporte pas l\'audio.
 
 </body>
 </html>',
-                    'hint' => 'Définissez les variables dans :root avec --primary-color: blue; et --spacing: 20px; puis utilisez-les avec var(--primary-color) et var(--spacing).'
+                    'hint' => $getTranslated('hint', 'Définissez les variables dans :root avec --primary-color: blue; et --spacing: 20px; puis utilisez-les avec var(--primary-color) et var(--spacing).')
                 ],
                 13 => [
-                    'title' => 'Advanced Grid Layout',
-                    'difficulty' => 'Difficile',
+                    'title' => $getTranslated('title', 'Advanced Grid Layout'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
                     'points' => 30,
-                    'instruction' => 'Créez une grille CSS complexe avec 3 colonnes (200px, 1fr, 200px), une zone header qui spanne 3 colonnes, et une zone sidebar qui spanne 2 lignes. Utilisez grid-template-areas pour nommer les zones.',
-                    'description' => 'CSS Grid avancé permet de créer des layouts complexes avec grid-template-areas pour nommer les zones, grid-column et grid-row pour le spanning, et des tailles mixtes (px, fr, auto). C\'est la méthode moderne pour créer des layouts de type magazine.',
+                    'instruction' => $getTranslated('instruction', 'Créez une grille CSS complexe avec 3 colonnes (200px, 1fr, 200px), une zone header qui spanne 3 colonnes, et une zone sidebar qui spanne 2 lignes. Utilisez grid-template-areas pour nommer les zones.'),
+                    'description' => $getTranslated('description', 'CSS Grid avancé permet de créer des layouts complexes avec grid-template-areas pour nommer les zones, grid-column et grid-row pour le spanning, et des tailles mixtes (px, fr, auto). C\'est la méthode moderne pour créer des layouts de type magazine.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -2093,301 +2573,14 @@ Votre navigateur ne supporte pas l\'audio.
 
 </body>
 </html>',
-                    'hint' => 'Utilisez grid-template-columns: 200px 1fr 200px; grid-template-areas pour nommer les zones, et grid-area pour assigner les éléments aux zones.'
-                ],
-                2 => [
-                    'title' => 'Couleurs et arrière-plans',
-                    'difficulty' => 'Facile',
-                    'points' => 10,
-                    'instruction' => 'Changez la couleur de fond de la div en bleu et la couleur du texte en blanc.',
-                    'description' => 'Les propriétés background-color et color contrôlent respectivement la couleur de fond et du texte. Les valeurs peuvent être des noms (blue, white), des codes hex (#0000FF, #FFFFFF), ou des valeurs RGB/rgba. C\'est la base du style CSS.',
-                    'startCode' => '<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Couleurs CSS</title>
-    <style>
-    .box {
-      padding: 20px;
-      
-    }
-    </style>
-</head>
-<body>
-
-<div class="box">Texte dans la boîte</div>
-
-</body>
-</html>',
-                    'solution' => '<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Couleurs CSS</title>
-    <style>
-    .box {
-      padding: 20px;
-      background-color: blue;
-      color: white;
-    }
-    </style>
-</head>
-<body>
-
-<div class="box">Texte dans la boîte</div>
-
-</body>
-</html>',
-                    'hint' => 'Utilisez background-color: blue; pour le fond et color: white; pour le texte.'
-                ],
-                3 => [
-                    'title' => 'Marges et padding',
-                    'difficulty' => 'Facile',
-                    'points' => 10,
-                    'instruction' => 'Ajoutez un padding de 20px et une marge de 10px à la div.',
-                    'description' => 'Le padding crée un espacement interne (entre le contenu et la bordure), tandis que margin crée un espacement externe (entre l\'élément et les autres éléments). Les valeurs peuvent être en px, em, rem, ou %. C\'est fondamental pour le layout CSS.',
-                    'startCode' => '<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Marges et Padding</title>
-    <style>
-    .box {
-      background: lightblue;
-      
-    }
-    </style>
-</head>
-<body>
-
-<div class="box">Contenu</div>
-
-</body>
-</html>',
-                    'solution' => '<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Marges et Padding</title>
-    <style>
-    .box {
-      background: lightblue;
-      padding: 20px;
-      margin: 10px;
-    }
-    </style>
-</head>
-<body>
-
-<div class="box">Contenu</div>
-
-</body>
-</html>',
-                    'hint' => 'Utilisez padding: 20px; pour l\'espacement interne et margin: 10px; pour l\'espacement externe.'
-                ],
-                4 => [
-                    'title' => 'Bordures CSS',
-                    'difficulty' => 'Facile',
-                    'points' => 10,
-                    'instruction' => 'Ajoutez une bordure solide de 2px de couleur rouge autour de la div.',
-                    'description' => 'La propriété border crée une bordure autour d\'un élément. La syntaxe est : border: width style color. Les styles courants sont solid, dashed, dotted, double. border peut être défini globalement ou par côté (border-top, border-left, etc.).',
-                    'startCode' => '<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Bordures CSS</title>
-    <style>
-    .box {
-      padding: 20px;
-      background: lightgray;
-      
-    }
-    </style>
-</head>
-<body>
-
-<div class="box">Contenu avec bordure</div>
-
-</body>
-</html>',
-                    'solution' => '<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Bordures CSS</title>
-    <style>
-    .box {
-      padding: 20px;
-      background: lightgray;
-      border: 2px solid red;
-    }
-    </style>
-</head>
-<body>
-
-<div class="box">Contenu avec bordure</div>
-
-</body>
-</html>',
-                    'hint' => 'Utilisez border: 2px solid red; pour créer une bordure de 2px, solide, rouge.'
-                ],
-                5 => [
-                    'title' => 'Polices et texte',
-                    'difficulty' => 'Facile',
-                    'points' => 12,
-                    'instruction' => 'Changez la police en Arial, la taille en 18px, et mettez le texte en gras.',
-                    'description' => 'Les propriétés de texte CSS contrôlent l\'apparence du texte. font-family définit la police, font-size la taille, font-weight l\'épaisseur (normal, bold), font-style le style (normal, italic). C\'est essentiel pour la typographie web.',
-                    'startCode' => '<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Polices CSS</title>
-    <style>
-    p {
-      
-    }
-    </style>
-</head>
-<body>
-
-<p>Texte à styliser</p>
-
-</body>
-</html>',
-                    'solution' => '<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Polices CSS</title>
-    <style>
-    p {
-      font-family: Arial, sans-serif;
-      font-size: 18px;
-      font-weight: bold;
-    }
-    </style>
-</head>
-<body>
-
-<p>Texte à styliser</p>
-
-</body>
-</html>',
-                    'hint' => 'Utilisez font-family: Arial, sans-serif; font-size: 18px; font-weight: bold;'
-                ],
-                9 => [
-                    'title' => 'Pseudo-classes et pseudo-éléments',
-                    'difficulty' => 'Moyen',
-                    'points' => 18,
-                    'instruction' => 'Changez la couleur du lien en rouge au survol (hover) et ajoutez un soulignement à la première ligne du paragraphe avec ::first-line.',
-                    'description' => 'Les pseudo-classes (:hover, :active, :focus) ciblent des états d\'éléments. Les pseudo-éléments (::before, ::after, ::first-line, ::first-letter) ciblent des parties d\'éléments. :hover s\'active au survol, ::first-line cible la première ligne. C\'est puissant pour les interactions.',
-                    'startCode' => '<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Pseudo-classes</title>
-    <style>
-    a {
-      color: blue;
-    }
-    
-    </style>
-</head>
-<body>
-
-<a href="#">Lien</a>
-<p>Première ligne du paragraphe. Deuxième ligne du paragraphe.</p>
-
-</body>
-</html>',
-                    'solution' => '<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Pseudo-classes</title>
-    <style>
-    a {
-      color: blue;
-    }
-    a:hover {
-      color: red;
-    }
-    p::first-line {
-      text-decoration: underline;
-    }
-    </style>
-</head>
-<body>
-
-<a href="#">Lien</a>
-<p>Première ligne du paragraphe. Deuxième ligne du paragraphe.</p>
-
-</body>
-</html>',
-                    'hint' => 'Utilisez a:hover { color: red; } pour le survol et p::first-line { text-decoration: underline; } pour la première ligne.'
-                ],
-                10 => [
-                    'title' => 'Transitions CSS',
-                    'difficulty' => 'Moyen',
-                    'points' => 20,
-                    'instruction' => 'Créez une transition fluide de 0.5s sur le changement de couleur de fond du bouton au survol.',
-                    'description' => 'Les transitions CSS créent des animations fluides entre deux états. transition définit la propriété, la durée, et le timing-function. C\'est plus simple que les animations pour des changements d\'état. Les transitions améliorent l\'expérience utilisateur.',
-                    'startCode' => '<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Transitions CSS</title>
-    <style>
-    button {
-      background: blue;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      
-    }
-    button:hover {
-      background: red;
-    }
-    </style>
-</head>
-<body>
-
-<button>Survolez-moi</button>
-
-</body>
-</html>',
-                    'solution' => '<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Transitions CSS</title>
-    <style>
-    button {
-      background: blue;
-      color: white;
-      padding: 10px 20px;
-      border: none;
-      transition: background 0.5s;
-    }
-    button:hover {
-      background: red;
-    }
-    </style>
-</head>
-<body>
-
-<button>Survolez-moi</button>
-
-</body>
-</html>',
-                    'hint' => 'Ajoutez transition: background 0.5s; au bouton pour créer une transition fluide de 0.5 secondes sur la couleur de fond.'
+                    'hint' => $getTranslated('hint', 'Utilisez grid-template-columns: 200px 1fr 200px; grid-template-areas pour nommer les zones, et grid-area pour assigner les éléments aux zones.')
                 ],
                 14 => [
-                    'title' => 'Transformations CSS 3D',
-                    'difficulty' => 'Difficile',
+                    'title' => $getTranslated('title', 'Transformations CSS 3D'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
                     'points' => 28,
-                    'instruction' => 'Créez une transformation 3D qui fait tourner la div de 45 degrés sur l\'axe Y (rotateY) avec une perspective de 1000px sur le conteneur parent.',
-                    'description' => 'Les transformations 3D CSS créent des effets de profondeur. transform: rotateY() fait tourner sur l\'axe Y, perspective sur le parent crée la profondeur 3D. transform-style: preserve-3d maintient la 3D. C\'est avancé mais puissant pour les effets visuels.',
+                    'instruction' => $getTranslated('instruction', 'Créez une transformation 3D qui fait tourner la div de 45 degrés sur l\'axe Y (rotateY) avec une perspective de 1000px sur le conteneur parent.'),
+                    'description' => $getTranslated('description', 'Les transformations 3D CSS créent des effets de profondeur. transform: rotateY() fait tourner sur l\'axe Y, perspective sur le parent crée la profondeur 3D. transform-style: preserve-3d maintient la 3D. C\'est avancé mais puissant pour les effets visuels.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -2442,14 +2635,14 @@ Votre navigateur ne supporte pas l\'audio.
 
 </body>
 </html>',
-                    'hint' => 'Ajoutez perspective: 1000px; au conteneur et transform: rotateY(45deg); à la box pour créer la rotation 3D.'
+                    'hint' => $getTranslated('hint', 'Ajoutez perspective: 1000px; au conteneur et transform: rotateY(45deg); à la box pour créer la rotation 3D.')
                 ],
                 15 => [
-                    'title' => 'CSS Architecture (BEM, SMACSS)',
-                    'difficulty' => 'Difficile',
+                    'title' => $getTranslated('title', 'CSS Architecture (BEM, SMACSS)'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
                     'points' => 30,
-                    'instruction' => 'Créez une structure CSS suivant la méthodologie BEM (Block Element Modifier). Créez un bloc "card", un élément "card__title", et un modificateur "card--highlighted".',
-                    'description' => 'BEM (Block Element Modifier) est une méthodologie de nommage CSS. Block = composant indépendant, Element = partie du bloc (__element), Modifier = variation (--modifier). SMACSS organise le CSS en catégories (Base, Layout, Module, State, Theme). C\'est essentiel pour maintenir du CSS à grande échelle.',
+                    'instruction' => $getTranslated('instruction', 'Créez une structure CSS suivant la méthodologie BEM (Block Element Modifier). Créez un bloc "card", un élément "card__title", et un modificateur "card--highlighted".'),
+                    'description' => $getTranslated('description', 'BEM (Block Element Modifier) est une méthodologie de nommage CSS. Block = composant indépendant, Element = partie du bloc (__element), Modifier = variation (--modifier). SMACSS organise le CSS en catégories (Base, Layout, Module, State, Theme). C\'est essentiel pour maintenir du CSS à grande échelle.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -2513,11 +2706,11 @@ Votre navigateur ne supporte pas l\'audio.
             ],
             'javascript' => [
                 1 => [
-                    'title' => 'Variables et types',
-                    'difficulty' => 'Facile',
+                    'title' => $getTranslated('title', 'Variables et types'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
                     'points' => 10,
-                    'instruction' => 'Créez une variable "nom" avec votre prénom et affichez-la dans l\'élément avec l\'id "demo".',
-                    'description' => 'Les variables JavaScript stockent des valeurs. let permet de déclarer une variable modifiable, const une constante. Les chaînes de caractères sont entre guillemets. document.getElementById() sélectionne un élément par son ID, et innerHTML modifie son contenu HTML.',
+                    'instruction' => $getTranslated('instruction', 'Créez une variable "nom" avec votre prénom et affichez-la dans l\'élément avec l\'id "demo".'),
+                    'description' => $getTranslated('description', 'Les variables JavaScript stockent des valeurs. let permet de déclarer une variable modifiable, const une constante. Les chaînes de caractères sont entre guillemets. document.getElementById() sélectionne un élément par son ID, et innerHTML modifie son contenu HTML.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -2554,14 +2747,14 @@ document.getElementById("demo").innerHTML = nom;
 
 </body>
 </html>',
-                    'hint' => 'Utilisez let nom = "VotreNom"; pour déclarer la variable, puis document.getElementById("demo").innerHTML = nom; pour l\'afficher.'
+                    'hint' => $getTranslated('hint', 'Utilisez let nom = "VotreNom"; pour déclarer la variable, puis document.getElementById("demo").innerHTML = nom; pour l\'afficher.')
                 ],
                 2 => [
-                    'title' => 'Fonctions',
-                    'difficulty' => 'Facile',
+                    'title' => $getTranslated('title', 'Fonctions'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
                     'points' => 15,
-                    'instruction' => 'Créez une fonction qui additionne deux nombres.',
-                    'description' => 'Utilisez function pour créer une fonction.',
+                    'instruction' => $getTranslated('instruction', 'Créez une fonction qui additionne deux nombres.'),
+                    'description' => $getTranslated('description', 'Les fonctions JavaScript organisent le code réutilisable. function nomFonction(param1, param2) { return valeur; } définit une fonction. return retourne une valeur. Les fonctions peuvent avoir des paramètres par défaut. C\'est essentiel pour éviter la duplication de code.'),
                     'startCode' => '<html>
 <body>
 
@@ -2592,14 +2785,14 @@ document.getElementById("demo").innerHTML = resultat;
 
 </body>
 </html>',
-                    'hint' => 'Créez function additionner(a, b) { return a + b; }'
+                    'hint' => $getTranslated('hint', 'Créez function additionner(a, b) { return a + b; }')
                 ],
                 3 => [
-                    'title' => 'Conditions if/else',
-                    'difficulty' => 'Facile',
+                    'title' => $getTranslated('title', 'Conditions if/else'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
                     'points' => 12,
-                    'instruction' => 'Créez une condition if/else qui affiche "Majeur" si l\'âge est >= 18, sinon "Mineur".',
-                    'description' => 'Les conditions if/else permettent d\'exécuter du code de manière conditionnelle. if (condition) exécute le code si la condition est vraie, else exécute le code alternatif. Les opérateurs de comparaison (==, ===, <, >, <=, >=) comparent des valeurs. C\'est fondamental pour la logique de programmation.',
+                    'instruction' => $getTranslated('instruction', 'Créez une condition if/else qui affiche "Majeur" si l\'âge est >= 18, sinon "Mineur".'),
+                    'description' => $getTranslated('description', 'Les conditions if/else permettent d\'exécuter du code de manière conditionnelle. if (condition) exécute le code si la condition est vraie, else exécute le code alternatif. Les opérateurs de comparaison (==, ===, <, >, <=, >=) comparent des valeurs. C\'est fondamental pour la logique de programmation.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -2644,14 +2837,14 @@ document.getElementById("demo").innerHTML = statut;
 
 </body>
 </html>',
-                    'hint' => 'Utilisez if (age >= 18) { statut = "Majeur"; } else { statut = "Mineur"; } pour créer la condition.'
+                    'hint' => $getTranslated('hint', 'Utilisez if (age >= 18) { statut = "Majeur"; } else { statut = "Mineur"; } pour créer la condition.')
                 ],
                 4 => [
-                    'title' => 'Boucles for et while',
-                    'difficulty' => 'Facile',
+                    'title' => $getTranslated('title', 'Boucles for et while'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
                     'points' => 12,
-                    'instruction' => 'Affichez les nombres de 1 à 5 en utilisant une boucle for.',
-                    'description' => 'Les boucles répètent du code. for (initialisation; condition; incrément) répète tant que la condition est vraie. while (condition) répète aussi, mais l\'incrément doit être géré manuellement. Les boucles sont essentielles pour traiter des collections de données.',
+                    'instruction' => $getTranslated('instruction', 'Affichez les nombres de 1 à 5 en utilisant une boucle for.'),
+                    'description' => $getTranslated('description', 'Les boucles répètent du code. for (initialisation; condition; incrément) répète tant que la condition est vraie. while (condition) répète aussi, mais l\'incrément doit être géré manuellement. Les boucles sont essentielles pour traiter des collections de données.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -2693,14 +2886,14 @@ document.getElementById("demo").innerHTML = texte;
 
 </body>
 </html>',
-                    'hint' => 'Utilisez for (let i = 1; i <= 5; i++) { texte += i + " "; } pour créer la boucle.'
+                    'hint' => $getTranslated('hint', 'Utilisez for (let i = 1; i <= 5; i++) { texte += i + " "; } pour créer la boucle.')
                 ],
                 5 => [
-                    'title' => 'Opérateurs JavaScript',
-                    'difficulty' => 'Facile',
+                    'title' => $getTranslated('title', 'Opérateurs JavaScript'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
                     'points' => 10,
-                    'instruction' => 'Utilisez les opérateurs arithmétiques pour calculer et afficher le résultat de (10 + 5) * 2.',
-                    'description' => 'Les opérateurs JavaScript effectuent des opérations. + (addition), - (soustraction), * (multiplication), / (division), % (modulo). Les opérateurs de comparaison (==, ===, !=, !==, <, >, <=, >=) comparent des valeurs. Les opérateurs logiques (&&, ||, !) combinent des conditions.',
+                    'instruction' => $getTranslated('instruction', 'Utilisez les opérateurs arithmétiques pour calculer et afficher le résultat de (10 + 5) * 2.'),
+                    'description' => $getTranslated('description', 'Les opérateurs JavaScript effectuent des opérations. + (addition), - (soustraction), * (multiplication), / (division), % (modulo). Les opérateurs de comparaison (==, ===, !=, !==, <, >, <=, >=) comparent des valeurs. Les opérateurs logiques (&&, ||, !) combinent des conditions.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -2739,14 +2932,14 @@ document.getElementById("demo").innerHTML = resultat;
 
 </body>
 </html>',
-                    'hint' => 'Utilisez let resultat = (10 + 5) * 2; pour calculer. Les parenthèses contrôlent l\'ordre des opérations.'
+                    'hint' => $getTranslated('hint', 'Utilisez let resultat = (10 + 5) * 2; pour calculer le résultat.')
                 ],
                 6 => [
-                    'title' => 'DOM Manipulation',
-                    'difficulty' => 'Moyen',
+                    'title' => $getTranslated('title', 'DOM Manipulation'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
                     'points' => 20,
-                    'instruction' => 'Changez le texte du bouton en "Cliqué !" quand on clique dessus.',
-                    'description' => 'Utilisez addEventListener et innerHTML.',
+                    'instruction' => $getTranslated('instruction', 'Sélectionnez l\'élément avec l\'id "titre" et changez son contenu en "Nouveau Titre".'),
+                    'description' => $getTranslated('description', 'Le DOM (Document Object Model) représente la structure HTML. document.getElementById() sélectionne par ID, querySelector() par sélecteur CSS. innerHTML modifie le contenu HTML, textContent modifie le texte. C\'est essentiel pour créer des interfaces interactives.'),
                     'startCode' => '<html>
 <body>
 
@@ -2774,14 +2967,14 @@ bouton.addEventListener("click", function() {
 
 </body>
 </html>',
-                    'hint' => 'Utilisez bouton.addEventListener("click", function() { bouton.innerHTML = "Cliqué !"; });'
+                    'hint' => $getTranslated('hint', 'Utilisez document.getElementById("titre").innerHTML = "Nouveau Titre"; pour modifier le contenu.')
                 ],
                 7 => [
-                    'title' => 'Tableaux et boucles',
-                    'difficulty' => 'Moyen',
+                    'title' => $getTranslated('title', 'Tableaux et boucles'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
                     'points' => 20,
-                    'instruction' => 'Affichez tous les fruits du tableau avec une boucle.',
-                    'description' => 'Utilisez une boucle for ou forEach.',
+                    'instruction' => $getTranslated('instruction', 'Créez un tableau avec 3 fruits et affichez chaque fruit avec une boucle forEach.'),
+                    'description' => $getTranslated('description', 'Les tableaux JavaScript stockent des collections ordonnées. [] crée un tableau, push() ajoute un élément, forEach() parcourt tous les éléments. Les tableaux sont fondamentaux en JavaScript.'),
                     'startCode' => '<html>
 <body>
 
@@ -2816,14 +3009,14 @@ document.getElementById("demo").innerHTML = texte;
 
 </body>
 </html>',
-                    'hint' => 'Utilisez for (let i = 0; i < fruits.length; i++) { texte += fruits[i] + " "; }'
+                    'hint' => $getTranslated('hint', 'Créez let fruits = ["Pomme", "Banane", "Orange"]; puis fruits.forEach(fruit => console.log(fruit));')
                 ],
                 8 => [
-                    'title' => 'Événements JavaScript',
-                    'difficulty' => 'Moyen',
+                    'title' => $getTranslated('title', 'Événements JavaScript'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
                     'points' => 18,
-                    'instruction' => 'Créez un événement qui change la couleur de fond de la div en rouge quand on passe la souris dessus (mouseover) et en bleu quand on la quitte (mouseout).',
-                    'description' => 'Les événements JavaScript permettent d\'interagir avec la page. addEventListener attache un gestionnaire d\'événement. mouseover se déclenche au survol, mouseout à la sortie. Les événements sont essentiels pour créer des interfaces interactives.',
+                    'instruction' => $getTranslated('instruction', 'Ajoutez un événement click sur un bouton qui affiche "Clic effectué !" dans la console.'),
+                    'description' => $getTranslated('description', 'Les événements JavaScript réagissent aux interactions utilisateur. addEventListener() attache un gestionnaire d\'événements. Les événements courants sont click, mouseover, keydown, submit. C\'est essentiel pour l\'interactivité web.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -2880,14 +3073,14 @@ box.addEventListener("mouseout", function() {
 
 </body>
 </html>',
-                    'hint' => 'Utilisez addEventListener("mouseover", ...) pour le survol et addEventListener("mouseout", ...) pour la sortie. Modifiez box.style.backgroundColor.'
+                    'hint' => $getTranslated('hint', 'Utilisez button.addEventListener("click", () => { console.log("Clic effectué !"); });')
                 ],
                 9 => [
-                    'title' => 'Manipulation de chaînes',
-                    'difficulty' => 'Moyen',
+                    'title' => $getTranslated('title', 'Manipulation de chaînes'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
                     'points' => 15,
-                    'instruction' => 'Concaténez deux chaînes "Bonjour" et "Monde" avec un espace entre elles, puis convertissez le résultat en majuscules.',
-                    'description' => 'Les chaînes JavaScript ont de nombreuses méthodes. + concatène, toUpperCase() met en majuscules, toLowerCase() en minuscules, length retourne la longueur, substring() extrait une partie, indexOf() trouve une position. C\'est essentiel pour manipuler du texte.',
+                    'instruction' => $getTranslated('instruction', 'Créez une chaîne "Bonjour" et utilisez toUpperCase() pour l\'afficher en majuscules.'),
+                    'description' => $getTranslated('description', 'Les chaînes JavaScript ont de nombreuses méthodes. toUpperCase() convertit en majuscules, toLowerCase() en minuscules, length retourne la longueur, substring() extrait une partie. C\'est essentiel pour traiter du texte.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -2929,14 +3122,14 @@ document.getElementById("demo").innerHTML = resultat;
 
 </body>
 </html>',
-                    'hint' => 'Utilisez (chaine1 + " " + chaine2).toUpperCase() pour concaténer avec un espace et convertir en majuscules.'
+                    'hint' => $getTranslated('hint', 'Utilisez let texte = "Bonjour"; puis texte.toUpperCase();')
                 ],
                 10 => [
-                    'title' => 'Fonctions fléchées',
-                    'difficulty' => 'Moyen',
+                    'title' => $getTranslated('title', 'Fonctions fléchées'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
                     'points' => 20,
-                    'instruction' => 'Convertissez la fonction normale en fonction fléchée (arrow function). La fonction doit multiplier deux nombres.',
-                    'description' => 'Les fonctions fléchées (=>) sont une syntaxe concise introduite en ES6. (a, b) => a + b est équivalent à function(a, b) { return a + b; }. Elles n\'ont pas leur propre this, ce qui est utile pour les callbacks. C\'est la syntaxe moderne recommandée.',
+                    'instruction' => $getTranslated('instruction', 'Convertissez la fonction function multiplier(a, b) { return a * b; } en fonction fléchée.'),
+                    'description' => $getTranslated('description', 'Les fonctions fléchées (arrow functions) sont une syntaxe ES6 concise. (param) => expression remplace function(param) { return expression; }. Elles préservent le contexte this. C\'est la syntaxe moderne recommandée.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -2977,14 +3170,14 @@ document.getElementById("demo").innerHTML = resultat;
 
 </body>
 </html>',
-                    'hint' => 'Remplacez function multiplier(a, b) { return a * b; } par const multiplier = (a, b) => a * b;'
+                    'hint' => $getTranslated('hint', 'Utilisez const multiplier = (a, b) => a * b;')
                 ],
                 11 => [
-                    'title' => 'Objets JavaScript',
-                    'difficulty' => 'Difficile',
+                    'title' => $getTranslated('title', 'Objets JavaScript'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
                     'points' => 30,
-                    'instruction' => 'Créez un objet "personne" avec les propriétés nom et age, puis affichez le nom dans l\'élément avec l\'id "demo".',
-                    'description' => 'Les objets JavaScript sont des collections de propriétés (clé-valeur). La syntaxe littérale { propriété: valeur } crée un objet. L\'accès aux propriétés se fait avec point (objet.propriété) ou crochets (objet["propriété"]). Les objets permettent de structurer des données complexes.',
+                    'instruction' => $getTranslated('instruction', 'Créez un objet personne avec les propriétés nom et age, puis affichez-les.'),
+                    'description' => $getTranslated('description', 'Les objets JavaScript stockent des paires clé-valeur. {} crée un objet, .propriété accède à une propriété, [\'propriété\'] aussi. Les objets sont fondamentaux pour représenter des données structurées.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -3024,14 +3217,14 @@ document.getElementById("demo").innerHTML = personne.nom;
 
 </body>
 </html>',
-                    'hint' => 'Créez let personne = { nom: "Marie", age: 25 }; pour définir l\'objet, puis accédez à la propriété avec personne.nom.'
+                    'hint' => $getTranslated('hint', 'Créez let personne = { nom: "Jean", age: 30 }; puis console.log(personne.nom, personne.age);')
                 ],
                 12 => [
-                    'title' => 'Promises et Async/Await',
-                    'difficulty' => 'Difficile',
+                    'title' => $getTranslated('title', 'Promises et Async/Await'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
                     'points' => 28,
-                    'instruction' => 'Créez une fonction asynchrone qui simule une requête API avec fetch(). Affichez les données dans l\'élément avec l\'id "demo". Utilisez async/await pour gérer la promesse.',
-                    'description' => 'Les Promises gèrent les opérations asynchrones. async/await est une syntaxe moderne pour travailler avec les promesses. fetch() fait des requêtes HTTP et retourne une Promise. await attend la résolution de la Promise. C\'est essentiel pour les appels API modernes.',
+                    'instruction' => $getTranslated('instruction', 'Créez une Promise qui se résout après 1 seconde avec la valeur "Succès" et utilisez async/await pour l\'attendre.'),
+                    'description' => $getTranslated('description', 'Les Promises gèrent les opérations asynchrones. new Promise() crée une promise, then() gère le succès, catch() gère les erreurs. async/await est une syntaxe moderne pour les promises. C\'est essentiel pour les appels API.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -3076,14 +3269,14 @@ chargerDonnees();
 
 </body>
 </html>',
-                    'hint' => 'Créez async function chargerDonnees() { const response = await fetch("URL"); const data = await response.json(); document.getElementById("demo").innerHTML = data.title; } puis appelez chargerDonnees();'
+                    'hint' => $getTranslated('hint', 'Créez const promise = new Promise(resolve => setTimeout(() => resolve("Succès"), 1000)); puis const resultat = await promise;')
                 ],
                 13 => [
-                    'title' => 'Closures et Scope',
-                    'difficulty' => 'Difficile',
+                    'title' => $getTranslated('title', 'Closures et Scope'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
                     'points' => 30,
-                    'instruction' => 'Créez une fonction qui retourne une autre fonction (closure). La fonction interne doit avoir accès à une variable de la fonction externe. Appelez la fonction retournée et affichez le résultat.',
-                    'description' => 'Les closures permettent à une fonction interne d\'accéder aux variables de la fonction externe même après que la fonction externe soit terminée. Le scope (portée) détermine l\'accessibilité des variables. Les closures sont fondamentales pour la programmation fonctionnelle et la création de fonctions privées.',
+                    'instruction' => $getTranslated('instruction', 'Créez une fonction qui retourne une fonction interne qui incrémente un compteur privé.'),
+                    'description' => $getTranslated('description', 'Les closures permettent à une fonction interne d\'accéder aux variables de la fonction externe même après que la fonction externe soit terminée. C\'est puissant pour créer des variables privées et des fonctions factory.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -3127,14 +3320,14 @@ document.getElementById("demo").innerHTML = incrementer();
 
 </body>
 </html>',
-                    'hint' => 'Créez function creerCompteur() { let compteur = 0; return function() { compteur++; return compteur; }; } puis const incrementer = creerCompteur(); et appelez incrementer().'
+                    'hint' => $getTranslated('hint', 'Créez function creerCompteur() { let compteur = 0; return function() { compteur++; return compteur; }; }')
                 ],
                 14 => [
-                    'title' => 'Destructuring et Spread',
-                    'difficulty' => 'Difficile',
+                    'title' => $getTranslated('title', 'Destructuring et Spread'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
                     'points' => 25,
-                    'instruction' => 'Utilisez le destructuring pour extraire "nom" et "age" de l\'objet personne, puis utilisez le spread operator pour copier le tableau fruits dans un nouveau tableau.',
-                    'description' => 'Le destructuring extrait des valeurs d\'objets ou tableaux. const {nom, age} = personne extrait les propriétés. Le spread operator (...) copie ou fusionne des tableaux/objets. const nouveau = [...ancien] copie un tableau. C\'est une syntaxe moderne ES6 très utilisée.',
+                    'instruction' => $getTranslated('instruction', 'Utilisez le destructuring pour extraire "nom" et "age" de l\'objet personne, puis utilisez le spread operator pour copier le tableau fruits dans un nouveau tableau.'),
+                    'description' => $getTranslated('description', 'Le destructuring extrait des valeurs d\'objets ou tableaux. const {nom, age} = personne extrait les propriétés. Le spread operator (...) copie ou fusionne des tableaux/objets. const nouveau = [...ancien] copie un tableau. C\'est une syntaxe moderne ES6 très utilisée.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -3185,14 +3378,14 @@ document.getElementById("demo").innerHTML = nom + " " + age + " - " + nouveauFru
 
 </body>
 </html>',
-                    'hint' => 'Utilisez const { nom, age } = personne; pour le destructuring et const nouveauFruits = [...fruits]; pour le spread.'
+                    'hint' => $getTranslated('hint', 'Utilisez const { nom, age } = personne; pour le destructuring et const nouveauFruits = [...fruits]; pour le spread.')
                 ],
                 15 => [
-                    'title' => 'Modules ES6 (import/export)',
-                    'difficulty' => 'Difficile',
+                    'title' => $getTranslated('title', 'Modules ES6 (import/export)'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
                     'points' => 28,
-                    'instruction' => 'Créez un module qui exporte une fonction "multiplier" et importez-la dans le script principal. Utilisez export et import.',
-                    'description' => 'Les modules ES6 permettent d\'organiser le code en fichiers séparés. export expose des fonctions/variables, import les importe. C\'est la méthode moderne pour structurer du JavaScript. Les modules améliorent la maintenabilité et permettent le tree-shaking.',
+                    'instruction' => $getTranslated('instruction', 'Créez un module qui exporte une fonction "multiplier" et importez-la dans le script principal. Utilisez export et import.'),
+                    'description' => $getTranslated('description', 'Les modules ES6 permettent d\'organiser le code en fichiers séparés. export expose des fonctions/variables, import les importe. C\'est la méthode moderne pour structurer du JavaScript. Les modules améliorent la maintenabilité et permettent le tree-shaking.'),
                     'startCode' => '/* math.js */
 // Exportez la fonction multiplier
 
@@ -3220,11 +3413,11 @@ console.log(resultat);',
             ],
             'php' => [
                 1 => [
-                    'title' => 'Syntaxe de base PHP',
-                    'difficulty' => 'Facile',
+                    'title' => $getTranslated('title', 'Syntaxe de base PHP'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
                     'points' => 10,
-                    'instruction' => 'Affichez "Bonjour PHP" avec echo.',
-                    'description' => 'Utilisez la balise PHP et echo pour afficher du texte.',
+                    'instruction' => $getTranslated('instruction', 'Affichez "Bonjour PHP" avec echo.'),
+                    'description' => $getTranslated('description', 'La syntaxe PHP utilise <?php ?> pour délimiter le code. echo affiche du texte. C\'est la base de PHP.'),
                     'startCode' => '<html>
 <body>
 
@@ -3243,14 +3436,14 @@ echo "Bonjour PHP";
 
 </body>
 </html>',
-                    'hint' => 'Utilisez echo "Bonjour PHP"; entre les balises PHP.'
+                    'hint' => $getTranslated('hint', 'Utilisez echo "Bonjour PHP"; entre les balises PHP.')
                 ],
                 2 => [
-                    'title' => 'Variables PHP',
-                    'difficulty' => 'Facile',
+                    'title' => $getTranslated('title', 'Variables PHP'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
                     'points' => 10,
-                    'instruction' => 'Créez une variable $nom avec votre prénom et affichez-la.',
-                    'description' => 'Les variables PHP commencent par $.',
+                    'instruction' => $getTranslated('instruction', 'Créez une variable $nom avec votre prénom et affichez-la.'),
+                    'description' => $getTranslated('description', 'Les variables PHP commencent par $. Elles sont typées dynamiquement. C\'est la base de PHP.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -3281,14 +3474,14 @@ echo $nom;
 
 </body>
 </html>',
-                    'hint' => 'Créez $nom = "Pierre"; puis echo $nom;'
+                    'hint' => $getTranslated('hint', 'Créez $nom = "VotreNom"; puis echo $nom;')
                 ],
                 3 => [
-                    'title' => 'Opérateurs PHP',
-                    'difficulty' => 'Facile',
+                    'title' => $getTranslated('title', 'Opérateurs PHP'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
                     'points' => 10,
-                    'instruction' => 'Utilisez les opérateurs arithmétiques pour calculer et afficher le résultat de (10 + 5) * 2.',
-                    'description' => 'Les opérateurs PHP effectuent des opérations. + (addition), - (soustraction), * (multiplication), / (division), % (modulo). Les opérateurs de comparaison (==, ===, !=, !==, <, >, <=, >=) comparent des valeurs. Les opérateurs logiques (&&, ||, !) combinent des conditions.',
+                    'instruction' => $getTranslated('instruction', 'Calculez la somme de 10 et 5, puis affichez le résultat.'),
+                    'description' => $getTranslated('description', 'PHP supporte les opérateurs arithmétiques : +, -, *, /, %, **. Les opérateurs de comparaison (==, ===, <, >) comparent des valeurs.'),
                     'startCode' => '<html>
 <body>
 
@@ -3312,14 +3505,14 @@ echo $resultat;
 
 </body>
 </html>',
-                    'hint' => 'Utilisez $resultat = (10 + 5) * 2; pour calculer. Les parenthèses contrôlent l\'ordre des opérations.'
+                    'hint' => $getTranslated('hint', 'Utilisez $resultat = (10 + 5) * 2; pour calculer.')
                 ],
                 4 => [
-                    'title' => 'Chaînes de caractères PHP',
-                    'difficulty' => 'Facile',
+                    'title' => $getTranslated('title', 'Chaînes de caractères PHP'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
                     'points' => 12,
-                    'instruction' => 'Concaténez deux chaînes "Bonjour" et "PHP" avec un point (.), puis affichez le résultat en majuscules avec strtoupper().',
-                    'description' => 'Les chaînes PHP peuvent être concaténées avec le point (.). strtoupper() met en majuscules, strtolower() en minuscules, strlen() retourne la longueur, substr() extrait une partie, strpos() trouve une position. C\'est essentiel pour manipuler du texte.',
+                    'instruction' => $getTranslated('instruction', 'Concaténez deux chaînes "Bonjour" et "PHP" avec un point (.), puis affichez le résultat en majuscules avec strtoupper().'),
+                    'description' => $getTranslated('description', 'Les chaînes PHP peuvent être concaténées avec le point (.). strtoupper() met en majuscules, strtolower() en minuscules, strlen() retourne la longueur, substr() extrait une partie, strpos() trouve une position. C\'est essentiel pour manipuler du texte.'),
                     'startCode' => '<html>
 <body>
 
@@ -3347,14 +3540,14 @@ echo $resultat;
 
 </body>
 </html>',
-                    'hint' => 'Utilisez $resultat = strtoupper($chaine1 . " " . $chaine2); pour concaténer avec un espace et convertir en majuscules.'
+                    'hint' => $getTranslated('hint', 'Utilisez $resultat = strtoupper($chaine1 . " " . $chaine2); pour concaténer avec un espace et convertir en majuscules.')
                 ],
                 5 => [
-                    'title' => 'Commentaires PHP',
-                    'difficulty' => 'Facile',
+                    'title' => $getTranslated('title', 'Commentaires PHP'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
                     'points' => 8,
-                    'instruction' => 'Ajoutez un commentaire sur une ligne et un commentaire sur plusieurs lignes dans le code PHP.',
-                    'description' => 'Les commentaires PHP documentent le code. // crée un commentaire sur une ligne, # aussi, /* */ crée un commentaire multi-lignes. Les commentaires ne sont pas exécutés. C\'est essentiel pour la maintenabilité du code.',
+                    'instruction' => $getTranslated('instruction', 'Ajoutez un commentaire sur une ligne et un commentaire sur plusieurs lignes dans le code PHP.'),
+                    'description' => $getTranslated('description', 'Les commentaires PHP documentent le code. // crée un commentaire sur une ligne, # aussi, /* */ crée un commentaire multi-lignes. Les commentaires ne sont pas exécutés. C\'est essentiel pour la maintenabilité du code.'),
                     'startCode' => '<html>
 <body>
 
@@ -3377,14 +3570,14 @@ echo "Hello World";
 
 </body>
 </html>',
-                    'hint' => 'Utilisez // pour un commentaire sur une ligne et /* */ pour un commentaire multi-lignes.'
+                    'hint' => $getTranslated('hint', 'Utilisez // pour un commentaire sur une ligne et /* */ pour un commentaire multi-lignes.')
                 ],
                 6 => [
-                    'title' => 'Conditions PHP',
-                    'difficulty' => 'Moyen',
+                    'title' => $getTranslated('title', 'Conditions PHP'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
                     'points' => 15,
-                    'instruction' => 'Affichez "Majeur" si $age >= 18, sinon "Mineur".',
-                    'description' => 'Utilisez if/else en PHP.',
+                    'instruction' => $getTranslated('instruction', 'Affichez "Majeur" si $age >= 18, sinon "Mineur".'),
+                    'description' => $getTranslated('description', 'Les conditions PHP utilisent if/elseif/else. Les opérateurs de comparaison (==, ===, <, >, <=, >=) comparent des valeurs.'),
                     'startCode' => '<html>
 <body>
 
@@ -3449,14 +3642,14 @@ for ($i = 1; $i <= 5; $i++) {
 
 </body>
 </html>',
-                    'hint' => 'Utilisez for ($i = 1; $i <= 5; $i++) { echo $i . " "; }'
+                    'hint' => $getTranslated('hint', 'Utilisez for ($i = 1; $i <= 5; $i++) { echo $i; }')
                 ],
                 8 => [
-                    'title' => 'Fonctions PHP',
-                    'difficulty' => 'Moyen',
+                    'title' => $getTranslated('title', 'Fonctions PHP'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
                     'points' => 18,
-                    'instruction' => 'Créez une fonction "calculerCarre" qui prend un nombre en paramètre et retourne son carré. Appelez la fonction avec 5 et affichez le résultat.',
-                    'description' => 'Les fonctions PHP organisent le code réutilisable. function nomFonction($param) { return valeur; } définit une fonction. return retourne une valeur. Les fonctions peuvent avoir des paramètres par défaut. C\'est essentiel pour éviter la duplication de code.',
+                    'instruction' => $getTranslated('instruction', 'Créez une fonction "calculerCarre" qui prend un nombre en paramètre et retourne son carré. Appelez la fonction avec 5 et affichez le résultat.'),
+                    'description' => $getTranslated('description', 'Les fonctions PHP organisent le code réutilisable. function nomFonction($param) { return valeur; } définit une fonction. return retourne une valeur. Les fonctions peuvent avoir des paramètres par défaut. C\'est essentiel pour éviter la duplication de code.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -3493,14 +3686,14 @@ echo $resultat;
 
 </body>
 </html>',
-                    'hint' => 'Créez function calculerCarre($nombre) { return $nombre * $nombre; } puis appelez calculerCarre(5).'
+                    'hint' => $getTranslated('hint', 'Créez function calculerCarre($nombre) { return $nombre * $nombre; } puis appelez calculerCarre(5).')
                 ],
                 9 => [
-                    'title' => 'Tableaux simples PHP',
-                    'difficulty' => 'Moyen',
+                    'title' => $getTranslated('title', 'Tableaux simples PHP'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
                     'points' => 18,
-                    'instruction' => 'Créez un tableau simple avec 3 fruits, puis affichez chaque fruit avec une boucle foreach.',
-                    'description' => 'Les tableaux PHP simples sont indexés numériquement. array() ou [] crée un tableau. foreach parcourt tous les éléments. count() retourne le nombre d\'éléments. Les tableaux sont fondamentaux en PHP.',
+                    'instruction' => $getTranslated('instruction', 'Créez un tableau simple avec 3 fruits, puis affichez chaque fruit avec une boucle foreach.'),
+                    'description' => $getTranslated('description', 'Les tableaux PHP simples sont indexés numériquement. array() ou [] crée un tableau. foreach parcourt tous les éléments. count() retourne le nombre d\'éléments. Les tableaux sont fondamentaux en PHP.'),
                     'startCode' => '<html>
 <body>
 
@@ -3524,14 +3717,14 @@ foreach ($fruits as $fruit) {
 
 </body>
 </html>',
-                    'hint' => 'Créez $fruits = array("Pomme", "Banane", "Orange"); puis foreach ($fruits as $fruit) { echo $fruit . "<br>"; }'
+                    'hint' => $getTranslated('hint', 'Créez $fruits = array("Pomme", "Banane", "Orange"); puis foreach ($fruits as $fruit) { echo $fruit . "<br>"; }')
                 ],
                 10 => [
-                    'title' => 'Formulaires PHP (GET/POST)',
-                    'difficulty' => 'Moyen',
+                    'title' => $getTranslated('title', 'Formulaires PHP (GET/POST)'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
                     'points' => 20,
-                    'instruction' => 'Créez un formulaire HTML avec un champ texte "nom" et un bouton submit. Traitez le formulaire en PHP : si le formulaire est soumis (POST), affichez "Bonjour [nom]".',
-                    'description' => 'Les formulaires PHP collectent des données utilisateur. $_POST contient les données POST, $_GET contient les données GET. isset() vérifie si une variable existe. Les formulaires sont essentiels pour l\'interaction utilisateur.',
+                    'instruction' => $getTranslated('instruction', 'Créez un formulaire HTML avec un champ texte "nom" et un bouton submit. Traitez le formulaire en PHP : si le formulaire est soumis (POST), affichez "Bonjour [nom]".'),
+                    'description' => $getTranslated('description', 'Les formulaires PHP collectent des données utilisateur. $_POST contient les données POST, $_GET contient les données GET. isset() vérifie si une variable existe. Les formulaires sont essentiels pour l\'interaction utilisateur.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -3729,14 +3922,14 @@ echo "Utilisateur : " . $_SESSION["utilisateur"];
 
 </body>
 </html>',
-                    'hint' => 'Utilisez session_start(); au début, puis $_SESSION["utilisateur"] = "admin"; pour stocker, et $_SESSION["utilisateur"] pour récupérer.'
+                    'hint' => $getTranslated('hint', 'Utilisez session_start(); au début, puis $_SESSION["utilisateur"] = "admin"; pour stocker, et $_SESSION["utilisateur"] pour récupérer.')
                 ],
                 14 => [
-                    'title' => 'Traitement des fichiers PHP',
-                    'difficulty' => 'Difficile',
+                    'title' => $getTranslated('title', 'Traitement des fichiers PHP'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
                     'points' => 28,
-                    'instruction' => 'Créez un fichier "test.txt" avec le contenu "Hello PHP", puis lisez et affichez son contenu. Utilisez file_put_contents() pour écrire et file_get_contents() pour lire.',
-                    'description' => 'PHP peut lire et écrire des fichiers. file_put_contents() écrit dans un fichier, file_get_contents() lit un fichier. fopen(), fwrite(), fread(), fclose() offrent plus de contrôle. file_exists() vérifie l\'existence. C\'est essentiel pour la gestion de fichiers.',
+                    'instruction' => $getTranslated('instruction', 'Créez un fichier "test.txt" avec le contenu "Hello PHP", puis lisez et affichez son contenu. Utilisez file_put_contents() pour écrire et file_get_contents() pour lire.'),
+                    'description' => $getTranslated('description', 'PHP peut lire et écrire des fichiers. file_put_contents() écrit dans un fichier, file_get_contents() lit un fichier. fopen(), fwrite(), fread(), fclose() offrent plus de contrôle. file_exists() vérifie l\'existence. C\'est essentiel pour la gestion de fichiers.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -3769,14 +3962,14 @@ echo $contenu;
 
 </body>
 </html>',
-                    'hint' => 'Utilisez file_put_contents("test.txt", "Hello PHP"); pour écrire et $contenu = file_get_contents("test.txt"); pour lire.'
+                    'hint' => $getTranslated('hint', 'Utilisez file_put_contents("test.txt", "Hello PHP"); pour écrire et $contenu = file_get_contents("test.txt"); pour lire.')
                 ],
                 15 => [
-                    'title' => 'Exceptions et gestion d\'erreurs',
-                    'difficulty' => 'Difficile',
+                    'title' => $getTranslated('title', 'Exceptions et gestion d\'erreurs'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
                     'points' => 30,
-                    'instruction' => 'Créez une fonction qui divise deux nombres. Utilisez try/catch pour gérer l\'exception si le diviseur est 0. Affichez un message d\'erreur approprié.',
-                    'description' => 'Les exceptions PHP gèrent les erreurs de manière élégante. try exécute du code, catch capture les exceptions. throw lance une exception. Exception est la classe de base. C\'est la méthode moderne pour gérer les erreurs.',
+                    'instruction' => $getTranslated('instruction', 'Créez une fonction qui divise deux nombres. Utilisez try/catch pour gérer l\'exception si le diviseur est 0. Affichez un message d\'erreur approprié.'),
+                    'description' => $getTranslated('description', 'Les exceptions PHP gèrent les erreurs de manière élégante. try exécute du code, catch capture les exceptions. throw lance une exception. Exception est la classe de base. C\'est la méthode moderne pour gérer les erreurs.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -3868,14 +4061,14 @@ try {
 
 </body>
 </html>',
-                    'hint' => 'Ajoutez la classe "col" à chaque div pour créer des colonnes égales. La structure est : container > row > col.'
+                    'hint' => $getTranslated('hint', 'Ajoutez la classe "col" à chaque div pour créer des colonnes égales.')
                 ],
                 2 => [
-                    'title' => 'Bouton Bootstrap',
-                    'difficulty' => 'Facile',
+                    'title' => $getTranslated('title', 'Bouton Bootstrap'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
                     'points' => 10,
-                    'instruction' => 'Créez un bouton bleu primaire avec Bootstrap.',
-                    'description' => 'Utilisez les classes btn et btn-primary.',
+                    'instruction' => $getTranslated('instruction', 'Créez un bouton bleu primaire avec Bootstrap.'),
+                    'description' => $getTranslated('description', 'Bootstrap fournit des classes de boutons prédéfinies. btn crée un bouton, btn-primary le rend bleu primaire.'),
                     'startCode' => '<html>
 <head>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -3900,14 +4093,14 @@ try {
 
 </body>
 </html>',
-                    'hint' => 'Ajoutez les classes "btn btn-primary" au bouton.'
+                    'hint' => $getTranslated('hint', 'Ajoutez les classes "btn btn-primary" au bouton.')
                 ],
                 3 => [
-                    'title' => 'Typographie Bootstrap',
-                    'difficulty' => 'Facile',
+                    'title' => $getTranslated('title', 'Typographie Bootstrap'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
                     'points' => 10,
-                    'instruction' => 'Utilisez les classes Bootstrap pour créer un titre h1 avec la classe "display-1", un paragraphe avec "lead", et un texte en gras avec "fw-bold".',
-                    'description' => 'Bootstrap fournit des classes typographiques prédéfinies. display-1 à display-6 créent de grands titres, lead met en évidence un paragraphe, fw-bold met en gras, text-muted assombrit le texte. C\'est la base de la typographie Bootstrap.',
+                    'instruction' => $getTranslated('instruction', 'Utilisez les classes Bootstrap pour créer un titre h1 avec la classe "display-1", un paragraphe avec "lead", et un texte en gras avec "fw-bold".'),
+                    'description' => $getTranslated('description', 'Bootstrap fournit des classes typographiques prédéfinies. display-1 à display-6 créent de grands titres, lead met en évidence un paragraphe, fw-bold met en gras, text-muted assombrit le texte. C\'est la base de la typographie Bootstrap.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -4030,14 +4223,14 @@ try {
 
 </body>
 </html>',
-                    'hint' => 'Utilisez <div class="alert alert-success|info|warning"> pour créer les alertes.'
+                    'hint' => $getTranslated('hint', 'Utilisez class="alert alert-success" et ajoutez le texte "Opération réussie !".')
                 ],
                 6 => [
-                    'title' => 'Card Bootstrap',
-                    'difficulty' => 'Moyen',
+                    'title' => $getTranslated('title', 'Card Bootstrap'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
                     'points' => 15,
-                    'instruction' => 'Complétez la structure d\'une card Bootstrap.',
-                    'description' => 'Ajoutez les classes card-body et card-title.',
+                    'instruction' => $getTranslated('instruction', 'Créez une carte Bootstrap (card) avec un titre (card-title) et un texte (card-text).'),
+                    'description' => $getTranslated('description', 'Les cartes Bootstrap sont des conteneurs flexibles et extensibles. card est le conteneur principal, card-body pour le contenu, card-title pour le titre, card-text pour le texte. C\'est un composant polyvalent pour afficher du contenu.'),
                     'startCode' => '<html>
 <head>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -4072,14 +4265,14 @@ try {
 
 </body>
 </html>',
-                    'hint' => 'Ajoutez "card-body" à la div et "card-title" au h5.'
+                    'hint' => $getTranslated('hint', 'Utilisez class="card" pour le conteneur, class="card-body" pour le corps, class="card-title" pour le titre, et class="card-text" pour le texte.')
                 ],
                 7 => [
-                    'title' => 'Navbar Bootstrap',
-                    'difficulty' => 'Moyen',
+                    'title' => $getTranslated('title', 'Navbar Bootstrap'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
                     'points' => 20,
-                    'instruction' => 'Créez une navbar Bootstrap avec un logo et des liens.',
-                    'description' => 'Utilisez les classes navbar, navbar-brand et nav-link.',
+                    'instruction' => $getTranslated('instruction', 'Créez une navbar Bootstrap simple avec un titre de marque et un lien "Accueil".'),
+                    'description' => $getTranslated('description', 'La navbar Bootstrap est un composant de navigation réactif. navbar est la classe de base, navbar-brand pour le titre, nav-item et nav-link pour les liens. C\'est essentiel pour la navigation des sites web.'),
                     'startCode' => '<html>
 <head>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -4118,14 +4311,14 @@ try {
 
 </body>
 </html>',
-                    'hint' => 'Ajoutez "navbar-brand" au logo et "nav-link" au lien.'
+                    'hint' => $getTranslated('hint', 'Utilisez navbar navbar-expand-lg navbar-light bg-light pour la nav, navbar-brand pour le titre, navbar-nav pour la liste, nav-item pour l\'élément, et nav-link pour le lien.')
                 ],
                 8 => [
-                    'title' => 'Formulaires Bootstrap',
-                    'difficulty' => 'Moyen',
+                    'title' => $getTranslated('title', 'Formulaires Bootstrap'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
                     'points' => 18,
-                    'instruction' => 'Créez un formulaire Bootstrap avec un champ texte (form-control), un label (form-label), et un bouton submit (btn-primary). Utilisez les classes form-group ou mb-3 pour l\'espacement.',
-                    'description' => 'Bootstrap stylise les formulaires avec des classes dédiées. form-control stylise les inputs, form-label pour les labels, form-select pour les selects, form-check pour les checkboxes. mb-3 ajoute une marge en bas. C\'est essentiel pour des formulaires professionnels.',
+                    'instruction' => $getTranslated('instruction', 'Créez un formulaire Bootstrap avec un champ texte (nom) et un bouton submit. Utilisez les classes form-label et form-control.'),
+                    'description' => $getTranslated('description', 'Bootstrap stylise les formulaires pour une meilleure apparence. form-label pour les labels, form-control pour les inputs. mb-3 ajoute une marge en bas. C\'est essentiel pour des formulaires modernes.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -4166,14 +4359,14 @@ try {
 
 </body>
 </html>',
-                    'hint' => 'Utilisez <div class="mb-3">, <label class="form-label">, <input class="form-control">, et <button class="btn btn-primary">.'
+                    'hint' => $getTranslated('hint', 'Utilisez <div class="mb-3">, <label class="form-label">, <input class="form-control">, et <button class="btn btn-primary">.')
                 ],
                 9 => [
-                    'title' => 'Badges et boutons groupés',
-                    'difficulty' => 'Moyen',
+                    'title' => $getTranslated('title', 'Badges et boutons groupés'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
                     'points' => 15,
-                    'instruction' => 'Créez un badge "Nouveau" avec la classe badge bg-primary, et un groupe de boutons avec btn-group contenant 3 boutons.',
-                    'description' => 'Les badges Bootstrap affichent de petites étiquettes. badge bg-primary|success|danger crée des badges colorés. btn-group groupe des boutons horizontalement, btn-group-vertical verticalement. C\'est utile pour les tags et les groupes d\'actions.',
+                    'instruction' => $getTranslated('instruction', 'Créez un badge "Nouveau" avec la classe badge bg-primary, et un groupe de boutons avec btn-group contenant 3 boutons.'),
+                    'description' => $getTranslated('description', 'Les badges Bootstrap affichent de petites étiquettes. badge bg-primary|success|danger crée des badges colorés. btn-group groupe des boutons horizontalement, btn-group-vertical verticalement. C\'est utile pour les tags et les groupes d\'actions.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -4218,14 +4411,14 @@ try {
 
 </body>
 </html>',
-                    'hint' => 'Utilisez <span class="badge bg-primary"> pour le badge et <div class="btn-group"> pour grouper les boutons.'
+                    'hint' => $getTranslated('hint', 'Utilisez <span class="badge bg-primary"> pour le badge et <div class="btn-group"> pour grouper les boutons.')
                 ],
                 10 => [
-                    'title' => 'Listes et groupes Bootstrap',
-                    'difficulty' => 'Moyen',
+                    'title' => $getTranslated('title', 'Listes et groupes Bootstrap'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
                     'points' => 15,
-                    'instruction' => 'Créez une liste groupée Bootstrap (list-group) avec 3 éléments (list-group-item). Ajoutez un élément actif (active) et un élément désactivé (disabled).',
-                    'description' => 'Les listes groupées Bootstrap affichent des listes stylisées. list-group contient la liste, list-group-item chaque élément. active met en évidence, disabled désactive. list-group-flush enlève les bordures. C\'est utile pour les menus et les listes de contenu.',
+                    'instruction' => $getTranslated('instruction', 'Créez une liste groupée Bootstrap (list-group) avec 3 éléments (list-group-item). Ajoutez un élément actif (active) et un élément désactivé (disabled).'),
+                    'description' => $getTranslated('description', 'Les listes groupées Bootstrap affichent des listes stylisées. list-group contient la liste, list-group-item chaque élément. active met en évidence, disabled désactive. list-group-flush enlève les bordures. C\'est utile pour les menus et les listes de contenu.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -4266,14 +4459,14 @@ try {
 
 </body>
 </html>',
-                    'hint' => 'Utilisez <ul class="list-group"> et <li class="list-group-item active|disabled"> pour créer la liste groupée.'
+                    'hint' => $getTranslated('hint', 'Utilisez class="list-group" pour la liste, class="list-group-item" pour chaque élément. Ajoutez active et disabled aux éléments appropriés.')
                 ],
                 11 => [
-                    'title' => 'Responsive Bootstrap',
-                    'difficulty' => 'Difficile',
+                    'title' => $getTranslated('title', 'Responsive Bootstrap'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
                     'points' => 20,
-                    'instruction' => 'Créez une grille Bootstrap responsive : 12 colonnes (pleine largeur) sur mobile, 6 colonnes sur tablette (md), et 4 colonnes sur desktop (lg).',
-                    'description' => 'Bootstrap utilise des breakpoints (sm, md, lg, xl) pour le responsive. col-12 = mobile (12 colonnes), col-md-6 = tablette (6 colonnes), col-lg-4 = desktop (4 colonnes). Les classes s\'appliquent à partir du breakpoint spécifié et au-dessus.',
+                    'instruction' => $getTranslated('instruction', 'Créez une div qui occupe 12 colonnes sur mobile (col-12), 6 colonnes sur tablette (col-md-6) et 4 colonnes sur desktop (col-lg-4).'),
+                    'description' => $getTranslated('description', 'Le système de grille Bootstrap est responsive. col-12 prend toute la largeur sur mobile, col-md-6 prend la moitié sur tablette, col-lg-4 prend un tiers sur desktop. C\'est essentiel pour un design adaptatif.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -4314,14 +4507,14 @@ try {
 
 </body>
 </html>',
-                    'hint' => 'Utilisez "col-12 col-md-6 col-lg-4" pour chaque colonne. col-12 = mobile, col-md-6 = tablette, col-lg-4 = desktop.'
+                    'hint' => $getTranslated('hint', 'Utilisez col-12 pour mobile, col-md-6 pour tablette, et col-lg-4 pour desktop.')
                 ],
                 12 => [
-                    'title' => 'Customisation Bootstrap',
-                    'difficulty' => 'Difficile',
+                    'title' => $getTranslated('title', 'Customisation Bootstrap'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
                     'points' => 25,
-                    'instruction' => 'Créez un fichier SCSS personnalisé qui override les variables Bootstrap ($primary: #06b6d4, $font-family-base: "Arial"). Compilez-le en CSS et incluez-le après Bootstrap.',
-                    'description' => 'Bootstrap peut être personnalisé via SCSS en redéfinissant les variables Sass. $primary change la couleur primaire, $font-family-base change la police. Il faut compiler SCSS en CSS. C\'est la méthode recommandée pour personnaliser Bootstrap sans modifier les fichiers source.',
+                    'instruction' => $getTranslated('instruction', 'Changez la couleur primaire de Bootstrap en vert en utilisant les variables CSS de Bootstrap (via :root ou un sélecteur).'),
+                    'description' => $getTranslated('description', 'Bootstrap 5 utilise des variables CSS pour la customisation. Vous pouvez redéfinir ces variables (ex: --bs-primary) dans :root ou un sélecteur pour changer les couleurs, les espacements, etc. C\'est la méthode moderne pour personnaliser Bootstrap.'),
                     'startCode' => '/* custom.scss */
 @import "bootstrap/scss/bootstrap";
 
@@ -4345,14 +4538,14 @@ $font-family-base: "Arial", sans-serif;
   background-color: $primary;
   border-radius: 20px;
 }',
-                    'hint' => 'Définissez $primary: #06b6d4; et $font-family-base: "Arial", sans-serif; avant @import. Utilisez $primary dans .custom-btn.'
+                    'hint' => $getTranslated('hint', 'Dans :root, définissez --bs-primary: green; pour changer la couleur primaire.')
                 ],
                 13 => [
-                    'title' => 'Bootstrap avec JavaScript',
-                    'difficulty' => 'Difficile',
+                    'title' => $getTranslated('title', 'Bootstrap avec JavaScript'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
                     'points' => 28,
-                    'instruction' => 'Créez une modale Bootstrap qui s\'ouvre au clic sur un bouton. Utilisez les attributs data-bs-toggle et data-bs-target, et incluez le JavaScript Bootstrap.',
-                    'description' => 'Bootstrap inclut des composants JavaScript interactifs. Les modales nécessitent data-bs-toggle="modal" et data-bs-target="#idModal". Le JavaScript Bootstrap doit être inclus. Les modales sont utiles pour les dialogues, formulaires, et confirmations.',
+                    'instruction' => $getTranslated('instruction', 'Créez un bouton qui ouvre un modal Bootstrap. Le modal doit avoir un titre "Titre du Modal" et un corps "Contenu du modal".'),
+                    'description' => $getTranslated('description', 'Bootstrap utilise JavaScript pour ses composants interactifs comme les modals, carousels, dropdowns. data-bs-toggle="modal" et data-bs-target="#id" activent le modal. C\'est essentiel pour les interfaces dynamiques.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -4422,14 +4615,14 @@ $font-family-base: "Arial", sans-serif;
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>',
-                    'hint' => 'Ajoutez data-bs-toggle="modal" data-bs-target="#maModale" au bouton, tabindex="-1" à la modale, et data-bs-dismiss="modal" aux boutons de fermeture.'
+                    'hint' => $getTranslated('hint', 'Ajoutez data-bs-toggle="modal" data-bs-target="#myModal" au bouton, et ajoutez le titre et le contenu au modal.')
                 ],
                 14 => [
-                    'title' => 'Carousel et composants avancés',
-                    'difficulty' => 'Difficile',
+                    'title' => $getTranslated('title', 'Carousel et composants avancés'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
                     'points' => 28,
-                    'instruction' => 'Créez un carousel Bootstrap avec 3 slides. Utilisez carousel, carousel-inner, carousel-item, et les contrôles (carousel-control-prev, carousel-control-next). Ajoutez aussi les indicateurs (carousel-indicators).',
-                    'description' => 'Le carousel Bootstrap crée un diaporama d\'images. carousel contient le carousel, carousel-inner les slides, carousel-item chaque slide. carousel-control-prev/next ajoutent les flèches, carousel-indicators les points. data-bs-ride="carousel" active l\'auto-play. C\'est un composant avancé très utilisé.',
+                    'instruction' => $getTranslated('instruction', 'Créez un carousel Bootstrap avec 3 slides. Utilisez carousel, carousel-inner, carousel-item, et les contrôles (carousel-control-prev, carousel-control-next). Ajoutez aussi les indicateurs (carousel-indicators).'),
+                    'description' => $getTranslated('description', 'Le carousel Bootstrap crée un diaporama d\'images. carousel contient le carousel, carousel-inner les slides, carousel-item chaque slide. carousel-control-prev/next ajoutent les flèches, carousel-indicators les points. data-bs-ride="carousel" active l\'auto-play. C\'est un composant avancé très utilisé.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -4489,14 +4682,14 @@ $font-family-base: "Arial", sans-serif;
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>',
-                    'hint' => 'Utilisez carousel-indicators pour les points, carousel-inner pour les slides, carousel-item pour chaque slide, et carousel-control-prev/next pour les flèches.'
+                    'hint' => $getTranslated('hint', 'Utilisez carousel-indicators pour les points, carousel-inner pour les slides, carousel-item pour chaque slide, et carousel-control-prev/next pour les flèches.')
                 ],
                 15 => [
-                    'title' => 'Système de grille avancé Bootstrap',
-                    'difficulty' => 'Difficile',
+                    'title' => $getTranslated('title', 'CSS Architecture (BEM, SMACSS)'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
                     'points' => 30,
-                    'instruction' => 'Créez une grille Bootstrap complexe avec offset : 3 colonnes de 2 colonnes chacune (col-md-2), avec un offset de 2 colonnes (offset-md-2) pour la première colonne. Utilisez row et col-md-2 offset-md-2.',
-                    'description' => 'Le système de grille Bootstrap avancé permet des layouts complexes. offset-* décale les colonnes, order-* change l\'ordre, align-self-* aligne verticalement. Les offsets créent des espaces sans colonnes vides. C\'est puissant pour des layouts asymétriques.',
+                    'instruction' => $getTranslated('instruction', 'Créez une structure CSS suivant la méthodologie BEM (Block Element Modifier). Créez un bloc "card", un élément "card__title", et un modificateur "card--highlighted".'),
+                    'description' => $getTranslated('description', 'BEM (Block Element Modifier) est une méthodologie de nommage CSS. Block = composant indépendant, Element = partie du bloc (__element), Modifier = variation (--modifier). SMACSS organise le CSS en catégories (Base, Layout, Module, State, Theme). C\'est essentiel pour maintenir du CSS à grande échelle.'),
                     'startCode' => '<!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -4542,81 +4735,121 @@ $font-family-base: "Arial", sans-serif;
             ],
             'git' => [
                 1 => [
-                    'title' => 'Initialiser un dépôt Git',
-                    'difficulty' => 'Facile',
+                    'title' => $getTranslated('title', 'Initialiser un dépôt Git'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
                     'points' => 10,
-                    'instruction' => 'Quelle commande initialise un nouveau dépôt Git ?',
-                    'description' => 'Tapez la commande Git pour créer un nouveau dépôt.',
+                    'instruction' => $getTranslated('instruction', 'Quelle commande initialise un nouveau dépôt Git ?'),
+                    'description' => $getTranslated('description', 'Tapez la commande Git pour créer un nouveau dépôt.'),
                     'startCode' => 'git ',
                     'solution' => 'git init',
-                    'hint' => 'La commande commence par "git" et utilise "init".'
+                    'hint' => $getTranslated('hint', 'La commande commence par "git" et utilise "init".')
                 ],
                 2 => [
-                    'title' => 'Ajouter des fichiers',
-                    'difficulty' => 'Facile',
+                    'title' => $getTranslated('title', 'Ajouter des fichiers'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
                     'points' => 10,
-                    'instruction' => 'Quelle commande ajoute tous les fichiers au staging ?',
-                    'description' => 'Utilisez la commande pour ajouter tous les fichiers modifiés.',
+                    'instruction' => $getTranslated('instruction', 'Quelle commande ajoute tous les fichiers au staging ?'),
+                    'description' => $getTranslated('description', 'Utilisez la commande pour ajouter tous les fichiers modifiés.'),
                     'startCode' => 'git ',
                     'solution' => 'git add .',
-                    'hint' => 'Utilisez "git add" suivi d\'un point pour tout ajouter.'
+                    'hint' => $getTranslated('hint', 'Utilisez "git add" suivi d\'un point pour tout ajouter.')
                 ],
                 3 => [
-                    'title' => 'Créer un commit',
-                    'difficulty' => 'Facile',
+                    'title' => $getTranslated('title', 'Créer un commit'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
                     'points' => 15,
-                    'instruction' => 'Créez un commit avec le message "Premier commit".',
-                    'description' => 'Utilisez la commande commit avec l\'option -m.',
+                    'instruction' => $getTranslated('instruction', 'Créez un commit avec le message "Premier commit".'),
+                    'description' => $getTranslated('description', 'Utilisez la commande commit avec l\'option -m.'),
                     'startCode' => 'git ',
                     'solution' => 'git commit -m "Premier commit"',
-                    'hint' => 'Utilisez git commit -m suivi du message entre guillemets.'
+                    'hint' => $getTranslated('hint', 'Utilisez git commit -m suivi du message entre guillemets.')
                 ],
                 4 => [
-                    'title' => 'Voir l\'historique Git',
-                    'difficulty' => 'Facile',
+                    'title' => $getTranslated('title', 'Voir l\'historique Git'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
                     'points' => 10,
-                    'instruction' => 'Quelle commande affiche l\'historique des commits Git avec les messages et les auteurs ?',
-                    'description' => 'git log affiche l\'historique des commits. git log --oneline affiche une version compacte, git log --graph affiche un graphique, git log --all affiche toutes les branches. C\'est essentiel pour comprendre l\'historique du projet.',
+                    'instruction' => $getTranslated('instruction', 'Quelle commande affiche l\'historique des commits Git avec les messages et les auteurs ?'),
+                    'description' => $getTranslated('description', 'git log affiche l\'historique des commits. git log --oneline affiche une version compacte, git log --graph affiche un graphique, git log --all affiche toutes les branches. C\'est essentiel pour comprendre l\'historique du projet.'),
                     'startCode' => 'git ',
                     'solution' => 'git log',
-                    'hint' => 'La commande est git log. Utilisez git log --oneline pour une version compacte.'
+                    'hint' => $getTranslated('hint', 'La commande est git log. Utilisez git log --oneline pour une version compacte.')
                 ],
                 5 => [
-                    'title' => 'Vérifier le statut Git',
-                    'difficulty' => 'Facile',
+                    'title' => $getTranslated('title', 'Vérifier le statut Git'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
                     'points' => 10,
-                    'instruction' => 'Quelle commande affiche le statut actuel du dépôt Git (fichiers modifiés, ajoutés, etc.) ?',
-                    'description' => 'git status affiche l\'état actuel du dépôt. Il montre les fichiers modifiés, ajoutés au staging, et non suivis. C\'est la commande la plus utilisée pour voir ce qui a changé. git status -s affiche une version courte.',
+                    'instruction' => $getTranslated('instruction', 'Quelle commande affiche le statut actuel du dépôt Git (fichiers modifiés, ajoutés, etc.) ?'),
+                    'description' => $getTranslated('description', 'git status affiche l\'état actuel du dépôt. Il montre les fichiers modifiés, ajoutés au staging, et non suivis. C\'est la commande la plus utilisée pour voir ce qui a changé. git status -s affiche une version courte.'),
                     'startCode' => 'git ',
                     'solution' => 'git status',
-                    'hint' => 'La commande est git status. Utilisez git status -s pour une version courte.'
+                    'hint' => $getTranslated('hint', 'La commande est git status. Utilisez git status -s pour une version courte.')
                 ],
                 6 => [
-                    'title' => 'Créer une branche',
-                    'difficulty' => 'Moyen',
+                    'title' => $getTranslated('title', 'Créer une branche'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
                     'points' => 15,
-                    'instruction' => 'Créez une nouvelle branche appelée "develop" et basculez dessus en une seule commande.',
-                    'description' => 'Les branches permettent de travailler sur des fonctionnalités isolées. git checkout -b crée et bascule sur une nouvelle branche. Les branches permettent de développer en parallèle sans affecter la branche principale. C\'est essentiel pour le workflow Git.',
+                    'instruction' => $getTranslated('instruction', 'Créez une nouvelle branche appelée "develop" et basculez dessus en une seule commande.'),
+                    'description' => $getTranslated('description', 'Les branches permettent de travailler sur des fonctionnalités isolées. git checkout -b crée et bascule sur une nouvelle branche. Les branches permettent de développer en parallèle sans affecter la branche principale. C\'est essentiel pour le workflow Git.'),
                     'startCode' => 'git ',
                     'solution' => 'git checkout -b develop',
-                    'hint' => 'Utilisez git checkout -b develop. -b crée la branche et checkout y bascule.'
+                    'hint' => $getTranslated('hint', 'Utilisez git checkout -b develop. -b crée la branche et checkout y bascule.')
+                ],
+                7 => [
+                    'title' => $getTranslated('title', 'Changer de branche'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 15,
+                    'instruction' => $getTranslated('instruction', 'Basculez sur la branche "develop" en utilisant la commande appropriée.'),
+                    'description' => $getTranslated('description', 'git checkout bascule sur une branche existante. git switch (nouvelle syntaxe) fait la même chose. git checkout -b crée et bascule. C\'est essentiel pour travailler sur différentes fonctionnalités en parallèle.'),
+                    'startCode' => 'git ',
+                    'solution' => 'git checkout develop',
+                    'hint' => $getTranslated('hint', 'Utilisez git checkout develop ou git switch develop pour basculer sur la branche develop.')
+                ],
+                8 => [
+                    'title' => $getTranslated('title', 'Cloner un dépôt distant'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 18,
+                    'instruction' => $getTranslated('instruction', 'Clonez le dépôt distant "https://github.com/user/repo.git" dans un dossier local.'),
+                    'description' => $getTranslated('description', 'git clone copie un dépôt distant localement. git clone URL crée un dossier avec le nom du dépôt, git clone URL nom crée un dossier avec un nom personnalisé. C\'est la première étape pour travailler sur un projet existant.'),
+                    'startCode' => 'git ',
+                    'solution' => 'git clone https://github.com/user/repo.git',
+                    'hint' => $getTranslated('hint', 'Utilisez git clone suivi de l\'URL du dépôt. git clone https://github.com/user/repo.git')
+                ],
+                9 => [
+                    'title' => $getTranslated('title', 'Pousser vers un dépôt distant'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 18,
+                    'instruction' => $getTranslated('instruction', 'Poussez la branche "main" vers le dépôt distant "origin".'),
+                    'description' => $getTranslated('description', 'git push envoie les commits locaux vers le dépôt distant. git push origin main pousse la branche main vers origin. git push -u origin main configure le tracking. C\'est essentiel pour partager le code.'),
+                    'startCode' => 'git ',
+                    'solution' => 'git push origin main',
+                    'hint' => $getTranslated('hint', 'Utilisez git push origin main pour pousser la branche main vers origin. git push -u origin main configure le tracking.')
+                ],
+                10 => [
+                    'title' => $getTranslated('title', 'Récupérer les changements (pull)'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 18,
+                    'instruction' => $getTranslated('instruction', 'Récupérez et fusionnez les changements du dépôt distant "origin" dans la branche actuelle.'),
+                    'description' => $getTranslated('description', 'git pull récupère et fusionne les changements du dépôt distant. C\'est équivalent à git fetch suivi de git merge. git pull origin main récupère depuis origin/main. C\'est essentiel pour synchroniser avec le dépôt distant.'),
+                    'startCode' => 'git ',
+                    'solution' => 'git pull origin main',
+                    'hint' => $getTranslated('hint', 'Utilisez git pull origin main pour récupérer et fusionner les changements. git pull est équivalent à git fetch + git merge.')
                 ],
                 11 => [
-                    'title' => 'Fusionner des branches',
-                    'difficulty' => 'Difficile',
+                    'title' => $getTranslated('title', 'Fusionner des branches'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
                     'points' => 20,
-                    'instruction' => 'Fusionnez la branche "feature" dans la branche actuelle (main) en créant un merge commit.',
-                    'description' => 'git merge combine les changements d\'une branche dans une autre. Il faut être sur la branche de destination. Git crée un merge commit si nécessaire. Les conflits doivent être résolus manuellement. C\'est la méthode standard pour intégrer des fonctionnalités.',
+                    'instruction' => $getTranslated('instruction', 'Fusionnez la branche "feature" dans la branche actuelle (main) en créant un merge commit.'),
+                    'description' => $getTranslated('description', 'git merge combine les changements d\'une branche dans une autre. Il faut être sur la branche de destination. Git crée un merge commit si nécessaire. Les conflits doivent être résolus manuellement. C\'est la méthode standard pour intégrer des fonctionnalités.'),
                     'startCode' => 'git ',
                     'solution' => 'git merge feature',
-                    'hint' => 'Assurez-vous d\'être sur main, puis utilisez git merge feature pour fusionner.'
+                    'hint' => $getTranslated('hint', 'Assurez-vous d\'être sur main, puis utilisez git merge feature pour fusionner.')
                 ],
                 12 => [
-                    'title' => 'Résoudre les conflits',
-                    'difficulty' => 'Difficile',
+                    'title' => $getTranslated('title', 'Résoudre les conflits'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
                     'points' => 25,
-                    'instruction' => 'Après un merge conflictuel, résolvez le conflit dans le fichier "fichier.txt". Les marqueurs de conflit sont <<<<<<, ======, >>>>>>. Supprimez les marqueurs et gardez la version correcte, puis ajoutez le fichier et complétez le merge.',
-                    'description' => 'Les conflits surviennent quand Git ne peut pas fusionner automatiquement. Les marqueurs <<<<<<, ======, >>>>>> indiquent les zones conflictuelles. Il faut éditer manuellement, supprimer les marqueurs, garder le code correct, puis git add et git commit pour finaliser.',
+                    'instruction' => $getTranslated('instruction', 'Après un merge conflictuel, résolvez le conflit dans le fichier "fichier.txt". Les marqueurs de conflit sont <<<<<<, ======, >>>>>>. Supprimez les marqueurs et gardez la version correcte, puis ajoutez le fichier et complétez le merge.'),
+                    'description' => $getTranslated('description', 'Les conflits surviennent quand Git ne peut pas fusionner automatiquement. Les marqueurs <<<<<<, ======, >>>>>> indiquent les zones conflictuelles. Il faut éditer manuellement, supprimer les marqueurs, garder le code correct, puis git add et git commit pour finaliser.'),
                     'startCode' => '/* Après git merge feature, fichier.txt contient : */
 <<<<<<< HEAD
 Ligne dans main
@@ -4632,65 +4865,25 @@ Ligne dans feature
 /* Commandes Git */
 git add fichier.txt
 git commit -m "Résolution du conflit"',
-                    'hint' => 'Supprimez les marqueurs <<<<<<, ======, >>>>>>, gardez le code correct, puis git add fichier.txt et git commit.'
+                    'hint' => $getTranslated('hint', 'Supprimez les marqueurs <<<<<<, ======, >>>>>>, gardez le code correct, puis git add fichier.txt et git commit.')
                 ],
                 13 => [
-                    'title' => 'Git rebase',
-                    'difficulty' => 'Difficile',
+                    'title' => $getTranslated('title', 'Git rebase'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
                     'points' => 28,
-                    'instruction' => 'Effectuez un rebase de la branche "feature" sur "main" pour réécrire l\'historique et créer un historique linéaire.',
-                    'description' => 'git rebase réapplique les commits d\'une branche sur une autre, créant un historique linéaire. C\'est une alternative à merge. git rebase main réapplique les commits de la branche actuelle sur main. Attention : ne jamais rebaser une branche partagée.',
+                    'instruction' => $getTranslated('instruction', 'Effectuez un rebase de la branche "feature" sur "main" pour réécrire l\'historique et créer un historique linéaire.'),
+                    'description' => $getTranslated('description', 'git rebase réapplique les commits d\'une branche sur une autre, créant un historique linéaire. C\'est une alternative à merge. git rebase main réapplique les commits de la branche actuelle sur main. Attention : ne jamais rebaser une branche partagée.'),
                     'startCode' => '/* Vous êtes sur la branche feature */
 git ',
                     'solution' => 'git rebase main',
-                    'hint' => 'Sur la branche feature, utilisez git rebase main pour réappliquer les commits sur main.'
-                ],
-                7 => [
-                    'title' => 'Changer de branche',
-                    'difficulty' => 'Moyen',
-                    'points' => 15,
-                    'instruction' => 'Basculez sur la branche "develop" en utilisant la commande appropriée.',
-                    'description' => 'git checkout bascule sur une branche existante. git switch (nouvelle syntaxe) fait la même chose. git checkout -b crée et bascule. C\'est essentiel pour travailler sur différentes fonctionnalités en parallèle.',
-                    'startCode' => 'git ',
-                    'solution' => 'git checkout develop',
-                    'hint' => 'Utilisez git checkout develop ou git switch develop pour basculer sur la branche develop.'
-                ],
-                8 => [
-                    'title' => 'Cloner un dépôt distant',
-                    'difficulty' => 'Moyen',
-                    'points' => 18,
-                    'instruction' => 'Clonez le dépôt distant "https://github.com/user/repo.git" dans un dossier local.',
-                    'description' => 'git clone copie un dépôt distant localement. git clone URL crée un dossier avec le nom du dépôt, git clone URL nom crée un dossier avec un nom personnalisé. C\'est la première étape pour travailler sur un projet existant.',
-                    'startCode' => 'git ',
-                    'solution' => 'git clone https://github.com/user/repo.git',
-                    'hint' => 'Utilisez git clone suivi de l\'URL du dépôt. git clone https://github.com/user/repo.git'
-                ],
-                9 => [
-                    'title' => 'Pousser vers un dépôt distant',
-                    'difficulty' => 'Moyen',
-                    'points' => 18,
-                    'instruction' => 'Poussez la branche "main" vers le dépôt distant "origin".',
-                    'description' => 'git push envoie les commits locaux vers le dépôt distant. git push origin main pousse la branche main vers origin. git push -u origin main configure le tracking. C\'est essentiel pour partager le code.',
-                    'startCode' => 'git ',
-                    'solution' => 'git push origin main',
-                    'hint' => 'Utilisez git push origin main pour pousser la branche main vers origin. git push -u origin main configure le tracking.'
-                ],
-                10 => [
-                    'title' => 'Récupérer les changements (pull)',
-                    'difficulty' => 'Moyen',
-                    'points' => 18,
-                    'instruction' => 'Récupérez et fusionnez les changements du dépôt distant "origin" dans la branche actuelle.',
-                    'description' => 'git pull récupère et fusionne les changements du dépôt distant. C\'est équivalent à git fetch suivi de git merge. git pull origin main récupère depuis origin/main. C\'est essentiel pour synchroniser avec le dépôt distant.',
-                    'startCode' => 'git ',
-                    'solution' => 'git pull origin main',
-                    'hint' => 'Utilisez git pull origin main pour récupérer et fusionner les changements. git pull est équivalent à git fetch + git merge.'
+                    'hint' => $getTranslated('hint', 'Sur la branche feature, utilisez git rebase main pour réappliquer les commits sur main.')
                 ],
                 14 => [
-                    'title' => 'Git stash (mise de côté)',
-                    'difficulty' => 'Difficile',
+                    'title' => $getTranslated('title', 'Git stash (mise de côté)'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
                     'points' => 25,
-                    'instruction' => 'Mettez de côté les modifications en cours avec git stash, puis récupérez-les avec git stash pop.',
-                    'description' => 'git stash sauvegarde temporairement les modifications non commitées. git stash sauvegarde, git stash list liste les stashes, git stash pop récupère et supprime le dernier stash, git stash apply récupère sans supprimer. C\'est utile pour changer de branche sans committer.',
+                    'instruction' => $getTranslated('instruction', 'Mettez de côté les modifications en cours avec git stash, puis récupérez-les avec git stash pop.'),
+                    'description' => $getTranslated('description', 'git stash sauvegarde temporairement les modifications non commitées. git stash sauvegarde, git stash list liste les stashes, git stash pop récupère et supprime le dernier stash, git stash apply récupère sans supprimer. C\'est utile pour changer de branche sans committer.'),
                     'startCode' => '/* Vous avez des modifications non commitées */
 git 
 
@@ -4702,27 +4895,27 @@ git stash
 
 /* Après avoir changé de branche et travaillé, récupérer */
 git stash pop',
-                    'hint' => 'Utilisez git stash pour sauvegarder, puis git stash pop pour récupérer. git stash list affiche tous les stashes.'
+                    'hint' => $getTranslated('hint', 'Utilisez git stash pour sauvegarder, puis git stash pop pour récupérer. git stash list affiche tous les stashes.')
                 ],
                 15 => [
-                    'title' => 'Annuler des changements Git',
-                    'difficulty' => 'Difficile',
+                    'title' => $getTranslated('title', 'Annuler des changements Git'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
                     'points' => 28,
-                    'instruction' => 'Annulez les modifications non commitées dans le fichier "fichier.txt" avec git checkout ou git restore.',
-                    'description' => 'git restore (nouveau) ou git checkout -- (ancien) annule les modifications non commitées. git reset --hard annule tout, git reset --soft annule le commit mais garde les modifications. Attention : ces commandes sont destructives. C\'est utile pour corriger des erreurs.',
+                    'instruction' => $getTranslated('instruction', 'Annulez les modifications non commitées dans le fichier "fichier.txt" avec git checkout ou git restore.'),
+                    'description' => $getTranslated('description', 'git restore (nouveau) ou git checkout -- (ancien) annule les modifications non commitées. git reset --hard annule tout, git reset --soft annule le commit mais garde les modifications. Attention : ces commandes sont destructives. C\'est utile pour corriger des erreurs.'),
                     'startCode' => '/* Vous avez modifié fichier.txt mais voulez annuler */
 git ',
                     'solution' => 'git restore fichier.txt',
-                    'hint' => 'Utilisez git restore fichier.txt (nouveau) ou git checkout -- fichier.txt (ancien) pour annuler les modifications. git restore . annule tout.'
+                    'hint' => $getTranslated('hint', 'Utilisez git restore fichier.txt (nouveau) ou git checkout -- fichier.txt (ancien) pour annuler les modifications. git restore . annule tout.')
                 ],
             ],
             'wordpress' => [
                 1 => [
-                    'title' => 'The Loop WordPress',
-                    'difficulty' => 'Facile',
+                    'title' => $getTranslated('title', 'The Loop WordPress'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
                     'points' => 10,
-                    'instruction' => 'Complétez la boucle WordPress (The Loop) pour afficher les articles avec leur titre et contenu.',
-                    'description' => 'The Loop est le cœur de WordPress. have_posts() vérifie s\'il y a des articles, the_post() charge les données de l\'article courant, the_title() et the_content() affichent le titre et le contenu. C\'est la base de tous les templates WordPress.',
+                    'instruction' => $getTranslated('instruction', 'Complétez la boucle WordPress (The Loop) pour afficher les articles avec leur titre et contenu.'),
+                    'description' => $getTranslated('description', 'The Loop est le cœur de WordPress. have_posts() vérifie s\'il y a des articles, the_post() charge les données de l\'article courant, the_title() et the_content() affichent le titre et le contenu. C\'est la base de tous les templates WordPress.'),
                     'startCode' => '<?php
 if ( ) {
   while ( ) {
@@ -4741,54 +4934,54 @@ if (have_posts()) {
   }
 }
 ?>',
-                    'hint' => 'Utilisez have_posts() dans le if et le while, puis the_post() dans la boucle pour charger les données de l\'article.'
+                    'hint' => $getTranslated('hint', 'Utilisez have_posts() dans le if et le while, puis the_post() dans la boucle pour charger les données de l\'article.')
                 ],
                 2 => [
-                    'title' => 'Afficher le titre',
-                    'difficulty' => 'Facile',
+                    'title' => $getTranslated('title', 'Afficher le titre'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
                     'points' => 10,
-                    'instruction' => 'Affichez le titre de l\'article dans un élément h1 en utilisant la fonction WordPress appropriée.',
-                    'description' => 'WordPress fournit des fonctions template pour afficher les données. the_title() affiche le titre de l\'article courant. Il existe aussi get_the_title() qui retourne le titre sans l\'afficher. Ces fonctions doivent être utilisées dans The Loop.',
+                    'instruction' => $getTranslated('instruction', 'Affichez le titre de l\'article dans un élément h1 en utilisant la fonction WordPress appropriée.'),
+                    'description' => $getTranslated('description', 'WordPress fournit des fonctions template pour afficher les données. the_title() affiche le titre de l\'article courant. Il existe aussi get_the_title() qui retourne le titre sans l\'afficher. Ces fonctions doivent être utilisées dans The Loop.'),
                     'startCode' => '<h1><?php  ?></h1>',
                     'solution' => '<h1><?php the_title(); ?></h1>',
-                    'hint' => 'Utilisez the_title() pour afficher le titre. Cette fonction doit être appelée dans The Loop.'
+                    'hint' => $getTranslated('hint', 'Utilisez the_title() pour afficher le titre. Cette fonction doit être appelée dans The Loop.')
                 ],
                 3 => [
-                    'title' => 'Afficher le contenu',
-                    'difficulty' => 'Facile',
+                    'title' => $getTranslated('title', 'Afficher le contenu'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
                     'points' => 10,
-                    'instruction' => 'Affichez le contenu de l\'article dans un élément <div> en utilisant la fonction WordPress appropriée.',
-                    'description' => 'WordPress fournit the_content() pour afficher le contenu de l\'article. Il existe aussi get_the_content() qui retourne le contenu sans l\'afficher. Ces fonctions doivent être utilisées dans The Loop. C\'est la base de l\'affichage de contenu.',
+                    'instruction' => $getTranslated('instruction', 'Affichez le contenu de l\'article dans un élément <div> en utilisant la fonction WordPress appropriée.'),
+                    'description' => $getTranslated('description', 'WordPress fournit the_content() pour afficher le contenu de l\'article. Il existe aussi get_the_content() qui retourne le contenu sans l\'afficher. Ces fonctions doivent être utilisées dans The Loop. C\'est la base de l\'affichage de contenu.'),
                     'startCode' => '<div><?php  ?></div>',
                     'solution' => '<div><?php the_content(); ?></div>',
-                    'hint' => 'Utilisez the_content() pour afficher le contenu. Cette fonction doit être appelée dans The Loop.'
+                    'hint' => $getTranslated('hint', 'Utilisez the_content() pour afficher le contenu. Cette fonction doit être appelée dans The Loop.')
                 ],
                 4 => [
-                    'title' => 'Afficher la date',
-                    'difficulty' => 'Facile',
+                    'title' => $getTranslated('title', 'Afficher la date'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
                     'points' => 10,
-                    'instruction' => 'Affichez la date de publication de l\'article en utilisant the_date() ou get_the_date().',
-                    'description' => 'WordPress fournit the_date() pour afficher la date de publication. get_the_date() retourne la date sans l\'afficher. On peut formater la date avec des paramètres. C\'est essentiel pour afficher les métadonnées des articles.',
+                    'instruction' => $getTranslated('instruction', 'Affichez la date de publication de l\'article en utilisant the_date() ou get_the_date().'),
+                    'description' => $getTranslated('description', 'WordPress fournit the_date() pour afficher la date de publication. get_the_date() retourne la date sans l\'afficher. On peut formater la date avec des paramètres. C\'est essentiel pour afficher les métadonnées des articles.'),
                     'startCode' => '<p>Publié le : <?php  ?></p>',
                     'solution' => '<p>Publié le : <?php the_date(); ?></p>',
-                    'hint' => 'Utilisez the_date() pour afficher la date. Utilisez the_date(\'d/m/Y\') pour formater la date.'
+                    'hint' => $getTranslated('hint', 'Utilisez the_date() pour afficher la date. Utilisez the_date(\'d/m/Y\') pour formater la date.')
                 ],
                 5 => [
-                    'title' => 'Afficher l\'auteur',
-                    'difficulty' => 'Facile',
+                    'title' => $getTranslated('title', 'Afficher l\'auteur'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
                     'points' => 12,
-                    'instruction' => 'Affichez le nom de l\'auteur de l\'article en utilisant the_author() ou get_the_author().',
-                    'description' => 'WordPress fournit the_author() pour afficher le nom de l\'auteur. get_the_author() retourne le nom sans l\'afficher. the_author_meta() permet d\'accéder à d\'autres informations de l\'auteur. C\'est essentiel pour afficher les crédits.',
+                    'instruction' => $getTranslated('instruction', 'Affichez le nom de l\'auteur de l\'article en utilisant the_author() ou get_the_author().'),
+                    'description' => $getTranslated('description', 'WordPress fournit the_author() pour afficher le nom de l\'auteur. get_the_author() retourne le nom sans l\'afficher. the_author_meta() permet d\'accéder à d\'autres informations de l\'auteur. C\'est essentiel pour afficher les crédits.'),
                     'startCode' => '<p>Auteur : <?php  ?></p>',
                     'solution' => '<p>Auteur : <?php the_author(); ?></p>',
-                    'hint' => 'Utilisez the_author() pour afficher le nom de l\'auteur. Cette fonction doit être appelée dans The Loop.'
+                    'hint' => $getTranslated('hint', 'Utilisez the_author() pour afficher le nom de l\'auteur. Cette fonction doit être appelée dans The Loop.')
                 ],
                 6 => [
-                    'title' => 'Image à la une',
-                    'difficulty' => 'Moyen',
+                    'title' => $getTranslated('title', 'Image à la une'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
                     'points' => 15,
-                    'instruction' => 'Affichez l\'image à la une (featured image) de l\'article avec une taille personnalisée "medium".',
-                    'description' => 'Les images à la une enrichissent les articles. has_post_thumbnail() vérifie si une image existe, the_post_thumbnail() l\'affiche. On peut spécifier une taille (\'thumbnail\', \'medium\', \'large\', \'full\'). C\'est essentiel pour un design professionnel.',
+                    'instruction' => $getTranslated('instruction', 'Affichez l\'image à la une (featured image) de l\'article avec une taille personnalisée "medium".'),
+                    'description' => $getTranslated('description', 'Les images à la une enrichissent les articles. has_post_thumbnail() vérifie si une image existe, the_post_thumbnail() l\'affiche. On peut spécifier une taille (\'thumbnail\', \'medium\', \'large\', \'full\'). C\'est essentiel pour un design professionnel.'),
                     'startCode' => '<?php
 if (has_post_thumbnail()) {
   
@@ -4799,14 +4992,14 @@ if (has_post_thumbnail()) {
   the_post_thumbnail(\'medium\');
 }
 ?>',
-                    'hint' => 'Utilisez the_post_thumbnail(\'medium\') pour afficher l\'image avec la taille medium.'
+                    'hint' => $getTranslated('hint', 'Utilisez the_post_thumbnail(\'medium\') pour afficher l\'image avec la taille medium.')
                 ],
                 7 => [
-                    'title' => 'Menu WordPress',
-                    'difficulty' => 'Moyen',
+                    'title' => $getTranslated('title', 'Menu WordPress'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
                     'points' => 18,
-                    'instruction' => 'Affichez le menu WordPress enregistré avec l\'emplacement "primary" en utilisant wp_nav_menu().',
-                    'description' => 'Les menus WordPress sont gérés via l\'interface admin. wp_nav_menu() affiche un menu. theme_location correspond à l\'emplacement enregistré avec register_nav_menus(). Les menus sont essentiels pour la navigation du site.',
+                    'instruction' => $getTranslated('instruction', 'Affichez le menu WordPress enregistré avec l\'emplacement "primary" en utilisant wp_nav_menu().'),
+                    'description' => $getTranslated('description', 'Les menus WordPress sont gérés via l\'interface admin. wp_nav_menu() affiche un menu. theme_location correspond à l\'emplacement enregistré avec register_nav_menus(). Les menus sont essentiels pour la navigation du site.'),
                     'startCode' => '<?php
 wp_nav_menu(array(
   \'theme_location\' => \'\'
@@ -4817,14 +5010,14 @@ wp_nav_menu(array(
   \'theme_location\' => \'primary\'
 ));
 ?>',
-                    'hint' => 'Utilisez \'primary\' comme theme_location. Cet emplacement doit être enregistré dans functions.php avec register_nav_menus().'
+                    'hint' => $getTranslated('hint', 'Utilisez \'primary\' comme theme_location. Cet emplacement doit être enregistré dans functions.php avec register_nav_menus().')
                 ],
                 8 => [
-                    'title' => 'Widgets WordPress',
-                    'difficulty' => 'Moyen',
+                    'title' => $getTranslated('title', 'Widgets WordPress'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
                     'points' => 18,
-                    'instruction' => 'Enregistrez une zone de widgets (sidebar) avec register_sidebar() dans functions.php, puis affichez-la dans le template avec dynamic_sidebar().',
-                    'description' => 'Les widgets WordPress permettent d\'ajouter du contenu dynamique dans les sidebars. register_sidebar() enregistre une zone, dynamic_sidebar() l\'affiche. is_active_sidebar() vérifie si des widgets sont actifs. C\'est essentiel pour les thèmes personnalisables.',
+                    'instruction' => $getTranslated('instruction', 'Enregistrez une zone de widgets (sidebar) avec register_sidebar() dans functions.php, puis affichez-la dans le template avec dynamic_sidebar().'),
+                    'description' => $getTranslated('description', 'Les widgets WordPress permettent d\'ajouter du contenu dynamique dans les sidebars. register_sidebar() enregistre une zone, dynamic_sidebar() l\'affiche. is_active_sidebar() vérifie si des widgets sont actifs. C\'est essentiel pour les thèmes personnalisables.'),
                     'startCode' => '/* functions.php */
 <?php
 function mon_theme_widgets() {
@@ -4855,14 +5048,14 @@ if (is_active_sidebar(\'sidebar-1\')) {
   dynamic_sidebar(\'sidebar-1\');
 }
 ?>',
-                    'hint' => 'Utilisez register_sidebar(array(\'name\' => \'...\', \'id\' => \'...\')) dans functions.php, et dynamic_sidebar(\'id\') dans le template.'
+                    'hint' => $getTranslated('hint', 'Utilisez register_sidebar(array(\'name\' => \'...\', \'id\' => \'...\')) dans functions.php, et dynamic_sidebar(\'id\') dans le template.')
                 ],
                 9 => [
-                    'title' => 'Catégories et tags',
-                    'difficulty' => 'Moyen',
+                    'title' => $getTranslated('title', 'Catégories et tags'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
                     'points' => 15,
-                    'instruction' => 'Affichez les catégories et les tags de l\'article en utilisant the_category() et the_tags().',
-                    'description' => 'WordPress utilise les catégories et tags pour organiser le contenu. the_category() affiche les catégories, the_tags() affiche les tags. get_the_category() et get_the_tags() retournent les données. C\'est essentiel pour la navigation et l\'organisation.',
+                    'instruction' => $getTranslated('instruction', 'Affichez les catégories et les tags de l\'article en utilisant the_category() et the_tags().'),
+                    'description' => $getTranslated('description', 'WordPress utilise les catégories et tags pour organiser le contenu. the_category() affiche les catégories, the_tags() affiche les tags. get_the_category() et get_the_tags() retournent les données. C\'est essentiel pour la navigation et l\'organisation.'),
                     'startCode' => '<?php
 if (have_posts()) {
   while (have_posts()) {
@@ -4882,14 +5075,14 @@ if (have_posts()) {
   }
 }
 ?>',
-                    'hint' => 'Utilisez the_category(\', \') pour afficher les catégories séparées par des virgules, et the_tags(\'Tags: \', \', \') pour les tags.'
+                    'hint' => $getTranslated('hint', 'Utilisez the_category(\', \') pour afficher les catégories séparées par des virgules, et the_tags(\'Tags: \', \', \') pour les tags.')
                 ],
                 10 => [
-                    'title' => 'Pagination WordPress',
-                    'difficulty' => 'Moyen',
+                    'title' => $getTranslated('title', 'Pagination WordPress'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
                     'points' => 20,
-                    'instruction' => 'Ajoutez la pagination WordPress en utilisant the_posts_pagination() ou paginate_links().',
-                    'description' => 'La pagination WordPress divise les articles en pages. the_posts_pagination() affiche la pagination moderne, paginate_links() offre plus de contrôle. previous_posts_link() et next_posts_link() créent des liens simples. C\'est essentiel pour naviguer entre les pages d\'articles.',
+                    'instruction' => $getTranslated('instruction', 'Ajoutez la pagination WordPress en utilisant the_posts_pagination() ou paginate_links().'),
+                    'description' => $getTranslated('description', 'La pagination WordPress divise les articles en pages. the_posts_pagination() affiche la pagination moderne, paginate_links() offre plus de contrôle. previous_posts_link() et next_posts_link() créent des liens simples. C\'est essentiel pour naviguer entre les pages d\'articles.'),
                     'startCode' => '<?php
 if (have_posts()) {
   while (have_posts()) {
@@ -4908,14 +5101,14 @@ if (have_posts()) {
   the_posts_pagination();
 }
 ?>',
-                    'hint' => 'Utilisez the_posts_pagination() après The Loop pour afficher la pagination. previous_posts_link() et next_posts_link() créent des liens simples.'
+                    'hint' => $getTranslated('hint', 'Utilisez the_posts_pagination() après The Loop pour afficher la pagination. previous_posts_link() et next_posts_link() créent des liens simples.')
                 ],
                 11 => [
-                    'title' => 'Custom Post Type',
-                    'difficulty' => 'Difficile',
+                    'title' => $getTranslated('title', 'Custom Post Type'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
                     'points' => 20,
-                    'instruction' => 'Enregistrez un custom post type "portfolio" avec les paramètres : public => true, has_archive => true, et supports => [\'title\', \'editor\', \'thumbnail\']. Utilisez add_action(\'init\', ...).',
-                    'description' => 'Les Custom Post Types étendent WordPress au-delà des articles et pages. register_post_type() crée un nouveau type de contenu. public rend accessible, has_archive active l\'archive, supports définit les fonctionnalités. C\'est essentiel pour des sites complexes.',
+                    'instruction' => $getTranslated('instruction', 'Enregistrez un custom post type "portfolio" avec les paramètres : public => true, has_archive => true, et supports => [\'title\', \'editor\', \'thumbnail\']. Utilisez add_action(\'init\', ...).'),
+                    'description' => $getTranslated('description', 'Les Custom Post Types étendent WordPress au-delà des articles et pages. register_post_type() crée un nouveau type de contenu. public rend accessible, has_archive active l\'archive, supports définit les fonctionnalités. C\'est essentiel pour des sites complexes.'),
                     'startCode' => '<?php
 function create_portfolio_post_type() {
   register_post_type(\'\', array(
@@ -4936,14 +5129,14 @@ function create_portfolio_post_type() {
 }
 add_action(\'init\', \'create_portfolio_post_type\');
 ?>',
-                    'hint' => 'Utilisez "portfolio" comme premier paramètre, et ajoutez has_archive => true et supports => array(\'title\', \'editor\', \'thumbnail\').'
+                    'hint' => $getTranslated('hint', 'Utilisez "portfolio" comme premier paramètre, et ajoutez has_archive => true et supports => array(\'title\', \'editor\', \'thumbnail\').')
                 ],
                 12 => [
-                    'title' => 'Les actions et filtres',
-                    'difficulty' => 'Difficile',
+                    'title' => $getTranslated('title', 'Les actions et filtres'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
                     'points' => 25,
-                    'instruction' => 'Créez un filtre qui modifie le contenu des articles en ajoutant "Publié par NiangProgrammeur" à la fin. Utilisez add_filter() avec le hook "the_content".',
-                    'description' => 'Les hooks (actions et filtres) sont le système d\'extensibilité de WordPress. add_filter() modifie des données, add_action() exécute du code. the_content est un filtre qui permet de modifier le contenu avant affichage. C\'est la base du développement WordPress avancé.',
+                    'instruction' => $getTranslated('instruction', 'Créez un filtre qui modifie le contenu des articles en ajoutant "Publié par NiangProgrammeur" à la fin. Utilisez add_filter() avec le hook "the_content".'),
+                    'description' => $getTranslated('description', 'Les hooks (actions et filtres) sont le système d\'extensibilité de WordPress. add_filter() modifie des données, add_action() exécute du code. the_content est un filtre qui permet de modifier le contenu avant affichage. C\'est la base du développement WordPress avancé.'),
                     'startCode' => '<?php
 
 function ajouter_signature($content) {
@@ -4961,14 +5154,14 @@ function ajouter_signature($content) {
 }
 add_filter(\'the_content\', \'ajouter_signature\');
 ?>',
-                    'hint' => 'Créez function ajouter_signature($content) { $content .= "..."; return $content; } puis add_filter(\'the_content\', \'ajouter_signature\');'
+                    'hint' => $getTranslated('hint', 'Créez function ajouter_signature($content) { $content .= "..."; return $content; } puis add_filter(\'the_content\', \'ajouter_signature\');')
                 ],
                 13 => [
-                    'title' => 'Créer un thème complet',
-                    'difficulty' => 'Difficile',
+                    'title' => $getTranslated('title', 'Créer un thème complet'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
                     'points' => 30,
-                    'instruction' => 'Créez la structure minimale d\'un thème WordPress avec : style.css (avec en-tête), index.php, functions.php, et header.php. Le style.css doit contenir les informations du thème (Theme Name, Author, Version).',
-                    'description' => 'Un thème WordPress nécessite au minimum style.css avec l\'en-tête du thème, index.php comme template de fallback, functions.php pour les fonctionnalités, et header.php/footer.php pour la structure. C\'est la base pour créer un thème personnalisé.',
+                    'instruction' => $getTranslated('instruction', 'Créez la structure minimale d\'un thème WordPress avec : style.css (avec en-tête), index.php, functions.php, et header.php. Le style.css doit contenir les informations du thème (Theme Name, Author, Version).'),
+                    'description' => $getTranslated('description', 'Un thème WordPress nécessite au minimum style.css avec l\'en-tête du thème, index.php comme template de fallback, functions.php pour les fonctionnalités, et header.php/footer.php pour la structure. C\'est la base pour créer un thème personnalisé.'),
                     'startCode' => '/* style.css */
 /*
 Theme Name: 
@@ -5012,14 +5205,14 @@ function mon_theme_setup() {
 }
 add_action(\'after_setup_theme\', \'mon_theme_setup\');
 ?>',
-                    'hint' => 'Ajoutez Theme Name, Author, Version dans style.css. Créez index.php avec The Loop. Ajoutez add_theme_support() dans functions.php.'
+                    'hint' => $getTranslated('hint', 'Ajoutez Theme Name, Author, Version dans style.css. Créez index.php avec The Loop. Ajoutez add_theme_support() dans functions.php.')
                 ],
                 14 => [
-                    'title' => 'Taxonomies personnalisées',
-                    'difficulty' => 'Difficile',
+                    'title' => $getTranslated('title', 'Taxonomies personnalisées'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
                     'points' => 28,
-                    'instruction' => 'Enregistrez une taxonomie personnalisée "genre" pour le custom post type "livre" avec register_taxonomy(). La taxonomie doit être hiérarchique (comme les catégories).',
-                    'description' => 'Les taxonomies personnalisées organisent les custom post types. register_taxonomy() crée une taxonomie, hierarchical => true crée une taxonomie hiérarchique (comme catégories), false crée une taxonomie non-hiérarchique (comme tags). C\'est essentiel pour organiser du contenu personnalisé.',
+                    'instruction' => $getTranslated('instruction', 'Enregistrez une taxonomie personnalisée "genre" pour le custom post type "livre" avec register_taxonomy(). La taxonomie doit être hiérarchique (comme les catégories).'),
+                    'description' => $getTranslated('description', 'Les taxonomies personnalisées organisent les custom post types. register_taxonomy() crée une taxonomie, hierarchical => true crée une taxonomie hiérarchique (comme catégories), false crée une taxonomie non-hiérarchique (comme tags). C\'est essentiel pour organiser du contenu personnalisé.'),
                     'startCode' => '<?php
 function creer_taxonomie_genre() {
   
@@ -5036,14 +5229,14 @@ function creer_taxonomie_genre() {
 }
 add_action(\'init\', \'creer_taxonomie_genre\');
 ?>',
-                    'hint' => 'Utilisez register_taxonomy(\'genre\', \'livre\', array(\'hierarchical\' => true, ...)) pour créer une taxonomie hiérarchique.'
+                    'hint' => $getTranslated('hint', 'Utilisez register_taxonomy(\'genre\', \'livre\', array(\'hierarchical\' => true, ...)) pour créer une taxonomie hiérarchique.')
                 ],
                 15 => [
-                    'title' => 'Meta boxes personnalisées',
-                    'difficulty' => 'Difficile',
+                    'title' => $getTranslated('title', 'Meta boxes personnalisées'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
                     'points' => 30,
-                    'instruction' => 'Créez une meta box personnalisée "Prix" pour les articles en utilisant add_meta_box(), et sauvegardez les données avec save_post. Affichez le champ dans l\'éditeur.',
-                    'description' => 'Les meta boxes ajoutent des champs personnalisés aux articles. add_meta_box() crée la meta box, save_post sauvegarde les données, get_post_meta() récupère les valeurs. C\'est essentiel pour ajouter des métadonnées personnalisées aux articles.',
+                    'instruction' => $getTranslated('instruction', 'Créez une meta box personnalisée "Prix" pour les articles en utilisant add_meta_box(), et sauvegardez les données avec save_post. Affichez le champ dans l\'éditeur.'),
+                    'description' => $getTranslated('description', 'Les meta boxes ajoutent des champs personnalisés aux articles. add_meta_box() crée la meta box, save_post sauvegarde les données, get_post_meta() récupère les valeurs. C\'est essentiel pour ajouter des métadonnées personnalisées aux articles.'),
                     'startCode' => '<?php
 function ajouter_meta_box_prix() {
   
@@ -5078,142 +5271,142 @@ function sauvegarder_prix($post_id) {
 }
 add_action(\'save_post\', \'sauvegarder_prix\');
 ?>',
-                    'hint' => 'Utilisez add_meta_box() pour créer, une fonction callback pour afficher, et save_post pour sauvegarder avec update_post_meta().'
+                    'hint' => $getTranslated('hint', 'Utilisez add_meta_box() pour créer, une fonction callback pour afficher, et save_post pour sauvegarder avec update_post_meta().')
                 ],
             ],
             'ia' => [
                 1 => [
-                    'title' => 'Concepts de base IA',
-                    'difficulty' => 'Facile',
+                    'title' => $getTranslated('title', 'Concepts de base IA'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
                     'points' => 10,
-                    'instruction' => 'Complétez la définition : L\'IA est la simulation de l\'intelligence ___ par des machines.',
-                    'description' => 'L\'Intelligence Artificielle (IA) est un domaine de l\'informatique qui vise à créer des systèmes capables d\'effectuer des tâches nécessitant normalement l\'intelligence humaine. Elle simule les processus cognitifs comme l\'apprentissage, le raisonnement et la résolution de problèmes.',
+                    'instruction' => $getTranslated('instruction', 'Complétez la définition : L\'IA est la simulation de l\'intelligence ___ par des machines.'),
+                    'description' => $getTranslated('description', 'L\'Intelligence Artificielle (IA) est un domaine de l\'informatique qui vise à créer des systèmes capables d\'effectuer des tâches nécessitant normalement l\'intelligence humaine. Elle simule les processus cognitifs comme l\'apprentissage, le raisonnement et la résolution de problèmes.'),
                     'startCode' => 'L\'IA est la simulation de l\'intelligence ___ par des machines.',
                     'solution' => 'L\'IA est la simulation de l\'intelligence humaine par des machines.',
-                    'hint' => 'L\'IA simule l\'intelligence humaine. Réponse : humaine.'
+                    'hint' => $getTranslated('hint', 'L\'IA simule l\'intelligence humaine. Réponse : humaine.')
                 ],
                 2 => [
-                    'title' => 'Machine Learning',
-                    'difficulty' => 'Facile',
+                    'title' => $getTranslated('title', 'Machine Learning'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
                     'points' => 12,
-                    'instruction' => 'Citez les 3 types principaux de Machine Learning (Apprentissage automatique).',
-                    'description' => 'Le Machine Learning est un sous-domaine de l\'IA. L\'apprentissage supervisé utilise des données étiquetées, l\'apprentissage non supervisé trouve des patterns sans étiquettes, et l\'apprentissage par renforcement apprend par essais et erreurs avec des récompenses.',
+                    'instruction' => $getTranslated('instruction', 'Citez les 3 types principaux de Machine Learning (Apprentissage automatique).'),
+                    'description' => $getTranslated('description', 'Le Machine Learning est un sous-domaine de l\'IA. L\'apprentissage supervisé utilise des données étiquetées, l\'apprentissage non supervisé trouve des patterns sans étiquettes, et l\'apprentissage par renforcement apprend par essais et erreurs avec des récompenses.'),
                     'startCode' => '1. Apprentissage supervisé
 2. Apprentissage non supervisé
 3. Apprentissage ___',
                     'solution' => '1. Apprentissage supervisé
 2. Apprentissage non supervisé
 3. Apprentissage par renforcement',
-                    'hint' => 'Le troisième type est l\'apprentissage par renforcement (reinforcement learning).'
+                    'hint' => $getTranslated('hint', 'Le troisième type est l\'apprentissage par renforcement (reinforcement learning).')
                 ],
                 3 => [
-                    'title' => 'Types d\'apprentissage',
-                    'difficulty' => 'Facile',
+                    'title' => $getTranslated('title', 'Types d\'apprentissage'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
                     'points' => 10,
-                    'instruction' => 'Complétez : L\'apprentissage ___ utilise des données étiquetées pour entraîner un modèle.',
-                    'description' => 'L\'apprentissage supervisé utilise des données étiquetées (input et output connus). L\'apprentissage non supervisé trouve des patterns sans étiquettes. L\'apprentissage par renforcement apprend par essais et erreurs avec des récompenses. C\'est la base de la classification des algorithmes ML.',
+                    'instruction' => $getTranslated('instruction', 'Complétez : L\'apprentissage ___ utilise des données étiquetées pour entraîner un modèle.'),
+                    'description' => $getTranslated('description', 'L\'apprentissage supervisé utilise des données étiquetées (input et output connus). L\'apprentissage non supervisé trouve des patterns sans étiquettes. L\'apprentissage par renforcement apprend par essais et erreurs avec des récompenses. C\'est la base de la classification des algorithmes ML.'),
                     'startCode' => 'L\'apprentissage ___ utilise des données étiquetées pour entraîner un modèle.',
                     'solution' => 'L\'apprentissage supervisé utilise des données étiquetées pour entraîner un modèle.',
-                    'hint' => 'L\'apprentissage supervisé utilise des données avec des étiquettes (labels). Réponse : supervisé.'
+                    'hint' => $getTranslated('hint', 'L\'apprentissage supervisé utilise des données avec des étiquettes (labels). Réponse : supervisé.')
                 ],
                 4 => [
-                    'title' => 'Données et datasets',
-                    'difficulty' => 'Facile',
+                    'title' => $getTranslated('title', 'Données et datasets'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
                     'points' => 10,
-                    'instruction' => 'Complétez : Un ___ est un ensemble de données utilisé pour entraîner un modèle d\'IA.',
-                    'description' => 'Un dataset est une collection de données structurées. Le dataset d\'entraînement entraîne le modèle, le dataset de test évalue les performances, le dataset de validation ajuste les hyperparamètres. La qualité du dataset détermine la qualité du modèle. C\'est fondamental en ML.',
+                    'instruction' => $getTranslated('instruction', 'Complétez : Un ___ est un ensemble de données utilisé pour entraîner un modèle d\'IA.'),
+                    'description' => $getTranslated('description', 'Un dataset est une collection de données structurées. Le dataset d\'entraînement entraîne le modèle, le dataset de test évalue les performances, le dataset de validation ajuste les hyperparamètres. La qualité du dataset détermine la qualité du modèle. C\'est fondamental en ML.'),
                     'startCode' => 'Un ___ est un ensemble de données utilisé pour entraîner un modèle d\'IA.',
                     'solution' => 'Un dataset est un ensemble de données utilisé pour entraîner un modèle d\'IA.',
-                    'hint' => 'Un dataset est un ensemble de données. Réponse : dataset.'
+                    'hint' => $getTranslated('hint', 'Un dataset est un ensemble de données. Réponse : dataset.')
                 ],
                 5 => [
-                    'title' => 'Algorithmes de base',
-                    'difficulty' => 'Facile',
+                    'title' => $getTranslated('title', 'Algorithmes de base'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
                     'points' => 12,
-                    'instruction' => 'Citez 2 algorithmes de Machine Learning couramment utilisés pour la classification.',
-                    'description' => 'Les algorithmes ML de base incluent la régression linéaire (prédiction), la classification (KNN, SVM, Decision Tree), le clustering (K-means), et les réseaux de neurones. Chaque algorithme a ses forces et faiblesses selon le type de problème.',
+                    'instruction' => $getTranslated('instruction', 'Citez 2 algorithmes de Machine Learning couramment utilisés pour la classification.'),
+                    'description' => $getTranslated('description', 'Les algorithmes ML de base incluent la régression linéaire (prédiction), la classification (KNN, SVM, Decision Tree), le clustering (K-means), et les réseaux de neurones. Chaque algorithme a ses forces et faiblesses selon le type de problème.'),
                     'startCode' => 'Algorithmes de classification :
 1. ___
 2. ___',
                     'solution' => 'Algorithmes de classification :
 1. Decision Tree (Arbre de décision)
 2. K-Nearest Neighbors (KNN)',
-                    'hint' => 'Exemples d\'algorithmes de classification : Decision Tree, KNN, SVM, Naive Bayes, Random Forest.'
+                    'hint' => $getTranslated('hint', 'Exemples d\'algorithmes de classification : Decision Tree, KNN, SVM, Naive Bayes, Random Forest.')
                 ],
                 6 => [
-                    'title' => 'Réseaux de neurones',
-                    'difficulty' => 'Moyen',
+                    'title' => $getTranslated('title', 'Réseaux de neurones'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
                     'points' => 15,
-                    'instruction' => 'Complétez la structure d\'un réseau de neurones : Couche d\'entrée → Couches ___ → Couche de sortie.',
-                    'description' => 'Les réseaux de neurones artificiels sont inspirés du cerveau. Ils ont une couche d\'entrée (input), des couches cachées (hidden layers) qui traitent les données, et une couche de sortie (output). Plus il y a de couches cachées, plus le réseau est "profond" (deep learning).',
+                    'instruction' => $getTranslated('instruction', 'Complétez la structure d\'un réseau de neurones : Couche d\'entrée → Couches ___ → Couche de sortie.'),
+                    'description' => $getTranslated('description', 'Les réseaux de neurones artificiels sont inspirés du cerveau. Ils ont une couche d\'entrée (input), des couches cachées (hidden layers) qui traitent les données, et une couche de sortie (output). Plus il y a de couches cachées, plus le réseau est "profond" (deep learning).'),
                     'startCode' => 'Couche d\'entrée → Couches ___ → Couche de sortie',
                     'solution' => 'Couche d\'entrée → Couches cachées → Couche de sortie',
-                    'hint' => 'Les couches intermédiaires sont appelées "couches cachées" (hidden layers).'
+                    'hint' => $getTranslated('hint', 'Les couches intermédiaires sont appelées "couches cachées" (hidden layers).')
                 ],
                 7 => [
-                    'title' => 'Deep Learning',
-                    'difficulty' => 'Moyen',
+                    'title' => $getTranslated('title', 'Deep Learning'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
                     'points' => 15,
-                    'instruction' => 'Quelle bibliothèque Python open-source, développée par Google, est la plus populaire pour le Deep Learning ? Complétez : import ___.',
-                    'description' => 'TensorFlow est une bibliothèque open-source développée par Google pour le machine learning et le deep learning. Elle permet de créer et entraîner des réseaux de neurones complexes. Keras est une API haut niveau qui s\'appuie sur TensorFlow.',
+                    'instruction' => $getTranslated('instruction', 'Quelle bibliothèque Python open-source, développée par Google, est la plus populaire pour le Deep Learning ? Complétez : import ___.'),
+                    'description' => $getTranslated('description', 'TensorFlow est une bibliothèque open-source développée par Google pour le machine learning et le deep learning. Elle permet de créer et entraîner des réseaux de neurones complexes. Keras est une API haut niveau qui s\'appuie sur TensorFlow.'),
                     'startCode' => 'import ___',
                     'solution' => 'import tensorflow',
-                    'hint' => 'La bibliothèque s\'appelle TensorFlow. Réponse : tensorflow.'
+                    'hint' => $getTranslated('hint', 'La bibliothèque s\'appelle TensorFlow. Réponse : tensorflow.')
                 ],
                 8 => [
-                    'title' => 'Entraînement d\'un modèle',
-                    'difficulty' => 'Moyen',
+                    'title' => $getTranslated('title', 'Entraînement d\'un modèle'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
                     'points' => 18,
-                    'instruction' => 'Complétez : L\'___ est le processus d\'ajustement des paramètres d\'un modèle pour minimiser l\'erreur.',
-                    'description' => 'L\'entraînement (training) ajuste les paramètres du modèle pour minimiser l\'erreur. L\'epoch est une passe complète sur le dataset. Le batch size est le nombre d\'échantillons traités avant la mise à jour. Le learning rate contrôle la vitesse d\'apprentissage. C\'est le cœur du ML.',
+                    'instruction' => $getTranslated('instruction', 'Complétez : L\'___ est le processus d\'ajustement des paramètres d\'un modèle pour minimiser l\'erreur.'),
+                    'description' => $getTranslated('description', 'L\'entraînement (training) ajuste les paramètres du modèle pour minimiser l\'erreur. L\'epoch est une passe complète sur le dataset. Le batch size est le nombre d\'échantillons traités avant la mise à jour. Le learning rate contrôle la vitesse d\'apprentissage. C\'est le cœur du ML.'),
                     'startCode' => 'L\'___ est le processus d\'ajustement des paramètres d\'un modèle pour minimiser l\'erreur.',
                     'solution' => 'L\'entraînement (training) est le processus d\'ajustement des paramètres d\'un modèle pour minimiser l\'erreur.',
-                    'hint' => 'L\'entraînement (training) ajuste les paramètres. Réponse : entraînement ou training.'
+                    'hint' => $getTranslated('hint', 'L\'entraînement (training) ajuste les paramètres. Réponse : entraînement ou training.')
                 ],
                 9 => [
-                    'title' => 'Évaluation de performance',
-                    'difficulty' => 'Moyen',
+                    'title' => $getTranslated('title', 'Évaluation de performance'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
                     'points' => 18,
-                    'instruction' => 'Citez 2 métriques utilisées pour évaluer les performances d\'un modèle de classification.',
-                    'description' => 'Les métriques évaluent les performances. Accuracy (précision globale), Precision (précision des prédictions positives), Recall (taux de détection), F1-score (moyenne harmonique). Pour la régression : MSE, MAE, R². Le choix dépend du problème. C\'est essentiel pour valider un modèle.',
+                    'instruction' => $getTranslated('instruction', 'Citez 2 métriques utilisées pour évaluer les performances d\'un modèle de classification.'),
+                    'description' => $getTranslated('description', 'Les métriques évaluent les performances. Accuracy (précision globale), Precision (précision des prédictions positives), Recall (taux de détection), F1-score (moyenne harmonique). Pour la régression : MSE, MAE, R². Le choix dépend du problème. C\'est essentiel pour valider un modèle.'),
                     'startCode' => 'Métriques de classification :
 1. ___
 2. ___',
                     'solution' => 'Métriques de classification :
 1. Accuracy (Précision)
 2. F1-score',
-                    'hint' => 'Métriques courantes : Accuracy, Precision, Recall, F1-score, Confusion Matrix.'
+                    'hint' => $getTranslated('hint', 'Métriques courantes : Accuracy, Precision, Recall, F1-score, Confusion Matrix.')
                 ],
                 10 => [
-                    'title' => 'Bibliothèques Python (TensorFlow, PyTorch)',
-                    'difficulty' => 'Moyen',
+                    'title' => $getTranslated('title', 'Bibliothèques Python (TensorFlow, PyTorch)'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
                     'points' => 20,
-                    'instruction' => 'Complétez : ___ est une bibliothèque Python open-source développée par Facebook pour le Deep Learning.',
-                    'description' => 'TensorFlow (Google) et PyTorch (Facebook) sont les deux principales bibliothèques de Deep Learning. TensorFlow est plus mature, PyTorch est plus flexible. Keras est une API haut niveau sur TensorFlow. Scikit-learn est pour le ML classique. C\'est essentiel pour développer en IA.',
+                    'instruction' => $getTranslated('instruction', 'Complétez : ___ est une bibliothèque Python open-source développée par Facebook pour le Deep Learning.'),
+                    'description' => $getTranslated('description', 'TensorFlow (Google) et PyTorch (Facebook) sont les deux principales bibliothèques de Deep Learning. TensorFlow est plus mature, PyTorch est plus flexible. Keras est une API haut niveau sur TensorFlow. Scikit-learn est pour le ML classique. C\'est essentiel pour développer en IA.'),
                     'startCode' => '___ est une bibliothèque Python open-source développée par Facebook pour le Deep Learning.',
                     'solution' => 'PyTorch est une bibliothèque Python open-source développée par Facebook pour le Deep Learning.',
-                    'hint' => 'PyTorch est développé par Facebook. TensorFlow est développé par Google. Réponse : PyTorch.'
+                    'hint' => $getTranslated('hint', 'PyTorch est développé par Facebook. TensorFlow est développé par Google. Réponse : PyTorch.')
                 ],
                 11 => [
-                    'title' => 'Applications IA',
-                    'difficulty' => 'Difficile',
+                    'title' => $getTranslated('title', 'Applications IA'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
                     'points' => 18,
-                    'instruction' => 'Citez 3 applications concrètes de l\'IA dans la vie quotidienne.',
-                    'description' => 'L\'IA est partout : reconnaissance vocale (Siri, Alexa), voitures autonomes (Tesla), assistants virtuels, recommandations (Netflix, Amazon), reconnaissance d\'images, traduction automatique, chatbots, diagnostic médical, etc. L\'IA transforme de nombreux secteurs.',
+                    'instruction' => $getTranslated('instruction', 'Citez 3 applications concrètes de l\'IA dans la vie quotidienne.'),
+                    'description' => $getTranslated('description', 'L\'IA est partout : reconnaissance vocale (Siri, Alexa), voitures autonomes (Tesla), assistants virtuels, recommandations (Netflix, Amazon), reconnaissance d\'images, traduction automatique, chatbots, diagnostic médical, etc. L\'IA transforme de nombreux secteurs.'),
                     'startCode' => '1. Reconnaissance ___
 2. Voitures ___
 3. Assistants ___',
                     'solution' => '1. Reconnaissance vocale
 2. Voitures autonomes
 3. Assistants virtuels',
-                    'hint' => 'Exemples : reconnaissance vocale (Siri), voitures autonomes (Tesla), assistants virtuels (ChatGPT).'
+                    'hint' => $getTranslated('hint', 'Exemples : reconnaissance vocale (Siri), voitures autonomes (Tesla), assistants virtuels (ChatGPT).')
                 ],
                 12 => [
-                    'title' => 'Natural Language Processing',
-                    'difficulty' => 'Difficile',
+                    'title' => $getTranslated('title', 'Natural Language Processing'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
                     'points' => 25,
-                    'instruction' => 'Expliquez ce qu\'est le NLP (Natural Language Processing) et donnez 2 exemples d\'applications.',
-                    'description' => 'Le NLP (Traitement du Langage Naturel) permet aux machines de comprendre et générer le langage humain. Applications : traduction automatique (Google Translate), chatbots, analyse de sentiment, résumé automatique, assistants vocaux. Les modèles modernes comme GPT utilisent le NLP.',
+                    'instruction' => $getTranslated('instruction', 'Expliquez ce qu\'est le NLP (Natural Language Processing) et donnez 2 exemples d\'applications.'),
+                    'description' => $getTranslated('description', 'Le NLP (Traitement du Langage Naturel) permet aux machines de comprendre et générer le langage humain. Applications : traduction automatique (Google Translate), chatbots, analyse de sentiment, résumé automatique, assistants vocaux. Les modèles modernes comme GPT utilisent le NLP.'),
                     'startCode' => 'NLP signifie : ___
 
 Applications :
@@ -5224,14 +5417,14 @@ Applications :
 Applications :
 1. Traduction automatique
 2. Chatbots et assistants vocaux',
-                    'hint' => 'NLP = Natural Language Processing. Applications : traduction, chatbots, analyse de sentiment, etc.'
+                    'hint' => $getTranslated('hint', 'NLP = Natural Language Processing. Applications : traduction, chatbots, analyse de sentiment, etc.')
                 ],
                 13 => [
-                    'title' => 'Éthique de l\'IA',
-                    'difficulty' => 'Difficile',
+                    'title' => $getTranslated('title', 'Éthique de l\'IA'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
                     'points' => 30,
-                    'instruction' => 'Citez 3 principes éthiques importants dans le développement de l\'IA (ex: transparence, équité, confidentialité).',
-                    'description' => 'L\'éthique de l\'IA est cruciale. Principes clés : transparence (compréhensibilité), équité (pas de biais), confidentialité (protection des données), responsabilité (qui est responsable), robustesse (sécurité). Ces principes guident le développement responsable de l\'IA.',
+                    'instruction' => $getTranslated('instruction', 'Citez 3 principes éthiques importants dans le développement de l\'IA (ex: transparence, équité, confidentialité).'),
+                    'description' => $getTranslated('description', 'L\'éthique de l\'IA est cruciale. Principes clés : transparence (compréhensibilité), équité (pas de biais), confidentialité (protection des données), responsabilité (qui est responsable), robustesse (sécurité). Ces principes guident le développement responsable de l\'IA.'),
                     'startCode' => 'Principes éthiques de l\'IA :
 1. ___
 2. ___
@@ -5240,14 +5433,14 @@ Applications :
 1. Transparence
 2. Équité (absence de biais)
 3. Confidentialité et protection des données',
-                    'hint' => 'Principes : transparence, équité, confidentialité, responsabilité, robustesse.'
+                    'hint' => $getTranslated('hint', 'Principes : transparence, équité, confidentialité, responsabilité, robustesse.')
                 ],
                 14 => [
-                    'title' => 'Computer Vision',
-                    'difficulty' => 'Difficile',
+                    'title' => $getTranslated('title', 'Computer Vision'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
                     'points' => 28,
-                    'instruction' => 'Expliquez ce qu\'est la Computer Vision et donnez 2 applications concrètes.',
-                    'description' => 'La Computer Vision permet aux machines de comprendre les images. Applications : reconnaissance d\'objets, classification d\'images, détection de visages, OCR (reconnaissance de texte), voitures autonomes, imagerie médicale. Les CNN (Convolutional Neural Networks) sont la base. C\'est un domaine en pleine expansion.',
+                    'instruction' => $getTranslated('instruction', 'Expliquez ce qu\'est la Computer Vision et donnez 2 applications concrètes.'),
+                    'description' => $getTranslated('description', 'La Computer Vision permet aux machines de comprendre les images. Applications : reconnaissance d\'objets, classification d\'images, détection de visages, OCR (reconnaissance de texte), voitures autonomes, imagerie médicale. Les CNN (Convolutional Neural Networks) sont la base. C\'est un domaine en pleine expansion.'),
                     'startCode' => 'Computer Vision signifie : ___
 
 Applications :
@@ -5258,14 +5451,14 @@ Applications :
 Applications :
 1. Reconnaissance d\'objets et classification d\'images
 2. Détection de visages et OCR (reconnaissance de texte)',
-                    'hint' => 'Computer Vision = Vision par ordinateur. Applications : reconnaissance d\'objets, classification, OCR, voitures autonomes, imagerie médicale.'
+                    'hint' => $getTranslated('hint', 'Computer Vision = Vision par ordinateur. Applications : reconnaissance d\'objets, classification, OCR, voitures autonomes, imagerie médicale.')
                 ],
                 15 => [
-                    'title' => 'Optimisation et hyperparamètres',
-                    'difficulty' => 'Difficile',
+                    'title' => $getTranslated('title', 'Optimisation et hyperparamètres'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
                     'points' => 30,
-                    'instruction' => 'Citez 3 hyperparamètres importants à ajuster lors de l\'entraînement d\'un réseau de neurones.',
-                    'description' => 'Les hyperparamètres contrôlent l\'entraînement. Learning rate (vitesse d\'apprentissage), batch size (taille des lots), nombre d\'epochs (itérations), nombre de couches, nombre de neurones par couche. L\'optimisation des hyperparamètres améliore les performances. C\'est un processus itératif.',
+                    'instruction' => $getTranslated('instruction', 'Citez 3 hyperparamètres importants à ajuster lors de l\'entraînement d\'un réseau de neurones.'),
+                    'description' => $getTranslated('description', 'Les hyperparamètres contrôlent l\'entraînement. Learning rate (vitesse d\'apprentissage), batch size (taille des lots), nombre d\'epochs (itérations), nombre de couches, nombre de neurones par couche. L\'optimisation des hyperparamètres améliore les performances. C\'est un processus itératif.'),
                     'startCode' => 'Hyperparamètres importants :
 1. ___
 2. ___
@@ -5274,28 +5467,28 @@ Applications :
 1. Learning rate (taux d\'apprentissage)
 2. Batch size (taille des lots)
 3. Nombre d\'epochs (itérations)',
-                    'hint' => 'Hyperparamètres clés : learning rate, batch size, nombre d\'epochs, nombre de couches, nombre de neurones, fonction d\'activation.'
+                    'hint' => $getTranslated('hint', 'Hyperparamètres clés : learning rate, batch size, nombre d\'epochs, nombre de couches, nombre de neurones, fonction d\'activation.')
                 ],
             ],
             'python' => [
                 1 => [
-                    'title' => 'Syntaxe de base Python',
-                    'difficulty' => 'Facile',
+                    'title' => $getTranslated('title', 'Syntaxe de base Python'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
                     'points' => 10,
-                    'instruction' => 'Affichez le message "Bonjour Python !" en utilisant la fonction print().',
-                    'description' => 'La fonction print() est la fonction de base pour afficher du texte en Python. Elle permet d\'afficher des chaînes de caractères, des variables, et des expressions. C\'est l\'une des premières fonctions que vous apprendrez en Python.',
+                    'instruction' => $getTranslated('instruction', 'Affichez le message "Bonjour Python !" en utilisant la fonction print().'),
+                    'description' => $getTranslated('description', 'La fonction print() est la fonction de base pour afficher du texte en Python. Elle permet d\'afficher des chaînes de caractères, des variables, et des expressions. C\'est l\'une des premières fonctions que vous apprendrez en Python.'),
                     'startCode' => '# Affichez "Bonjour Python !"
 ',
                     'solution' => '# Affichez "Bonjour Python !"
 print("Bonjour Python !")',
-                    'hint' => 'Utilisez print("Bonjour Python !") pour afficher le message.'
+                    'hint' => $getTranslated('hint', 'Utilisez print("Bonjour Python !") pour afficher le message.')
                 ],
                 2 => [
-                    'title' => 'Variables Python',
-                    'difficulty' => 'Facile',
+                    'title' => $getTranslated('title', 'Variables Python'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
                     'points' => 10,
-                    'instruction' => 'Créez une variable nom avec la valeur "Python" et affichez-la.',
-                    'description' => 'En Python, les variables sont créées simplement en leur assignant une valeur. Pas besoin de déclarer le type. Python est un langage à typage dynamique.',
+                    'instruction' => $getTranslated('instruction', 'Créez une variable nom avec la valeur "Python" et affichez-la.'),
+                    'description' => $getTranslated('description', 'En Python, les variables sont créées simplement en leur assignant une valeur. Pas besoin de déclarer le type. Python est un langage à typage dynamique.'),
                     'startCode' => '# Créez une variable nom avec la valeur "Python"
 # Affichez la variable
 ',
@@ -5303,55 +5496,55 @@ print("Bonjour Python !")',
 nom = "Python"
 # Affichez la variable
 print(nom)',
-                    'hint' => 'Créez la variable avec nom = "Python" puis utilisez print(nom) pour l\'afficher.'
+                    'hint' => $getTranslated('hint', 'Créez la variable avec nom = "Python" puis utilisez print(nom) pour l\'afficher.')
                 ],
                 3 => [
-                    'title' => 'Types de données Python',
-                    'difficulty' => 'Facile',
+                    'title' => $getTranslated('title', 'Types de données Python'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
                     'points' => 10,
-                    'instruction' => 'Créez trois variables : un entier (age = 25), un décimal (prix = 19.99), et une chaîne (nom = "Python").',
-                    'description' => 'Python a plusieurs types de données : int (entiers), float (décimaux), str (chaînes de caractères), bool (booléens), list (listes), dict (dictionnaires), etc.',
+                    'instruction' => $getTranslated('instruction', 'Créez trois variables : un entier (age = 25), un décimal (prix = 19.99), et une chaîne (nom = "Python").'),
+                    'description' => $getTranslated('description', 'Python a plusieurs types de données : int (entiers), float (décimaux), str (chaînes de caractères), bool (booléens), list (listes), dict (dictionnaires), etc.'),
                     'startCode' => '# Créez les trois variables
 ',
                     'solution' => '# Créez les trois variables
 age = 25
 prix = 19.99
 nom = "Python"',
-                    'hint' => 'age = 25 (int), prix = 19.99 (float), nom = "Python" (str).'
+                    'hint' => $getTranslated('hint', 'age = 25 (int), prix = 19.99 (float), nom = "Python" (str).')
                 ],
                 4 => [
-                    'title' => 'Opérateurs Python',
-                    'difficulty' => 'Facile',
+                    'title' => $getTranslated('title', 'Opérateurs Python'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
                     'points' => 10,
-                    'instruction' => 'Calculez la somme de 10 et 5, puis affichez le résultat.',
-                    'description' => 'Python supporte les opérateurs arithmétiques : + (addition), - (soustraction), * (multiplication), / (division), // (division entière), % (modulo), ** (puissance).',
+                    'instruction' => $getTranslated('instruction', 'Calculez la somme de 10 et 5, puis affichez le résultat.'),
+                    'description' => $getTranslated('description', 'Python supporte les opérateurs arithmétiques : + (addition), - (soustraction), * (multiplication), / (division), // (division entière), % (modulo), ** (puissance).'),
                     'startCode' => '# Calculez 10 + 5 et affichez le résultat
 ',
                     'solution' => '# Calculez 10 + 5 et affichez le résultat
 resultat = 10 + 5
 print(resultat)',
-                    'hint' => 'Utilisez resultat = 10 + 5 puis print(resultat).'
+                    'hint' => $getTranslated('hint', 'Utilisez resultat = 10 + 5 puis print(resultat).')
                 ],
                 5 => [
-                    'title' => 'Commentaires Python',
-                    'difficulty' => 'Facile',
+                    'title' => $getTranslated('title', 'Commentaires Python'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
                     'points' => 8,
-                    'instruction' => 'Ajoutez un commentaire expliquant ce que fait le code suivant.',
-                    'description' => 'Les commentaires en Python commencent par #. Ils permettent d\'expliquer le code et ne sont pas exécutés. Les commentaires sont essentiels pour rendre le code lisible.',
+                    'instruction' => $getTranslated('instruction', 'Ajoutez un commentaire sur une seule ligne "Ceci est un commentaire" et un commentaire sur plusieurs lignes "Ceci est un commentaire sur plusieurs lignes." dans le code Python.'),
+                    'description' => $getTranslated('description', 'Les commentaires Python sont ignorés par l\'interpréteur. // ou # pour une ligne, /* ... */ pour plusieurs lignes. Ils sont essentiels pour documenter le code et le rendre compréhensible.'),
                     'startCode' => 'nom = "Python"
 print(nom)',
                     'solution' => '# Définit une variable nom avec la valeur "Python"
 nom = "Python"
 # Affiche la valeur de la variable nom
 print(nom)',
-                    'hint' => 'Ajoutez des commentaires avec # avant chaque ligne pour expliquer ce qu\'elle fait.'
+                    'hint' => $getTranslated('hint', 'Utilisez # pour un commentaire sur une ligne et """ ... """ pour un commentaire sur plusieurs lignes.')
                 ],
                 6 => [
-                    'title' => 'Conditions if/elif/else',
-                    'difficulty' => 'Moyen',
+                    'title' => $getTranslated('title', 'Conditions if/elif/else'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
                     'points' => 15,
-                    'instruction' => 'Créez une condition qui affiche "Majeur" si age >= 18, sinon "Mineur".',
-                    'description' => 'Les structures conditionnelles permettent d\'exécuter du code selon certaines conditions. if teste une condition, elif teste une autre condition si la première est fausse, else exécute le code si toutes les conditions sont fausses.',
+                    'instruction' => $getTranslated('instruction', 'Créez une condition if/else qui affiche "Majeur" si l\'âge est >= 18, sinon "Mineur".'),
+                    'description' => $getTranslated('description', 'Les conditions if/else permettent d\'exécuter du code de manière conditionnelle. if (condition) exécute le code si la condition est vraie, else exécute le code alternatif. Les opérateurs de comparaison (==, ===, <, >, <=, >=) comparent des valeurs. C\'est fondamental pour la logique de programmation.'),
                     'startCode' => 'age = 20
 # Ajoutez la condition
 ',
@@ -5361,27 +5554,27 @@ if age >= 18:
     print("Majeur")
 else:
     print("Mineur")',
-                    'hint' => 'Utilisez if age >= 18: print("Majeur") else: print("Mineur"). N\'oubliez pas les deux-points et l\'indentation !'
+                    'hint' => $getTranslated('hint', 'Utilisez if age >= 18: print("Majeur") else: print("Mineur"). N\'oubliez pas les deux-points et l\'indentation !')
                 ],
                 7 => [
-                    'title' => 'Boucles for et while',
-                    'difficulty' => 'Moyen',
+                    'title' => $getTranslated('title', 'Boucles for et while'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
                     'points' => 18,
-                    'instruction' => 'Utilisez une boucle for pour afficher les nombres de 1 à 5.',
-                    'description' => 'Les boucles permettent de répéter du code. La boucle for itère sur une séquence (liste, chaîne, range). La boucle while répète tant qu\'une condition est vraie.',
+                    'instruction' => $getTranslated('instruction', 'Affichez les nombres de 1 à 5 en utilisant une boucle for.'),
+                    'description' => $getTranslated('description', 'Les boucles répètent du code. for (initialisation; condition; incrément) répète tant que la condition est vraie. while (condition) répète aussi, mais l\'incrément doit être géré manuellement. Les boucles sont essentielles pour traiter des collections de données.'),
                     'startCode' => '# Affichez les nombres de 1 à 5 avec une boucle for
 ',
                     'solution' => '# Affichez les nombres de 1 à 5 avec une boucle for
 for i in range(1, 6):
     print(i)',
-                    'hint' => 'Utilisez for i in range(1, 6): print(i). range(1, 6) génère les nombres de 1 à 5.'
+                    'hint' => $getTranslated('hint', 'Utilisez for i in range(1, 6): print(i). range(1, 6) génère les nombres de 1 à 5.')
                 ],
                 8 => [
-                    'title' => 'Fonctions Python',
-                    'difficulty' => 'Moyen',
+                    'title' => $getTranslated('title', 'Fonctions Python'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
                     'points' => 18,
-                    'instruction' => 'Créez une fonction saluer(nom) qui retourne "Bonjour, [nom] !" et appelez-la avec "Python".',
-                    'description' => 'Les fonctions permettent de réutiliser du code. On définit une fonction avec def. Les fonctions peuvent prendre des paramètres et retourner des valeurs avec return.',
+                    'instruction' => $getTranslated('instruction', 'Créez une fonction qui additionne deux nombres.'),
+                    'description' => $getTranslated('description', 'Les fonctions Python organisent le code réutilisable. function nomFonction(param) { return valeur; } définit une fonction. return retourne une valeur. Les fonctions peuvent avoir des paramètres par défaut. C\'est essentiel pour éviter la duplication de code.'),
                     'startCode' => '# Créez la fonction saluer
 # Appelez-la avec "Python"
 ',
@@ -5391,14 +5584,14 @@ def saluer(nom):
 
 # Appelez-la avec "Python"
 print(saluer("Python"))',
-                    'hint' => 'def saluer(nom): return f"Bonjour, {nom} !" puis print(saluer("Python")).'
+                    'hint' => $getTranslated('hint', 'Créez def additionner(a, b): return a + b')
                 ],
                 9 => [
-                    'title' => 'Listes Python',
-                    'difficulty' => 'Moyen',
+                    'title' => $getTranslated('title', 'Listes Python'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
                     'points' => 18,
-                    'instruction' => 'Créez une liste fruits avec ["pomme", "banane", "orange"] et affichez le premier élément.',
-                    'description' => 'Les listes sont des collections ordonnées et modifiables. On accède aux éléments par index (commence à 0). Les listes supportent de nombreuses méthodes : append(), remove(), sort(), etc.',
+                    'instruction' => $getTranslated('instruction', 'Affichez tous les fruits du tableau avec une boucle.'),
+                    'description' => $getTranslated('description', 'Les tableaux Python stockent des collections d\'éléments. Les boucles for et forEach parcourent les tableaux. fruits.length retourne la taille du tableau. Les tableaux sont fondamentaux pour gérer des listes de données.'),
                     'startCode' => '# Créez la liste fruits
 # Affichez le premier élément
 ',
@@ -5406,14 +5599,14 @@ print(saluer("Python"))',
 fruits = ["pomme", "banane", "orange"]
 # Affichez le premier élément
 print(fruits[0])',
-                    'hint' => 'fruits = ["pomme", "banane", "orange"] puis print(fruits[0]) pour le premier élément.'
+                    'hint' => $getTranslated('hint', 'Utilisez for fruit in fruits: print(fruit) pour parcourir le tableau.')
                 ],
                 10 => [
-                    'title' => 'Dictionnaires Python',
-                    'difficulty' => 'Moyen',
+                    'title' => $getTranslated('title', 'Dictionnaires Python'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
                     'points' => 20,
-                    'instruction' => 'Créez un dictionnaire personne avec les clés "nom" et "age", puis affichez la valeur de "nom".',
-                    'description' => 'Les dictionnaires stockent des paires clé-valeur. On accède aux valeurs par leur clé. Les dictionnaires sont très utiles pour représenter des données structurées.',
+                    'instruction' => $getTranslated('instruction', 'Créez un objet personne avec les propriétés nom et age, puis affichez la valeur de nom.'),
+                    'description' => $getTranslated('description', 'Les objets Python stockent des paires clé-valeur. On accède aux propriétés avec la notation point (personne.nom) ou avec des crochets (personne["nom"]). Les objets sont très utiles pour représenter des données structurées.'),
                     'startCode' => '# Créez le dictionnaire personne
 # Affichez la valeur de "nom"
 ',
@@ -5421,14 +5614,14 @@ print(fruits[0])',
 personne = {"nom": "Python", "age": 30}
 # Affichez la valeur de "nom"
 print(personne["nom"])',
-                    'hint' => 'personne = {"nom": "Python", "age": 30} puis print(personne["nom"]).'
+                    'hint' => $getTranslated('hint', 'Créez personne = {"nom": "Python", "age": 30} puis print(personne["nom"]).')
                 ],
                 11 => [
-                    'title' => 'Programmation Orientée Objet',
-                    'difficulty' => 'Difficile',
+                    'title' => $getTranslated('title', 'Programmation Orientée Objet'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
                     'points' => 30,
-                    'instruction' => 'Créez une classe Personne avec un constructeur __init__ qui prend nom et age, puis créez un objet personne1.',
-                    'description' => 'La POO permet de créer des classes et des objets. Une classe est un modèle, un objet est une instance. Le constructeur __init__ est appelé lors de la création d\'un objet. self représente l\'instance.',
+                    'instruction' => $getTranslated('instruction', 'Créez une classe Personne avec un constructeur qui prend nom et age, puis créez un objet personne1.'),
+                    'description' => $getTranslated('description', 'La POO permet de créer des classes et des objets. Une classe est un modèle, un objet est une instance. Le constructeur __init__ est appelé lors de la création d\'un objet. self représente l\'instance. C\'est essentiel pour organiser le code en entités réutilisables.'),
                     'startCode' => '# Créez la classe Personne
 # Créez un objet personne1
 ',
@@ -5441,28 +5634,28 @@ class Personne:
 # Créez un objet personne1
 personne1 = Personne("Python", 30)
 print(personne1.nom)',
-                    'hint' => 'class Personne: def __init__(self, nom, age): self.nom = nom; self.age = age puis personne1 = Personne("Python", 30).'
+                    'hint' => $getTranslated('hint', 'Créez class Personne: def __init__(self, nom, age): self.nom = nom; self.age = age puis personne1 = Personne("Python", 30).')
                 ],
                 12 => [
-                    'title' => 'Modules et packages',
-                    'difficulty' => 'Difficile',
+                    'title' => $getTranslated('title', 'Modules et packages'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
                     'points' => 25,
-                    'instruction' => 'Importez le module math et utilisez math.sqrt(16) pour calculer la racine carrée de 16.',
-                    'description' => 'Les modules permettent d\'organiser le code et de réutiliser des fonctions. Python a une vaste bibliothèque standard. On importe avec import. On peut aussi importer des fonctions spécifiques avec from module import fonction.',
+                    'instruction' => $getTranslated('instruction', 'Importez le module math et utilisez math.sqrt(16) pour calculer la racine carrée de 16.'),
+                    'description' => $getTranslated('description', 'Les modules permettent d\'organiser le code et de réutiliser des fonctions. Python a une vaste bibliothèque standard. On importe avec import. On peut aussi importer des fonctions spécifiques avec from module import fonction. C\'est essentiel pour structurer des projets complexes.'),
                     'startCode' => '# Importez math et calculez sqrt(16)
 ',
                     'solution' => '# Importez math et calculez sqrt(16)
 import math
 resultat = math.sqrt(16)
 print(resultat)',
-                    'hint' => 'import math puis resultat = math.sqrt(16) et print(resultat).'
+                    'hint' => $getTranslated('hint', 'Utilisez import math puis resultat = math.sqrt(16) et print(resultat).')
                 ],
                 13 => [
-                    'title' => 'Gestion des exceptions',
-                    'difficulty' => 'Difficile',
+                    'title' => $getTranslated('title', 'Gestion des exceptions'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
                     'points' => 28,
-                    'instruction' => 'Utilisez try/except pour gérer une erreur de division par zéro.',
-                    'description' => 'Les exceptions permettent de gérer les erreurs. try exécute le code, except capture les exceptions. C\'est essentiel pour créer des programmes robustes.',
+                    'instruction' => $getTranslated('instruction', 'Utilisez try/except pour gérer une erreur de division par zéro.'),
+                    'description' => $getTranslated('description', 'Les exceptions permettent de gérer les erreurs. try exécute le code, except capture les exceptions. C\'est essentiel pour créer des programmes robustes qui ne plantent pas en cas d\'erreur.'),
                     'startCode' => '# Gérer la division par zéro avec try/except
 a = 10
 b = 0
@@ -5475,33 +5668,33 @@ try:
     print(resultat)
 except ZeroDivisionError:
     print("Erreur : Division par zéro !")',
-                    'hint' => 'try: resultat = a / b; print(resultat) except ZeroDivisionError: print("Erreur : Division par zéro !").'
+                    'hint' => $getTranslated('hint', 'Utilisez try: resultat = a / b; print(resultat) except ZeroDivisionError: print("Erreur : Division par zéro !").')
                 ],
                 14 => [
-                    'title' => 'Manipulation de fichiers',
-                    'difficulty' => 'Difficile',
+                    'title' => $getTranslated('title', 'Manipulation de fichiers'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
                     'points' => 28,
-                    'instruction' => 'Écrivez "Bonjour Python !" dans un fichier texte nommé "fichier.txt".',
-                    'description' => 'Python permet de lire et écrire dans des fichiers. On utilise open() avec les modes "r" (lecture), "w" (écriture), "a" (ajout). Il est recommandé d\'utiliser with pour garantir la fermeture du fichier.',
+                    'instruction' => $getTranslated('instruction', 'Écrivez "Bonjour Python !" dans un fichier texte nommé "fichier.txt".'),
+                    'description' => $getTranslated('description', 'Python permet de lire et écrire dans des fichiers. On utilise open() avec les modes "r" (lecture), "w" (écriture), "a" (ajout). Il est recommandé d\'utiliser with pour garantir la fermeture du fichier. C\'est essentiel pour la persistance des données.'),
                     'startCode' => '# Écrivez dans le fichier
 ',
                     'solution' => '# Écrivez dans le fichier
 with open("fichier.txt", "w") as f:
     f.write("Bonjour Python !")',
-                    'hint' => 'with open("fichier.txt", "w") as f: f.write("Bonjour Python !").'
+                    'hint' => $getTranslated('hint', 'Utilisez with open("fichier.txt", "w") as f: f.write("Bonjour Python !").')
                 ],
                 15 => [
-                    'title' => 'Compréhensions de listes et générateurs',
-                    'difficulty' => 'Difficile',
+                    'title' => $getTranslated('title', 'Compréhensions de listes et générateurs'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
                     'points' => 30,
-                    'instruction' => 'Créez une liste des carrés des nombres de 1 à 5 en utilisant une compréhension de liste.',
-                    'description' => 'Les compréhensions de listes permettent de créer des listes de manière concise. Syntaxe : [expression for item in iterable]. Les générateurs sont similaires mais utilisent () au lieu de [] et sont plus efficaces en mémoire.',
+                    'instruction' => $getTranslated('instruction', 'Créez une liste des carrés des nombres de 1 à 5 en utilisant une compréhension de liste.'),
+                    'description' => $getTranslated('description', 'Les compréhensions de listes permettent de créer des listes de manière concise. Syntaxe : [expression for item in iterable]. Les générateurs sont similaires mais utilisent () au lieu de [] et sont plus efficaces en mémoire. C\'est une technique avancée pour manipuler des collections.'),
                     'startCode' => '# Créez la liste des carrés avec une compréhension
 ',
                     'solution' => '# Créez la liste des carrés avec une compréhension
 carres = [x**2 for x in range(1, 6)]
 print(carres)',
-                    'hint' => 'carres = [x**2 for x in range(1, 6)] crée [1, 4, 9, 16, 25].'
+                    'hint' => $getTranslated('hint', 'Utilisez carres = [x**2 for x in range(1, 6)] pour créer [1, 4, 9, 16, 25].')
                 ],
             ],
         ];
@@ -5511,187 +5704,194 @@ print(carres)',
 
     private function getExercisesByLanguage($language)
     {
+        // Helper function to get translated exercise title
+        $getTitle = function($exerciseId, $default) use ($language) {
+            $translationKey = "exercises.{$language}.{$exerciseId}.title";
+            $translated = trans($translationKey);
+            return $translated !== $translationKey ? $translated : $default;
+        };
+        
         // Exemples d'exercices par langage
         $allExercises = [
             'html5' => [
                 // Niveau Facile (5 exercices)
-                ['title' => 'Les balises de base', 'difficulty' => 'Facile', 'points' => 10],
-                ['title' => 'Les paragraphes', 'difficulty' => 'Facile', 'points' => 10],
-                ['title' => 'Les liens', 'difficulty' => 'Facile', 'points' => 15],
-                ['title' => 'Les titres HTML', 'difficulty' => 'Facile', 'points' => 10],
-                ['title' => 'Les sauts de ligne', 'difficulty' => 'Facile', 'points' => 10],
+                ['title' => $getTitle(1, 'Les balises de base'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(2, 'Les paragraphes'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(3, 'Les liens'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 15],
+                ['title' => $getTitle(4, 'Les titres HTML'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(5, 'Les sauts de ligne'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
                 // Niveau Moyen (5 exercices)
-                ['title' => 'Les images', 'difficulty' => 'Moyen', 'points' => 15],
-                ['title' => 'Les listes', 'difficulty' => 'Moyen', 'points' => 20],
-                ['title' => 'Les tableaux HTML5', 'difficulty' => 'Moyen', 'points' => 20],
-                ['title' => 'Les formulaires de base', 'difficulty' => 'Moyen', 'points' => 18],
-                ['title' => 'Les citations et abréviations', 'difficulty' => 'Moyen', 'points' => 15],
+                ['title' => $getTitle(6, 'Les images'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 15],
+                ['title' => $getTitle(7, 'Les listes'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
+                ['title' => $getTitle(8, 'Les tableaux HTML5'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
+                ['title' => $getTitle(9, 'Les formulaires de base'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 18],
+                ['title' => $getTitle(10, 'Les citations et abréviations'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 15],
                 // Niveau Difficile (5 exercices)
-                ['title' => 'Formulaires HTML5 avancés', 'difficulty' => 'Difficile', 'points' => 25],
-                ['title' => 'Éléments sémantiques HTML5', 'difficulty' => 'Difficile', 'points' => 25],
-                ['title' => 'Accessibilité HTML5', 'difficulty' => 'Difficile', 'points' => 30],
-                ['title' => 'Métadonnées et SEO HTML5', 'difficulty' => 'Difficile', 'points' => 28],
-                ['title' => 'Multimédia HTML5 (audio/vidéo)', 'difficulty' => 'Difficile', 'points' => 30],
+                ['title' => $getTitle(11, 'Formulaires HTML5 avancés'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 25],
+                ['title' => $getTitle(12, 'Éléments sémantiques HTML5'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 25],
+                ['title' => $getTitle(13, 'Accessibilité HTML5'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+                ['title' => $getTitle(14, 'Métadonnées et SEO HTML5'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(15, 'Multimédia HTML5 (audio/vidéo)'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
             ],
             'css3' => [
                 // Niveau Facile (5 exercices)
-                ['title' => 'Les sélecteurs CSS', 'difficulty' => 'Facile', 'points' => 10],
-                ['title' => 'Couleurs et arrière-plans', 'difficulty' => 'Facile', 'points' => 10],
-                ['title' => 'Marges et padding', 'difficulty' => 'Facile', 'points' => 10],
-                ['title' => 'Bordures CSS', 'difficulty' => 'Facile', 'points' => 10],
-                ['title' => 'Polices et texte', 'difficulty' => 'Facile', 'points' => 12],
+                ['title' => $getTitle(1, 'Les sélecteurs CSS'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(2, 'Couleurs et arrière-plans'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(3, 'Marges et padding'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(4, 'Bordures CSS'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(5, 'Polices et texte'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 12],
                 // Niveau Moyen (5 exercices)
-                ['title' => 'Flexbox - Centrage', 'difficulty' => 'Moyen', 'points' => 20],
-                ['title' => 'Grid Layout', 'difficulty' => 'Moyen', 'points' => 20],
-                ['title' => 'Responsive Design', 'difficulty' => 'Moyen', 'points' => 15],
-                ['title' => 'Pseudo-classes et pseudo-éléments', 'difficulty' => 'Moyen', 'points' => 18],
-                ['title' => 'Transitions CSS', 'difficulty' => 'Moyen', 'points' => 20],
+                ['title' => $getTitle(6, 'Flexbox - Centrage'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
+                ['title' => $getTitle(7, 'Grid Layout'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
+                ['title' => $getTitle(8, 'Responsive Design'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 15],
+                ['title' => $getTitle(9, 'Pseudo-classes et pseudo-éléments'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 18],
+                ['title' => $getTitle(10, 'Transitions CSS'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
                 // Niveau Difficile (5 exercices)
-                ['title' => 'Animations CSS', 'difficulty' => 'Difficile', 'points' => 25],
-                ['title' => 'CSS Variables', 'difficulty' => 'Difficile', 'points' => 25],
-                ['title' => 'Advanced Grid Layout', 'difficulty' => 'Difficile', 'points' => 30],
-                ['title' => 'Transformations CSS 3D', 'difficulty' => 'Difficile', 'points' => 28],
-                ['title' => 'CSS Architecture (BEM, SMACSS)', 'difficulty' => 'Difficile', 'points' => 30],
+                ['title' => $getTitle(11, 'Animations CSS'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 25],
+                ['title' => $getTitle(12, 'CSS Variables'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 25],
+                ['title' => $getTitle(13, 'Advanced Grid Layout'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+                ['title' => $getTitle(14, 'Transformations CSS 3D'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(15, 'CSS Architecture (BEM, SMACSS)'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
             ],
             'javascript' => [
                 // Niveau Facile (5 exercices)
-                ['title' => 'Variables et types', 'difficulty' => 'Facile', 'points' => 10],
-                ['title' => 'Fonctions', 'difficulty' => 'Facile', 'points' => 15],
-                ['title' => 'Conditions if/else', 'difficulty' => 'Facile', 'points' => 12],
-                ['title' => 'Boucles for et while', 'difficulty' => 'Facile', 'points' => 12],
-                ['title' => 'Opérateurs JavaScript', 'difficulty' => 'Facile', 'points' => 10],
+                ['title' => $getTitle(1, 'Variables et types'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(2, 'Fonctions'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 15],
+                ['title' => $getTitle(3, 'Conditions if/else'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 12],
+                ['title' => $getTitle(4, 'Boucles for et while'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 12],
+                ['title' => $getTitle(5, 'Opérateurs JavaScript'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
                 // Niveau Moyen (5 exercices)
-                ['title' => 'DOM Manipulation', 'difficulty' => 'Moyen', 'points' => 20],
-                ['title' => 'Tableaux et boucles', 'difficulty' => 'Moyen', 'points' => 20],
-                ['title' => 'Événements JavaScript', 'difficulty' => 'Moyen', 'points' => 18],
-                ['title' => 'Manipulation de chaînes', 'difficulty' => 'Moyen', 'points' => 15],
-                ['title' => 'Fonctions fléchées', 'difficulty' => 'Moyen', 'points' => 20],
+                ['title' => $getTitle(6, 'DOM Manipulation'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
+                ['title' => $getTitle(7, 'Tableaux et boucles'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
+                ['title' => $getTitle(8, 'Événements JavaScript'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 18],
+                ['title' => $getTitle(9, 'Manipulation de chaînes'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 15],
+                ['title' => $getTitle(10, 'Fonctions fléchées'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
                 // Niveau Difficile (5 exercices)
-                ['title' => 'Objets JavaScript', 'difficulty' => 'Difficile', 'points' => 30],
-                ['title' => 'Promises et Async/Await', 'difficulty' => 'Difficile', 'points' => 28],
-                ['title' => 'Closures et Scope', 'difficulty' => 'Difficile', 'points' => 30],
-                ['title' => 'Destructuring et Spread', 'difficulty' => 'Difficile', 'points' => 25],
-                ['title' => 'Modules ES6 (import/export)', 'difficulty' => 'Difficile', 'points' => 28],
+                ['title' => $getTitle(11, 'Objets JavaScript'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+                ['title' => $getTitle(12, 'Promises et Async/Await'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(13, 'Closures et Scope'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+                ['title' => $getTitle(14, 'Destructuring et Spread'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 25],
+                ['title' => $getTitle(15, 'Modules ES6 (import/export)'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
             ],
             'php' => [
                 // Niveau Facile (5 exercices)
-                ['title' => 'Syntaxe de base PHP', 'difficulty' => 'Facile', 'points' => 10],
-                ['title' => 'Variables PHP', 'difficulty' => 'Facile', 'points' => 10],
-                ['title' => 'Opérateurs PHP', 'difficulty' => 'Facile', 'points' => 10],
-                ['title' => 'Chaînes de caractères PHP', 'difficulty' => 'Facile', 'points' => 12],
-                ['title' => 'Commentaires PHP', 'difficulty' => 'Facile', 'points' => 8],
+                ['title' => $getTitle(1, 'Syntaxe de base PHP'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(2, 'Variables PHP'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(3, 'Opérateurs PHP'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(4, 'Chaînes de caractères PHP'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 12],
+                ['title' => $getTitle(5, 'Commentaires PHP'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 8],
                 // Niveau Moyen (5 exercices)
-                ['title' => 'Conditions PHP', 'difficulty' => 'Moyen', 'points' => 15],
-                ['title' => 'Boucles PHP', 'difficulty' => 'Moyen', 'points' => 20],
-                ['title' => 'Fonctions PHP', 'difficulty' => 'Moyen', 'points' => 18],
-                ['title' => 'Tableaux simples PHP', 'difficulty' => 'Moyen', 'points' => 18],
-                ['title' => 'Formulaires PHP (GET/POST)', 'difficulty' => 'Moyen', 'points' => 20],
+                ['title' => $getTitle(6, 'Conditions PHP'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 15],
+                ['title' => $getTitle(7, 'Boucles PHP'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
+                ['title' => $getTitle(8, 'Fonctions PHP'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 18],
+                ['title' => $getTitle(9, 'Tableaux simples PHP'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 18],
+                ['title' => $getTitle(10, 'Formulaires PHP (GET/POST)'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
                 // Niveau Difficile (5 exercices)
-                ['title' => 'Tableaux PHP', 'difficulty' => 'Difficile', 'points' => 25],
-                ['title' => 'POO en PHP', 'difficulty' => 'Difficile', 'points' => 30],
-                ['title' => 'Les sessions PHP', 'difficulty' => 'Difficile', 'points' => 28],
-                ['title' => 'Traitement des fichiers PHP', 'difficulty' => 'Difficile', 'points' => 28],
-                ['title' => 'Exceptions et gestion d\'erreurs', 'difficulty' => 'Difficile', 'points' => 30],
+                ['title' => $getTitle(11, 'Tableaux PHP'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 25],
+                ['title' => $getTitle(12, 'POO en PHP'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+                ['title' => $getTitle(13, 'Les sessions PHP'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(14, 'Traitement des fichiers PHP'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(15, 'Exceptions et gestion d\'erreurs'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
             ],
             'bootstrap' => [
                 // Niveau Facile (5 exercices)
-                ['title' => 'Grille Bootstrap', 'difficulty' => 'Facile', 'points' => 10],
-                ['title' => 'Bouton Bootstrap', 'difficulty' => 'Facile', 'points' => 10],
-                ['title' => 'Typographie Bootstrap', 'difficulty' => 'Facile', 'points' => 10],
-                ['title' => 'Couleurs Bootstrap', 'difficulty' => 'Facile', 'points' => 10],
-                ['title' => 'Alertes Bootstrap', 'difficulty' => 'Facile', 'points' => 12],
+                ['title' => $getTitle(1, 'Grille Bootstrap'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(2, 'Bouton Bootstrap'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(3, 'Typographie Bootstrap'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(4, 'Couleurs Bootstrap'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(5, 'Alertes Bootstrap'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 12],
                 // Niveau Moyen (5 exercices)
-                ['title' => 'Card Bootstrap', 'difficulty' => 'Moyen', 'points' => 15],
-                ['title' => 'Navbar Bootstrap', 'difficulty' => 'Moyen', 'points' => 20],
-                ['title' => 'Formulaires Bootstrap', 'difficulty' => 'Moyen', 'points' => 18],
-                ['title' => 'Badges et boutons groupés', 'difficulty' => 'Moyen', 'points' => 15],
-                ['title' => 'Listes et groupes Bootstrap', 'difficulty' => 'Moyen', 'points' => 15],
+                ['title' => $getTitle(6, 'Card Bootstrap'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 15],
+                ['title' => $getTitle(7, 'Navbar Bootstrap'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
+                ['title' => $getTitle(8, 'Formulaires Bootstrap'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 18],
+                ['title' => $getTitle(9, 'Badges et boutons groupés'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 15],
+                ['title' => $getTitle(10, 'Listes et groupes Bootstrap'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 15],
                 // Niveau Difficile (5 exercices)
-                ['title' => 'Responsive Bootstrap', 'difficulty' => 'Difficile', 'points' => 20],
-                ['title' => 'Customisation Bootstrap', 'difficulty' => 'Difficile', 'points' => 25],
-                ['title' => 'Bootstrap avec JavaScript', 'difficulty' => 'Difficile', 'points' => 28],
-                ['title' => 'Carousel et composants avancés', 'difficulty' => 'Difficile', 'points' => 28],
-                ['title' => 'Système de grille avancé Bootstrap', 'difficulty' => 'Difficile', 'points' => 30],
+                ['title' => $getTitle(11, 'Responsive Bootstrap'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 20],
+                ['title' => $getTitle(12, 'Customisation Bootstrap'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 25],
+                ['title' => $getTitle(13, 'Bootstrap avec JavaScript'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(14, 'Carousel et composants avancés'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(15, 'Système de grille avancé Bootstrap'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
             ],
             'git' => [
                 // Niveau Facile (5 exercices)
-                ['title' => 'Initialiser un dépôt Git', 'difficulty' => 'Facile', 'points' => 10],
-                ['title' => 'Ajouter des fichiers', 'difficulty' => 'Facile', 'points' => 10],
-                ['title' => 'Créer un commit', 'difficulty' => 'Facile', 'points' => 15],
-                ['title' => 'Voir l\'historique Git', 'difficulty' => 'Facile', 'points' => 10],
-                ['title' => 'Vérifier le statut Git', 'difficulty' => 'Facile', 'points' => 10],
+                ['title' => $getTitle(1, 'Initialiser un dépôt Git'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(2, 'Ajouter des fichiers'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(3, 'Créer un commit'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 15],
+                ['title' => $getTitle(4, 'Voir l\'historique Git'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(5, 'Vérifier le statut Git'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
                 // Niveau Moyen (5 exercices)
-                ['title' => 'Créer une branche', 'difficulty' => 'Moyen', 'points' => 15],
-                ['title' => 'Changer de branche', 'difficulty' => 'Moyen', 'points' => 15],
-                ['title' => 'Cloner un dépôt distant', 'difficulty' => 'Moyen', 'points' => 18],
-                ['title' => 'Pousser vers un dépôt distant', 'difficulty' => 'Moyen', 'points' => 18],
-                ['title' => 'Récupérer les changements (pull)', 'difficulty' => 'Moyen', 'points' => 18],
+                ['title' => $getTitle(6, 'Créer une branche'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 15],
+                ['title' => $getTitle(7, 'Changer de branche'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 15],
+                ['title' => $getTitle(8, 'Cloner un dépôt distant'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 18],
+                ['title' => $getTitle(9, 'Pousser vers un dépôt distant'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 18],
+                ['title' => $getTitle(10, 'Récupérer les changements (pull)'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 18],
                 // Niveau Difficile (5 exercices)
-                ['title' => 'Fusionner des branches', 'difficulty' => 'Difficile', 'points' => 20],
-                ['title' => 'Résoudre les conflits', 'difficulty' => 'Difficile', 'points' => 25],
-                ['title' => 'Git rebase', 'difficulty' => 'Difficile', 'points' => 28],
-                ['title' => 'Git stash (mise de côté)', 'difficulty' => 'Difficile', 'points' => 25],
-                ['title' => 'Annuler des changements Git', 'difficulty' => 'Difficile', 'points' => 28],
+                ['title' => $getTitle(11, 'Fusionner des branches'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 20],
+                ['title' => $getTitle(12, 'Résoudre les conflits'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 25],
+                ['title' => $getTitle(13, 'Git rebase'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(14, 'Git stash (mise de côté)'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 25],
+                ['title' => $getTitle(15, 'Annuler des changements Git'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
             ],
             'wordpress' => [
                 // Niveau Facile (5 exercices)
-                ['title' => 'The Loop WordPress', 'difficulty' => 'Facile', 'points' => 10],
-                ['title' => 'Afficher le titre', 'difficulty' => 'Facile', 'points' => 10],
-                ['title' => 'Afficher le contenu', 'difficulty' => 'Facile', 'points' => 10],
-                ['title' => 'Afficher la date', 'difficulty' => 'Facile', 'points' => 10],
-                ['title' => 'Afficher l\'auteur', 'difficulty' => 'Facile', 'points' => 12],
+                ['title' => $getTitle(1, 'The Loop WordPress'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(2, 'Afficher le titre'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(3, 'Afficher le contenu'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(4, 'Afficher la date'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(5, 'Afficher l\'auteur'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 12],
                 // Niveau Moyen (5 exercices)
-                ['title' => 'Image à la une', 'difficulty' => 'Moyen', 'points' => 15],
-                ['title' => 'Menu WordPress', 'difficulty' => 'Moyen', 'points' => 18],
-                ['title' => 'Widgets WordPress', 'difficulty' => 'Moyen', 'points' => 18],
-                ['title' => 'Catégories et tags', 'difficulty' => 'Moyen', 'points' => 15],
-                ['title' => 'Pagination WordPress', 'difficulty' => 'Moyen', 'points' => 20],
+                ['title' => $getTitle(6, 'Image à la une'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 15],
+                ['title' => $getTitle(7, 'Menu WordPress'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 18],
+                ['title' => $getTitle(8, 'Widgets WordPress'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 18],
+                ['title' => $getTitle(9, 'Catégories et tags'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 15],
+                ['title' => $getTitle(10, 'Pagination WordPress'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
                 // Niveau Difficile (5 exercices)
-                ['title' => 'Custom Post Type', 'difficulty' => 'Difficile', 'points' => 20],
-                ['title' => 'Les actions et filtres', 'difficulty' => 'Difficile', 'points' => 25],
-                ['title' => 'Créer un thème complet', 'difficulty' => 'Difficile', 'points' => 30],
-                ['title' => 'Taxonomies personnalisées', 'difficulty' => 'Difficile', 'points' => 28],
-                ['title' => 'Meta boxes personnalisées', 'difficulty' => 'Difficile', 'points' => 30],
+                ['title' => $getTitle(11, 'Custom Post Type'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 20],
+                ['title' => $getTitle(12, 'Les actions et filtres'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 25],
+                ['title' => $getTitle(13, 'Créer un thème complet'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+                ['title' => $getTitle(14, 'Taxonomies personnalisées'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(15, 'Meta boxes personnalisées'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
             ],
             'ia' => [
                 // Niveau Facile (5 exercices)
-                ['title' => 'Concepts de base IA', 'difficulty' => 'Facile', 'points' => 10],
-                ['title' => 'Machine Learning', 'difficulty' => 'Facile', 'points' => 12],
-                ['title' => 'Types d\'apprentissage', 'difficulty' => 'Facile', 'points' => 10],
-                ['title' => 'Données et datasets', 'difficulty' => 'Facile', 'points' => 10],
-                ['title' => 'Algorithmes de base', 'difficulty' => 'Facile', 'points' => 12],
+                ['title' => $getTitle(1, 'Concepts de base IA'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(2, 'Machine Learning'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 12],
+                ['title' => $getTitle(3, 'Types d\'apprentissage'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(4, 'Données et datasets'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(5, 'Algorithmes de base'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 12],
                 // Niveau Moyen (5 exercices)
-                ['title' => 'Réseaux de neurones', 'difficulty' => 'Moyen', 'points' => 15],
-                ['title' => 'Deep Learning', 'difficulty' => 'Moyen', 'points' => 15],
-                ['title' => 'Entraînement d\'un modèle', 'difficulty' => 'Moyen', 'points' => 18],
-                ['title' => 'Évaluation de performance', 'difficulty' => 'Moyen', 'points' => 18],
-                ['title' => 'Bibliothèques Python (TensorFlow, PyTorch)', 'difficulty' => 'Moyen', 'points' => 20],
+                ['title' => $getTitle(6, 'Réseaux de neurones'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 15],
+                ['title' => $getTitle(7, 'Deep Learning'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 15],
+                ['title' => $getTitle(8, 'Entraînement d\'un modèle'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 18],
+                ['title' => $getTitle(9, 'Évaluation de performance'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 18],
+                ['title' => $getTitle(10, 'Bibliothèques Python (TensorFlow, PyTorch)'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
                 // Niveau Difficile (5 exercices)
-                ['title' => 'Applications IA', 'difficulty' => 'Difficile', 'points' => 18],
-                ['title' => 'Natural Language Processing', 'difficulty' => 'Difficile', 'points' => 25],
-                ['title' => 'Éthique de l\'IA', 'difficulty' => 'Difficile', 'points' => 30],
-                ['title' => 'Computer Vision', 'difficulty' => 'Difficile', 'points' => 28],
-                ['title' => 'Optimisation et hyperparamètres', 'difficulty' => 'Difficile', 'points' => 30],
+                ['title' => $getTitle(11, 'Applications IA'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 18],
+                ['title' => $getTitle(12, 'Natural Language Processing'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 25],
+                ['title' => $getTitle(13, 'Éthique de l\'IA'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+                ['title' => $getTitle(14, 'Computer Vision'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(15, 'Optimisation et hyperparamètres'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
             ],
             'python' => [
                 // Niveau Facile (5 exercices)
-                ['title' => 'Syntaxe de base Python', 'difficulty' => 'Facile', 'points' => 10],
-                ['title' => 'Variables Python', 'difficulty' => 'Facile', 'points' => 10],
-                ['title' => 'Types de données Python', 'difficulty' => 'Facile', 'points' => 10],
-                ['title' => 'Opérateurs Python', 'difficulty' => 'Facile', 'points' => 10],
-                ['title' => 'Commentaires Python', 'difficulty' => 'Facile', 'points' => 8],
+                ['title' => $getTitle(1, 'Syntaxe de base Python'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(2, 'Variables Python'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(3, 'Types de données Python'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(4, 'Opérateurs Python'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(5, 'Commentaires Python'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 8],
                 // Niveau Moyen (5 exercices)
-                ['title' => 'Conditions if/elif/else', 'difficulty' => 'Moyen', 'points' => 15],
-                ['title' => 'Boucles for et while', 'difficulty' => 'Moyen', 'points' => 18],
-                ['title' => 'Fonctions Python', 'difficulty' => 'Moyen', 'points' => 18],
-                ['title' => 'Listes Python', 'difficulty' => 'Moyen', 'points' => 18],
-                ['title' => 'Dictionnaires Python', 'difficulty' => 'Moyen', 'points' => 20],
+                ['title' => $getTitle(6, 'Conditions if/elif/else'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 15],
+                ['title' => $getTitle(7, 'Boucles for et while'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 18],
+                ['title' => $getTitle(8, 'Fonctions Python'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 18],
+                ['title' => $getTitle(9, 'Listes Python'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 18],
+                ['title' => $getTitle(10, 'Dictionnaires Python'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
                 // Niveau Difficile (5 exercices)
-                ['title' => 'Programmation Orientée Objet', 'difficulty' => 'Difficile', 'points' => 30],
-                ['title' => 'Modules et packages', 'difficulty' => 'Difficile', 'points' => 25],
-                ['title' => 'Gestion des exceptions', 'difficulty' => 'Difficile', 'points' => 28],
-                ['title' => 'Manipulation de fichiers', 'difficulty' => 'Difficile', 'points' => 28],
-                ['title' => 'Compréhensions de listes et générateurs', 'difficulty' => 'Difficile', 'points' => 30],
+                ['title' => $getTitle(11, 'Programmation Orientée Objet'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+                ['title' => $getTitle(12, 'Modules et packages'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 25],
+                ['title' => $getTitle(13, 'Gestion des exceptions'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(14, 'Manipulation de fichiers'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(15, 'Compréhensions de listes et générateurs'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
             ],
         ];
 
@@ -5723,19 +5923,53 @@ print(carres)',
             abort(404);
         }
         
-        return view('quiz-language', compact('language', 'questions'));
+        // Traduire les questions et options
+        $translatedQuestions = $this->translateQuizQuestions($language, $questions);
+        
+        return view('quiz-language', compact('language', 'questions'))->with('questions', $translatedQuestions);
+    }
+    
+    private function translateQuizQuestions($language, $questions)
+    {
+        $translatedQuestions = [];
+        
+        foreach ($questions as $index => $question) {
+            $questionId = $index + 1;
+            
+            // Récupérer la traduction complète de la question
+            $translation = trans("quiz.{$language}.{$questionId}", [], app()->getLocale());
+            
+            // Si la traduction existe et est un tableau
+            if (is_array($translation) && isset($translation['question']) && isset($translation['options'])) {
+                $translatedQuestions[] = [
+                    'question' => $translation['question'],
+                    'options' => array_values($translation['options']), // Réindexer pour garder l'ordre
+                    'correct' => $question['correct']
+                ];
+            } else {
+                // Fallback sur les valeurs par défaut si la traduction n'existe pas
+                $translatedQuestions[] = [
+                    'question' => $question['question'],
+                    'options' => $question['options'],
+                    'correct' => $question['correct']
+                ];
+            }
+        }
+        
+        return $translatedQuestions;
     }
 
     public function quizSubmit(Request $request, $language)
     {
         $questions = $this->getQuizQuestions($language);
+        $translatedQuestions = $this->translateQuizQuestions($language, $questions);
         $answers = $request->input('answers', []);
         
         $score = 0;
-        $total = count($questions);
+        $total = count($translatedQuestions);
         $results = [];
         
-        foreach ($questions as $index => $question) {
+        foreach ($translatedQuestions as $index => $question) {
             $userAnswer = $answers[$index] ?? null;
             $isCorrect = $userAnswer == $question['correct'];
             
@@ -6040,7 +6274,7 @@ print(carres)',
                 'slug' => 'html5',
                 'icon' => 'fab fa-html5',
                 'color' => '#e34c26',
-                'description' => 'Apprenez les fondamentaux du web avec HTML5, le langage de balisage standard pour créer des pages web. Cette formation complète couvre la structure HTML, les balises sémantiques, les formulaires, les tableaux, les médias, et les bonnes pratiques pour créer des sites web accessibles et optimisés pour le SEO. Vous découvrirez également les nouvelles fonctionnalités HTML5 comme les APIs natives, le stockage local, et la géolocalisation.',
+                'description' => trans('app.formations.html5.description'),
                 'route' => route('formations.html5')
             ],
             [
@@ -6048,7 +6282,7 @@ print(carres)',
                 'slug' => 'css3',
                 'icon' => 'fab fa-css3-alt',
                 'color' => '#264de4',
-                'description' => 'Créez des designs modernes et responsives avec CSS3, le langage de style qui transforme vos pages HTML en interfaces visuellement attrayantes. Cette formation approfondie couvre les sélecteurs avancés, les animations CSS, les transitions, Flexbox pour les layouts flexibles, CSS Grid pour les grilles complexes, les variables CSS, et les techniques de responsive design. Vous apprendrez également à créer des designs adaptatifs pour tous les appareils, des smartphones aux écrans 4K.',
+                'description' => trans('app.formations.css3.description'),
                 'route' => route('formations.css3')
             ],
             [
@@ -6056,7 +6290,7 @@ print(carres)',
                 'slug' => 'javascript',
                 'icon' => 'fab fa-js',
                 'color' => '#f0db4f',
-                'description' => 'Maîtrisez JavaScript ES6+, le langage de programmation le plus utilisé au monde pour créer des applications web interactives. Cette formation complète couvre les fondamentaux (variables, fonctions, objets, tableaux), les fonctionnalités modernes ES6+ (arrow functions, destructuring, modules, classes), la manipulation du DOM, les événements, la programmation asynchrone (Promises, async/await), les APIs modernes (Fetch, LocalStorage), et les frameworks JavaScript populaires. Vous développerez des compétences essentielles pour créer des applications web dynamiques et interactives.',
+                'description' => trans('app.formations.javascript.description'),
                 'route' => route('formations.javascript')
             ],
             [
@@ -6064,7 +6298,7 @@ print(carres)',
                 'slug' => 'php',
                 'icon' => 'fab fa-php',
                 'color' => '#8993be',
-                'description' => 'Développez des applications web dynamiques et performantes avec PHP, le langage de programmation côté serveur le plus populaire. Cette formation complète couvre la syntaxe PHP, les variables, les fonctions, la programmation orientée objet (OOP), la gestion des formulaires, les sessions et cookies, l\'intégration avec MySQL pour les bases de données, la sécurité web, et les frameworks PHP modernes comme Laravel. Vous apprendrez à créer des sites web dynamiques, des systèmes de gestion de contenu, et des applications web complètes.',
+                'description' => trans('app.formations.php.description'),
                 'route' => route('formations.php')
             ],
             [
@@ -6072,7 +6306,7 @@ print(carres)',
                 'slug' => 'bootstrap',
                 'icon' => 'fab fa-bootstrap',
                 'color' => '#7952b3',
-                'description' => 'Créez rapidement des interfaces responsives et professionnelles avec Bootstrap, le framework CSS le plus populaire au monde. Cette formation pratique couvre le système de grille responsive, les composants Bootstrap (boutons, cartes, modales, carrousels), les utilitaires CSS, la personnalisation avec Sass, l\'intégration de JavaScript Bootstrap, et les meilleures pratiques pour créer des interfaces modernes. Vous apprendrez à développer des sites web responsive rapidement, sans avoir à écrire beaucoup de CSS personnalisé.',
+                'description' => trans('app.formations.bootstrap.description'),
                 'route' => route('formations.bootstrap')
             ],
             [
@@ -6080,7 +6314,7 @@ print(carres)',
                 'slug' => 'git',
                 'icon' => 'fab fa-git-alt',
                 'color' => '#f34f29',
-                'description' => 'Gérez efficacement vos projets de développement avec Git, le système de contrôle de version le plus utilisé au monde, et GitHub, la plateforme de collaboration pour développeurs. Cette formation pratique couvre les commandes Git essentielles (commit, push, pull, merge), la gestion des branches, la résolution de conflits, les pull requests sur GitHub, la collaboration en équipe, et les workflows Git avancés. Vous apprendrez à travailler en équipe, à gérer l\'historique de vos projets, et à contribuer à des projets open source.',
+                'description' => trans('app.formations.git.description'),
                 'route' => route('formations.git')
             ],
             [
@@ -6088,7 +6322,7 @@ print(carres)',
                 'slug' => 'wordpress',
                 'icon' => 'fab fa-wordpress',
                 'color' => '#21759b',
-                'description' => 'Créez des sites web professionnels et puissants avec WordPress, le système de gestion de contenu (CMS) qui alimente plus de 43% des sites web dans le monde. Cette formation complète couvre l\'installation et la configuration, la gestion du contenu (pages, articles, médias), la personnalisation avec des thèmes, le développement de thèmes personnalisés, la création de plugins, l\'optimisation SEO, la sécurité, et les meilleures pratiques WordPress. Vous apprendrez à créer des sites web professionnels sans avoir besoin de coder, et à personnaliser WordPress selon vos besoins spécifiques.',
+                'description' => trans('app.formations.wordpress.description'),
                 'route' => route('formations.wordpress')
             ],
             [
@@ -6096,7 +6330,7 @@ print(carres)',
                 'slug' => 'ia',
                 'icon' => 'fas fa-robot',
                 'color' => '#06b6d4',
-                'description' => 'Découvrez l\'Intelligence Artificielle (IA), le Machine Learning et leurs applications pratiques dans le développement web moderne. Cette formation complète couvre les concepts fondamentaux de l\'IA, le Machine Learning (apprentissage supervisé et non supervisé), le Deep Learning, le traitement du langage naturel (NLP), la vision par ordinateur, les APIs d\'IA (OpenAI, TensorFlow), et l\'intégration de l\'IA dans les applications web. Vous apprendrez à créer des applications intelligentes qui peuvent comprendre, apprendre et s\'adapter, ouvrant de nouvelles possibilités dans le développement web.',
+                'description' => trans('app.formations.ia.description'),
                 'route' => route('formations.ia')
             ],
             [
@@ -6104,7 +6338,7 @@ print(carres)',
                 'slug' => 'python',
                 'icon' => 'fab fa-python',
                 'color' => '#3776ab',
-                'description' => 'Apprenez Python, le langage de programmation polyvalent et puissant utilisé pour le développement web, la data science, l\'intelligence artificielle, et bien plus encore. Cette formation complète couvre la syntaxe Python, les structures de données (listes, dictionnaires, tuples), les fonctions et classes, les modules et packages, le développement web avec Flask et Django, l\'analyse de données avec Pandas, le Machine Learning avec scikit-learn, et les bonnes pratiques Python. Python est reconnu pour sa simplicité et sa lisibilité, ce qui en fait un excellent choix pour les débutants et les développeurs expérimentés.',
+                'description' => trans('app.formations.python.description'),
                 'route' => route('formations.python')
             ],
         ];

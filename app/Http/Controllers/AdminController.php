@@ -13,6 +13,7 @@ use App\Models\Statistic;
 use App\Models\User;
 use App\Models\SiteSetting;
 use App\Models\ContactMessage;
+use App\Services\BingUrlSubmissionService;
 use Carbon\Carbon;
 
 class AdminController extends Controller
@@ -498,6 +499,7 @@ class AdminController extends Controller
             'youtube_url' => 'nullable|url',
             'github_url' => 'nullable|url',
             'google_analytics_id' => 'nullable|string|regex:/^G-[A-Z0-9]+$/',
+            'bing_api_key' => 'nullable|string|max:255',
         ]);
         
         $settings = SiteSetting::first();
@@ -513,6 +515,33 @@ class AdminController extends Controller
         \App\Models\SiteSetting::clearCache();
         
         return redirect()->route('admin.settings')->with('success', 'Paramètres mis à jour avec succès!');
+    }
+
+    public function bingSubmission()
+    {
+        $service = new BingUrlSubmissionService();
+        $urls = $service->getAllUrlsToSubmit();
+        $isConfigured = $service->isConfigured();
+        
+        return view('admin.bing-submission', compact('urls', 'isConfigured'));
+    }
+
+    public function submitToBing(Request $request)
+    {
+        $service = new BingUrlSubmissionService();
+
+        if (!$service->isConfigured()) {
+            return back()->with('error', 'Clé API Bing non configurée. Veuillez la configurer dans les paramètres.');
+        }
+
+        $urls = $service->getAllUrlsToSubmit();
+        $result = $service->submitUrls($urls);
+
+        if ($result['success']) {
+            return back()->with('success', $result['message'] . " ({$result['submitted']}/{$result['total']} URLs soumises)");
+        } else {
+            return back()->with('error', $result['message']);
+        }
     }
     
     public function logout(Request $request)

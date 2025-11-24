@@ -109,6 +109,13 @@
             background: none;
             border: none;
             cursor: pointer;
+            text-align: left;
+        }
+        
+        .sidebar-dropdown.active .sidebar-dropdown-toggle {
+            background: rgba(6, 182, 212, 0.1);
+            color: #06b6d4;
+            border-left-color: #06b6d4;
         }
         
         .sidebar-dropdown-toggle .dropdown-icon {
@@ -507,14 +514,6 @@
             
             @auth
             @if(Auth::user()->isAdmin())
-            <a href="{{ route('admin.adsense') }}" class="sidebar-item {{ request()->routeIs('admin.adsense*') ? 'active' : '' }}">
-                <i class="fab fa-google text-xl"></i>
-                <span>Google AdSense</span>
-            </a>
-            <a href="{{ route('admin.backups') }}" class="sidebar-item {{ request()->routeIs('admin.backups*') ? 'active' : '' }}">
-                <i class="fas fa-database text-xl"></i>
-                <span>Sauvegardes</span>
-            </a>
             <a href="{{ route('admin.ads.index') }}" class="sidebar-item {{ request()->routeIs('admin.ads.*') ? 'active' : '' }}">
                 <i class="fas fa-ad text-xl"></i>
                 <span>Publicités</span>
@@ -533,20 +532,41 @@
                     <span class="ml-auto px-2 py-1 bg-blue-500 text-white text-xs rounded-full">{{ $subscribersCount }}</span>
                 @endif
             </a>
-            
-            <a href="{{ route('admin.logs.index') }}" class="sidebar-item {{ request()->routeIs('admin.logs.*') ? 'active' : '' }}">
-                <i class="fas fa-history text-xl"></i>
-                <span>Logs</span>
-            </a>
             <a href="{{ route('admin.achievements.index') }}" class="sidebar-item {{ request()->routeIs('admin.achievements.*') ? 'active' : '' }}">
                 <i class="fas fa-trophy text-xl"></i>
                 <span>Réalisations</span>
             </a>
             
-            <a href="{{ route('admin.settings') }}" class="sidebar-item {{ request()->routeIs('admin.settings') ? 'active' : '' }}">
-                <i class="fas fa-cog text-xl"></i>
-                <span>Paramètres</span>
-            </a>
+            <!-- Dropdown Configuration -->
+            <div class="sidebar-dropdown {{ request()->routeIs('admin.adsense*') || request()->routeIs('admin.backups*') || request()->routeIs('admin.logs.*') || request()->routeIs('admin.bing*') || request()->routeIs('admin.settings') ? 'active' : '' }}">
+                <button class="sidebar-item sidebar-dropdown-toggle" onclick="toggleSidebarDropdown('config')">
+                    <i class="fas fa-cog text-xl"></i>
+                    <span>Configuration</span>
+                    <i class="fas fa-chevron-down dropdown-icon ml-auto" id="config-icon"></i>
+                </button>
+                <div class="sidebar-dropdown-menu" id="config-dropdown" style="display: {{ request()->routeIs('admin.adsense*') || request()->routeIs('admin.backups*') || request()->routeIs('admin.logs.*') || request()->routeIs('admin.bing*') || request()->routeIs('admin.settings') ? 'block' : 'none' }};">
+                    <a href="{{ route('admin.adsense') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.adsense*') ? 'active' : '' }}">
+                        <i class="fab fa-google"></i>
+                        <span>Google AdSense</span>
+                    </a>
+                    <a href="{{ route('admin.backups') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.backups*') ? 'active' : '' }}">
+                        <i class="fas fa-database"></i>
+                        <span>Sauvegardes</span>
+                    </a>
+                    <a href="{{ route('admin.logs.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.logs.*') ? 'active' : '' }}">
+                        <i class="fas fa-history"></i>
+                        <span>Logs</span>
+                    </a>
+                    <a href="{{ route('admin.bing.submission') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.bing*') ? 'active' : '' }}">
+                        <i class="fab fa-bing"></i>
+                        <span>Bing Submission</span>
+                    </a>
+                    <a href="{{ route('admin.settings') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.settings') ? 'active' : '' }}">
+                        <i class="fas fa-cog"></i>
+                        <span>Paramètres</span>
+                    </a>
+                </div>
+            </div>
             @endif
             @endauth
             

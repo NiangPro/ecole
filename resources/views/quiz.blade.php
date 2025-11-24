@@ -124,11 +124,10 @@
         <!-- Header -->
         <div class="text-center mb-16">
             <h1 class="text-6xl font-bold mb-6 bg-gradient-to-r from-purple-400 via-pink-500 to-purple-400 bg-clip-text text-transparent">
-                Quiz de Programmation
+                {{ __('app.quiz.title') }}
             </h1>
             <p class="text-xl text-gray-300 max-w-3xl mx-auto">
-                Testez vos connaissances et mesurez votre niveau avec nos quiz interactifs. 
-                Choisissez un langage et relevez le défi !
+                {{ __('app.quiz.subtitle') }}
             </p>
         </div>
 
@@ -136,19 +135,19 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-16">
             <div class="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-2xl p-6 text-center">
                 <div class="text-4xl font-bold text-purple-400 mb-2">{{ count($languages) }}</div>
-                <div class="text-gray-400">Langages</div>
+                <div class="text-gray-400">{{ __('app.quiz.stats.languages') }}</div>
             </div>
             <div class="bg-gradient-to-br from-pink-500/10 to-rose-500/10 border border-pink-500/20 rounded-2xl p-6 text-center">
                 <div class="text-4xl font-bold text-pink-400 mb-2">{{ array_sum(array_column($languages, 'questions')) }}</div>
-                <div class="text-gray-400">Questions</div>
+                <div class="text-gray-400">{{ __('app.quiz.stats.questions') }}</div>
             </div>
             <div class="bg-gradient-to-br from-blue-500/10 to-cyan-500/10 border border-blue-500/20 rounded-2xl p-6 text-center">
                 <div class="text-4xl font-bold text-blue-400 mb-2">20</div>
-                <div class="text-gray-400">Questions/Quiz</div>
+                <div class="text-gray-400">{{ __('app.quiz.stats.questions_per_quiz') }}</div>
             </div>
             <div class="bg-gradient-to-br from-green-500/10 to-emerald-500/10 border border-green-500/20 rounded-2xl p-6 text-center">
                 <div class="text-4xl font-bold text-green-400 mb-2">100%</div>
-                <div class="text-gray-400">Gratuit</div>
+                <div class="text-gray-400">{{ __('app.quiz.stats.free') }}</div>
             </div>
         </div>
 
@@ -166,7 +165,7 @@
                 
                 <div class="flex items-center justify-center gap-2 text-gray-400 mb-4">
                     <i class="fas fa-question-circle text-purple-400"></i>
-                    <span>{{ $lang['questions'] }} questions</span>
+                    <span>{{ $lang['questions'] }} {{ __('app.quiz.questions_count') }}</span>
                 </div>
                 
                 <div class="flex items-center justify-center gap-2 text-sm mb-4">
@@ -176,7 +175,7 @@
                 
                 <div class="mt-6 text-center">
                     <span class="inline-flex items-center gap-2 text-purple-400 font-semibold group-hover:gap-4 transition-all">
-                        Commencer le quiz
+                        {{ __('app.quiz.start_quiz') }}
                         <i class="fas fa-arrow-right"></i>
                     </span>
                 </div>
@@ -188,18 +187,17 @@
         <div class="mt-16 bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-3xl p-12 text-center">
             <h2 class="text-3xl font-bold text-white mb-4">
                 <i class="fas fa-trophy text-yellow-400 mr-3"></i>
-                Prêt à tester vos connaissances ?
+                {{ __('app.quiz.cta.title') }}
             </h2>
             <p class="text-gray-300 text-lg mb-6 max-w-2xl mx-auto">
-                Chaque quiz contient 20 questions à choix multiples. 
-                Obtenez votre score et découvrez vos points forts et faibles !
+                {{ __('app.quiz.cta.description') }}
             </p>
             <div class="flex flex-wrap gap-4 justify-center">
                 <a href="{{ route('exercices') }}" class="px-8 py-3 bg-gradient-to-r from-cyan-500 to-teal-600 text-white font-bold rounded-lg hover:shadow-lg hover:scale-105 transition">
-                    <i class="fas fa-code mr-2"></i>Voir les exercices
+                    <i class="fas fa-code mr-2"></i>{{ __('app.quiz.cta.see_exercices') }}
                 </a>
                 <a href="{{ route('about') }}" class="px-8 py-3 bg-white/10 border border-white/20 text-white font-bold rounded-lg hover:bg-white/20 transition">
-                    <i class="fas fa-info-circle mr-2"></i>En savoir plus
+                    <i class="fas fa-info-circle mr-2"></i>{{ __('app.quiz.cta.learn_more') }}
                 </a>
             </div>
         </div>

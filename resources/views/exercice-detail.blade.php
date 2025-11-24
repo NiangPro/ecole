@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Exercice ' . $id . ' - ' . $exercise['title'] . ' | NiangProgrammeur')
+@section('title', trans('app.exercices.exercise') . ' ' . $id . ' - ' . $exercise['title'] . ' | NiangProgrammeur')
 
 @section('styles')
 <!-- CodeMirror CSS -->
@@ -522,24 +522,24 @@
         <div class="flex items-center justify-between mb-3 flex-wrap gap-4">
             <div>
                 <a href="{{ route('exercices') }}" class="text-cyan-400 hover:text-cyan-300 transition">
-                    <i class="fas fa-arrow-left mr-2"></i>Tous les exercices
+                    <i class="fas fa-arrow-left mr-2"></i>{{ trans('app.exercices.all_exercices') }}
                 </a>
                 <span class="text-gray-500 mx-2">/</span>
                 <a href="{{ route('exercices.language', $language) }}" class="text-cyan-400 hover:text-cyan-300 transition">
                     {{ ucfirst($language) }}
                 </a>
                 <span class="text-gray-500 mx-2">/</span>
-                <span class="text-gray-400">Exercice {{ $id }}</span>
+                <span class="text-gray-400">{{ trans('app.exercices.exercise') }} {{ $id }}</span>
             </div>
             <div class="flex gap-2">
                 @if($id > 1)
                 <a href="{{ route('exercices.detail', [$language, $id - 1]) }}" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition">
-                    <i class="fas fa-chevron-left mr-2"></i>Précédent
+                    <i class="fas fa-chevron-left mr-2"></i>{{ trans('app.exercices.detail.previous') }}
                 </a>
                 @endif
                 @if($id < 5)
                 <a href="{{ route('exercices.detail', [$language, $id + 1]) }}" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition">
-                    Suivant<i class="fas fa-chevron-right ml-2"></i>
+                    {{ trans('app.exercices.detail.next') }}<i class="fas fa-chevron-right ml-2"></i>
                 </a>
                 @endif
             </div>
@@ -553,7 +553,7 @@
                     {{ $exercise['difficulty'] }}
                 </span>
                 <span class="px-4 py-2 bg-purple-500/10 text-purple-400 rounded-full text-sm font-semibold">
-                    <i class="fas fa-star mr-1"></i>{{ $exercise['points'] }} points
+                    <i class="fas fa-star mr-1"></i>{{ $exercise['points'] }} {{ trans('app.exercices.points') }}
                 </span>
             </div>
             <p class="text-xl text-cyan-400 mb-2">{{ $exercise['instruction'] }}</p>
@@ -565,8 +565,8 @@
             <div class="flex items-center gap-3">
                 <i class="fas fa-check-circle text-2xl"></i>
                 <div>
-                    <div class="font-bold text-lg">Bravo ! 🎉</div>
-                    <div>Votre réponse est correcte ! Vous avez gagné {{ $exercise['points'] }} points.</div>
+                    <div class="font-bold text-lg">{{ trans('app.exercices.detail.success_title') }}</div>
+                    <div>{{ str_replace(':points', $exercise['points'], trans('app.exercices.detail.success_message')) }}</div>
                 </div>
             </div>
         </div>
@@ -575,8 +575,8 @@
             <div class="flex items-center gap-3">
                 <i class="fas fa-times-circle text-2xl"></i>
                 <div>
-                    <div class="font-bold text-lg">Pas tout à fait...</div>
-                    <div id="errorText">Réessayez ! Vous pouvez le faire.</div>
+                    <div class="font-bold text-lg">{{ trans('app.exercices.detail.error_title') }}</div>
+                    <div id="errorText">{{ trans('app.exercices.detail.error_message') }}</div>
                 </div>
             </div>
         </div>
@@ -588,10 +588,10 @@
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="text-xl font-bold text-white flex items-center gap-2">
                         <i class="fas fa-code text-cyan-400"></i>
-                        Votre code
+                        {{ trans('app.exercices.detail.your_code') }}
                     </h3>
                     <button onclick="resetCode()" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition text-sm">
-                        <i class="fas fa-undo mr-2"></i>Réinitialiser
+                        <i class="fas fa-undo mr-2"></i>{{ trans('app.exercices.detail.reset') }}
                     </button>
                 </div>
                 <div class="code-editor-wrapper">
@@ -600,10 +600,10 @@
                 
                 <div class="mt-4 flex gap-3">
                     <button onclick="runCode()" class="flex-1 px-6 py-3 bg-gradient-to-r from-cyan-500 to-teal-600 text-white font-bold rounded-lg hover:shadow-lg hover:scale-105 transition">
-                        <i class="fas fa-play mr-2"></i>Exécuter le code
+                        <i class="fas fa-play mr-2"></i>{{ trans('app.exercices.detail.run_code') }}
                     </button>
                     <button onclick="submitCode()" class="flex-1 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-lg hover:shadow-lg hover:scale-105 transition">
-                        <i class="fas fa-check mr-2"></i>Soumettre
+                        <i class="fas fa-check mr-2"></i>{{ trans('app.exercices.detail.submit') }}
                     </button>
                 </div>
 
@@ -611,7 +611,7 @@
                     <div class="flex items-start gap-2">
                         <i class="fas fa-lightbulb text-yellow-400 mt-1"></i>
                         <div>
-                            <div class="font-semibold text-yellow-400 mb-1">Indice</div>
+                            <div class="font-semibold text-yellow-400 mb-1">{{ trans('app.exercices.detail.hint') }}</div>
                             <div class="text-gray-300 text-sm">{{ $exercise['hint'] }}</div>
                         </div>
                     </div>
@@ -622,7 +622,7 @@
             <div class="exercise-panel">
                 <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
                     <i class="fas fa-eye text-cyan-400"></i>
-                    Résultat
+                    {{ trans('app.exercices.detail.result') }}
                 </h3>
                 <iframe id="resultFrame" class="result-frame"></iframe>
                 
@@ -630,8 +630,7 @@
                     <div class="flex items-start gap-2">
                         <i class="fas fa-info-circle text-cyan-400 mt-1"></i>
                         <div class="text-gray-300 text-sm">
-                            Cliquez sur "Exécuter le code" pour voir le résultat de votre code. 
-                            Cliquez sur "Soumettre" pour vérifier si votre réponse est correcte.
+                            {{ trans('app.exercices.detail.result_help') }}
                         </div>
                     </div>
                 </div>
@@ -644,6 +643,16 @@
 @section('scripts')
 <!-- CodeMirror JS - Chargement séquentiel -->
 <script>
+    // Traductions pour JavaScript
+    const translations = {
+        executing: @json(trans('app.exercices.detail.executing')),
+        noOutput: @json(trans('app.exercices.detail.no_output')),
+        result: @json(trans('app.exercices.detail.result')),
+        successTitle: @json(trans('app.exercices.detail.success_title')),
+        successMessage: @json(trans('app.exercices.detail.success_message')),
+        errorTitle: @json(trans('app.exercices.detail.error_title')),
+        errorMessage: @json(trans('app.exercices.detail.error_message')),
+    };
     // Charger les scripts CodeMirror de manière séquentielle
     function loadScript(src, callback) {
         const script = document.createElement('script');
@@ -834,7 +843,7 @@
                     <body>
                         <div class="loading">
                             <div class="spinner"></div>
-                            <p>Exécution du code en cours...</p>
+                            <p>{{ trans('app.exercices.detail.executing') }}</p>
                         </div>
                     </body>
                     </html>
@@ -1008,7 +1017,7 @@
                                     <html>
                                     <head>
                                         <meta charset="UTF-8">
-                                        <title>Résultat</title>
+                                        <title>{{ trans('app.exercices.detail.result') }}</title>
                                         <style>
                                             * {
                                                 margin: 0;
@@ -1089,7 +1098,7 @@
                                             }
                                         </style>
                                     </head>
-                                    <body style="margin: 0 !important; padding: 0 !important; padding-top: 0 !important; margin-top: 0 !important;">${hasOutput ? output : '<p class="no-output">Aucune sortie. Le code s\'est exécuté sans erreur mais n\'a rien affiché. Utilisez print() pour afficher des résultats.</p>'}
+                                    <body style="margin: 0 !important; padding: 0 !important; padding-top: 0 !important; margin-top: 0 !important;">${hasOutput ? output : '<p class="no-output">' + translations.noOutput + '</p>'}
                                     </body>
                                     </html>
                                 `);

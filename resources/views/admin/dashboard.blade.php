@@ -820,6 +820,15 @@
             <div class="quick-action-desc">Gérer les articles</div>
         </a>
         
+        <a href="{{ route('admin.bing.submission') }}" class="quick-action-card">
+            <div class="quick-action-icon" style="background: linear-gradient(135deg, #0078d4 0%, #106ebe 100%);">
+                <i class="fab fa-microsoft"></i>
+            </div>
+            <div class="quick-action-content">
+                <h4>Soumission Bing</h4>
+                <p>Soumettre les URLs à Bing</p>
+            </div>
+        </a>
         <a href="{{ route('admin.settings') }}" class="quick-action-card">
             <div class="quick-action-icon" style="color: #f97316;">
                 <i class="fas fa-cog"></i>

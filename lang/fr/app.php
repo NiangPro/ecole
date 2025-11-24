@@ -1,0 +1,196 @@
+<?php
+
+return [
+    // Navigation
+    'nav' => [
+        'home' => 'Accueil',
+        'formations' => 'Formations',
+        'exercices' => 'Exercices',
+        'quiz' => 'Quiz',
+        'contact' => 'Contact',
+    ],
+    
+    // Formations
+    'formations' => [
+        'title' => 'Toutes les Formations',
+        'subtitle' => 'Découvrez notre collection complète de formations en développement web et programmation. Chaque formation a été soigneusement conçue pour vous guider pas à pas, des concepts fondamentaux aux techniques avancées.',
+        'subtitle_rest' => 'Que vous soyez débutant ou développeur expérimenté, nos cours interactifs, exercices pratiques et quiz vous permettront d\'acquérir les compétences nécessaires pour réussir dans le développement web moderne. Toutes nos formations sont entièrement gratuites et accessibles 24/7, sans aucune limitation de temps ou de contenu.',
+        'all_formations' => 'Toutes les formations',
+        'see_all' => 'Voir toutes les formations',
+        'start_learning' => 'Commencer la formation',
+        'description' => 'Description',
+        'lessons' => 'Leçons',
+        'duration' => 'Durée',
+        'level' => 'Niveau',
+        'available' => 'Disponible',
+        'stats' => [
+            'formations' => 'Formations',
+            'exercices' => 'Exercices',
+            'available' => 'Disponible',
+            'free' => 'Gratuit',
+        ],
+        'section_title' => 'Nos Formations',
+        'section_subtitle' => 'Choisissez la formation qui correspond à vos besoins et commencez votre parcours d\'apprentissage dès aujourd\'hui. Chaque formation comprend des leçons détaillées avec exemples de code, des exercices pratiques pour renforcer vos compétences, des quiz pour tester vos connaissances, et des projets réels pour mettre en pratique ce que vous avez appris. Nos formations sont régulièrement mises à jour pour refléter les dernières technologies et meilleures pratiques de l\'industrie. Que vous souhaitiez devenir développeur frontend, backend, full-stack, ou vous spécialiser dans une technologie spécifique, nous avons la formation qu\'il vous faut.',
+        'html5' => [
+            'title' => 'Formation HTML5',
+            'subtitle' => 'Maîtrisez les bases du HTML5',
+            'explore_chapters' => 'Maintenant que vous connaissez les bases, explorez les autres chapitres dans le menu de gauche pour approfondir vos connaissances en HTML5 !',
+            'description' => 'Apprenez les fondamentaux du web avec HTML5, le langage de balisage standard pour créer des pages web. Cette formation complète couvre la structure HTML, les balises sémantiques, les formulaires, les tableaux, les médias, et les bonnes pratiques pour créer des sites web accessibles et optimisés pour le SEO. Vous découvrirez également les nouvelles fonctionnalités HTML5 comme les APIs natives, le stockage local, et la géolocalisation.',
+        ],
+        'css3' => [
+            'description' => 'Créez des designs modernes et responsives avec CSS3, le langage de style qui transforme vos pages HTML en interfaces visuellement attrayantes. Cette formation approfondie couvre les sélecteurs avancés, les animations CSS, les transitions, Flexbox pour les layouts flexibles, CSS Grid pour les grilles complexes, les variables CSS, et les techniques de responsive design. Vous apprendrez également à créer des designs adaptatifs pour tous les appareils, des smartphones aux écrans 4K.',
+        ],
+        'javascript' => [
+            'description' => 'Maîtrisez JavaScript ES6+, le langage de programmation le plus utilisé au monde pour créer des applications web interactives. Cette formation complète couvre les fondamentaux (variables, fonctions, objets, tableaux), les fonctionnalités modernes ES6+ (arrow functions, destructuring, modules, classes), la manipulation du DOM, les événements, la programmation asynchrone (Promises, async/await), les APIs modernes (Fetch, LocalStorage), et les frameworks JavaScript populaires. Vous développerez des compétences essentielles pour créer des applications web dynamiques et interactives.',
+        ],
+        'php' => [
+            'description' => 'Développez des applications web dynamiques et performantes avec PHP, le langage de programmation côté serveur le plus populaire. Cette formation complète couvre la syntaxe PHP, les variables, les fonctions, la programmation orientée objet (OOP), la gestion des formulaires, les sessions et cookies, l\'intégration avec MySQL pour les bases de données, la sécurité web, et les frameworks PHP modernes comme Laravel. Vous apprendrez à créer des sites web dynamiques, des systèmes de gestion de contenu, et des applications web complètes.',
+        ],
+        'bootstrap' => [
+            'description' => 'Créez rapidement des interfaces responsives et professionnelles avec Bootstrap, le framework CSS le plus populaire au monde. Cette formation pratique couvre le système de grille responsive, les composants Bootstrap (boutons, cartes, modales, carrousels), les utilitaires CSS, la personnalisation avec Sass, l\'intégration de JavaScript Bootstrap, et les meilleures pratiques pour créer des interfaces modernes. Vous apprendrez à développer des sites web responsive rapidement, sans avoir à écrire beaucoup de CSS personnalisé.',
+        ],
+        'git' => [
+            'description' => 'Gérez efficacement vos projets de développement avec Git, le système de contrôle de version le plus utilisé au monde, et GitHub, la plateforme de collaboration pour développeurs. Cette formation pratique couvre les commandes Git essentielles (commit, push, pull, merge), la gestion des branches, la résolution de conflits, les pull requests sur GitHub, la collaboration en équipe, et les workflows Git avancés. Vous apprendrez à travailler en équipe, à gérer l\'historique de vos projets, et à contribuer à des projets open source.',
+        ],
+        'wordpress' => [
+            'description' => 'Créez des sites web professionnels et puissants avec WordPress, le système de gestion de contenu (CMS) qui alimente plus de 43% des sites web dans le monde. Cette formation complète couvre l\'installation et la configuration, la gestion du contenu (pages, articles, médias), la personnalisation avec des thèmes, le développement de thèmes personnalisés, la création de plugins, l\'optimisation SEO, la sécurité, et les meilleures pratiques WordPress. Vous apprendrez à créer des sites web professionnels sans avoir besoin de coder, et à personnaliser WordPress selon vos besoins spécifiques.',
+        ],
+        'ia' => [
+            'description' => 'Découvrez l\'Intelligence Artificielle (IA), le Machine Learning et leurs applications pratiques dans le développement web moderne. Cette formation complète couvre les concepts fondamentaux de l\'IA, le Machine Learning (apprentissage supervisé et non supervisé), le Deep Learning, le traitement du langage naturel (NLP), la vision par ordinateur, les APIs d\'IA (OpenAI, TensorFlow), et l\'intégration de l\'IA dans les applications web. Vous apprendrez à créer des applications intelligentes qui peuvent comprendre, apprendre et s\'adapter, ouvrant de nouvelles possibilités dans le développement web.',
+        ],
+        'python' => [
+            'description' => 'Apprenez Python, le langage de programmation polyvalent et puissant utilisé pour le développement web, la data science, l\'intelligence artificielle, et bien plus encore. Cette formation complète couvre la syntaxe Python, les structures de données (listes, dictionnaires, tuples), les fonctions et classes, les modules et packages, le développement web avec Flask et Django, l\'analyse de données avec Pandas, le Machine Learning avec scikit-learn, et les bonnes pratiques Python. Python est reconnu pour sa simplicité et sa lisibilité, ce qui en fait un excellent choix pour les débutants et les développeurs expérimentés.',
+        ],
+    ],
+    
+    // Exercices
+    'exercices' => [
+        'title' => 'Exercices de Programmation',
+        'subtitle' => 'Pratiquez et améliorez vos compétences avec nos exercices interactifs. Choisissez un langage et commencez à coder !',
+        'choose_language' => 'Langages',
+        'exercises_count' => 'exercices',
+        'start_exercise' => 'Commencer',
+        'back_to_exercices' => 'Retour aux exercices',
+        'all_exercices' => 'Tous les exercices',
+        'exercise' => 'Exercice',
+        'exercises' => 'Exercices',
+        'practice_skills' => 'Pratiquez vos compétences avec ces exercices interactifs',
+        'available_exercices' => 'Exercices disponibles',
+        'coming_soon' => 'Exercices bientôt disponibles',
+        'coming_soon_desc' => 'Les exercices pour :language seront ajoutés prochainement.',
+        'difficulty' => [
+            'easy' => 'Facile',
+            'medium' => 'Moyen',
+            'hard' => 'Difficile',
+            'all' => 'Tous',
+        ],
+        'stats' => [
+            'languages' => 'Langages',
+            'exercises' => 'Exercices',
+            'levels' => 'Niveaux',
+            'free' => 'Gratuit',
+        ],
+        'filter_by_level' => 'Filtrer par niveau',
+        'points' => 'points',
+        'total_points' => 'Points totaux',
+        'progress' => 'Progression',
+        'tips' => [
+            'title' => 'Conseils pour réussir',
+            'read_carefully' => 'Lisez attentivement chaque énoncé avant de commencer',
+            'test_regularly' => 'Testez votre code régulièrement pendant que vous travaillez',
+            'check_docs' => 'N\'hésitez pas à consulter la documentation si nécessaire',
+            'take_time' => 'Prenez votre temps et ne vous découragez pas face aux difficultés',
+        ],
+        'detail' => [
+            'your_code' => 'Votre code',
+            'reset' => 'Réinitialiser',
+            'run_code' => 'Exécuter le code',
+            'submit' => 'Soumettre',
+            'hint' => 'Indice',
+            'result' => 'Résultat',
+            'result_help' => 'Cliquez sur "Exécuter le code" pour voir le résultat de votre code. Cliquez sur "Soumettre" pour vérifier si votre réponse est correcte.',
+            'previous' => 'Précédent',
+            'next' => 'Suivant',
+            'executing' => 'Exécution du code en cours...',
+            'no_output' => 'Aucune sortie. Le code s\'est exécuté sans erreur mais n\'a rien affiché. Utilisez print() pour afficher des résultats.',
+            'success_title' => 'Bravo ! 🎉',
+            'success_message' => 'Votre réponse est correcte ! Vous avez gagné :points points.',
+            'error_title' => 'Pas tout à fait...',
+            'error_message' => 'Réessayez ! Vous pouvez le faire.',
+        ],
+        'cta' => [
+            'title' => 'Prêt à relever le défi ?',
+            'description' => 'Chaque exercice complété vous rapproche de la maîtrise du développement web. Commencez maintenant et suivez votre progression !',
+            'learn_more' => 'En savoir plus',
+            'contact' => 'Nous contacter',
+        ],
+        'html5' => [
+            'title' => 'Exercices HTML5',
+            'subtitle' => 'Pratiquez vos compétences en HTML5',
+        ],
+    ],
+    
+    // Quiz
+    'quiz' => [
+        'title' => 'Quiz de Programmation',
+        'subtitle' => 'Testez vos connaissances et mesurez votre niveau avec nos quiz interactifs. Choisissez un langage et relevez le défi !',
+        'choose_language' => 'Langages',
+        'questions_count' => 'questions',
+        'start_quiz' => 'Commencer le quiz',
+        'back_to_quiz' => 'Retour aux quiz',
+        'answer_questions' => 'Répondez aux :count questions ci-dessous. Bonne chance !',
+        'submit_quiz' => 'Soumettre le quiz',
+        'answer_all' => 'Veuillez répondre à toutes les questions avant de soumettre le quiz.',
+        'stats' => [
+            'languages' => 'Langages',
+            'questions' => 'Questions',
+            'questions_per_quiz' => 'Questions/Quiz',
+            'free' => 'Gratuit',
+        ],
+        'cta' => [
+            'title' => 'Prêt à tester vos connaissances ?',
+            'description' => 'Chaque quiz contient 20 questions à choix multiples. Obtenez votre score et découvrez vos points forts et faibles !',
+            'see_exercices' => 'Voir les exercices',
+            'learn_more' => 'En savoir plus',
+        ],
+        'html5' => [
+            'title' => 'Quiz HTML5',
+            'subtitle' => 'Testez vos connaissances en HTML5',
+        ],
+        'result' => [
+            'title' => 'Résultats du Quiz',
+            'score' => 'Score',
+            'correct' => 'Correct',
+            'incorrect' => 'Incorrect',
+            'percentage' => 'Pourcentage',
+            'retry' => 'Refaire le quiz',
+            'back' => 'Autres quiz',
+            'do_exercices' => 'Faire les exercices',
+            'details' => 'Détails des réponses',
+            'question' => 'Question',
+            'good_answer' => 'Bonne réponse !',
+            'your_answer' => 'Votre réponse :',
+            'correct_answer' => 'Bonne réponse :',
+            'no_answer' => 'Aucune réponse',
+            'excellent' => '🎉 Excellent travail !',
+            'good' => '👍 Bon travail !',
+            'continue' => '📚 Continuez à apprendre !',
+            'dont_give_up' => '💪 Ne vous découragez pas !',
+            'got_score' => 'Vous avez obtenu :score/:total bonnes réponses',
+            'continue_learning' => 'Continuez votre apprentissage !',
+            'continue_learning_desc' => 'Pratiquez avec nos exercices interactifs ou testez-vous sur d\'autres langages.',
+        ],
+    ],
+    
+    // Common
+    'common' => [
+        'loading' => 'Chargement...',
+        'error' => 'Erreur',
+        'success' => 'Succès',
+        'back' => 'Retour',
+        'next' => 'Suivant',
+        'previous' => 'Précédent',
+        'submit' => 'Soumettre',
+        'cancel' => 'Annuler',
+    ],
+];

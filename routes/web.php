@@ -11,6 +11,7 @@ Route::get('/sitemap-pages.xml', [\App\Http\Controllers\SitemapController::class
 Route::get('/sitemap-articles.xml', [\App\Http\Controllers\SitemapController::class, 'articles'])->name('sitemap.articles');
 
 Route::get('/', [PageController::class, 'index'])->name('home');
+Route::get('/lang/{locale}', [PageController::class, 'setLocale'])->name('lang.switch');
 Route::get('/search', [PageController::class, 'search'])->middleware('throttle:30,1')->name('search');
 Route::post('/contact', [PageController::class, 'sendContact'])->middleware('throttle:5,1')->name('contact.send');
 Route::post('/newsletter/subscribe', [PageController::class, 'newsletterSubscribe'])->middleware('throttle:10,1')->name('newsletter.subscribe');
@@ -27,6 +28,7 @@ Route::get('/quiz', [PageController::class, 'quiz'])->name('quiz');
 Route::get('/quiz/{language}', [PageController::class, 'quizLanguage'])->name('quiz.language');
 Route::post('/quiz/{language}/submit', [PageController::class, 'quizSubmit'])->name('quiz.submit');
 Route::get('/quiz/{language}/result', [PageController::class, 'quizResult'])->name('quiz.result');
+Route::get('/all-links', [PageController::class, 'allLinks'])->name('all.links');
 Route::get('/legal', [PageController::class, 'legal'])->name('legal');
 Route::get('/privacy-policy', [PageController::class, 'privacyPolicy'])->name('privacy-policy');
 Route::get('/terms', [PageController::class, 'terms'])->name('terms');
@@ -94,6 +96,8 @@ Route::middleware(['admin'])->group(function () {
     Route::delete('/admin/messages/{id}', [App\Http\Controllers\AdminController::class, 'deleteMessage'])->name('admin.messages.delete');
     Route::get('/admin/settings', [App\Http\Controllers\AdminController::class, 'settings'])->name('admin.settings');
     Route::post('/admin/settings', [App\Http\Controllers\AdminController::class, 'updateSettings'])->name('admin.settings.update');
+    Route::get('/admin/bing-submission', [App\Http\Controllers\AdminController::class, 'bingSubmission'])->name('admin.bing.submission');
+    Route::post('/admin/bing-submission/submit', [App\Http\Controllers\AdminController::class, 'submitToBing'])->name('admin.bing.submit');
     Route::get('/admin/logout', [App\Http\Controllers\AdminController::class, 'logout'])->name('admin.logout');
 
     // Routes Commentaires Admin

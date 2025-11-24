@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Formation HTML5 | DevFormation')
+@section('title', __('formations.html5.title') . ' | NiangProgrammeur')
 
 @section('styles')
 <style>
@@ -473,7 +473,7 @@
         <!-- Sidebar -->
         <aside class="sidebar" id="tutorialSidebar">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid rgba(4, 170, 109, 0.2);">
-                <h3 style="margin: 0;">HTML5 Tutorial</h3>
+                <h3 style="margin: 0;">{{ __('formations.html5.title') }}</h3>
                 <button class="sidebar-close-btn" id="sidebarClose" style="display: none; background: none; border: none; color: #04AA6D; font-size: 24px; cursor: pointer; padding: 5px; width: 35px; height: 35px; border-radius: 50%; transition: all 0.3s ease;" aria-label="Fermer le menu">
                     <i class="fas fa-times"></i>
                 </button>
@@ -1182,7 +1182,7 @@
             </div>
 
             <h2>🎓 Prochaines étapes</h2>
-            <p>Maintenant que vous connaissez les bases, explorez les autres chapitres dans le menu de gauche pour approfondir vos connaissances en HTML5 !</p>
+            <p>{{ __('formations.html5.explore_chapters') }}</p>
             
             <div class="example-box" style="background-color: #d4edda; border-left-color: #28a745;">
                 <h3 style="color: #000;">✅ Ce que vous avez appris :</h3>
@@ -1207,7 +1207,7 @@
             <!-- Navigation Buttons -->
             <div class="nav-buttons">
                 <a href="{{ route('home') }}" class="nav-btn">❮ Accueil</a>
-                <a href="{{ route('formations.css3') }}" class="nav-btn">Suivant: CSS3 ❯</a>
+                <a href="{{ route('formations.css3') }}" class="nav-btn">{{ __('common.next') }}: CSS3 ❯</a>
             </div>
         </main>
     </div>

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Exercices ' . ucfirst($language) . ' | NiangProgrammeur')
+@section('title', trans('app.exercices.exercises') . ' ' . ucfirst($language) . ' | NiangProgrammeur')
 
 @section('styles')
 <style>
@@ -133,7 +133,8 @@
         // Mettre à jour les boutons actifs
         buttons.forEach(btn => {
             btn.classList.remove('active');
-            if (btn.textContent.includes(difficulty === 'all' ? 'Tous' : difficulty)) {
+            const allText = @json(trans('app.exercices.difficulty.all'));
+            if (btn.textContent.includes(difficulty === 'all' ? allText : difficulty)) {
                 btn.classList.add('active');
             }
         });
@@ -160,55 +161,62 @@
         <!-- Breadcrumb -->
         <div class="mb-8">
             <a href="{{ route('exercices') }}" class="text-cyan-400 hover:text-cyan-300 transition">
-                <i class="fas fa-arrow-left mr-2"></i>Retour aux exercices
+                <i class="fas fa-arrow-left mr-2"></i>{{ trans('app.exercices.back_to_exercices') }}
             </a>
         </div>
 
         <!-- Header -->
         <div class="mb-12">
             <h1 class="text-5xl font-bold mb-4 bg-gradient-to-r from-cyan-400 to-teal-500 bg-clip-text text-transparent">
-                Exercices {{ ucfirst($language) }}
+                {{ trans('app.exercices.exercises') }} {{ ucfirst($language) }}
             </h1>
             <p class="text-xl text-gray-300">
-                Pratiquez vos compétences avec ces exercices interactifs
+                {{ trans('app.exercices.practice_skills') }}
             </p>
         </div>
+
+        @php
+            // Définir les difficultés traduites une seule fois pour toute la page
+            $easyDifficulty = trans('app.exercices.difficulty.easy');
+            $mediumDifficulty = trans('app.exercices.difficulty.medium');
+            $hardDifficulty = trans('app.exercices.difficulty.hard');
+        @endphp
 
         <!-- Stats Section -->
         <div class="mb-12 grid grid-cols-1 md:grid-cols-4 gap-6">
             <div class="bg-gradient-to-br from-cyan-500/10 to-teal-500/10 border border-cyan-500/20 rounded-xl p-6 text-center">
                 <div class="text-4xl font-bold text-cyan-400 mb-2">{{ count($exercises) }}+</div>
-                <div class="text-gray-300">Exercices</div>
+                <div class="text-gray-300">{{ trans('app.exercices.exercises') }}</div>
             </div>
             <div class="bg-gradient-to-br from-green-500/10 to-emerald-500/10 border border-green-500/20 rounded-xl p-6 text-center">
-                <div class="text-4xl font-bold text-green-400 mb-2">{{ collect($exercises)->where('difficulty', 'Facile')->count() }}</div>
-                <div class="text-gray-300">Facile</div>
+                <div class="text-4xl font-bold text-green-400 mb-2">{{ collect($exercises)->where('difficulty', $easyDifficulty)->count() }}</div>
+                <div class="text-gray-300">{{ trans('app.exercices.difficulty.easy') }}</div>
             </div>
             <div class="bg-gradient-to-br from-yellow-500/10 to-amber-500/10 border border-yellow-500/20 rounded-xl p-6 text-center">
-                <div class="text-4xl font-bold text-yellow-400 mb-2">{{ collect($exercises)->where('difficulty', 'Moyen')->count() }}</div>
-                <div class="text-gray-300">Moyen</div>
+                <div class="text-4xl font-bold text-yellow-400 mb-2">{{ collect($exercises)->where('difficulty', $mediumDifficulty)->count() }}</div>
+                <div class="text-gray-300">{{ trans('app.exercices.difficulty.medium') }}</div>
             </div>
             <div class="bg-gradient-to-br from-red-500/10 to-rose-500/10 border border-red-500/20 rounded-xl p-6 text-center">
-                <div class="text-4xl font-bold text-red-400 mb-2">{{ collect($exercises)->where('difficulty', 'Difficile')->count() }}</div>
-                <div class="text-gray-300">Difficile</div>
+                <div class="text-4xl font-bold text-red-400 mb-2">{{ collect($exercises)->where('difficulty', $hardDifficulty)->count() }}</div>
+                <div class="text-gray-300">{{ trans('app.exercices.difficulty.hard') }}</div>
             </div>
         </div>
 
         @if(count($exercises) > 0)
         <!-- Filtres par niveau -->
         <div class="mb-8 flex flex-wrap gap-4 items-center">
-            <span class="text-gray-400 font-semibold">Filtrer par niveau:</span>
+            <span class="text-gray-400 font-semibold">{{ trans('app.exercices.filter_by_level') }}:</span>
             <button onclick="filterExercises('all')" class="filter-btn active px-4 py-2 rounded-lg bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500/30 transition">
-                Tous ({{ count($exercises) }})
+                {{ trans('app.exercices.difficulty.all') }} ({{ count($exercises) }})
             </button>
-            <button onclick="filterExercises('Facile')" class="filter-btn px-4 py-2 rounded-lg bg-green-500/20 text-green-400 border border-green-500/30 hover:bg-green-500/30 transition">
-                Facile ({{ collect($exercises)->where('difficulty', 'Facile')->count() }})
+            <button onclick="filterExercises('{{ $easyDifficulty }}')" class="filter-btn px-4 py-2 rounded-lg bg-green-500/20 text-green-400 border border-green-500/30 hover:bg-green-500/30 transition">
+                {{ trans('app.exercices.difficulty.easy') }} ({{ collect($exercises)->where('difficulty', $easyDifficulty)->count() }})
             </button>
-            <button onclick="filterExercises('Moyen')" class="filter-btn px-4 py-2 rounded-lg bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 hover:bg-yellow-500/30 transition">
-                Moyen ({{ collect($exercises)->where('difficulty', 'Moyen')->count() }})
+            <button onclick="filterExercises('{{ $mediumDifficulty }}')" class="filter-btn px-4 py-2 rounded-lg bg-yellow-500/20 text-yellow-400 border border-yellow-500/30 hover:bg-yellow-500/30 transition">
+                {{ trans('app.exercices.difficulty.medium') }} ({{ collect($exercises)->where('difficulty', $mediumDifficulty)->count() }})
             </button>
-            <button onclick="filterExercises('Difficile')" class="filter-btn px-4 py-2 rounded-lg bg-red-500/20 text-red-400 border border-red-500/30 hover:bg-red-500/30 transition">
-                Difficile ({{ collect($exercises)->where('difficulty', 'Difficile')->count() }})
+            <button onclick="filterExercises('{{ $hardDifficulty }}')" class="filter-btn px-4 py-2 rounded-lg bg-red-500/20 text-red-400 border border-red-500/30 hover:bg-red-500/30 transition">
+                {{ trans('app.exercices.difficulty.hard') }} ({{ collect($exercises)->where('difficulty', $hardDifficulty)->count() }})
             </button>
         </div>
         
@@ -228,13 +236,13 @@
                                     <i class="fas fa-signal mr-1"></i>{{ $exercise['difficulty'] }}
                                 </span>
                                 <span class="text-gray-400 text-sm">
-                                    <i class="fas fa-star text-yellow-400 mr-1"></i>{{ $exercise['points'] }} points
+                                    <i class="fas fa-star text-yellow-400 mr-1"></i>{{ $exercise['points'] }} {{ trans('app.exercices.points') }}
                                 </span>
                             </div>
                         </div>
                     </div>
                     <a href="{{ route('exercices.detail', [$language, $exercise['display_index'] ?? ($index + 1)]) }}" class="px-6 py-3 bg-gradient-to-r from-cyan-500 to-teal-600 text-white font-bold rounded-lg hover:shadow-lg hover:scale-105 transition inline-block">
-                        <i class="fas fa-play mr-2"></i>Commencer
+                        <i class="fas fa-play mr-2"></i>{{ trans('app.exercices.start_exercise') }}
                     </a>
                 </div>
             </div>
@@ -245,15 +253,15 @@
         <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="bg-gradient-to-br from-green-500/10 to-emerald-500/10 border border-green-500/20 rounded-2xl p-6 text-center">
                 <div class="text-3xl font-bold text-green-400 mb-2">{{ count($exercises) }}</div>
-                <div class="text-gray-400">Exercices disponibles</div>
+                <div class="text-gray-400">{{ trans('app.exercices.available_exercices') }}</div>
             </div>
             <div class="bg-gradient-to-br from-yellow-500/10 to-orange-500/10 border border-yellow-500/20 rounded-2xl p-6 text-center">
                 <div class="text-3xl font-bold text-yellow-400 mb-2">{{ array_sum(array_column($exercises, 'points')) }}</div>
-                <div class="text-gray-400">Points totaux</div>
+                <div class="text-gray-400">{{ trans('app.exercices.total_points') }}</div>
             </div>
             <div class="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-2xl p-6 text-center">
                 <div class="text-3xl font-bold text-purple-400 mb-2">0%</div>
-                <div class="text-gray-400">Progression</div>
+                <div class="text-gray-400">{{ trans('app.exercices.progress') }}</div>
             </div>
         </div>
         @else
@@ -262,10 +270,10 @@
             <div class="w-32 h-32 mx-auto mb-6 bg-cyan-500/10 rounded-full flex items-center justify-center">
                 <i class="fas fa-dumbbell text-cyan-400 text-5xl"></i>
             </div>
-            <h3 class="text-2xl font-bold text-white mb-4">Exercices bientôt disponibles</h3>
-            <p class="text-gray-400 mb-8">Les exercices pour {{ ucfirst($language) }} seront ajoutés prochainement.</p>
+            <h3 class="text-2xl font-bold text-white mb-4">{{ trans('app.exercices.coming_soon') }}</h3>
+            <p class="text-gray-400 mb-8">{{ str_replace(':language', ucfirst($language), trans('app.exercices.coming_soon_desc')) }}</p>
             <a href="{{ route('exercices') }}" class="inline-block px-8 py-3 bg-gradient-to-r from-cyan-500 to-teal-600 text-white font-bold rounded-lg hover:shadow-lg hover:scale-105 transition">
-                <i class="fas fa-arrow-left mr-2"></i>Retour aux exercices
+                <i class="fas fa-arrow-left mr-2"></i>{{ trans('app.exercices.back_to_exercices') }}
             </a>
         </div>
         @endif
@@ -274,24 +282,24 @@
         <div class="mt-12 bg-gradient-to-r from-cyan-500/10 to-teal-500/10 border border-cyan-500/20 rounded-3xl p-8">
             <h3 class="text-2xl font-bold text-white mb-4 flex items-center gap-3">
                 <i class="fas fa-lightbulb text-yellow-400"></i>
-                Conseils pour réussir
+                {{ trans('app.exercices.tips.title') }}
             </h3>
             <ul class="space-y-3 text-gray-300">
                 <li class="flex items-start gap-3">
                     <i class="fas fa-check text-green-400 mt-1"></i>
-                    <span>Lisez attentivement chaque énoncé avant de commencer</span>
+                    <span>{{ trans('app.exercices.tips.read_carefully') }}</span>
                 </li>
                 <li class="flex items-start gap-3">
                     <i class="fas fa-check text-green-400 mt-1"></i>
-                    <span>Testez votre code régulièrement pendant que vous travaillez</span>
+                    <span>{{ trans('app.exercices.tips.test_regularly') }}</span>
                 </li>
                 <li class="flex items-start gap-3">
                     <i class="fas fa-check text-green-400 mt-1"></i>
-                    <span>N'hésitez pas à consulter la documentation si nécessaire</span>
+                    <span>{{ trans('app.exercices.tips.check_docs') }}</span>
                 </li>
                 <li class="flex items-start gap-3">
                     <i class="fas fa-check text-green-400 mt-1"></i>
-                    <span>Prenez votre temps et ne vous découragez pas face aux difficultés</span>
+                    <span>{{ trans('app.exercices.tips.take_time') }}</span>
                 </li>
             </ul>
         </div>

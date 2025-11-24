@@ -19,6 +19,7 @@ class SiteSetting extends Model
         'youtube_url',
         'github_url',
         'google_analytics_id',
+        'bing_api_key',
         'show_achievements_section',
     ];
 
