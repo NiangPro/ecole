@@ -56,6 +56,7 @@ Route::get('/emplois/bourses', [PageController::class, 'bourses'])->name('emploi
 Route::get('/emplois/candidature-spontanee', [PageController::class, 'candidatureSpontanee'])->name('emplois.candidature');
 Route::get('/emplois/opportunites', [PageController::class, 'opportunites'])->name('emplois.opportunites');
 Route::get('/emplois/concours', [PageController::class, 'concours'])->name('emplois.concours');
+Route::get('/emplois/categorie/{slug}', [PageController::class, 'categoryArticles'])->name('emplois.category');
 // Route spécifique avant la route avec paramètre pour éviter les conflits
 Route::get('/emplois/articles-recents', [PageController::class, 'recentArticles'])->name('emplois.recent-articles');
 // Route avec paramètre - exclut "articles-recents" pour éviter les conflits

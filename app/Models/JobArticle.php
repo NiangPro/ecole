@@ -25,6 +25,7 @@ class JobArticle extends Model
         'seo_score',
         'readability_score',
         'status',
+        'is_sponsored',
         'views',
         'published_at'
     ];
@@ -33,6 +34,7 @@ class JobArticle extends Model
         'meta_keywords' => 'array',
         'seo_score' => 'integer',
         'readability_score' => 'integer',
+        'is_sponsored' => 'boolean',
         'views' => 'integer',
         'published_at' => 'datetime'
     ];

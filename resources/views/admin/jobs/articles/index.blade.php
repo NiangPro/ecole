@@ -73,11 +73,22 @@
         align-items: center;
         justify-content: center;
         transition: all 0.3s ease;
+        position: relative;
+    }
+    
+    .article-thumbnail.sponsored {
+        border-color: rgba(245, 158, 11, 0.5);
+        box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
     }
     
     .article-thumbnail:hover {
         border-color: rgba(6, 182, 212, 0.4);
         transform: scale(1.05);
+    }
+    
+    .article-thumbnail.sponsored:hover {
+        border-color: rgba(245, 158, 11, 0.7);
+        box-shadow: 0 0 15px rgba(245, 158, 11, 0.5);
     }
     
     .article-thumbnail-img {
@@ -91,6 +102,53 @@
         transform: scale(1.1);
     }
     
+    /* Overlay étoiles pour articles sponsorisés */
+    .sponsored-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(245, 158, 11, 0.3) 0%, rgba(239, 68, 68, 0.3) 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        z-index: 2;
+        border-radius: 8px;
+        backdrop-filter: blur(2px);
+    }
+    
+    .sponsored-star {
+        color: #fbbf24;
+        font-size: 12px;
+        text-shadow: 0 0 8px rgba(251, 191, 36, 0.8), 0 0 4px rgba(251, 191, 36, 0.6);
+        animation: starPulse 2s ease-in-out infinite;
+    }
+    
+    .sponsored-star:nth-child(1) {
+        animation-delay: 0s;
+    }
+    
+    .sponsored-star:nth-child(2) {
+        animation-delay: 0.2s;
+    }
+    
+    .sponsored-star:nth-child(3) {
+        animation-delay: 0.4s;
+    }
+    
+    @keyframes starPulse {
+        0%, 100% {
+            opacity: 0.8;
+            transform: scale(1);
+        }
+        50% {
+            opacity: 1;
+            transform: scale(1.2);
+        }
+    }
+    
     .article-thumbnail-placeholder {
         width: 80px;
         height: 60px;
@@ -102,6 +160,12 @@
         border-radius: 8px;
         color: rgba(6, 182, 212, 0.5);
         font-size: 1.5rem;
+        position: relative;
+    }
+    
+    .article-thumbnail-placeholder.sponsored {
+        border-color: rgba(245, 158, 11, 0.5);
+        background: rgba(245, 158, 11, 0.1);
     }
     
     /* Modal de partage Facebook */
@@ -298,6 +362,15 @@
         </div>
         
         <div>
+            <label class="block text-gray-300 mb-2 text-sm font-semibold">Type</label>
+            <select name="sponsored" class="input-admin">
+                <option value="">Tous les articles</option>
+                <option value="1" {{ request('sponsored') == '1' ? 'selected' : '' }}>Articles sponsorisés</option>
+                <option value="0" {{ request('sponsored') == '0' ? 'selected' : '' }}>Articles normaux</option>
+            </select>
+        </div>
+        
+        <div>
             <label class="block text-gray-300 mb-2 text-sm font-semibold">Score SEO min</label>
             <input type="number" name="seo_min" value="{{ request('seo_min') }}" 
                    placeholder="0" min="0" max="100"
@@ -369,18 +442,32 @@
                 <tr class="border-b border-cyan-500/10 hover:bg-cyan-500/5 transition">
                     <td class="p-4">
                         @if($article->cover_image)
-                            <div class="article-thumbnail">
+                            <div class="article-thumbnail {{ $article->is_sponsored ? 'sponsored' : '' }}">
                                 <img src="{{ $article->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($article->cover_image) : $article->cover_image }}" 
                                      alt="{{ $article->title }}"
                                      class="article-thumbnail-img"
                                      onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                                <div class="article-thumbnail-placeholder" style="display: none;">
+                                @if($article->is_sponsored)
+                                    <div class="sponsored-overlay">
+                                        <i class="fas fa-star sponsored-star"></i>
+                                        <i class="fas fa-star sponsored-star"></i>
+                                        <i class="fas fa-star sponsored-star"></i>
+                                    </div>
+                                @endif
+                                <div class="article-thumbnail-placeholder {{ $article->is_sponsored ? 'sponsored' : '' }}" style="display: none;">
                                     <i class="fas fa-image"></i>
                                 </div>
                             </div>
                         @else
-                            <div class="article-thumbnail-placeholder">
+                            <div class="article-thumbnail-placeholder {{ $article->is_sponsored ? 'sponsored' : '' }}">
                                 <i class="fas fa-image"></i>
+                                @if($article->is_sponsored)
+                                    <div class="sponsored-overlay">
+                                        <i class="fas fa-star sponsored-star"></i>
+                                        <i class="fas fa-star sponsored-star"></i>
+                                        <i class="fas fa-star sponsored-star"></i>
+                                    </div>
+                                @endif
                             </div>
                         @endif
                     </td>

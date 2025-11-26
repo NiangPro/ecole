@@ -44,6 +44,12 @@
                 @else
                     <span class="px-3 py-1 bg-gray-500/20 text-gray-400 rounded text-sm">Archivé</span>
                 @endif
+                @if($article->is_sponsored)
+                    <span class="px-3 py-1 bg-gradient-to-r from-orange-500/20 to-red-500/20 text-orange-400 rounded text-sm font-bold flex items-center gap-1">
+                        <i class="fas fa-star text-xs"></i>
+                        Sponsorisé
+                    </span>
+                @endif
                 <span class="text-gray-400 text-sm">
                     <i class="fas fa-eye mr-1"></i>{{ $article->views }} vues
                 </span>
@@ -81,6 +87,19 @@
                 <div>
                     <span class="text-gray-400 text-sm">Slug:</span>
                     <p class="text-white font-mono text-sm">{{ $article->slug }}</p>
+                </div>
+                <div>
+                    <span class="text-gray-400 text-sm">Statut sponsorisé:</span>
+                    <p class="text-white">
+                        @if($article->is_sponsored)
+                            <span class="px-2 py-1 bg-gradient-to-r from-orange-500/20 to-red-500/20 text-orange-400 rounded text-xs font-bold inline-flex items-center gap-1">
+                                <i class="fas fa-star text-xs"></i>
+                                Oui
+                            </span>
+                        @else
+                            <span class="text-gray-500">Non</span>
+                        @endif
+                    </p>
                 </div>
                 <div>
                     <span class="text-gray-400 text-sm">Créé le:</span>

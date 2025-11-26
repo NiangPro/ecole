@@ -42,6 +42,11 @@ class JobArticleController extends Controller
             $query->where('views', '>=', $request->views_min);
         }
         
+        // Filtre par articles sponsorisés
+        if ($request->filled('sponsored')) {
+            $query->where('is_sponsored', $request->sponsored == '1');
+        }
+        
         // Tri par défaut : plus récents au plus anciens (par updated_at puis created_at)
         $sortBy = $request->get('sort_by', 'updated_at');
         $sortOrder = $request->get('sort_order', 'desc');
@@ -85,8 +90,12 @@ class JobArticleController extends Controller
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string|max:500',
             'meta_keywords' => 'nullable|string',
-            'status' => 'required|in:draft,published,archived'
+            'status' => 'required|in:draft,published,archived',
+            'is_sponsored' => 'nullable|boolean'
         ]);
+        
+        // Convertir le checkbox en boolean
+        $validated['is_sponsored'] = $request->has('is_sponsored') ? true : false;
 
         if (empty($validated['slug'])) {
             $validated['slug'] = Str::slug($validated['title']);
@@ -195,8 +204,12 @@ class JobArticleController extends Controller
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string|max:500',
             'meta_keywords' => 'nullable|string',
-            'status' => 'required|in:draft,published,archived'
+            'status' => 'required|in:draft,published,archived',
+            'is_sponsored' => 'nullable|boolean'
         ]);
+        
+        // Convertir le checkbox en boolean
+        $validated['is_sponsored'] = $request->has('is_sponsored') ? true : false;
 
         if (empty($validated['slug'])) {
             $validated['slug'] = Str::slug($validated['title']);

@@ -38,6 +38,28 @@ class PageController extends Controller
                 ->get();
         });
         
+        // Cache les catégories actives (15 minutes)
+        $categories = \Illuminate\Support\Facades\Cache::remember('active_categories_homepage', 900, function () {
+            return \App\Models\Category::where('is_active', true)
+                ->withCount(['publishedArticles' => function ($query) {
+                    $query->where('status', 'published');
+                }])
+                ->orderBy('order', 'asc')
+                ->orderBy('name', 'asc')
+                ->get();
+        });
+        
+        // Cache les articles sponsorisés (15 minutes) - Limité à 2 articles
+        $sponsoredArticles = \Illuminate\Support\Facades\Cache::remember('sponsored_articles', 900, function () {
+            return \App\Models\JobArticle::where('status', 'published')
+                ->where('is_sponsored', true)
+                ->with('category:id,name,slug')
+                ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')
+                ->orderBy('published_at', 'desc')
+                ->take(2)
+                ->get();
+        });
+        
         // Cache les publicités pour la position "content" (30 minutes)
         $sidebarAds = \Illuminate\Support\Facades\Cache::remember('sidebar_ads_content', 1800, function () {
             return \App\Models\Ad::active()
@@ -55,7 +77,7 @@ class PageController extends Controller
                 ->get();
         });
         
-        return view('index', compact('latestJobs', 'sidebarAds', 'homepageAds'));
+        return view('index', compact('latestJobs', 'categories', 'sponsoredArticles', 'sidebarAds', 'homepageAds'));
     }
 
     public function about()
@@ -7124,6 +7146,40 @@ int main() {
         return view('emplois.recent-articles', compact('recentArticles'));
     }
 
+    public function categoryArticles($slug)
+    {
+        $this->ensureLocale();
+        
+        // Récupérer la catégorie
+        $category = \Illuminate\Support\Facades\Cache::remember("category_{$slug}", 900, function () use ($slug) {
+            return \App\Models\Category::where('slug', $slug)
+                ->where('is_active', true)
+                ->firstOrFail();
+        });
+        
+        // Cache les articles de la catégorie (15 minutes)
+        $articles = \Illuminate\Support\Facades\Cache::remember("category_articles_{$slug}", 900, function () use ($category) {
+            return \App\Models\JobArticle::where('category_id', $category->id)
+                ->where('status', 'published')
+                ->with('category:id,name,slug')
+                ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')
+                ->orderBy('published_at', 'desc')
+                ->orderBy('created_at', 'desc')
+                ->paginate(12);
+        });
+        
+        // Cache les publicités pour la sidebar (30 minutes)
+        $sidebarAds = \Illuminate\Support\Facades\Cache::remember('sidebar_ads_content', 1800, function () {
+            return \App\Models\Ad::active()
+                ->forPosition('content')
+                ->whereNull('location')
+                ->orderBy('order')
+                ->get();
+        });
+        
+        return view('emplois.category', compact('category', 'articles', 'sidebarAds'));
+    }
+    
     public function showArticle($slug)
     {
         // Cache l'article avec sélection optimisée (30 minutes)

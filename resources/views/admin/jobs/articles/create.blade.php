@@ -564,6 +564,23 @@
                             <option value="archived" {{ old('status', $article->status ?? '') === 'archived' ? 'selected' : '' }}>Archivé</option>
                         </select>
                     </div>
+                    
+                    <!-- Article sponsorisé -->
+                    <div class="form-group" style="margin-top: 20px;">
+                        <label class="form-label">
+                            <input type="checkbox" name="is_sponsored" value="1" 
+                                   {{ old('is_sponsored', isset($article) && $article->is_sponsored ? true : false) ? 'checked' : '' }}
+                                   class="form-checkbox" style="width: 20px; height: 20px; margin-right: 10px; cursor: pointer;">
+                            <span style="font-weight: 600; color: rgba(255, 255, 255, 0.9);">
+                                <i class="fas fa-star" style="color: #f59e0b; margin-right: 6px;"></i>
+                                Article sponsorisé
+                            </span>
+                        </label>
+                        <div class="form-help" style="margin-top: 8px; padding-left: 30px;">
+                            Les articles sponsorisés apparaissent dans la section "Articles Premium" de la page d'accueil.
+                        </div>
+                    </div>
+                    
                     <div class="form-actions" style="margin-top: 20px; padding-top: 20px; border-top: 2px solid rgba(6, 182, 212, 0.2);">
                         <button type="submit" class="btn-submit">
                             <i class="fas fa-save"></i>

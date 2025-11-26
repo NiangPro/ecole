@@ -497,7 +497,7 @@
     
     .section-title {
         font-family: 'Orbitron', sans-serif;
-        font-size: clamp(2.5rem, 5vw, 4rem);
+        font-size: clamp(1.8rem, 3.5vw, 2.5rem);
         font-weight: 900;
         text-align: center;
         margin-bottom: 20px;
@@ -535,7 +535,7 @@
     /* Styles spécifiques pour la section Exercices & Quiz */
     .exercices-quiz-section-title {
         font-family: 'Orbitron', sans-serif;
-        font-size: clamp(1.8rem, 3vw, 2.5rem);
+        font-size: clamp(1.5rem, 2.5vw, 2rem);
         font-weight: 800;
         text-align: center;
         margin-bottom: 20px;
@@ -925,7 +925,7 @@
         }
         
         .section-title {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
         }
         
         .tech-section {
@@ -948,7 +948,7 @@
         }
         
         .tech-icon {
-            font-size: 2.5rem;
+            font-size: 2rem;
         }
         
         .tech-name {
@@ -1412,7 +1412,7 @@
     }
     
     .ad-main-title {
-        font-size: clamp(2rem, 4vw, 3.5rem);
+        font-size: clamp(1.5rem, 3vw, 2.5rem);
         font-weight: 900;
         line-height: 1.1;
         margin: 0;
@@ -1964,6 +1964,131 @@
     </div>
 </section>
 
+<!-- Categories and Sponsored Articles Section -->
+<section class="categories-sponsored-section" style="position: relative; z-index: 2; padding: 60px 20px; max-width: 1600px; margin: 0 auto;">
+    <div class="categories-sponsored-container" style="display: grid; grid-template-columns: {{ (isset($sponsoredArticles) && $sponsoredArticles->count() > 0) ? '2.5fr 1fr' : '1fr' }}; gap: 30px; align-items: start;">
+        
+        <!-- Partie 1: Catégories d'articles (plus grande) -->
+        <div class="categories-section">
+            <div style="text-align: center; margin-bottom: 40px;">
+                <h2 class="section-title">📂 Catégories d'Articles</h2>
+                <p class="section-subtitle">
+                    Explorez nos différentes catégories d'articles et trouvez le contenu qui vous intéresse
+                </p>
+            </div>
+            
+            @if(isset($categories) && $categories->count() > 0)
+            <div class="categories-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px;">
+                @foreach($categories as $category)
+                <a href="{{ route('emplois.category', $category->slug) }}" class="category-card" style="display: block; text-decoration: none;">
+                    <div class="category-card-inner" style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(20, 184, 166, 0.1)); border: 2px solid rgba(6, 182, 212, 0.3); border-radius: 16px; padding: 24px; transition: all 0.3s ease; height: 100%; position: relative; overflow: hidden;">
+                        <!-- Effet de brillance au survol -->
+                        <div class="category-shine" style="position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(45deg, transparent, rgba(6, 182, 212, 0.1), transparent); transform: rotate(45deg); transition: all 0.5s ease; opacity: 0;"></div>
+                        
+                        <!-- Icône de la catégorie -->
+                        <div class="category-icon" style="width: 60px; height: 60px; margin: 0 auto 16px; background: linear-gradient(135deg, #06b6d4, #14b8a6); border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);">
+                            @if($category->icon)
+                                <i class="{{ $category->icon }}" style="font-size: 28px; color: #fff;"></i>
+                            @else
+                                <i class="fas fa-folder" style="font-size: 28px; color: #fff;"></i>
+                            @endif
+                        </div>
+                        
+                        <!-- Nom de la catégorie -->
+                        <h3 class="category-name" style="font-size: 1.1rem; font-weight: 700; margin-bottom: 8px; text-align: center; color: rgba(30, 41, 59, 0.9);">
+                            {{ $category->name }}
+                        </h3>
+                        
+                        <!-- Nombre d'articles -->
+                        <div class="category-count" style="text-align: center; color: rgba(6, 182, 212, 0.8); font-size: 0.9rem; font-weight: 600;">
+                            <i class="fas fa-file-alt" style="margin-right: 6px;"></i>
+                            {{ $category->published_articles_count ?? 0 }} article{{ ($category->published_articles_count ?? 0) > 1 ? 's' : '' }}
+                        </div>
+                        
+                        <!-- Badge "Nouveau" si récent -->
+                        @if($category->created_at && $category->created_at->gt(now()->subDays(30)))
+                        <div style="position: absolute; top: 12px; right: 12px; background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff; padding: 4px 10px; border-radius: 12px; font-size: 0.7rem; font-weight: 700; box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);">
+                            Nouveau
+                        </div>
+                        @endif
+                    </div>
+                </a>
+                @endforeach
+            </div>
+            @else
+            <div style="text-align: center; padding: 40px; background: rgba(6, 182, 212, 0.05); border-radius: 16px; border: 2px dashed rgba(6, 182, 212, 0.3);">
+                <i class="fas fa-folder-open" style="font-size: 48px; color: rgba(6, 182, 212, 0.5); margin-bottom: 16px;"></i>
+                <p style="color: rgba(30, 41, 59, 0.6);">Aucune catégorie disponible pour le moment.</p>
+            </div>
+            @endif
+        </div>
+        
+        <!-- Partie 2: Articles sponsorisés (plus petite) -->
+        @if(isset($sponsoredArticles) && $sponsoredArticles->count() > 0)
+        <div class="sponsored-section">
+            <div style="text-align: center; margin-bottom: 32px;">
+                <div style="display: inline-flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                    <div style="width: 4px; height: 24px; background: linear-gradient(180deg, #06b6d4, #14b8a6); border-radius: 2px;"></div>
+                    <h2 class="section-title" style="font-size: 1.2rem; font-weight: 800; color: rgba(30, 41, 59, 0.95); letter-spacing: -0.5px; margin: 0;">
+                        Articles Premium
+                    </h2>
+                    <div style="width: 4px; height: 24px; background: linear-gradient(180deg, #14b8a6, #06b6d4); border-radius: 2px;"></div>
+                </div>
+                <p class="section-subtitle" style="font-size: 0.85rem; color: rgba(30, 41, 59, 0.6); margin: 0;">
+                    Contenu sélectionné pour vous
+                </p>
+            </div>
+            
+            <div class="sponsored-articles-list" style="display: flex; flex-direction: column; gap: 25px; width: 100%;">
+                @foreach($sponsoredArticles as $article)
+                <div class="modern-sidebar-ad sponsored-article-ad" style="width: 100%; max-width: 100%;">
+                    <!-- Badge Sponsorisé -->
+                    <div class="sponsored-badge-top">
+                        <i class="fas fa-star"></i>
+                        <span>Sponsorisé</span>
+                    </div>
+                    <a href="{{ route('emplois.article', $article->slug) }}" class="modern-sidebar-ad-link">
+                        @if($article->cover_image)
+                        <div class="modern-sidebar-ad-image-wrapper">
+                            @if($article->cover_type === 'external')
+                                <img src="{{ $article->cover_image }}" 
+                                     alt="{{ $article->title }}" 
+                                     class="modern-sidebar-ad-image"
+                                     loading="lazy"
+                                     onerror="this.style.display='none'">
+                            @else
+                                <img src="{{ asset('storage/' . $article->cover_image) }}" 
+                                     alt="{{ $article->title }}" 
+                                     class="modern-sidebar-ad-image"
+                                     loading="lazy"
+                                     onerror="this.style.display='none'">
+                            @endif
+                            <div class="modern-sidebar-ad-overlay">
+                                <div class="modern-sidebar-ad-content">
+                                    <h4 class="modern-sidebar-ad-title">{{ $article->title }}</h4>
+                                    <span class="modern-sidebar-ad-cta">Découvrir <i class="fas fa-arrow-right"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        @else
+                        <div class="modern-sidebar-ad-image-wrapper" style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2)); min-height: 300px; display: flex; align-items: center; justify-content: center;">
+                            <div class="modern-sidebar-ad-overlay">
+                                <div class="modern-sidebar-ad-content">
+                                    <h4 class="modern-sidebar-ad-title">{{ $article->title }}</h4>
+                                    <span class="modern-sidebar-ad-cta">Découvrir <i class="fas fa-arrow-right"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        @endif
+                    </a>
+                </div>
+                @endforeach
+            </div>
+        </div>
+        @endif
+    </div>
+</section>
+
 <!-- Latest Jobs Section -->
 @if(isset($latestJobs) && $latestJobs->count() > 0)
 <section class="latest-jobs-section" style="position: relative; z-index: 2; padding: 50px 20px; max-width: 1600px; margin: 0 auto;">
@@ -2443,6 +2568,277 @@
     
     .latest-jobs-grid > a:hover img {
         transform: scale(1.1);
+    }
+    
+    /* Styles pour la section Catégories et Articles Sponsorisés */
+    @media (max-width: 1024px) {
+        .categories-sponsored-container {
+            grid-template-columns: 1fr !important;
+        }
+    }
+    
+    /* Adaptation automatique si pas d'articles sponsorisés */
+    .categories-sponsored-container:has(.sponsored-section:empty) {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .categories-sponsored-container:not(:has(.sponsored-section)) {
+        grid-template-columns: 1fr !important;
+    }
+    
+    /* Effets de survol pour les cards de catégories */
+    .category-card:hover .category-card-inner {
+        transform: translateY(-8px);
+        border-color: rgba(6, 182, 212, 0.6);
+        box-shadow: 0 15px 40px rgba(6, 182, 212, 0.25);
+    }
+    
+    .category-card:hover .category-shine {
+        opacity: 1;
+        animation: shine 1.5s ease-in-out;
+    }
+    
+    @keyframes shine {
+        0% {
+            transform: translateX(-100%) translateY(-100%) rotate(45deg);
+        }
+        100% {
+            transform: translateX(100%) translateY(100%) rotate(45deg);
+        }
+    }
+    
+    .category-card:hover .category-icon {
+        transform: scale(1.1) rotate(5deg);
+        box-shadow: 0 8px 25px rgba(6, 182, 212, 0.4);
+    }
+    
+    /* ============================================
+       DESIGN ARTICLES SPONSORISÉS - MÊME STYLE QUE PUBLICITÉS
+       ============================================ */
+    
+    /* Réutiliser le style des publicités modernes */
+    .sponsored-article-ad {
+        background: rgba(51, 65, 85, 0.7);
+        border: 2px solid rgba(6, 182, 212, 0.3);
+        border-radius: 20px;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        position: relative;
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+    }
+    
+    /* Badge Sponsorisé */
+    .sponsored-badge-top {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        background: linear-gradient(135deg, #f59e0b, #ef4444);
+        color: #fff;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        z-index: 10;
+        box-shadow: 0 4px 15px rgba(245, 158, 11, 0.5);
+        letter-spacing: 0.3px;
+        text-transform: uppercase;
+    }
+    
+    .sponsored-badge-top i {
+        font-size: 0.65rem;
+        animation: pulse-star 2s ease-in-out infinite;
+    }
+    
+    @keyframes pulse-star {
+        0%, 100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+        50% {
+            transform: scale(1.2);
+            opacity: 0.8;
+        }
+    }
+    
+    body:not(.dark-mode) .sponsored-badge-top {
+        box-shadow: 0 4px 15px rgba(245, 158, 11, 0.6);
+    }
+    
+    .sponsored-article-ad:hover .sponsored-badge-top {
+        transform: scale(1.05);
+        box-shadow: 0 6px 20px rgba(245, 158, 11, 0.7);
+    }
+    
+    body:not(.dark-mode) .sponsored-article-ad {
+        background: rgba(255, 255, 255, 0.9) !important;
+        border-color: rgba(6, 182, 212, 0.25) !important;
+        box-shadow: 0 10px 30px rgba(6, 182, 212, 0.1) !important;
+    }
+    
+    .sponsored-article-ad:hover {
+        transform: translateY(-5px);
+        border-color: rgba(6, 182, 212, 0.6);
+        box-shadow: 0 15px 40px rgba(6, 182, 212, 0.4);
+    }
+    
+    .sponsored-article-ad .modern-sidebar-ad-image-wrapper {
+        position: relative;
+        width: 100%;
+        min-height: 200px;
+        height: auto;
+        overflow: hidden;
+    }
+    
+    .sponsored-article-ad .modern-sidebar-ad-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+    
+    .sponsored-article-ad:hover .modern-sidebar-ad-image {
+        transform: scale(1.1);
+    }
+    
+    .sponsored-article-ad .modern-sidebar-ad-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(180deg, transparent 0%, rgba(51, 65, 85, 0.7) 50%, rgba(51, 65, 85, 0.85) 100%);
+        display: flex;
+        align-items: flex-end;
+        padding: 25px;
+        min-height: 100%;
+    }
+    
+    body:not(.dark-mode) .sponsored-article-ad .modern-sidebar-ad-overlay {
+        background: linear-gradient(180deg, transparent 0%, rgba(30, 41, 59, 0.6) 50%, rgba(30, 41, 59, 0.8) 100%) !important;
+    }
+    
+    .sponsored-article-ad .modern-sidebar-ad-content {
+        width: 100%;
+    }
+    
+    .sponsored-article-ad .modern-sidebar-ad-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 15px;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        line-height: 1.3;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    .sponsored-article-ad .modern-sidebar-ad-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: #06b6d4;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: gap 0.3s ease;
+    }
+    
+    .sponsored-article-ad:hover .modern-sidebar-ad-cta {
+        gap: 12px;
+    }
+    
+    body:not(.dark-mode) .sponsored-article-ad .modern-sidebar-ad-title {
+        color: rgba(255, 255, 255, 0.95) !important;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7) !important;
+    }
+    
+    
+    body:not(.dark-mode) .sponsored-article-ad .modern-sidebar-ad-cta {
+        color: #06b6d4 !important;
+    }
+    
+    /* Mode sombre - Catégories */
+    body.dark-mode .category-card-inner {
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.9)) !important;
+        border-color: rgba(6, 182, 212, 0.3) !important;
+    }
+    
+    body.dark-mode .category-name {
+        color: #fff !important;
+    }
+    
+    body.dark-mode .category-count {
+        color: rgba(6, 182, 212, 0.9) !important;
+    }
+    
+    /* Mode sombre - Articles sponsorisés */
+    body.dark-mode .sponsored-card-inner {
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.9)) !important;
+        border-color: rgba(255, 193, 7, 0.3) !important;
+    }
+    
+    body.dark-mode .sponsored-title {
+        color: #fff !important;
+    }
+    
+    body.dark-mode .sponsored-excerpt {
+        color: rgba(255, 255, 255, 0.7) !important;
+    }
+    
+    /* Responsive pour les catégories */
+    @media (max-width: 768px) {
+        .categories-grid {
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
+            gap: 15px !important;
+        }
+        
+        .category-card-inner {
+            padding: 18px !important;
+        }
+        
+        .category-icon {
+            width: 50px !important;
+            height: 50px !important;
+        }
+        
+        .category-name {
+            font-size: 0.95rem !important;
+        }
+        
+        /* Articles sponsorisés responsive */
+        .sponsored-articles-list {
+            gap: 20px !important;
+        }
+        
+        .sponsored-article-ad {
+            max-width: 100% !important;
+        }
+        
+        .sponsored-article-ad .modern-sidebar-ad-image-wrapper {
+            min-height: 180px !important;
+        }
+        
+        .sponsored-article-ad .modern-sidebar-ad-title {
+            font-size: 0.95rem !important;
+        }
+        
+        .sponsored-article-ad .modern-sidebar-ad-description {
+            font-size: 0.8rem !important;
+        }
+        
+        .sponsored-badge-top {
+            top: 10px !important;
+            left: 10px !important;
+            padding: 5px 10px !important;
+            font-size: 0.65rem !important;
+        }
     }
 </style>
 @endif
