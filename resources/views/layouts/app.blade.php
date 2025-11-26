@@ -351,7 +351,7 @@
         /* Back to Top Button */
         .back-to-top-button {
             position: fixed;
-            bottom: 120px;
+            bottom: 170px;
             right: 20px;
             width: 40px;
             height: 40px;
@@ -366,7 +366,7 @@
             justify-content: center;
             box-shadow: 0 4px 20px rgba(6, 182, 212, 0.4);
             transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 9999;
+            z-index: 10000;
             opacity: 0;
             transform: translateY(20px) scale(0.8);
         }
@@ -428,12 +428,24 @@
         
         @media (max-width: 768px) {
             .back-to-top-button {
-                bottom: 120px;
+                bottom: 170px;
                 right: 18px;
                 width: 36px;
                 height: 36px;
                 font-size: 14px;
                 z-index: 10000;
+            }
+            
+            .language-widget {
+                bottom: 120px;
+                right: 12px;
+                z-index: 9997;
+            }
+            
+            .language-button {
+                width: 36px;
+                height: 36px;
+                font-size: 14px;
             }
             
             .dark-mode-widget {
@@ -463,6 +475,71 @@
             .back-to-top-tooltip {
                 display: none;
             }
+        }
+        
+        /* Language Widget */
+        .language-widget {
+            position: fixed;
+            bottom: 120px;
+            right: 20px;
+            z-index: 9997;
+        }
+        
+        .language-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #06b6d4, #14b8a6);
+            border: 2px solid rgba(6, 182, 212, 0.3);
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 20px rgba(6, 182, 212, 0.4);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .language-button:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 6px 25px rgba(6, 182, 212, 0.5);
+            border-color: rgba(6, 182, 212, 0.5);
+        }
+        
+        .language-tooltip {
+            position: absolute;
+            bottom: 60px;
+            right: 0;
+            background: rgba(0, 0, 0, 0.9);
+            color: #fff;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 13px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+            z-index: 10000;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .language-tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            right: 20px;
+            border: 6px solid transparent;
+            border-top-color: rgba(0, 0, 0, 0.9);
+        }
+        
+        .language-button:hover .language-tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
         }
         
         /* Dark Mode Widget */
@@ -778,6 +855,16 @@
                 bottom: 75px;
                 right: 15px;
             }
+            
+            .language-widget {
+                bottom: 120px;
+                right: 15px;
+            }
+            
+            .back-to-top-button {
+                bottom: 170px;
+                right: 15px;
+            }
         }
     </style>
     @yield('styles')
@@ -817,6 +904,39 @@
         <i class="fas fa-arrow-up"></i>
         <span class="back-to-top-tooltip">Retour en haut</span>
     </button>
+    
+    @php
+        // Pages où afficher le widget de langue
+        $showLanguageWidget = request()->routeIs([
+            'formations.all',
+            'formations.html5',
+            'formations.css3',
+            'formations.javascript',
+            'formations.php',
+            'formations.bootstrap',
+            'formations.java',
+            'formations.sql',
+            'formations.c',
+            'formations.git',
+            'formations.wordpress',
+            'formations.ia',
+            'formations.python',
+            'exercices',
+            'exercices.language',
+            'exercices.detail',
+            'quiz.language'
+        ]);
+    @endphp
+    
+    @if($showLanguageWidget)
+    <!-- Language Toggle Button -->
+    <div id="language-widget" class="language-widget">
+        <button id="language-toggle" class="language-button" onclick="toggleLanguage()" title="Changer la langue">
+            <i class="fas fa-globe" id="language-icon"></i>
+            <span class="language-tooltip" id="language-tooltip">Changer la langue</span>
+        </button>
+    </div>
+    @endif
     
     <!-- Dark Mode Toggle Button -->
     <div id="dark-mode-widget" class="dark-mode-widget">
@@ -929,6 +1049,17 @@
                 button.classList.add('active');
             }
         });
+        
+        // Language Toggle Function (à implémenter plus tard)
+        function toggleLanguage() {
+            // TODO: Implémenter le changement de langue
+            const currentLang = localStorage.getItem('language') || 'fr';
+            const newLang = currentLang === 'fr' ? 'en' : 'fr';
+            localStorage.setItem('language', newLang);
+            
+            // Pour l'instant, juste un message
+            alert('Fonctionnalité de traduction en cours de développement. Langue sélectionnée: ' + newLang.toUpperCase());
+        }
         
         function toggleWhatsApp() {
             const popup = document.getElementById('whatsappPopup');
