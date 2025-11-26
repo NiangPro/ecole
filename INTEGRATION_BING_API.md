@@ -317,3 +317,4 @@ protected function schedule(Schedule $schedule)
 **Version :** 1.0
 **Statut :** ✅ Intégration complète et fonctionnelle
 
+

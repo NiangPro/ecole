@@ -97,11 +97,29 @@
         <div class="grid md:grid-cols-2 gap-6">
             <div>
                 <label class="block text-gray-300 mb-2 font-semibold">
-                    <i class="fab fa-facebook text-blue-500 mr-2"></i>Facebook
+                    <i class="fab fa-facebook text-blue-500 mr-2"></i>Facebook URL
                 </label>
                 <input type="url" name="facebook_url" value="{{ old('facebook_url', $settings->facebook_url ?? '') }}" 
                        class="input-admin" placeholder="https://facebook.com/...">
                 @error('facebook_url')
+                    <p class="text-red-400 text-sm mt-2">{{ $message }}</p>
+                @enderror
+            </div>
+            
+            <div>
+                <label class="block text-gray-300 mb-2 font-semibold">
+                    <i class="fab fa-facebook text-blue-500 mr-2"></i>Facebook App ID
+                </label>
+                <input type="text" name="facebook_app_id" value="{{ old('facebook_app_id', $settings->facebook_app_id ?? '') }}" 
+                       class="input-admin" placeholder="Votre Facebook App ID">
+                <p class="text-gray-500 text-sm mt-2">
+                    <i class="fas fa-info-circle mr-1"></i>
+                    Nécessaire pour le partage via l'API Facebook. 
+                    <a href="https://developers.facebook.com/apps/" target="_blank" class="text-cyan-400 hover:underline">
+                        Créer une App Facebook
+                    </a>
+                </p>
+                @error('facebook_app_id')
                     <p class="text-red-400 text-sm mt-2">{{ $message }}</p>
                 @enderror
             </div>

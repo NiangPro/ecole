@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', trans('app.exercices.exercises') . ' ' . ucfirst($language) . ' | NiangProgrammeur')
+@section('title', trans('app.exercices.exercises') . ' ' . trans('app.formations.languages.' . $language, [], null, ucfirst($language)) . ' | NiangProgrammeur')
 
 @section('styles')
 <style>
@@ -168,7 +168,7 @@
         <!-- Header -->
         <div class="mb-12">
             <h1 class="text-5xl font-bold mb-4 bg-gradient-to-r from-cyan-400 to-teal-500 bg-clip-text text-transparent">
-                {{ trans('app.exercices.exercises') }} {{ ucfirst($language) }}
+                {{ trans('app.exercices.exercises') }} {{ trans('app.formations.languages.' . $language, [], null, ucfirst($language)) }}
             </h1>
             <p class="text-xl text-gray-300">
                 {{ trans('app.exercices.practice_skills') }}

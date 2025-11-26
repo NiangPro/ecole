@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Quiz de Programmation | NiangProgrammeur')
+@section('title', trans('app.quiz.title') . ' | NiangProgrammeur')
 @section('meta_description', 'Testez vos connaissances en programmation avec nos quiz interactifs. HTML5, CSS3, JavaScript, PHP, Bootstrap, Git, WordPress et IA.')
 
 @section('styles')

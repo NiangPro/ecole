@@ -11,7 +11,6 @@ Route::get('/sitemap-pages.xml', [\App\Http\Controllers\SitemapController::class
 Route::get('/sitemap-articles.xml', [\App\Http\Controllers\SitemapController::class, 'articles'])->name('sitemap.articles');
 
 Route::get('/', [PageController::class, 'index'])->name('home');
-Route::get('/lang/{locale}', [PageController::class, 'setLocale'])->name('lang.switch');
 Route::get('/search', [PageController::class, 'search'])->middleware('throttle:30,1')->name('search');
 Route::post('/contact', [PageController::class, 'sendContact'])->middleware('throttle:5,1')->name('contact.send');
 Route::post('/newsletter/subscribe', [PageController::class, 'newsletterSubscribe'])->middleware('throttle:10,1')->name('newsletter.subscribe');
@@ -42,6 +41,9 @@ Route::get('/formations/css3', [PageController::class, 'css3'])->name('formation
 Route::get('/formations/javascript', [PageController::class, 'javascript'])->name('formations.javascript');
 Route::get('/formations/php', [PageController::class, 'php'])->name('formations.php');
 Route::get('/formations/bootstrap', [PageController::class, 'bootstrap'])->name('formations.bootstrap');
+Route::get('/formations/java', [PageController::class, 'java'])->name('formations.java');
+Route::get('/formations/sql', [PageController::class, 'sql'])->name('formations.sql');
+Route::get('/formations/c', [PageController::class, 'c'])->name('formations.c');
 Route::get('/formations/git', [PageController::class, 'git'])->name('formations.git');
 Route::get('/formations/wordpress', [PageController::class, 'wordpress'])->name('formations.wordpress');
 Route::get('/formations/ia', [PageController::class, 'ia'])->name('formations.ia');

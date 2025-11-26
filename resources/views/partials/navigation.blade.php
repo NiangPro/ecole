@@ -176,13 +176,13 @@
         position: absolute;
         top: calc(100% + 15px);
         left: 0;
-        min-width: 300px;
+        min-width: 260px;
         background: linear-gradient(135deg, rgba(15, 23, 42, 0.98) 0%, rgba(30, 41, 59, 0.95) 100%);
         backdrop-filter: blur(30px) saturate(180%);
         -webkit-backdrop-filter: blur(30px) saturate(180%);
         border: 2px solid rgba(6, 182, 212, 0.25);
-        border-radius: 20px;
-        padding: 12px;
+        border-radius: 16px;
+        padding: 8px;
         opacity: 0;
         visibility: hidden;
         transform: translateY(-15px) scale(0.95);
@@ -212,13 +212,13 @@
     .dropdown-item {
         display: flex;
         align-items: center;
-        gap: 12px;
-        padding: 12px 16px;
+        gap: 8px;
+        padding: 8px 12px;
         color: rgba(255, 255, 255, 0.85);
         text-decoration: none;
-        border-radius: 12px;
+        border-radius: 10px;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         border: 1px solid transparent;
         position: relative;
         overflow: hidden;
@@ -239,9 +239,9 @@
     .dropdown-item:hover {
         background: rgba(6, 182, 212, 0.12);
         color: #06b6d4;
-        transform: translateX(8px);
+        transform: translateX(6px);
         border-color: rgba(6, 182, 212, 0.3);
-        box-shadow: 0 4px 12px rgba(6, 182, 212, 0.15);
+        box-shadow: 0 3px 10px rgba(6, 182, 212, 0.15);
     }
     
     .dropdown-item:hover::before {
@@ -249,14 +249,15 @@
     }
     
     .dropdown-item-icon {
-        width: 36px;
-        height: 36px;
+        width: 28px;
+        height: 28px;
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: 8px;
-        font-size: 1.2rem;
+        border-radius: 6px;
+        font-size: 1rem;
         transition: transform 0.3s ease;
+        flex-shrink: 0;
     }
     
     .dropdown-item:hover .dropdown-item-icon {
@@ -269,13 +270,15 @@
     
     .dropdown-item-title {
         font-weight: 600;
-        font-size: 0.95rem;
-        margin-bottom: 2px;
+        font-size: 0.85rem;
+        margin-bottom: 1px;
+        line-height: 1.3;
     }
     
     .dropdown-item-desc {
-        font-size: 0.75rem;
+        font-size: 0.7rem;
         color: rgba(255, 255, 255, 0.5);
+        line-height: 1.2;
     }
     
     /* CTA Button */
@@ -316,154 +319,6 @@
         transform: translateY(-3px) scale(1.05);
         box-shadow: 0 12px 35px rgba(6, 182, 212, 0.5);
         border-color: rgba(6, 182, 212, 0.5);
-    }
-    
-    /* Language Selector */
-    .navbar-language-selector {
-        position: relative;
-        margin-right: 12px;
-    }
-    
-    .navbar-language-btn {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        padding: 6px 10px;
-        background: rgba(6, 182, 212, 0.1);
-        border: 1px solid rgba(6, 182, 212, 0.2);
-        border-radius: 10px;
-        color: #06b6d4;
-        font-size: 0.8rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        backdrop-filter: blur(10px);
-    }
-    
-    .navbar-language-btn:hover {
-        background: rgba(6, 182, 212, 0.2);
-        border-color: rgba(6, 182, 212, 0.4);
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(6, 182, 212, 0.2);
-    }
-    
-    .language-code {
-        font-weight: 700;
-        min-width: 24px;
-        text-align: center;
-        font-size: 0.75rem;
-    }
-    
-    .language-chevron {
-        font-size: 0.7rem;
-        transition: transform 0.3s ease;
-    }
-    
-    .navbar-language-btn[aria-expanded="true"] .language-chevron {
-        transform: rotate(180deg);
-    }
-    
-    .language-dropdown {
-        position: absolute;
-        top: calc(100% + 10px);
-        right: 0;
-        background: linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.98));
-        backdrop-filter: blur(30px) saturate(180%);
-        border: 1px solid rgba(6, 182, 212, 0.3);
-        border-radius: 16px;
-        padding: 8px;
-        min-width: 180px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-        z-index: 10000;
-        animation: slideDown 0.3s ease;
-    }
-    
-    @keyframes slideDown {
-        from {
-            opacity: 0;
-            transform: translateY(-10px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    .language-option {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 12px 16px;
-        border-radius: 12px;
-        color: #e2e8f0;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        position: relative;
-    }
-    
-    .language-option:hover {
-        background: rgba(6, 182, 212, 0.15);
-        color: #06b6d4;
-        transform: translateX(4px);
-    }
-    
-    .language-option.active {
-        background: rgba(6, 182, 212, 0.2);
-        color: #06b6d4;
-    }
-    
-    .language-flag {
-        font-size: 1.2rem;
-        width: 24px;
-        text-align: center;
-    }
-    
-    .language-name {
-        flex: 1;
-        font-weight: 500;
-    }
-    
-    .language-check {
-        color: #06b6d4;
-        font-size: 0.9rem;
-    }
-    
-    body:not(.dark-mode) .language-dropdown {
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.98));
-        border-color: rgba(6, 182, 212, 0.3);
-    }
-    
-    body:not(.dark-mode) .language-option {
-        color: #1e293b;
-    }
-    
-    body:not(.dark-mode) .language-option:hover {
-        background: rgba(6, 182, 212, 0.1);
-    }
-    
-    body:not(.dark-mode) .language-option.active {
-        background: rgba(6, 182, 212, 0.15);
-    }
-    
-    @media (max-width: 768px) {
-        .navbar-language-selector {
-            margin-right: 6px;
-        }
-        
-        .navbar-language-btn {
-            padding: 6px 10px;
-            font-size: 0.75rem;
-        }
-        
-        .language-code {
-            min-width: 20px;
-            font-size: 0.7rem;
-        }
-        
-        .language-dropdown {
-            right: 0;
-            left: auto;
-        }
     }
     
     /* Search Icon & Form */
@@ -1103,6 +958,15 @@
                             <div class="dropdown-item-desc">Versioning</div>
                         </div>
                     </a>
+                    <a href="{{ route('formations.java') }}" class="dropdown-item" data-parent-active="formations">
+                        <div class="dropdown-item-icon" style="background: rgba(237, 139, 0, 0.1);">
+                            <i class="fab fa-java" style="color: #ed8b00;"></i>
+                        </div>
+                        <div class="dropdown-item-content">
+                            <div class="dropdown-item-title">Java</div>
+                            <div class="dropdown-item-desc">Programmation orientée objet</div>
+                        </div>
+                    </a>
                 </div>
             </li>
             
@@ -1251,41 +1115,6 @@
             </form>
         </div>
         
-        @php
-            // Pages où le sélecteur de langue doit apparaître
-            $showLanguageSelector = request()->routeIs('formations.all', 'formations.html5', 'exercices', 'exercices.language', 'exercices.detail', 'quiz', 'quiz.language', 'quiz.result');
-            $currentLocale = session('locale', 'fr');
-        @endphp
-        
-        @if($showLanguageSelector)
-        <!-- Language Selector -->
-        <div class="navbar-language-selector" style="position: relative;">
-            <button type="button" class="navbar-language-btn" id="languageBtn" aria-label="Changer la langue" aria-expanded="false">
-                <i class="fas fa-globe" aria-hidden="true"></i>
-                <span class="language-code">{{ strtoupper($currentLocale) }}</span>
-                <i class="fas fa-chevron-down language-chevron" aria-hidden="true"></i>
-            </button>
-            <div class="language-dropdown" id="languageDropdown" style="display: none;">
-                @php
-                    $currentPath = '/' . ltrim(request()->path(), '/');
-                @endphp
-                <a href="{{ route('lang.switch', ['locale' => 'fr']) }}?redirect={{ urlencode($currentPath) }}" class="language-option {{ $currentLocale === 'fr' ? 'active' : '' }}">
-                    <span class="language-flag">🇫🇷</span>
-                    <span class="language-name">Français</span>
-                    @if($currentLocale === 'fr')
-                        <i class="fas fa-check language-check"></i>
-                    @endif
-                </a>
-                <a href="{{ route('lang.switch', ['locale' => 'en']) }}?redirect={{ urlencode($currentPath) }}" class="language-option {{ $currentLocale === 'en' ? 'active' : '' }}">
-                    <span class="language-flag">🇬🇧</span>
-                    <span class="language-name">English</span>
-                    @if($currentLocale === 'en')
-                        <i class="fas fa-check language-check"></i>
-                    @endif
-                </a>
-            </div>
-        </div>
-        @endif
         
         <!-- CTA Button -->
         <a href="{{ route('contact') }}" class="navbar-cta" aria-label="Page de contact">
@@ -1348,6 +1177,9 @@
                 </a>
                 <a href="{{ route('formations.git') }}" class="mobile-dropdown-item">
                     <i class="fab fa-git-alt" style="color: #f34f29;"></i> Git
+                </a>
+                <a href="{{ route('formations.java') }}" class="mobile-dropdown-item">
+                    <i class="fab fa-java" style="color: #ed8b00;"></i> Java
                 </a>
             </div>
         </li>
@@ -1618,24 +1450,4 @@
         }
     });
     
-    // Language selector toggle
-    const languageBtn = document.getElementById('languageBtn');
-    const languageDropdown = document.getElementById('languageDropdown');
-    
-    if (languageBtn && languageDropdown) {
-        languageBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            const isExpanded = languageBtn.getAttribute('aria-expanded') === 'true';
-            languageBtn.setAttribute('aria-expanded', !isExpanded);
-            languageDropdown.style.display = isExpanded ? 'none' : 'block';
-        });
-        
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!languageBtn.contains(e.target) && !languageDropdown.contains(e.target)) {
-                languageBtn.setAttribute('aria-expanded', 'false');
-                languageDropdown.style.display = 'none';
-            }
-        });
-    }
 </script>

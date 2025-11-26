@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Quiz ' . ucfirst($language) . ' | NiangProgrammeur')
+@section('title', trans('app.quiz.title') . ' ' . trans('app.formations.languages.' . $language, [], null, ucfirst($language)) . ' | NiangProgrammeur')
 
 @section('styles')
 <style>
@@ -153,7 +153,7 @@
             <!-- Progress -->
             <div class="mb-8">
                 <div class="flex items-center justify-between mb-2">
-                    <span class="text-gray-400">Progression</span>
+                    <span class="text-gray-400">{{ trans('app.exercices.progress') }}</span>
                     <span class="text-purple-400 font-bold" id="progressText">0/{{ count($questions) }}</span>
                 </div>
                 <div class="progress-bar">

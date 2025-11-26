@@ -61,6 +61,17 @@ return [
         'python' => [
             'description' => 'Apprenez Python, le langage de programmation polyvalent et puissant utilisé pour le développement web, la data science, l\'intelligence artificielle, et bien plus encore. Cette formation complète couvre la syntaxe Python, les structures de données (listes, dictionnaires, tuples), les fonctions et classes, les modules et packages, le développement web avec Flask et Django, l\'analyse de données avec Pandas, le Machine Learning avec scikit-learn, et les bonnes pratiques Python. Python est reconnu pour sa simplicité et sa lisibilité, ce qui en fait un excellent choix pour les débutants et les développeurs expérimentés.',
         ],
+        'languages' => [
+            'html5' => 'HTML5',
+            'css3' => 'CSS3',
+            'javascript' => 'JavaScript',
+            'php' => 'PHP',
+            'bootstrap' => 'Bootstrap',
+            'git' => 'Git',
+            'wordpress' => 'WordPress',
+            'ia' => 'Intelligence Artificielle',
+            'python' => 'Python',
+        ],
     ],
     
     // Exercices

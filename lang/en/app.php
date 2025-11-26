@@ -61,6 +61,17 @@ return [
         'python' => [
             'description' => 'Learn Python, the versatile and powerful programming language used for web development, data science, artificial intelligence, and much more. This comprehensive course covers Python syntax, data structures (lists, dictionaries, tuples), functions and classes, modules and packages, web development with Flask and Django, data analysis with Pandas, Machine Learning with scikit-learn, and Python best practices. Python is recognized for its simplicity and readability, making it an excellent choice for beginners and experienced developers.',
         ],
+        'languages' => [
+            'html5' => 'HTML5',
+            'css3' => 'CSS3',
+            'javascript' => 'JavaScript',
+            'php' => 'PHP',
+            'bootstrap' => 'Bootstrap',
+            'git' => 'Git',
+            'wordpress' => 'WordPress',
+            'ia' => 'Artificial Intelligence',
+            'python' => 'Python',
+        ],
     ],
     
     // Exercices

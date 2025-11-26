@@ -5,9 +5,25 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\ContactMessage;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Session;
 
 class PageController extends Controller
 {
+    /**
+     * Force la locale à français (plus de système de traduction)
+     */
+    private function ensureLocale()
+    {
+        // TOUJOURS forcer le français
+        App::setLocale('fr');
+        \Illuminate\Support\Facades\Lang::setLocale('fr');
+        config(['app.locale' => 'fr']);
+        config(['app.fallback_locale' => 'fr']);
+        
+        return 'fr';
+    }
+    
     public function index()
     {
         // Cache les 6 derniers articles publiés (15 minutes) - Optimisé avec select()
@@ -101,100 +117,6 @@ class PageController extends Controller
         return view('faq');
     }
 
-    public function setLocale($locale)
-    {
-        // Langues supportées
-        $supportedLocales = ['fr', 'en'];
-        
-        // Vérifier que la langue est supportée
-        if (!in_array($locale, $supportedLocales)) {
-            $locale = 'fr';
-        }
-        
-        // Sauvegarder la langue dans la session
-        session(['locale' => $locale]);
-        
-        // Forcer l'écriture de la session (important en production)
-        session()->save();
-        
-        // Récupérer le chemin de redirection depuis le paramètre 'redirect' (GET)
-        $redirectPath = request('redirect');
-        
-        // Si un chemin de redirection est fourni
-        if (!empty($redirectPath)) {
-            // Décoder le chemin si nécessaire
-            $redirectPath = urldecode($redirectPath);
-            
-            // Nettoyer le chemin (enlever les espaces, etc.)
-            $redirectPath = trim($redirectPath);
-            
-            // S'assurer que le chemin commence par /
-            if (strpos($redirectPath, '/') !== 0) {
-                $redirectPath = '/' . $redirectPath;
-            }
-            
-            // Vérifier que ce n'est pas une route protégée
-            if (!str_starts_with($redirectPath, '/admin') && 
-                !str_starts_with($redirectPath, '/lang')) {
-                
-                // Si c'est la racine, rediriger vers l'accueil
-                if ($redirectPath === '/') {
-                    return redirect()->route('home')
-                        ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
-                        ->header('Pragma', 'no-cache')
-                        ->header('Expires', '0');
-                }
-                
-                // Rediriger vers le chemin avec headers explicites pour la production
-                return redirect($redirectPath, 302)
-                    ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
-                    ->header('Pragma', 'no-cache')
-                    ->header('Expires', '0');
-            }
-        }
-        
-        // Sinon, utiliser le referer si disponible
-        $referer = request()->header('referer');
-        if ($referer) {
-            try {
-                // Extraire le chemin du referer
-                $refererUrl = parse_url($referer);
-                $refererPath = $refererUrl['path'] ?? null;
-                
-                // Si le referer contient /lang/, extraire le paramètre redirect
-                if ($refererPath && str_contains($refererPath, '/lang/')) {
-                    $query = $refererUrl['query'] ?? null;
-                    if ($query) {
-                        parse_str($query, $params);
-                        if (isset($params['redirect'])) {
-                            $refererPath = urldecode($params['redirect']);
-                            if (strpos($refererPath, '/') !== 0) {
-                                $refererPath = '/' . $refererPath;
-                            }
-                        } else {
-                            $refererPath = null;
-                        }
-                    }
-                }
-                
-                // Vérifier que le chemin est valide
-                if ($refererPath && 
-                    strpos($refererPath, '/') === 0 &&
-                    !str_starts_with($refererPath, '/admin') &&
-                    !str_starts_with($refererPath, '/lang')) {
-                    return redirect($refererPath, 302)
-                        ->header('Cache-Control', 'no-cache, no-store, must-revalidate')
-                        ->header('Pragma', 'no-cache')
-                        ->header('Expires', '0');
-                }
-            } catch (\Exception $e) {
-                // Continuer vers le fallback
-            }
-        }
-        
-        // Fallback : rediriger vers l'accueil
-        return redirect()->route('home');
-    }
 
     public function allLinks()
     {
@@ -269,23 +191,43 @@ class PageController extends Controller
 
     public function exercices()
     {
+        // Forcer la locale AVANT tout traitement
+        $locale = $this->ensureLocale();
+        
+        // Forcer la recompilation de la vue si nécessaire (en production, le cache peut être problématique)
+        // On utilise view()->share() pour s'assurer que la locale est bien passée à la vue
+        view()->share('currentLocale', $locale);
+        
         $languages = [
-            ['name' => 'HTML5', 'slug' => 'html5', 'icon' => 'fab fa-html5', 'color' => 'orange', 'exercises' => 25],
-            ['name' => 'CSS3', 'slug' => 'css3', 'icon' => 'fab fa-css3-alt', 'color' => 'blue', 'exercises' => 30],
-            ['name' => 'JavaScript', 'slug' => 'javascript', 'icon' => 'fab fa-js', 'color' => 'yellow', 'exercises' => 35],
-            ['name' => 'PHP', 'slug' => 'php', 'icon' => 'fab fa-php', 'color' => 'purple', 'exercises' => 28],
-            ['name' => 'Bootstrap', 'slug' => 'bootstrap', 'icon' => 'fab fa-bootstrap', 'color' => 'purple', 'exercises' => 20],
-            ['name' => 'Git', 'slug' => 'git', 'icon' => 'fab fa-git-alt', 'color' => 'red', 'exercises' => 15],
-            ['name' => 'WordPress', 'slug' => 'wordpress', 'icon' => 'fab fa-wordpress', 'color' => 'blue', 'exercises' => 18],
-            ['name' => 'IA', 'slug' => 'ia', 'icon' => 'fas fa-robot', 'color' => 'green', 'exercises' => 12],
-            ['name' => 'Python', 'slug' => 'python', 'icon' => 'fab fa-python', 'color' => 'blue', 'exercises' => 22],
+            ['name' => trans('app.formations.languages.html5'), 'slug' => 'html5', 'icon' => 'fab fa-html5', 'color' => 'orange', 'exercises' => 25],
+            ['name' => trans('app.formations.languages.css3'), 'slug' => 'css3', 'icon' => 'fab fa-css3-alt', 'color' => 'blue', 'exercises' => 30],
+            ['name' => trans('app.formations.languages.javascript'), 'slug' => 'javascript', 'icon' => 'fab fa-js', 'color' => 'yellow', 'exercises' => 35],
+            ['name' => trans('app.formations.languages.php'), 'slug' => 'php', 'icon' => 'fab fa-php', 'color' => 'purple', 'exercises' => 28],
+            ['name' => trans('app.formations.languages.bootstrap'), 'slug' => 'bootstrap', 'icon' => 'fab fa-bootstrap', 'color' => 'purple', 'exercises' => 20],
+            ['name' => trans('app.formations.languages.git'), 'slug' => 'git', 'icon' => 'fab fa-git-alt', 'color' => 'red', 'exercises' => 15],
+            ['name' => trans('app.formations.languages.wordpress'), 'slug' => 'wordpress', 'icon' => 'fab fa-wordpress', 'color' => 'blue', 'exercises' => 18],
+            ['name' => trans('app.formations.languages.ia'), 'slug' => 'ia', 'icon' => 'fas fa-robot', 'color' => 'green', 'exercises' => 12],
+            ['name' => trans('app.formations.languages.python'), 'slug' => 'python', 'icon' => 'fab fa-python', 'color' => 'blue', 'exercises' => 22],
+            ['name' => 'Java', 'slug' => 'java', 'icon' => 'fab fa-java', 'color' => 'orange', 'exercises' => 25],
+            ['name' => 'SQL', 'slug' => 'sql', 'icon' => 'fas fa-database', 'color' => 'blue', 'exercises' => 20],
+            ['name' => 'Langage C', 'slug' => 'c', 'icon' => 'fab fa-c', 'color' => 'gray', 'exercises' => 18],
         ];
         
-        return view('exercices', compact('languages'));
+        // Créer la réponse avec des headers pour empêcher le cache
+        $response = response()->view('exercices', compact('languages'));
+        $response->headers->set('Cache-Control', 'no-cache, no-store, must-revalidate, private');
+        $response->headers->set('Pragma', 'no-cache');
+        $response->headers->set('Expires', '0');
+        $response->headers->set('X-Locale', $locale);
+        
+        return $response;
     }
 
     public function exercicesLanguage($language)
     {
+        // Forcer la locale
+        $this->ensureLocale();
+        
         $allExercises = $this->getExercisesByLanguage($language);
         
         // Varier les exercices par utilisateur (basé sur IP + session)
@@ -5697,6 +5639,114 @@ print(carres)',
                     'hint' => $getTranslated('hint', 'Utilisez carres = [x**2 for x in range(1, 6)] pour créer [1, 4, 9, 16, 25].')
                 ],
             ],
+            'java' => [
+                1 => [
+                    'title' => $getTranslated('title', 'Premier programme Java'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 10,
+                    'instruction' => $getTranslated('instruction', 'Créez un programme Java qui affiche "Bonjour Java !" dans la console.'),
+                    'description' => $getTranslated('description', 'En Java, chaque programme doit avoir une classe publique avec une méthode main(). La méthode main() est le point d\'entrée du programme. Utilisez System.out.println() pour afficher du texte.'),
+                    'startCode' => 'public class Bonjour {
+    public static void main(String[] args) {
+        // Affichez "Bonjour Java !"
+    }
+}',
+                    'solution' => 'public class Bonjour {
+    public static void main(String[] args) {
+        System.out.println("Bonjour Java !");
+    }
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez System.out.println("Bonjour Java !"); dans la méthode main().')
+                ],
+                2 => [
+                    'title' => $getTranslated('title', 'Variables et types'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 10,
+                    'instruction' => $getTranslated('instruction', 'Déclarez une variable nom de type String avec la valeur "Java" et affichez-la.'),
+                    'description' => $getTranslated('description', 'En Java, les variables doivent être déclarées avec un type. String est utilisé pour les chaînes de caractères. Java est un langage fortement typé.'),
+                    'startCode' => 'public class Variables {
+    public static void main(String[] args) {
+        // Déclarez une variable nom de type String avec la valeur "Java"
+        // Affichez-la
+    }
+}',
+                    'solution' => 'public class Variables {
+    public static void main(String[] args) {
+        String nom = "Java";
+        System.out.println(nom);
+    }
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez String nom = "Java"; puis System.out.println(nom);')
+                ],
+            ],
+            'sql' => [
+                1 => [
+                    'title' => $getTranslated('title', 'Requête SELECT de base'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 10,
+                    'instruction' => $getTranslated('instruction', 'Écrivez une requête SQL pour sélectionner toutes les colonnes de la table "utilisateurs".'),
+                    'description' => $getTranslated('description', 'La commande SELECT permet de récupérer des données d\'une table. SELECT * sélectionne toutes les colonnes. FROM spécifie la table source.'),
+                    'startCode' => '-- Sélectionnez toutes les colonnes de la table utilisateurs
+',
+                    'solution' => 'SELECT * FROM utilisateurs;',
+                    'hint' => $getTranslated('hint', 'Utilisez SELECT * FROM utilisateurs;')
+                ],
+                2 => [
+                    'title' => $getTranslated('title', 'Filtrage avec WHERE'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 12,
+                    'instruction' => $getTranslated('instruction', 'Sélectionnez tous les utilisateurs dont l\'âge est supérieur à 18.'),
+                    'description' => $getTranslated('description', 'La clause WHERE permet de filtrer les résultats selon une condition. Utilisez les opérateurs de comparaison comme >, <, =, etc.'),
+                    'startCode' => '-- Sélectionnez les utilisateurs avec age > 18
+',
+                    'solution' => 'SELECT * FROM utilisateurs WHERE age > 18;',
+                    'hint' => $getTranslated('hint', 'Utilisez SELECT * FROM utilisateurs WHERE age > 18;')
+                ],
+            ],
+            'c' => [
+                1 => [
+                    'title' => $getTranslated('title', 'Premier programme C'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 10,
+                    'instruction' => $getTranslated('instruction', 'Créez un programme C qui affiche "Bonjour C !" dans la console.'),
+                    'description' => $getTranslated('description', 'En C, chaque programme doit avoir une fonction main(). On utilise printf() pour afficher du texte. stdio.h contient les fonctions d\'entrée/sortie.'),
+                    'startCode' => '#include <stdio.h>
+
+int main() {
+    // Affichez "Bonjour C !"
+    return 0;
+}',
+                    'solution' => '#include <stdio.h>
+
+int main() {
+    printf("Bonjour C !\\n");
+    return 0;
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez printf("Bonjour C !\\n"); dans la fonction main().')
+                ],
+                2 => [
+                    'title' => $getTranslated('title', 'Variables et types'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 10,
+                    'instruction' => $getTranslated('instruction', 'Déclarez une variable age de type int avec la valeur 25 et affichez-la.'),
+                    'description' => $getTranslated('description', 'En C, les variables doivent être déclarées avec un type. int est utilisé pour les nombres entiers. %d est le format pour afficher un entier avec printf().'),
+                    'startCode' => '#include <stdio.h>
+
+int main() {
+    // Déclarez une variable age de type int avec la valeur 25
+    // Affichez-la
+    return 0;
+}',
+                    'solution' => '#include <stdio.h>
+
+int main() {
+    int age = 25;
+    printf("Age : %d\\n", age);
+    return 0;
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez int age = 25; puis printf("Age : %d\\n", age);')
+                ],
+            ],
         ];
 
         return $allExercises[$language][$id] ?? null;
@@ -5893,6 +5943,57 @@ print(carres)',
                 ['title' => $getTitle(14, 'Manipulation de fichiers'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
                 ['title' => $getTitle(15, 'Compréhensions de listes et générateurs'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
             ],
+            'java' => [
+                ['title' => $getTitle(1, 'Premier programme Java'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(2, 'Variables et types'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(3, 'Opérateurs arithmétiques'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(4, 'Conditions if/else'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 12],
+                ['title' => $getTitle(5, 'Boucles for et while'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 12],
+                ['title' => $getTitle(6, 'Méthodes Java'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 18],
+                ['title' => $getTitle(7, 'Tableaux Java'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 18],
+                ['title' => $getTitle(8, 'ArrayList et Collections'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
+                ['title' => $getTitle(9, 'Classes et objets'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
+                ['title' => $getTitle(10, 'Héritage'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 22],
+                ['title' => $getTitle(11, 'Polymorphisme'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(12, 'Interfaces et abstractions'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+                ['title' => $getTitle(13, 'Gestion des exceptions'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 25],
+                ['title' => $getTitle(14, 'Fichiers et I/O'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(15, 'Threads et concurrence'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+            ],
+            'sql' => [
+                ['title' => $getTitle(1, 'Requête SELECT de base'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(2, 'Filtrage avec WHERE'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 12],
+                ['title' => $getTitle(3, 'Tri avec ORDER BY'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(4, 'Opérateurs de comparaison'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 12],
+                ['title' => $getTitle(5, 'Opérateurs logiques AND/OR'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 12],
+                ['title' => $getTitle(6, 'Fonctions d\'agrégation'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 18],
+                ['title' => $getTitle(7, 'GROUP BY et HAVING'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
+                ['title' => $getTitle(8, 'JOIN INNER'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
+                ['title' => $getTitle(9, 'JOIN LEFT/RIGHT'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 22],
+                ['title' => $getTitle(10, 'Sous-requêtes'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
+                ['title' => $getTitle(11, 'INSERT, UPDATE, DELETE'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 25],
+                ['title' => $getTitle(12, 'Création de tables'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(13, 'Contraintes et clés'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(14, 'Vues et index'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 25],
+                ['title' => $getTitle(15, 'Requêtes complexes'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+            ],
+            'c' => [
+                ['title' => $getTitle(1, 'Premier programme C'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(2, 'Variables et types'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(3, 'Opérateurs arithmétiques'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(4, 'Conditions if/else'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 12],
+                ['title' => $getTitle(5, 'Boucles for et while'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 12],
+                ['title' => $getTitle(6, 'Fonctions C'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 18],
+                ['title' => $getTitle(7, 'Tableaux'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 18],
+                ['title' => $getTitle(8, 'Pointeurs de base'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
+                ['title' => $getTitle(9, 'Pointeurs et tableaux'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 22],
+                ['title' => $getTitle(10, 'Structures (struct)'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
+                ['title' => $getTitle(11, 'Allocation mémoire'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(12, 'Pointeurs avancés'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+                ['title' => $getTitle(13, 'Fichiers et I/O'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(14, 'Chaînes de caractères'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 25],
+                ['title' => $getTitle(15, 'Programmation système'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+            ],
         ];
 
         return $allExercises[$language] ?? [];
@@ -5900,16 +6001,19 @@ print(carres)',
 
     public function quiz()
     {
+        // Forcer la locale
+        $this->ensureLocale();
+        
         $languages = [
-            ['name' => 'HTML5', 'slug' => 'html5', 'icon' => 'fab fa-html5', 'color' => 'orange', 'questions' => 20],
-            ['name' => 'CSS3', 'slug' => 'css3', 'icon' => 'fab fa-css3-alt', 'color' => 'blue', 'questions' => 20],
-            ['name' => 'JavaScript', 'slug' => 'javascript', 'icon' => 'fab fa-js', 'color' => 'yellow', 'questions' => 20],
-            ['name' => 'PHP', 'slug' => 'php', 'icon' => 'fab fa-php', 'color' => 'purple', 'questions' => 20],
-            ['name' => 'Bootstrap', 'slug' => 'bootstrap', 'icon' => 'fab fa-bootstrap', 'color' => 'purple', 'questions' => 15],
-            ['name' => 'Git', 'slug' => 'git', 'icon' => 'fab fa-git-alt', 'color' => 'red', 'questions' => 15],
-            ['name' => 'WordPress', 'slug' => 'wordpress', 'icon' => 'fab fa-wordpress', 'color' => 'blue', 'questions' => 15],
-            ['name' => 'IA', 'slug' => 'ia', 'icon' => 'fas fa-robot', 'color' => 'green', 'questions' => 15],
-            ['name' => 'Python', 'slug' => 'python', 'icon' => 'fab fa-python', 'color' => 'blue', 'questions' => 20],
+            ['name' => trans('app.formations.languages.html5'), 'slug' => 'html5', 'icon' => 'fab fa-html5', 'color' => 'orange', 'questions' => 20],
+            ['name' => trans('app.formations.languages.css3'), 'slug' => 'css3', 'icon' => 'fab fa-css3-alt', 'color' => 'blue', 'questions' => 20],
+            ['name' => trans('app.formations.languages.javascript'), 'slug' => 'javascript', 'icon' => 'fab fa-js', 'color' => 'yellow', 'questions' => 20],
+            ['name' => trans('app.formations.languages.php'), 'slug' => 'php', 'icon' => 'fab fa-php', 'color' => 'purple', 'questions' => 20],
+            ['name' => trans('app.formations.languages.bootstrap'), 'slug' => 'bootstrap', 'icon' => 'fab fa-bootstrap', 'color' => 'purple', 'questions' => 15],
+            ['name' => trans('app.formations.languages.git'), 'slug' => 'git', 'icon' => 'fab fa-git-alt', 'color' => 'red', 'questions' => 15],
+            ['name' => trans('app.formations.languages.wordpress'), 'slug' => 'wordpress', 'icon' => 'fab fa-wordpress', 'color' => 'blue', 'questions' => 15],
+            ['name' => trans('app.formations.languages.ia'), 'slug' => 'ia', 'icon' => 'fas fa-robot', 'color' => 'green', 'questions' => 15],
+            ['name' => trans('app.formations.languages.python'), 'slug' => 'python', 'icon' => 'fab fa-python', 'color' => 'blue', 'questions' => 20],
         ];
         
         return view('quiz', compact('languages'));
@@ -5917,6 +6021,9 @@ print(carres)',
 
     public function quizLanguage($language)
     {
+        // Forcer la locale
+        $this->ensureLocale();
+        
         $questions = $this->getQuizQuestions($language);
         
         if (empty($questions)) {
@@ -6207,6 +6314,72 @@ print(carres)',
                 ['question' => 'Comment créer un ensemble (set) ?', 'options' => ['set = []', 'set = ()', 'set = {}', 'set = set()'], 'correct' => 3],
                 ['question' => 'Quelle fonction génère un nombre aléatoire ?', 'options' => ['random.random()', 'rand()', 'Math.random()', 'random()'], 'correct' => 0],
             ],
+            'java' => [
+                ['question' => 'Qui a créé Java ?', 'options' => ['James Gosling', 'Guido van Rossum', 'Brendan Eich', 'Dennis Ritchie'], 'correct' => 0],
+                ['question' => 'En quelle année Java a-t-il été créé ?', 'options' => ['1991', '1995', '2000', '2005'], 'correct' => 1],
+                ['question' => 'Comment afficher du texte en Java ?', 'options' => ['System.out.println()', 'print()', 'echo()', 'display()'], 'correct' => 0],
+                ['question' => 'Comment déclarer une variable en Java ?', 'options' => ['int x = 5', 'var x = 5', 'x = 5', 'variable x = 5'], 'correct' => 0],
+                ['question' => 'Comment créer un commentaire sur une ligne ?', 'options' => ['// commentaire', '# commentaire', '/* commentaire */', '-- commentaire'], 'correct' => 0],
+                ['question' => 'Comment créer un tableau ?', 'options' => ['int[] arr = new int[5]', 'int arr = []', 'array arr = []', 'int arr = {}'], 'correct' => 0],
+                ['question' => 'Comment créer une classe ?', 'options' => ['class MaClasse {}', 'create class MaClasse', 'new class MaClasse', 'define class MaClasse'], 'correct' => 0],
+                ['question' => 'Quelle méthode retourne la longueur d\'un tableau ?', 'options' => ['length', 'length()', 'size()', 'count()'], 'correct' => 0],
+                ['question' => 'Comment créer une boucle for ?', 'options' => ['for (int i = 0; i < 5; i++)', 'for i in range(5)', 'for i = 0 to 5', 'loop i < 5'], 'correct' => 0],
+                ['question' => 'Comment créer une condition if ?', 'options' => ['if (x > 5)', 'if x > 5', 'if (x > 5) then', 'if x > 5 then'], 'correct' => 0],
+                ['question' => 'Quelle méthode ajoute un élément à une ArrayList ?', 'options' => ['add()', 'append()', 'insert()', 'push()'], 'correct' => 0],
+                ['question' => 'Comment créer une méthode ?', 'options' => ['public void maMethode() {}', 'def maMethode()', 'function maMethode()', 'create maMethode()'], 'correct' => 0],
+                ['question' => 'Quel mot-clé définit une constante ?', 'options' => ['const', 'final', 'static', 'constant'], 'correct' => 1],
+                ['question' => 'Comment créer un objet ?', 'options' => ['MaClasse obj = new MaClasse()', 'new MaClasse()', 'create MaClasse()', 'MaClasse obj = MaClasse()'], 'correct' => 0],
+                ['question' => 'Quelle interface représente une collection ?', 'options' => ['Collection', 'List', 'Set', 'Toutes les réponses'], 'correct' => 3],
+                ['question' => 'Comment gérer une exception ?', 'options' => ['try-catch', 'try-except', 'catch-error', 'handle-exception'], 'correct' => 0],
+                ['question' => 'Quelle méthode convertit une chaîne en entier ?', 'options' => ['Integer.parseInt()', 'int()', 'toInt()', 'parseInt()'], 'correct' => 0],
+                ['question' => 'Comment créer un thread ?', 'options' => ['extends Thread', 'implements Runnable', 'Les deux A et B', 'new Thread()'], 'correct' => 2],
+                ['question' => 'Quelle méthode lit un fichier ?', 'options' => ['FileReader', 'BufferedReader', 'Scanner', 'Toutes les réponses'], 'correct' => 3],
+                ['question' => 'Quelle annotation marque une méthode de test ?', 'options' => ['@Test', '@TestAnnotation', '@TestMethod', '@TestFunction'], 'correct' => 0],
+            ],
+            'sql' => [
+                ['question' => 'Que signifie SQL ?', 'options' => ['Structured Query Language', 'Simple Query Language', 'Standard Query Language', 'System Query Language'], 'correct' => 0],
+                ['question' => 'Quelle commande sélectionne des données ?', 'options' => ['SELECT', 'GET', 'FETCH', 'RETRIEVE'], 'correct' => 0],
+                ['question' => 'Quelle clause filtre les résultats ?', 'options' => ['WHERE', 'FILTER', 'CONDITION', 'IF'], 'correct' => 0],
+                ['question' => 'Quelle clause trie les résultats ?', 'options' => ['ORDER BY', 'SORT BY', 'ORDER', 'SORT'], 'correct' => 0],
+                ['question' => 'Quelle fonction compte les lignes ?', 'options' => ['COUNT()', 'SUM()', 'TOTAL()', 'NUMBER()'], 'correct' => 0],
+                ['question' => 'Quelle fonction calcule la moyenne ?', 'options' => ['AVG()', 'MEAN()', 'AVERAGE()', 'MEDIAN()'], 'correct' => 0],
+                ['question' => 'Quelle fonction trouve la valeur maximale ?', 'options' => ['MAX()', 'HIGHEST()', 'TOP()', 'BIGGEST()'], 'correct' => 0],
+                ['question' => 'Quelle fonction trouve la valeur minimale ?', 'options' => ['MIN()', 'LOWEST()', 'BOTTOM()', 'SMALLEST()'], 'correct' => 0],
+                ['question' => 'Quelle clause groupe les résultats ?', 'options' => ['GROUP BY', 'GROUP', 'CLUSTER BY', 'AGGREGATE BY'], 'correct' => 0],
+                ['question' => 'Quel type de JOIN retourne toutes les lignes des deux tables ?', 'options' => ['INNER JOIN', 'LEFT JOIN', 'FULL OUTER JOIN', 'RIGHT JOIN'], 'correct' => 2],
+                ['question' => 'Quelle commande insère des données ?', 'options' => ['INSERT', 'ADD', 'CREATE', 'NEW'], 'correct' => 0],
+                ['question' => 'Quelle commande modifie des données ?', 'options' => ['UPDATE', 'MODIFY', 'CHANGE', 'EDIT'], 'correct' => 0],
+                ['question' => 'Quelle commande supprime des données ?', 'options' => ['DELETE', 'REMOVE', 'DROP', 'CLEAR'], 'correct' => 0],
+                ['question' => 'Quelle commande crée une table ?', 'options' => ['CREATE TABLE', 'NEW TABLE', 'MAKE TABLE', 'BUILD TABLE'], 'correct' => 0],
+                ['question' => 'Quelle contrainte garantit l\'unicité ?', 'options' => ['UNIQUE', 'DISTINCT', 'ONLY', 'SINGLE'], 'correct' => 0],
+                ['question' => 'Quelle contrainte garantit qu\'une valeur n\'est pas NULL ?', 'options' => ['NOT NULL', 'REQUIRED', 'MANDATORY', 'OBLIGATORY'], 'correct' => 0],
+                ['question' => 'Quelle clé identifie de manière unique une ligne ?', 'options' => ['PRIMARY KEY', 'UNIQUE KEY', 'FOREIGN KEY', 'INDEX KEY'], 'correct' => 0],
+                ['question' => 'Quelle clause limite le nombre de résultats ?', 'options' => ['LIMIT', 'TOP', 'FIRST', 'RESTRICT'], 'correct' => 0],
+                ['question' => 'Quel opérateur recherche un motif ?', 'options' => ['LIKE', 'MATCH', 'FIND', 'SEARCH'], 'correct' => 0],
+                ['question' => 'Quelle commande crée un index ?', 'options' => ['CREATE INDEX', 'NEW INDEX', 'MAKE INDEX', 'BUILD INDEX'], 'correct' => 0],
+            ],
+            'c' => [
+                ['question' => 'Qui a créé le langage C ?', 'options' => ['Dennis Ritchie', 'James Gosling', 'Guido van Rossum', 'Bjarne Stroustrup'], 'correct' => 0],
+                ['question' => 'En quelle année le langage C a-t-il été créé ?', 'options' => ['1969', '1972', '1975', '1980'], 'correct' => 1],
+                ['question' => 'Comment afficher du texte en C ?', 'options' => ['printf()', 'print()', 'echo()', 'display()'], 'correct' => 0],
+                ['question' => 'Comment déclarer une variable en C ?', 'options' => ['int x = 5', 'var x = 5', 'x = 5', 'variable x = 5'], 'correct' => 0],
+                ['question' => 'Comment créer un commentaire sur une ligne ?', 'options' => ['// commentaire', '# commentaire', '/* commentaire */', '-- commentaire'], 'correct' => 0],
+                ['question' => 'Comment créer un tableau ?', 'options' => ['int arr[5]', 'int[] arr = new int[5]', 'array arr = []', 'int arr = {}'], 'correct' => 0],
+                ['question' => 'Comment créer une fonction ?', 'options' => ['int maFonction() {}', 'def maFonction()', 'function maFonction()', 'create maFonction()'], 'correct' => 0],
+                ['question' => 'Quelle fonction retourne la longueur d\'une chaîne ?', 'options' => ['strlen()', 'length()', 'size()', 'count()'], 'correct' => 0],
+                ['question' => 'Comment créer une boucle for ?', 'options' => ['for (int i = 0; i < 5; i++)', 'for i in range(5)', 'for i = 0 to 5', 'loop i < 5'], 'correct' => 0],
+                ['question' => 'Comment créer une condition if ?', 'options' => ['if (x > 5)', 'if x > 5', 'if (x > 5) then', 'if x > 5 then'], 'correct' => 0],
+                ['question' => 'Comment déclarer un pointeur ?', 'options' => ['int *ptr', 'int ptr*', 'pointer int ptr', 'int &ptr'], 'correct' => 0],
+                ['question' => 'Comment allouer de la mémoire dynamiquement ?', 'options' => ['malloc()', 'alloc()', 'new()', 'create()'], 'correct' => 0],
+                ['question' => 'Comment libérer la mémoire allouée ?', 'options' => ['free()', 'delete()', 'release()', 'remove()'], 'correct' => 0],
+                ['question' => 'Comment créer une structure ?', 'options' => ['struct MaStruct {}', 'create struct MaStruct', 'new struct MaStruct', 'define struct MaStruct'], 'correct' => 0],
+                ['question' => 'Quelle fonction ouvre un fichier ?', 'options' => ['fopen()', 'open()', 'file_open()', 'open_file()'], 'correct' => 0],
+                ['question' => 'Quelle fonction lit un fichier ?', 'options' => ['fread()', 'read()', 'file_read()', 'get_file()'], 'correct' => 0],
+                ['question' => 'Quelle fonction écrit dans un fichier ?', 'options' => ['fwrite()', 'write()', 'file_write()', 'put_file()'], 'correct' => 0],
+                ['question' => 'Quelle fonction ferme un fichier ?', 'options' => ['fclose()', 'close()', 'file_close()', 'end_file()'], 'correct' => 0],
+                ['question' => 'Comment copier une chaîne ?', 'options' => ['strcpy()', 'copy()', 'string_copy()', 'str_dup()'], 'correct' => 0],
+                ['question' => 'Comment concaténer deux chaînes ?', 'options' => ['strcat()', 'concat()', 'string_concat()', 'str_join()'], 'correct' => 0],
+            ],
         ];
 
         return $allQuestions[$language] ?? [];
@@ -6268,9 +6441,12 @@ print(carres)',
     // Formations
     public function allFormations()
     {
+        // Forcer la locale AVANT tout traitement
+        $locale = $this->ensureLocale();
+        
         $formations = [
             [
-                'name' => 'HTML5',
+                'name' => trans('app.formations.languages.html5'),
                 'slug' => 'html5',
                 'icon' => 'fab fa-html5',
                 'color' => '#e34c26',
@@ -6278,7 +6454,7 @@ print(carres)',
                 'route' => route('formations.html5')
             ],
             [
-                'name' => 'CSS3',
+                'name' => trans('app.formations.languages.css3'),
                 'slug' => 'css3',
                 'icon' => 'fab fa-css3-alt',
                 'color' => '#264de4',
@@ -6286,7 +6462,7 @@ print(carres)',
                 'route' => route('formations.css3')
             ],
             [
-                'name' => 'JavaScript',
+                'name' => trans('app.formations.languages.javascript'),
                 'slug' => 'javascript',
                 'icon' => 'fab fa-js',
                 'color' => '#f0db4f',
@@ -6294,7 +6470,7 @@ print(carres)',
                 'route' => route('formations.javascript')
             ],
             [
-                'name' => 'PHP',
+                'name' => trans('app.formations.languages.php'),
                 'slug' => 'php',
                 'icon' => 'fab fa-php',
                 'color' => '#8993be',
@@ -6302,7 +6478,7 @@ print(carres)',
                 'route' => route('formations.php')
             ],
             [
-                'name' => 'Bootstrap',
+                'name' => trans('app.formations.languages.bootstrap'),
                 'slug' => 'bootstrap',
                 'icon' => 'fab fa-bootstrap',
                 'color' => '#7952b3',
@@ -6310,7 +6486,7 @@ print(carres)',
                 'route' => route('formations.bootstrap')
             ],
             [
-                'name' => 'Git',
+                'name' => trans('app.formations.languages.git'),
                 'slug' => 'git',
                 'icon' => 'fab fa-git-alt',
                 'color' => '#f34f29',
@@ -6318,7 +6494,7 @@ print(carres)',
                 'route' => route('formations.git')
             ],
             [
-                'name' => 'WordPress',
+                'name' => trans('app.formations.languages.wordpress'),
                 'slug' => 'wordpress',
                 'icon' => 'fab fa-wordpress',
                 'color' => '#21759b',
@@ -6326,7 +6502,7 @@ print(carres)',
                 'route' => route('formations.wordpress')
             ],
             [
-                'name' => 'Intelligence Artificielle',
+                'name' => trans('app.formations.languages.ia'),
                 'slug' => 'ia',
                 'icon' => 'fas fa-robot',
                 'color' => '#06b6d4',
@@ -6334,12 +6510,36 @@ print(carres)',
                 'route' => route('formations.ia')
             ],
             [
-                'name' => 'Python',
+                'name' => trans('app.formations.languages.python'),
                 'slug' => 'python',
                 'icon' => 'fab fa-python',
                 'color' => '#3776ab',
                 'description' => trans('app.formations.python.description'),
                 'route' => route('formations.python')
+            ],
+            [
+                'name' => 'Java',
+                'slug' => 'java',
+                'icon' => 'fab fa-java',
+                'color' => '#ed8b00',
+                'description' => 'Maîtrisez Java, l\'un des langages de programmation les plus populaires au monde. Cette formation complète couvre les fondamentaux de la programmation orientée objet, les collections, les exceptions, les threads, les I/O, et les frameworks Java modernes comme Spring. Vous apprendrez à développer des applications robustes, sécurisées et performantes.',
+                'route' => route('formations.java')
+            ],
+            [
+                'name' => 'SQL',
+                'slug' => 'sql',
+                'icon' => 'fas fa-database',
+                'color' => '#336791',
+                'description' => 'Apprenez SQL, le langage standard pour gérer et manipuler les bases de données relationnelles. Cette formation complète couvre les requêtes SELECT, INSERT, UPDATE, DELETE, les jointures, les fonctions d\'agrégation, les sous-requêtes, les vues, les procédures stockées, et l\'optimisation des performances. Maîtrisez MySQL, PostgreSQL et SQL Server.',
+                'route' => route('formations.sql')
+            ],
+            [
+                'name' => 'Langage C',
+                'slug' => 'c',
+                'icon' => 'fab fa-c',
+                'color' => '#a8b9cc',
+                'description' => 'Découvrez le langage C, le fondement de nombreux langages de programmation modernes. Cette formation complète couvre les pointeurs, les structures, les tableaux, les fonctions, la gestion mémoire, les fichiers, et la programmation système. Comprenez les concepts fondamentaux de la programmation et développez des applications performantes.',
+                'route' => route('formations.c')
             ],
         ];
         
@@ -6369,6 +6569,21 @@ print(carres)',
     public function python()
     {
         return view('formations.python');
+    }
+
+    public function java()
+    {
+        return view('formations.java');
+    }
+
+    public function sql()
+    {
+        return view('formations.sql');
+    }
+
+    public function c()
+    {
+        return view('formations.c');
     }
 
     public function bootstrap()

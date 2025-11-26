@@ -558,7 +558,7 @@
                         <span>Logs</span>
                     </a>
                     <a href="{{ route('admin.bing.submission') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.bing*') ? 'active' : '' }}">
-                        <i class="fab fa-bing"></i>
+                        <i class="fas fa-paper-plane"></i>
                         <span>Bing Submission</span>
                     </a>
                     <a href="{{ route('admin.settings') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.settings') ? 'active' : '' }}">

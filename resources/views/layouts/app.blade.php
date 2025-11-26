@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -50,7 +50,172 @@
     
     <title>@yield('title', 'NiangProgrammeur - Formation Gratuite en Développement Web')</title>
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
-    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- CSS critique inline pour éviter le FOUC - DOIT être en premier -->
+    <style id="critical-css">
+        /* Masquer le body immédiatement pour éviter le FOUC */
+        body {
+            opacity: 0;
+            visibility: hidden;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+        }
+        
+        /* Afficher le body une fois que tout est chargé */
+        body.loaded {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Masquer le HTML jusqu'à ce que Tailwind soit chargé */
+        html:not(.tailwind-loaded) {
+            visibility: hidden;
+        }
+        
+        html.tailwind-loaded {
+            visibility: visible;
+        }
+        
+        /* Loader minimal pendant le chargement */
+        .page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0f172a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+            transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
+        }
+        
+        .page-loader.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        
+        .page-loader-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(6, 182, 212, 0.2);
+            border-top-color: #06b6d4;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+    
+    <!-- Script anti-FOUC qui s'exécute immédiatement -->
+    <script>
+        // Masquer le body immédiatement AVANT le rendu
+        (function() {
+            // Masquer le HTML et le body
+            if (document.documentElement) {
+                document.documentElement.style.visibility = 'hidden';
+            }
+            if (document.body) {
+                document.body.style.opacity = '0';
+                document.body.style.visibility = 'hidden';
+            }
+            
+            // Fonction pour afficher le contenu
+            function showContent() {
+                // Attendre que le DOM soit complètement chargé
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', function() {
+                        setTimeout(displayContent, 100);
+                    });
+                } else {
+                    setTimeout(displayContent, 100);
+                }
+            }
+            
+            function displayContent() {
+                // Masquer le loader
+                const loader = document.getElementById('page-loader');
+                if (loader) {
+                    loader.classList.add('hidden');
+                    setTimeout(function() {
+                        if (loader.parentNode) {
+                            loader.parentNode.removeChild(loader);
+                        }
+                    }, 300);
+                }
+                
+                // Afficher le HTML
+                if (document.documentElement) {
+                    document.documentElement.classList.add('tailwind-loaded');
+                    document.documentElement.style.visibility = 'visible';
+                }
+                
+                // Afficher le body
+                if (document.body) {
+                    document.body.classList.add('loaded');
+                    document.body.style.opacity = '1';
+                    document.body.style.visibility = 'visible';
+                }
+            }
+            
+            // Charger Tailwind CSS
+            const tailwindScript = document.createElement('script');
+            tailwindScript.src = 'https://cdn.tailwindcss.com';
+            tailwindScript.async = true;
+            tailwindScript.defer = true;
+            
+            let tailwindLoaded = false;
+            let stylesLoaded = false;
+            
+            function checkAndShow() {
+                if (tailwindLoaded && stylesLoaded) {
+                    showContent();
+                }
+            }
+            
+            tailwindScript.onload = function() {
+                tailwindLoaded = true;
+                // Attendre un peu pour que Tailwind s'initialise
+                setTimeout(function() {
+                    checkAndShow();
+                }, 50);
+            };
+            
+            tailwindScript.onerror = function() {
+                tailwindLoaded = true; // Considérer comme chargé même en cas d'erreur
+                checkAndShow();
+            };
+            
+            document.head.appendChild(tailwindScript);
+            
+            // Vérifier que les styles personnalisés sont chargés
+            function checkStylesLoaded() {
+                // Attendre que tous les styles soient appliqués
+                if (document.styleSheets.length > 0) {
+                    stylesLoaded = true;
+                    checkAndShow();
+                } else {
+                    setTimeout(checkStylesLoaded, 50);
+                }
+            }
+            
+            // Démarrer la vérification après un court délai
+            setTimeout(checkStylesLoaded, 100);
+            
+            // Fallback : afficher après 2 secondes maximum
+            setTimeout(function() {
+                tailwindLoaded = true;
+                stylesLoaded = true;
+                showContent();
+            }, 2000);
+        })();
+    </script>
     
     <!-- reCAPTCHA v3 (invisible) -->
     @php
@@ -95,12 +260,15 @@
     @endif
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" media="print" onload="this.media='all'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"></noscript>
+    <!-- Google Fonts optimisé avec preload et font-display: swap -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet"></noscript>
     
-    <!-- Toastr CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <!-- Toastr CSS - Chargé de manière asynchrone -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"></noscript>
     
     @php
         $adsenseSettings = \Illuminate\Support\Facades\Cache::remember('adsense_settings', 3600, function () {
@@ -121,23 +289,32 @@
     @endphp
     
     @if($gaId)
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id={{ $gaId }}"></script>
+    <!-- Google tag (gtag.js) - Chargé de manière différée pour ne pas bloquer le rendu -->
     <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        
-        // Vérifier le consentement cookies
-        const cookieConsent = localStorage.getItem('cookieConsent');
-        if (cookieConsent === 'accepted') {
-            gtag('config', '{{ $gaId }}');
-        } else if (cookieConsent === 'refused') {
-            gtag('config', '{{ $gaId }}', {
-                'anonymize_ip': true,
-                'storage': 'none'
-            });
-        }
+        // Charger Google Analytics de manière asynchrone après le chargement de la page
+        window.addEventListener('load', function() {
+            const script = document.createElement('script');
+            script.async = true;
+            script.src = 'https://www.googletagmanager.com/gtag/js?id={{ $gaId }}';
+            document.head.appendChild(script);
+            
+            script.onload = function() {
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                
+                // Vérifier le consentement cookies
+                const cookieConsent = localStorage.getItem('cookieConsent');
+                if (cookieConsent === 'accepted') {
+                    gtag('config', '{{ $gaId }}');
+                } else if (cookieConsent === 'refused') {
+                    gtag('config', '{{ $gaId }}', {
+                        'anonymize_ip': true,
+                        'storage': 'none'
+                    });
+                }
+            };
+        });
     </script>
     @endif
     
@@ -146,6 +323,17 @@
         html {
             overflow-x: hidden;
             scroll-behavior: smooth;
+        }
+        
+        html.loaded,
+        html.tailwind-loaded {
+            visibility: visible !important;
+        }
+        
+        /* S'assurer que le body reste masqué jusqu'à ce qu'il soit marqué comme chargé */
+        body:not(.loaded) {
+            opacity: 0 !important;
+            visibility: hidden !important;
         }
         
         body {
@@ -159,77 +347,7 @@
         * {
             box-sizing: border-box;
         }
-    </style>
-    @yield('styles')
-</head>
-<body class="bg-black text-white">
-    @include('partials.navigation')
-    
-    @include('partials.schema-org')
-    
-    @yield('content')
-    
-    @include('partials.footer')
-    
-    <!-- Cookie Banner -->
-    @include('partials.cookie-banner')
-    
-    <!-- Back to Top Button -->
-    <button id="back-to-top" class="back-to-top-button" onclick="scrollToTop()" title="Retour en haut" aria-label="Retour en haut">
-        <i class="fas fa-arrow-up"></i>
-        <span class="back-to-top-tooltip">Retour en haut</span>
-    </button>
-    
-    <!-- Dark Mode Toggle Button -->
-    <div id="dark-mode-widget" class="dark-mode-widget">
-        <button id="dark-mode-toggle" class="dark-mode-button" onclick="toggleDarkMode()" title="Basculer le mode sombre">
-            <i class="fas fa-moon" id="dark-mode-icon"></i>
-            <span class="dark-mode-tooltip" id="dark-mode-tooltip">Activer le mode sombre</span>
-        </button>
-    </div>
-    
-    <!-- WhatsApp Chatbot Widget -->
-    @php
-        $whatsappNumber = \App\Models\SiteSetting::get('contact_phone', '+221783123657');
-        // Nettoyer le numéro pour WhatsApp (enlever espaces, +, etc.)
-        $whatsappNumber = preg_replace('/[^0-9]/', '', $whatsappNumber);
-    @endphp
-    @if($whatsappNumber)
-    <div id="whatsapp-widget" class="whatsapp-widget">
-        <div class="whatsapp-button" onclick="toggleWhatsApp()" title="Cliquer pour discuter avec NiangProgrammeur">
-            <i class="fab fa-whatsapp"></i>
-            <span class="whatsapp-tooltip">Cliquer pour discuter avec NiangProgrammeur</span>
-        </div>
-        <div class="whatsapp-popup" id="whatsappPopup">
-            <div class="whatsapp-header">
-                <div class="whatsapp-avatar">
-                    <i class="fab fa-whatsapp"></i>
-                </div>
-                <div>
-                    <div class="whatsapp-name">NiangProgrammeur</div>
-                    <div class="whatsapp-status">En ligne</div>
-                </div>
-                <button class="whatsapp-close" onclick="toggleWhatsApp()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="whatsapp-body">
-                <div class="whatsapp-message">
-                    <p>Bonjour ! 👋</p>
-                    <p>Comment puis-je vous aider aujourd'hui ?</p>
-                </div>
-            </div>
-            <div class="whatsapp-footer">
-                <a href="https://wa.me/{{ $whatsappNumber }}?text=Bonjour,%20je%20souhaite%20en%20savoir%20plus%20sur%20vos%20formations." 
-                   target="_blank" 
-                   class="whatsapp-send-btn">
-                    <i class="fab fa-whatsapp"></i>
-                    Ouvrir WhatsApp
-                </a>
-            </div>
-        </div>
-    </div>
-    <style>
+        
         /* Back to Top Button */
         .back-to-top-button {
             position: fixed;
@@ -662,6 +780,93 @@
             }
         }
     </style>
+    @yield('styles')
+    
+    <!-- Fallback pour navigateurs sans JavaScript -->
+    <noscript>
+        <style>
+            body {
+                opacity: 1 !important;
+                visibility: visible !important;
+            }
+            .page-loader {
+                display: none !important;
+            }
+        </style>
+    </noscript>
+</head>
+<body class="bg-black text-white">
+    <!-- Loader pendant le chargement -->
+    <div id="page-loader" class="page-loader">
+        <div class="page-loader-spinner"></div>
+    </div>
+    
+    @include('partials.navigation')
+    
+    @include('partials.schema-org')
+    
+    @yield('content')
+    
+    @include('partials.footer')
+    
+    <!-- Cookie Banner -->
+    @include('partials.cookie-banner')
+    
+    <!-- Back to Top Button -->
+    <button id="back-to-top" class="back-to-top-button" onclick="scrollToTop()" title="Retour en haut" aria-label="Retour en haut">
+        <i class="fas fa-arrow-up"></i>
+        <span class="back-to-top-tooltip">Retour en haut</span>
+    </button>
+    
+    <!-- Dark Mode Toggle Button -->
+    <div id="dark-mode-widget" class="dark-mode-widget">
+        <button id="dark-mode-toggle" class="dark-mode-button" onclick="toggleDarkMode()" title="Basculer le mode sombre">
+            <i class="fas fa-moon" id="dark-mode-icon"></i>
+            <span class="dark-mode-tooltip" id="dark-mode-tooltip">Activer le mode sombre</span>
+        </button>
+    </div>
+    
+    <!-- WhatsApp Chatbot Widget -->
+    @php
+        $whatsappNumber = \App\Models\SiteSetting::get('contact_phone', '+221783123657');
+        // Nettoyer le numéro pour WhatsApp (enlever espaces, +, etc.)
+        $whatsappNumber = preg_replace('/[^0-9]/', '', $whatsappNumber);
+    @endphp
+    @if($whatsappNumber)
+    <div id="whatsapp-widget" class="whatsapp-widget">
+        <div class="whatsapp-button" onclick="toggleWhatsApp()" title="Cliquer pour discuter avec NiangProgrammeur">
+            <i class="fab fa-whatsapp"></i>
+            <span class="whatsapp-tooltip">Cliquer pour discuter avec NiangProgrammeur</span>
+        </div>
+        <div class="whatsapp-popup" id="whatsappPopup">
+            <div class="whatsapp-header">
+                <div class="whatsapp-avatar">
+                    <i class="fab fa-whatsapp"></i>
+                </div>
+                <div>
+                    <div class="whatsapp-name">NiangProgrammeur</div>
+                    <div class="whatsapp-status">En ligne</div>
+                </div>
+                <button class="whatsapp-close" onclick="toggleWhatsApp()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="whatsapp-body">
+                <div class="whatsapp-message">
+                    <p>Bonjour ! 👋</p>
+                    <p>Comment puis-je vous aider aujourd'hui ?</p>
+                </div>
+            </div>
+            <div class="whatsapp-footer">
+                <a href="https://wa.me/{{ $whatsappNumber }}?text=Bonjour,%20je%20souhaite%20en%20savoir%20plus%20sur%20vos%20formations." 
+                   target="_blank" 
+                   class="whatsapp-send-btn">
+                    <i class="fab fa-whatsapp"></i>
+                    Ouvrir WhatsApp
+                </a>
+            </div>
+        </div>
+    </div>
     <script>
         // Back to Top Button
         function scrollToTop() {
@@ -741,59 +946,75 @@
     </script>
     @endif
     
-    <!-- Toastr JS (conservé pour d'autres fonctionnalités si nécessaire) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <!-- Toastr JS - Chargé de manière différée -->
     <script>
-        // Configuration Toastr (pour d'autres messages si nécessaire)
-        (function() {
-            function initToastr() {
-                if (typeof toastr === 'undefined') {
-                    setTimeout(initToastr, 100);
-                    return;
+        // Charger Toastr après le chargement de la page pour ne pas bloquer le rendu
+        window.addEventListener('load', function() {
+            const script = document.createElement('script');
+            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js';
+            script.async = true;
+            document.head.appendChild(script);
+            
+            script.onload = function() {
+                if (typeof toastr !== 'undefined') {
+                    toastr.options = {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": true,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "5000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    };
+
+                    // Afficher les messages d'erreur, info et warning
+                    @if(session('error'))
+                        toastr.error('{{ addslashes(session('error')) }}', 'Erreur');
+                    @endif
+
+                    @if(session('info'))
+                        toastr.info('{{ addslashes(session('info')) }}', 'Information');
+                    @endif
+
+                    @if(session('warning'))
+                        toastr.warning('{{ addslashes(session('warning')) }}', 'Attention');
+                    @endif
                 }
-
-                toastr.options = {
-                    "closeButton": true,
-                    "debug": false,
-                    "newestOnTop": true,
-                    "progressBar": true,
-                    "positionClass": "toast-top-right",
-                    "preventDuplicates": false,
-                    "onclick": null,
-                    "showDuration": "300",
-                    "hideDuration": "1000",
-                    "timeOut": "5000",
-                    "extendedTimeOut": "1000",
-                    "showEasing": "swing",
-                    "hideEasing": "linear",
-                    "showMethod": "fadeIn",
-                    "hideMethod": "fadeOut"
-                };
-
-                // Afficher les messages d'erreur, info et warning (mais pas success pour les commentaires)
-                @if(session('error'))
-                    toastr.error('{{ addslashes(session('error')) }}', 'Erreur');
-                @endif
-
-                @if(session('info'))
-                    toastr.info('{{ addslashes(session('info')) }}', 'Information');
-                @endif
-
-                @if(session('warning'))
-                    toastr.warning('{{ addslashes(session('warning')) }}', 'Attention');
-                @endif
-            }
-
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', initToastr);
-            } else {
-                initToastr();
-            }
-        })();
+            };
+        });
     </script>
     
     <script src="{{ asset('js/main.js') }}" defer></script>
     <script src="{{ asset('js/pwa.js') }}" defer></script>
+    
+    <!-- Script pour marquer le HTML comme chargé et éviter le FOUC -->
+    <script>
+        // Marquer le HTML comme chargé une fois que tout est prêt
+        (function() {
+            function markAsLoaded() {
+                document.documentElement.classList.add('loaded', 'tailwind-loaded');
+                document.documentElement.style.visibility = 'visible';
+            }
+            
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', markAsLoaded);
+            } else {
+                markAsLoaded();
+            }
+            
+            // Fallback : marquer comme chargé après un court délai
+            setTimeout(markAsLoaded, 100);
+        })();
+    </script>
+    
     @yield('scripts')
 </body>
 </html>

@@ -486,13 +486,14 @@ class AdminController extends Controller
     }
     
     public function updateSettings(Request $request)
-    {$request->validate([
+    {        $request->validate([
             'site_name' => 'required|string|max:255',
             'site_description' => 'nullable|string',
             'contact_email' => 'nullable|email',
             'contact_phone' => 'nullable|string|max:20',
             'contact_address' => 'nullable|string',
             'facebook_url' => 'nullable|url',
+            'facebook_app_id' => 'nullable|string|max:255',
             'tiktok_url' => 'nullable|url',
             'linkedin_url' => 'nullable|url',
             'instagram_url' => 'nullable|url',
@@ -523,7 +524,19 @@ class AdminController extends Controller
         $urls = $service->getAllUrlsToSubmit();
         $isConfigured = $service->isConfigured();
         
-        return view('admin.bing-submission', compact('urls', 'isConfigured'));
+        // Calculer les statistiques dynamiques
+        $totalUrls = count($urls);
+        // 1 (formations) + 12 (langages) + 1 (exercices) + 12 (langages) + 1 (quiz) + 12 (langages) = 40
+        $formationsExercicesQuiz = 40;
+        // 1 (base) + 2 (about, contact) + 7 (emplois) = 10
+        $pagesStatiques = 10;
+        $articlesCount = \App\Models\JobArticle::where('status', 'published')->count();
+        // Calculer le nombre d'articles nécessaires pour atteindre exactement 100 URLs
+        // Total fixe = 40 (formations/exercices/quiz) + 10 (pages statiques) = 50
+        // Articles nécessaires = 100 - 50 = 50
+        $articlesIncluded = min($articlesCount, max(0, 100 - ($formationsExercicesQuiz + $pagesStatiques)));
+        
+        return view('admin.bing-submission', compact('urls', 'isConfigured', 'totalUrls', 'formationsExercicesQuiz', 'pagesStatiques', 'articlesIncluded', 'articlesCount'));
     }
 
     public function submitToBing(Request $request)

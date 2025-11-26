@@ -5,6 +5,17 @@
     </IfModule>
 
     RewriteEngine On
+    RewriteBase /
+
+    # IMPORTANT : Forcer www.niangprogrammeur.com et HTTPS (DOIT être en premier)
+    # Étape 1 : Rediriger niangprogrammeur.com vers www.niangprogrammeur.com
+    RewriteCond %{HTTP_HOST} !^www\. [NC]
+    RewriteCond %{HTTP_HOST} niangprogrammeur\.com$ [NC]
+    RewriteRule ^(.*)$ https://www.niangprogrammeur.com/$1 [R=301,L]
+    
+    # Étape 2 : Forcer HTTPS si ce n'est pas déjà le cas
+    RewriteCond %{HTTPS} off
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 
     # Handle Authorization Header
     RewriteCond %{HTTP:Authorization} .
@@ -21,8 +32,9 @@
     RewriteRule ^ index.php [L]
 </IfModule>
 
-# Compression GZIP pour améliorer les performances
+# Compression GZIP/Brotli pour améliorer les performances
 <IfModule mod_deflate.c>
+    # Compression pour tous les types de fichiers textuels
     AddOutputFilterByType DEFLATE text/html
     AddOutputFilterByType DEFLATE text/css
     AddOutputFilterByType DEFLATE text/javascript
@@ -36,25 +48,51 @@
     AddOutputFilterByType DEFLATE application/rss+xml
     AddOutputFilterByType DEFLATE application/atom+xml
     AddOutputFilterByType DEFLATE image/svg+xml
+    AddOutputFilterByType DEFLATE application/font-woff
+    AddOutputFilterByType DEFLATE application/font-woff2
+    AddOutputFilterByType DEFLATE font/woff
+    AddOutputFilterByType DEFLATE font/woff2
+    AddOutputFilterByType DEFLATE font/ttf
+    AddOutputFilterByType DEFLATE font/otf
 </IfModule>
 
-# Cache des fichiers statiques
+# Cache des fichiers statiques - Optimisé pour les performances
 <IfModule mod_expires.c>
     ExpiresActive On
+    ExpiresDefault "access plus 1 month"
+    
+    # Images - Cache long terme
     ExpiresByType image/jpg "access plus 1 year"
     ExpiresByType image/jpeg "access plus 1 year"
     ExpiresByType image/gif "access plus 1 year"
     ExpiresByType image/png "access plus 1 year"
     ExpiresByType image/svg+xml "access plus 1 year"
     ExpiresByType image/webp "access plus 1 year"
+    ExpiresByType image/avif "access plus 1 year"
+    ExpiresByType image/x-icon "access plus 1 year"
+    
+    # Fonts - Cache long terme
+    ExpiresByType font/woff "access plus 1 year"
+    ExpiresByType font/woff2 "access plus 1 year"
+    ExpiresByType font/ttf "access plus 1 year"
+    ExpiresByType font/otf "access plus 1 year"
+    ExpiresByType application/font-woff "access plus 1 year"
+    ExpiresByType application/font-woff2 "access plus 1 year"
+    
+    # CSS et JavaScript - Cache moyen terme
     ExpiresByType text/css "access plus 1 month"
     ExpiresByType application/javascript "access plus 1 month"
     ExpiresByType text/javascript "access plus 1 month"
+    ExpiresByType application/json "access plus 1 month"
+    
+    # Documents
     ExpiresByType application/pdf "access plus 1 month"
+    
+    # HTML - Cache court terme (pour les mises à jour)
     ExpiresByType text/html "access plus 1 hour"
 </IfModule>
 
-# Headers de sécurité et SEO
+# Headers de sécurité, SEO et Performance
 <IfModule mod_headers.c>
     # Sécurité
     Header set X-Content-Type-Options "nosniff"
@@ -62,14 +100,33 @@
     Header set X-XSS-Protection "1; mode=block"
     Header set Referrer-Policy "strict-origin-when-cross-origin"
     
-    # SEO - Ne pas mettre en cache les pages HTML dynamiques
-    <FilesMatch "\.(html|htm)$">
-        Header set Cache-Control "max-age=3600, must-revalidate"
+    # Performance - Preconnect pour les ressources externes
+    <FilesMatch "\.(html|htm|php)$">
+        Header set Link "</fonts.googleapis.com>; rel=preconnect; crossorigin, </fonts.gstatic.com>; rel=preconnect; crossorigin"
     </FilesMatch>
     
-    # Cache des fichiers statiques
-    <FilesMatch "\.(jpg|jpeg|png|gif|ico|svg|webp|css|js|woff|woff2|ttf|eot)$">
-        Header set Cache-Control "max-age=31536000, public"
+    # SEO - Ne pas mettre en cache les pages HTML dynamiques
+    <FilesMatch "\.(html|htm|php)$">
+        Header set Cache-Control "max-age=3600, must-revalidate, public"
+        Header set Pragma "public"
+    </FilesMatch>
+    
+    # Cache des fichiers statiques - Cache long terme
+    <FilesMatch "\.(jpg|jpeg|png|gif|ico|svg|webp|avif)$">
+        Header set Cache-Control "max-age=31536000, public, immutable"
+        Header append Vary "Accept-Encoding"
+    </FilesMatch>
+    
+    # Cache des fonts
+    <FilesMatch "\.(woff|woff2|ttf|otf|eot)$">
+        Header set Cache-Control "max-age=31536000, public, immutable"
+        Header set Access-Control-Allow-Origin "*"
+    </FilesMatch>
+    
+    # Cache des CSS et JS
+    <FilesMatch "\.(css|js)$">
+        Header set Cache-Control "max-age=2592000, public"
+        Header append Vary "Accept-Encoding"
     </FilesMatch>
 </IfModule>
 

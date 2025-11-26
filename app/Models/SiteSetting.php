@@ -13,6 +13,7 @@ class SiteSetting extends Model
         'contact_phone',
         'contact_address',
         'facebook_url',
+        'facebook_app_id',
         'tiktok_url',
         'linkedin_url',
         'instagram_url',

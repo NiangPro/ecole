@@ -103,6 +103,155 @@
         color: rgba(6, 182, 212, 0.5);
         font-size: 1.5rem;
     }
+    
+    /* Modal de partage Facebook */
+    .share-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 10000;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+    
+    .share-modal.active {
+        display: flex;
+    }
+    
+    .share-modal-content {
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95));
+        border: 2px solid rgba(6, 182, 212, 0.3);
+        border-radius: 16px;
+        max-width: 600px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    }
+    
+    .share-modal-header {
+        padding: 24px;
+        border-bottom: 1px solid rgba(6, 182, 212, 0.2);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .share-modal-header h3 {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #06b6d4;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .share-modal-close {
+        background: transparent;
+        border: none;
+        color: #94a3b8;
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 5px;
+        transition: all 0.3s ease;
+    }
+    
+    .share-modal-close:hover {
+        color: #06b6d4;
+        transform: rotate(90deg);
+    }
+    
+    .share-modal-preview {
+        padding: 24px;
+    }
+    
+    .share-preview-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(6, 182, 212, 0.2);
+        border-radius: 12px;
+        overflow: hidden;
+        margin-bottom: 20px;
+    }
+    
+    .share-preview-image {
+        width: 100%;
+        height: 300px;
+        object-fit: cover;
+        background: rgba(6, 182, 212, 0.1);
+    }
+    
+    .share-preview-content {
+        padding: 20px;
+    }
+    
+    .share-preview-title {
+        font-size: 1.25rem;
+        font-weight: bold;
+        color: #06b6d4;
+        margin-bottom: 10px;
+    }
+    
+    .share-preview-description {
+        color: #94a3b8;
+        font-size: 0.9rem;
+        line-height: 1.6;
+        margin-bottom: 15px;
+    }
+    
+    .share-preview-url {
+        color: #64748b;
+        font-size: 0.85rem;
+        word-break: break-all;
+    }
+    
+    .share-modal-actions {
+        padding: 24px;
+        border-top: 1px solid rgba(6, 182, 212, 0.2);
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+    }
+    
+    .btn-share-facebook {
+        background: linear-gradient(135deg, #1877f2, #0d5fdb);
+        color: white;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .btn-share-facebook:hover {
+        background: linear-gradient(135deg, #0d5fdb, #1877f2);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(24, 119, 242, 0.4);
+    }
+    
+    .btn-cancel {
+        background: rgba(100, 116, 139, 0.2);
+        color: #94a3b8;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        border: none;
+        cursor: pointer;
+    }
+    
+    .btn-cancel:hover {
+        background: rgba(100, 116, 139, 0.3);
+        color: #cbd5e1;
+    }
 </style>
 @endsection
 
@@ -268,6 +417,22 @@
                             <a href="{{ route('admin.jobs.articles.edit', $article->id) }}" class="px-3 py-1 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-400 rounded transition" title="Modifier">
                                 <i class="fas fa-edit"></i>
                             </a>
+                            @php
+                                $articleImage = $article->cover_image 
+                                    ? ($article->cover_type === 'internal' 
+                                        ? asset(\Illuminate\Support\Facades\Storage::url($article->cover_image)) 
+                                        : $article->cover_image)
+                                    : asset('images/logo.png');
+                                $articleUrl = str_contains(config('app.url'), 'niangprogrammeur.com') 
+                                    ? 'https://www.niangprogrammeur.com/emplois/article/' . $article->slug
+                                    : route('emplois.article', $article->slug);
+                            @endphp
+                            <button type="button" 
+                                    onclick="openShareModal({{ $article->id }}, '{{ addslashes($article->title) }}', '{{ $articleImage }}', '{{ addslashes($article->meta_description ?? $article->excerpt ?? '') }}', '{{ $articleUrl }}')" 
+                                    class="px-3 py-1 bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 rounded transition" 
+                                    title="Partager sur Facebook">
+                                <i class="fab fa-facebook-f"></i>
+                            </button>
                             @auth
                             @if(Auth::user()->isAdmin())
                             <form action="{{ route('admin.jobs.articles.destroy', $article->id) }}" method="POST" class="inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet article ?');">
@@ -300,5 +465,139 @@
     </div>
     @endif
 </div>
+
+<!-- Modal de partage Facebook -->
+<div id="shareModal" class="share-modal">
+    <div class="share-modal-content">
+        <div class="share-modal-header">
+            <h3>
+                <i class="fab fa-facebook-f"></i>
+                Partager sur Facebook
+            </h3>
+            <button type="button" class="share-modal-close" onclick="closeShareModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="share-modal-preview">
+            <div class="share-preview-card">
+                <img id="sharePreviewImage" src="" alt="Preview" class="share-preview-image">
+                <div class="share-preview-content">
+                    <div id="sharePreviewTitle" class="share-preview-title"></div>
+                    <div id="sharePreviewDescription" class="share-preview-description"></div>
+                    <div id="sharePreviewUrl" class="share-preview-url"></div>
+                </div>
+            </div>
+        </div>
+        <div class="share-modal-actions">
+            <button type="button" class="btn-cancel" onclick="closeShareModal()">
+                Annuler
+            </button>
+            <button type="button" class="btn-share-facebook" onclick="shareOnFacebook()">
+                <i class="fab fa-facebook-f"></i>
+                Partager sur Facebook
+            </button>
+        </div>
+    </div>
+</div>
+
+@php
+    $facebookAppId = \App\Models\SiteSetting::get('facebook_app_id', '');
+    $baseUrl = str_contains(config('app.url'), 'niangprogrammeur.com') 
+        ? 'https://www.niangprogrammeur.com' 
+        : config('app.url');
+@endphp
+
+<!-- Facebook SDK -->
+@if($facebookAppId)
+<div id="fb-root"></div>
+<script>
+    (function(d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "https://connect.facebook.net/fr_FR/sdk.js#xfbml=1&version=v18.0&appId={{ $facebookAppId }}&autoLogAppEvents=1";
+        js.async = true;
+        js.defer = true;
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+</script>
+@endif
+
+<script>
+    // Variables globales pour le partage
+    let shareData = {
+        url: '',
+        title: '',
+        image: '',
+        description: ''
+    };
+    
+    // Ouvrir la modal de partage
+    function openShareModal(articleId, title, image, description, url) {
+        shareData = {
+            url: url,
+            title: title,
+            image: image,
+            description: description || 'Découvrez cet article sur NiangProgrammeur'
+        };
+        
+        // Mettre à jour la prévisualisation
+        document.getElementById('sharePreviewImage').src = shareData.image;
+        document.getElementById('sharePreviewTitle').textContent = shareData.title;
+        document.getElementById('sharePreviewDescription').textContent = shareData.description;
+        document.getElementById('sharePreviewUrl').textContent = shareData.url;
+        
+        // Afficher la modal
+        document.getElementById('shareModal').classList.add('active');
+    }
+    
+    // Fermer la modal
+    function closeShareModal() {
+        document.getElementById('shareModal').classList.remove('active');
+    }
+    
+    // Fermer la modal en cliquant en dehors
+    document.addEventListener('DOMContentLoaded', function() {
+        const shareModal = document.getElementById('shareModal');
+        if (shareModal) {
+            shareModal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeShareModal();
+                }
+            });
+        }
+    });
+    
+    // Partager sur Facebook
+    function shareOnFacebook() {
+        const facebookAppId = '{{ $facebookAppId }}';
+        const shareUrl = encodeURIComponent(shareData.url);
+        
+        if (facebookAppId && typeof FB !== 'undefined') {
+            // Utiliser l'API Facebook Share Dialog
+            FB.ui({
+                method: 'share',
+                href: shareData.url,
+                quote: shareData.title + ' - ' + shareData.description,
+            }, function(response) {
+                if (response && !response.error_message) {
+                    // Partage réussi
+                    alert('Article partagé avec succès sur Facebook !');
+                    closeShareModal();
+                } else {
+                    // Erreur ou annulation - utiliser le fallback
+                    const facebookShareUrl = 'https://www.facebook.com/sharer/sharer.php?u=' + shareUrl + '&quote=' + encodeURIComponent(shareData.title + ' - ' + shareData.description);
+                    window.open(facebookShareUrl, 'Partager sur Facebook', 'width=600,height=400,scrollbars=yes,resizable=yes');
+                    closeShareModal();
+                }
+            });
+        } else {
+            // Fallback : ouvrir l'URL de partage Facebook
+            const facebookShareUrl = 'https://www.facebook.com/sharer/sharer.php?u=' + shareUrl + '&quote=' + encodeURIComponent(shareData.title + ' - ' + shareData.description);
+            window.open(facebookShareUrl, 'Partager sur Facebook', 'width=600,height=400,scrollbars=yes,resizable=yes');
+            closeShareModal();
+        }
+    }
+</script>
 @endsection
 

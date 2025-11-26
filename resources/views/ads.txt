@@ -1,3 +1,0 @@
-# Google AdSense
-# Remplacez pub-0000000000000000 par votre ID éditeur AdSense
-google.com, pub-0000000000000000, DIRECT, f08c47fec0942fa0

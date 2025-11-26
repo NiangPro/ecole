@@ -43,26 +43,34 @@
         Informations
     </h4>
     
-    <div class="grid md:grid-cols-3 gap-4 mb-4">
+    <div class="grid md:grid-cols-4 gap-4 mb-4">
         <div class="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4">
-            <div class="text-2xl font-bold text-blue-400 mb-1">{{ count($urls) }}</div>
-            <div class="text-gray-400 text-sm">URLs à soumettre</div>
+            <div class="text-2xl font-bold text-blue-400 mb-1">{{ $totalUrls }}</div>
+            <div class="text-gray-400 text-sm">Total URLs</div>
         </div>
         <div class="bg-green-500/10 border border-green-500/30 rounded-lg p-4">
-            <div class="text-2xl font-bold text-green-400 mb-1">28</div>
-            <div class="text-gray-400 text-sm">Liens formations/exercices/quiz</div>
+            <div class="text-2xl font-bold text-green-400 mb-1">{{ $formationsExercicesQuiz }}</div>
+            <div class="text-gray-400 text-sm">Formations/Exercices/Quiz</div>
+        </div>
+        <div class="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4">
+            <div class="text-2xl font-bold text-yellow-400 mb-1">{{ $pagesStatiques }}</div>
+            <div class="text-gray-400 text-sm">Pages statiques</div>
         </div>
         <div class="bg-purple-500/10 border border-purple-500/30 rounded-lg p-4">
-            <div class="text-2xl font-bold text-purple-400 mb-1">40</div>
-            <div class="text-gray-400 text-sm">Derniers articles</div>
+            <div class="text-2xl font-bold text-purple-400 mb-1">{{ $articlesIncluded }}</div>
+            <div class="text-gray-400 text-sm">Articles inclus</div>
+            @if($articlesCount > $articlesIncluded)
+                <div class="text-xs text-gray-500 mt-1">sur {{ $articlesCount }} disponibles</div>
+            @endif
         </div>
     </div>
 
-    <div class="bg-cyan-500/10 border border-cyan-500/30 rounded-lg p-4">
+        <div class="bg-cyan-500/10 border border-cyan-500/30 rounded-lg p-4">
         <p class="text-sm text-gray-300">
             <i class="fas fa-lightbulb mr-2 text-cyan-400"></i>
             Cette fonctionnalité soumet automatiquement toutes les URLs importantes de votre site à Bing pour un indexation rapide. 
-            Les URLs incluent toutes les formations, exercices, quiz et les 40 derniers articles publiés.
+            Les URLs incluent toutes les formations, exercices, quiz, les pages statiques (à propos, contact), 
+            les pages emplois et les articles publiés (dynamique pour atteindre 100 URLs au total).
         </p>
     </div>
 </div>

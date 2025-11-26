@@ -434,9 +434,19 @@
         
         <h3 class="privacy-subtitle">4.1 Types de cookies utilisés</h3>
         <ul class="privacy-list">
-            <li><strong>Cookies essentiels</strong> : Nécessaires au fonctionnement du site (ex: préférences de langue)</li>
-            <li><strong>Cookies analytiques</strong> : Nous aident à comprendre comment les visiteurs utilisent notre site</li>
-            <li><strong>Cookies publicitaires</strong> : Utilisés pour afficher des publicités pertinentes (Google AdSense)</li>
+            <li><strong>Cookies essentiels</strong> : Nécessaires au fonctionnement du site (ex: préférences de langue, session utilisateur)</li>
+            <li><strong>Cookies analytiques</strong> : Nous aident à comprendre comment les visiteurs utilisent notre site et à améliorer l'expérience utilisateur</li>
+            <li><strong>Cookies publicitaires</strong> : Utilisés pour afficher des publicités pertinentes via Google AdSense. Ces cookies permettent à Google de personnaliser les annonces en fonction de vos intérêts et de votre historique de navigation</li>
+            <li><strong>Cookies de performance</strong> : Collectent des informations sur la façon dont vous utilisez notre site pour améliorer les performances</li>
+        </ul>
+        
+        <h3 class="privacy-subtitle">4.2 Durée de conservation des cookies</h3>
+        <p class="privacy-text">
+            Les cookies que nous utilisons ont différentes durées de vie :
+        </p>
+        <ul class="privacy-list">
+            <li><strong>Cookies de session</strong> : Supprimés automatiquement à la fermeture de votre navigateur</li>
+            <li><strong>Cookies persistants</strong> : Restent sur votre appareil pendant une période déterminée (jusqu'à 1 an pour les préférences de langue, jusqu'à 2 ans pour les cookies publicitaires Google AdSense)</li>
         </ul>
         
         <h3 class="privacy-subtitle">4.2 Gestion des cookies</h3>

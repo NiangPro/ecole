@@ -115,13 +115,12 @@ class BingUrlSubmissionService
     }
 
     /**
-     * Récupère toutes les URLs à soumettre (liens all-links + 40 derniers articles)
+     * Récupère toutes les URLs à soumettre (pages statiques + formations/exercices/quiz + articles dynamiques)
      */
     public function getAllUrlsToSubmit(): array
     {
         $urls = [];
 
-        // URLs de la page all-links
         // Utiliser www.niangprogrammeur.com en production
         $appUrl = config('app.url');
         if (str_contains($appUrl, 'niangprogrammeur.com')) {
@@ -133,9 +132,22 @@ class BingUrlSubmissionService
         // Ajouter l'URL de base
         $urls[] = $baseUrl . '/';
         
+        // Pages statiques importantes (sans faq, legal, privacy-policy, terms, all-links)
+        $urls[] = $baseUrl . '/about';
+        $urls[] = $baseUrl . '/contact';
+        
+        // Pages Emplois
+        $urls[] = $baseUrl . '/emplois';
+        $urls[] = $baseUrl . '/emplois/offres';
+        $urls[] = $baseUrl . '/emplois/bourses';
+        $urls[] = $baseUrl . '/emplois/candidature-spontanee';
+        $urls[] = $baseUrl . '/emplois/opportunites';
+        $urls[] = $baseUrl . '/emplois/concours';
+        $urls[] = $baseUrl . '/emplois/articles-recents';
+        
         $languages = [
             'html5', 'css3', 'javascript', 'php', 'bootstrap', 
-            'git', 'wordpress', 'ia', 'python'
+            'git', 'wordpress', 'ia', 'python', 'java', 'sql', 'c'
         ];
 
         // Page principale formations
@@ -162,15 +174,30 @@ class BingUrlSubmissionService
             $urls[] = $baseUrl . '/quiz/' . $lang;
         }
 
-        // 40 derniers articles
-        $recentArticles = \App\Models\JobArticle::where('status', 'published')
-            ->orderBy('published_at', 'desc')
-            ->orderBy('created_at', 'desc')
-            ->take(40)
-            ->get(['slug']);
+        // Calculer le nombre d'URLs fixes déjà ajoutées
+        $fixedUrlsCount = count($urls);
+        
+        // Objectif : 100 URLs au total
+        $targetTotal = 100;
+        $articlesNeeded = max(0, $targetTotal - $fixedUrlsCount);
+        
+        // Récupérer tous les articles publiés disponibles
+        $totalPublishedArticles = \App\Models\JobArticle::where('status', 'published')->count();
+        
+        // Prendre le minimum entre les articles nécessaires et les articles disponibles
+        $articlesToTake = min($articlesNeeded, $totalPublishedArticles);
+        
+        // Si on a besoin de plus d'articles que disponibles, prendre tous les articles disponibles
+        if ($articlesToTake > 0) {
+            $recentArticles = \App\Models\JobArticle::where('status', 'published')
+                ->orderBy('published_at', 'desc')
+                ->orderBy('created_at', 'desc')
+                ->take($articlesToTake)
+                ->get(['slug']);
 
-        foreach ($recentArticles as $article) {
-            $urls[] = $baseUrl . '/emplois/article/' . $article->slug;
+            foreach ($recentArticles as $article) {
+                $urls[] = $baseUrl . '/emplois/article/' . $article->slug;
+            }
         }
 
         return array_unique($urls);
