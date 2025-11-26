@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Résultat Quiz ' . ucfirst($language) . ' | NiangProgrammeur')
+@section('title', trans('app.quiz.result.title') . ' ' . trans('app.formations.languages.' . $language, [], null, ucfirst($language)) . ' | NiangProgrammeur')
 
 @section('styles')
 <style>
@@ -128,35 +128,35 @@
                 <div class="score-circle">
                     <div class="text-center">
                         <div class="text-6xl font-bold text-white">{{ number_format($percentage, 0) }}%</div>
-                        <div class="text-white text-lg">{{ __('app.quiz.result.score') }}</div>
+                        <div class="text-white text-lg">{{ trans('app.quiz.result.score') }}</div>
                     </div>
                 </div>
                 
                 <h1 class="text-4xl font-bold text-white mb-4">
                     @if($percentage >= 80)
-                        {{ __('app.quiz.result.excellent') }}
+                        {{ trans('app.quiz.result.excellent') }}
                     @elseif($percentage >= 60)
-                        {{ __('app.quiz.result.good') }}
+                        {{ trans('app.quiz.result.good') }}
                     @elseif($percentage >= 40)
-                        {{ __('app.quiz.result.continue') }}
+                        {{ trans('app.quiz.result.continue') }}
                     @else
-                        {{ __('app.quiz.result.dont_give_up') }}
+                        {{ trans('app.quiz.result.dont_give_up') }}
                     @endif
                 </h1>
                 
                 <p class="text-2xl text-gray-300 mb-6">
-                    {{ str_replace([':score', ':total'], [$score, $total], __('app.quiz.result.got_score')) }}
+                    {{ str_replace([':score', ':total'], [$score, $total], trans('app.quiz.result.got_score')) }}
                 </p>
                 
                 <div class="flex gap-4 justify-center flex-wrap">
                     <a href="{{ route('quiz.language', $language) }}" class="px-8 py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white font-bold rounded-lg hover:shadow-lg hover:scale-105 transition">
-                        <i class="fas fa-redo mr-2"></i>{{ __('app.quiz.result.retry') }}
+                        <i class="fas fa-redo mr-2"></i>{{ trans('app.quiz.result.retry') }}
                     </a>
                     <a href="{{ route('quiz') }}" class="px-8 py-3 bg-white/10 border border-white/20 text-white font-bold rounded-lg hover:bg-white/20 transition">
-                        <i class="fas fa-arrow-left mr-2"></i>{{ __('app.quiz.result.back') }}
+                        <i class="fas fa-arrow-left mr-2"></i>{{ trans('app.quiz.result.back') }}
                     </a>
                     <a href="{{ route('exercices.language', $language) }}" class="px-8 py-3 bg-gradient-to-r from-cyan-500 to-teal-600 text-white font-bold rounded-lg hover:shadow-lg hover:scale-105 transition">
-                        <i class="fas fa-code mr-2"></i>{{ __('app.quiz.result.do_exercices') }}
+                        <i class="fas fa-code mr-2"></i>{{ trans('app.quiz.result.do_exercices') }}
                     </a>
                 </div>
             </div>
@@ -165,7 +165,7 @@
             <div class="mb-8">
                 <h2 class="text-3xl font-bold text-white mb-6">
                     <i class="fas fa-list-check text-purple-400 mr-3"></i>
-                    {{ __('app.quiz.result.details') }}
+                    {{ trans('app.quiz.result.details') }}
                 </h2>
             </div>
 
@@ -181,24 +181,24 @@
                     </div>
                     <div class="flex-1">
                         <h3 class="text-lg font-bold text-white mb-3">
-                            {{ __('app.quiz.result.question') }} {{ $index + 1 }}: {{ $result['question'] }}
+                            {{ trans('app.quiz.result.question') }} {{ $index + 1 }}: {{ $result['question'] }}
                         </h3>
                         
                         @if($result['isCorrect'])
                             <div class="flex items-center gap-2 text-green-400">
                                 <i class="fas fa-check-circle"></i>
-                                <span class="font-semibold">{{ __('app.quiz.result.good_answer') }}</span>
+                                <span class="font-semibold">{{ trans('app.quiz.result.good_answer') }}</span>
                             </div>
                         @else
                             <div class="mb-2">
                                 <div class="flex items-center gap-2 text-red-400 mb-2">
                                     <i class="fas fa-times-circle"></i>
-                                    <span class="font-semibold">{{ __('app.quiz.result.your_answer') }}</span>
-                                    <span>{{ $result['options'][$result['userAnswer']] ?? __('app.quiz.result.no_answer') }}</span>
+                                    <span class="font-semibold">{{ trans('app.quiz.result.your_answer') }}</span>
+                                    <span>{{ $result['options'][$result['userAnswer']] ?? trans('app.quiz.result.no_answer') }}</span>
                                 </div>
                                 <div class="flex items-center gap-2 text-green-400">
                                     <i class="fas fa-check-circle"></i>
-                                    <span class="font-semibold">{{ __('app.quiz.result.correct_answer') }}</span>
+                                    <span class="font-semibold">{{ trans('app.quiz.result.correct_answer') }}</span>
                                     <span>{{ $result['options'][$result['correctAnswer']] }}</span>
                                 </div>
                             </div>
@@ -212,17 +212,17 @@
             <div class="mt-12 text-center">
                 <div class="bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-2xl p-8">
                     <h3 class="text-2xl font-bold text-white mb-4">
-                        {{ __('app.quiz.result.continue_learning') }}
+                        {{ trans('app.quiz.result.continue_learning') }}
                     </h3>
                     <p class="text-gray-300 mb-6">
-                        {{ __('app.quiz.result.continue_learning_desc') }}
+                        {{ trans('app.quiz.result.continue_learning_desc') }}
                     </p>
                     <div class="flex gap-4 justify-center flex-wrap">
                         <a href="{{ route('exercices') }}" class="px-6 py-3 bg-gradient-to-r from-cyan-500 to-teal-600 text-white font-bold rounded-lg hover:shadow-lg hover:scale-105 transition">
-                            <i class="fas fa-code mr-2"></i>{{ __('app.exercices.title') }}
+                            <i class="fas fa-code mr-2"></i>{{ trans('app.exercices.title') }}
                         </a>
                         <a href="{{ route('quiz') }}" class="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white font-bold rounded-lg hover:shadow-lg hover:scale-105 transition">
-                            <i class="fas fa-question-circle mr-2"></i>{{ __('app.quiz.title') }}
+                            <i class="fas fa-question-circle mr-2"></i>{{ trans('app.quiz.title') }}
                         </a>
                     </div>
                 </div>

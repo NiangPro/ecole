@@ -202,6 +202,7 @@ return [
             'got_score' => 'Vous avez obtenu :score/:total bonnes réponses',
             'continue_learning' => 'Continuez votre apprentissage !',
             'continue_learning_desc' => 'Pratiquez avec nos exercices interactifs ou testez-vous sur d\'autres langages.',
+            'no_results' => 'Aucun résultat de quiz trouvé. Veuillez compléter le quiz d\'abord.',
         ],
     ],
     

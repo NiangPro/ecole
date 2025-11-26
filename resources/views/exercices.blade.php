@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', trans('app.exercices.title') . ' | NiangProgrammeur')
-@section('meta_description', 'Pratiquez vos compétences en programmation avec nos exercices interactifs. HTML5, CSS3, JavaScript, PHP, Bootstrap, Git, WordPress et IA.')
+@section('meta_description', trans('app.exercices.subtitle'))
 @section('meta_keywords', 'exercices programmation, pratique code, exercices HTML, exercices CSS, exercices JavaScript, exercices PHP, quiz développement web')
 
 @section('styles')

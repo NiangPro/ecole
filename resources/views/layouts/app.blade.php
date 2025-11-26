@@ -933,7 +933,9 @@
             'exercices',
             'exercices.language',
             'exercices.detail',
-            'quiz.language'
+            'quiz',
+            'quiz.language',
+            'quiz.result'
         ]);
     @endphp
     

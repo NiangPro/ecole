@@ -140,13 +140,13 @@
             <!-- Header -->
             <div class="mb-8">
                 <a href="{{ route('quiz') }}" class="text-purple-400 hover:text-purple-300 transition mb-4 inline-block">
-                    <i class="fas fa-arrow-left mr-2"></i>{{ __('app.quiz.back_to_quiz') }}
+                    <i class="fas fa-arrow-left mr-2"></i>{{ trans('app.quiz.back_to_quiz') }}
                 </a>
                 <h1 class="text-5xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
-                    Quiz {{ ucfirst($language) }}
+                    {{ trans('app.quiz.title') }} {{ trans('app.formations.languages.' . $language, [], null, ucfirst($language)) }}
                 </h1>
                 <p class="text-xl text-gray-300">
-                    {{ str_replace(':count', count($questions), __('app.quiz.answer_questions')) }}
+                    {{ str_replace(':count', count($questions), trans('app.quiz.answer_questions')) }}
                 </p>
             </div>
 
@@ -198,7 +198,7 @@
                 <!-- Submit Button -->
                 <div class="text-center mt-8">
                     <button type="submit" class="px-12 py-4 bg-gradient-to-r from-purple-500 to-pink-600 text-white font-bold text-lg rounded-lg hover:shadow-lg hover:scale-105 transition">
-                        <i class="fas fa-check-circle mr-2"></i>{{ __('app.quiz.submit_quiz') }}
+                        <i class="fas fa-check-circle mr-2"></i>{{ trans('app.quiz.submit_quiz') }}
                     </button>
                 </div>
             </form>
@@ -224,7 +224,7 @@
         
         if (checkedInputs.length < totalQuestions) {
             e.preventDefault();
-            alert(@json(__('app.quiz.answer_all')));
+            alert(@json(trans('app.quiz.answer_all')));
             return false;
         }
     });

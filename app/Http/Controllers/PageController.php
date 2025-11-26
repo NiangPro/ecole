@@ -245,9 +245,9 @@ class PageController extends Controller
             ['name' => trans('app.formations.languages.wordpress'), 'slug' => 'wordpress', 'icon' => 'fab fa-wordpress', 'color' => 'blue', 'exercises' => 18],
             ['name' => trans('app.formations.languages.ia'), 'slug' => 'ia', 'icon' => 'fas fa-robot', 'color' => 'green', 'exercises' => 12],
             ['name' => trans('app.formations.languages.python'), 'slug' => 'python', 'icon' => 'fab fa-python', 'color' => 'blue', 'exercises' => 22],
-            ['name' => 'Java', 'slug' => 'java', 'icon' => 'fab fa-java', 'color' => 'orange', 'exercises' => 25],
-            ['name' => 'SQL', 'slug' => 'sql', 'icon' => 'fas fa-database', 'color' => 'blue', 'exercises' => 20],
-            ['name' => 'Langage C', 'slug' => 'c', 'icon' => 'fab fa-c', 'color' => 'gray', 'exercises' => 18],
+            ['name' => trans('app.formations.languages.java'), 'slug' => 'java', 'icon' => 'fab fa-java', 'color' => 'orange', 'exercises' => 25],
+            ['name' => trans('app.formations.languages.sql'), 'slug' => 'sql', 'icon' => 'fas fa-database', 'color' => 'blue', 'exercises' => 20],
+            ['name' => trans('app.formations.languages.c'), 'slug' => 'c', 'icon' => 'fab fa-c', 'color' => 'gray', 'exercises' => 18],
         ];
         
         // Créer la réponse avec des headers pour empêcher le cache
@@ -6270,21 +6270,21 @@ int main() {
     public function quiz()
     {
         // Forcer la locale
-        $this->ensureLocale();
+        $locale = $this->ensureLocale();
         
         $languages = [
-            ['name' => 'HTML5', 'slug' => 'html5', 'icon' => 'fab fa-html5', 'color' => 'orange', 'questions' => 20],
-            ['name' => 'CSS3', 'slug' => 'css3', 'icon' => 'fab fa-css3-alt', 'color' => 'blue', 'questions' => 20],
-            ['name' => 'JavaScript', 'slug' => 'javascript', 'icon' => 'fab fa-js', 'color' => 'yellow', 'questions' => 20],
-            ['name' => 'PHP', 'slug' => 'php', 'icon' => 'fab fa-php', 'color' => 'purple', 'questions' => 20],
-            ['name' => 'Bootstrap', 'slug' => 'bootstrap', 'icon' => 'fab fa-bootstrap', 'color' => 'purple', 'questions' => 15],
-            ['name' => 'Git', 'slug' => 'git', 'icon' => 'fab fa-git-alt', 'color' => 'red', 'questions' => 15],
-            ['name' => 'WordPress', 'slug' => 'wordpress', 'icon' => 'fab fa-wordpress', 'color' => 'blue', 'questions' => 15],
-            ['name' => 'IA', 'slug' => 'ia', 'icon' => 'fas fa-robot', 'color' => 'green', 'questions' => 15],
-            ['name' => 'Python', 'slug' => 'python', 'icon' => 'fab fa-python', 'color' => 'blue', 'questions' => 20],
-            ['name' => 'Java', 'slug' => 'java', 'icon' => 'fab fa-java', 'color' => 'orange', 'questions' => 20],
-            ['name' => 'SQL', 'slug' => 'sql', 'icon' => 'fas fa-database', 'color' => 'blue', 'questions' => 20],
-            ['name' => 'C', 'slug' => 'c', 'icon' => 'fas fa-c', 'color' => 'gray', 'questions' => 20],
+            ['name' => trans('app.formations.languages.html5'), 'slug' => 'html5', 'icon' => 'fab fa-html5', 'color' => 'orange', 'questions' => 20],
+            ['name' => trans('app.formations.languages.css3'), 'slug' => 'css3', 'icon' => 'fab fa-css3-alt', 'color' => 'blue', 'questions' => 20],
+            ['name' => trans('app.formations.languages.javascript'), 'slug' => 'javascript', 'icon' => 'fab fa-js', 'color' => 'yellow', 'questions' => 20],
+            ['name' => trans('app.formations.languages.php'), 'slug' => 'php', 'icon' => 'fab fa-php', 'color' => 'purple', 'questions' => 20],
+            ['name' => trans('app.formations.languages.bootstrap'), 'slug' => 'bootstrap', 'icon' => 'fab fa-bootstrap', 'color' => 'purple', 'questions' => 15],
+            ['name' => trans('app.formations.languages.git'), 'slug' => 'git', 'icon' => 'fab fa-git-alt', 'color' => 'red', 'questions' => 15],
+            ['name' => trans('app.formations.languages.wordpress'), 'slug' => 'wordpress', 'icon' => 'fab fa-wordpress', 'color' => 'blue', 'questions' => 15],
+            ['name' => trans('app.formations.languages.ia'), 'slug' => 'ia', 'icon' => 'fas fa-robot', 'color' => 'green', 'questions' => 15],
+            ['name' => trans('app.formations.languages.python'), 'slug' => 'python', 'icon' => 'fab fa-python', 'color' => 'blue', 'questions' => 20],
+            ['name' => trans('app.formations.languages.java'), 'slug' => 'java', 'icon' => 'fab fa-java', 'color' => 'orange', 'questions' => 20],
+            ['name' => trans('app.formations.languages.sql'), 'slug' => 'sql', 'icon' => 'fas fa-database', 'color' => 'blue', 'questions' => 20],
+            ['name' => trans('app.formations.languages.c'), 'slug' => 'c', 'icon' => 'fab fa-c', 'color' => 'gray', 'questions' => 20],
         ];
         
         return view('quiz', compact('languages'));
@@ -6304,7 +6304,7 @@ int main() {
         // Traduire les questions et options
         $translatedQuestions = $this->translateQuizQuestions($language, $questions);
         
-        return view('quiz-language', compact('language', 'questions'))->with('questions', $translatedQuestions);
+        return view('quiz-language', compact('language'))->with('questions', $translatedQuestions);
     }
     
     private function translateQuizQuestions($language, $questions)
@@ -6339,6 +6339,9 @@ int main() {
 
     public function quizSubmit(Request $request, $language)
     {
+        // Forcer la locale
+        $this->ensureLocale();
+        
         $questions = $this->getQuizQuestions($language);
         $translatedQuestions = $this->translateQuizQuestions($language, $questions);
         $answers = $request->input('answers', []);
@@ -6382,6 +6385,9 @@ int main() {
     
     public function quizResult($language)
     {
+        // Forcer la locale
+        $this->ensureLocale();
+        
         // Récupérer les résultats depuis la session
         $sessionKey = 'quiz_results_' . $language;
         $quizData = session($sessionKey);
@@ -6389,18 +6395,24 @@ int main() {
         if (!$quizData) {
             // Si pas de résultats en session, rediriger vers le quiz
             return redirect()->route('quiz.language', $language)
-                ->with('error', 'Aucun résultat de quiz trouvé. Veuillez compléter le quiz d\'abord.');
+                ->with('error', trans('app.quiz.result.no_results'));
         }
         
         // Supprimer les résultats de la session après récupération (une seule fois)
         session()->forget($sessionKey);
+        
+        // Traduire les questions dans les résultats
+        $translatedResults = [];
+        foreach ($quizData['results'] as $result) {
+            $translatedResults[] = $result; // Les questions sont déjà traduites via translateQuizQuestions
+        }
         
         return view('quiz-result', [
             'language' => $language,
             'score' => $quizData['score'],
             'total' => $quizData['total'],
             'percentage' => $quizData['percentage'],
-            'results' => $quizData['results']
+            'results' => $translatedResults
         ]);
     }
 
