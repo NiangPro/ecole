@@ -21,5 +21,39 @@ class AppServiceProvider extends ServiceProvider
     {
         // Partager les catégories d'emplois avec la navigation
         view()->composer('partials.navigation', \App\View\Composers\NavigationComposer::class);
+        
+        // Charger les paramètres email depuis la base de données
+        try {
+            $settings = \App\Models\SiteSetting::first();
+            if ($settings) {
+                // Configuration mail depuis la base de données
+                if ($settings->mail_mailer) {
+                    config(['mail.default' => $settings->mail_mailer]);
+                }
+                if ($settings->mail_host) {
+                    config(['mail.mailers.smtp.host' => $settings->mail_host]);
+                }
+                if ($settings->mail_port) {
+                    config(['mail.mailers.smtp.port' => (int)$settings->mail_port]);
+                }
+                if ($settings->mail_username) {
+                    config(['mail.mailers.smtp.username' => $settings->mail_username]);
+                }
+                if ($settings->mail_password) {
+                    config(['mail.mailers.smtp.password' => $settings->mail_password]);
+                }
+                if ($settings->mail_encryption) {
+                    config(['mail.mailers.smtp.encryption' => $settings->mail_encryption]);
+                }
+                if ($settings->mail_from_address) {
+                    config(['mail.from.address' => $settings->mail_from_address]);
+                }
+                if ($settings->mail_from_name) {
+                    config(['mail.from.name' => $settings->mail_from_name]);
+                }
+            }
+        } catch (\Exception $e) {
+            // Ignorer les erreurs si la table n'existe pas encore
+        }
     }
 }

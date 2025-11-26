@@ -121,6 +121,7 @@ Route::middleware(['admin'])->group(function () {
     // Newsletter Admin
     Route::get('/admin/newsletter', [\App\Http\Controllers\Admin\NewsletterController::class, 'index'])->name('admin.newsletter.index');
     Route::get('/admin/newsletter/export', [\App\Http\Controllers\Admin\NewsletterController::class, 'export'])->name('admin.newsletter.export');
+    Route::post('/admin/newsletter/bulk-action', [\App\Http\Controllers\Admin\NewsletterController::class, 'bulkAction'])->name('admin.newsletter.bulk-action');
     Route::post('/admin/newsletter/{id}/toggle', [\App\Http\Controllers\Admin\NewsletterController::class, 'toggleStatus'])->name('admin.newsletter.toggle');
     Route::delete('/admin/newsletter/{id}', [\App\Http\Controllers\Admin\NewsletterController::class, 'destroy'])->name('admin.newsletter.destroy');
 
@@ -131,6 +132,7 @@ Route::middleware(['admin'])->group(function () {
         
         // Articles
         Route::resource('articles', \App\Http\Controllers\Admin\JobArticleController::class);
+        Route::post('articles/{id}/send-newsletter', [\App\Http\Controllers\Admin\JobArticleController::class, 'sendNewsletter'])->name('articles.send-newsletter');
         
         // Seeder d'articles
         Route::get('seeder', [\App\Http\Controllers\Admin\ArticleSeederController::class, 'index'])->name('seeder.index');

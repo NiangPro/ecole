@@ -9,6 +9,14 @@
         <p class="text-gray-400">{{ $article->title }}</p>
     </div>
     <div class="flex gap-3">
+        @if($article->status === 'published')
+        <form action="{{ route('admin.jobs.articles.send-newsletter', $article->id) }}" method="POST" class="inline" onsubmit="return confirm('Envoyer cet article à tous les abonnés de la newsletter ?');">
+            @csrf
+            <button type="submit" class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg transition">
+                <i class="fas fa-paper-plane mr-2"></i>Envoyer par newsletter
+            </button>
+        </form>
+        @endif
         <a href="{{ route('admin.jobs.articles.edit', $article->id) }}" class="px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-black font-semibold rounded-lg transition">
             <i class="fas fa-edit mr-2"></i>Modifier
         </a>

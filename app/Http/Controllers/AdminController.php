@@ -501,6 +501,14 @@ class AdminController extends Controller
             'github_url' => 'nullable|url',
             'google_analytics_id' => 'nullable|string|regex:/^G-[A-Z0-9]+$/',
             'bing_api_key' => 'nullable|string|max:255',
+            'mail_mailer' => 'nullable|string|in:smtp,sendmail,mailgun,ses',
+            'mail_host' => 'nullable|string|max:255',
+            'mail_port' => 'nullable|string|max:10',
+            'mail_username' => 'nullable|string|max:255',
+            'mail_password' => 'nullable|string|max:255',
+            'mail_encryption' => 'nullable|string|in:tls,ssl',
+            'mail_from_address' => 'nullable|email|max:255',
+            'mail_from_name' => 'nullable|string|max:255',
         ]);
         
         $settings = SiteSetting::first();
@@ -509,13 +517,54 @@ class AdminController extends Controller
             $settings = new SiteSetting();
         }
         
-        $settings->fill($request->all());
+        $data = $request->all();
+        
+        // Si le mot de passe est vide, ne pas le mettre à jour (garder l'ancien)
+        if (empty($data['mail_password'])) {
+            unset($data['mail_password']);
+        }
+        
+        $settings->fill($data);
         $settings->save();
         
         // Invalider le cache
         \App\Models\SiteSetting::clearCache();
         
+        // Recharger la configuration mail dynamiquement
+        $this->updateMailConfig($settings);
+        
         return redirect()->route('admin.settings')->with('success', 'Paramètres mis à jour avec succès!');
+    }
+    
+    /**
+     * Mettre à jour la configuration mail depuis les settings
+     */
+    private function updateMailConfig($settings)
+    {
+        if ($settings->mail_mailer) {
+            config(['mail.default' => $settings->mail_mailer]);
+        }
+        if ($settings->mail_host) {
+            config(['mail.mailers.smtp.host' => $settings->mail_host]);
+        }
+        if ($settings->mail_port) {
+            config(['mail.mailers.smtp.port' => (int)$settings->mail_port]);
+        }
+        if ($settings->mail_username) {
+            config(['mail.mailers.smtp.username' => $settings->mail_username]);
+        }
+        if ($settings->mail_password) {
+            config(['mail.mailers.smtp.password' => $settings->mail_password]);
+        }
+        if ($settings->mail_encryption) {
+            config(['mail.mailers.smtp.encryption' => $settings->mail_encryption]);
+        }
+        if ($settings->mail_from_address) {
+            config(['mail.from.address' => $settings->mail_from_address]);
+        }
+        if ($settings->mail_from_name) {
+            config(['mail.from.name' => $settings->mail_from_name]);
+        }
     }
 
     public function bingSubmission()

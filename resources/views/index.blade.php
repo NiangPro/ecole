@@ -1966,11 +1966,11 @@
 
 <!-- Categories and Sponsored Articles Section -->
 <section class="categories-sponsored-section" style="position: relative; z-index: 2; padding: 60px 20px; max-width: 1600px; margin: 0 auto;">
-    <div class="categories-sponsored-container" style="display: grid; grid-template-columns: {{ (isset($sponsoredArticles) && $sponsoredArticles->count() > 0) ? '2.5fr 1fr' : '1fr' }}; gap: 30px; align-items: start;">
+    <div class="categories-sponsored-container" style="display: grid; grid-template-columns: {{ (isset($sponsoredArticles) && $sponsoredArticles->count() > 0) ? '2.5fr 1fr' : '1fr' }}; gap: 30px; align-items: stretch;">
         
         <!-- Partie 1: Catégories d'articles (plus grande) -->
-        <div class="categories-section">
-            <div style="text-align: center; margin-bottom: 40px;">
+        <div class="categories-section" style="display: flex; flex-direction: column; height: 100%;">
+            <div style="text-align: center; margin-bottom: 40px; flex-shrink: 0;">
                 <h2 class="section-title">📂 Catégories d'Articles</h2>
                 <p class="section-subtitle">
                     Explorez nos différentes catégories d'articles et trouvez le contenu qui vous intéresse
@@ -1978,7 +1978,7 @@
             </div>
             
             @if(isset($categories) && $categories->count() > 0)
-            <div class="categories-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px;">
+            <div class="categories-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; flex: 1; overflow-y: auto; min-height: 0;">
                 @foreach($categories as $category)
                 <a href="{{ route('emplois.category', $category->slug) }}" class="category-card" style="display: block; text-decoration: none;">
                     <div class="category-card-inner" style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(20, 184, 166, 0.1)); border: 2px solid rgba(6, 182, 212, 0.3); border-radius: 16px; padding: 24px; transition: all 0.3s ease; height: 100%; position: relative; overflow: hidden;">
@@ -2025,8 +2025,8 @@
         
         <!-- Partie 2: Articles sponsorisés (plus petite) -->
         @if(isset($sponsoredArticles) && $sponsoredArticles->count() > 0)
-        <div class="sponsored-section">
-            <div style="text-align: center; margin-bottom: 32px;">
+        <div class="sponsored-section" style="display: flex; flex-direction: column; height: 100%; max-height: 100%;">
+            <div style="text-align: center; margin-bottom: 32px; flex-shrink: 0;">
                 <div style="display: inline-flex; align-items: center; gap: 10px; margin-bottom: 8px;">
                     <div style="width: 4px; height: 24px; background: linear-gradient(180deg, #06b6d4, #14b8a6); border-radius: 2px;"></div>
                     <h2 class="section-title" style="font-size: 1.2rem; font-weight: 800; color: rgba(30, 41, 59, 0.95); letter-spacing: -0.5px; margin: 0;">
@@ -2039,7 +2039,7 @@
                 </p>
             </div>
             
-            <div class="sponsored-articles-list" style="display: flex; flex-direction: column; gap: 25px; width: 100%;">
+            <div class="sponsored-articles-list" style="display: flex; flex-direction: column; gap: 25px; width: 100%; flex: 1; overflow-y: auto; min-height: 0;">
                 @foreach($sponsoredArticles as $article)
                 <div class="modern-sidebar-ad sponsored-article-ad" style="width: 100%; max-width: 100%;">
                     <!-- Badge Sponsorisé -->
@@ -2616,6 +2616,23 @@
        DESIGN ARTICLES SPONSORISÉS - MÊME STYLE QUE PUBLICITÉS
        ============================================ */
     
+    /* Limiter la hauteur de la section sponsorisée pour qu'elle ne dépasse pas celle des catégories */
+    .sponsored-section {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        max-height: 100%;
+    }
+    
+    .sponsored-articles-list {
+        flex: 1;
+        overflow: hidden;
+        min-height: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 25px;
+    }
+    
     /* Réutiliser le style des publicités modernes */
     .sponsored-article-ad {
         background: rgba(51, 65, 85, 0.7);
@@ -2628,6 +2645,24 @@
         width: 100%;
         max-width: 100%;
         margin: 0;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        min-height: 0;
+    }
+    
+    .sponsored-article-ad .modern-sidebar-ad-link {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+    }
+    
+    .sponsored-article-ad .modern-sidebar-ad-link {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
     }
     
     /* Badge Sponsorisé */
@@ -2690,9 +2725,12 @@
     .sponsored-article-ad .modern-sidebar-ad-image-wrapper {
         position: relative;
         width: 100%;
+        height: 100%;
+        flex: 1;
         min-height: 200px;
-        height: auto;
         overflow: hidden;
+        display: flex;
+        align-items: stretch;
     }
     
     .sponsored-article-ad .modern-sidebar-ad-image {
@@ -2716,7 +2754,7 @@
         display: flex;
         align-items: flex-end;
         padding: 25px;
-        min-height: 100%;
+        height: 100%;
     }
     
     body:not(.dark-mode) .sponsored-article-ad .modern-sidebar-ad-overlay {
@@ -2815,6 +2853,11 @@
         /* Articles sponsorisés responsive */
         .sponsored-articles-list {
             gap: 20px !important;
+            max-height: none !important;
+        }
+        
+        .sponsored-section {
+            max-height: none !important;
         }
         
         .sponsored-article-ad {
@@ -2823,6 +2866,15 @@
         
         .sponsored-article-ad .modern-sidebar-ad-image-wrapper {
             min-height: 180px !important;
+            height: auto !important;
+        }
+        
+        .sponsored-articles-list {
+            overflow-y: auto !important;
+        }
+        
+        .categories-grid {
+            overflow-y: auto !important;
         }
         
         .sponsored-article-ad .modern-sidebar-ad-title {

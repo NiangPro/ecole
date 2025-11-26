@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/eclipse.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/show-hint.min.css">
 <style>
     body {
         overflow-x: hidden;
@@ -696,8 +697,14 @@
                         loadScript('https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/clike/clike.min.js', function() {
                             loadScript('https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/php/php.min.js', function() {
                                 loadScript('https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js', function() {
-                                    // Tous les scripts sont chargés, initialiser CodeMirror
-                                    initCodeMirror();
+                                    loadScript('https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/show-hint.min.js', function() {
+                                        loadScript('https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/xml-hint.min.js', function() {
+                                            loadScript('https://cdn.jsdelivr.net/npm/emmet@2.3.6/dist/emmet.umd.js', function() {
+                                                // Tous les scripts sont chargés, initialiser CodeMirror
+                                                initCodeMirror();
+                                            });
+                                        });
+                                    });
                                 });
                             });
                         });
@@ -768,8 +775,8 @@
                 textarea.value = startCode;
             }
             
-            // Initialiser CodeMirror
-            const codeEditor = CodeMirror.fromTextArea(textarea, {
+            // Configuration de base pour CodeMirror
+            const editorConfig = {
                 mode: codeMirrorMode,
                 theme: codeMirrorTheme,
                 lineNumbers: true,
@@ -783,10 +790,17 @@
                 autoCloseTags: true,
                 foldGutter: true,
                 gutters: ['CodeMirror-linenumbers', 'CodeMirror-foldgutter'],
-                // Options pour mieux gérer le HTML avec JavaScript
                 matchTags: { bothTags: true },
                 extraKeys: {
-                    'Ctrl-Space': 'autocomplete',
+                    'Ctrl-Space': function(cm) {
+                        // Autocomplétion pour HTML/XML
+                        if (codeMirrorMode === 'htmlmixed' || codeMirrorMode === 'xml') {
+                            CodeMirror.commands.autocomplete(cm);
+                        } else {
+                            // Autocomplétion par défaut pour les autres langages
+                            CodeMirror.commands.autocomplete(cm);
+                        }
+                    },
                     'Ctrl-/': 'toggleComment',
                     'Ctrl-Enter': function() {
                         runCode();
@@ -795,6 +809,47 @@
                         runCode();
                     },
                     'Tab': function(cm) {
+                        // Vérifier si on peut expand Emmet pour HTML
+                        if (codeMirrorMode === 'htmlmixed' || codeMirrorMode === 'xml' || language === 'html5' || language === 'html') {
+                            // Vérifier si emmet est disponible (différentes façons selon le chargement)
+                            const emmetLib = window.emmet || (typeof emmet !== 'undefined' ? emmet : null);
+                            
+                            if (emmetLib && emmetLib.expandAbbreviation) {
+                                const cursor = cm.getCursor();
+                                const line = cm.getLine(cursor.line);
+                                const textBeforeCursor = line.substring(0, cursor.ch);
+                                
+                                // Chercher une abréviation Emmet valide
+                                const emmetPattern = /[a-zA-Z][a-zA-Z0-9]*(\.[a-zA-Z][a-zA-Z0-9-]*)*(#[a-zA-Z][a-zA-Z0-9-]*)*(\[[^\]]*\])*(\{[^\}]*\})*(\*[0-9]+)?(\+[a-zA-Z][a-zA-Z0-9]*(\.[a-zA-Z][a-zA-Z0-9-]*)*(#[a-zA-Z][a-zA-Z0-9-]*)*)*$/;
+                                const match = textBeforeCursor.match(emmetPattern);
+                                
+                                if (match && match[0].length > 0) {
+                                    try {
+                                        const abbreviation = match[0];
+                                        const expanded = emmetLib.expandAbbreviation(abbreviation, {
+                                            syntax: 'html',
+                                            options: {
+                                                'output.indent': '  ',
+                                                'output.baseIndent': '',
+                                                'output.newline': '\n'
+                                            }
+                                        });
+                                        
+                                        if (expanded) {
+                                            const startPos = { line: cursor.line, ch: cursor.ch - abbreviation.length };
+                                            const endPos = cursor;
+                                            cm.replaceRange(expanded, startPos, endPos);
+                                            return;
+                                        }
+                                    } catch (e) {
+                                        // Si l'expansion échoue, continuer avec le comportement par défaut
+                                        console.log('Emmet expansion failed:', e);
+                                    }
+                                }
+                            }
+                        }
+                        
+                        // Comportement par défaut
                         if (cm.somethingSelected()) {
                             cm.indentSelection('add');
                         } else {
@@ -805,7 +860,73 @@
                         cm.indentSelection('subtract');
                     }
                 }
-            });
+            };
+            
+            // Ajouter l'autocomplétion pour HTML/XML
+            if (codeMirrorMode === 'htmlmixed' || codeMirrorMode === 'xml' || language === 'html5' || language === 'html') {
+                editorConfig.hintOptions = {
+                    schemaInfo: CodeMirror.hint.xml,
+                    closeOnUnfocus: false,
+                    completeSingle: false
+                };
+            }
+            
+            // Initialiser CodeMirror
+            const codeEditor = CodeMirror.fromTextArea(textarea, editorConfig);
+            
+            // Activer Emmet pour HTML
+            if (codeMirrorMode === 'htmlmixed' || codeMirrorMode === 'xml' || language === 'html5' || language === 'html') {
+                // Ajouter un raccourci Ctrl+E pour expand Emmet manuellement
+                codeEditor.addKeyMap({
+                    'Ctrl-E': function(cm) {
+                        const emmetLib = window.emmet || (typeof emmet !== 'undefined' ? emmet : null);
+                        if (!emmetLib || !emmetLib.expandAbbreviation) return;
+                        
+                        const cursor = cm.getCursor();
+                        const line = cm.getLine(cursor.line);
+                        const textBeforeCursor = line.substring(0, cursor.ch);
+                        
+                        // Chercher une abréviation Emmet
+                        const emmetPattern = /[a-zA-Z][a-zA-Z0-9]*(\.[a-zA-Z][a-zA-Z0-9-]*)*(#[a-zA-Z][a-zA-Z0-9-]*)*(\[[^\]]*\])*(\{[^\}]*\})*(\*[0-9]+)?(\+[a-zA-Z][a-zA-Z0-9]*(\.[a-zA-Z][a-zA-Z0-9-]*)*(#[a-zA-Z][a-zA-Z0-9-]*)*)*$/;
+                        const match = textBeforeCursor.match(emmetPattern);
+                        
+                        if (match && match[0].length > 0) {
+                            try {
+                                const abbreviation = match[0];
+                                const expanded = emmetLib.expandAbbreviation(abbreviation, {
+                                    syntax: 'html',
+                                    options: {
+                                        'output.indent': '  ',
+                                        'output.baseIndent': '',
+                                        'output.newline': '\n'
+                                    }
+                                });
+                                
+                                if (expanded) {
+                                    const startPos = { line: cursor.line, ch: cursor.ch - abbreviation.length };
+                                    const endPos = cursor;
+                                    cm.replaceRange(expanded, startPos, endPos);
+                                }
+                            } catch (e) {
+                                console.error('Erreur Emmet:', e);
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Activer l'autocomplétion automatique pour HTML (après avoir tapé <)
+            if (codeMirrorMode === 'htmlmixed' || codeMirrorMode === 'xml' || language === 'html5' || language === 'html') {
+                codeEditor.on('inputRead', function(cm, change) {
+                    if (change.text && change.text.length > 0 && (change.text[0] === '<' || change.text[0].includes('<'))) {
+                        // Délai pour permettre à l'utilisateur de continuer à taper
+                        setTimeout(function() {
+                            if (cm.state.completionActive) return;
+                            CodeMirror.commands.autocomplete(cm, null, {completeSingle: false});
+                        }, 300);
+                    }
+                });
+            }
             
             // S'assurer que le code initial est correctement formaté avec les retours à la ligne
             // CodeMirror lit automatiquement le contenu du textarea, donc on s'assure qu'il est correct

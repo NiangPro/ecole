@@ -331,8 +331,16 @@
 </div>
 
 @if(session('success'))
-    <div class="mb-4 p-4 bg-green-500/20 border border-green-500/50 rounded-lg text-green-400">
+    <div class="mb-4 p-4 bg-green-500/20 border border-green-500/50 rounded-lg text-green-400 flex items-center gap-2">
+        <i class="fas fa-check-circle"></i>
         {{ session('success') }}
+    </div>
+@endif
+
+@if(session('error'))
+    <div class="mb-4 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400 flex items-center gap-2">
+        <i class="fas fa-exclamation-circle"></i>
+        {{ session('error') }}
     </div>
 @endif
 
@@ -514,6 +522,14 @@
                                     ? 'https://www.niangprogrammeur.com/emplois/article/' . $article->slug
                                     : route('emplois.article', $article->slug);
                             @endphp
+                            @if($article->status === 'published')
+                            <form action="{{ route('admin.jobs.articles.send-newsletter', $article->id) }}" method="POST" class="inline" onsubmit="return confirm('Envoyer cet article à tous les abonnés de la newsletter ?');">
+                                @csrf
+                                <button type="submit" class="px-3 py-1 bg-green-600/20 hover:bg-green-600/30 text-green-400 rounded transition" title="Envoyer par newsletter">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </form>
+                            @endif
                             <button type="button" 
                                     onclick="openShareModal({{ $article->id }}, '{{ addslashes($article->title) }}', '{{ $articleImage }}', '{{ addslashes($article->meta_description ?? $article->excerpt ?? '') }}', '{{ $articleUrl }}')" 
                                     class="px-3 py-1 bg-blue-600/20 hover:bg-blue-600/30 text-blue-300 rounded transition" 

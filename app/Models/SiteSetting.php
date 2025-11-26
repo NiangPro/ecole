@@ -22,6 +22,14 @@ class SiteSetting extends Model
         'google_analytics_id',
         'bing_api_key',
         'show_achievements_section',
+        'mail_mailer',
+        'mail_host',
+        'mail_port',
+        'mail_username',
+        'mail_password',
+        'mail_encryption',
+        'mail_from_address',
+        'mail_from_name',
     ];
 
     public static function get($key, $default = null)

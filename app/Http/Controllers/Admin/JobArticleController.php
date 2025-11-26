@@ -293,6 +293,29 @@ class JobArticleController extends Controller
             ->with('success', 'Article mis à jour avec succès');
     }
 
+    public function sendNewsletter($id)
+    {
+        $article = JobArticle::with('category')->findOrFail($id);
+        
+        // Vérifier que l'article est publié
+        if ($article->status !== 'published') {
+            return redirect()->route('admin.jobs.articles.index')
+                ->with('error', 'Seuls les articles publiés peuvent être envoyés par newsletter.');
+        }
+        
+        // Charger la relation category
+        $article->load('category');
+        
+        // Dispatch le job d'envoi
+        \App\Jobs\SendNewsletterArticleJob::dispatch($article);
+        
+        // Compter les abonnés actifs
+        $subscribersCount = \App\Models\Newsletter::where('is_active', true)->count();
+        
+        return redirect()->route('admin.jobs.articles.index')
+            ->with('success', "Newsletter en cours d'envoi à {$subscribersCount} abonné(s) pour l'article \"{$article->title}\".");
+    }
+
     public function destroy($id)
     {
         // Le middleware AdminAuth gère déjà l'authentification
