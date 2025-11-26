@@ -500,6 +500,15 @@
             box-shadow: 0 4px 20px rgba(6, 182, 212, 0.4);
             transition: all 0.3s ease;
             position: relative;
+            overflow: hidden;
+        }
+        
+        .language-flag {
+            width: 24px;
+            height: 18px;
+            border-radius: 2px;
+            object-fit: cover;
+            display: block;
         }
         
         .language-button:hover {
@@ -882,7 +891,7 @@
         </style>
     </noscript>
 </head>
-<body class="bg-black text-white">
+<body class="bg-black text-white" lang="{{ app()->getLocale() }}">
     <!-- Loader pendant le chargement -->
     <div id="page-loader" class="page-loader">
         <div class="page-loader-spinner"></div>
@@ -929,11 +938,51 @@
     @endphp
     
     @if($showLanguageWidget)
+    @php
+        $currentLang = app()->getLocale();
+        $tooltipText = $currentLang === 'fr' ? 'Changer en anglais' : 'Switch to French';
+    @endphp
     <!-- Language Toggle Button -->
     <div id="language-widget" class="language-widget">
-        <button id="language-toggle" class="language-button" onclick="toggleLanguage()" title="Changer la langue">
-            <i class="fas fa-globe" id="language-icon"></i>
-            <span class="language-tooltip" id="language-tooltip">Changer la langue</span>
+        <button id="language-toggle" class="language-button" onclick="toggleLanguage()" title="{{ $tooltipText }}">
+            @if($currentLang === 'fr')
+            <!-- Drapeau français -->
+            <svg class="language-flag" viewBox="0 0 640 480" xmlns="http://www.w3.org/2000/svg">
+                <g fill-rule="evenodd" stroke-width="1pt">
+                    <path fill="#fff" d="M0 0h640v480H0z"/>
+                    <path fill="#00267f" d="M0 0h213.3v480H0z"/>
+                    <path fill="#f31830" d="M426.7 0H640v480H426.7z"/>
+                </g>
+            </svg>
+            @else
+            <!-- Drapeau américain simplifié -->
+            <svg class="language-flag" viewBox="0 0 7410 3900" xmlns="http://www.w3.org/2000/svg">
+                <path fill="#b22234" d="M0 0h7410v3900H0z"/>
+                <path d="M0 450h7410m0 600H0m0 600h7410m0 600H0m0 600h7410m0 600H0m0 600h7410m0 600H0" stroke="#fff" stroke-width="300"/>
+                <path fill="#3c3b6e" d="M0 0h2964v2100H0z"/>
+                <g fill="#fff">
+                    <g id="star">
+                        <path d="M247 90l70.534 217.082-184.66-134.164h228.253L176.466 307.082z"/>
+                    </g>
+                    <use href="#star" x="988" y="210"/>
+                    <use href="#star" x="1976" y="420"/>
+                    <use href="#star" x="494" y="420"/>
+                    <use href="#star" x="1482" y="630"/>
+                    <use href="#star" x="2470" y="630"/>
+                    <use href="#star" x="988" y="840"/>
+                    <use href="#star" x="1976" y="840"/>
+                    <use href="#star" x="494" y="1050"/>
+                    <use href="#star" x="1482" y="1260"/>
+                    <use href="#star" x="2470" y="1260"/>
+                    <use href="#star" x="988" y="1470"/>
+                    <use href="#star" x="1976" y="1470"/>
+                    <use href="#star" x="494" y="1680"/>
+                    <use href="#star" x="1482" y="1890"/>
+                    <use href="#star" x="2470" y="1890"/>
+                </g>
+            </svg>
+            @endif
+            <span class="language-tooltip" id="language-tooltip">{{ $tooltipText }}</span>
         </button>
     </div>
     @endif
@@ -1050,15 +1099,14 @@
             }
         });
         
-        // Language Toggle Function (à implémenter plus tard)
+        // Language Toggle Function
         function toggleLanguage() {
-            // TODO: Implémenter le changement de langue
-            const currentLang = localStorage.getItem('language') || 'fr';
+            // Récupérer la langue actuelle depuis l'attribut lang du body
+            const currentLang = document.body.getAttribute('lang') || 'fr';
             const newLang = currentLang === 'fr' ? 'en' : 'fr';
-            localStorage.setItem('language', newLang);
             
-            // Pour l'instant, juste un message
-            alert('Fonctionnalité de traduction en cours de développement. Langue sélectionnée: ' + newLang.toUpperCase());
+            // Rediriger vers la route de changement de langue
+            window.location.href = '{{ route("language.set", ":locale") }}'.replace(':locale', newLang);
         }
         
         function toggleWhatsApp() {

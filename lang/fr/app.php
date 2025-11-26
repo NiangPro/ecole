@@ -71,6 +71,18 @@ return [
             'wordpress' => 'WordPress',
             'ia' => 'Intelligence Artificielle',
             'python' => 'Python',
+            'java' => 'Java',
+            'sql' => 'SQL',
+            'c' => 'Langage C',
+        ],
+        'java' => [
+            'description' => 'Maîtrisez Java, l\'un des langages de programmation les plus populaires au monde. Cette formation complète couvre les fondamentaux de la programmation orientée objet, les collections, les exceptions, les threads, les I/O, et les frameworks Java modernes comme Spring. Vous apprendrez à développer des applications robustes, sécurisées et performantes.',
+        ],
+        'sql' => [
+            'description' => 'Apprenez SQL, le langage standard pour gérer et manipuler les bases de données relationnelles. Cette formation complète couvre les requêtes SELECT, INSERT, UPDATE, DELETE, les jointures, les fonctions d\'agrégation, les sous-requêtes, les vues, les procédures stockées, et l\'optimisation des performances. Maîtrisez MySQL, PostgreSQL et SQL Server.',
+        ],
+        'c' => [
+            'description' => 'Découvrez le langage C, le fondement de nombreux langages de programmation modernes. Cette formation complète couvre les pointeurs, les structures, les tableaux, les fonctions, la gestion mémoire, les fichiers, et la programmation système. Comprenez les concepts fondamentaux de la programmation et développez des applications performantes.',
         ],
     ],
     

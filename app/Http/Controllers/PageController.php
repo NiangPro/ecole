@@ -11,17 +11,31 @@ use Illuminate\Support\Facades\Session;
 class PageController extends Controller
 {
     /**
-     * Force la locale à français (plus de système de traduction)
+     * Détermine la locale à utiliser (français ou anglais)
      */
     private function ensureLocale()
     {
-        // TOUJOURS forcer le français
-        App::setLocale('fr');
-        \Illuminate\Support\Facades\Lang::setLocale('fr');
-        config(['app.locale' => 'fr']);
+        // Récupérer la langue depuis la session ou le paramètre de requête
+        $locale = Session::get('language', 'fr');
+        
+        // Vérifier si un paramètre de langue est passé dans l'URL
+        if (request()->has('lang')) {
+            $locale = request()->get('lang');
+            Session::put('language', $locale);
+        }
+        
+        // Valider que la locale est supportée
+        if (!in_array($locale, ['fr', 'en'])) {
+            $locale = 'fr';
+        }
+        
+        // Définir la locale
+        App::setLocale($locale);
+        \Illuminate\Support\Facades\Lang::setLocale($locale);
+        config(['app.locale' => $locale]);
         config(['app.fallback_locale' => 'fr']);
         
-        return 'fr';
+        return $locale;
     }
     
     public function index()
@@ -6775,32 +6789,46 @@ int main() {
                 'route' => route('formations.python')
             ],
             [
-                'name' => 'Java',
+                'name' => trans('app.formations.languages.java'),
                 'slug' => 'java',
                 'icon' => 'fab fa-java',
                 'color' => '#ed8b00',
-                'description' => 'Maîtrisez Java, l\'un des langages de programmation les plus populaires au monde. Cette formation complète couvre les fondamentaux de la programmation orientée objet, les collections, les exceptions, les threads, les I/O, et les frameworks Java modernes comme Spring. Vous apprendrez à développer des applications robustes, sécurisées et performantes.',
+                'description' => trans('app.formations.java.description'),
                 'route' => route('formations.java')
             ],
             [
-                'name' => 'SQL',
+                'name' => trans('app.formations.languages.sql'),
                 'slug' => 'sql',
                 'icon' => 'fas fa-database',
                 'color' => '#336791',
-                'description' => 'Apprenez SQL, le langage standard pour gérer et manipuler les bases de données relationnelles. Cette formation complète couvre les requêtes SELECT, INSERT, UPDATE, DELETE, les jointures, les fonctions d\'agrégation, les sous-requêtes, les vues, les procédures stockées, et l\'optimisation des performances. Maîtrisez MySQL, PostgreSQL et SQL Server.',
+                'description' => trans('app.formations.sql.description'),
                 'route' => route('formations.sql')
             ],
             [
-                'name' => 'Langage C',
+                'name' => trans('app.formations.languages.c'),
                 'slug' => 'c',
                 'icon' => 'fab fa-c',
                 'color' => '#a8b9cc',
-                'description' => 'Découvrez le langage C, le fondement de nombreux langages de programmation modernes. Cette formation complète couvre les pointeurs, les structures, les tableaux, les fonctions, la gestion mémoire, les fichiers, et la programmation système. Comprenez les concepts fondamentaux de la programmation et développez des applications performantes.',
+                'description' => trans('app.formations.c.description'),
                 'route' => route('formations.c')
             ],
         ];
         
         return view('formations.all', compact('formations'));
+    }
+    
+    /**
+     * Change la langue de l'application
+     */
+    public function setLanguage($locale)
+    {
+        if (in_array($locale, ['fr', 'en'])) {
+            Session::put('language', $locale);
+            App::setLocale($locale);
+        }
+        
+        // Rediriger vers la page précédente ou la page d'accueil
+        return redirect()->back();
     }
 
     public function html5()

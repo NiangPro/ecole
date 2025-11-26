@@ -34,6 +34,9 @@ Route::get('/terms', [PageController::class, 'terms'])->name('terms');
 Route::post('/newsletter/subscribe', [PageController::class, 'newsletterSubscribe'])->name('newsletter.subscribe');
 Route::get('/newsletter/unsubscribe/{token}', [PageController::class, 'newsletterUnsubscribe'])->name('newsletter.unsubscribe');
 
+// Route pour changer la langue
+Route::get('/language/{locale}', [PageController::class, 'setLanguage'])->name('language.set');
+
 // Routes Formations
 Route::get('/formations', [PageController::class, 'allFormations'])->name('formations.all');
 Route::get('/formations/html5', [PageController::class, 'html5'])->name('formations.html5');

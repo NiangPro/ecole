@@ -71,6 +71,18 @@ return [
             'wordpress' => 'WordPress',
             'ia' => 'Artificial Intelligence',
             'python' => 'Python',
+            'java' => 'Java',
+            'sql' => 'SQL',
+            'c' => 'C Language',
+        ],
+        'java' => [
+            'description' => 'Master Java, one of the world\'s most popular programming languages. This comprehensive course covers the fundamentals of object-oriented programming, collections, exceptions, threads, I/O, and modern Java frameworks like Spring. You will learn to develop robust, secure and high-performance applications.',
+        ],
+        'sql' => [
+            'description' => 'Learn SQL, the standard language for managing and manipulating relational databases. This comprehensive course covers SELECT, INSERT, UPDATE, DELETE queries, joins, aggregate functions, subqueries, views, stored procedures, and performance optimization. Master MySQL, PostgreSQL and SQL Server.',
+        ],
+        'c' => [
+            'description' => 'Discover the C language, the foundation of many modern programming languages. This comprehensive course covers pointers, structures, arrays, functions, memory management, files, and systems programming. Understand the fundamental concepts of programming and develop high-performance applications.',
         ],
     ],
     
