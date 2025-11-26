@@ -933,6 +933,7 @@
             'exercices',
             'exercices.language',
             'exercices.detail',
+            'exercices.run',
             'quiz',
             'quiz.language',
             'quiz.result'

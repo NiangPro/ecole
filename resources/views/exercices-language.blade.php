@@ -49,22 +49,46 @@
         font-weight: 600;
     }
     
-    .difficulty-facile {
+    .difficulty-facile,
+    .difficulty-easy {
         background: rgba(34, 197, 94, 0.1);
         color: #22c55e;
         border: 1px solid rgba(34, 197, 94, 0.3);
     }
     
-    .difficulty-moyen {
+    body:not(.dark-mode) .difficulty-facile,
+    body:not(.dark-mode) .difficulty-easy {
+        background: rgba(34, 197, 94, 0.15) !important;
+        color: #16a34a !important;
+        border: 1px solid rgba(34, 197, 94, 0.4) !important;
+    }
+    
+    .difficulty-moyen,
+    .difficulty-medium {
         background: rgba(234, 179, 8, 0.1);
         color: #eab308;
         border: 1px solid rgba(234, 179, 8, 0.3);
     }
     
-    .difficulty-difficile {
+    body:not(.dark-mode) .difficulty-moyen,
+    body:not(.dark-mode) .difficulty-medium {
+        background: rgba(234, 179, 8, 0.15) !important;
+        color: #ca8a04 !important;
+        border: 1px solid rgba(234, 179, 8, 0.4) !important;
+    }
+    
+    .difficulty-difficile,
+    .difficulty-hard {
         background: rgba(239, 68, 68, 0.1);
         color: #ef4444;
         border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+    
+    body:not(.dark-mode) .difficulty-difficile,
+    body:not(.dark-mode) .difficulty-hard {
+        background: rgba(239, 68, 68, 0.15) !important;
+        color: #dc2626 !important;
+        border: 1px solid rgba(239, 68, 68, 0.4) !important;
     }
     
     /* Text colors */
@@ -232,7 +256,18 @@
                         <div class="flex-1">
                             <h3 class="text-xl font-bold text-white mb-2">{{ $exercise['title'] }}</h3>
                             <div class="flex items-center gap-4 flex-wrap">
-                                <span class="difficulty-badge difficulty-{{ strtolower($exercise['difficulty']) }}">
+                                @php
+                                    $difficultyLower = strtolower($exercise['difficulty']);
+                                    $difficultyClass = 'difficulty-facile';
+                                    if ($difficultyLower === 'facile' || $difficultyLower === 'easy') {
+                                        $difficultyClass = 'difficulty-facile difficulty-easy';
+                                    } elseif ($difficultyLower === 'moyen' || $difficultyLower === 'medium') {
+                                        $difficultyClass = 'difficulty-moyen difficulty-medium';
+                                    } elseif ($difficultyLower === 'difficile' || $difficultyLower === 'hard') {
+                                        $difficultyClass = 'difficulty-difficile difficulty-hard';
+                                    }
+                                @endphp
+                                <span class="difficulty-badge {{ $difficultyClass }}">
                                     <i class="fas fa-signal mr-1"></i>{{ $exercise['difficulty'] }}
                                 </span>
                                 <span class="text-gray-400 text-sm">

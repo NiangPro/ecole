@@ -535,7 +535,7 @@
                 </a>
                 <span class="text-gray-500 mx-2">/</span>
                 <a href="{{ route('exercices.language', $language) }}" class="text-cyan-400 hover:text-cyan-300 transition">
-                    {{ ucfirst($language) }}
+                    {{ trans('app.formations.languages.' . $language, [], null, ucfirst($language)) }}
                 </a>
                 <span class="text-gray-500 mx-2">/</span>
                 <span class="text-gray-400">{{ trans('app.exercices.exercise') }} {{ $id }}</span>
@@ -546,7 +546,7 @@
                     <i class="fas fa-chevron-left mr-2"></i>{{ trans('app.exercices.detail.previous') }}
                 </a>
                 @endif
-                @if($id < 5)
+                @if(isset($totalExercises) && $id < $totalExercises)
                 <a href="{{ route('exercices.detail', [$language, $id + 1]) }}" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition">
                     {{ trans('app.exercices.detail.next') }}<i class="fas fa-chevron-right ml-2"></i>
                 </a>
@@ -558,8 +558,18 @@
         <div class="mb-8">
             <div class="flex items-center gap-4 mb-4">
                 <h1 class="text-4xl font-bold text-white">{{ $exercise['title'] }}</h1>
-                <span class="px-4 py-2 bg-{{ $exercise['difficulty'] === 'Facile' ? 'green' : ($exercise['difficulty'] === 'Moyen' ? 'yellow' : 'red') }}-500/10 text-{{ $exercise['difficulty'] === 'Facile' ? 'green' : ($exercise['difficulty'] === 'Moyen' ? 'yellow' : 'red') }}-400 rounded-full text-sm font-semibold">
-                    {{ $exercise['difficulty'] }}
+                @php
+                    $easyDifficulty = trans('app.exercices.difficulty.easy');
+                    $mediumDifficulty = trans('app.exercices.difficulty.medium');
+                    $hardDifficulty = trans('app.exercices.difficulty.hard');
+                    $isEasy = $exercise['difficulty'] === $easyDifficulty || $exercise['difficulty'] === 'Facile' || $exercise['difficulty'] === 'Easy';
+                    $isMedium = $exercise['difficulty'] === $mediumDifficulty || $exercise['difficulty'] === 'Moyen' || $exercise['difficulty'] === 'Medium';
+                    $isHard = $exercise['difficulty'] === $hardDifficulty || $exercise['difficulty'] === 'Difficile' || $exercise['difficulty'] === 'Hard';
+                    $difficultyColor = $isEasy ? 'green' : ($isMedium ? 'yellow' : 'red');
+                    $displayDifficulty = $isEasy ? $easyDifficulty : ($isMedium ? $mediumDifficulty : $hardDifficulty);
+                @endphp
+                <span class="px-4 py-2 bg-{{ $difficultyColor }}-500/10 text-{{ $difficultyColor }}-400 rounded-full text-sm font-semibold">
+                    {{ $displayDifficulty }}
                 </span>
                 <span class="px-4 py-2 bg-purple-500/10 text-purple-400 rounded-full text-sm font-semibold">
                     <i class="fas fa-star mr-1"></i>{{ $exercise['points'] }} {{ trans('app.exercices.points') }}
@@ -1484,7 +1494,7 @@
                 // Confetti effect (optional)
                 setTimeout(() => {
                     // Auto-redirect to next exercise after 3 seconds
-                    @if($id < 5)
+                    @if(isset($totalExercises) && $id < $totalExercises)
                     setTimeout(() => {
                         window.location.href = '{{ route('exercices.detail', [$language, $id + 1]) }}';
                     }, 3000);

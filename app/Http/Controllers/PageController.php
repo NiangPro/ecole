@@ -372,6 +372,9 @@ class PageController extends Controller
 
     public function exerciceDetail($language, $id)
     {
+        // Forcer la locale
+        $this->ensureLocale();
+        
         // Récupérer tous les exercices pour trouver celui correspondant à l'index d'affichage
         $allExercises = $this->getExercisesByLanguage($language);
         
@@ -383,14 +386,23 @@ class PageController extends Controller
         $exercise = null;
         foreach ($variedExercises as $ex) {
             if (isset($ex['display_index']) && $ex['display_index'] == $id) {
-                // Récupérer les détails complets de l'exercice en utilisant le titre pour trouver l'ID
-                $exerciseTitle = $ex['title'];
-                $originalIndex = $this->findExerciseIndexByTitle($language, $exerciseTitle);
-                
-                if ($originalIndex) {
+                // Utiliser original_index s'il existe (correspond à l'ID dans getExerciseDetail)
+                if (isset($ex['original_index'])) {
+                    $originalIndex = $ex['original_index'];
                     $exercise = $this->getExerciseDetail($language, $originalIndex);
                     if ($exercise) {
                         $exercise['display_index'] = $id;
+                    }
+                } else {
+                    // Fallback: chercher par titre
+                    $exerciseTitle = $ex['title'];
+                    $originalIndex = $this->findExerciseIndexByTitle($language, $exerciseTitle);
+                    
+                    if ($originalIndex) {
+                        $exercise = $this->getExerciseDetail($language, $originalIndex);
+                        if ($exercise) {
+                            $exercise['display_index'] = $id;
+                        }
                     }
                 }
                 break;
@@ -398,10 +410,13 @@ class PageController extends Controller
         }
         
         if (!$exercise) {
-            abort(404, 'Exercice non trouvé');
+            abort(404, 'Exercice non trouvé pour le langage: ' . $language . ' et l\'ID: ' . $id);
         }
         
-        return view('exercice-detail', compact('language', 'id', 'exercise'));
+        // Compter le nombre total d'exercices pour ce langage
+        $totalExercises = count($variedExercises);
+        
+        return view('exercice-detail', compact('language', 'id', 'exercise', 'totalExercises'));
     }
     
     /**
@@ -409,10 +424,28 @@ class PageController extends Controller
      */
     private function findExerciseIndexByTitle($language, $title)
     {
-        $allExercises = $this->getExerciseDetail($language, 1); // Juste pour obtenir la structure
+        // Récupérer tous les exercices pour ce langage
+        $allExercises = $this->getExercisesByLanguage($language);
         
         // Parcourir tous les exercices pour trouver celui avec le bon titre
-        for ($i = 1; $i <= 20; $i++) { // Limite à 20 exercices max par langage
+        foreach ($allExercises as $index => $exercise) {
+            if (isset($exercise['title']) && $exercise['title'] === $title) {
+                // L'index dans le tableau commence à 0, mais les IDs d'exercices commencent à 1
+                // Pour trouver l'ID réel, on doit chercher dans getExerciseDetail
+                // On utilise l'index + 1 comme ID potentiel
+                $potentialId = $index + 1;
+                
+                // Vérifier que cet ID existe dans getExerciseDetail
+                $exerciseDetail = $this->getExerciseDetail($language, $potentialId);
+                if ($exerciseDetail && isset($exerciseDetail['title']) && $exerciseDetail['title'] === $title) {
+                    return $potentialId;
+                }
+            }
+        }
+        
+        // Si pas trouvé, essayer de parcourir getExerciseDetail directement
+        // Limite à 20 exercices max par langage
+        for ($i = 1; $i <= 20; $i++) {
             $exercise = $this->getExerciseDetail($language, $i);
             if ($exercise && isset($exercise['title']) && $exercise['title'] === $title) {
                 return $i;
@@ -5946,6 +5979,350 @@ print(carres)',
 }',
                     'hint' => $getTranslated('hint', 'Utilisez String nom = "Java"; puis System.out.println(nom);')
                 ],
+                3 => [
+                    'title' => $getTranslated('title', 'Opérateurs arithmétiques'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 10,
+                    'instruction' => $getTranslated('instruction', 'Calculez la somme de 10 et 5, puis affichez le résultat.'),
+                    'description' => $getTranslated('description', 'Java supporte les opérateurs arithmétiques : + (addition), - (soustraction), * (multiplication), / (division), % (modulo).'),
+                    'startCode' => 'public class Calcul {
+    public static void main(String[] args) {
+        // Calculez la somme de 10 et 5
+        // Affichez le résultat
+    }
+}',
+                    'solution' => 'public class Calcul {
+    public static void main(String[] args) {
+        int resultat = 10 + 5;
+        System.out.println(resultat);
+    }
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez int resultat = 10 + 5; puis System.out.println(resultat);')
+                ],
+                4 => [
+                    'title' => $getTranslated('title', 'Conditions if/else'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 12,
+                    'instruction' => $getTranslated('instruction', 'Créez une condition if/else qui affiche "Majeur" si l\'âge est >= 18, sinon "Mineur".'),
+                    'description' => $getTranslated('description', 'Les conditions Java utilisent if/else. Les opérateurs de comparaison (==, <, >, <=, >=) comparent des valeurs.'),
+                    'startCode' => 'public class Age {
+    public static void main(String[] args) {
+        int age = 20;
+        // Créez une condition if/else
+        // Affichez "Majeur" si age >= 18, sinon "Mineur"
+    }
+}',
+                    'solution' => 'public class Age {
+    public static void main(String[] args) {
+        int age = 20;
+        if (age >= 18) {
+            System.out.println("Majeur");
+        } else {
+            System.out.println("Mineur");
+        }
+    }
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez if (age >= 18) { System.out.println("Majeur"); } else { System.out.println("Mineur"); }')
+                ],
+                5 => [
+                    'title' => $getTranslated('title', 'Boucles for et while'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 12,
+                    'instruction' => $getTranslated('instruction', 'Affichez les nombres de 1 à 5 en utilisant une boucle for.'),
+                    'description' => $getTranslated('description', 'Les boucles Java répètent du code. for (initialisation; condition; incrément) répète tant que la condition est vraie.'),
+                    'startCode' => 'public class Boucle {
+    public static void main(String[] args) {
+        // Affichez les nombres de 1 à 5 avec une boucle for
+    }
+}',
+                    'solution' => 'public class Boucle {
+    public static void main(String[] args) {
+        for (int i = 1; i <= 5; i++) {
+            System.out.println(i);
+        }
+    }
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez for (int i = 1; i <= 5; i++) { System.out.println(i); }')
+                ],
+                6 => [
+                    'title' => $getTranslated('title', 'Méthodes Java'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 18,
+                    'instruction' => $getTranslated('instruction', 'Créez une méthode qui additionne deux nombres et retourne le résultat.'),
+                    'description' => $getTranslated('description', 'Les méthodes Java organisent le code réutilisable. public static int nomMethode(int a, int b) { return valeur; } définit une méthode.'),
+                    'startCode' => 'public class Methodes {
+    // Créez une méthode qui additionne deux nombres
+    public static void main(String[] args) {
+        // Appelez la méthode et affichez le résultat
+    }
+}',
+                    'solution' => 'public class Methodes {
+    public static int additionner(int a, int b) {
+        return a + b;
+    }
+    public static void main(String[] args) {
+        int resultat = additionner(10, 5);
+        System.out.println(resultat);
+    }
+}',
+                    'hint' => $getTranslated('hint', 'Créez public static int additionner(int a, int b) { return a + b; }')
+                ],
+                7 => [
+                    'title' => $getTranslated('title', 'Tableaux Java'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 18,
+                    'instruction' => $getTranslated('instruction', 'Créez un tableau de 5 entiers et affichez chaque élément avec une boucle for.'),
+                    'description' => $getTranslated('description', 'Les tableaux Java stockent des collections ordonnées. int[] arr = new int[5] crée un tableau. Les tableaux ont une taille fixe.'),
+                    'startCode' => 'public class Tableaux {
+    public static void main(String[] args) {
+        // Créez un tableau de 5 entiers
+        // Affichez chaque élément avec une boucle for
+    }
+}',
+                    'solution' => 'public class Tableaux {
+    public static void main(String[] args) {
+        int[] arr = new int[]{1, 2, 3, 4, 5};
+        for (int i = 0; i < arr.length; i++) {
+            System.out.println(arr[i]);
+        }
+    }
+}',
+                    'hint' => $getTranslated('hint', 'Créez int[] arr = new int[5]; puis utilisez for (int i = 0; i < arr.length; i++) pour parcourir.')
+                ],
+                8 => [
+                    'title' => $getTranslated('title', 'ArrayList et Collections'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 20,
+                    'instruction' => $getTranslated('instruction', 'Créez une ArrayList de fruits et ajoutez 3 fruits, puis affichez-les.'),
+                    'description' => $getTranslated('description', 'ArrayList est une collection dynamique. ArrayList<String> liste = new ArrayList<>(); crée une liste. add() ajoute un élément.'),
+                    'startCode' => 'import java.util.ArrayList;
+
+public class Collections {
+    public static void main(String[] args) {
+        // Créez une ArrayList de fruits
+        // Ajoutez 3 fruits et affichez-les
+    }
+}',
+                    'solution' => 'import java.util.ArrayList;
+
+public class Collections {
+    public static void main(String[] args) {
+        ArrayList<String> fruits = new ArrayList<>();
+        fruits.add("Pomme");
+        fruits.add("Banane");
+        fruits.add("Orange");
+        for (String fruit : fruits) {
+            System.out.println(fruit);
+        }
+    }
+}',
+                    'hint' => $getTranslated('hint', 'Créez ArrayList<String> fruits = new ArrayList<>(); puis fruits.add("Pomme"); et affichez avec une boucle for.')
+                ],
+                9 => [
+                    'title' => $getTranslated('title', 'Classes et objets'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 20,
+                    'instruction' => $getTranslated('instruction', 'Créez une classe Personne avec un constructeur qui prend nom et age, puis créez un objet.'),
+                    'description' => $getTranslated('description', 'La POO Java permet de créer des classes et des objets. class Personne { } définit une classe. new crée un objet.'),
+                    'startCode' => '// Créez une classe Personne avec un constructeur
+// Créez un objet dans main
+public class Main {
+    public static void main(String[] args) {
+    }
+}',
+                    'solution' => 'class Personne {
+    String nom;
+    int age;
+    Personne(String n, int a) {
+        nom = n;
+        age = a;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Personne p = new Personne("Java", 30);
+        System.out.println(p.nom + " - " + p.age);
+    }
+}',
+                    'hint' => $getTranslated('hint', 'Créez class Personne { String nom; int age; Personne(String n, int a) { nom = n; age = a; } } puis Personne p = new Personne("Java", 30);')
+                ],
+                10 => [
+                    'title' => $getTranslated('title', 'Héritage'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 22,
+                    'instruction' => $getTranslated('instruction', 'Créez une classe Animal et une classe Chien qui hérite de Animal.'),
+                    'description' => $getTranslated('description', 'L\'héritage Java permet à une classe d\'hériter des propriétés et méthodes d\'une autre. extends crée l\'héritage.'),
+                    'startCode' => '// Créez une classe Animal
+// Créez une classe Chien qui hérite de Animal
+public class Main {
+    public static void main(String[] args) {
+    }
+}',
+                    'solution' => 'class Animal {
+    String nom;
+    Animal(String n) {
+        nom = n;
+    }
+}
+
+class Chien extends Animal {
+    Chien(String n) {
+        super(n);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Chien chien = new Chien("Rex");
+        System.out.println(chien.nom);
+    }
+}',
+                    'hint' => $getTranslated('hint', 'Créez class Animal { } puis class Chien extends Animal { }')
+                ],
+                11 => [
+                    'title' => $getTranslated('title', 'Polymorphisme'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 28,
+                    'instruction' => $getTranslated('instruction', 'Créez une classe Voiture avec les propriétés marque et modele, et une méthode afficher().'),
+                    'description' => $getTranslated('description', 'La POO permet de créer des classes et des objets. Une classe est un modèle, un objet est une instance.'),
+                    'startCode' => '// Créez une classe Voiture avec marque, modele et afficher()
+public class Main {
+    public static void main(String[] args) {
+        // Créez un objet Voiture et appelez afficher()
+    }
+}',
+                    'solution' => 'class Voiture {
+    String marque;
+    String modele;
+    Voiture(String m, String mod) {
+        marque = m;
+        modele = mod;
+    }
+    void afficher() {
+        System.out.println(marque + " " + modele);
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Voiture v = new Voiture("Toyota", "Corolla");
+        v.afficher();
+    }
+}',
+                    'hint' => $getTranslated('hint', 'Créez class Voiture { String marque; String modele; void afficher() { System.out.println(marque + " " + modele); } }')
+                ],
+                12 => [
+                    'title' => $getTranslated('title', 'Interfaces et abstractions'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 30,
+                    'instruction' => $getTranslated('instruction', 'Créez un package "com.exemple" et placez-y une classe Test.'),
+                    'description' => $getTranslated('description', 'Les packages Java organisent les classes. package com.exemple; définit le package. Les packages améliorent l\'organisation du code.'),
+                    'startCode' => '// Créez un package com.exemple
+// Placez-y une classe Test
+',
+                    'solution' => 'package com.exemple;
+
+public class Test {
+    public static void main(String[] args) {
+        System.out.println("Test");
+    }
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez package com.exemple; au début du fichier, puis créez la classe Test dans ce package.')
+                ],
+                13 => [
+                    'title' => $getTranslated('title', 'Gestion des exceptions'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 25,
+                    'instruction' => $getTranslated('instruction', 'Utilisez try/catch pour gérer une exception de division par zéro.'),
+                    'description' => $getTranslated('description', 'Les exceptions Java gèrent les erreurs. try exécute du code, catch capture les exceptions. C\'est essentiel pour créer des programmes robustes.'),
+                    'startCode' => 'public class Exceptions {
+    public static void main(String[] args) {
+        // Utilisez try/catch pour gérer la division par zéro
+        int a = 10;
+        int b = 0;
+    }
+}',
+                    'solution' => 'public class Exceptions {
+    public static void main(String[] args) {
+        int a = 10;
+        int b = 0;
+        try {
+            int resultat = a / b;
+            System.out.println(resultat);
+        } catch (ArithmeticException e) {
+            System.out.println("Division par zéro");
+        }
+    }
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez try { int resultat = 10 / 0; } catch (ArithmeticException e) { System.out.println("Division par zéro"); }')
+                ],
+                14 => [
+                    'title' => $getTranslated('title', 'Fichiers et I/O'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 28,
+                    'instruction' => $getTranslated('instruction', 'Créez un fichier "test.txt" avec le contenu "Hello Java", puis lisez et affichez son contenu.'),
+                    'description' => $getTranslated('description', 'Java peut lire et écrire des fichiers. FileWriter écrit dans un fichier, FileReader lit un fichier. BufferedReader améliore les performances.'),
+                    'startCode' => 'import java.io.*;
+
+public class Fichiers {
+    public static void main(String[] args) {
+        // Créez un fichier "test.txt" avec "Hello Java"
+        // Lisez et affichez son contenu
+    }
+}',
+                    'solution' => 'import java.io.*;
+
+public class Fichiers {
+    public static void main(String[] args) {
+        try {
+            FileWriter fw = new FileWriter("test.txt");
+            fw.write("Hello Java");
+            fw.close();
+            
+            FileReader fr = new FileReader("test.txt");
+            BufferedReader br = new BufferedReader(fr);
+            String ligne = br.readLine();
+            System.out.println(ligne);
+            br.close();
+        } catch (IOException e) {
+            System.out.println("Erreur: " + e.getMessage());
+        }
+    }
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez FileWriter pour écrire et FileReader ou BufferedReader pour lire.')
+                ],
+                15 => [
+                    'title' => $getTranslated('title', 'Threads et concurrence'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 30,
+                    'instruction' => $getTranslated('instruction', 'Créez un thread qui affiche "Thread en cours" toutes les secondes pendant 5 secondes.'),
+                    'description' => $getTranslated('description', 'Les threads Java permettent l\'exécution simultanée. extends Thread ou implements Runnable crée un thread. start() démarre le thread.'),
+                    'startCode' => '// Créez un thread qui affiche "Thread en cours" toutes les secondes pendant 5 secondes
+public class Main {
+    public static void main(String[] args) {
+    }
+}',
+                    'solution' => 'class MonThread extends Thread {
+    public void run() {
+        for (int i = 0; i < 5; i++) {
+            System.out.println("Thread en cours");
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        new MonThread().start();
+    }
+}',
+                    'hint' => $getTranslated('hint', 'Créez class MonThread extends Thread { public void run() { ... } } puis new MonThread().start();')
+                ],
             ],
             'sql' => [
                 1 => [
@@ -5969,6 +6346,149 @@ print(carres)',
 ',
                     'solution' => 'SELECT * FROM utilisateurs WHERE age > 18;',
                     'hint' => $getTranslated('hint', 'Utilisez SELECT * FROM utilisateurs WHERE age > 18;')
+                ],
+                3 => [
+                    'title' => $getTranslated('title', 'Tri avec ORDER BY'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 10,
+                    'instruction' => $getTranslated('instruction', 'Écrivez une requête SQL pour sélectionner tous les utilisateurs triés par nom en ordre alphabétique.'),
+                    'description' => $getTranslated('description', 'La clause ORDER BY trie les résultats. ORDER BY nom ASC trie par ordre croissant, ORDER BY nom DESC trie par ordre décroissant.'),
+                    'startCode' => '-- Sélectionnez tous les utilisateurs triés par nom
+',
+                    'solution' => 'SELECT * FROM utilisateurs ORDER BY nom ASC;',
+                    'hint' => $getTranslated('hint', 'Utilisez SELECT * FROM utilisateurs ORDER BY nom ASC;')
+                ],
+                4 => [
+                    'title' => $getTranslated('title', 'Opérateurs de comparaison'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 12,
+                    'instruction' => $getTranslated('instruction', 'Écrivez une requête SQL pour sélectionner les utilisateurs dont l\'âge est égal à 25.'),
+                    'description' => $getTranslated('description', 'Les opérateurs de comparaison SQL comparent des valeurs. = (égal), != ou <> (différent), < (inférieur), > (supérieur), <= (inférieur ou égal), >= (supérieur ou égal).'),
+                    'startCode' => '-- Sélectionnez les utilisateurs avec age = 25
+',
+                    'solution' => 'SELECT * FROM utilisateurs WHERE age = 25;',
+                    'hint' => $getTranslated('hint', 'Utilisez SELECT * FROM utilisateurs WHERE age = 25;')
+                ],
+                5 => [
+                    'title' => $getTranslated('title', 'Opérateurs logiques AND/OR'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 12,
+                    'instruction' => $getTranslated('instruction', 'Écrivez une requête SQL pour sélectionner les utilisateurs dont l\'âge est supérieur à 18 ET le nom commence par "J".'),
+                    'description' => $getTranslated('description', 'Les opérateurs logiques combinent des conditions. AND retourne vrai si toutes les conditions sont vraies, OR retourne vrai si au moins une condition est vraie.'),
+                    'startCode' => '-- Sélectionnez les utilisateurs avec age > 18 ET nom commence par "J"
+',
+                    'solution' => 'SELECT * FROM utilisateurs WHERE age > 18 AND nom LIKE "J%";',
+                    'hint' => $getTranslated('hint', 'Utilisez SELECT * FROM utilisateurs WHERE age > 18 AND nom LIKE "J%";')
+                ],
+                6 => [
+                    'title' => $getTranslated('title', 'Fonctions d\'agrégation'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 18,
+                    'instruction' => $getTranslated('instruction', 'Écrivez une requête SQL pour calculer le nombre total d\'utilisateurs, la moyenne d\'âge, l\'âge maximum et l\'âge minimum.'),
+                    'description' => $getTranslated('description', 'Les fonctions d\'agrégation SQL calculent des valeurs sur plusieurs lignes. COUNT() compte, AVG() calcule la moyenne, MAX() trouve le maximum, MIN() trouve le minimum, SUM() additionne.'),
+                    'startCode' => '-- Calculez COUNT, AVG, MAX, MIN pour l\'âge
+',
+                    'solution' => 'SELECT COUNT(*), AVG(age), MAX(age), MIN(age) FROM utilisateurs;',
+                    'hint' => $getTranslated('hint', 'Utilisez SELECT COUNT(*), AVG(age), MAX(age), MIN(age) FROM utilisateurs;')
+                ],
+                7 => [
+                    'title' => $getTranslated('title', 'GROUP BY et HAVING'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 20,
+                    'instruction' => $getTranslated('instruction', 'Écrivez une requête SQL pour grouper les utilisateurs par ville et afficher le nombre d\'utilisateurs par ville.'),
+                    'description' => $getTranslated('description', 'GROUP BY groupe les lignes par valeurs identiques. HAVING filtre les groupes (similaire à WHERE mais pour les groupes).'),
+                    'startCode' => '-- Groupez par ville et comptez les utilisateurs
+',
+                    'solution' => 'SELECT ville, COUNT(*) FROM utilisateurs GROUP BY ville;',
+                    'hint' => $getTranslated('hint', 'Utilisez SELECT ville, COUNT(*) FROM utilisateurs GROUP BY ville;')
+                ],
+                8 => [
+                    'title' => $getTranslated('title', 'JOIN INNER'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 20,
+                    'instruction' => $getTranslated('instruction', 'Écrivez une requête SQL pour joindre les tables "utilisateurs" et "commandes" et afficher le nom de l\'utilisateur et le montant de chaque commande.'),
+                    'description' => $getTranslated('description', 'INNER JOIN retourne uniquement les lignes qui ont une correspondance dans les deux tables. ON spécifie la condition de jointure.'),
+                    'startCode' => '-- Joignez utilisateurs et commandes avec INNER JOIN
+',
+                    'solution' => 'SELECT u.nom, c.montant FROM utilisateurs u INNER JOIN commandes c ON u.id = c.utilisateur_id;',
+                    'hint' => $getTranslated('hint', 'Utilisez SELECT u.nom, c.montant FROM utilisateurs u INNER JOIN commandes c ON u.id = c.utilisateur_id;')
+                ],
+                9 => [
+                    'title' => $getTranslated('title', 'JOIN LEFT/RIGHT'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 22,
+                    'instruction' => $getTranslated('instruction', 'Écrivez une requête SQL pour afficher tous les utilisateurs et leurs commandes, même si un utilisateur n\'a pas de commande.'),
+                    'description' => $getTranslated('description', 'LEFT JOIN retourne toutes les lignes de la table de gauche, même s\'il n\'y a pas de correspondance. RIGHT JOIN fait l\'inverse.'),
+                    'startCode' => '-- Utilisez LEFT JOIN pour afficher tous les utilisateurs
+',
+                    'solution' => 'SELECT u.nom, c.montant FROM utilisateurs u LEFT JOIN commandes c ON u.id = c.utilisateur_id;',
+                    'hint' => $getTranslated('hint', 'Utilisez SELECT u.nom, c.montant FROM utilisateurs u LEFT JOIN commandes c ON u.id = c.utilisateur_id;')
+                ],
+                10 => [
+                    'title' => $getTranslated('title', 'Sous-requêtes'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 20,
+                    'instruction' => $getTranslated('instruction', 'Écrivez une requête SQL pour sélectionner les utilisateurs dont l\'âge est supérieur à la moyenne d\'âge de tous les utilisateurs.'),
+                    'description' => $getTranslated('description', 'Les sous-requêtes sont des requêtes imbriquées. Elles peuvent être utilisées dans SELECT, FROM, WHERE, etc. Les sous-requêtes doivent être entre parenthèses.'),
+                    'startCode' => '-- Utilisez une sous-requête pour trouver la moyenne d\'âge
+',
+                    'solution' => 'SELECT * FROM utilisateurs WHERE age > (SELECT AVG(age) FROM utilisateurs);',
+                    'hint' => $getTranslated('hint', 'Utilisez SELECT * FROM utilisateurs WHERE age > (SELECT AVG(age) FROM utilisateurs);')
+                ],
+                11 => [
+                    'title' => $getTranslated('title', 'INSERT, UPDATE, DELETE'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 25,
+                    'instruction' => $getTranslated('instruction', 'Écrivez une requête SQL pour insérer un nouvel utilisateur, mettre à jour son âge, puis le supprimer.'),
+                    'description' => $getTranslated('description', 'INSERT ajoute des lignes, UPDATE modifie des lignes existantes, DELETE supprime des lignes. Ces commandes modifient les données.'),
+                    'startCode' => '-- Insérez un utilisateur, mettez à jour son âge, puis supprimez-le
+',
+                    'solution' => 'INSERT INTO utilisateurs (nom, age) VALUES ("Jean", 30); UPDATE utilisateurs SET age = 31 WHERE nom = "Jean"; DELETE FROM utilisateurs WHERE nom = "Jean";',
+                    'hint' => $getTranslated('hint', 'Utilisez INSERT INTO utilisateurs (nom, age) VALUES ("Jean", 30); UPDATE utilisateurs SET age = 31 WHERE nom = "Jean"; DELETE FROM utilisateurs WHERE nom = "Jean";')
+                ],
+                12 => [
+                    'title' => $getTranslated('title', 'Création de tables'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 28,
+                    'instruction' => $getTranslated('instruction', 'Écrivez une requête SQL pour créer une table "produits" avec les colonnes id (INT, PRIMARY KEY), nom (VARCHAR(100)), prix (DECIMAL(10,2)).'),
+                    'description' => $getTranslated('description', 'CREATE TABLE crée une nouvelle table. Les colonnes sont définies avec leur nom, type et contraintes. PRIMARY KEY identifie de manière unique chaque ligne.'),
+                    'startCode' => '-- Créez la table produits
+',
+                    'solution' => 'CREATE TABLE produits (id INT PRIMARY KEY, nom VARCHAR(100), prix DECIMAL(10,2));',
+                    'hint' => $getTranslated('hint', 'Utilisez CREATE TABLE produits (id INT PRIMARY KEY, nom VARCHAR(100), prix DECIMAL(10,2));')
+                ],
+                13 => [
+                    'title' => $getTranslated('title', 'Contraintes et clés'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 28,
+                    'instruction' => $getTranslated('instruction', 'Écrivez une requête SQL pour créer une table avec une clé primaire, une clé étrangère, et une contrainte UNIQUE.'),
+                    'description' => $getTranslated('description', 'Les contraintes SQL garantissent l\'intégrité des données. PRIMARY KEY identifie de manière unique, FOREIGN KEY lie à une autre table, UNIQUE garantit l\'unicité.'),
+                    'startCode' => '-- Créez une table avec PRIMARY KEY, FOREIGN KEY et UNIQUE
+',
+                    'solution' => 'CREATE TABLE commandes (id INT PRIMARY KEY, utilisateur_id INT, email VARCHAR(100) UNIQUE, FOREIGN KEY (utilisateur_id) REFERENCES utilisateurs(id));',
+                    'hint' => $getTranslated('hint', 'Utilisez PRIMARY KEY (id), FOREIGN KEY (utilisateur_id) REFERENCES utilisateurs(id), UNIQUE (email) dans CREATE TABLE.')
+                ],
+                14 => [
+                    'title' => $getTranslated('title', 'Vues et index'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 25,
+                    'instruction' => $getTranslated('instruction', 'Écrivez une requête SQL pour créer une vue "utilisateurs_actifs" et un index sur la colonne "email".'),
+                    'description' => $getTranslated('description', 'Les vues SQL sont des requêtes sauvegardées qui se comportent comme des tables. Les index améliorent les performances de recherche. CREATE VIEW crée une vue, CREATE INDEX crée un index.'),
+                    'startCode' => '-- Créez une vue et un index
+',
+                    'solution' => 'CREATE VIEW utilisateurs_actifs AS SELECT * FROM utilisateurs WHERE actif = 1; CREATE INDEX idx_email ON utilisateurs(email);',
+                    'hint' => $getTranslated('hint', 'Utilisez CREATE VIEW utilisateurs_actifs AS SELECT * FROM utilisateurs WHERE actif = 1; et CREATE INDEX idx_email ON utilisateurs(email);')
+                ],
+                15 => [
+                    'title' => $getTranslated('title', 'Requêtes complexes'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 30,
+                    'instruction' => $getTranslated('instruction', 'Écrivez une requête SQL complexe qui joint plusieurs tables, utilise GROUP BY, HAVING, et des fonctions d\'agrégation.'),
+                    'description' => $getTranslated('description', 'Les requêtes complexes combinent plusieurs concepts SQL : JOIN, GROUP BY, HAVING, fonctions d\'agrégation, sous-requêtes. C\'est la maîtrise avancée de SQL.'),
+                    'startCode' => '-- Créez une requête complexe avec JOIN, GROUP BY, HAVING
+',
+                    'solution' => 'SELECT u.ville, COUNT(c.id) as nb_commandes, SUM(c.montant) as total FROM utilisateurs u LEFT JOIN commandes c ON u.id = c.utilisateur_id GROUP BY u.ville HAVING COUNT(c.id) > 0;',
+                    'hint' => $getTranslated('hint', 'Combinez SELECT, FROM, JOIN, WHERE, GROUP BY, HAVING, et des fonctions d\'agrégation dans une seule requête.')
                 ],
             ],
             'c' => [
@@ -6013,6 +6533,349 @@ int main() {
     return 0;
 }',
                     'hint' => $getTranslated('hint', 'Utilisez int age = 25; puis printf("Age : %d\\n", age);')
+                ],
+                3 => [
+                    'title' => $getTranslated('title', 'Opérateurs arithmétiques'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 10,
+                    'instruction' => $getTranslated('instruction', 'Calculez la somme de 10 et 5, puis affichez le résultat.'),
+                    'description' => $getTranslated('description', 'C supporte les opérateurs arithmétiques : + (addition), - (soustraction), * (multiplication), / (division), % (modulo).'),
+                    'startCode' => '#include <stdio.h>
+
+int main() {
+    // Calculez la somme de 10 et 5
+    // Affichez le résultat
+    return 0;
+}',
+                    'solution' => '#include <stdio.h>
+
+int main() {
+    int resultat = 10 + 5;
+    printf("%d\\n", resultat);
+    return 0;
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez int resultat = 10 + 5; puis printf("%d\\n", resultat);')
+                ],
+                4 => [
+                    'title' => $getTranslated('title', 'Conditions if/else'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 12,
+                    'instruction' => $getTranslated('instruction', 'Créez une condition if/else qui affiche "Majeur" si l\'âge est >= 18, sinon "Mineur".'),
+                    'description' => $getTranslated('description', 'Les conditions C utilisent if/else. Les opérateurs de comparaison (==, <, >, <=, >=, !=) comparent des valeurs.'),
+                    'startCode' => '#include <stdio.h>
+
+int main() {
+    int age = 20;
+    // Créez une condition if/else
+    // Affichez "Majeur" si age >= 18, sinon "Mineur"
+    return 0;
+}',
+                    'solution' => '#include <stdio.h>
+
+int main() {
+    int age = 20;
+    if (age >= 18) {
+        printf("Majeur\\n");
+    } else {
+        printf("Mineur\\n");
+    }
+    return 0;
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez if (age >= 18) { printf("Majeur\\n"); } else { printf("Mineur\\n"); }')
+                ],
+                5 => [
+                    'title' => $getTranslated('title', 'Boucles for et while'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 12,
+                    'instruction' => $getTranslated('instruction', 'Affichez les nombres de 1 à 5 en utilisant une boucle for.'),
+                    'description' => $getTranslated('description', 'Les boucles C répètent du code. for (initialisation; condition; incrément) répète tant que la condition est vraie. while répète aussi mais l\'incrément doit être géré manuellement.'),
+                    'startCode' => '#include <stdio.h>
+
+int main() {
+    // Affichez les nombres de 1 à 5 avec une boucle for
+    return 0;
+}',
+                    'solution' => '#include <stdio.h>
+
+int main() {
+    for (int i = 1; i <= 5; i++) {
+        printf("%d\\n", i);
+    }
+    return 0;
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez for (int i = 1; i <= 5; i++) { printf("%d\\n", i); }')
+                ],
+                6 => [
+                    'title' => $getTranslated('title', 'Fonctions C'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 18,
+                    'instruction' => $getTranslated('instruction', 'Créez une fonction qui additionne deux nombres et retourne le résultat.'),
+                    'description' => $getTranslated('description', 'Les fonctions C organisent le code réutilisable. int nomFonction(int a, int b) { return valeur; } définit une fonction. return retourne une valeur.'),
+                    'startCode' => '#include <stdio.h>
+
+// Créez une fonction qui additionne deux nombres
+int main() {
+    // Appelez la fonction et affichez le résultat
+    return 0;
+}',
+                    'solution' => '#include <stdio.h>
+
+int additionner(int a, int b) {
+    return a + b;
+}
+
+int main() {
+    int resultat = additionner(10, 5);
+    printf("%d\\n", resultat);
+    return 0;
+}',
+                    'hint' => $getTranslated('hint', 'Créez int additionner(int a, int b) { return a + b; }')
+                ],
+                7 => [
+                    'title' => $getTranslated('title', 'Tableaux'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 18,
+                    'instruction' => $getTranslated('instruction', 'Créez un tableau de 5 entiers et affichez chaque élément avec une boucle for.'),
+                    'description' => $getTranslated('description', 'Les tableaux C stockent des collections ordonnées. int arr[5] crée un tableau de 5 entiers. Les tableaux ont une taille fixe.'),
+                    'startCode' => '#include <stdio.h>
+
+int main() {
+    // Créez un tableau de 5 entiers
+    // Affichez chaque élément avec une boucle for
+    return 0;
+}',
+                    'solution' => '#include <stdio.h>
+
+int main() {
+    int arr[5] = {1, 2, 3, 4, 5};
+    for (int i = 0; i < 5; i++) {
+        printf("%d\\n", arr[i]);
+    }
+    return 0;
+}',
+                    'hint' => $getTranslated('hint', 'Créez int arr[5] = {1, 2, 3, 4, 5}; puis utilisez for (int i = 0; i < 5; i++) pour parcourir.')
+                ],
+                8 => [
+                    'title' => $getTranslated('title', 'Pointeurs de base'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 20,
+                    'instruction' => $getTranslated('instruction', 'Créez un pointeur vers une variable entière et affichez la valeur via le pointeur.'),
+                    'description' => $getTranslated('description', 'Les pointeurs C stockent l\'adresse mémoire d\'une variable. int *ptr déclare un pointeur, &variable obtient l\'adresse, *ptr accède à la valeur.'),
+                    'startCode' => '#include <stdio.h>
+
+int main() {
+    int x = 10;
+    // Créez un pointeur vers x
+    // Affichez la valeur via le pointeur
+    return 0;
+}',
+                    'solution' => '#include <stdio.h>
+
+int main() {
+    int x = 10;
+    int *ptr = &x;
+    printf("%d\\n", *ptr);
+    return 0;
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez int x = 10; int *ptr = &x; puis printf("%d\\n", *ptr);')
+                ],
+                9 => [
+                    'title' => $getTranslated('title', 'Pointeurs et tableaux'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 22,
+                    'instruction' => $getTranslated('instruction', 'Utilisez un pointeur pour parcourir un tableau et afficher tous les éléments.'),
+                    'description' => $getTranslated('description', 'Les pointeurs et tableaux sont étroitement liés en C. Le nom d\'un tableau est un pointeur vers son premier élément. ptr++ avance au prochain élément.'),
+                    'startCode' => '#include <stdio.h>
+
+int main() {
+    int arr[5] = {1, 2, 3, 4, 5};
+    // Utilisez un pointeur pour parcourir le tableau
+    return 0;
+}',
+                    'solution' => '#include <stdio.h>
+
+int main() {
+    int arr[5] = {1, 2, 3, 4, 5};
+    int *ptr = arr;
+    for (int i = 0; i < 5; i++) {
+        printf("%d\\n", *ptr);
+        ptr++;
+    }
+    return 0;
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez int arr[5] = {1, 2, 3, 4, 5}; int *ptr = arr; puis parcourez avec ptr++ et *ptr.')
+                ],
+                10 => [
+                    'title' => $getTranslated('title', 'Structures (struct)'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 20,
+                    'instruction' => $getTranslated('instruction', 'Créez une structure Personne avec les champs nom et age, puis créez une variable de ce type.'),
+                    'description' => $getTranslated('description', 'Les structures C permettent de regrouper des variables de types différents. struct Personne { } définit une structure. . accède aux champs.'),
+                    'startCode' => '#include <stdio.h>
+
+// Créez une structure Personne
+int main() {
+    // Créez une variable de type Personne et affichez ses champs
+    return 0;
+}',
+                    'solution' => '#include <stdio.h>
+
+struct Personne {
+    char nom[50];
+    int age;
+};
+
+int main() {
+    struct Personne p = {"Jean", 30};
+    printf("%s - %d\\n", p.nom, p.age);
+    return 0;
+}',
+                    'hint' => $getTranslated('hint', 'Créez struct Personne { char nom[50]; int age; }; puis struct Personne p = {"Jean", 30};')
+                ],
+                11 => [
+                    'title' => $getTranslated('title', 'Allocation mémoire'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 28,
+                    'instruction' => $getTranslated('instruction', 'Allouez dynamiquement de la mémoire pour un tableau de 10 entiers, puis libérez-la.'),
+                    'description' => $getTranslated('description', 'L\'allocation mémoire dynamique permet de créer des tableaux de taille variable. malloc() alloue, free() libère. stdlib.h contient ces fonctions.'),
+                    'startCode' => '#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    // Allouez de la mémoire pour un tableau de 10 entiers
+    // Libérez la mémoire
+    return 0;
+}',
+                    'solution' => '#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    int *arr = (int*)malloc(10 * sizeof(int));
+    if (arr != NULL) {
+        for (int i = 0; i < 10; i++) {
+            arr[i] = i + 1;
+        }
+        free(arr);
+    }
+    return 0;
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez int *arr = (int*)malloc(10 * sizeof(int)); puis free(arr);')
+                ],
+                12 => [
+                    'title' => $getTranslated('title', 'Pointeurs avancés'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 30,
+                    'instruction' => $getTranslated('instruction', 'Créez un pointeur de pointeur (double pointeur) et utilisez-le pour modifier une variable.'),
+                    'description' => $getTranslated('description', 'Les pointeurs de pointeurs stockent l\'adresse d\'un pointeur. int **ptr déclare un double pointeur. C\'est utile pour les tableaux multidimensionnels.'),
+                    'startCode' => '#include <stdio.h>
+
+int main() {
+    int x = 10;
+    // Créez un double pointeur et modifiez x
+    return 0;
+}',
+                    'solution' => '#include <stdio.h>
+
+int main() {
+    int x = 10;
+    int *ptr = &x;
+    int **pptr = &ptr;
+    **pptr = 20;
+    printf("%d\\n", x);
+    return 0;
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez int x = 10; int *ptr = &x; int **pptr = &ptr; puis **pptr = 20;')
+                ],
+                13 => [
+                    'title' => $getTranslated('title', 'Fichiers et I/O'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 28,
+                    'instruction' => $getTranslated('instruction', 'Créez un fichier "test.txt" avec le contenu "Hello C", puis lisez et affichez son contenu.'),
+                    'description' => $getTranslated('description', 'C peut lire et écrire des fichiers. fopen() ouvre un fichier, fwrite() écrit, fread() lit, fclose() ferme. FILE* représente un fichier.'),
+                    'startCode' => '#include <stdio.h>
+
+int main() {
+    // Créez un fichier "test.txt" avec "Hello C"
+    // Lisez et affichez son contenu
+    return 0;
+}',
+                    'solution' => '#include <stdio.h>
+
+int main() {
+    FILE *f = fopen("test.txt", "w");
+    if (f != NULL) {
+        fprintf(f, "Hello C");
+        fclose(f);
+    }
+    
+    f = fopen("test.txt", "r");
+    if (f != NULL) {
+        char ligne[100];
+        if (fgets(ligne, sizeof(ligne), f) != NULL) {
+            printf("%s", ligne);
+        }
+        fclose(f);
+    }
+    return 0;
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez FILE *f = fopen("test.txt", "w"); fwrite("Hello C", 1, 7, f); fclose(f); puis lisez avec fopen("test.txt", "r");')
+                ],
+                14 => [
+                    'title' => $getTranslated('title', 'Chaînes de caractères'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 25,
+                    'instruction' => $getTranslated('instruction', 'Créez une chaîne de caractères, copiez-la dans une autre chaîne, puis concaténez deux chaînes.'),
+                    'description' => $getTranslated('description', 'Les chaînes C sont des tableaux de caractères terminés par \\0. string.h contient strcpy() pour copier, strcat() pour concaténer, strlen() pour la longueur.'),
+                    'startCode' => '#include <stdio.h>
+#include <string.h>
+
+int main() {
+    // Créez une chaîne, copiez-la, puis concaténez
+    return 0;
+}',
+                    'solution' => '#include <stdio.h>
+#include <string.h>
+
+int main() {
+    char str1[50] = "Hello";
+    char str2[50];
+    strcpy(str2, str1);
+    strcat(str1, " World");
+    printf("%s\\n", str1);
+    printf("%s\\n", str2);
+    return 0;
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez char str1[50] = "Hello"; char str2[50]; strcpy(str2, str1); strcat(str1, " World");')
+                ],
+                15 => [
+                    'title' => $getTranslated('title', 'Programmation système'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 30,
+                    'instruction' => $getTranslated('instruction', 'Créez un programme qui utilise des appels système pour créer un processus enfant avec fork().'),
+                    'description' => $getTranslated('description', 'La programmation système C permet d\'interagir avec le système d\'exploitation. fork() crée un processus enfant, exec() exécute un programme, wait() attend un processus.'),
+                    'startCode' => '#include <stdio.h>
+#include <unistd.h>
+#include <sys/wait.h>
+
+int main() {
+    // Créez un processus enfant avec fork()
+    return 0;
+}',
+                    'solution' => '#include <stdio.h>
+#include <unistd.h>
+#include <sys/wait.h>
+
+int main() {
+    pid_t pid = fork();
+    if (pid == 0) {
+        printf("Processus enfant\\n");
+    } else if (pid > 0) {
+        wait(NULL);
+        printf("Processus parent\\n");
+    }
+    return 0;
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez pid_t pid = fork(); pour créer un processus enfant. Vérifiez pid pour distinguer le parent et l\'enfant.')
                 ],
             ],
         ];
