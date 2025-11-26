@@ -429,11 +429,19 @@
     
     /* Hide textarea but keep it in DOM for CodeMirror */
     #codeEditor {
-        position: absolute;
-        left: -9999px;
-        opacity: 0;
-        width: 1px;
-        height: 1px;
+        position: absolute !important;
+        left: -9999px !important;
+        opacity: 0 !important;
+        width: 1px !important;
+        height: 1px !important;
+        visibility: hidden !important;
+        display: none !important;
+    }
+    
+    /* S'assurer que CodeMirror est visible */
+    .CodeMirror {
+        display: block !important;
+        visibility: visible !important;
     }
     
     .code-editor-wrapper {
@@ -595,7 +603,7 @@
                     </button>
                 </div>
                 <div class="code-editor-wrapper">
-                    <textarea id="codeEditor" spellcheck="false">{{ $exercise['startCode'] }}</textarea>
+                    <textarea id="codeEditor" spellcheck="false" style="display: none !important; visibility: hidden !important; position: absolute !important; left: -9999px !important; opacity: 0 !important; width: 1px !important; height: 1px !important;">{!! htmlspecialchars($exercise['startCode'], ENT_QUOTES, 'UTF-8') !!}</textarea>
                 </div>
                 
                 <div class="mt-4 flex gap-3">
@@ -653,6 +661,20 @@
         errorTitle: @json(trans('app.exercices.detail.error_title')),
         errorMessage: @json(trans('app.exercices.detail.error_message')),
     };
+    // Cacher immédiatement le textarea avant le chargement de CodeMirror
+    (function() {
+        const textarea = document.getElementById('codeEditor');
+        if (textarea) {
+            textarea.style.display = 'none';
+            textarea.style.visibility = 'hidden';
+            textarea.style.position = 'absolute';
+            textarea.style.left = '-9999px';
+            textarea.style.opacity = '0';
+            textarea.style.width = '1px';
+            textarea.style.height = '1px';
+        }
+    })();
+    
     // Charger les scripts CodeMirror de manière séquentielle
     function loadScript(src, callback) {
         const script = document.createElement('script');
@@ -712,6 +734,12 @@
             codeMirrorMode = 'python';
         } else if (language === 'html5' || language === 'html') {
             codeMirrorMode = 'htmlmixed';
+        } else if (language === 'java') {
+            codeMirrorMode = 'text/x-java';
+        } else if (language === 'c' || language === 'cpp' || language === 'c++') {
+            codeMirrorMode = 'text/x-csrc';
+        } else if (language === 'sql') {
+            codeMirrorMode = 'text/x-sql';
         }
         
         // Déterminer le thème selon le mode sombre
@@ -729,15 +757,20 @@
                 return;
             }
             
+            // S'assurer que le textarea a le code avec les retours à la ligne préservés
+            if (textarea.value !== startCode) {
+                textarea.value = startCode;
+            }
+            
             // Initialiser CodeMirror
             const codeEditor = CodeMirror.fromTextArea(textarea, {
                 mode: codeMirrorMode,
                 theme: codeMirrorTheme,
                 lineNumbers: true,
                 lineWrapping: true,
-                indentUnit: 2,
+                indentUnit: 4,
                 indentWithTabs: false,
-                tabSize: 2,
+                tabSize: 4,
                 autofocus: false,
                 matchBrackets: true,
                 autoCloseBrackets: true,
@@ -767,6 +800,12 @@
                     }
                 }
             });
+            
+            // S'assurer que le code initial est correctement formaté avec les retours à la ligne
+            // CodeMirror lit automatiquement le contenu du textarea, donc on s'assure qu'il est correct
+            if (codeEditor.getValue() !== startCode) {
+                codeEditor.setValue(startCode);
+            }
             
             // Stocker l'instance globalement
             window.codeEditorInstance = codeEditor;
@@ -850,8 +889,8 @@
                 `);
         iframeDoc.close();
         
-                // Si c'est du PHP ou Python, exécuter côté serveur
-                if (language === 'php' || language === 'python') {
+                // Si c'est du PHP, Python ou Java, exécuter côté serveur
+                if (language === 'php' || language === 'python' || language === 'java') {
                     fetch(`/exercices/${language}/run`, {
                         method: 'POST',
                         headers: {
@@ -875,7 +914,7 @@
                         iframeDoc.open();
                         
                         if (data.error) {
-                            const langName = language === 'python' ? 'Python' : 'PHP';
+                            const langName = language === 'python' ? 'Python' : (language === 'java' ? 'Java' : 'PHP');
                             iframeDoc.write(`
                                 <!DOCTYPE html>
                                 <html>
@@ -1098,7 +1137,7 @@
                                             }
                                         </style>
                                     </head>
-                                    <body style="margin: 0 !important; padding: 0 !important; padding-top: 0 !important; margin-top: 0 !important;">${hasOutput ? output : '<p class="no-output">' + translations.noOutput + '</p>'}
+                                    <body style="margin: 0 !important; padding: 0 !important; padding-top: 0 !important; margin-top: 0 !important;">${hasOutput ? output : '<p class="no-output">' + (language === 'java' ? 'Aucune sortie. Le code s\'est exécuté sans erreur mais n\'a rien affiché. Utilisez System.out.println() pour afficher des résultats.' : language === 'python' ? 'Aucune sortie. Le code s\'est exécuté sans erreur mais n\'a rien affiché. Utilisez print() pour afficher des résultats.' : translations.noOutput) + '</p>'}
                                     </body>
                                     </html>
                                 `);
@@ -1546,7 +1585,7 @@
                                         }
                                     </style>
                                 </head>
-                                <body style="margin: 0 !important; padding: 0 !important;">${hasOutput ? output : '<p class="no-output">Aucune sortie.</p>'}
+                                <body style="margin: 0 !important; padding: 0 !important;">${hasOutput ? output : '<p class="no-output">' + (language === 'java' ? 'Aucune sortie. Le code s\'est exécuté sans erreur mais n\'a rien affiché. Utilisez System.out.println() pour afficher des résultats.' : language === 'python' ? 'Aucune sortie. Le code s\'est exécuté sans erreur mais n\'a rien affiché. Utilisez print() pour afficher des résultats.' : 'Aucune sortie.') + '</p>'}
                                 </body>
                                 </html>
                             `);

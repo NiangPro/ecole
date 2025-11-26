@@ -592,51 +592,52 @@
             <p>Le langage C est un langage de programmation <strong>compilé</strong> et <strong>procédural</strong>. C est un langage de <strong>bas niveau</strong> qui donne un contrôle direct sur la mémoire et les ressources système. C'est un langage puissant mais qui nécessite une compréhension approfondie de la gestion mémoire et des pointeurs.</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">💡 Pourquoi Python est si populaire ?</h3>
+                <h3 style="color: #000;">💡 Pourquoi le langage C est si important ?</h3>
                 <ol style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                    <li><strong>Syntaxe simple et lisible</strong> - Le code Python ressemble presque à de l'anglais, ce qui le rend facile à apprendre et à comprendre</li>
-                    <li><strong>Polyvalent</strong> - Utilisé pour le web (Django, Flask), la data science (Pandas, NumPy), l'IA (TensorFlow, PyTorch), l'automatisation</li>
-                    <li><strong>Vaste bibliothèque standard</strong> - Des milliers de modules disponibles pour presque tous les besoins</li>
-                    <li><strong>Communauté active</strong> - Des millions de développeurs dans le monde, documentation complète, nombreuses ressources d'apprentissage</li>
-                    <li><strong>Open-source et gratuit</strong> - Aucun coût de licence, multiplateforme (Windows, Linux, macOS)</li>
-                    <li><strong>Multi-paradigme</strong> - Supporte la programmation procédurale, orientée objet et fonctionnelle</li>
+                    <li><strong>Fondement des langages modernes</strong> - C est à la base de nombreux langages (C++, Java, C#, Python, JavaScript). Comprendre C aide à mieux maîtriser ces langages</li>
+                    <li><strong>Performance maximale</strong> - C offre un contrôle direct sur la mémoire et les ressources système, permettant des applications très rapides</li>
+                    <li><strong>Programmation système</strong> - Utilisé pour développer les systèmes d'exploitation (Linux, Windows), les drivers, les compilateurs</li>
+                    <li><strong>Systèmes embarqués</strong> - Idéal pour la programmation de microcontrôleurs, IoT, systèmes temps réel</li>
+                    <li><strong>Standard et portable</strong> - Code C peut être compilé sur presque toutes les plateformes (Windows, Linux, macOS, embarqué)</li>
+                    <li><strong>Contrôle total</strong> - Gestion manuelle de la mémoire et des pointeurs donne un contrôle précis sur les performances</li>
                 </ol>
             </div>
 
-            <h3>🚀 Pourquoi apprendre Python ?</h3>
-            <p>Python est un excellent choix pour débuter en programmation pour plusieurs raisons :</p>
+            <h3>🚀 Pourquoi apprendre le langage C ?</h3>
+            <p>Le langage C est essentiel pour comprendre les fondements de la programmation :</p>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li>✅ <strong>Facile à apprendre</strong> - Syntaxe claire et intuitive, parfaite pour les débutants. La courbe d'apprentissage est douce comparée à d'autres langages</li>
-                <li>✅ <strong>Polyvalent</strong> - Développement web (Django, Flask), data science (Pandas, NumPy), IA (TensorFlow, PyTorch), automatisation, scripts système</li>
-                <li>✅ <strong>Très demandé</strong> - L'un des langages les plus recherchés sur le marché du travail. Utilisé par Google, Facebook, Netflix, Instagram, Spotify</li>
-                <li>✅ <strong>Gratuit et Open-Source</strong> - Aucun coût, multiplateforme, communauté active</li>
-                <li>✅ <strong>Vaste écosystème</strong> - Des milliers de bibliothèques disponibles via pip (gestionnaire de paquets Python)</li>
-                <li>✅ <strong>Grande communauté</strong> - Support et ressources abondantes, forums actifs, tutoriels gratuits</li>
-                <li>✅ <strong>Rapidité de développement</strong> - Permet de développer rapidement des prototypes et applications</li>
+                <li>✅ <strong>Comprendre l'informatique</strong> - C vous apprend comment fonctionnent vraiment les ordinateurs, la mémoire, les pointeurs</li>
+                <li>✅ <strong>Performance</strong> - Applications nécessitant des performances maximales (jeux vidéo, systèmes temps réel, embarqué)</li>
+                <li>✅ <strong>Programmation système</strong> - Développement de systèmes d'exploitation, drivers, compilateurs, outils système</li>
+                <li>✅ <strong>Base solide</strong> - Comprendre C facilite l'apprentissage de C++, Java, et autres langages dérivés</li>
+                <li>✅ <strong>Industrie</strong> - Très utilisé dans l'embarqué, l'automobile, l'aéronautique, les systèmes critiques</li>
+                <li>✅ <strong>Contrôle précis</strong> - Gestion manuelle de la mémoire permet d'optimiser chaque octet</li>
+                <li>✅ <strong>Standard ANSI</strong> - Langage standardisé, portable sur toutes les plateformes</li>
             </ul>
 
-            <h3>📋 Prérequis pour apprendre Python</h3>
-            <p>Python est si simple que vous pouvez commencer sans aucune expérience préalable ! Cependant, avoir des connaissances de base en :</p>
+            <h3>📋 Prérequis pour apprendre C</h3>
+            <p>Pour apprendre C efficacement, il est recommandé d'avoir :</p>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
                 <li>✅ <strong>Informatique de base</strong> - Savoir utiliser un ordinateur, créer et éditer des fichiers</li>
-                <li>⚠️ <strong>Logique</strong> - Comprendre les concepts de base (variables, conditions, boucles) est utile mais pas obligatoire, vous les apprendrez avec Python</li>
+                <li>⚠️ <strong>Logique de programmation</strong> - Comprendre les concepts de base (variables, conditions, boucles) est très utile</li>
+                <li>⚠️ <strong>Patience</strong> - C nécessite plus d'attention aux détails que les langages de haut niveau</li>
             </ul>
 
             <div class="note-box">
-                <p style="color: #000;"><strong>💡 Note importante :</strong> Python est installé par défaut sur Linux et macOS. Pour Windows, vous pouvez télécharger Python depuis <a href="https://www.python.org/downloads/" target="_blank" style="color: #3776ab; font-weight: bold;">python.org</a>. Vous pouvez aussi utiliser un IDE comme PyCharm, VS Code, ou simplement l'interpréteur Python en ligne de commande. Pour tester rapidement, vous pouvez utiliser des environnements en ligne comme Repl.it ou Python.org/shell.</p>
+                <p style="color: #000;"><strong>💡 Note importante :</strong> Pour compiler du code C, vous avez besoin d'un compilateur comme GCC (GNU Compiler Collection) qui est disponible gratuitement. Sur Linux, GCC est souvent préinstallé. Sur Windows, vous pouvez installer MinGW ou utiliser Visual Studio. Sur macOS, installez Xcode Command Line Tools. Vous pouvez aussi utiliser des IDE comme Code::Blocks, Dev-C++, ou Visual Studio Code avec l'extension C/C++.</p>
             </div>
 
-            <h3>🎯 Cas d'usage de Python</h3>
-            <p>Python est utilisé dans de nombreux domaines :</p>
+            <h3>🎯 Cas d'usage du langage C</h3>
+            <p>Le langage C est utilisé dans de nombreux domaines critiques :</p>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li>🌐 <strong>Développement web</strong> - Django, Flask pour créer des sites web et API REST. Frameworks modernes et puissants</li>
-                <li>📊 <strong>Data Science</strong> - Analyse de données, visualisation avec Pandas, NumPy, Matplotlib. Très utilisé dans la finance et la recherche</li>
-                <li>🤖 <strong>Intelligence Artificielle</strong> - Machine Learning, Deep Learning avec TensorFlow, PyTorch, Scikit-learn</li>
-                <li>🔧 <strong>Automatisation</strong> - Scripts pour automatiser des tâches répétitives, traitement de fichiers, web scraping</li>
-                <li>📱 <strong>Applications desktop</strong> - Tkinter, PyQt pour créer des interfaces graphiques multiplateformes</li>
-                <li>🎮 <strong>Développement de jeux</strong> - Pygame pour créer des jeux vidéo 2D</li>
-                <li>🌐 <strong>Scraping web</strong> - BeautifulSoup, Scrapy pour extraire des données de sites web</li>
-                <li>🔬 <strong>Calcul scientifique</strong> - NumPy, SciPy pour les calculs mathématiques et scientifiques</li>
+                <li>🖥️ <strong>Systèmes d'exploitation</strong> - Linux, Windows (en partie), macOS utilisent C pour leurs noyaux</li>
+                <li>🔧 <strong>Programmation système</strong> - Drivers, compilateurs, interpréteurs, outils système</li>
+                <li>🚗 <strong>Systèmes embarqués</strong> - Microcontrôleurs, IoT, systèmes temps réel, automobile, aéronautique</li>
+                <li>🎮 <strong>Jeux vidéo</strong> - Moteurs de jeux nécessitant des performances maximales</li>
+                <li>📡 <strong>Réseaux</strong> - Protocoles réseau, serveurs haute performance</li>
+                <li>🔬 <strong>Calcul scientifique</strong> - Applications nécessitant des calculs intensifs</li>
+                <li>💾 <strong>Bases de données</strong> - Moteurs de bases de données (MySQL, PostgreSQL utilisent C)</li>
+                <li>🌐 <strong>Serveurs web</strong> - Serveurs web haute performance (nginx, Apache)</li>
             </ul>
 
             <h2 id="syntax">📝 Syntaxe de base</h2>
@@ -879,7 +880,7 @@ int main() {
             </div>
 
             <h2 id="conditions">🔀 Structures conditionnelles</h2>
-            <p>Python utilise <code>if</code>, <code>elif</code> (else if) et <code>else</code> pour les conditions. L'indentation est cruciale pour définir les blocs de code.</p>
+            <p>Le langage C utilise <code>if</code>, <code>else if</code> et <code>else</code> pour les conditions. Les blocs de code sont délimités par des accolades <code>{}</code>.</p>
 
             <div class="code-box">
                 <pre><code class="language-c"># Structure if simple
@@ -935,7 +936,7 @@ else:
             </div>
 
             <h2 id="loops">🔄 Boucles</h2>
-            <p>Python propose deux types de boucles : <code>for</code> (pour itérer sur une séquence) et <code>while</code> (pour répéter tant qu'une condition est vraie) :</p>
+            <p>Le langage C propose trois types de boucles : <code>for</code> (pour itérer un nombre défini de fois), <code>while</code> (pour répéter tant qu'une condition est vraie) et <code>do-while</code> (exécute au moins une fois) :</p>
 
             <div class="code-box">
                 <pre><code class="language-c"># Boucle for avec range()
@@ -988,7 +989,7 @@ else:
             </div>
 
             <h2 id="functions">⚙️ Fonctions</h2>
-            <p>Les fonctions permettent de réutiliser du code. En Python, on définit une fonction avec <code>def</code>. Les fonctions peuvent prendre des paramètres et retourner des valeurs avec <code>return</code>.</p>
+            <p>Les fonctions permettent de réutiliser du code. En C, on définit une fonction avec son type de retour, son nom et ses paramètres. Les fonctions peuvent prendre des paramètres et retourner des valeurs avec <code>return</code>.</p>
 
             <div class="code-box">
                 <pre><code class="language-c"># Fonction simple (sans paramètres)
@@ -1301,37 +1302,38 @@ int main() {
             </div>
 
             <div class="note-box">
-                <p style="color: #000;"><strong>💡 Bonne pratique :</strong> Utilisez toujours <code>with</code> pour ouvrir les fichiers. Cela garantit que le fichier sera fermé automatiquement même en cas d'erreur. C'est la méthode recommandée en Python et cela évite les fuites de ressources !</p>
+                <p style="color: #000;"><strong>💡 Bonne pratique :</strong> Toujours fermer les fichiers avec <code>fclose()</code> après utilisation pour libérer les ressources. Vérifiez toujours que <code>fopen()</code> retourne un pointeur non-NULL avant d'utiliser le fichier. Cela évite les fuites de ressources et les erreurs d'accès !</p>
             </div>
 
             <h2>🎓 Prochaines étapes</h2>
-            <p>Félicitations ! Vous avez maintenant une solide base en Python.</p>
+            <p>Félicitations ! Vous avez maintenant une solide base en langage C.</p>
             
             <div class="example-box" style="background-color: #d4edda; border-left-color: #28a745;">
                 <h3 style="color: #000;">✅ Ce que vous avez appris :</h3>
                 <ul style="margin-left: 20px; line-height: 2; color: #000;">
-                    <li>Syntaxe Python et variables</li>
-                    <li>Types de données (str, int, float, bool, list, dict, tuple, set)</li>
-                    <li>Opérateurs (arithmétiques, comparaison, logiques)</li>
-                    <li>Structures conditionnelles (if, elif, else)</li>
-                    <li>Boucles (for et while)</li>
-                    <li>Fonctions (définition, paramètres, return, lambda)</li>
-                    <li>Listes et dictionnaires (méthodes, slicing)</li>
-                    <li>Modules (import, création)</li>
-                    <li>Programmation Orientée Objet (classes, objets, héritage)</li>
-                    <li>Manipulation de fichiers (lecture, écriture, gestion d'erreurs)</li>
+                    <li>Syntaxe C et variables</li>
+                    <li>Types de données (int, float, double, char, void)</li>
+                    <li>Opérateurs (arithmétiques, comparaison, logiques, pointeurs)</li>
+                    <li>Structures conditionnelles (if, else if, else, switch)</li>
+                    <li>Boucles (for, while, do-while)</li>
+                    <li>Fonctions (définition, paramètres, return, prototypes)</li>
+                    <li>Pointeurs et références</li>
+                    <li>Tableaux et chaînes de caractères</li>
+                    <li>Structures (struct) et unions</li>
+                    <li>Gestion de la mémoire (malloc, calloc, realloc, free)</li>
+                    <li>Manipulation de fichiers (fopen, fclose, fprintf, fscanf, fread, fwrite)</li>
                 </ul>
             </div>
 
             <div class="example-box">
                 <h3 style="color: #000;">🚀 Pour aller plus loin :</h3>
                 <ul style="margin-left: 20px; line-height: 2; color: #000;">
-                    <li>📚 <strong>Compréhensions de listes</strong> - Syntaxe concise pour créer des listes</li>
-                    <li>🔧 <strong>Gestion des exceptions</strong> - try/except pour gérer les erreurs</li>
-                    <li>📦 <strong>Packages et pip</strong> - Installer des bibliothèques externes</li>
-                    <li>🌐 <strong>Développement web</strong> - Django ou Flask pour créer des sites web</li>
-                    <li>📊 <strong>Data Science</strong> - Pandas, NumPy pour l'analyse de données</li>
-                    <li>🤖 <strong>Intelligence Artificielle</strong> - TensorFlow, PyTorch pour le Machine Learning</li>
+                    <li>📚 <strong>C++</strong> - Langage orienté objet basé sur C</li>
+                    <li>🔧 <strong>Programmation système</strong> - Développement de drivers, outils système</li>
+                    <li>📦 <strong>Bibliothèques C</strong> - Utilisation de bibliothèques externes (GTK, SDL, etc.)</li>
+                    <li>🌐 <strong>Réseaux</strong> - Programmation réseau avec sockets</li>
+                    <li>📊 <strong>Algorithmes avancés</strong> - Structures de données complexes, algorithmes optimisés</li>
+                    <li>🤖 <strong>Systèmes embarqués</strong> - Programmation de microcontrôleurs, IoT</li>
                 </ul>
             </div>
 

@@ -591,51 +591,52 @@
             <p>SQL est un langage <strong>déclaratif</strong> utilisé pour interagir avec les bases de données relationnelles. Contrairement aux langages de programmation impératifs, SQL décrit <strong>ce que vous voulez</strong> plutôt que <strong>comment l'obtenir</strong>. SQL permet de créer, lire, modifier et supprimer des données dans une base de données.</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">💡 Pourquoi Python est si populaire ?</h3>
+                <h3 style="color: #000;">💡 Pourquoi SQL est si important ?</h3>
                 <ol style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                    <li><strong>Syntaxe simple et lisible</strong> - Le code Python ressemble presque à de l'anglais, ce qui le rend facile à apprendre et à comprendre</li>
-                    <li><strong>Polyvalent</strong> - Utilisé pour le web (Django, Flask), la data science (Pandas, NumPy), l'IA (TensorFlow, PyTorch), l'automatisation</li>
-                    <li><strong>Vaste bibliothèque standard</strong> - Des milliers de modules disponibles pour presque tous les besoins</li>
-                    <li><strong>Communauté active</strong> - Des millions de développeurs dans le monde, documentation complète, nombreuses ressources d'apprentissage</li>
-                    <li><strong>Open-source et gratuit</strong> - Aucun coût de licence, multiplateforme (Windows, Linux, macOS)</li>
-                    <li><strong>Multi-paradigme</strong> - Supporte la programmation procédurale, orientée objet et fonctionnelle</li>
+                    <li><strong>Standard universel</strong> - SQL est le langage standard pour interagir avec les bases de données relationnelles, utilisé partout dans le monde</li>
+                    <li><strong>Indispensable pour les développeurs</strong> - Presque toutes les applications modernes utilisent des bases de données, SQL est donc essentiel</li>
+                    <li><strong>Gestion efficace des données</strong> - Permet de stocker, récupérer, modifier et analyser de grandes quantités de données efficacement</li>
+                    <li><strong>Compatible avec tous les SGBD</strong> - Fonctionne avec MySQL, PostgreSQL, SQL Server, Oracle, SQLite, etc.</li>
+                    <li><strong>Syntaxe déclarative</strong> - Vous décrivez ce que vous voulez, pas comment l'obtenir, ce qui rend le code plus lisible</li>
+                    <li><strong>Très demandé</strong> - Compétence essentielle recherchée par les employeurs dans le développement web, data science, business intelligence</li>
                 </ol>
             </div>
 
-            <h3>🚀 Pourquoi apprendre Python ?</h3>
-            <p>Python est un excellent choix pour débuter en programmation pour plusieurs raisons :</p>
+            <h3>🚀 Pourquoi apprendre SQL ?</h3>
+            <p>SQL est essentiel pour tout développeur ou professionnel travaillant avec des données :</p>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li>✅ <strong>Facile à apprendre</strong> - Syntaxe claire et intuitive, parfaite pour les débutants. La courbe d'apprentissage est douce comparée à d'autres langages</li>
-                <li>✅ <strong>Polyvalent</strong> - Développement web (Django, Flask), data science (Pandas, NumPy), IA (TensorFlow, PyTorch), automatisation, scripts système</li>
-                <li>✅ <strong>Très demandé</strong> - L'un des langages les plus recherchés sur le marché du travail. Utilisé par Google, Facebook, Netflix, Instagram, Spotify</li>
-                <li>✅ <strong>Gratuit et Open-Source</strong> - Aucun coût, multiplateforme, communauté active</li>
-                <li>✅ <strong>Vaste écosystème</strong> - Des milliers de bibliothèques disponibles via pip (gestionnaire de paquets Python)</li>
-                <li>✅ <strong>Grande communauté</strong> - Support et ressources abondantes, forums actifs, tutoriels gratuits</li>
-                <li>✅ <strong>Rapidité de développement</strong> - Permet de développer rapidement des prototypes et applications</li>
+                <li>✅ <strong>Développement web</strong> - Toutes les applications web modernes utilisent des bases de données (e-commerce, réseaux sociaux, CMS)</li>
+                <li>✅ <strong>Data Science</strong> - Extraction et analyse de données pour prendre des décisions basées sur les données</li>
+                <li>✅ <strong>Business Intelligence</strong> - Création de rapports, tableaux de bord, analyses commerciales</li>
+                <li>✅ <strong>Très demandé</strong> - Compétence recherchée dans presque tous les domaines : développement, marketing, finance, gestion</li>
+                <li>✅ <strong>Syntaxe simple</strong> - SQL est relativement facile à apprendre avec une syntaxe proche de l'anglais</li>
+                <li>✅ <strong>Standard universel</strong> - Une fois appris, vous pouvez l'utiliser avec n'importe quel système de gestion de base de données</li>
+                <li>✅ <strong>Performance</strong> - Permet d'optimiser les requêtes pour gérer efficacement de grandes quantités de données</li>
             </ul>
 
-            <h3>📋 Prérequis pour apprendre Python</h3>
-            <p>Python est si simple que vous pouvez commencer sans aucune expérience préalable ! Cependant, avoir des connaissances de base en :</p>
+            <h3>📋 Prérequis pour apprendre SQL</h3>
+            <p>Pour apprendre SQL, il est recommandé d'avoir :</p>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
                 <li>✅ <strong>Informatique de base</strong> - Savoir utiliser un ordinateur, créer et éditer des fichiers</li>
-                <li>⚠️ <strong>Logique</strong> - Comprendre les concepts de base (variables, conditions, boucles) est utile mais pas obligatoire, vous les apprendrez avec Python</li>
+                <li>⚠️ <strong>Logique</strong> - Comprendre les concepts de base (conditions, filtres) est utile mais pas obligatoire</li>
+                <li>⚠️ <strong>Notions de bases de données</strong> - Comprendre ce qu'est une table, une ligne, une colonne facilite l'apprentissage</li>
             </ul>
 
             <div class="note-box">
-                <p style="color: #000;"><strong>💡 Note importante :</strong> Python est installé par défaut sur Linux et macOS. Pour Windows, vous pouvez télécharger Python depuis <a href="https://www.python.org/downloads/" target="_blank" style="color: #3776ab; font-weight: bold;">python.org</a>. Vous pouvez aussi utiliser un IDE comme PyCharm, VS Code, ou simplement l'interpréteur Python en ligne de commande. Pour tester rapidement, vous pouvez utiliser des environnements en ligne comme Repl.it ou Python.org/shell.</p>
+                <p style="color: #000;"><strong>💡 Note importante :</strong> Pour pratiquer SQL, vous pouvez installer un système de gestion de base de données gratuit comme MySQL, PostgreSQL ou SQLite. SQLite est particulièrement simple car il ne nécessite pas de serveur. Vous pouvez aussi utiliser des environnements en ligne comme SQLFiddle, DB-Fiddle, ou des outils comme phpMyAdmin, DBeaver, ou MySQL Workbench pour une interface graphique.</p>
             </div>
 
-            <h3>🎯 Cas d'usage de Python</h3>
-            <p>Python est utilisé dans de nombreux domaines :</p>
+            <h3>🎯 Cas d'usage de SQL</h3>
+            <p>SQL est utilisé dans de nombreux domaines :</p>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li>🌐 <strong>Développement web</strong> - Django, Flask pour créer des sites web et API REST. Frameworks modernes et puissants</li>
-                <li>📊 <strong>Data Science</strong> - Analyse de données, visualisation avec Pandas, NumPy, Matplotlib. Très utilisé dans la finance et la recherche</li>
-                <li>🤖 <strong>Intelligence Artificielle</strong> - Machine Learning, Deep Learning avec TensorFlow, PyTorch, Scikit-learn</li>
-                <li>🔧 <strong>Automatisation</strong> - Scripts pour automatiser des tâches répétitives, traitement de fichiers, web scraping</li>
-                <li>📱 <strong>Applications desktop</strong> - Tkinter, PyQt pour créer des interfaces graphiques multiplateformes</li>
-                <li>🎮 <strong>Développement de jeux</strong> - Pygame pour créer des jeux vidéo 2D</li>
-                <li>🌐 <strong>Scraping web</strong> - BeautifulSoup, Scrapy pour extraire des données de sites web</li>
-                <li>🔬 <strong>Calcul scientifique</strong> - NumPy, SciPy pour les calculs mathématiques et scientifiques</li>
+                <li>🌐 <strong>Développement web</strong> - Sites e-commerce, réseaux sociaux, CMS, applications web stockent leurs données en base</li>
+                <li>📊 <strong>Data Science</strong> - Extraction, transformation et analyse de données pour l'analyse prédictive</li>
+                <li>💼 <strong>Business Intelligence</strong> - Création de rapports, tableaux de bord, analyses commerciales et financières</li>
+                <li>🏦 <strong>Finance</strong> - Gestion des transactions, comptabilité, rapports financiers</li>
+                <li>🏥 <strong>Santé</strong> - Gestion des dossiers patients, systèmes d'information hospitaliers</li>
+                <li>🛒 <strong>E-commerce</strong> - Gestion des produits, commandes, clients, inventaires</li>
+                <li>📱 <strong>Applications mobiles</strong> - Stockage local avec SQLite ou synchronisation avec serveurs distants</li>
+                <li>🔍 <strong>Recherche</strong> - Moteurs de recherche, catalogues, systèmes de recommandation</li>
             </ul>
 
             <h2 id="syntax">📝 Syntaxe de base</h2>
