@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', __('formations.html5.title') . ' | NiangProgrammeur')
+@section('title', trans('app.formations.html5.title') . ' | NiangProgrammeur')
 
 @section('styles')
 <style>
@@ -463,7 +463,7 @@
 <div class="tutorial-content">
     <div class="content-wrapper">
         <!-- Sidebar Toggle Button (Mobile) -->
-        <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Ouvrir le menu">
+        <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="{{ trans('app.formations.html5.menu_open') }}">
             <i class="fas fa-bars" id="sidebarToggleIcon"></i>
         </button>
         
@@ -473,77 +473,73 @@
         <!-- Sidebar -->
         <aside class="sidebar" id="tutorialSidebar">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid rgba(4, 170, 109, 0.2);">
-                <h3 style="margin: 0;">{{ __('formations.html5.title') }}</h3>
-                <button class="sidebar-close-btn" id="sidebarClose" style="display: none; background: none; border: none; color: #04AA6D; font-size: 24px; cursor: pointer; padding: 5px; width: 35px; height: 35px; border-radius: 50%; transition: all 0.3s ease;" aria-label="Fermer le menu">
+                <h3 style="margin: 0;">{{ trans('app.formations.html5.title') }}</h3>
+                <button class="sidebar-close-btn" id="sidebarClose" style="display: none; background: none; border: none; color: #04AA6D; font-size: 24px; cursor: pointer; padding: 5px; width: 35px; height: 35px; border-radius: 50%; transition: all 0.3s ease;" aria-label="{{ trans('app.formations.html5.menu_close') }}">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <a href="#intro" class="active">Introduction HTML5</a>
-            <a href="#editors">Éditeurs HTML</a>
-            <a href="#basic">HTML Basique</a>
-            <a href="#elements">Éléments HTML</a>
-            <a href="#attributes">Attributs HTML</a>
-            <a href="#headings">Titres HTML</a>
-            <a href="#paragraphs">Paragraphes</a>
-            <a href="#styles">Styles CSS</a>
-            <a href="#formatting">Formatage Texte</a>
-            <a href="#quotations">Citations</a>
-            <a href="#comments">Commentaires</a>
-            <a href="#colors">Couleurs</a>
-            <a href="#links">Liens Hypertextes</a>
-            <a href="#images">Images</a>
-            <a href="#tables">Tableaux</a>
-            <a href="#lists">Listes</a>
-            <a href="#forms">Formulaires</a>
-            <a href="#media">Audio & Vidéo</a>
-            <a href="#canvas">Canvas</a>
-            <a href="#svg">SVG</a>
-            <a href="#apis">APIs HTML5</a>
-            <a href="#semantic">HTML Sémantique</a>
+            <a href="#intro" class="active">{{ trans('app.formations.html5.sidebar_menu')[0] }}</a>
+            <a href="#editors">{{ trans('app.formations.html5.sidebar_menu')[1] }}</a>
+            <a href="#basic">{{ trans('app.formations.html5.sidebar_menu')[2] }}</a>
+            <a href="#elements">{{ trans('app.formations.html5.sidebar_menu')[3] }}</a>
+            <a href="#attributes">{{ trans('app.formations.html5.sidebar_menu')[4] }}</a>
+            <a href="#headings">{{ trans('app.formations.html5.sidebar_menu')[5] }}</a>
+            <a href="#paragraphs">{{ trans('app.formations.html5.sidebar_menu')[6] }}</a>
+            <a href="#styles">{{ trans('app.formations.html5.sidebar_menu')[7] }}</a>
+            <a href="#formatting">{{ trans('app.formations.html5.sidebar_menu')[8] }}</a>
+            <a href="#quotations">{{ trans('app.formations.html5.sidebar_menu')[9] }}</a>
+            <a href="#comments">{{ trans('app.formations.html5.sidebar_menu')[10] }}</a>
+            <a href="#colors">{{ trans('app.formations.html5.sidebar_menu')[11] }}</a>
+            <a href="#links">{{ trans('app.formations.html5.sidebar_menu')[12] }}</a>
+            <a href="#images">{{ trans('app.formations.html5.sidebar_menu')[13] }}</a>
+            <a href="#tables">{{ trans('app.formations.html5.sidebar_menu')[14] }}</a>
+            <a href="#lists">{{ trans('app.formations.html5.sidebar_menu')[15] }}</a>
+            <a href="#forms">{{ trans('app.formations.html5.sidebar_menu')[16] }}</a>
+            <a href="#media">{{ trans('app.formations.html5.sidebar_menu')[17] }}</a>
+            <a href="#canvas">{{ trans('app.formations.html5.sidebar_menu')[18] }}</a>
+            <a href="#svg">{{ trans('app.formations.html5.sidebar_menu')[19] }}</a>
+            <a href="#apis">{{ trans('app.formations.html5.sidebar_menu')[20] }}</a>
+            <a href="#semantic">{{ trans('app.formations.html5.sidebar_menu')[21] }}</a>
         </aside>
 
         <!-- Main Content -->
         <main class="main-content">
-            <h1 id="intro">Introduction à HTML5</h1>
-            <p>HTML5 est la dernière version du langage HTML (HyperText Markup Language). C'est le langage standard pour créer et structurer le contenu des pages web.</p>
+            <h1 id="intro">{{ trans('app.formations.html5.intro_title') }}</h1>
+            <p>{{ trans('app.formations.html5.intro_text') }}</p>
 
-            <h3>🚀 Pourquoi apprendre HTML5 ?</h3>
+            <h3>{{ trans('app.formations.html5.why_learn_title') }}</h3>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li>✅ <strong>Essentiel pour le développement web</strong> - C'est la base de tous les sites web</li>
-                <li>✅ <strong>Facile à apprendre</strong> - Syntaxe simple et intuitive</li>
-                <li>✅ <strong>Très demandé</strong> - Compétence recherchée par les employeurs</li>
-                <li>✅ <strong>Compatible</strong> - Fonctionne sur tous les navigateurs modernes</li>
-                <li>✅ <strong>Gratuit</strong> - Aucun logiciel payant nécessaire</li>
+                @foreach(trans('app.formations.html5.why_learn_items') as $item)
+                <li>✅ <strong>{{ explode(' - ', $item)[0] }}</strong>@if(isset(explode(' - ', $item)[1])) - {{ explode(' - ', $item)[1] }}@endif</li>
+                @endforeach
             </ul>
 
-            <h2 id="editors">💻 Éditeurs HTML</h2>
-            <p>Pour écrire du code HTML, vous avez besoin d'un éditeur de texte. Voici les meilleurs éditeurs pour débuter :</p>
+            <h2 id="editors">{{ trans('app.formations.html5.editors_title') }}</h2>
+            <p>{{ trans('app.formations.html5.editors_text') }}</p>
             
-            <h3>Éditeurs recommandés :</h3>
+            <h3>{{ trans('app.formations.html5.editors_recommended') }}</h3>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li>✅ <strong>Visual Studio Code</strong> - Gratuit, puissant, extensions nombreuses</li>
-                <li>✅ <strong>Sublime Text</strong> - Rapide et léger</li>
-                <li>✅ <strong>Atom</strong> - Open source et personnalisable</li>
-                <li>✅ <strong>Notepad++</strong> - Simple et efficace (Windows)</li>
-                <li>✅ <strong>Brackets</strong> - Spécialisé pour le web</li>
+                @foreach(trans('app.formations.html5.editors_list') as $editor)
+                <li>✅ <strong>{{ explode(' - ', $editor)[0] }}</strong>@if(isset(explode(' - ', $editor)[1])) - {{ explode(' - ', $editor)[1] }}@endif</li>
+                @endforeach
             </ul>
 
             <div class="example-box">
-                <h3>Installation de VS Code</h3>
-                <p>1. Téléchargez VS Code depuis <a href="https://code.visualstudio.com" target="_blank" class="text-cyan-600 hover:underline">code.visualstudio.com</a></p>
-                <p>2. Installez l'extension "Live Server" pour prévisualiser vos pages</p>
-                <p>3. Créez un fichier avec l'extension <code>.html</code></p>
-                <p>4. Tapez <code>!</code> puis <code>Tab</code> pour générer une structure HTML5</p>
+                <h3>{{ trans('app.formations.html5.editors_install_title') }}</h3>
+                <p>1. {{ trans('app.formations.html5.editors_install_steps')[0] }} <a href="https://code.visualstudio.com" target="_blank" class="text-cyan-600 hover:underline">code.visualstudio.com</a></p>
+                <p>2. {{ trans('app.formations.html5.editors_install_steps')[1] }}</p>
+                <p>3. {{ trans('app.formations.html5.editors_install_steps')[2] }} <code>.html</code></p>
+                <p>4. {{ trans('app.formations.html5.editors_install_steps')[3] }}</p>
             </div>
 
             <div class="note-box">
-                <p style="color: #000;"><strong>💡 Astuce :</strong> VS Code offre l'auto-complétion, la coloration syntaxique et le débogage intégré. C'est l'éditeur le plus populaire chez les développeurs web !</p>
+                <p style="color: #000;"><strong>{{ trans('app.formations.html5.editors_tip') }}</strong></p>
             </div>
 
-            <h2 id="basic">📚 HTML Basique</h2>
-            <p>Comprendre les concepts de base est essentiel pour maîtriser HTML5.</p>
+            <h2 id="basic">{{ trans('app.formations.html5.basic_title') }}</h2>
+            <p>{{ trans('app.formations.html5.basic_text') }}</p>
 
-            <h3>Structure minimale d'une page HTML</h3>
+            <h3>{{ trans('app.formations.html5.basic_structure_title') }}</h3>
             <div class="example-box">
                 <div class="code-box">
                     <code>
@@ -561,21 +557,21 @@
                 </div>
             </div>
 
-            <h3>Les balises de base</h3>
+            <h3>{{ trans('app.formations.html5.basic_tags_title') }}</h3>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li><code>&lt;!DOCTYPE html&gt;</code> - Déclare le type de document</li>
-                <li><code>&lt;html&gt;</code> - Conteneur principal</li>
-                <li><code>&lt;head&gt;</code> - Métadonnées (non visibles)</li>
-                <li><code>&lt;body&gt;</code> - Contenu visible de la page</li>
-                <li><code>&lt;meta&gt;</code> - Informations sur la page</li>
-                <li><code>&lt;title&gt;</code> - Titre dans l'onglet du navigateur</li>
+                <li><code>&lt;!DOCTYPE html&gt;</code> - {{ trans('app.formations.html5.basic_tags_list')[0] }}</li>
+                <li><code>&lt;html&gt;</code> - {{ trans('app.formations.html5.basic_tags_list')[1] }}</li>
+                <li><code>&lt;head&gt;</code> - {{ trans('app.formations.html5.basic_tags_list')[2] }}</li>
+                <li><code>&lt;body&gt;</code> - {{ trans('app.formations.html5.basic_tags_list')[3] }}</li>
+                <li><code>&lt;meta&gt;</code> - {{ trans('app.formations.html5.basic_tags_list')[4] }}</li>
+                <li><code>&lt;title&gt;</code> - {{ trans('app.formations.html5.basic_tags_list')[5] }}</li>
             </ul>
 
-            <h2>📝 Votre premier document HTML5</h2>
-            <p>Voici la structure de base d'un document HTML5 :</p>
+            <h2>{{ trans('app.formations.html5.first_doc_title') }}</h2>
+            <p>{{ trans('app.formations.html5.first_doc_text') }}</p>
             
             <div class="example-box">
-                <h3>Exemple - Structure HTML5</h3>
+                <h3>{{ trans('app.formations.html5.first_doc_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-tag">&lt;!DOCTYPE html&gt;</span><br>
@@ -595,17 +591,17 @@
             </div>
 
             <div class="note-box">
-                <p><strong>💡 Explication :</strong></p>
+                <p><strong>{{ trans('app.formations.html5.first_doc_explanation_title') }}</strong></p>
                 <ul style="margin-left: 20px; line-height: 1.8; color: #000;">
-                    <li><code>&lt;!DOCTYPE html&gt;</code> - Déclare que c'est un document HTML5</li>
-                    <li><code>&lt;html&gt;</code> - Élément racine de la page</li>
-                    <li><code>&lt;head&gt;</code> - Contient les métadonnées (titre, encodage, etc.)</li>
-                    <li><code>&lt;body&gt;</code> - Contient le contenu visible de la page</li>
+                    <li><code>&lt;!DOCTYPE html&gt;</code> - {{ trans('app.formations.html5.first_doc_explanation_list')[0] }}</li>
+                    <li><code>&lt;html&gt;</code> - {{ trans('app.formations.html5.first_doc_explanation_list')[1] }}</li>
+                    <li><code>&lt;head&gt;</code> - {{ trans('app.formations.html5.first_doc_explanation_list')[2] }}</li>
+                    <li><code>&lt;body&gt;</code> - {{ trans('app.formations.html5.first_doc_explanation_list')[3] }}</li>
                 </ul>
             </div>
 
-            <h2 id="elements">🧩 Les Éléments HTML</h2>
-            <p>Un élément HTML est défini par une <strong>balise d'ouverture</strong>, du <strong>contenu</strong>, et une <strong>balise de fermeture</strong> :</p>
+            <h2 id="elements">{{ trans('app.formations.html5.elements_title') }}</h2>
+            <p>{!! trans('app.formations.html5.elements_text') !!}</p>
             
             <div class="code-box">
                 <code>
@@ -613,7 +609,7 @@
                 </code>
             </div>
 
-            <h3>Éléments HTML courants :</h3>
+            <h3>{{ trans('app.formations.html5.elements_common_title') }}</h3>
             <div class="example-box">
                 <div class="code-box">
                     <code>
@@ -628,11 +624,11 @@
                 </div>
             </div>
 
-            <h2 id="attributes">⚙️ Les Attributs HTML</h2>
-            <p>Les attributs fournissent des informations supplémentaires sur les éléments HTML. Ils sont toujours spécifiés dans la balise d'ouverture.</p>
+            <h2 id="attributes">{{ trans('app.formations.html5.attributes_title') }}</h2>
+            <p>{{ trans('app.formations.html5.attributes_text') }}</p>
             
             <div class="example-box">
-                <h3>Exemple d'attributs</h3>
+                <h3>{{ trans('app.formations.html5.attributes_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-tag">&lt;a</span> <span class="code-attr">href</span>=<span class="code-value">"https://devformation.com"</span> <span class="code-attr">target</span>=<span class="code-value">"_blank"</span> <span class="code-attr">title</span>=<span class="code-value">"Visitez DevFormation"</span><span class="code-tag">&gt;</span><br>
@@ -644,19 +640,19 @@
                 </div>
             </div>
 
-            <h3>Attributs les plus utilisés :</h3>
+            <h3>{{ trans('app.formations.html5.attributes_common_title') }}</h3>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li><code>href</code> - Spécifie l'URL d'un lien</li>
-                <li><code>src</code> - Spécifie la source d'une image</li>
-                <li><code>alt</code> - Texte alternatif pour les images</li>
-                <li><code>id</code> - Identifiant unique d'un élément</li>
-                <li><code>class</code> - Classe CSS pour styliser l'élément</li>
-                <li><code>style</code> - Style CSS inline</li>
-                <li><code>title</code> - Information supplémentaire (tooltip)</li>
+                <li><code>href</code> - {{ trans('app.formations.html5.attributes_list')[0] }}</li>
+                <li><code>src</code> - {{ trans('app.formations.html5.attributes_list')[1] }}</li>
+                <li><code>alt</code> - {{ trans('app.formations.html5.attributes_list')[2] }}</li>
+                <li><code>id</code> - {{ trans('app.formations.html5.attributes_list')[3] }}</li>
+                <li><code>class</code> - {{ trans('app.formations.html5.attributes_list')[4] }}</li>
+                <li><code>style</code> - {{ trans('app.formations.html5.attributes_list')[5] }}</li>
+                <li><code>title</code> - {{ trans('app.formations.html5.attributes_list')[6] }}</li>
             </ul>
 
-            <h2 id="headings">📌 Les Titres HTML</h2>
-            <p>HTML propose 6 niveaux de titres, de <code>&lt;h1&gt;</code> à <code>&lt;h6&gt;</code> :</p>
+            <h2 id="headings">{{ trans('app.formations.html5.headings_title') }}</h2>
+            <p>{!! trans('app.formations.html5.headings_text') !!}</p>
             
             <div class="example-box">
                 <div class="code-box">
@@ -672,11 +668,11 @@
             </div>
 
             <div class="note-box">
-                <p style="color: #000;"><strong>⚠️ Important :</strong> Utilisez <code>&lt;h1&gt;</code> pour le titre principal de la page (un seul par page). Les moteurs de recherche utilisent les titres pour indexer le contenu.</p>
+                <p style="color: #000;"><strong>{!! trans('app.formations.html5.headings_important') !!}</strong></p>
             </div>
 
-            <h2 id="paragraphs">📄 Les Paragraphes</h2>
-            <p>L'élément <code>&lt;p&gt;</code> définit un paragraphe. Les navigateurs ajoutent automatiquement un espace avant et après chaque paragraphe.</p>
+            <h2 id="paragraphs">{{ trans('app.formations.html5.paragraphs_title') }}</h2>
+            <p>{!! trans('app.formations.html5.paragraphs_text') !!}</p>
             
             <div class="example-box">
                 <div class="code-box">
@@ -688,10 +684,10 @@
                 </div>
             </div>
 
-            <h2 id="styles">🎨 Styles CSS</h2>
-            <p>Vous pouvez ajouter du style à vos éléments HTML de trois façons différentes :</p>
+            <h2 id="styles">{{ trans('app.formations.html5.styles_title') }}</h2>
+            <p>{{ trans('app.formations.html5.styles_text') }}</p>
 
-            <h3>1. Style inline (dans la balise)</h3>
+            <h3>{{ trans('app.formations.html5.styles_inline_title') }}</h3>
             <div class="example-box">
                 <div class="code-box">
                     <code>
@@ -700,7 +696,7 @@
                 </div>
             </div>
 
-            <h3>2. Style interne (dans le &lt;head&gt;)</h3>
+            <h3>{!! trans('app.formations.html5.styles_internal_title') !!}</h3>
             <div class="example-box">
                 <div class="code-box">
                     <code>
@@ -713,7 +709,7 @@
                 </div>
             </div>
 
-            <h3>3. Style externe (fichier CSS séparé)</h3>
+            <h3>{{ trans('app.formations.html5.styles_external_title') }}</h3>
             <div class="example-box">
                 <div class="code-box">
                     <code>
@@ -725,11 +721,11 @@
             </div>
 
             <div class="note-box">
-                <p><strong>💡 Bonne pratique :</strong> Utilisez toujours un fichier CSS externe pour faciliter la maintenance et la réutilisation du code.</p>
+                <p><strong>{{ trans('app.formations.html5.styles_best_practice') }}</strong></p>
             </div>
 
-            <h2 id="formatting">✨ Formatage du Texte</h2>
-            <p>HTML propose plusieurs balises pour formater le texte :</p>
+            <h2 id="formatting">{{ trans('app.formations.html5.formatting_title') }}</h2>
+            <p>{{ trans('app.formations.html5.formatting_text') }}</p>
             
             <div class="example-box">
                 <div class="code-box">
@@ -748,10 +744,10 @@
                 </div>
             </div>
 
-            <h2 id="quotations">💬 Citations et Quotations</h2>
-            <p>HTML propose plusieurs balises pour afficher des citations et des références.</p>
+            <h2 id="quotations">{{ trans('app.formations.html5.quotations_title') }}</h2>
+            <p>{{ trans('app.formations.html5.quotations_text') }}</p>
 
-            <h3>Citation courte (&lt;q&gt;)</h3>
+            <h3>{!! trans('app.formations.html5.quotations_short_title') !!}</h3>
             <div class="example-box">
                 <div class="code-box">
                     <code>
@@ -760,7 +756,7 @@
                 </div>
             </div>
 
-            <h3>Citation longue (&lt;blockquote&gt;)</h3>
+            <h3>{!! trans('app.formations.html5.quotations_long_title') !!}</h3>
             <div class="example-box">
                 <div class="code-box">
                     <code>
@@ -771,7 +767,7 @@
                 </div>
             </div>
 
-            <h3>Autres balises utiles</h3>
+            <h3>{{ trans('app.formations.html5.quotations_other_title') }}</h3>
             <div class="example-box">
                 <div class="code-box">
                     <code>
@@ -782,8 +778,8 @@
                 </div>
             </div>
 
-            <h2 id="comments">📝 Commentaires HTML</h2>
-            <p>Les commentaires permettent d'ajouter des notes dans votre code qui ne seront pas affichées dans le navigateur.</p>
+            <h2 id="comments">{{ trans('app.formations.html5.comments_title') }}</h2>
+            <p>{{ trans('app.formations.html5.comments_text') }}</p>
 
             <div class="example-box">
                 <div class="code-box">
@@ -800,19 +796,18 @@
             </div>
 
             <div class="note-box">
-                <p><strong>💡 Utilité des commentaires :</strong></p>
+                <p><strong>{{ trans('app.formations.html5.comments_useful_title') }}</strong></p>
                 <ul style="margin-left: 20px; line-height: 1.8; color: #000;">
-                    <li>Expliquer le code complexe</li>
-                    <li>Désactiver temporairement du code</li>
-                    <li>Marquer des sections importantes</li>
-                    <li>Collaborer avec d'autres développeurs</li>
+                    @foreach(trans('app.formations.html5.comments_useful_list') as $item)
+                    <li>{{ $item }}</li>
+                    @endforeach
                 </ul>
             </div>
 
-            <h2 id="colors">🌈 Couleurs HTML</h2>
-            <p>HTML supporte plusieurs formats pour définir les couleurs.</p>
+            <h2 id="colors">{{ trans('app.formations.html5.colors_title') }}</h2>
+            <p>{{ trans('app.formations.html5.colors_text') }}</p>
 
-            <h3>1. Noms de couleurs</h3>
+            <h3>{{ trans('app.formations.html5.colors_names_title') }}</h3>
             <div class="example-box">
                 <div class="code-box">
                     <code>
@@ -822,7 +817,7 @@
                 </div>
             </div>
 
-            <h3>2. Code hexadécimal</h3>
+            <h3>{{ trans('app.formations.html5.colors_hex_title') }}</h3>
             <div class="example-box">
                 <div class="code-box">
                     <code>
@@ -833,7 +828,7 @@
                 </div>
             </div>
 
-            <h3>3. RGB et RGBA</h3>
+            <h3>{{ trans('app.formations.html5.colors_rgb_title') }}</h3>
             <div class="example-box">
                 <div class="code-box">
                     <code>
@@ -843,8 +838,8 @@
                 </div>
             </div>
 
-            <h2 id="links">🔗 Les Liens Hypertextes</h2>
-            <p>Les liens permettent de naviguer entre les pages. Utilisez la balise <code>&lt;a&gt;</code> avec l'attribut <code>href</code> :</p>
+            <h2 id="links">{{ trans('app.formations.html5.links_title') }}</h2>
+            <p>{!! trans('app.formations.html5.links_text') !!}</p>
             
             <div class="example-box">
                 <div class="code-box">
@@ -858,8 +853,8 @@
                 </div>
             </div>
 
-            <h2 id="images">🖼️ Les Images HTML</h2>
-            <p>L'élément <code>&lt;img&gt;</code> permet d'insérer des images dans une page web. L'attribut <code>src</code> spécifie le chemin de l'image et <code>alt</code> fournit un texte alternatif.</p>
+            <h2 id="images">{{ trans('app.formations.html5.images_title') }}</h2>
+            <p>{!! trans('app.formations.html5.images_text') !!}</p>
             
             <div class="example-box">
                 <div class="code-box">
@@ -870,22 +865,22 @@
                 </div>
             </div>
 
-            <h2 id="tables">📊 Les Tableaux HTML</h2>
-            <p>Les tableaux HTML permettent d'organiser et d'afficher des données structurées en lignes et colonnes. Ils sont essentiels pour présenter des informations tabulaires de manière claire et organisée.</p>
+            <h2 id="tables">{{ trans('app.formations.html5.tables_title') }}</h2>
+            <p>{{ trans('app.formations.html5.tables_text') }}</p>
 
-            <h3>Structure d'un tableau</h3>
-            <p>Un tableau HTML est composé de plusieurs éléments :</p>
+            <h3>{{ trans('app.formations.html5.tables_structure_title') }}</h3>
+            <p>{{ trans('app.formations.html5.tables_structure_text') }}</p>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li><code>&lt;table&gt;</code> - Conteneur principal du tableau</li>
-                <li><code>&lt;thead&gt;</code> - En-tête du tableau (optionnel mais recommandé)</li>
-                <li><code>&lt;tbody&gt;</code> - Corps du tableau contenant les données</li>
-                <li><code>&lt;tfoot&gt;</code> - Pied du tableau (optionnel)</li>
-                <li><code>&lt;tr&gt;</code> - Ligne du tableau (Table Row)</li>
-                <li><code>&lt;th&gt;</code> - Cellule d'en-tête (Table Header)</li>
-                <li><code>&lt;td&gt;</code> - Cellule de données (Table Data)</li>
+                <li><code>&lt;table&gt;</code> - {{ trans('app.formations.html5.tables_structure_list')[0] }}</li>
+                <li><code>&lt;thead&gt;</code> - {{ trans('app.formations.html5.tables_structure_list')[1] }}</li>
+                <li><code>&lt;tbody&gt;</code> - {{ trans('app.formations.html5.tables_structure_list')[2] }}</li>
+                <li><code>&lt;tfoot&gt;</code> - {{ trans('app.formations.html5.tables_structure_list')[3] }}</li>
+                <li><code>&lt;tr&gt;</code> - {{ trans('app.formations.html5.tables_structure_list')[4] }}</li>
+                <li><code>&lt;th&gt;</code> - {{ trans('app.formations.html5.tables_structure_list')[5] }}</li>
+                <li><code>&lt;td&gt;</code> - {{ trans('app.formations.html5.tables_structure_list')[6] }}</li>
             </ul>
 
-            <h3>Exemple de tableau complet</h3>
+            <h3>{{ trans('app.formations.html5.tables_example_title') }}</h3>
             <div class="example-box">
                 <div class="code-box">
                     <code>
@@ -914,9 +909,9 @@
                 </div>
             </div>
 
-            <h3>Attributs importants des tableaux</h3>
+            <h3>{{ trans('app.formations.html5.tables_merge_title') }}</h3>
             <div class="example-box">
-                <h4 style="color: #000;">Fusion de cellules</h4>
+                <h4 style="color: #000;">{{ trans('app.formations.html5.tables_merge_subtitle') }}</h4>
                 <div class="code-box">
                     <code>
                         <span class="code-comment">&lt;!-- Fusion horizontale (colspan) --&gt;</span><br>
@@ -928,20 +923,19 @@
             </div>
 
             <div class="note-box">
-                <p style="color: #000;"><strong>💡 Bonnes pratiques :</strong></p>
+                <p style="color: #000;"><strong>{{ trans('app.formations.html5.tables_best_practices_title') }}</strong></p>
                 <ul style="margin-left: 20px; line-height: 1.8; color: #000;">
-                    <li>Utilisez toujours <code>&lt;thead&gt;</code> et <code>&lt;tbody&gt;</code> pour une meilleure structure</li>
-                    <li>Les <code>&lt;th&gt;</code> rendent le tableau plus accessible aux lecteurs d'écran</li>
-                    <li>Ajoutez un attribut <code>caption</code> pour décrire le tableau</li>
-                    <li>Utilisez CSS pour le style plutôt que les attributs HTML obsolètes</li>
+                    @foreach(trans('app.formations.html5.tables_best_practices_list') as $item)
+                    <li>{!! $item !!}</li>
+                    @endforeach
                 </ul>
             </div>
 
-            <h2 id="lists">📝 Les Listes HTML</h2>
-            <p>HTML propose trois types de listes pour organiser et présenter des informations de manière structurée. Chaque type de liste a son utilité spécifique.</p>
+            <h2 id="lists">{{ trans('app.formations.html5.lists_title') }}</h2>
+            <p>{{ trans('app.formations.html5.lists_text') }}</p>
 
-            <h3>1. Liste non ordonnée (&lt;ul&gt;)</h3>
-            <p>Utilisée pour des éléments sans ordre particulier. Par défaut, les éléments sont affichés avec des puces.</p>
+            <h3>{!! trans('app.formations.html5.lists_unordered_title') !!}</h3>
+            <p>{{ trans('app.formations.html5.lists_unordered_text') }}</p>
             <div class="example-box">
                 <div class="code-box">
                     <code>
@@ -955,8 +949,8 @@
                 <p style="color: #000; margin-top: 10px;"><strong>Résultat :</strong> • HTML5 • CSS3 • JavaScript</p>
             </div>
 
-            <h3>2. Liste ordonnée (&lt;ol&gt;)</h3>
-            <p>Utilisée pour des éléments qui suivent un ordre spécifique. Les éléments sont numérotés automatiquement.</p>
+            <h3>{!! trans('app.formations.html5.lists_ordered_title') !!}</h3>
+            <p>{{ trans('app.formations.html5.lists_ordered_text') }}</p>
             <div class="example-box">
                 <div class="code-box">
                     <code>
@@ -971,7 +965,7 @@
                 <p style="color: #000; margin-top: 10px;"><strong>Résultat :</strong> 1. Ouvrir l'éditeur 2. Écrire le code HTML 3. Enregistrer...</p>
             </div>
 
-            <h3>Attributs des listes ordonnées</h3>
+            <h3>{{ trans('app.formations.html5.lists_ordered_attrs_title') }}</h3>
             <div class="example-box">
                 <div class="code-box">
                     <code>
@@ -989,8 +983,8 @@
                 </div>
             </div>
 
-            <h3>3. Liste de définition (&lt;dl&gt;)</h3>
-            <p>Utilisée pour afficher des termes et leurs définitions, comme un glossaire.</p>
+            <h3>{!! trans('app.formations.html5.lists_definition_title') !!}</h3>
+            <p>{{ trans('app.formations.html5.lists_definition_text') }}</p>
             <div class="example-box">
                 <div class="code-box">
                     <code>
@@ -1004,8 +998,8 @@
                 </div>
             </div>
 
-            <h3>Listes imbriquées</h3>
-            <p>Vous pouvez créer des listes à plusieurs niveaux en imbriquant des listes :</p>
+            <h3>{{ trans('app.formations.html5.lists_nested_title') }}</h3>
+            <p>{{ trans('app.formations.html5.lists_nested_text') }}</p>
             <div class="example-box">
                 <div class="code-box">
                     <code>
@@ -1029,18 +1023,18 @@
             </div>
 
             <div class="note-box">
-                <p style="color: #000;"><strong>💡 Quand utiliser chaque type :</strong></p>
+                <p style="color: #000;"><strong>{{ trans('app.formations.html5.lists_when_title') }}</strong></p>
                 <ul style="margin-left: 20px; line-height: 1.8; color: #000;">
-                    <li><strong>&lt;ul&gt;</strong> - Liste de courses, caractéristiques d'un produit, menu de navigation</li>
-                    <li><strong>&lt;ol&gt;</strong> - Instructions étape par étape, classements, recettes de cuisine</li>
-                    <li><strong>&lt;dl&gt;</strong> - Glossaires, FAQ, métadonnées</li>
+                    <li><strong>&lt;ul&gt;</strong> - {{ trans('app.formations.html5.lists_when_list')[0] }}</li>
+                    <li><strong>&lt;ol&gt;</strong> - {{ trans('app.formations.html5.lists_when_list')[1] }}</li>
+                    <li><strong>&lt;dl&gt;</strong> - {{ trans('app.formations.html5.lists_when_list')[2] }}</li>
                 </ul>
             </div>
 
-            <h2 id="forms">📋 Les Formulaires HTML</h2>
-            <p>Les formulaires HTML permettent aux utilisateurs d'interagir avec votre site en saisissant et soumettant des données. Essentiels pour inscriptions, connexions, recherches et commentaires.</p>
+            <h2 id="forms">{{ trans('app.formations.html5.forms_title') }}</h2>
+            <p>{{ trans('app.formations.html5.forms_text') }}</p>
 
-            <h3>Structure de base</h3>
+            <h3>{{ trans('app.formations.html5.forms_structure_title') }}</h3>
             <div class="example-box">
                 <div class="code-box">
                     <code>
@@ -1055,20 +1049,14 @@
                 </div>
             </div>
 
-            <h3>Types de champs input</h3>
+            <h3>{{ trans('app.formations.html5.forms_input_types_title') }}</h3>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li><code>text</code> - Texte simple</li>
-                <li><code>email</code> - Adresse email (validation automatique)</li>
-                <li><code>password</code> - Mot de passe (masqué)</li>
-                <li><code>number</code> - Nombres uniquement</li>
-                <li><code>tel</code> - Numéro de téléphone</li>
-                <li><code>date</code> - Sélecteur de date</li>
-                <li><code>checkbox</code> - Cases à cocher</li>
-                <li><code>radio</code> - Boutons radio</li>
-                <li><code>file</code> - Upload de fichiers</li>
+                @foreach(trans('app.formations.html5.forms_input_types_list') as $index => $type)
+                <li><code>{{ ['text', 'email', 'password', 'number', 'tel', 'date', 'checkbox', 'radio', 'file'][$index] }}</code> - {{ $type }}</li>
+                @endforeach
             </ul>
 
-            <h3>Autres éléments de formulaire</h3>
+            <h3>{{ trans('app.formations.html5.forms_other_title') }}</h3>
             <div class="example-box">
                 <div class="code-box">
                     <code>
@@ -1084,19 +1072,18 @@
             </div>
 
             <div class="note-box">
-                <p style="color: #000;"><strong>💡 Bonnes pratiques :</strong></p>
+                <p style="color: #000;"><strong>{{ trans('app.formations.html5.forms_best_practices_title') }}</strong></p>
                 <ul style="margin-left: 20px; line-height: 1.8; color: #000;">
-                    <li>Toujours associer un <code>&lt;label&gt;</code> à chaque champ avec l'attribut <code>for</code></li>
-                    <li>Utiliser <code>placeholder</code> pour des exemples de saisie</li>
-                    <li>Ajouter <code>required</code> pour les champs obligatoires</li>
-                    <li>Utiliser les bons types d'input pour la validation automatique</li>
+                    @foreach(trans('app.formations.html5.forms_best_practices_list') as $item)
+                    <li>{!! $item !!}</li>
+                    @endforeach
                 </ul>
             </div>
 
-            <h2 id="media">🎬 Audio et Vidéo HTML5</h2>
-            <p>HTML5 permet d'intégrer facilement des médias audio et vidéo sans plugins externes.</p>
+            <h2 id="media">{{ trans('app.formations.html5.media_title') }}</h2>
+            <p>{{ trans('app.formations.html5.media_text') }}</p>
 
-            <h3>Vidéo HTML5</h3>
+            <h3>{{ trans('app.formations.html5.media_video_title') }}</h3>
             <div class="example-box">
                 <div class="code-box">
                     <code>
@@ -1108,7 +1095,7 @@
                 </div>
             </div>
 
-            <h3>Audio HTML5</h3>
+            <h3>{{ trans('app.formations.html5.media_audio_title') }}</h3>
             <div class="example-box">
                 <div class="code-box">
                     <code>
@@ -1119,8 +1106,8 @@
                 </div>
             </div>
 
-            <h2 id="canvas">🎨 Canvas HTML5</h2>
-            <p>L'élément <code>&lt;canvas&gt;</code> permet de dessiner des graphiques dynamiques avec JavaScript.</p>
+            <h2 id="canvas">{{ trans('app.formations.html5.canvas_title') }}</h2>
+            <p>{!! trans('app.formations.html5.canvas_text') !!}</p>
 
             <div class="example-box">
                 <div class="code-box">
@@ -1135,8 +1122,8 @@
                 </div>
             </div>
 
-            <h2 id="svg">🖌️ SVG</h2>
-            <p>SVG permet de créer des graphiques vectoriels qui s'adaptent à toutes les tailles.</p>
+            <h2 id="svg">{{ trans('app.formations.html5.svg_title') }}</h2>
+            <p>{{ trans('app.formations.html5.svg_text') }}</p>
 
             <div class="example-box">
                 <div class="code-box">
@@ -1148,10 +1135,10 @@
                 </div>
             </div>
 
-            <h2 id="apis">⚡ APIs HTML5</h2>
-            <p>HTML5 introduit de nombreuses APIs JavaScript pour créer des applications web puissantes.</p>
+            <h2 id="apis">{{ trans('app.formations.html5.apis_title') }}</h2>
+            <p>{{ trans('app.formations.html5.apis_text') }}</p>
 
-            <h3>Geolocation API</h3>
+            <h3>{{ trans('app.formations.html5.apis_geolocation_title') }}</h3>
             <div class="example-box">
                 <div class="code-box">
                     <code>
@@ -1164,8 +1151,8 @@
                 </div>
             </div>
 
-            <h2 id="semantic">🏗️ HTML Sémantique</h2>
-            <p>HTML5 introduit des balises sémantiques qui donnent du sens au contenu.</p>
+            <h2 id="semantic">{{ trans('app.formations.html5.semantic_title') }}</h2>
+            <p>{{ trans('app.formations.html5.semantic_text') }}</p>
             
             <div class="example-box">
                 <div class="code-box">
@@ -1181,33 +1168,22 @@
                 </div>
             </div>
 
-            <h2>🎓 Prochaines étapes</h2>
-            <p>{{ __('formations.html5.explore_chapters') }}</p>
+            <h2>{{ trans('app.formations.html5.next_steps_title') }}</h2>
+            <p>{{ trans('app.formations.html5.explore_chapters') }}</p>
             
             <div class="example-box" style="background-color: #d4edda; border-left-color: #28a745;">
-                <h3 style="color: #000;">✅ Ce que vous avez appris :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.html5.learned_title') }}</h3>
                 <ul style="margin-left: 20px; line-height: 2; color: #000;">
-                    <li>La structure de base d'un document HTML5</li>
-                    <li>Les éléments et balises HTML</li>
-                    <li>Les attributs HTML</li>
-                    <li>Les titres et paragraphes</li>
-                    <li>Le formatage du texte</li>
-                    <li>Les liens hypertextes</li>
-                    <li>Les images</li>
-                    <li>Les tableaux avec fusion de cellules</li>
-                    <li>Les listes (ordonnées, non ordonnées, définition)</li>
-                    <li>Les formulaires et leurs éléments</li>
-                    <li>HTML Sémantique</li>
-                    <li>Audio et Vidéo HTML5</li>
-                    <li>Canvas et SVG</li>
-                    <li>Les APIs HTML5</li>
+                    @foreach(trans('app.formations.html5.learned_list') as $item)
+                    <li>{{ $item }}</li>
+                    @endforeach
                 </ul>
             </div>
 
             <!-- Navigation Buttons -->
             <div class="nav-buttons">
-                <a href="{{ route('home') }}" class="nav-btn">❮ Accueil</a>
-                <a href="{{ route('formations.css3') }}" class="nav-btn">{{ __('common.next') }}: CSS3 ❯</a>
+                <a href="{{ route('home') }}" class="nav-btn">❮ {{ trans('app.formations.html5.home') }}</a>
+                <a href="{{ route('formations.css3') }}" class="nav-btn">{{ trans('app.formations.html5.next') }}: CSS3 ❯</a>
             </div>
         </main>
     </div>

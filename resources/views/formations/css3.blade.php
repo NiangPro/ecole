@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Formation CSS3 | DevFormation')
+@section('title', trans('app.formations.css3.title') . ' | NiangProgrammeur')
 
 @section('styles')
 <style>
@@ -445,15 +445,15 @@
 @section('content')
 <!-- Header -->
 <div class="tutorial-header">
-    <h1 style="font-size: 48px; margin-bottom: 10px;">Tutoriel CSS3</h1>
-    <p style="font-size: 20px;">Apprenez à styliser vos pages web avec CSS3</p>
+    <h1 style="font-size: 48px; margin-bottom: 10px;">{{ trans('app.formations.css3.title') }}</h1>
+    <p style="font-size: 20px;">{{ trans('app.formations.css3.subtitle') }}</p>
 </div>
 
 <!-- Content -->
 <div class="tutorial-content">
     <div class="content-wrapper">
         <!-- Sidebar Toggle Button (Mobile) -->
-        <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Ouvrir le menu">
+        <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="{{ trans('app.formations.css3.menu_open') }}">
             <i class="fas fa-bars" id="sidebarToggleIcon"></i>
         </button>
         
@@ -463,46 +463,44 @@
         <!-- Sidebar -->
         <aside class="sidebar" id="tutorialSidebar">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid rgba(30, 144, 255, 0.2);">
-                <h3 style="margin: 0;">CSS3 Tutorial</h3>
-                <button class="sidebar-close-btn" id="sidebarClose" style="display: none; background: none; border: none; color: #1E90FF; font-size: 24px; cursor: pointer; padding: 5px; width: 35px; height: 35px; border-radius: 50%; transition: all 0.3s ease;" aria-label="Fermer le menu">
+                <h3 style="margin: 0;">{{ trans('app.formations.css3.title') }}</h3>
+                <button class="sidebar-close-btn" id="sidebarClose" style="display: none; background: none; border: none; color: #1E90FF; font-size: 24px; cursor: pointer; padding: 5px; width: 35px; height: 35px; border-radius: 50%; transition: all 0.3s ease;" aria-label="{{ trans('app.formations.css3.menu_close') }}">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <a href="#intro" class="active">Introduction CSS3</a>
-            <a href="#syntax">Syntaxe CSS</a>
-            <a href="#selectors">Sélecteurs</a>
-            <a href="#colors">Couleurs</a>
-            <a href="#backgrounds">Arrière-plans</a>
-            <a href="#borders">Bordures</a>
-            <a href="#margins">Marges & Padding</a>
-            <a href="#text">Texte</a>
-            <a href="#fonts">Polices</a>
-            <a href="#flexbox">Flexbox</a>
-            <a href="#grid">CSS Grid</a>
-            <a href="#transitions">Transitions</a>
-            <a href="#animations">Animations</a>
-            <a href="#responsive">Responsive Design</a>
+            <a href="#intro" class="active">{{ trans('app.formations.css3.sidebar_menu')[0] }}</a>
+            <a href="#syntax">{{ trans('app.formations.css3.sidebar_menu')[1] }}</a>
+            <a href="#selectors">{{ trans('app.formations.css3.sidebar_menu')[2] }}</a>
+            <a href="#colors">{{ trans('app.formations.css3.sidebar_menu')[3] }}</a>
+            <a href="#backgrounds">{{ trans('app.formations.css3.sidebar_menu')[4] }}</a>
+            <a href="#borders">{{ trans('app.formations.css3.sidebar_menu')[5] }}</a>
+            <a href="#margins">{{ trans('app.formations.css3.sidebar_menu')[6] }}</a>
+            <a href="#text">{{ trans('app.formations.css3.sidebar_menu')[7] }}</a>
+            <a href="#fonts">{{ trans('app.formations.css3.sidebar_menu')[8] }}</a>
+            <a href="#flexbox">{{ trans('app.formations.css3.sidebar_menu')[9] }}</a>
+            <a href="#grid">{{ trans('app.formations.css3.sidebar_menu')[10] }}</a>
+            <a href="#transitions">{{ trans('app.formations.css3.sidebar_menu')[11] }}</a>
+            <a href="#animations">{{ trans('app.formations.css3.sidebar_menu')[12] }}</a>
+            <a href="#responsive">{{ trans('app.formations.css3.sidebar_menu')[13] }}</a>
         </aside>
 
         <!-- Main Content -->
         <main class="main-content">
-            <h1 id="intro">Introduction à CSS3</h1>
-            <p>CSS3 (Cascading Style Sheets) est le langage utilisé pour styliser et mettre en forme les pages web. Il contrôle l'apparence, la disposition et le design de votre site.</p>
+            <h1 id="intro">{{ trans('app.formations.css3.intro_title') }}</h1>
+            <p>{{ trans('app.formations.css3.intro_text') }}</p>
 
-            <h3>🚀 Pourquoi apprendre CSS3 ?</h3>
+            <h3>{{ trans('app.formations.css3.why_learn_title') }}</h3>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li>✅ <strong>Contrôle total du design</strong> - Personnalisez l'apparence de votre site</li>
-                <li>✅ <strong>Responsive Design</strong> - Créez des sites adaptés à tous les écrans</li>
-                <li>✅ <strong>Animations et effets</strong> - Donnez vie à vos pages</li>
-                <li>✅ <strong>Performance optimisée</strong> - Code léger et rapide</li>
-                <li>✅ <strong>Indispensable</strong> - Compétence essentielle pour tout développeur web</li>
+                @foreach(trans('app.formations.css3.why_learn_items') as $item)
+                <li>✅ <strong>{{ explode(' - ', $item)[0] }}</strong>@if(isset(explode(' - ', $item)[1])) - {{ explode(' - ', $item)[1] }}@endif</li>
+                @endforeach
             </ul>
 
-            <h2 id="syntax">📝 Syntaxe CSS</h2>
-            <p>Une règle CSS est composée d'un sélecteur et d'un bloc de déclarations. Chaque déclaration contient une propriété et une valeur.</p>
+            <h2 id="syntax">{{ trans('app.formations.css3.syntax_title') }}</h2>
+            <p>{{ trans('app.formations.css3.syntax_text') }}</p>
 
             <div class="example-box">
-                <h3>Structure d'une règle CSS</h3>
+                <h3>{{ trans('app.formations.css3.syntax_structure_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-selector">sélecteur</span> {<br>
@@ -514,7 +512,7 @@
             </div>
 
             <div class="example-box">
-                <h3>Exemple concret</h3>
+                <h3>{{ trans('app.formations.css3.syntax_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-selector">h1</span> {<br>
@@ -526,17 +524,17 @@
                 </div>
             </div>
 
-            <h3>Trois façons d'ajouter du CSS</h3>
+            <h3>{{ trans('app.formations.css3.syntax_ways_title') }}</h3>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li><strong>CSS Inline</strong> - Dans l'attribut style de la balise HTML</li>
-                <li><strong>CSS Interne</strong> - Dans la balise &lt;style&gt; du &lt;head&gt;</li>
-                <li><strong>CSS Externe</strong> - Dans un fichier .css séparé (recommandé)</li>
+                @foreach(trans('app.formations.css3.syntax_ways_list') as $way)
+                <li><strong>{{ explode(' - ', $way)[0] }}</strong>@if(isset(explode(' - ', $way)[1])) - {!! explode(' - ', $way)[1] !!}@endif</li>
+                @endforeach
             </ul>
 
-            <h2 id="selectors">🎯 Sélecteurs CSS</h2>
-            <p>Les sélecteurs permettent de cibler les éléments HTML que vous souhaitez styliser. Il existe plusieurs types de sélecteurs, chacun avec sa spécificité.</p>
+            <h2 id="selectors">{{ trans('app.formations.css3.selectors_title') }}</h2>
+            <p>{{ trans('app.formations.css3.selectors_text') }}</p>
 
-            <h3>Sélecteurs de base</h3>
+            <h3>{{ trans('app.formations.css3.selectors_basic_title') }}</h3>
             <div class="example-box">
                 <div class="code-box">
                     <code>
@@ -554,7 +552,7 @@
                 </div>
             </div>
 
-            <h3>Sélecteurs combinateurs</h3>
+            <h3>{{ trans('app.formations.css3.selectors_combinators_title') }}</h3>
             <div class="example-box">
                 <div class="code-box">
                     <code>
@@ -570,7 +568,7 @@
                 </div>
             </div>
 
-            <h3>Pseudo-classes</h3>
+            <h3>{{ trans('app.formations.css3.selectors_pseudo_classes_title') }}</h3>
             <div class="example-box">
                 <div class="code-box">
                     <code>
@@ -586,7 +584,7 @@
                 </div>
             </div>
 
-            <h3>Pseudo-éléments</h3>
+            <h3>{{ trans('app.formations.css3.selectors_pseudo_elements_title') }}</h3>
             <div class="example-box">
                 <div class="code-box">
                     <code>
@@ -606,13 +604,13 @@
             </div>
 
             <div class="note-box">
-                <p style="color: #000;"><strong>💡 Spécificité :</strong> ID (100 points) > Classe (10 points) > Élément (1 point). Plus la spécificité est élevée, plus le style est prioritaire.</p>
+                <p style="color: #000;"><strong>{{ trans('app.formations.css3.selectors_specificity') }}</strong></p>
             </div>
 
-            <h2 id="colors">🌈 Couleurs CSS</h2>
-            <p>CSS supporte plusieurs formats pour définir les couleurs. Chaque format a ses avantages selon le contexte.</p>
+            <h2 id="colors">{{ trans('app.formations.css3.colors_title') }}</h2>
+            <p>{{ trans('app.formations.css3.colors_text') }}</p>
 
-            <h3>Formats de couleurs</h3>
+            <h3>{{ trans('app.formations.css3.colors_formats_title') }}</h3>
             <div class="example-box">
                 <div class="code-box">
                     <code>
@@ -634,21 +632,19 @@
                 </div>
             </div>
 
-            <h3>Propriétés de couleur</h3>
+            <h3>{{ trans('app.formations.css3.colors_properties_title') }}</h3>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li><code>color</code> - Couleur du texte</li>
-                <li><code>background-color</code> - Couleur de fond</li>
-                <li><code>border-color</code> - Couleur de bordure</li>
-                <li><code>outline-color</code> - Couleur du contour</li>
-                <li><code>opacity</code> - Transparence globale (0 à 1)</li>
+                @foreach(['color', 'background-color', 'border-color', 'outline-color', 'opacity'] as $index => $prop)
+                <li><code>{{ $prop }}</code> - {{ trans('app.formations.css3.colors_properties_list')[$index] }}</li>
+                @endforeach
             </ul>
 
             <div class="note-box">
-                <p style="color: #000;"><strong>💡 Conseil :</strong> Utilisez HSL pour ajuster facilement la luminosité et la saturation. Utilisez RGBA/HSLA pour les superpositions transparentes.</p>
+                <p style="color: #000;"><strong>{{ trans('app.formations.css3.colors_tip') }}</strong></p>
             </div>
 
-            <h2 id="backgrounds">🖼️ Arrière-plans</h2>
-            <p>CSS offre de nombreuses propriétés pour personnaliser les arrière-plans.</p>
+            <h2 id="backgrounds">{{ trans('app.formations.css3.backgrounds_title') }}</h2>
+            <p>{{ trans('app.formations.css3.backgrounds_text') }}</p>
 
             <div class="example-box">
                 <div class="code-box">
@@ -664,7 +660,7 @@
                 </div>
             </div>
 
-            <h3>Dégradés CSS</h3>
+            <h3>{{ trans('app.formations.css3.backgrounds_gradients_title') }}</h3>
             <div class="example-box">
                 <div class="code-box">
                     <code>
@@ -680,11 +676,11 @@
                 </div>
             </div>
 
-            <h2 id="borders">🔲 Bordures</h2>
-            <p>Les bordures permettent d'encadrer les éléments et d'ajouter des effets visuels.</p>
+            <h2 id="borders">{{ trans('app.formations.css3.borders_title') }}</h2>
+            <p>{{ trans('app.formations.css3.borders_text') }}</p>
 
             <div class="example-box">
-                <h3>Propriétés de bordure</h3>
+                <h3>{{ trans('app.formations.css3.borders_properties_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-selector">.box</span> {<br>
@@ -697,7 +693,7 @@
                 </div>
             </div>
 
-            <h3>Ombres (Box Shadow)</h3>
+            <h3>{{ trans('app.formations.css3.borders_shadow_title') }}</h3>
             <div class="example-box">
                 <div class="code-box">
                     <code>
@@ -713,7 +709,7 @@
                 </div>
             </div>
 
-            <h2 id="margins">📏 Marges et Padding</h2>
+            <h2 id="margins">{{ trans('app.formations.css3.margins_title') }}</h2>
             <p>Le Box Model est fondamental en CSS. Il définit comment les éléments occupent l'espace : contenu, padding, bordure et marge.</p>
 
             <h3>Comprendre le Box Model</h3>
@@ -725,7 +721,7 @@
             </ul>
 
             <div class="example-box">
-                <h3>Syntaxe des marges et padding</h3>
+                <h3>{{ trans('app.formations.css3.margins_syntax_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-selector">.element</span> {<br>
@@ -747,7 +743,7 @@
                 </div>
             </div>
 
-            <h3>Techniques utiles</h3>
+            <h3>{{ trans('app.formations.css3.margins_techniques_title') }}</h3>
             <div class="example-box">
                 <div class="code-box">
                     <code>
@@ -769,13 +765,13 @@
             </div>
 
             <div class="note-box">
-                <p style="color: #000;"><strong>⚠️ Margin Collapse :</strong> Les marges verticales de deux éléments adjacents fusionnent. La plus grande marge l'emporte.</p>
+                <p style="color: #000;"><strong>{{ trans('app.formations.css3.margins_collapse') }}</strong></p>
             </div>
 
-            <h2 id="text">✍️ Texte CSS</h2>
-            <p>CSS offre de nombreuses propriétés pour contrôler l'apparence et la mise en forme du texte.</p>
+            <h2 id="text">{{ trans('app.formations.css3.text_title') }}</h2>
+            <p>{{ trans('app.formations.css3.text_text') }}</p>
 
-            <h3>Propriétés de texte essentielles</h3>
+            <h3>{{ trans('app.formations.css3.text_properties_title') }}</h3>
             <div class="example-box">
                 <div class="code-box">
                     <code>
@@ -801,7 +797,7 @@
                 </div>
             </div>
 
-            <h3>Gestion du débordement de texte</h3>
+            <h3>{{ trans('app.formations.css3.text_overflow_title') }}</h3>
             <div class="example-box">
                 <div class="code-box">
                     <code>
@@ -818,11 +814,11 @@
                 </div>
             </div>
 
-            <h2 id="fonts">🔤 Polices CSS</h2>
-            <p>Contrôlez l'apparence des polices de caractères sur votre site.</p>
+            <h2 id="fonts">{{ trans('app.formations.css3.fonts_title') }}</h2>
+            <p>{{ trans('app.formations.css3.fonts_text') }}</p>
 
             <div class="example-box">
-                <h3>Propriétés de police</h3>
+                <h3>{{ trans('app.formations.css3.fonts_properties_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-selector">.titre</span> {<br>
@@ -835,7 +831,7 @@
                 </div>
             </div>
 
-            <h3>Google Fonts</h3>
+            <h3>{{ trans('app.formations.css3.fonts_google_title') }}</h3>
             <div class="example-box">
                 <div class="code-box">
                     <code>
@@ -849,10 +845,10 @@
                 </div>
             </div>
 
-            <h2 id="flexbox">📦 Flexbox</h2>
-            <p>Flexbox est un système de mise en page puissant pour créer des layouts flexibles et responsives.</p>
+            <h2 id="flexbox">{{ trans('app.formations.css3.flexbox_title') }}</h2>
+            <p>{{ trans('app.formations.css3.flexbox_text') }}</p>
 
-            <h3>Conteneur Flex - Propriétés</h3>
+            <h3>{{ trans('app.formations.css3.flexbox_container_title') }}</h3>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
                 <li><code>flex-direction</code> - Direction des éléments (row, column, row-reverse, column-reverse)</li>
                 <li><code>justify-content</code> - Alignement sur l'axe principal (flex-start, center, space-between, space-around)</li>
@@ -875,7 +871,7 @@
                 </div>
             </div>
 
-            <h3>Éléments Flex - Propriétés</h3>
+            <h3>{{ trans('app.formations.css3.flexbox_items_title') }}</h3>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
                 <li><code>flex-grow</code> - Facteur d'agrandissement (0 = ne grandit pas, 1+ = grandit)</li>
                 <li><code>flex-shrink</code> - Facteur de rétrécissement (0 = ne rétrécit pas)</li>
@@ -911,7 +907,7 @@
             </ul>
 
             <div class="example-box">
-                <h3>Définir une grille</h3>
+                <h3>{{ trans('app.formations.css3.grid_define_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-selector">.grid-container</span> {<br>
@@ -961,7 +957,7 @@
                 </div>
             </div>
 
-            <h3>Grille avec zones nommées</h3>
+            <h3>{{ trans('app.formations.css3.grid_areas_title') }}</h3>
             <div class="example-box">
                 <div class="code-box">
                     <code>
@@ -983,10 +979,10 @@
                 <p style="color: #000;"><strong>💡 fr vs % :</strong> L'unité <code>fr</code> distribue l'espace disponible APRÈS avoir soustrait les tailles fixes. Plus flexible que les pourcentages !</p>
             </div>
 
-            <h2 id="transitions">✨ Transitions CSS</h2>
-            <p>Les transitions permettent d'animer en douceur les changements de propriétés CSS lorsqu'un état change (hover, focus, etc.).</p>
+            <h2 id="transitions">{{ trans('app.formations.css3.transitions_title') }}</h2>
+            <p>{{ trans('app.formations.css3.transitions_text') }}</p>
 
-            <h3>Propriétés de transition</h3>
+            <h3>{{ trans('app.formations.css3.transitions_properties_title') }}</h3>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
                 <li><code>transition-property</code> - Propriété(s) à animer (all, background, transform, etc.)</li>
                 <li><code>transition-duration</code> - Durée de la transition (en s ou ms)</li>
@@ -996,7 +992,7 @@
             </ul>
 
             <div class="example-box">
-                <h3>Syntaxe raccourcie</h3>
+                <h3>{{ trans('app.formations.css3.transitions_shorthand_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-selector">.button</span> {<br>
@@ -1013,7 +1009,7 @@
                 </div>
             </div>
 
-            <h3>Transitions multiples</h3>
+            <h3>{{ trans('app.formations.css3.transitions_multiple_title') }}</h3>
             <div class="example-box">
                 <div class="code-box">
                     <code>
@@ -1031,24 +1027,21 @@
                 </div>
             </div>
 
-            <h3>Fonctions de timing</h3>
+            <h3>{{ trans('app.formations.css3.transitions_timing_title') }}</h3>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li><code>linear</code> - Vitesse constante</li>
-                <li><code>ease</code> - Lent au début et à la fin (par défaut)</li>
-                <li><code>ease-in</code> - Lent au début, rapide à la fin</li>
-                <li><code>ease-out</code> - Rapide au début, lent à la fin</li>
-                <li><code>ease-in-out</code> - Lent au début et à la fin</li>
-                <li><code>cubic-bezier(n,n,n,n)</code> - Courbe personnalisée</li>
+                @foreach(['linear', 'ease', 'ease-in', 'ease-out', 'ease-in-out', 'cubic-bezier(n,n,n,n)'] as $index => $func)
+                <li><code>{{ $func }}</code> - {{ trans('app.formations.css3.transitions_timing_list')[$index] }}</li>
+                @endforeach
             </ul>
 
             <div class="note-box">
-                <p style="color: #000;"><strong>⚡ Performance :</strong> Privilégiez les transitions sur <code>transform</code> et <code>opacity</code> pour de meilleures performances (accélération GPU).</p>
+                <p style="color: #000;"><strong>{{ trans('app.formations.css3.transitions_performance') }}</strong></p>
             </div>
 
-            <h2 id="animations">🎬 Animations CSS</h2>
-            <p>Les animations CSS permettent de créer des mouvements complexes et automatiques avec @keyframes, sans JavaScript.</p>
+            <h2 id="animations">{{ trans('app.formations.css3.animations_title') }}</h2>
+            <p>{{ trans('app.formations.css3.animations_text') }}</p>
 
-            <h3>Propriétés d'animation</h3>
+            <h3>{{ trans('app.formations.css3.animations_properties_title') }}</h3>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
                 <li><code>animation-name</code> - Nom de l'animation @keyframes</li>
                 <li><code>animation-duration</code> - Durée (en s ou ms)</li>
@@ -1061,7 +1054,7 @@
             </ul>
 
             <div class="example-box">
-                <h3>Définir une animation avec @keyframes</h3>
+                <h3>{{ trans('app.formations.css3.animations_keyframes_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-comment">/* Avec pourcentages */</span><br>
@@ -1088,7 +1081,7 @@
                 </div>
             </div>
 
-            <h3>Appliquer l'animation</h3>
+            <h3>{{ trans('app.formations.css3.animations_apply_title') }}</h3>
             <div class="example-box">
                 <div class="code-box">
                     <code>
@@ -1110,7 +1103,7 @@
                 </div>
             </div>
 
-            <h3>Animations multiples</h3>
+            <h3>{{ trans('app.formations.css3.animations_multiple_title') }}</h3>
             <div class="example-box">
                 <div class="code-box">
                     <code>
@@ -1124,22 +1117,20 @@
             </div>
 
             <div class="note-box">
-                <p style="color: #000;"><strong>💡 fill-mode :</strong> <code>forwards</code> garde l'état final, <code>backwards</code> applique l'état initial pendant le delay, <code>both</code> combine les deux.</p>
+                <p style="color: #000;"><strong>{{ trans('app.formations.css3.animations_fill_mode') }}</strong></p>
             </div>
 
-            <h2 id="responsive">📱 Responsive Design</h2>
-            <p>Les Media Queries permettent d'adapter votre site à différentes tailles d'écran, orientations et types d'appareils.</p>
+            <h2 id="responsive">{{ trans('app.formations.css3.responsive_title') }}</h2>
+            <p>{{ trans('app.formations.css3.responsive_text') }}</p>
 
-            <h3>Syntaxe des Media Queries</h3>
+            <h3>{{ trans('app.formations.css3.responsive_syntax_title') }}</h3>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li><code>@media (condition)</code> - Applique des styles selon une condition</li>
-                <li><code>min-width</code> - Largeur minimale (Mobile First)</li>
-                <li><code>max-width</code> - Largeur maximale (Desktop First)</li>
-                <li><code>orientation</code> - Portrait ou landscape</li>
-                <li><code>and</code> - Combine plusieurs conditions</li>
+                @foreach(['@media (condition)', 'min-width', 'max-width', 'orientation', 'and'] as $index => $item)
+                <li><code>{{ $item }}</code> - {{ trans('app.formations.css3.responsive_syntax_list')[$index] }}</li>
+                @endforeach
             </ul>
 
-            <h3>Breakpoints courants</h3>
+            <h3>{{ trans('app.formations.css3.responsive_breakpoints_title') }}</h3>
             <div class="example-box">
                 <div class="code-box">
                     <code>
@@ -1165,16 +1156,11 @@
                 </div>
             </div>
 
-            <h3>Unités responsives</h3>
+            <h3>{{ trans('app.formations.css3.responsive_units_title') }}</h3>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li><code>vw</code> - 1% de la largeur du viewport</li>
-                <li><code>vh</code> - 1% de la hauteur du viewport</li>
-                <li><code>vmin</code> - 1% de la plus petite dimension</li>
-                <li><code>vmax</code> - 1% de la plus grande dimension</li>
-                <li><code>%</code> - Pourcentage du parent</li>
-                <li><code>em</code> - Relatif à la taille de police du parent</li>
-                <li><code>rem</code> - Relatif à la taille de police racine (html)</li>
-                <li><code>clamp(min, préféré, max)</code> - Valeur fluide avec limites</li>
+                @foreach(['vw', 'vh', 'vmin', 'vmax', '%', 'em', 'rem', 'clamp(min, préféré, max)'] as $index => $unit)
+                <li><code>{{ $unit }}</code> - {{ trans('app.formations.css3.responsive_units_list')[$index] }}</li>
+                @endforeach
             </ul>
 
             <div class="example-box">
@@ -1191,31 +1177,25 @@
             </div>
 
             <div class="note-box">
-                <p style="color: #000;"><strong>💡 Mobile First :</strong> Commencez par le design mobile, puis ajoutez des Media Queries avec <code>min-width</code> pour les écrans plus grands. Plus maintenable !</p>
+                <p style="color: #000;"><strong>{{ trans('app.formations.css3.responsive_mobile_first') }}</strong></p>
             </div>
 
-            <h2>🎓 Prochaines étapes</h2>
-            <p>Félicitations ! Vous avez maintenant une solide base en CSS3.</p>
+            <h2>{{ trans('app.formations.css3.next_steps_title') }}</h2>
+            <p>{{ trans('app.formations.css3.next_steps_text') }}</p>
             
             <div class="example-box" style="background-color: #d4edda; border-left-color: #28a745;">
-                <h3 style="color: #000;">✅ Ce que vous avez appris :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.css3.learned_title') }}</h3>
                 <ul style="margin-left: 20px; line-height: 2; color: #000;">
-                    <li>La syntaxe CSS et les sélecteurs</li>
-                    <li>Les couleurs et arrière-plans</li>
-                    <li>Les bordures et ombres</li>
-                    <li>Le Box Model (marges et padding)</li>
-                    <li>Le style du texte et des polices</li>
-                    <li>Flexbox pour layouts flexibles</li>
-                    <li>CSS Grid pour grilles complexes</li>
-                    <li>Les transitions et animations</li>
-                    <li>Le Responsive Design</li>
+                    @foreach(trans('app.formations.css3.learned_list') as $item)
+                    <li>{{ $item }}</li>
+                    @endforeach
                 </ul>
             </div>
 
             <!-- Navigation Buttons -->
             <div class="nav-buttons">
-                <a href="{{ route('formations.html5') }}" class="nav-btn">❮ Précédent: HTML5</a>
-                <a href="{{ route('formations.javascript') }}" class="nav-btn">Suivant: JavaScript ❯</a>
+                <a href="{{ route('formations.html5') }}" class="nav-btn">❮ {{ trans('app.formations.css3.previous') }}: HTML5</a>
+                <a href="{{ route('formations.javascript') }}" class="nav-btn">{{ trans('app.formations.css3.next') }}: JavaScript ❯</a>
             </div>
         </main>
     </div>

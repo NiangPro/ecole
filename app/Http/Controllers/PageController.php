@@ -7708,11 +7708,13 @@ int main() {
 
     public function html5()
     {
+        $this->ensureLocale();
         return view('formations.html5');
     }
 
     public function css3()
     {
+        $this->ensureLocale();
         return view('formations.css3');
     }
 
