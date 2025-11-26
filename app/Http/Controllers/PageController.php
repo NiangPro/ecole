@@ -1051,9 +1051,121 @@ class PageController extends Controller
             }
         }
         
+        // Exécution C
+        if ($language === 'c' || $language === 'cpp' || $language === 'c++') {
+            try {
+                // Vérifications de sécurité pour C
+                $dangerousPatterns = [
+                    '/system\s*\(/', '/exec\s*\(/', '/popen\s*\(/', '/fopen\s*\(/',
+                    '/socket\s*\(/', '/connect\s*\(/', '/fork\s*\(/', '/vfork\s*\(/',
+                    '/chmod\s*\(/', '/chown\s*\(/', '/unlink\s*\(/', '/remove\s*\(/',
+                ];
+                
+                foreach ($dangerousPatterns as $pattern) {
+                    if (preg_match($pattern, $code)) {
+                        return response()->json([
+                            'output' => '',
+                            'error' => 'Code non autorisé détecté. Certaines fonctionnalités sont désactivées pour des raisons de sécurité.'
+                        ]);
+                    }
+                }
+                
+                // Préparer la requête pour Piston API
+                $pistonApiUrl = 'https://emkc.org/api/v2/piston/execute';
+                
+                // Optimiser la requête avec timeout approprié pour C (compilation + exécution)
+                $response = Http::timeout(20)
+                    ->retry(2, 1000)
+                    ->withOptions([
+                        'http_errors' => false,
+                        'verify' => true,
+                        'timeout' => 20,
+                        'connect_timeout' => 10,
+                    ])
+                    ->post($pistonApiUrl, [
+                        'language' => 'c',
+                        'version' => '10.2.0',
+                        'files' => [
+                            [
+                                'name' => 'main.c',
+                                'content' => $code
+                            ]
+                        ],
+                        'stdin' => '',
+                        'args' => []
+                    ]);
+                
+                if ($response->successful()) {
+                    $data = $response->json();
+                    
+                    $output = '';
+                    $error = null;
+                    
+                    if (isset($data['run']['stdout'])) {
+                        $output = $data['run']['stdout'];
+                    }
+                    
+                    if (isset($data['run']['stderr']) && !empty($data['run']['stderr'])) {
+                        $error = $data['run']['stderr'];
+                    } elseif (isset($data['run']['code']) && $data['run']['code'] !== 0) {
+                        $error = 'Erreur lors de l\'exécution (code de retour: ' . $data['run']['code'] . ')';
+                        if (!empty($output)) {
+                            $error .= "\n" . $output;
+                        }
+                    }
+                    
+                    // Nettoyer l'output
+                    if (!empty($output)) {
+                        $output = trim($output);
+                        if (!mb_check_encoding($output, 'UTF-8')) {
+                            $output = mb_convert_encoding($output, 'UTF-8', 'UTF-8');
+                        }
+                    }
+                    
+                    if (!empty($error)) {
+                        $error = trim($error);
+                        if (!mb_check_encoding($error, 'UTF-8')) {
+                            $error = mb_convert_encoding($error, 'UTF-8', 'UTF-8');
+                        }
+                    }
+                    
+                    return response()->json([
+                        'output' => $output,
+                        'error' => $error
+                    ], 200, [], JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_IGNORE);
+                } else {
+                    $statusCode = $response->status();
+                    $errorBody = $response->body();
+                    return response()->json([
+                        'output' => '',
+                        'error' => 'Erreur lors de l\'exécution du code C (HTTP ' . $statusCode . '). L\'API d\'exécution peut être temporairement indisponible. Veuillez réessayer dans quelques instants.'
+                    ]);
+                }
+            } catch (\Illuminate\Http\Client\ConnectionException $e) {
+                // Erreur de connexion/timeout
+                return response()->json([
+                    'output' => '',
+                    'error' => 'Erreur de connexion : Impossible de se connecter à l\'API d\'exécution C. Vérifiez votre connexion internet et réessayez.'
+                ]);
+            } catch (\Exception $e) {
+                $errorMessage = $e->getMessage();
+                // Masquer les détails techniques de cURL pour l'utilisateur
+                if (strpos($errorMessage, 'cURL error') !== false) {
+                    return response()->json([
+                        'output' => '',
+                        'error' => 'Erreur de connexion : L\'API d\'exécution C est temporairement indisponible. Veuillez réessayer dans quelques instants.'
+                    ]);
+                }
+                return response()->json([
+                    'output' => '',
+                    'error' => 'Erreur : ' . $errorMessage
+                ]);
+            }
+        }
+        
         // Sécurité : Ne permettre l'exécution que pour PHP
         if ($language !== 'php') {
-            // Pour les autres langages (HTML, CSS, JS), retourner le code tel quel
+            // Pour les autres langages (HTML, CSS, JS, SQL), retourner le code tel quel
             return response()->json([
                 'output' => $code,
                 'error' => null

@@ -717,7 +717,12 @@
         
         console.log('CodeMirror chargé, initialisation...');
         
-    const startCode = @json($exercise['startCode']);
+    // Préserver les retours à la ligne en utilisant directement la valeur du textarea
+    const textareaElement = document.getElementById('codeEditor');
+    let startCode = textareaElement ? textareaElement.value : @json($exercise['startCode']);
+    // Normaliser les retours à la ligne (Windows \r\n, Mac \r, Unix \n -> \n)
+    startCode = startCode.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+    
     const language = @json($language);
     const exerciseId = @json($id);
     
@@ -758,6 +763,7 @@
             }
             
             // S'assurer que le textarea a le code avec les retours à la ligne préservés
+            // startCode est déjà normalisé au-dessus
             if (textarea.value !== startCode) {
                 textarea.value = startCode;
             }
@@ -768,9 +774,9 @@
                 theme: codeMirrorTheme,
                 lineNumbers: true,
                 lineWrapping: true,
-                indentUnit: 4,
+                indentUnit: (language === 'java' || language === 'c' || language === 'cpp' || language === 'c++') ? 4 : 2,
                 indentWithTabs: false,
-                tabSize: 4,
+                tabSize: (language === 'java' || language === 'c' || language === 'cpp' || language === 'c++') ? 4 : 2,
                 autofocus: false,
                 matchBrackets: true,
                 autoCloseBrackets: true,
@@ -803,12 +809,56 @@
             
             // S'assurer que le code initial est correctement formaté avec les retours à la ligne
             // CodeMirror lit automatiquement le contenu du textarea, donc on s'assure qu'il est correct
-            if (codeEditor.getValue() !== startCode) {
+            const currentValue = codeEditor.getValue();
+            if (currentValue !== startCode) {
                 codeEditor.setValue(startCode);
             }
             
             // Stocker l'instance globalement
             window.codeEditorInstance = codeEditor;
+            
+            // Afficher le résultat par défaut pour l'exercice C numéro 1
+            if (language === 'c' && exerciseId === 1) {
+                const iframe = document.getElementById('resultFrame');
+                if (iframe) {
+                    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                    const darkMode = window.isDarkMode || document.body.classList.contains('dark-mode');
+                    iframeDoc.open();
+                    iframeDoc.write(`
+                        <!DOCTYPE html>
+                        <html>
+                        <head>
+                            <meta charset="UTF-8">
+                            <title>Résultat</title>
+                            <style>
+                                * {
+                                    margin: 0;
+                                    padding: 0;
+                                    box-sizing: border-box;
+                                }
+                                body {
+                                    font-family: 'Courier New', 'Consolas', 'Monaco', monospace;
+                                    padding: 20px;
+                                    background: ${darkMode ? '#1e293b' : '#ffffff'};
+                                    color: ${darkMode ? '#e2e8f0' : '#1e293b'};
+                                    font-size: 14px;
+                                    line-height: 1.6;
+                                }
+                                pre {
+                                    margin: 0;
+                                    white-space: pre-wrap;
+                                    word-wrap: break-word;
+                                }
+                            </style>
+                        </head>
+                        <body>
+                            <pre>Bonjour C !</pre>
+                        </body>
+                        </html>
+                    `);
+                    iframeDoc.close();
+                }
+            }
             
             // Synchroniser CodeMirror avec le textarea pour les soumissions
             codeEditor.on('change', function(cm) {
@@ -889,8 +939,8 @@
                 `);
         iframeDoc.close();
         
-                // Si c'est du PHP, Python ou Java, exécuter côté serveur
-                if (language === 'php' || language === 'python' || language === 'java') {
+                // Si c'est du PHP, Python, Java ou C, exécuter côté serveur
+                if (language === 'php' || language === 'python' || language === 'java' || language === 'c' || language === 'cpp' || language === 'c++') {
                     fetch(`/exercices/${language}/run`, {
                         method: 'POST',
                         headers: {
@@ -914,7 +964,7 @@
                         iframeDoc.open();
                         
                         if (data.error) {
-                            const langName = language === 'python' ? 'Python' : (language === 'java' ? 'Java' : 'PHP');
+                            const langName = language === 'python' ? 'Python' : (language === 'java' ? 'Java' : (language === 'c' || language === 'cpp' || language === 'c++') ? 'C' : 'PHP');
                             iframeDoc.write(`
                                 <!DOCTYPE html>
                                 <html>
@@ -1137,7 +1187,7 @@
                                             }
                                         </style>
                                     </head>
-                                    <body style="margin: 0 !important; padding: 0 !important; padding-top: 0 !important; margin-top: 0 !important;">${hasOutput ? output : '<p class="no-output">' + (language === 'java' ? 'Aucune sortie. Le code s\'est exécuté sans erreur mais n\'a rien affiché. Utilisez System.out.println() pour afficher des résultats.' : language === 'python' ? 'Aucune sortie. Le code s\'est exécuté sans erreur mais n\'a rien affiché. Utilisez print() pour afficher des résultats.' : translations.noOutput) + '</p>'}
+                                    <body style="margin: 0 !important; padding: 0 !important; padding-top: 0 !important; margin-top: 0 !important;">${hasOutput ? output : '<p class="no-output">' + (language === 'java' ? 'Aucune sortie. Le code s\'est exécuté sans erreur mais n\'a rien affiché. Utilisez System.out.println() pour afficher des résultats.' : language === 'python' ? 'Aucune sortie. Le code s\'est exécuté sans erreur mais n\'a rien affiché. Utilisez print() pour afficher des résultats.' : (language === 'c' || language === 'cpp' || language === 'c++') ? 'Aucune sortie. Le code s\'est exécuté sans erreur mais n\'a rien affiché. Utilisez printf() pour afficher des résultats.' : translations.noOutput) + '</p>'}
                                     </body>
                                     </html>
                                 `);
@@ -1585,7 +1635,7 @@
                                         }
                                     </style>
                                 </head>
-                                <body style="margin: 0 !important; padding: 0 !important;">${hasOutput ? output : '<p class="no-output">' + (language === 'java' ? 'Aucune sortie. Le code s\'est exécuté sans erreur mais n\'a rien affiché. Utilisez System.out.println() pour afficher des résultats.' : language === 'python' ? 'Aucune sortie. Le code s\'est exécuté sans erreur mais n\'a rien affiché. Utilisez print() pour afficher des résultats.' : 'Aucune sortie.') + '</p>'}
+                                <body style="margin: 0 !important; padding: 0 !important;">${hasOutput ? output : '<p class="no-output">' + (language === 'java' ? 'Aucune sortie. Le code s\'est exécuté sans erreur mais n\'a rien affiché. Utilisez System.out.println() pour afficher des résultats.' : language === 'python' ? 'Aucune sortie. Le code s\'est exécuté sans erreur mais n\'a rien affiché. Utilisez print() pour afficher des résultats.' : (language === 'c' || language === 'cpp' || language === 'c++') ? 'Aucune sortie. Le code s\'est exécuté sans erreur mais n\'a rien affiché. Utilisez printf() pour afficher des résultats.' : 'Aucune sortie.') + '</p>'}
                                 </body>
                                 </html>
                             `);
