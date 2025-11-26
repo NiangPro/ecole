@@ -29,12 +29,13 @@ class PageController extends Controller
         // Cache les 6 derniers articles publiés (15 minutes) - Optimisé avec select()
         $latestJobs = \Illuminate\Support\Facades\Cache::remember('latest_jobs', 900, function () {
             return \App\Models\JobArticle::where('status', 'published')
+                ->where('is_sponsored', false)
                 ->with('category:id,name,slug')
                 ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')
                 ->orderBy('published_at', 'desc')
                 ->orderBy('updated_at', 'desc')
                 ->orderBy('created_at', 'desc')
-                ->take(6)
+                ->take(8)
                 ->get();
         });
         

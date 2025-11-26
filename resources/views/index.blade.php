@@ -312,6 +312,13 @@
         margin: 30px 0;
     }
     
+    /* Masquer la section stats sur mobile */
+    @media (max-width: 768px) {
+        .stats-section {
+            display: none !important;
+        }
+    }
+    
     .stats-grid {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
@@ -467,12 +474,12 @@
         color: rgba(255, 255, 255, 0.95);
     }
     
-    /* Technologies Section - Ultra Modern Design */
+    /* Technologies Section - Carousel Design Exceptionnel */
     .tech-section {
         position: relative;
         z-index: 2;
-        padding: 100px 20px;
-        max-width: 1400px;
+        padding: 20px 20px 40px;
+        max-width: 1600px;
         margin: 0 auto;
         overflow: hidden;
     }
@@ -484,13 +491,16 @@
         left: -50%;
         width: 200%;
         height: 200%;
-        background: radial-gradient(circle at 30% 30%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
-                    radial-gradient(circle at 70% 70%, rgba(20, 184, 166, 0.15) 0%, transparent 50%);
-        animation: rotateGradient 20s linear infinite;
+        background: 
+            radial-gradient(circle at 20% 30%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
+            radial-gradient(circle at 80% 70%, rgba(20, 184, 166, 0.15) 0%, transparent 50%),
+            radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
+        animation: gradientRotate 20s linear infinite;
         pointer-events: none;
+        z-index: 0;
     }
     
-    @keyframes rotateGradient {
+    @keyframes gradientRotate {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
     }
@@ -522,7 +532,7 @@
         font-size: clamp(1rem, 2vw, 1.3rem);
         color: rgba(30, 41, 59, 0.7);
         max-width: 800px;
-        margin: 0 auto 60px;
+        margin: 0 auto 35px;
         line-height: 1.8;
         position: relative;
         z-index: 1;
@@ -566,180 +576,116 @@
         color: rgba(255, 255, 255, 0.7);
     }
     
-    .tech-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 35px;
+    /* Carousel Design Moderne et Épuré */
+    .tech-carousel-wrapper {
         position: relative;
+        padding: 30px 0 40px;
         z-index: 1;
     }
     
-    .tech-card {
+    .tech-carousel {
+        overflow: visible;
+        padding: 20px 0 30px;
+    }
+    
+    .tech-carousel .swiper-slide {
+        height: auto;
+        display: flex;
+    }
+    
+    .tech-card-carousel {
         position: relative;
-        background: rgba(255, 255, 255, 0.7);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        border-radius: 32px;
-        padding: 45px 35px;
-        backdrop-filter: blur(30px) saturate(180%);
-        -webkit-backdrop-filter: blur(30px) saturate(180%);
-        transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        background: #fff;
+        border: none;
+        border-radius: 20px;
+        padding: 0;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         cursor: pointer;
         overflow: hidden;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1),
-                    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
-        transform-style: preserve-3d;
-        perspective: 1000px;
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
     }
     
-    body.dark-mode .tech-card {
-        background: rgba(15, 23, 42, 0.6);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3),
-                    0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+    body.dark-mode .tech-card-carousel {
+        background: rgba(30, 41, 59, 0.95);
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
     }
     
-    .tech-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(135deg, 
-            rgba(6, 182, 212, 0.1) 0%, 
-            rgba(20, 184, 166, 0.1) 50%,
-            rgba(139, 92, 246, 0.1) 100%);
-        opacity: 0;
-        transition: opacity 0.5s ease;
-        border-radius: 32px;
-        z-index: 0;
-    }
-    
-    .tech-card:hover::before {
-        opacity: 1;
-    }
-    
-    .tech-card::after {
-        content: '';
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: conic-gradient(from 0deg, 
-            transparent 0deg,
-            rgba(6, 182, 212, 0.1) 90deg,
-            transparent 180deg,
-            rgba(20, 184, 166, 0.1) 270deg,
-            transparent 360deg);
-        animation: rotateBorder 4s linear infinite;
-        opacity: 0;
-        transition: opacity 0.5s ease;
-    }
-    
-    .tech-card:hover::after {
-        opacity: 1;
-    }
-    
-    @keyframes rotateBorder {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-    
-    .tech-card:hover {
-        transform: translateY(-15px) rotateX(5deg) rotateY(-5deg) scale(1.03);
-        border-color: rgba(6, 182, 212, 0.5);
-        box-shadow: 0 25px 60px rgba(6, 182, 212, 0.25),
-                    0 0 40px rgba(6, 182, 212, 0.15),
-                    0 0 0 1px rgba(6, 182, 212, 0.2) inset;
-    }
-    
-    body.dark-mode .tech-card:hover {
-        box-shadow: 0 25px 60px rgba(6, 182, 212, 0.4),
-                    0 0 50px rgba(6, 182, 212, 0.2),
-                    0 0 0 1px rgba(6, 182, 212, 0.3) inset;
-    }
-    
-    .tech-icon-wrapper {
+    /* Section icône avec gradient */
+    .tech-card-icon-section {
         position: relative;
-        width: 100px;
-        height: 100px;
-        margin: 0 auto 30px;
+        padding: 35px 30px 25px;
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.08), rgba(20, 184, 166, 0.08));
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        transition: all 0.4s ease;
+    }
+    
+    body.dark-mode .tech-card-icon-section {
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.12), rgba(20, 184, 166, 0.12));
+    }
+    
+    .tech-card-carousel:hover .tech-card-icon-section {
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(20, 184, 166, 0.15));
+    }
+    
+    .tech-icon-carousel {
+        width: 70px;
+        height: 70px;
+        margin: 0 auto 20px;
         display: flex;
         align-items: center;
         justify-content: center;
-        z-index: 1;
-    }
-    
-    .tech-icon-wrapper::before {
-        content: '';
-        position: absolute;
-        inset: -10px;
-        background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2));
-        border-radius: 50%;
-        opacity: 0;
-        transition: all 0.5s ease;
-        filter: blur(20px);
-    }
-    
-    .tech-card:hover .tech-icon-wrapper::before {
-        opacity: 1;
-        transform: scale(1.2);
-    }
-    
-    .tech-icon {
-        font-size: 4.5rem;
-        display: block;
+        font-size: 3.2rem;
         position: relative;
         z-index: 1;
-        transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-        filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
+        transition: all 0.4s ease;
     }
     
-    .tech-card:hover .tech-icon {
-        transform: scale(1.15) rotateY(15deg);
-        filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.25));
+    .tech-card-carousel:hover .tech-icon-carousel {
+        transform: scale(1.08);
     }
     
-    .tech-name {
-        font-size: clamp(1.5rem, 2.5vw, 2rem);
+    .tech-name-carousel {
+        font-size: 1.4rem;
         font-weight: 800;
-        margin-bottom: 18px;
+        margin-bottom: 0;
         color: rgba(30, 41, 59, 0.95);
         text-align: center;
+        letter-spacing: -0.5px;
         position: relative;
         z-index: 1;
-        letter-spacing: -0.5px;
-        transition: all 0.3s ease;
     }
     
-    body.dark-mode .tech-name {
+    body.dark-mode .tech-name-carousel {
         color: #fff;
     }
     
-    .tech-card:hover .tech-name {
-        background: linear-gradient(135deg, #06b6d4, #14b8a6);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
+    /* Section contenu */
+    .tech-card-content-section {
+        padding: 25px 30px 30px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
     }
     
-    .tech-desc {
-        color: rgba(30, 41, 59, 0.75);
-        line-height: 1.8;
-        margin-bottom: 28px;
+    .tech-desc-carousel {
+        color: rgba(30, 41, 59, 0.7);
+        line-height: 1.7;
+        margin-bottom: 25px;
         text-align: center;
-        font-size: 1rem;
-        position: relative;
-        z-index: 1;
-        transition: color 0.3s ease;
+        font-size: 0.9rem;
+        flex: 1;
     }
     
-    body.dark-mode .tech-desc {
+    body.dark-mode .tech-desc-carousel {
         color: rgba(255, 255, 255, 0.7);
     }
     
-    .tech-link {
+    .tech-link-carousel {
         color: #fff;
         text-decoration: none;
         font-weight: 700;
@@ -747,221 +693,187 @@
         align-items: center;
         justify-content: center;
         gap: 10px;
-        padding: 14px 32px;
+        padding: 12px 24px;
         background: linear-gradient(135deg, #06b6d4, #14b8a6);
-        border-radius: 50px;
-        transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-        position: relative;
-        z-index: 1;
-        overflow: hidden;
-        box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
-        text-transform: uppercase;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 10px rgba(6, 182, 212, 0.3);
         font-size: 0.85rem;
+        text-transform: uppercase;
         letter-spacing: 0.5px;
         width: 100%;
+        margin-top: auto;
     }
     
-    .tech-link::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-        transition: left 0.5s ease;
-    }
-    
-    .tech-link:hover::before {
-        left: 100%;
-    }
-    
-    .tech-link:hover {
-        gap: 15px;
+    .tech-link-carousel:hover {
+        gap: 12px;
         transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(6, 182, 212, 0.5);
+        box-shadow: 0 4px 15px rgba(6, 182, 212, 0.4);
         background: linear-gradient(135deg, #14b8a6, #06b6d4);
     }
     
-    .tech-link i {
-        transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    .tech-card-carousel:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 40px rgba(6, 182, 212, 0.2);
     }
     
-    .tech-link:hover i {
-        transform: translateX(5px);
+    body.dark-mode .tech-card-carousel:hover {
+        box-shadow: 0 12px 40px rgba(6, 182, 212, 0.3);
     }
     
-    /* Floating particles effect */
-    .tech-card .particle {
-        position: absolute;
-        width: 4px;
-        height: 4px;
-        background: rgba(6, 182, 212, 0.6);
+    /* Navigation moderne et épurée */
+    .tech-carousel-nav {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        margin: 30px auto 0;
+        position: relative;
+        z-index: 1;
+        width: fit-content;
+        max-width: 100%;
+    }
+    
+    .tech-carousel-btn {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #06b6d4, #14b8a6);
+        border: none;
+        color: #fff;
+        font-size: 1.1rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 10px rgba(6, 182, 212, 0.3);
+        flex-shrink: 0;
+    }
+    
+    .tech-carousel-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(6, 182, 212, 0.4);
+        background: linear-gradient(135deg, #14b8a6, #06b6d4);
+    }
+    
+    .tech-carousel-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        transform: translateY(0);
+    }
+    
+    .tech-carousel-pagination {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0 6px;
+    }
+    
+    .tech-carousel-pagination-bullet {
+        width: 8px;
+        height: 8px;
         border-radius: 50%;
-        pointer-events: none;
-        opacity: 0;
-        animation: floatParticle 3s ease-in-out infinite;
+        background: rgba(6, 182, 212, 0.3);
+        cursor: pointer;
+        transition: all 0.3s ease;
     }
     
-    @keyframes floatParticle {
-        0%, 100% {
-            transform: translateY(0) translateX(0);
-            opacity: 0;
-        }
-        50% {
-            opacity: 1;
-        }
+    .tech-carousel-pagination-bullet:hover {
+        background: rgba(6, 182, 212, 0.5);
+        transform: scale(1.2);
     }
     
-    .tech-card:hover .particle {
-        animation: floatParticle 2s ease-in-out infinite;
+    .tech-carousel-pagination-bullet-active {
+        background: #06b6d4;
+        width: 24px;
+        border-radius: 12px;
     }
     
-    /* Scroll Indicator */
-    .scroll-indicator {
-        position: absolute;
-        bottom: 40px;
-        left: 50%;
-        transform: translateX(-50%);
-        animation: bounce 2s infinite;
-    }
-    
-    @keyframes bounce {
-        0%, 100% {
-            transform: translateX(-50%) translateY(0);
-        }
-        50% {
-            transform: translateX(-50%) translateY(-20px);
-        }
-    }
-    
-    .scroll-text {
-        font-size: 0.9rem;
-        color: rgba(255, 255, 255, 0.5);
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        margin-bottom: 10px;
-    }
-    
-    .scroll-icon {
-        font-size: 2rem;
-        color: #06b6d4;
-    }
-    
-    /* Responsive */
-    @media (max-width: 968px) {
-        .hero-section {
-            padding: 80px 20px 60px;
-            min-height: auto;
-            background-attachment: scroll;
+    /* Masquer la pagination sur mobile */
+    @media (max-width: 768px) {
+        .tech-carousel-pagination {
+            display: none !important;
         }
         
-        .cta-buttons {
-            flex-direction: column;
-            align-items: center;
-        }
-        
-        .btn-3d {
-            width: 100%;
-            max-width: 320px;
-            justify-content: center;
-        }
-        
-        .stats-grid {
-            grid-template-columns: repeat(2, 1fr);
+        .tech-carousel-nav {
             gap: 20px;
         }
-        
-        .stat-card {
-            padding: 30px 20px;
-        }
-        
-        .stat-icon {
-            width: 60px;
-            height: 60px;
-            font-size: 1.8rem;
-        }
-        
-        .stat-number {
-            font-size: 2rem;
-        }
-        
+    }
+    
+    @media (max-width: 968px) {
         .tech-section {
-            padding: 60px 20px;
+            padding: 40px 20px 30px;
         }
         
-        .tech-grid {
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
+        .tech-carousel-wrapper {
+            padding: 20px 0 30px;
         }
         
-        .tech-card {
+        .tech-carousel {
+            padding: 15px 0 25px;
+        }
+        
+        .tech-carousel-nav {
+            margin-top: 30px;
+        }
+        
+        .tech-card-carousel {
             padding: 35px 25px;
         }
         
-        .tech-icon-wrapper {
+        .tech-icon-carousel {
             width: 80px;
             height: 80px;
-            margin-bottom: 25px;
+            font-size: 3.5rem;
         }
         
-        .tech-icon {
-            font-size: 3.5rem;
+        .tech-name-carousel {
+            font-size: 1.4rem;
         }
     }
     
-    @media (max-width: 480px) {
-        .hero-section {
-            padding: 70px 15px 50px;
-        }
-        
-        .main-title {
-            font-size: 2rem;
-        }
-        
-        .stats-grid {
-            grid-template-columns: 1fr;
-            gap: 15px;
-        }
-        
-        .section-title {
-            font-size: 1.5rem;
-        }
-        
+    @media (max-width: 768px) {
         .tech-section {
-            padding: 40px 15px;
+            padding: 35px 15px 25px;
         }
         
-        .tech-grid {
-            grid-template-columns: 1fr;
-            gap: 20px;
+        .tech-carousel-wrapper {
+            padding: 15px 0 25px;
         }
         
-        .tech-card {
-            padding: 25px 18px;
+        .tech-carousel-nav {
+            margin-top: 25px;
+            gap: 8px;
         }
         
-        .tech-icon-wrapper {
-            width: 60px;
-            height: 60px;
-            margin-bottom: 20px;
+        .tech-carousel-btn {
+            width: 48px;
+            height: 48px;
+            font-size: 1.1rem;
         }
         
-        .tech-icon {
-            font-size: 2rem;
+        .tech-card-carousel {
+            padding: 30px 22px;
         }
         
-        .tech-name {
-            font-size: 1.4rem;
+        .tech-icon-carousel {
+            width: 70px;
+            height: 70px;
+            font-size: 3rem;
         }
         
-        .tech-desc {
+        .tech-name-carousel {
+            font-size: 1.3rem;
+        }
+        
+        .tech-desc-carousel {
             font-size: 0.9rem;
         }
         
-        .tech-link {
-            padding: 12px 24px;
-            font-size: 0.8rem;
+        .tech-link-carousel {
+            padding: 12px 28px;
+            font-size: 0.85rem;
         }
     }
 </style>
@@ -1046,7 +958,7 @@
 </section>
 
 <!-- Exercices & Quiz Section -->
-<section class="exercices-quiz-section" style="position: relative; z-index: 2; padding: 50px 20px; max-width: 1600px; margin: 0 auto;">
+<section class="exercices-quiz-section" style="position: relative; z-index: 2; padding: 50px 20px 30px; max-width: 1600px; margin: 0 auto;">
     <h2 class="exercices-quiz-section-title">Pratiquez avec nos Exercices & Quiz</h2>
     <p class="exercices-quiz-section-subtitle">
         Renforcez vos compétences avec des exercices pratiques et testez vos connaissances avec nos quiz interactifs. La pratique est essentielle 
@@ -1067,13 +979,10 @@
                 </div>
                 <h3 class="exercices-quiz-title">Exercices Pratiques</h3>
                 <p class="exercices-quiz-description">
-                Plus de 100 exercices interactifs couvrant 9 technologies différentes, répartis en trois niveaux de difficulté (Facile, Moyen, Difficile). 
-                Chaque exercice comprend un énoncé clair, un code de départ, et une solution détaillée. Écrivez du code directement dans votre navigateur 
-                avec notre éditeur intégré, exécutez-le en temps réel, et recevez des feedbacks immédiats. Les exercices progressent naturellement, vous 
-                permettant de construire vos compétences étape par étape, de la syntaxe de base aux concepts avancés.
+                Plus de 100 exercices interactifs couvrant 9 technologies différentes, répartis en trois niveaux de difficulté. Écrivez du code directement dans votre navigateur avec notre éditeur intégré et recevez des feedbacks immédiats.
             </p>
                 <a href="{{ route('exercices') }}" class="exercices-quiz-btn exercices-btn">
-                Commencer les exercices <i class="fas fa-arrow-right"></i>
+                Commencer <i class="fas fa-arrow-right"></i>
             </a>
         </div>
         
@@ -1084,13 +993,24 @@
                 </div>
                 <h3 class="exercices-quiz-title">Quiz Interactifs</h3>
                 <p class="exercices-quiz-description">
-                Testez vos connaissances avec nos quiz détaillés couvrant toutes les technologies enseignées. Chaque quiz comprend des questions 
-                variées (choix multiples, vrai/faux, questions à développement) qui évaluent votre compréhension des concepts clés. Obtenez un 
-                score détaillé à la fin, avec des explications complètes pour chaque question, qu'elle soit correcte ou incorrecte. Cette approche 
-                vous permet d'identifier vos points forts et vos faiblesses, et de cibler vos révisions pour progresser rapidement et efficacement.
+                Testez vos connaissances avec nos quiz détaillés couvrant toutes les technologies enseignées. Obtenez un score détaillé avec des explications complètes pour chaque question.
             </p>
                 <a href="{{ route('quiz') }}" class="exercices-quiz-btn quiz-btn">
                 Faire un quiz <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+        
+        <!-- Formations Card -->
+            <div class="exercices-quiz-card formations-card">
+                <div class="exercices-quiz-icon-wrapper formations-icon-wrapper">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <h3 class="exercices-quiz-title">Formations Complètes</h3>
+                <p class="exercices-quiz-description">
+                Découvrez nos formations complètes et structurées pour maîtriser le développement web. Des parcours progressifs avec des leçons détaillées, des exemples pratiques et des projets réels.
+            </p>
+                <a href="{{ route('formations.all') }}" class="exercices-quiz-btn formations-btn">
+                Voir les formations <i class="fas fa-arrow-right"></i>
             </a>
         </div>
         </div>
@@ -1254,9 +1174,10 @@
     
     /* Section Publicitaire Next-Gen - Design Ultra Moderne Alternatif */
     .nextgen-ads-section {
+        margin-top: 0;
         position: relative;
         z-index: 2;
-        padding: 100px 20px;
+        padding: 20px 20px 30px;
         max-width: 1600px;
         margin: 0 auto;
     }
@@ -1796,173 +1717,312 @@
         }).catch(err => console.log('Ad click tracking error:', err));
     }
     
-    // Animation au scroll pour les cartes tech
-    document.addEventListener('DOMContentLoaded', function() {
-        const techCards = document.querySelectorAll('.tech-card');
-        
-        // Observer pour l'animation au scroll
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-        
-        const observer = new IntersectionObserver(function(entries) {
-            entries.forEach((entry, index) => {
-                if (entry.isIntersecting) {
-                    setTimeout(() => {
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0)';
-                    }, index * 100);
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, observerOptions);
-        
-        techCards.forEach(card => {
-            card.style.opacity = '0';
-            card.style.transform = 'translateY(30px)';
-            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-            observer.observe(card);
-        });
-    });
 </script>
 
-<!-- Technologies Section - Ultra Modern Design -->
+<!-- Technologies Section - Carousel Ultra Moderne -->
 <section id="technologies" class="tech-section">
     <h2 class="section-title">Technologies Enseignées</h2>
     <p class="section-subtitle">
-        Maîtrisez les technologies les plus demandées du marché avec nos formations complètes et pratiques. 
-        Chaque technologie est enseignée avec des projets réels et des exercices interactifs.
+        Maîtrisez les technologies les plus demandées du marché avec nos formations complètes et pratiques.
     </p>
     
-    <div class="tech-grid">
-        <!-- HTML5 -->
-        <div class="tech-card">
-            <div class="tech-icon-wrapper">
-                <i class="fab fa-html5 tech-icon" style="color: #e34c26;"></i>
+    <div class="tech-carousel-wrapper">
+        <div class="swiper tech-carousel">
+            <div class="swiper-wrapper">
+                <!-- HTML5 -->
+                <div class="swiper-slide">
+                    <div class="tech-card-carousel">
+                        <div class="tech-card-icon-section">
+                            <div class="tech-icon-carousel">
+                                <i class="fab fa-html5" style="color: #e34c26;"></i>
+                            </div>
+                            <h3 class="tech-name-carousel">HTML5</h3>
+                        </div>
+                        <div class="tech-card-content-section">
+                            <p class="tech-desc-carousel">
+                                Apprenez les fondamentaux du web avec HTML5. Structure, sémantique et bonnes pratiques.
+                            </p>
+                            <a href="{{ route('formations.html5') }}" class="tech-link-carousel">
+                                Commencer <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- CSS3 -->
+                <div class="swiper-slide">
+                    <div class="tech-card-carousel">
+                        <div class="tech-card-icon-section">
+                            <div class="tech-icon-carousel">
+                                <i class="fab fa-css3-alt" style="color: #264de4;"></i>
+                            </div>
+                            <h3 class="tech-name-carousel">CSS3</h3>
+                        </div>
+                        <div class="tech-card-content-section">
+                            <p class="tech-desc-carousel">
+                                Créez des designs modernes et responsives avec CSS3, Flexbox, Grid et animations.
+                            </p>
+                            <a href="{{ route('formations.css3') }}" class="tech-link-carousel">
+                                Commencer <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- JavaScript -->
+                <div class="swiper-slide">
+                    <div class="tech-card-carousel">
+                        <div class="tech-card-icon-section">
+                            <div class="tech-icon-carousel">
+                                <i class="fab fa-js" style="color: #f0db4f;"></i>
+                            </div>
+                            <h3 class="tech-name-carousel">JavaScript</h3>
+                        </div>
+                        <div class="tech-card-content-section">
+                            <p class="tech-desc-carousel">
+                                Maîtrisez JavaScript ES6+, DOM manipulation, programmation asynchrone et frameworks.
+                            </p>
+                            <a href="{{ route('formations.javascript') }}" class="tech-link-carousel">
+                                Commencer <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- PHP -->
+                <div class="swiper-slide">
+                    <div class="tech-card-carousel">
+                        <div class="tech-card-icon-section">
+                            <div class="tech-icon-carousel">
+                                <i class="fab fa-php" style="color: #8993be;"></i>
+                            </div>
+                            <h3 class="tech-name-carousel">PHP</h3>
+                        </div>
+                        <div class="tech-card-content-section">
+                            <p class="tech-desc-carousel">
+                                Développez des applications web dynamiques avec PHP, MySQL, Laravel et Symfony.
+                            </p>
+                            <a href="{{ route('formations.php') }}" class="tech-link-carousel">
+                                Commencer <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Bootstrap -->
+                <div class="swiper-slide">
+                    <div class="tech-card-carousel">
+                        <div class="tech-card-icon-section">
+                            <div class="tech-icon-carousel">
+                                <i class="fab fa-bootstrap" style="color: #7952b3;"></i>
+                            </div>
+                            <h3 class="tech-name-carousel">Bootstrap</h3>
+                        </div>
+                        <div class="tech-card-content-section">
+                            <p class="tech-desc-carousel">
+                                Créez rapidement des interfaces responsives et modernes avec Bootstrap 5.
+                            </p>
+                            <a href="{{ route('formations.bootstrap') }}" class="tech-link-carousel">
+                                Commencer <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Git -->
+                <div class="swiper-slide">
+                    <div class="tech-card-carousel">
+                        <div class="tech-card-icon-section">
+                            <div class="tech-icon-carousel">
+                                <i class="fab fa-git-alt" style="color: #f34f29;"></i>
+                            </div>
+                            <h3 class="tech-name-carousel">Git</h3>
+                        </div>
+                        <div class="tech-card-content-section">
+                            <p class="tech-desc-carousel">
+                                Gérez vos projets avec Git et GitHub. Versioning, collaboration et workflows.
+                            </p>
+                            <a href="{{ route('formations.git') }}" class="tech-link-carousel">
+                                Commencer <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- WordPress -->
+                <div class="swiper-slide">
+                    <div class="tech-card-carousel">
+                        <div class="tech-card-icon-section">
+                            <div class="tech-icon-carousel">
+                                <i class="fab fa-wordpress" style="color: #21759b;"></i>
+                            </div>
+                            <h3 class="tech-name-carousel">WordPress</h3>
+                        </div>
+                        <div class="tech-card-content-section">
+                            <p class="tech-desc-carousel">
+                                Créez des sites web professionnels avec WordPress. Thèmes et plugins personnalisés.
+                            </p>
+                            <a href="{{ route('formations.wordpress') }}" class="tech-link-carousel">
+                                Commencer <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- IA -->
+                <div class="swiper-slide">
+                    <div class="tech-card-carousel">
+                        <div class="tech-card-icon-section">
+                            <div class="tech-icon-carousel">
+                                <i class="fas fa-robot" style="color: #06b6d4;"></i>
+                            </div>
+                            <h3 class="tech-name-carousel">Intelligence Artificielle</h3>
+                        </div>
+                        <div class="tech-card-content-section">
+                            <p class="tech-desc-carousel">
+                                Découvrez l'IA, le Machine Learning et leurs applications pratiques.
+                            </p>
+                            <a href="{{ route('formations.ia') }}" class="tech-link-carousel">
+                                Commencer <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Python -->
+                <div class="swiper-slide">
+                    <div class="tech-card-carousel">
+                        <div class="tech-card-icon-section">
+                            <div class="tech-icon-carousel">
+                                <i class="fab fa-python" style="color: #3776ab;"></i>
+                            </div>
+                            <h3 class="tech-name-carousel">Python</h3>
+                        </div>
+                        <div class="tech-card-content-section">
+                            <p class="tech-desc-carousel">
+                                Apprenez Python pour le web, la data science, l'IA et l'automatisation.
+                            </p>
+                            <a href="{{ route('formations.python') }}" class="tech-link-carousel">
+                                Commencer <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Java -->
+                <div class="swiper-slide">
+                    <div class="tech-card-carousel">
+                        <div class="tech-card-icon-section">
+                            <div class="tech-icon-carousel">
+                                <i class="fab fa-java" style="color: #ed8b00;"></i>
+                            </div>
+                            <h3 class="tech-name-carousel">Java</h3>
+                        </div>
+                        <div class="tech-card-content-section">
+                            <p class="tech-desc-carousel">
+                                Maîtrisez Java, l'un des langages les plus populaires. POO, collections, threads et Spring.
+                            </p>
+                            <a href="{{ route('formations.java') }}" class="tech-link-carousel">
+                                Commencer <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- SQL -->
+                <div class="swiper-slide">
+                    <div class="tech-card-carousel">
+                        <div class="tech-card-icon-section">
+                            <div class="tech-icon-carousel">
+                                <i class="fas fa-database" style="color: #336791;"></i>
+                            </div>
+                            <h3 class="tech-name-carousel">SQL</h3>
+                        </div>
+                        <div class="tech-card-content-section">
+                            <p class="tech-desc-carousel">
+                                Apprenez SQL pour gérer les bases de données. Requêtes, jointures, fonctions et optimisation.
+                            </p>
+                            <a href="{{ route('formations.sql') }}" class="tech-link-carousel">
+                                Commencer <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Langage C -->
+                <div class="swiper-slide">
+                    <div class="tech-card-carousel">
+                        <div class="tech-card-icon-section">
+                            <div class="tech-icon-carousel">
+                                <i class="fab fa-c" style="color: #a8b9cc;"></i>
+                            </div>
+                            <h3 class="tech-name-carousel">Langage C</h3>
+                        </div>
+                        <div class="tech-card-content-section">
+                            <p class="tech-desc-carousel">
+                                Découvrez le langage C, fondement de nombreux langages modernes. Pointeurs, structures et mémoire.
+                            </p>
+                            <a href="{{ route('formations.c') }}" class="tech-link-carousel">
+                                Commencer <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <h3 class="tech-name">HTML5</h3>
-            <p class="tech-desc">
-                Apprenez les fondamentaux du web avec HTML5. Structure, sémantique et bonnes pratiques pour créer des sites modernes.
-            </p>
-            <a href="{{ route('formations.html5') }}" class="tech-link">
-                Commencer <i class="fas fa-arrow-right"></i>
-            </a>
         </div>
         
-        <!-- CSS3 -->
-        <div class="tech-card">
-            <div class="tech-icon-wrapper">
-                <i class="fab fa-css3-alt tech-icon" style="color: #264de4;"></i>
-            </div>
-            <h3 class="tech-name">CSS3</h3>
-            <p class="tech-desc">
-                Créez des designs modernes et responsives avec CSS3, Flexbox, Grid et les animations avancées.
-            </p>
-            <a href="{{ route('formations.css3') }}" class="tech-link">
-                Commencer <i class="fas fa-arrow-right"></i>
-            </a>
-        </div>
-        
-        <!-- JavaScript -->
-        <div class="tech-card">
-            <div class="tech-icon-wrapper">
-                <i class="fab fa-js tech-icon" style="color: #f0db4f;"></i>
-            </div>
-            <h3 class="tech-name">JavaScript</h3>
-            <p class="tech-desc">
-                Maîtrisez JavaScript ES6+, DOM manipulation, programmation asynchrone et les frameworks modernes.
-            </p>
-            <a href="{{ route('formations.javascript') }}" class="tech-link">
-                Commencer <i class="fas fa-arrow-right"></i>
-            </a>
-        </div>
-        
-        <!-- PHP -->
-        <div class="tech-card">
-            <div class="tech-icon-wrapper">
-                <i class="fab fa-php tech-icon" style="color: #8993be;"></i>
-            </div>
-            <h3 class="tech-name">PHP</h3>
-            <p class="tech-desc">
-                Développez des applications web dynamiques avec PHP, MySQL, et les frameworks Laravel et Symfony.
-            </p>
-            <a href="{{ route('formations.php') }}" class="tech-link">
-                Commencer <i class="fas fa-arrow-right"></i>
-            </a>
-        </div>
-        
-        <!-- Bootstrap -->
-        <div class="tech-card">
-            <div class="tech-icon-wrapper">
-                <i class="fab fa-bootstrap tech-icon" style="color: #7952b3;"></i>
-            </div>
-            <h3 class="tech-name">Bootstrap</h3>
-            <p class="tech-desc">
-                Créez rapidement des interfaces responsives et modernes avec le framework Bootstrap 5.
-            </p>
-            <a href="{{ route('formations.bootstrap') }}" class="tech-link">
-                Commencer <i class="fas fa-arrow-right"></i>
-            </a>
-        </div>
-        
-        <!-- Git -->
-        <div class="tech-card">
-            <div class="tech-icon-wrapper">
-                <i class="fab fa-git-alt tech-icon" style="color: #f34f29;"></i>
-            </div>
-            <h3 class="tech-name">Git</h3>
-            <p class="tech-desc">
-                Gérez vos projets avec Git et GitHub. Versioning, collaboration et workflows professionnels.
-            </p>
-            <a href="{{ route('formations.git') }}" class="tech-link">
-                Commencer <i class="fas fa-arrow-right"></i>
-            </a>
-        </div>
-        
-        <!-- WordPress -->
-        <div class="tech-card">
-            <div class="tech-icon-wrapper">
-                <i class="fab fa-wordpress tech-icon" style="color: #21759b;"></i>
-            </div>
-            <h3 class="tech-name">WordPress</h3>
-            <p class="tech-desc">
-                Créez des sites web professionnels avec WordPress. Développement de thèmes et plugins personnalisés.
-            </p>
-            <a href="{{ route('formations.wordpress') }}" class="tech-link">
-                Commencer <i class="fas fa-arrow-right"></i>
-            </a>
-        </div>
-        
-        <!-- IA -->
-        <div class="tech-card">
-            <div class="tech-icon-wrapper">
-                <i class="fas fa-robot tech-icon" style="color: #06b6d4;"></i>
-            </div>
-            <h3 class="tech-name">Intelligence Artificielle</h3>
-            <p class="tech-desc">
-                Découvrez l'IA, le Machine Learning, le Deep Learning et leurs applications pratiques dans le développement.
-            </p>
-            <a href="{{ route('formations.ia') }}" class="tech-link">
-                Commencer <i class="fas fa-arrow-right"></i>
-            </a>
-        </div>
-        
-        <!-- Python -->
-        <div class="tech-card">
-            <div class="tech-icon-wrapper">
-                <i class="fab fa-python tech-icon" style="color: #3776ab;"></i>
-            </div>
-            <h3 class="tech-name">Python</h3>
-            <p class="tech-desc">
-                Apprenez Python, le langage de programmation polyvalent pour le web, la data science, l'IA et l'automatisation.
-            </p>
-            <a href="{{ route('formations.python') }}" class="tech-link">
-                Commencer <i class="fas fa-arrow-right"></i>
-            </a>
+        <div class="tech-carousel-nav">
+            <button class="tech-carousel-btn tech-carousel-prev">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            <div class="tech-carousel-pagination"></div>
+            <button class="tech-carousel-btn tech-carousel-next">
+                <i class="fas fa-chevron-right"></i>
+            </button>
         </div>
     </div>
 </section>
+
+@section('scripts')
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof Swiper !== 'undefined') {
+        const techSwiper = new Swiper('.tech-carousel', {
+            slidesPerView: 1,
+            spaceBetween: 20,
+            loop: true,
+            autoplay: {
+                delay: 4000,
+                disableOnInteraction: false,
+            },
+            breakpoints: {
+                640: {
+                    slidesPerView: 2,
+                    spaceBetween: 25,
+                },
+                1024: {
+                    slidesPerView: 4,
+                    spaceBetween: 30,
+                },
+            },
+            navigation: {
+                nextEl: '.tech-carousel-next',
+                prevEl: '.tech-carousel-prev',
+            },
+            pagination: {
+                el: '.tech-carousel-pagination',
+                clickable: true,
+                renderBullet: function (index, className) {
+                    return '<span class="' + className + ' tech-carousel-pagination-bullet"></span>';
+                },
+            },
+        });
+    }
+});
+</script>
+@endsection
 
 <!-- Categories and Sponsored Articles Section -->
 <section class="categories-sponsored-section" style="position: relative; z-index: 2; padding: 60px 20px; max-width: 1600px; margin: 0 auto;">
@@ -2100,11 +2160,11 @@
     </div>
     
     <div class="latest-jobs-grid" style="margin-bottom: 40px;">
-        @foreach($latestJobs as $job)
-        <a href="{{ route('emplois.article', $job->slug) }}" style="text-decoration: none; display: block;">
-            <div class="latest-job-card" style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.95)); border: 2px solid rgba(6, 182, 212, 0.25); border-radius: 24px; overflow: hidden; transition: all 0.5s ease; height: 100%; box-shadow: 0 10px 40px rgba(6, 182, 212, 0.1);">
+        @foreach($latestJobs as $index => $job)
+        <a href="{{ route('emplois.article', $job->slug) }}" class="latest-job-item @if($index >= 4) hide-on-mobile @endif" style="text-decoration: none; display: block;">
+            <div class="latest-job-card" style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.95)); border: 2px solid rgba(6, 182, 212, 0.25); border-radius: 20px; overflow: hidden; transition: all 0.5s ease; height: 100%; box-shadow: 0 8px 30px rgba(6, 182, 212, 0.1);">
                 @if($job->cover_image)
-                <div style="width: 100%; height: 180px; overflow: hidden;">
+                <div style="width: 100%; height: 140px; overflow: hidden;">
                     <img src="{{ $job->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($job->cover_image) : $job->cover_image }}"
                          alt="{{ $job->title }} - {{ $job->category->name ?? 'Article d\'emploi' }}"
                          loading="lazy" 
@@ -2112,29 +2172,25 @@
                          onerror="this.src='https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=400&h=250&fit=crop'">
                 </div>
                 @else
-                <div class="latest-job-placeholder" style="width: 100%; height: 180px; background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(20, 184, 166, 0.15)); display: flex; align-items: center; justify-content: center;">
-                    <i class="fas fa-briefcase text-5xl" style="color: rgba(6, 182, 212, 0.4);"></i>
+                <div class="latest-job-placeholder" style="width: 100%; height: 140px; background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(20, 184, 166, 0.15)); display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-briefcase text-4xl" style="color: rgba(6, 182, 212, 0.4);"></i>
                 </div>
                 @endif
                 
-                <div style="padding: 24px;">
-                    <span class="latest-job-category" style="display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; background: rgba(6, 182, 212, 0.1); color: #06b6d4; border-radius: 18px; font-size: 0.75rem; font-weight: 700; margin-bottom: 12px; border: 1px solid rgba(6, 182, 212, 0.25);">
+                <div style="padding: 18px;">
+                    <span class="latest-job-category" style="display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; background: rgba(6, 182, 212, 0.1); color: #06b6d4; border-radius: 16px; font-size: 0.7rem; font-weight: 700; margin-bottom: 10px; border: 1px solid rgba(6, 182, 212, 0.25);">
                         <i class="fas fa-folder"></i>{{ $job->category->name }}
                     </span>
                     
-                    <h3 class="latest-job-title" style="font-size: 1.1rem; font-weight: 800; color: rgba(30, 41, 59, 0.9); margin-bottom: 12px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 3em;">
+                    <h3 class="latest-job-title" style="font-size: 0.95rem; font-weight: 800; color: rgba(30, 41, 59, 0.9); margin-bottom: 12px; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 2.7em;">
                         {{ $job->title }}
                     </h3>
                     
-                    <p class="latest-job-excerpt" style="color: rgba(30, 41, 59, 0.7); line-height: 1.6; margin-bottom: 16px; font-size: 0.85rem; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-                        {{ $job->excerpt ?? Str::limit(strip_tags($job->content), 80) }}
-                    </p>
-                    
-                    <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 16px; border-top: 1px solid rgba(6, 182, 212, 0.2);">
-                        <div class="latest-job-meta" style="display: flex; align-items: center; gap: 10px; color: rgba(30, 41, 59, 0.6); font-size: 0.8rem;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 12px; border-top: 1px solid rgba(6, 182, 212, 0.2);">
+                        <div class="latest-job-meta" style="display: flex; align-items: center; gap: 8px; color: rgba(30, 41, 59, 0.6); font-size: 0.75rem;">
                             <span><i class="fas fa-calendar" style="color: #06b6d4;"></i> {{ $job->published_at ? $job->published_at->format('d/m/Y') : '' }}</span>
                         </div>
-                        <span style="padding: 8px 18px; background: linear-gradient(135deg, #06b6d4, #14b8a6); color: #000; border-radius: 10px; font-weight: 700; font-size: 0.8rem; transition: all 0.3s ease;">
+                        <span style="padding: 6px 14px; background: linear-gradient(135deg, #06b6d4, #14b8a6); color: #000; border-radius: 8px; font-weight: 700; font-size: 0.75rem; transition: all 0.3s ease;">
                             Voir <i class="fas fa-arrow-right"></i>
                         </span>
                     </div>
@@ -2154,11 +2210,17 @@
 <style>
     .latest-jobs-grid {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 25px;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 18px;
     }
     
     @media (max-width: 1200px) {
+        .latest-jobs-grid {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+    
+    @media (max-width: 900px) {
         .latest-jobs-grid {
             grid-template-columns: repeat(2, 1fr);
         }
@@ -2167,6 +2229,11 @@
     @media (max-width: 768px) {
         .latest-jobs-grid {
             grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        
+        .hide-on-mobile {
+            display: none !important;
         }
     }
     
@@ -2267,14 +2334,14 @@
         display: grid;
         grid-template-columns: {{ isset($sidebarAds) && $sidebarAds->count() > 0 ? '1fr 300px' : '1fr' }};
         gap: 30px;
-        margin-bottom: 30px;
+        margin-bottom: 0;
         align-items: start;
     }
     
     .exercices-quiz-cards {
         display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 30px;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
     }
     
     /* Cards Exercices & Quiz Ultra Modernes */
@@ -2283,8 +2350,8 @@
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
         border: 2px solid rgba(6, 182, 212, 0.2);
-        border-radius: 24px;
-        padding: 35px;
+        border-radius: 20px;
+        padding: 24px;
         text-align: left;
         transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative;
@@ -2349,14 +2416,14 @@
     }
     
     .exercices-quiz-icon-wrapper {
-        width: 70px;
-        height: 70px;
+        width: 56px;
+        height: 56px;
         background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2));
-        border-radius: 18px;
+        border-radius: 16px;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin-bottom: 25px;
+        margin-bottom: 18px;
         transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative;
         overflow: hidden;
@@ -2388,7 +2455,7 @@
     }
     
     .exercices-quiz-icon-wrapper i {
-        font-size: 2rem;
+        font-size: 1.6rem;
         color: #06b6d4;
         position: relative;
         z-index: 1;
@@ -2399,16 +2466,24 @@
         color: #14b8a6;
     }
     
+    .formations-icon-wrapper {
+        background: linear-gradient(135deg, rgba(20, 184, 166, 0.2), rgba(6, 182, 212, 0.2));
+    }
+    
+    .formations-icon-wrapper i {
+        color: #14b8a6;
+    }
+    
     .exercices-quiz-card:hover .exercices-quiz-icon-wrapper i {
         transform: scale(1.2);
         filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.6));
     }
     
     .exercices-quiz-title {
-        font-size: 1.4rem;
+        font-size: 1.15rem;
         font-weight: 700;
         color: #fff;
-        margin-bottom: 15px;
+        margin-bottom: 12px;
         transition: color 0.3s ease;
         position: relative;
         z-index: 2;
@@ -2421,13 +2496,17 @@
     
     .exercices-quiz-description {
         color: rgba(255, 255, 255, 0.75);
-        line-height: 1.8;
-        margin-bottom: 25px;
-        font-size: 0.95rem;
+        line-height: 1.6;
+        margin-bottom: 18px;
+        font-size: 0.85rem;
         transition: color 0.3s ease;
         position: relative;
         z-index: 2;
         pointer-events: none;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
     
     body:not(.dark-mode) .exercices-quiz-description {
@@ -2439,13 +2518,13 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 10px;
-        padding: 16px 32px;
+        gap: 8px;
+        padding: 12px 24px;
         background: linear-gradient(135deg, #06b6d4, #14b8a6);
         color: #fff;
         font-weight: 700;
+        font-size: 0.85rem;
         text-decoration: none;
-        font-size: 0.95rem;
         border-radius: 50px;
         transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         box-shadow: 0 4px 15px rgba(6, 182, 212, 0.4);
@@ -2463,6 +2542,16 @@
     .quiz-btn {
         background: linear-gradient(135deg, #14b8a6, #06b6d4);
         box-shadow: 0 4px 15px rgba(20, 184, 166, 0.4);
+    }
+    
+    .formations-btn {
+        background: linear-gradient(135deg, #14b8a6, #06b6d4);
+        box-shadow: 0 4px 15px rgba(20, 184, 166, 0.4);
+    }
+    
+    .formations-btn:hover {
+        background: linear-gradient(135deg, #06b6d4, #14b8a6);
+        box-shadow: 0 12px 35px rgba(20, 184, 166, 0.6);
     }
     
     .exercices-quiz-btn::before {
