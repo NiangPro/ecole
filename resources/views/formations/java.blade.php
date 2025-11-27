@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Formation Java | NiangProgrammeur')
+@section('title', trans('app.formations.java.title') . ' | NiangProgrammeur')
 
 @section('styles')
 <!-- Prism.js pour la coloration syntaxique -->
@@ -702,17 +702,17 @@
 <div class="tutorial-header">
     <h1 style="margin: 0; font-size: 48px; font-weight: 800;">
         <i class="fab fa-java" style="margin-right: 15px;"></i>
-        Formation Java
+        {{ trans('app.formations.java.title') }}
     </h1>
     <p style="font-size: 20px; margin-top: 15px; opacity: 0.9;">
-        Apprenez Java, l'un des langages de programmation les plus populaires au monde
+        {{ trans('app.formations.java.subtitle') }}
     </p>
 </div>
 
 <div class="tutorial-content">
     <div class="content-wrapper">
         <!-- Sidebar Toggle Button (Mobile) -->
-        <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Ouvrir le menu">
+        <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="{{ trans('app.formations.java.menu_open') }}">
             <i class="fas fa-bars" id="sidebarToggleIcon"></i>
         </button>
         
@@ -722,85 +722,98 @@
         <!-- Sidebar -->
         <aside class="sidebar" id="tutorialSidebar">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid rgba(237, 139, 0, 0.2);">
-                <h3 style="margin: 0;">Java Tutorial</h3>
-                <button class="sidebar-close-btn" id="sidebarClose" style="display: none; background: none; border: none; color: #ed8b00; font-size: 24px; cursor: pointer; padding: 5px; width: 35px; height: 35px; border-radius: 50%; transition: all 0.3s ease;" aria-label="Fermer le menu">
+                <h3 style="margin: 0;">{{ trans('app.formations.java.sidebar_title') }}</h3>
+                <button class="sidebar-close-btn" id="sidebarClose" style="display: none; background: none; border: none; color: #ed8b00; font-size: 24px; cursor: pointer; padding: 5px; width: 35px; height: 35px; border-radius: 50%; transition: all 0.3s ease;" aria-label="{{ trans('app.formations.java.menu_close') }}">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <a href="#intro" class="active">Introduction Java</a>
-            <a href="#syntax">Syntaxe</a>
-            <a href="#variables">Variables</a>
-            <a href="#datatypes">Types de données</a>
-            <a href="#operators">Opérateurs</a>
-            <a href="#conditions">Conditions</a>
-            <a href="#loops">Boucles</a>
-            <a href="#methods">Méthodes</a>
-            <a href="#arrays">Tableaux</a>
-            <a href="#oop">Programmation Orientée Objet</a>
-            <a href="#collections">Collections</a>
-            <a href="#exceptions">Exceptions</a>
-            <a href="#files">Fichiers</a>
+            @php
+                $anchors = ['intro', 'syntax', 'variables', 'datatypes', 'operators', 'conditions', 'loops', 'methods', 'arrays', 'oop', 'collections', 'exceptions', 'files'];
+            @endphp
+            @foreach(trans('app.formations.java.sidebar_menu') as $index => $menuItem)
+            <a href="#{{ $anchors[$index] ?? 'intro' }}" class="{{ $index === 0 ? 'active' : '' }}">{{ $menuItem }}</a>
+            @endforeach
         </aside>
 
         <!-- Main Content -->
         <main class="main-content">
-            <h1 id="intro">Introduction à Java</h1>
-            <p>Java est un langage de programmation orienté objet, compilé et multiplateforme, créé par James Gosling chez Sun Microsystems (maintenant Oracle) et publié en 1995. Java est l'un des langages les plus utilisés au monde, particulièrement dans le développement d'applications d'entreprise, Android, et systèmes backend.</p>
+            <h1 id="intro">{{ trans('app.formations.java.intro_title') }}</h1>
+            <p>{{ trans('app.formations.java.intro_text') }}</p>
 
-            <h3>☕ Qu'est-ce que Java ?</h3>
-            <p>Java est un langage de programmation <strong>compilé</strong> et <strong>orienté objet</strong>. Le code Java est compilé en bytecode qui s'exécute sur la Java Virtual Machine (JVM), ce qui permet à Java d'être "écrit une fois, exécuté partout" (WORA - Write Once, Run Anywhere). Java est fortement typé et suit le paradigme orienté objet.</p>
+            <h3>{{ trans('app.formations.java.what_is_title') }}</h3>
+            <p>{!! trans('app.formations.java.what_is_text') !!}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">💡 Pourquoi Java est si populaire ?</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.java.why_popular_title') }}</h3>
                 <ol style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                    <li><strong>Multiplateforme</strong> - "Écrit une fois, exécuté partout" grâce à la JVM, fonctionne sur Windows, Linux, macOS</li>
-                    <li><strong>Très utilisé en entreprise</strong> - Langage de choix pour les applications d'entreprise, systèmes backend, microservices</li>
-                    <li><strong>Développement Android</strong> - Langage principal pour développer des applications Android</li>
-                    <li><strong>Robuste et sécurisé</strong> - Gestion automatique de la mémoire, système de sécurité intégré, typage fort</li>
-                    <li><strong>Vaste écosystème</strong> - Spring, Hibernate, Maven, Gradle, et des milliers de bibliothèques</li>
-                    <li><strong>Communauté massive</strong> - Des millions de développeurs, documentation complète, support actif</li>
+                    @foreach(trans('app.formations.java.why_popular_items') as $item)
+                    @php
+                        $parts = explode(' - ', $item);
+                        $label = $parts[0] ?? '';
+                        $description = $parts[1] ?? '';
+                    @endphp
+                    <li><strong>{{ $label }}</strong>@if($description) - {{ $description }}@endif</li>
+                    @endforeach
                 </ol>
             </div>
 
-            <h3>🚀 Pourquoi apprendre Java ?</h3>
-            <p>Java est un excellent choix pour apprendre la programmation orientée objet et développer des applications professionnelles :</p>
+            <h3>{{ trans('app.formations.java.why_learn_title') }}</h3>
+            <p>{{ trans('app.formations.java.why_learn_text') }}</p>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li>✅ <strong>Très demandé</strong> - L'un des langages les plus recherchés sur le marché du travail. Utilisé par Google, Amazon, Netflix, LinkedIn, Uber</li>
-                <li>✅ <strong>Développement Android</strong> - Langage principal pour créer des applications mobiles Android</li>
-                <li>✅ <strong>Applications d'entreprise</strong> - Standard de l'industrie pour les systèmes backend, microservices, applications bancaires</li>
-                <li>✅ <strong>Gratuit et Open-Source</strong> - JDK open-source, multiplateforme, communauté active</li>
-                <li>✅ <strong>Écosystème riche</strong> - Spring Framework, Hibernate, Maven, Gradle, et des milliers de bibliothèques</li>
-                <li>✅ <strong>Grande communauté</strong> - Support et ressources abondantes, forums actifs, documentation complète</li>
-                <li>✅ <strong>Carrière stable</strong> - Beaucoup d'opportunités d'emploi avec de bons salaires</li>
+                @foreach(trans('app.formations.java.why_learn_items') as $item)
+                @php
+                    $parts = explode(' - ', $item);
+                    $label = $parts[0] ?? '';
+                    $description = $parts[1] ?? '';
+                @endphp
+                <li>✅ <strong>{{ $label }}</strong>@if($description) - {{ $description }}@endif</li>
+                @endforeach
             </ul>
 
-            <h3>📋 Prérequis pour apprendre Java</h3>
-            <p>Pour apprendre Java efficacement, il est recommandé d'avoir :</p>
+            <h3>{{ trans('app.formations.java.prerequisites_title') }}</h3>
+            <p>{{ trans('app.formations.java.prerequisites_text') }}</p>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li>✅ <strong>Informatique de base</strong> - Savoir utiliser un ordinateur, créer et éditer des fichiers</li>
-                <li>⚠️ <strong>Logique de programmation</strong> - Comprendre les concepts de base (variables, conditions, boucles) est recommandé</li>
-                <li>⚠️ <strong>Concepts OOP</strong> - Comprendre les classes, objets, héritage est utile mais vous les apprendrez avec Java</li>
+                @foreach(trans('app.formations.java.prerequisites_items') as $item)
+                @php
+                    $parts = explode(' - ', $item);
+                    $label = $parts[0] ?? '';
+                    $description = $parts[1] ?? '';
+                @endphp
+                <li>✅ <strong>{{ $label }}</strong>@if($description) - {{ $description }}@endif</li>
+                @endforeach
             </ul>
 
             <div class="note-box">
-                <p style="color: #000;"><strong>💡 Note importante :</strong> Pour commencer avec Java, vous devez installer le JDK (Java Development Kit) depuis <a href="https://www.oracle.com/java/technologies/downloads/" target="_blank" style="color: #ed8b00; font-weight: bold;">oracle.com</a> ou utiliser OpenJDK. Vous pouvez utiliser un IDE comme IntelliJ IDEA, Eclipse, ou VS Code avec l'extension Java. Pour tester rapidement, vous pouvez utiliser des environnements en ligne comme Repl.it ou OnlineGDB.</p>
+                <p style="color: #000;">{!! trans('app.formations.java.prerequisites_note') !!}</p>
             </div>
 
-            <h3>🎯 Cas d'usage de Java</h3>
-            <p>Java est utilisé dans de nombreux domaines :</p>
+            <h3>{{ trans('app.formations.java.use_cases_title') }}</h3>
+            <p>{{ trans('app.formations.java.use_cases_text') }}</p>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li>📱 <strong>Développement Android</strong> - Langage principal pour créer des applications mobiles Android</li>
-                <li>🌐 <strong>Applications web</strong> - Spring Boot, Java EE pour créer des applications web et API REST</li>
-                <li>💼 <strong>Applications d'entreprise</strong> - Systèmes backend, microservices, applications bancaires et financières</li>
-                <li>☁️ <strong>Cloud Computing</strong> - Développement d'applications cloud avec Spring Cloud, AWS SDK</li>
-                <li>🎮 <strong>Développement de jeux</strong> - LibGDX, jMonkeyEngine pour créer des jeux vidéo</li>
-                <li>🔧 <strong>Outils et frameworks</strong> - Maven, Gradle, Jenkins, Elasticsearch sont écrits en Java</li>
-                <li>📊 <strong>Big Data</strong> - Hadoop, Spark utilisent Java pour le traitement de grandes quantités de données</li>
-                <li>🏦 <strong>Systèmes financiers</strong> - Trading, systèmes bancaires, applications financières</li>
+                @foreach(trans('app.formations.java.use_cases_items') as $item)
+                @php
+                    $parts = explode(' - ', $item);
+                    $icon = '';
+                    $label = '';
+                    $description = '';
+                    if (preg_match('/^([📱🌐💼☁️🎮🔧📊🏦]) (.+)$/u', $item, $matches)) {
+                        $icon = $matches[1];
+                        $rest = $matches[2];
+                        $labelParts = explode(' - ', $rest);
+                        $label = $labelParts[0] ?? '';
+                        $description = $labelParts[1] ?? '';
+                    } else {
+                        $labelParts = explode(' - ', $item);
+                        $label = $labelParts[0] ?? '';
+                        $description = $labelParts[1] ?? '';
+                    }
+                @endphp
+                <li>@if($icon){{ $icon }} @endif<strong>{{ $label }}</strong>@if($description) - {{ $description }}@endif</li>
+                @endforeach
             </ul>
 
-            <h2 id="syntax">📝 Syntaxe de base</h2>
-            <p>La syntaxe Java est basée sur C/C++ mais simplifiée. Java utilise des <strong>accolades</strong> <code>{}</code> pour définir les blocs de code et est un langage <strong>fortement typé</strong>, ce qui signifie que vous devez déclarer le type de chaque variable.</p>
+            <h2 id="syntax">{{ trans('app.formations.java.syntax_title') }}</h2>
+            <p>{!! trans('app.formations.java.syntax_text') !!}</p>
 
             <div class="code-box">
                 <pre><code class="language-java">// Premier programme Java
@@ -823,20 +836,16 @@ public class BonjourMonde {
             </div>
 
             <div class="example-box">
-                <h3 style="color: #000;">💡 Points importants sur la syntaxe Java :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.java.syntax_points_title') }}</h3>
                 <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                    <li><strong>Java utilise des accolades</strong> <code>{}</code> pour définir les blocs de code (classes, méthodes, conditions, boucles)</li>
-                    <li><strong>Les commentaires</strong> utilisent <code>//</code> pour une ligne, ou <code>/* */</code> pour plusieurs lignes</li>
-                    <li><strong>Point-virgule obligatoire</strong> <code>;</code> à la fin de chaque instruction</li>
-                    <li><strong>Java est sensible à la casse</strong> - <code>MaClasse</code> est différent de <code>maclasse</code></li>
-                    <li><strong>Chaque fichier</strong> doit contenir une classe publique avec le même nom que le fichier</li>
-                    <li><strong>Méthode main</strong> - Point d'entrée de tout programme Java : <code>public static void main(String[] args)</code></li>
-                    <li><strong>Conventions de nommage</strong> - Classes en PascalCase, méthodes/variables en camelCase, constantes en UPPER_CASE</li>
+                    @foreach(trans('app.formations.java.syntax_points_items') as $item)
+                    <li>{!! $item !!}</li>
+                    @endforeach
                 </ul>
             </div>
 
-            <h3>🔍 Exemple détaillé de syntaxe</h3>
-            <p>Voici un exemple complet montrant plusieurs aspects de la syntaxe Java :</p>
+            <h3>{{ trans('app.formations.java.syntax_example_title') }}</h3>
+            <p>{{ trans('app.formations.java.syntax_example_text') }}</p>
 
             <div class="code-box">
                 <pre><code class="language-java">// Définition d'une classe
@@ -863,8 +872,8 @@ public class Calculatrice {
 }</code></pre>
             </div>
 
-            <h2 id="variables">🔤 Variables</h2>
-            <p>En Java, les variables doivent être <strong>déclarées avec un type</strong> avant d'être utilisées. Java est un langage à <strong>typage statique</strong>, ce qui signifie que le type d'une variable est déterminé au moment de la compilation et ne peut pas changer.</p>
+            <h2 id="variables">{{ trans('app.formations.java.variables_title') }}</h2>
+            <p>{!! trans('app.formations.java.variables_text') !!}</p>
 
             <div class="code-box">
                 <pre><code class="language-java">// Déclaration de variables
@@ -897,20 +906,16 @@ String _prive = "variable privée";  // Possible mais non recommandé</code></pr
             </div>
 
             <div class="example-box">
-                <h3 style="color: #000;">📌 Règles pour les noms de variables :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.java.variables_rules_title') }}</h3>
                 <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                    <li>Doivent commencer par une lettre, underscore <code>_</code>, ou dollar <code>$</code></li>
-                    <li>Peuvent contenir des lettres, chiffres, underscores et dollars</li>
-                    <li>Ne peuvent pas contenir d'espaces (utilisez <code>camelCase</code> à la place)</li>
-                    <li>Sont sensibles à la casse (<code>age</code> ≠ <code>Age</code>)</li>
-                    <li>Ne peuvent pas être des mots-clés Java (<code>if</code>, <code>for</code>, <code>class</code>, etc.)</li>
-                    <li>Convention : utilisez <code>camelCase</code> pour les variables (ex: <code>nomUtilisateur</code>)</li>
-                    <li>Pour les constantes : utilisez <code>UPPER_CASE</code> avec underscores (ex: <code>MAX_SIZE</code>)</li>
+                    @foreach(trans('app.formations.java.variables_rules_items') as $item)
+                    <li>{!! $item !!}</li>
+                    @endforeach
                 </ul>
             </div>
 
-            <h2 id="datatypes">📊 Types de données</h2>
-            <p>Java a deux catégories de types de données : <strong>types primitifs</strong> et <strong>types objets</strong> (références). Voici les principaux :</p>
+            <h2 id="datatypes">{{ trans('app.formations.java.datatypes_title') }}</h2>
+            <p>{!! trans('app.formations.java.datatypes_text') !!}</p>
 
             <div class="code-box">
                 <pre><code class="language-java">// Types primitifs (8 types)
@@ -944,23 +949,21 @@ double prixDouble = Double.parseDouble("19.99");  // Convertir en double</code><
             </div>
 
             <div class="example-box">
-                <h3 style="color: #000;">📚 Types de données Java :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.java.datatypes_list_title') }}</h3>
                 <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                    <li><strong>Types primitifs</strong> - byte, short, int, long, float, double, char, boolean</li>
-                    <li><strong>String</strong> - Chaînes de caractères (classe spéciale, immuable)</li>
-                    <li><strong>Tableaux</strong> - Collections de taille fixe (int[], String[], etc.)</li>
-                    <li><strong>Collections</strong> - ArrayList, HashMap, HashSet, etc. (du package java.util)</li>
-                    <li><strong>bool</strong> - Booléens (True ou False)</li>
-                    <li><strong>list</strong> - Listes ordonnées et modifiables</li>
-                    <li><strong>tuple</strong> - Tuples ordonnés et immuables</li>
-                    <li><strong>dict</strong> - Dictionnaires (paires clé-valeur)</li>
-                    <li><strong>set</strong> - Ensembles (éléments uniques, non ordonnés)</li>
-                    <li><strong>NoneType</strong> - Type pour la valeur None (équivalent à null)</li>
+                    @foreach(trans('app.formations.java.datatypes_list_items') as $item)
+                    @php
+                        $parts = explode(' - ', $item);
+                        $label = $parts[0] ?? '';
+                        $description = $parts[1] ?? '';
+                    @endphp
+                    <li><strong>{{ $label }}</strong>@if($description) - {{ $description }}@endif</li>
+                    @endforeach
                 </ul>
             </div>
 
-            <h2 id="operators">🔢 Opérateurs</h2>
-            <p>Java supporte les opérateurs arithmétiques, de comparaison, logiques, d'assignation et d'instance :</p>
+            <h2 id="operators">{{ trans('app.formations.java.operators_title') }}</h2>
+            <p>{{ trans('app.formations.java.operators_text') }}</p>
 
             <div class="code-box">
                 <pre><code class="language-java">// Opérateurs arithmétiques
@@ -1002,8 +1005,8 @@ String texte = "Java";
 System.out.println(texte instanceof String);  // true</code></pre>
             </div>
 
-            <h2 id="conditions">🔀 Structures conditionnelles</h2>
-            <p>Java utilise <code>if</code>, <code>else if</code> et <code>else</code> pour les conditions. Les blocs de code sont délimités par des accolades <code>{}</code>.</p>
+            <h2 id="conditions">{{ trans('app.formations.java.conditions_title') }}</h2>
+            <p>{!! trans('app.formations.java.conditions_text') !!}</p>
 
             <div class="code-box">
                 <pre><code class="language-java">// Structure if simple
@@ -1079,8 +1082,8 @@ switch (jour) {
 }</code></pre>
             </div>
 
-            <h2 id="loops">🔄 Boucles</h2>
-            <p>Java propose plusieurs types de boucles : <code>for</code> (classique et enhanced), <code>while</code> et <code>do-while</code> :</p>
+            <h2 id="loops">{{ trans('app.formations.java.loops_title') }}</h2>
+            <p>{!! trans('app.formations.java.loops_text') !!}</p>
 
             <div class="code-box">
                 <pre><code class="language-java">// Boucle for classique
@@ -1142,8 +1145,8 @@ do {
 } while (x < 5);</code></pre>
             </div>
 
-            <h2 id="methods">⚙️ Méthodes</h2>
-            <p>Les méthodes permettent de réutiliser du code. En Java, on définit une méthode avec un type de retour, un nom et des paramètres. Les méthodes peuvent retourner des valeurs avec <code>return</code>.</p>
+            <h2 id="methods">{{ trans('app.formations.java.methods_title') }}</h2>
+            <p>{!! trans('app.formations.java.methods_text') !!}</p>
 
             <div class="code-box">
                 <pre><code class="language-java">public class MethodesExemple {
@@ -1189,8 +1192,8 @@ do {
 }</code></pre>
             </div>
 
-            <h2 id="arrays">📋 Tableaux</h2>
-            <p>Les tableaux en Java sont des structures de données de taille fixe. Ils permettent de stocker plusieurs éléments du même type.</p>
+            <h2 id="arrays">{{ trans('app.formations.java.arrays_title') }}</h2>
+            <p>{{ trans('app.formations.java.arrays_text') }}</p>
 
             <div class="code-box">
                 <pre><code class="language-java">// Création de tableaux
@@ -1240,8 +1243,8 @@ for (int i = 0; i < matrice.length; i++) {
 }</code></pre>
             </div>
 
-            <h2 id="oop">🏗️ Programmation Orientée Objet</h2>
-            <p>Java est un langage orienté objet. Une classe est un modèle pour créer des objets. Les objets ont des attributs (données) et des méthodes (fonctions).</p>
+            <h2 id="oop">{{ trans('app.formations.java.oop_title') }}</h2>
+            <p>{{ trans('app.formations.java.oop_text') }}</p>
 
             <div class="code-box">
                 <pre><code class="language-java">// Définir une classe
@@ -1297,8 +1300,8 @@ public class ExemplePOO {
 }</code></pre>
             </div>
 
-            <h2 id="collections">📚 Collections</h2>
-            <p>Java fournit le framework Collections pour gérer des groupes d'objets. Les principales collections sont ArrayList, HashMap, HashSet, etc.</p>
+            <h2 id="collections">{{ trans('app.formations.java.collections_title') }}</h2>
+            <p>{{ trans('app.formations.java.collections_text') }}</p>
 
             <div class="code-box">
                 <pre><code class="language-java">import java.util.ArrayList;
@@ -1341,8 +1344,8 @@ villes.add("Dakar");  // Ignoré (déjà présent)
 System.out.println(villes.size());  // 2</code></pre>
             </div>
 
-            <h2 id="exceptions">⚠️ Gestion des exceptions</h2>
-            <p>Java utilise try-catch pour gérer les erreurs. Les exceptions permettent de gérer les erreurs de manière élégante sans faire planter le programme.</p>
+            <h2 id="exceptions">{{ trans('app.formations.java.exceptions_title') }}</h2>
+            <p>{{ trans('app.formations.java.exceptions_text') }}</p>
 
             <div class="code-box">
                 <pre><code class="language-java">// Try-catch simple
@@ -1381,8 +1384,8 @@ public static void verifierAge(int age) throws IllegalArgumentException {
 }</code></pre>
             </div>
 
-            <h2 id="files">📁 Manipulation de fichiers</h2>
-            <p>Java permet de lire et écrire dans des fichiers. On utilise FileReader, FileWriter, BufferedReader, etc.</p>
+            <h2 id="files">{{ trans('app.formations.java.files_title') }}</h2>
+            <p>{{ trans('app.formations.java.files_text') }}</p>
 
             <div class="code-box">
                 <pre><code class="language-java">import java.io.FileWriter;
@@ -1442,45 +1445,51 @@ try (FileWriter writer = new FileWriter("fichier.txt", true)) {
             </div>
 
             <div class="note-box">
-                <p style="color: #000;"><strong>💡 Note importante :</strong> En Java, il est recommandé d'utiliser <code>try-with-resources</code> pour garantir la fermeture automatique des fichiers. Cela évite les fuites de ressources et simplifie le code.</p>
+                <p style="color: #000;">{!! trans('app.formations.java.files_note') !!}</p>
             </div>
 
-            <h2>🎓 Prochaines étapes</h2>
-            <p>Félicitations ! Vous avez maintenant une solide base en Java.</p>
+            <h2>{{ trans('app.formations.java.next_steps_title') }}</h2>
+            <p>{{ trans('app.formations.java.next_steps_text') }}</p>
             
             <div class="example-box" style="background-color: #d4edda; border-left-color: #28a745;">
-                <h3 style="color: #000;">✅ Ce que vous avez appris :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.java.next_steps_learned_title') }}</h3>
                 <ul style="margin-left: 20px; line-height: 2; color: #000;">
-                    <li>Syntaxe Java et variables</li>
-                    <li>Types de données (primitifs et objets)</li>
-                    <li>Opérateurs (arithmétiques, comparaison, logiques)</li>
-                    <li>Structures conditionnelles (if, else if, else, switch)</li>
-                    <li>Boucles (for, while, do-while, enhanced for)</li>
-                    <li>Méthodes (définition, paramètres, return, surcharge)</li>
-                    <li>Tableaux (déclaration, manipulation, multidimensionnels)</li>
-                    <li>Programmation Orientée Objet (classes, objets, constructeurs)</li>
-                    <li>Collections (ArrayList, HashMap, HashSet)</li>
-                    <li>Gestion des exceptions (try-catch-finally)</li>
-                    <li>Manipulation de fichiers (FileReader, FileWriter, BufferedReader)</li>
+                    @foreach(trans('app.formations.java.next_steps_learned_items') as $item)
+                    <li>{{ $item }}</li>
+                    @endforeach
                 </ul>
             </div>
 
             <div class="example-box">
-                <h3 style="color: #000;">🚀 Pour aller plus loin :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.java.next_steps_further_title') }}</h3>
                 <ul style="margin-left: 20px; line-height: 2; color: #000;">
-                    <li>📚 <strong>Héritage et Polymorphisme</strong> - Concepts avancés de la POO</li>
-                    <li>🔧 <strong>Interfaces et Classes abstraites</strong> - Abstraction en Java</li>
-                    <li>📦 <strong>Packages et Modules</strong> - Organisation du code</li>
-                    <li>🌐 <strong>Spring Framework</strong> - Framework pour applications d'entreprise</li>
-                    <li>📱 <strong>Développement Android</strong> - Créer des applications mobiles</li>
-                    <li>☁️ <strong>Microservices</strong> - Architecture distribuée avec Spring Cloud</li>
+                    @foreach(trans('app.formations.java.next_steps_further_items') as $item)
+                    @php
+                        $parts = explode(' - ', $item);
+                        $icon = '';
+                        $label = '';
+                        $description = '';
+                        if (preg_match('/^([📚🔧📦🌐📱☁️]) (.+)$/u', $item, $matches)) {
+                            $icon = $matches[1];
+                            $rest = $matches[2];
+                            $labelParts = explode(' - ', $rest);
+                            $label = $labelParts[0] ?? '';
+                            $description = $labelParts[1] ?? '';
+                        } else {
+                            $labelParts = explode(' - ', $item);
+                            $label = $labelParts[0] ?? '';
+                            $description = $labelParts[1] ?? '';
+                        }
+                    @endphp
+                    <li>@if($icon){{ $icon }} @endif<strong>{{ $label }}</strong>@if($description) - {{ $description }}@endif</li>
+                    @endforeach
                 </ul>
             </div>
 
             <!-- Navigation Buttons -->
             <div class="nav-buttons">
-                <a href="{{ route('formations.python') }}" class="nav-btn">❮ Précédent: Python</a>
-                <a href="{{ route('exercices') }}" class="nav-btn">Pratiquer avec des exercices ❯</a>
+                <a href="{{ route('formations.python') }}" class="nav-btn">{{ trans('app.formations.java.nav_previous') }}</a>
+                <a href="{{ route('exercices') }}" class="nav-btn">{{ trans('app.formations.java.nav_next') }}</a>
             </div>
         </main>
     </div>

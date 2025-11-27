@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Formation SQL | NiangProgrammeur')
+@section('title', trans('app.formations.sql.title') . ' | NiangProgrammeur')
 
 @section('styles')
 <!-- Prism.js pour la coloration syntaxique -->
@@ -544,17 +544,17 @@
 <div class="tutorial-header">
     <h1 style="margin: 0; font-size: 48px; font-weight: 800;">
         <i class="fas fa-database" style="margin-right: 15px;"></i>
-        Formation SQL
+        {{ trans('app.formations.sql.title') }}
     </h1>
     <p style="font-size: 20px; margin-top: 15px; opacity: 0.9;">
-        Apprenez SQL, le langage standard pour gérer et manipuler les bases de données
+        {{ trans('app.formations.sql.subtitle') }}
     </p>
 </div>
 
 <div class="tutorial-content">
     <div class="content-wrapper">
         <!-- Sidebar Toggle Button (Mobile) -->
-        <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Ouvrir le menu">
+        <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="{{ trans('app.formations.sql.menu_open') }}">
             <i class="fas fa-bars" id="sidebarToggleIcon"></i>
         </button>
         
@@ -564,83 +564,98 @@
         <!-- Sidebar -->
         <aside class="sidebar" id="tutorialSidebar">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid rgba(55, 118, 171, 0.2);">
-                <h3 style="margin: 0;">SQL Tutorial</h3>
-                <button class="sidebar-close-btn" id="sidebarClose" style="display: none; background: none; border: none; color: #3776ab; font-size: 24px; cursor: pointer; padding: 5px; width: 35px; height: 35px; border-radius: 50%; transition: all 0.3s ease;" aria-label="Fermer le menu">
+                <h3 style="margin: 0;">{{ trans('app.formations.sql.sidebar_title') }}</h3>
+                <button class="sidebar-close-btn" id="sidebarClose" style="display: none; background: none; border: none; color: #3776ab; font-size: 24px; cursor: pointer; padding: 5px; width: 35px; height: 35px; border-radius: 50%; transition: all 0.3s ease;" aria-label="{{ trans('app.formations.sql.menu_close') }}">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <a href="#intro" class="active">Introduction SQL</a>
-            <a href="#syntax">Syntaxe de base</a>
-            <a href="#select">SELECT</a>
-            <a href="#where">WHERE</a>
-            <a href="#joins">JOIN</a>
-            <a href="#aggregate">Fonctions d'agrégation</a>
-            <a href="#groupby">GROUP BY</a>
-            <a href="#subqueries">Sous-requêtes</a>
-            <a href="#insert">INSERT, UPDATE, DELETE</a>
-            <a href="#tables">Création de tables</a>
-            <a href="#indexes">Index et optimisation</a>
+            @php
+                $anchors = ['intro', 'syntax', 'select', 'where', 'joins', 'aggregate', 'groupby', 'subqueries', 'insert', 'tables', 'indexes'];
+            @endphp
+            @foreach(trans('app.formations.sql.sidebar_menu') as $index => $menuItem)
+            <a href="#{{ $anchors[$index] ?? 'intro' }}" class="{{ $index === 0 ? 'active' : '' }}">{{ $menuItem }}</a>
+            @endforeach
         </aside>
 
         <!-- Main Content -->
         <main class="main-content">
-            <h1 id="intro">Introduction à SQL</h1>
-            <p>SQL (Structured Query Language) est le langage standard pour gérer et manipuler les bases de données relationnelles. Créé dans les années 1970, SQL est aujourd'hui utilisé par tous les systèmes de gestion de bases de données (SGBD) majeurs : MySQL, PostgreSQL, SQL Server, Oracle, SQLite, etc.</p>
+            <h1 id="intro">{{ trans('app.formations.sql.intro_title') }}</h1>
+            <p>{{ trans('app.formations.sql.intro_text') }}</p>
 
-            <h3>🗄️ Qu'est-ce que SQL ?</h3>
-            <p>SQL est un langage <strong>déclaratif</strong> utilisé pour interagir avec les bases de données relationnelles. Contrairement aux langages de programmation impératifs, SQL décrit <strong>ce que vous voulez</strong> plutôt que <strong>comment l'obtenir</strong>. SQL permet de créer, lire, modifier et supprimer des données dans une base de données.</p>
+            <h3>{{ trans('app.formations.sql.what_is_title') }}</h3>
+            <p>{!! trans('app.formations.sql.what_is_text') !!}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">💡 Pourquoi SQL est si important ?</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.sql.why_important_title') }}</h3>
                 <ol style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                    <li><strong>Standard universel</strong> - SQL est le langage standard pour interagir avec les bases de données relationnelles, utilisé partout dans le monde</li>
-                    <li><strong>Indispensable pour les développeurs</strong> - Presque toutes les applications modernes utilisent des bases de données, SQL est donc essentiel</li>
-                    <li><strong>Gestion efficace des données</strong> - Permet de stocker, récupérer, modifier et analyser de grandes quantités de données efficacement</li>
-                    <li><strong>Compatible avec tous les SGBD</strong> - Fonctionne avec MySQL, PostgreSQL, SQL Server, Oracle, SQLite, etc.</li>
-                    <li><strong>Syntaxe déclarative</strong> - Vous décrivez ce que vous voulez, pas comment l'obtenir, ce qui rend le code plus lisible</li>
-                    <li><strong>Très demandé</strong> - Compétence essentielle recherchée par les employeurs dans le développement web, data science, business intelligence</li>
+                    @foreach(trans('app.formations.sql.why_important_items') as $item)
+                    @php
+                        $parts = explode(' - ', $item);
+                        $label = $parts[0] ?? '';
+                        $description = $parts[1] ?? '';
+                    @endphp
+                    <li><strong>{{ $label }}</strong>@if($description) - {{ $description }}@endif</li>
+                    @endforeach
                 </ol>
             </div>
 
-            <h3>🚀 Pourquoi apprendre SQL ?</h3>
-            <p>SQL est essentiel pour tout développeur ou professionnel travaillant avec des données :</p>
+            <h3>{{ trans('app.formations.sql.why_learn_title') }}</h3>
+            <p>{{ trans('app.formations.sql.why_learn_text') }}</p>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li>✅ <strong>Développement web</strong> - Toutes les applications web modernes utilisent des bases de données (e-commerce, réseaux sociaux, CMS)</li>
-                <li>✅ <strong>Data Science</strong> - Extraction et analyse de données pour prendre des décisions basées sur les données</li>
-                <li>✅ <strong>Business Intelligence</strong> - Création de rapports, tableaux de bord, analyses commerciales</li>
-                <li>✅ <strong>Très demandé</strong> - Compétence recherchée dans presque tous les domaines : développement, marketing, finance, gestion</li>
-                <li>✅ <strong>Syntaxe simple</strong> - SQL est relativement facile à apprendre avec une syntaxe proche de l'anglais</li>
-                <li>✅ <strong>Standard universel</strong> - Une fois appris, vous pouvez l'utiliser avec n'importe quel système de gestion de base de données</li>
-                <li>✅ <strong>Performance</strong> - Permet d'optimiser les requêtes pour gérer efficacement de grandes quantités de données</li>
+                @foreach(trans('app.formations.sql.why_learn_items') as $item)
+                @php
+                    $parts = explode(' - ', $item);
+                    $label = $parts[0] ?? '';
+                    $description = $parts[1] ?? '';
+                @endphp
+                <li>✅ <strong>{{ $label }}</strong>@if($description) - {{ $description }}@endif</li>
+                @endforeach
             </ul>
 
-            <h3>📋 Prérequis pour apprendre SQL</h3>
-            <p>Pour apprendre SQL, il est recommandé d'avoir :</p>
+            <h3>{{ trans('app.formations.sql.prerequisites_title') }}</h3>
+            <p>{{ trans('app.formations.sql.prerequisites_text') }}</p>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li>✅ <strong>Informatique de base</strong> - Savoir utiliser un ordinateur, créer et éditer des fichiers</li>
-                <li>⚠️ <strong>Logique</strong> - Comprendre les concepts de base (conditions, filtres) est utile mais pas obligatoire</li>
-                <li>⚠️ <strong>Notions de bases de données</strong> - Comprendre ce qu'est une table, une ligne, une colonne facilite l'apprentissage</li>
+                @foreach(trans('app.formations.sql.prerequisites_items') as $item)
+                @php
+                    $parts = explode(' - ', $item);
+                    $label = $parts[0] ?? '';
+                    $description = $parts[1] ?? '';
+                @endphp
+                <li>✅ <strong>{{ $label }}</strong>@if($description) - {{ $description }}@endif</li>
+                @endforeach
             </ul>
 
             <div class="note-box">
-                <p style="color: #000;"><strong>💡 Note importante :</strong> Pour pratiquer SQL, vous pouvez installer un système de gestion de base de données gratuit comme MySQL, PostgreSQL ou SQLite. SQLite est particulièrement simple car il ne nécessite pas de serveur. Vous pouvez aussi utiliser des environnements en ligne comme SQLFiddle, DB-Fiddle, ou des outils comme phpMyAdmin, DBeaver, ou MySQL Workbench pour une interface graphique.</p>
+                <p style="color: #000;">{!! trans('app.formations.sql.prerequisites_note') !!}</p>
             </div>
 
-            <h3>🎯 Cas d'usage de SQL</h3>
-            <p>SQL est utilisé dans de nombreux domaines :</p>
+            <h3>{{ trans('app.formations.sql.use_cases_title') }}</h3>
+            <p>{{ trans('app.formations.sql.use_cases_text') }}</p>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li>🌐 <strong>Développement web</strong> - Sites e-commerce, réseaux sociaux, CMS, applications web stockent leurs données en base</li>
-                <li>📊 <strong>Data Science</strong> - Extraction, transformation et analyse de données pour l'analyse prédictive</li>
-                <li>💼 <strong>Business Intelligence</strong> - Création de rapports, tableaux de bord, analyses commerciales et financières</li>
-                <li>🏦 <strong>Finance</strong> - Gestion des transactions, comptabilité, rapports financiers</li>
-                <li>🏥 <strong>Santé</strong> - Gestion des dossiers patients, systèmes d'information hospitaliers</li>
-                <li>🛒 <strong>E-commerce</strong> - Gestion des produits, commandes, clients, inventaires</li>
-                <li>📱 <strong>Applications mobiles</strong> - Stockage local avec SQLite ou synchronisation avec serveurs distants</li>
-                <li>🔍 <strong>Recherche</strong> - Moteurs de recherche, catalogues, systèmes de recommandation</li>
+                @foreach(trans('app.formations.sql.use_cases_items') as $item)
+                @php
+                    $parts = explode(' - ', $item);
+                    $icon = '';
+                    $label = '';
+                    $description = '';
+                    if (preg_match('/^([🌐📊💼🏦🏥🛒📱🔍]) (.+)$/u', $item, $matches)) {
+                        $icon = $matches[1];
+                        $rest = $matches[2];
+                        $labelParts = explode(' - ', $rest);
+                        $label = $labelParts[0] ?? '';
+                        $description = $labelParts[1] ?? '';
+                    } else {
+                        $labelParts = explode(' - ', $item);
+                        $label = $labelParts[0] ?? '';
+                        $description = $labelParts[1] ?? '';
+                    }
+                @endphp
+                <li>@if($icon){{ $icon }} @endif<strong>{{ $label }}</strong>@if($description) - {{ $description }}@endif</li>
+                @endforeach
             </ul>
 
-            <h2 id="syntax">📝 Syntaxe de base</h2>
-            <p>SQL (Structured Query Language) est le langage standard pour interagir avec les bases de données relationnelles. SQL permet de <strong>créer, lire, modifier et supprimer</strong> des données dans une base de données.</p>
+            <h2 id="syntax">{{ trans('app.formations.sql.syntax_title') }}</h2>
+            <p>{!! trans('app.formations.sql.syntax_text') !!}</p>
 
             <div class="code-box">
                 <pre><code class="language-sql">-- Commentaire SQL (ligne unique)
@@ -663,19 +678,16 @@ SELECT * FROM utilisateurs LIMIT 10;</code></pre>
             </div>
 
             <div class="example-box">
-                <h3 style="color: #000;">💡 Points importants sur la syntaxe SQL :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.sql.syntax_points_title') }}</h3>
                 <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                    <li><strong>SQL n'est pas sensible à la casse</strong> - <code>SELECT</code> et <code>select</code> sont équivalents (mais utilisez les majuscules pour les mots-clés)</li>
-                    <li><strong>Les commentaires</strong> utilisent <code>--</code> pour une ligne ou <code>/* */</code> pour plusieurs lignes</li>
-                    <li><strong>Le point-virgule</strong> <code>;</code> termine généralement une requête (optionnel dans certains SGBD)</li>
-                    <li><strong>Les chaînes de caractères</strong> utilisent des guillemets simples <code>'</code> ou doubles <code>"</code> selon le SGBD</li>
-                    <li><strong>Les noms de tables et colonnes</strong> peuvent être entre guillemets si ils contiennent des caractères spéciaux</li>
-                    <li><strong>SQL est déclaratif</strong> - Vous décrivez ce que vous voulez, pas comment l'obtenir</li>
+                    @foreach(trans('app.formations.sql.syntax_points_items') as $item)
+                    <li>{!! $item !!}</li>
+                    @endforeach
                 </ul>
             </div>
 
-            <h3>🔍 Exemple détaillé de requête SQL</h3>
-            <p>Voici un exemple complet montrant plusieurs aspects de SQL :</p>
+            <h3>{{ trans('app.formations.sql.syntax_example_title') }}</h3>
+            <p>{{ trans('app.formations.sql.syntax_example_text') }}</p>
 
             <div class="code-box">
                 <pre><code class="language-sql">-- Requête complexe avec plusieurs clauses
@@ -694,8 +706,8 @@ ORDER BY total_achats DESC
 LIMIT 10;</code></pre>
             </div>
 
-            <h2 id="datatypes">📊 Types de données</h2>
-            <p>SQL supporte plusieurs types de données pour stocker différentes sortes d'informations. Les types varient légèrement selon le SGBD (MySQL, PostgreSQL, SQL Server, etc.), mais les principaux types sont similaires.</p>
+            <h2 id="datatypes">{{ trans('app.formations.sql.datatypes_title') }}</h2>
+            <p>{{ trans('app.formations.sql.datatypes_text') }}</p>
 
             <div class="code-box">
                 <pre><code class="language-sql">-- Types numériques
@@ -738,20 +750,21 @@ CREATE TABLE utilisateurs (
             </div>
 
             <div class="example-box">
-                <h3 style="color: #000;">📌 Règles pour les types de données :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.sql.datatypes_rules_title') }}</h3>
                 <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                    <li><strong>INT</strong> - Pour les nombres entiers (positifs, négatifs, zéro)</li>
-                    <li><strong>VARCHAR(n)</strong> - Pour les chaînes de longueur variable (spécifiez la longueur max)</li>
-                    <li><strong>CHAR(n)</strong> - Pour les chaînes de longueur fixe (rempli avec des espaces si nécessaire)</li>
-                    <li><strong>DECIMAL(p, s)</strong> - Pour les nombres décimaux précis (p = précision totale, s = décimales)</li>
-                    <li><strong>DATE/DATETIME</strong> - Pour stocker des dates et heures</li>
-                    <li><strong>NOT NULL</strong> - Contrainte pour empêcher les valeurs nulles</li>
-                    <li><strong>DEFAULT</strong> - Valeur par défaut si non spécifiée</li>
+                    @foreach(trans('app.formations.sql.datatypes_rules_items') as $item)
+                    @php
+                        $parts = explode(' - ', $item);
+                        $label = $parts[0] ?? '';
+                        $description = $parts[1] ?? '';
+                    @endphp
+                    <li><strong>{{ $label }}</strong>@if($description) - {{ $description }}@endif</li>
+                    @endforeach
                 </ul>
             </div>
 
-            <h2 id="operators">🔢 Opérateurs SQL</h2>
-            <p>SQL supporte plusieurs types d'opérateurs pour comparer, combiner et manipuler des données dans les requêtes.</p>
+            <h2 id="operators">{{ trans('app.formations.sql.operators_title') }}</h2>
+            <p>{{ trans('app.formations.sql.operators_text') }}</p>
 
             <div class="code-box">
                 <pre><code class="language-sql">-- Opérateurs de comparaison
@@ -791,8 +804,8 @@ SELECT * FROM utilisateurs WHERE email IS NULL;
 SELECT * FROM utilisateurs WHERE email IS NOT NULL;</code></pre>
             </div>
 
-            <h2 id="select">📋 Requêtes SELECT</h2>
-            <p>La commande <code>SELECT</code> est la commande la plus utilisée en SQL. Elle permet de récupérer des données d'une ou plusieurs tables.</p>
+            <h2 id="select">{{ trans('app.formations.sql.select_title') }}</h2>
+            <p>{!! trans('app.formations.sql.select_text') !!}</p>
 
             <div class="code-box">
                 <pre><code class="language-sql">-- SELECT de base : récupérer toutes les colonnes
@@ -829,8 +842,8 @@ SELECT * FROM produits LIMIT 10;              -- 10 premiers
 SELECT * FROM produits LIMIT 10 OFFSET 20;     -- 10 résultats à partir du 21ème</code></pre>
             </div>
 
-            <h2 id="where">🔍 Clause WHERE</h2>
-            <p>La clause <code>WHERE</code> permet de filtrer les résultats selon des conditions spécifiques.</p>
+            <h2 id="where">{{ trans('app.formations.sql.where_title') }}</h2>
+            <p>{!! trans('app.formations.sql.where_text') !!}</p>
 
             <div class="code-box">
                 <pre><code class="language-sql">-- WHERE simple
@@ -862,8 +875,8 @@ SELECT * FROM utilisateurs WHERE email IS NULL;
 SELECT * FROM utilisateurs WHERE email IS NOT NULL;</code></pre>
             </div>
 
-            <h2 id="conditions">🔀 Requêtes SELECT avec conditions</h2>
-            <p>La clause <code>WHERE</code> permet de filtrer les résultats selon des conditions. Vous pouvez combiner plusieurs conditions avec <code>AND</code>, <code>OR</code> et <code>NOT</code>.</p>
+            <h2 id="conditions">{{ trans('app.formations.sql.conditions_title') }}</h2>
+            <p>{!! trans('app.formations.sql.conditions_text') !!}</p>
 
             <div class="code-box">
                 <pre><code class="language-sql">-- Condition simple
@@ -902,8 +915,8 @@ SELECT * FROM utilisateurs
 WHERE telephone IS NULL;</code></pre>
             </div>
 
-            <h2 id="joins">🔗 Jointures (JOINs)</h2>
-            <p>Les jointures permettent de combiner des données de plusieurs tables. Il existe plusieurs types de JOINs : INNER JOIN, LEFT JOIN, RIGHT JOIN, et FULL JOIN.</p>
+            <h2 id="joins">{{ trans('app.formations.sql.joins_title') }}</h2>
+            <p>{{ trans('app.formations.sql.joins_text') }}</p>
 
             <div class="code-box">
                 <pre><code class="language-sql">-- INNER JOIN (jointure interne)
@@ -941,8 +954,8 @@ FROM employes e1
 LEFT JOIN employes e2 ON e1.manager_id = e2.id;</code></pre>
             </div>
 
-            <h2 id="aggregate">📊 Fonctions d'agrégation</h2>
-            <p>Les fonctions d'agrégation permettent de calculer des statistiques sur un ensemble de lignes : <code>COUNT</code>, <code>SUM</code>, <code>AVG</code>, <code>MAX</code>, <code>MIN</code>.</p>
+            <h2 id="aggregate">{{ trans('app.formations.sql.aggregate_title') }}</h2>
+            <p>{!! trans('app.formations.sql.aggregate_text') !!}</p>
 
             <div class="code-box">
                 <pre><code class="language-sql">-- COUNT : Compter le nombre de lignes
@@ -979,8 +992,8 @@ FROM commandes
 WHERE date_commande >= '2024-01-01';</code></pre>
             </div>
 
-            <h2 id="groupby">📦 GROUP BY et HAVING</h2>
-            <p>La clause <code>GROUP BY</code> permet de regrouper des lignes ayant des valeurs identiques dans certaines colonnes. <code>HAVING</code> filtre les groupes après agrégation (similaire à WHERE mais pour les groupes).</p>
+            <h2 id="groupby">{{ trans('app.formations.sql.groupby_title') }}</h2>
+            <p>{!! trans('app.formations.sql.groupby_text') !!}</p>
 
             <div class="code-box">
                 <pre><code class="language-sql">-- GROUP BY simple
@@ -1031,8 +1044,8 @@ HAVING AVG(prix) > 50  -- Filtrer après le GROUP BY
 ORDER BY prix_moyen DESC;</code></pre>
             </div>
 
-            <h2 id="insert">➕ INSERT, UPDATE, DELETE</h2>
-            <p>Les commandes <code>INSERT</code>, <code>UPDATE</code> et <code>DELETE</code> permettent de modifier les données dans la base de données.</p>
+            <h2 id="insert">{{ trans('app.formations.sql.insert_title') }}</h2>
+            <p>{!! trans('app.formations.sql.insert_text') !!}</p>
 
             <div class="code-box">
                 <pre><code class="language-sql">-- INSERT : Insérer de nouvelles lignes
@@ -1085,8 +1098,8 @@ WHERE c.id IS NULL;  -- Supprimer les utilisateurs sans commandes
 TRUNCATE TABLE logs;  -- Supprime toutes les lignes mais garde la structure</code></pre>
             </div>
 
-            <h2 id="subqueries">🔍 Sous-requêtes (Subqueries)</h2>
-            <p>Les sous-requêtes sont des requêtes SQL imbriquées à l'intérieur d'une autre requête. Elles peuvent être utilisées dans SELECT, FROM, WHERE, et HAVING.</p>
+            <h2 id="subqueries">{{ trans('app.formations.sql.subqueries_title') }}</h2>
+            <p>{{ trans('app.formations.sql.subqueries_text') }}</p>
 
             <div class="code-box">
                 <pre><code class="language-sql">-- Sous-requête dans WHERE (scalaire)
@@ -1152,8 +1165,8 @@ WHERE prix > ANY (
 );</code></pre>
             </div>
 
-            <h2 id="tables">🏗️ Création de tables</h2>
-            <p>La commande <code>CREATE TABLE</code> permet de créer de nouvelles tables dans la base de données. Vous pouvez définir des contraintes pour garantir l'intégrité des données.</p>
+            <h2 id="tables">{{ trans('app.formations.sql.tables_title') }}</h2>
+            <p>{!! trans('app.formations.sql.tables_text') !!}</p>
 
             <div class="code-box">
                 <pre><code class="language-sql">-- Création de table simple
@@ -1200,8 +1213,8 @@ DROP COLUMN telephone;
 DROP TABLE IF EXISTS ancienne_table;</code></pre>
             </div>
 
-            <h2 id="create">🏗️ CREATE TABLE et contraintes</h2>
-            <p>La commande <code>CREATE TABLE</code> permet de créer de nouvelles tables dans la base de données. Vous pouvez définir des contraintes pour garantir l'intégrité des données.</p>
+            <h2 id="create">{{ trans('app.formations.sql.tables_title') }}</h2>
+            <p>{!! trans('app.formations.sql.tables_text') !!}</p>
 
             <div class="code-box">
                 <pre><code class="language-sql">-- Création de table simple
@@ -1252,8 +1265,8 @@ FOREIGN KEY (categorie_id) REFERENCES categories(id);
 DROP TABLE IF EXISTS ancienne_table;</code></pre>
             </div>
 
-            <h2 id="indexes">📇 Index et optimisation</h2>
-            <p>Les index améliorent les performances des requêtes en permettant un accès plus rapide aux données. Ils sont particulièrement utiles sur les colonnes fréquemment utilisées dans WHERE, JOIN, et ORDER BY.</p>
+            <h2 id="indexes">{{ trans('app.formations.sql.indexes_title') }}</h2>
+            <p>{{ trans('app.formations.sql.indexes_text') }}</p>
 
             <div class="code-box">
                 <pre><code class="language-sql">-- Créer un index simple
@@ -1293,46 +1306,51 @@ ANALYZE TABLE utilisateurs;</code></pre>
             </div>
 
             <div class="note-box">
-                <p style="color: #000;"><strong>💡 Bonne pratique :</strong> Les index améliorent les performances de lecture mais ralentissent les opérations d'écriture (INSERT, UPDATE, DELETE). Créez des index stratégiquement sur les colonnes les plus utilisées dans vos requêtes !</p>
+                <p style="color: #000;">{!! trans('app.formations.sql.indexes_note') !!}</p>
             </div>
 
-            <h2>🎓 Prochaines étapes</h2>
-            <p>Félicitations ! Vous avez maintenant une solide base en SQL.</p>
+            <h2>{{ trans('app.formations.sql.next_steps_title') }}</h2>
+            <p>{{ trans('app.formations.sql.next_steps_text') }}</p>
             
             <div class="example-box" style="background-color: #d4edda; border-left-color: #28a745;">
-                <h3 style="color: #000;">✅ Ce que vous avez appris :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.sql.next_steps_learned_title') }}</h3>
                 <ul style="margin-left: 20px; line-height: 2; color: #000;">
-                    <li>Syntaxe SQL de base (SELECT, FROM, WHERE)</li>
-                    <li>Types de données SQL (INT, VARCHAR, DATE, DECIMAL, etc.)</li>
-                    <li>Opérateurs SQL (comparaison, logiques, LIKE, IN, BETWEEN)</li>
-                    <li>Requêtes SELECT avec conditions</li>
-                    <li>Jointures (INNER JOIN, LEFT JOIN, RIGHT JOIN)</li>
-                    <li>Fonctions d'agrégation (COUNT, SUM, AVG, MAX, MIN)</li>
-                    <li>GROUP BY et HAVING</li>
-                    <li>INSERT, UPDATE, DELETE</li>
-                    <li>Sous-requêtes (subqueries)</li>
-                    <li>CREATE TABLE et contraintes</li>
-                    <li>Index et optimisation</li>
+                    @foreach(trans('app.formations.sql.next_steps_learned_items') as $item)
+                    <li>{{ $item }}</li>
+                    @endforeach
                 </ul>
             </div>
 
             <div class="example-box">
-                <h3 style="color: #000;">🚀 Pour aller plus loin :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.sql.next_steps_further_title') }}</h3>
                 <ul style="margin-left: 20px; line-height: 2; color: #000;">
-                    <li>📚 <strong>Vues (VIEWS)</strong> - Créer des requêtes réutilisables</li>
-                    <li>🔧 <strong>Procédures stockées</strong> - Stocker du code SQL réutilisable</li>
-                    <li>📦 <strong>Triggers</strong> - Automatiser des actions sur les données</li>
-                    <li>🌐 <strong>Transactions</strong> - Gérer l'intégrité des données</li>
-                    <li>📊 <strong>Fonctions SQL</strong> - Fonctions personnalisées</li>
-                    <li>🤖 <strong>Optimisation avancée</strong> - EXPLAIN, query optimization</li>
-                    <li>🔐 <strong>Sécurité</strong> - Gestion des utilisateurs et permissions</li>
+                    @foreach(trans('app.formations.sql.next_steps_further_items') as $item)
+                    @php
+                        $parts = explode(' - ', $item);
+                        $icon = '';
+                        $label = '';
+                        $description = '';
+                        if (preg_match('/^([📚🔧📦🌐📊🤖🔐]) (.+)$/u', $item, $matches)) {
+                            $icon = $matches[1];
+                            $rest = $matches[2];
+                            $labelParts = explode(' - ', $rest);
+                            $label = $labelParts[0] ?? '';
+                            $description = $labelParts[1] ?? '';
+                        } else {
+                            $labelParts = explode(' - ', $item);
+                            $label = $labelParts[0] ?? '';
+                            $description = $labelParts[1] ?? '';
+                        }
+                    @endphp
+                    <li>@if($icon){{ $icon }} @endif<strong>{{ $label }}</strong>@if($description) - {{ $description }}@endif</li>
+                    @endforeach
                 </ul>
             </div>
 
             <!-- Navigation Buttons -->
             <div class="nav-buttons">
-                <a href="{{ route('formations.ia') }}" class="nav-btn">❮ Précédent: IA</a>
-                <a href="{{ route('exercices') }}" class="nav-btn">Pratiquer avec des exercices ❯</a>
+                <a href="{{ route('formations.ia') }}" class="nav-btn">{{ trans('app.formations.sql.nav_previous') }}</a>
+                <a href="{{ route('exercices') }}" class="nav-btn">{{ trans('app.formations.sql.nav_next') }}</a>
             </div>
         </main>
     </div>

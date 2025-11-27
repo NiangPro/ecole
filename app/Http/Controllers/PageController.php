@@ -7746,21 +7746,25 @@ int main() {
 
     public function python()
     {
+        $this->ensureLocale();
         return view('formations.python');
     }
 
     public function java()
     {
+        $this->ensureLocale();
         return view('formations.java');
     }
 
     public function sql()
     {
+        $this->ensureLocale();
         return view('formations.sql');
     }
 
     public function c()
     {
+        $this->ensureLocale();
         return view('formations.c');
     }
 

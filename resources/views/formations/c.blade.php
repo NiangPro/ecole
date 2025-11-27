@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Formation Langage C | NiangProgrammeur')
+@section('title', trans('app.formations.c.title') . ' | NiangProgrammeur')
 
 @section('styles')
 <!-- Prism.js pour la coloration syntaxique -->
@@ -544,17 +544,17 @@
 <div class="tutorial-header">
     <h1 style="margin: 0; font-size: 48px; font-weight: 800;">
         <i class="fab fa-c" style="margin-right: 15px;"></i>
-        Formation Langage C
+        {{ trans('app.formations.c.title') }}
     </h1>
     <p style="font-size: 20px; margin-top: 15px; opacity: 0.9;">
-        Apprenez le langage C, le fondement de nombreux langages de programmation modernes
+        {{ trans('app.formations.c.subtitle') }}
     </p>
 </div>
 
 <div class="tutorial-content">
     <div class="content-wrapper">
         <!-- Sidebar Toggle Button (Mobile) -->
-        <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Ouvrir le menu">
+        <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="{{ trans('app.formations.c.menu_open') }}">
             <i class="fas fa-bars" id="sidebarToggleIcon"></i>
         </button>
         
@@ -564,84 +564,98 @@
         <!-- Sidebar -->
         <aside class="sidebar" id="tutorialSidebar">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid rgba(55, 118, 171, 0.2);">
-                <h3 style="margin: 0;">C Tutorial</h3>
-                <button class="sidebar-close-btn" id="sidebarClose" style="display: none; background: none; border: none; color: #3776ab; font-size: 24px; cursor: pointer; padding: 5px; width: 35px; height: 35px; border-radius: 50%; transition: all 0.3s ease;" aria-label="Fermer le menu">
+                <h3 style="margin: 0;">{{ trans('app.formations.c.sidebar_title') }}</h3>
+                <button class="sidebar-close-btn" id="sidebarClose" style="display: none; background: none; border: none; color: #3776ab; font-size: 24px; cursor: pointer; padding: 5px; width: 35px; height: 35px; border-radius: 50%; transition: all 0.3s ease;" aria-label="{{ trans('app.formations.c.menu_close') }}">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <a href="#intro" class="active">Introduction C</a>
-            <a href="#syntax">Syntaxe</a>
-            <a href="#variables">Variables</a>
-            <a href="#datatypes">Types de données</a>
-            <a href="#operators">Opérateurs</a>
-            <a href="#conditions">Conditions</a>
-            <a href="#loops">Boucles</a>
-            <a href="#functions">Fonctions</a>
-            <a href="#pointers">Pointeurs</a>
-            <a href="#arrays">Tableaux</a>
-            <a href="#structs">Structures</a>
-            <a href="#memory">Gestion mémoire</a>
+            @php
+                $anchors = ['intro', 'syntax', 'variables', 'datatypes', 'operators', 'conditions', 'loops', 'functions', 'pointers', 'arrays', 'structs', 'memory'];
+            @endphp
+            @foreach(trans('app.formations.c.sidebar_menu') as $index => $menuItem)
+            <a href="#{{ $anchors[$index] ?? 'intro' }}" class="{{ $index === 0 ? 'active' : '' }}">{{ $menuItem }}</a>
+            @endforeach
         </aside>
 
         <!-- Main Content -->
         <main class="main-content">
-            <h1 id="intro">Introduction au Langage C</h1>
-            <p>Le langage C est un langage de programmation procédural de bas niveau, créé par Dennis Ritchie aux Bell Labs en 1972. C est le fondement de nombreux langages modernes (C++, Java, C#, Python, etc.) et reste largement utilisé pour la programmation système, les systèmes embarqués, et les applications nécessitant des performances élevées.</p>
+            <h1 id="intro">{{ trans('app.formations.c.intro_title') }}</h1>
+            <p>{{ trans('app.formations.c.intro_text') }}</p>
 
-            <h3>⚙️ Qu'est-ce que le langage C ?</h3>
-            <p>Le langage C est un langage de programmation <strong>compilé</strong> et <strong>procédural</strong>. C est un langage de <strong>bas niveau</strong> qui donne un contrôle direct sur la mémoire et les ressources système. C'est un langage puissant mais qui nécessite une compréhension approfondie de la gestion mémoire et des pointeurs.</p>
+            <h3>{{ trans('app.formations.c.what_is_title') }}</h3>
+            <p>{!! trans('app.formations.c.what_is_text') !!}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">💡 Pourquoi le langage C est si important ?</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.c.why_important_title') }}</h3>
                 <ol style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                    <li><strong>Fondement des langages modernes</strong> - C est à la base de nombreux langages (C++, Java, C#, Python, JavaScript). Comprendre C aide à mieux maîtriser ces langages</li>
-                    <li><strong>Performance maximale</strong> - C offre un contrôle direct sur la mémoire et les ressources système, permettant des applications très rapides</li>
-                    <li><strong>Programmation système</strong> - Utilisé pour développer les systèmes d'exploitation (Linux, Windows), les drivers, les compilateurs</li>
-                    <li><strong>Systèmes embarqués</strong> - Idéal pour la programmation de microcontrôleurs, IoT, systèmes temps réel</li>
-                    <li><strong>Standard et portable</strong> - Code C peut être compilé sur presque toutes les plateformes (Windows, Linux, macOS, embarqué)</li>
-                    <li><strong>Contrôle total</strong> - Gestion manuelle de la mémoire et des pointeurs donne un contrôle précis sur les performances</li>
+                    @foreach(trans('app.formations.c.why_important_items') as $item)
+                    @php
+                        $parts = explode(' - ', $item);
+                        $label = $parts[0] ?? '';
+                        $description = $parts[1] ?? '';
+                    @endphp
+                    <li><strong>{{ $label }}</strong>@if($description) - {{ $description }}@endif</li>
+                    @endforeach
                 </ol>
             </div>
 
-            <h3>🚀 Pourquoi apprendre le langage C ?</h3>
-            <p>Le langage C est essentiel pour comprendre les fondements de la programmation :</p>
+            <h3>{{ trans('app.formations.c.why_learn_title') }}</h3>
+            <p>{{ trans('app.formations.c.why_learn_text') }}</p>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li>✅ <strong>Comprendre l'informatique</strong> - C vous apprend comment fonctionnent vraiment les ordinateurs, la mémoire, les pointeurs</li>
-                <li>✅ <strong>Performance</strong> - Applications nécessitant des performances maximales (jeux vidéo, systèmes temps réel, embarqué)</li>
-                <li>✅ <strong>Programmation système</strong> - Développement de systèmes d'exploitation, drivers, compilateurs, outils système</li>
-                <li>✅ <strong>Base solide</strong> - Comprendre C facilite l'apprentissage de C++, Java, et autres langages dérivés</li>
-                <li>✅ <strong>Industrie</strong> - Très utilisé dans l'embarqué, l'automobile, l'aéronautique, les systèmes critiques</li>
-                <li>✅ <strong>Contrôle précis</strong> - Gestion manuelle de la mémoire permet d'optimiser chaque octet</li>
-                <li>✅ <strong>Standard ANSI</strong> - Langage standardisé, portable sur toutes les plateformes</li>
+                @foreach(trans('app.formations.c.why_learn_items') as $item)
+                @php
+                    $parts = explode(' - ', $item);
+                    $label = $parts[0] ?? '';
+                    $description = $parts[1] ?? '';
+                @endphp
+                <li>✅ <strong>{{ $label }}</strong>@if($description) - {{ $description }}@endif</li>
+                @endforeach
             </ul>
 
-            <h3>📋 Prérequis pour apprendre C</h3>
-            <p>Pour apprendre C efficacement, il est recommandé d'avoir :</p>
+            <h3>{{ trans('app.formations.c.prerequisites_title') }}</h3>
+            <p>{{ trans('app.formations.c.prerequisites_text') }}</p>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li>✅ <strong>Informatique de base</strong> - Savoir utiliser un ordinateur, créer et éditer des fichiers</li>
-                <li>⚠️ <strong>Logique de programmation</strong> - Comprendre les concepts de base (variables, conditions, boucles) est très utile</li>
-                <li>⚠️ <strong>Patience</strong> - C nécessite plus d'attention aux détails que les langages de haut niveau</li>
+                @foreach(trans('app.formations.c.prerequisites_items') as $item)
+                @php
+                    $parts = explode(' - ', $item);
+                    $label = $parts[0] ?? '';
+                    $description = $parts[1] ?? '';
+                @endphp
+                <li>✅ <strong>{{ $label }}</strong>@if($description) - {{ $description }}@endif</li>
+                @endforeach
             </ul>
 
             <div class="note-box">
-                <p style="color: #000;"><strong>💡 Note importante :</strong> Pour compiler du code C, vous avez besoin d'un compilateur comme GCC (GNU Compiler Collection) qui est disponible gratuitement. Sur Linux, GCC est souvent préinstallé. Sur Windows, vous pouvez installer MinGW ou utiliser Visual Studio. Sur macOS, installez Xcode Command Line Tools. Vous pouvez aussi utiliser des IDE comme Code::Blocks, Dev-C++, ou Visual Studio Code avec l'extension C/C++.</p>
+                <p style="color: #000;">{!! trans('app.formations.c.prerequisites_note') !!}</p>
             </div>
 
-            <h3>🎯 Cas d'usage du langage C</h3>
-            <p>Le langage C est utilisé dans de nombreux domaines critiques :</p>
+            <h3>{{ trans('app.formations.c.use_cases_title') }}</h3>
+            <p>{{ trans('app.formations.c.use_cases_text') }}</p>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li>🖥️ <strong>Systèmes d'exploitation</strong> - Linux, Windows (en partie), macOS utilisent C pour leurs noyaux</li>
-                <li>🔧 <strong>Programmation système</strong> - Drivers, compilateurs, interpréteurs, outils système</li>
-                <li>🚗 <strong>Systèmes embarqués</strong> - Microcontrôleurs, IoT, systèmes temps réel, automobile, aéronautique</li>
-                <li>🎮 <strong>Jeux vidéo</strong> - Moteurs de jeux nécessitant des performances maximales</li>
-                <li>📡 <strong>Réseaux</strong> - Protocoles réseau, serveurs haute performance</li>
-                <li>🔬 <strong>Calcul scientifique</strong> - Applications nécessitant des calculs intensifs</li>
-                <li>💾 <strong>Bases de données</strong> - Moteurs de bases de données (MySQL, PostgreSQL utilisent C)</li>
-                <li>🌐 <strong>Serveurs web</strong> - Serveurs web haute performance (nginx, Apache)</li>
+                @foreach(trans('app.formations.c.use_cases_items') as $item)
+                @php
+                    $parts = explode(' - ', $item);
+                    $icon = '';
+                    $label = '';
+                    $description = '';
+                    if (preg_match('/^([🖥️🔧🚗🎮📡🔬💾🌐]) (.+)$/u', $item, $matches)) {
+                        $icon = $matches[1];
+                        $rest = $matches[2];
+                        $labelParts = explode(' - ', $rest);
+                        $label = $labelParts[0] ?? '';
+                        $description = $labelParts[1] ?? '';
+                    } else {
+                        $labelParts = explode(' - ', $item);
+                        $label = $labelParts[0] ?? '';
+                        $description = $labelParts[1] ?? '';
+                    }
+                @endphp
+                <li>@if($icon){{ $icon }} @endif<strong>{{ $label }}</strong>@if($description) - {{ $description }}@endif</li>
+                @endforeach
             </ul>
 
-            <h2 id="syntax">📝 Syntaxe de base</h2>
-            <p>Le langage C est un langage de programmation procédural et compilé. C utilise des <strong>accolades</strong> <code>{}</code> pour définir les blocs de code et nécessite un <strong>point-virgule</strong> <code>;</code> à la fin de chaque instruction.</p>
+            <h2 id="syntax">{{ trans('app.formations.c.syntax_title') }}</h2>
+            <p>{!! trans('app.formations.c.syntax_text') !!}</p>
 
             <div class="code-box">
                 <pre><code class="language-c">// Premier programme C
@@ -666,19 +680,16 @@ printf("10 + 5 = %d\n", resultat);
             </div>
 
             <div class="example-box">
-                <h3 style="color: #000;">💡 Points importants sur la syntaxe C :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.c.syntax_points_title') }}</h3>
                 <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                    <li><strong>C utilise des accolades</strong> <code>{}</code> pour définir les blocs de code</li>
-                    <li><strong>Les commentaires</strong> utilisent <code>//</code> pour une ligne ou <code>/* */</code> pour plusieurs lignes</li>
-                    <li><strong>Point-virgule obligatoire</strong> <code>;</code> à la fin de chaque instruction</li>
-                    <li><strong>Les chaînes de caractères</strong> utilisent des guillemets doubles <code>"</code> et sont des tableaux de caractères</li>
-                    <li><strong>Les fonctions</strong> doivent être déclarées avant leur utilisation (ou via des headers)</li>
-                    <li><strong>Le point d'entrée</strong> est la fonction <code>main()</code> qui retourne un <code>int</code></li>
+                    @foreach(trans('app.formations.c.syntax_points_items') as $item)
+                    <li>{!! $item !!}</li>
+                    @endforeach
                 </ul>
             </div>
 
-            <h3>🔍 Exemple détaillé de syntaxe</h3>
-            <p>Voici un exemple complet montrant plusieurs aspects de la syntaxe C :</p>
+            <h3>{{ trans('app.formations.c.syntax_example_title') }}</h3>
+            <p>{{ trans('app.formations.c.syntax_example_text') }}</p>
 
             <div class="code-box">
                 <pre><code class="language-c">#include <stdio.h>
@@ -704,8 +715,8 @@ int main() {
 }</code></pre>
             </div>
 
-            <h2 id="variables">🔤 Variables</h2>
-            <p>En C, les variables doivent être <strong>déclarées avec un type</strong> avant d'être utilisées. C est un langage à <strong>typage statique</strong>, ce qui signifie que le type d'une variable est déterminé au moment de la compilation et ne peut pas changer.</p>
+            <h2 id="variables">{{ trans('app.formations.c.variables_title') }}</h2>
+            <p>{!! trans('app.formations.c.variables_text') !!}</p>
 
             <div class="code-box">
                 <pre><code class="language-c">#include <stdio.h>
@@ -748,19 +759,16 @@ int main() {
             </div>
 
             <div class="example-box">
-                <h3 style="color: #000;">📌 Règles pour les noms de variables :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.c.variables_rules_title') }}</h3>
                 <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                    <li>Doivent commencer par une lettre ou un underscore <code>_</code></li>
-                    <li>Peuvent contenir des lettres, chiffres et underscores</li>
-                    <li>Ne peuvent pas contenir d'espaces ou de caractères spéciaux</li>
-                    <li>Sont sensibles à la casse (<code>age</code> ≠ <code>Age</code>)</li>
-                    <li>Ne peuvent pas être des mots-clés C (<code>if</code>, <code>for</code>, <code>int</code>, etc.)</li>
-                    <li>Convention : utilisez <code>snake_case</code> ou <code>camelCase</code> pour les variables</li>
+                    @foreach(trans('app.formations.c.variables_rules_items') as $item)
+                    <li>{!! $item !!}</li>
+                    @endforeach
                 </ul>
             </div>
 
-            <h2 id="datatypes">📊 Types de données</h2>
-            <p>C a plusieurs types de données de base (primitifs). Voici les principaux types disponibles en C :</p>
+            <h2 id="datatypes">{{ trans('app.formations.c.datatypes_title') }}</h2>
+            <p>{{ trans('app.formations.c.datatypes_text') }}</p>
 
             <div class="code-box">
                 <pre><code class="language-c">#include <stdio.h>
@@ -810,21 +818,21 @@ int main() {
             </div>
 
             <div class="example-box">
-                <h3 style="color: #000;">📚 Types de données C :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.c.datatypes_list_title') }}</h3>
                 <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                    <li><strong>char</strong> - Caractère (1 octet)</li>
-                    <li><strong>int</strong> - Entier (généralement 4 octets)</li>
-                    <li><strong>float</strong> - Nombre décimal simple précision (4 octets)</li>
-                    <li><strong>double</strong> - Nombre décimal double précision (8 octets)</li>
-                    <li><strong>void</strong> - Type vide (pour fonctions sans retour)</li>
-                    <li><strong>bool</strong> - Booléen (C99+, nécessite stdbool.h)</li>
-                    <li><strong>short, long, long long</strong> - Variantes d'entiers</li>
-                    <li><strong>unsigned</strong> - Modificateur pour entiers non signés</li>
+                    @foreach(trans('app.formations.c.datatypes_list_items') as $item)
+                    @php
+                        $parts = explode(' - ', $item);
+                        $label = $parts[0] ?? '';
+                        $description = $parts[1] ?? '';
+                    @endphp
+                    <li><strong>{{ $label }}</strong>@if($description) - {{ $description }}@endif</li>
+                    @endforeach
                 </ul>
             </div>
 
-            <h2 id="operators">🔢 Opérateurs</h2>
-            <p>C supporte les opérateurs arithmétiques, de comparaison, logiques, d'assignation et de pointeurs :</p>
+            <h2 id="operators">{{ trans('app.formations.c.operators_title') }}</h2>
+            <p>{{ trans('app.formations.c.operators_text') }}</p>
 
             <div class="code-box">
                 <pre><code class="language-c">#include <stdio.h>
@@ -879,8 +887,8 @@ int main() {
 }</code></pre>
             </div>
 
-            <h2 id="conditions">🔀 Structures conditionnelles</h2>
-            <p>Le langage C utilise <code>if</code>, <code>else if</code> et <code>else</code> pour les conditions. Les blocs de code sont délimités par des accolades <code>{}</code>.</p>
+            <h2 id="conditions">{{ trans('app.formations.c.conditions_title') }}</h2>
+            <p>{!! trans('app.formations.c.conditions_text') !!}</p>
 
             <div class="code-box">
                 <pre><code class="language-c"># Structure if simple
@@ -935,8 +943,8 @@ else:
     print("Vous ne pouvez pas conduire")</code></pre>
             </div>
 
-            <h2 id="loops">🔄 Boucles</h2>
-            <p>Le langage C propose trois types de boucles : <code>for</code> (pour itérer un nombre défini de fois), <code>while</code> (pour répéter tant qu'une condition est vraie) et <code>do-while</code> (exécute au moins une fois) :</p>
+            <h2 id="loops">{{ trans('app.formations.c.loops_title') }}</h2>
+            <p>{!! trans('app.formations.c.loops_text') !!}</p>
 
             <div class="code-box">
                 <pre><code class="language-c"># Boucle for avec range()
@@ -988,8 +996,8 @@ else:
     print("Boucle terminée")  # Exécuté si la boucle se termine normalement</code></pre>
             </div>
 
-            <h2 id="functions">⚙️ Fonctions</h2>
-            <p>Les fonctions permettent de réutiliser du code. En C, on définit une fonction avec son type de retour, son nom et ses paramètres. Les fonctions peuvent prendre des paramètres et retourner des valeurs avec <code>return</code>.</p>
+            <h2 id="functions">{{ trans('app.formations.c.functions_title') }}</h2>
+            <p>{!! trans('app.formations.c.functions_text') !!}</p>
 
             <div class="code-box">
                 <pre><code class="language-c"># Fonction simple (sans paramètres)
@@ -1049,8 +1057,8 @@ carres = list(map(lambda x: x ** 2, nombres))
 print(carres)  # [1, 4, 9, 16, 25]</code></pre>
             </div>
 
-            <h2 id="pointers">📍 Pointeurs</h2>
-            <p>Les pointeurs sont l'une des fonctionnalités les plus puissantes et importantes du langage C. Un pointeur est une variable qui stocke l'adresse mémoire d'une autre variable.</p>
+            <h2 id="pointers">{{ trans('app.formations.c.pointers_title') }}</h2>
+            <p>{{ trans('app.formations.c.pointers_text') }}</p>
 
             <div class="code-box">
                 <pre><code class="language-c">#include <stdio.h>
@@ -1086,8 +1094,8 @@ int main() {
 }</code></pre>
             </div>
 
-            <h2 id="arrays">📋 Tableaux</h2>
-            <p>Les tableaux en C sont des collections d'éléments du même type stockés en mémoire de manière contiguë. La taille d'un tableau est fixe et doit être connue à la compilation.</p>
+            <h2 id="arrays">{{ trans('app.formations.c.arrays_title') }}</h2>
+            <p>{{ trans('app.formations.c.arrays_text') }}</p>
 
             <div class="code-box">
                 <pre><code class="language-c">#include <stdio.h>
@@ -1135,8 +1143,8 @@ int main() {
 }</code></pre>
             </div>
 
-            <h2 id="structs">🏗️ Structures (struct)</h2>
-            <p>Les structures permettent de regrouper plusieurs variables de types différents sous un seul nom. C'est l'équivalent des "objets" dans d'autres langages, mais sans méthodes.</p>
+            <h2 id="structs">{{ trans('app.formations.c.structs_title') }}</h2>
+            <p>{{ trans('app.formations.c.structs_text') }}</p>
 
             <div class="code-box">
                 <pre><code class="language-c">#include <stdio.h>
@@ -1184,8 +1192,8 @@ int main() {
 }</code></pre>
             </div>
 
-            <h2 id="memory">💾 Gestion de la mémoire</h2>
-            <p>En C, vous devez gérer manuellement la mémoire. Les fonctions <code>malloc()</code>, <code>calloc()</code>, <code>realloc()</code> et <code>free()</code> permettent d'allouer et libérer de la mémoire dynamiquement.</p>
+            <h2 id="memory">{{ trans('app.formations.c.memory_title') }}</h2>
+            <p>{!! trans('app.formations.c.memory_text') !!}</p>
 
             <div class="code-box">
                 <pre><code class="language-c">#include <stdio.h>
@@ -1302,45 +1310,51 @@ int main() {
             </div>
 
             <div class="note-box">
-                <p style="color: #000;"><strong>💡 Bonne pratique :</strong> Toujours fermer les fichiers avec <code>fclose()</code> après utilisation pour libérer les ressources. Vérifiez toujours que <code>fopen()</code> retourne un pointeur non-NULL avant d'utiliser le fichier. Cela évite les fuites de ressources et les erreurs d'accès !</p>
+                <p style="color: #000;">{!! trans('app.formations.c.memory_note') !!}</p>
             </div>
 
-            <h2>🎓 Prochaines étapes</h2>
-            <p>Félicitations ! Vous avez maintenant une solide base en langage C.</p>
+            <h2>{{ trans('app.formations.c.next_steps_title') }}</h2>
+            <p>{{ trans('app.formations.c.next_steps_text') }}</p>
             
             <div class="example-box" style="background-color: #d4edda; border-left-color: #28a745;">
-                <h3 style="color: #000;">✅ Ce que vous avez appris :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.c.next_steps_learned_title') }}</h3>
                 <ul style="margin-left: 20px; line-height: 2; color: #000;">
-                    <li>Syntaxe C et variables</li>
-                    <li>Types de données (int, float, double, char, void)</li>
-                    <li>Opérateurs (arithmétiques, comparaison, logiques, pointeurs)</li>
-                    <li>Structures conditionnelles (if, else if, else, switch)</li>
-                    <li>Boucles (for, while, do-while)</li>
-                    <li>Fonctions (définition, paramètres, return, prototypes)</li>
-                    <li>Pointeurs et références</li>
-                    <li>Tableaux et chaînes de caractères</li>
-                    <li>Structures (struct) et unions</li>
-                    <li>Gestion de la mémoire (malloc, calloc, realloc, free)</li>
-                    <li>Manipulation de fichiers (fopen, fclose, fprintf, fscanf, fread, fwrite)</li>
+                    @foreach(trans('app.formations.c.next_steps_learned_items') as $item)
+                    <li>{{ $item }}</li>
+                    @endforeach
                 </ul>
             </div>
 
             <div class="example-box">
-                <h3 style="color: #000;">🚀 Pour aller plus loin :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.c.next_steps_further_title') }}</h3>
                 <ul style="margin-left: 20px; line-height: 2; color: #000;">
-                    <li>📚 <strong>C++</strong> - Langage orienté objet basé sur C</li>
-                    <li>🔧 <strong>Programmation système</strong> - Développement de drivers, outils système</li>
-                    <li>📦 <strong>Bibliothèques C</strong> - Utilisation de bibliothèques externes (GTK, SDL, etc.)</li>
-                    <li>🌐 <strong>Réseaux</strong> - Programmation réseau avec sockets</li>
-                    <li>📊 <strong>Algorithmes avancés</strong> - Structures de données complexes, algorithmes optimisés</li>
-                    <li>🤖 <strong>Systèmes embarqués</strong> - Programmation de microcontrôleurs, IoT</li>
+                    @foreach(trans('app.formations.c.next_steps_further_items') as $item)
+                    @php
+                        $parts = explode(' - ', $item);
+                        $icon = '';
+                        $label = '';
+                        $description = '';
+                        if (preg_match('/^([📚🔧📦🌐📊🤖]) (.+)$/u', $item, $matches)) {
+                            $icon = $matches[1];
+                            $rest = $matches[2];
+                            $labelParts = explode(' - ', $rest);
+                            $label = $labelParts[0] ?? '';
+                            $description = $labelParts[1] ?? '';
+                        } else {
+                            $labelParts = explode(' - ', $item);
+                            $label = $labelParts[0] ?? '';
+                            $description = $labelParts[1] ?? '';
+                        }
+                    @endphp
+                    <li>@if($icon){{ $icon }} @endif<strong>{{ $label }}</strong>@if($description) - {{ $description }}@endif</li>
+                    @endforeach
                 </ul>
             </div>
 
             <!-- Navigation Buttons -->
             <div class="nav-buttons">
-                <a href="{{ route('formations.ia') }}" class="nav-btn">❮ Précédent: IA</a>
-                <a href="{{ route('exercices') }}" class="nav-btn">Pratiquer avec des exercices ❯</a>
+                <a href="{{ route('formations.ia') }}" class="nav-btn">{{ trans('app.formations.c.nav_previous') }}</a>
+                <a href="{{ route('exercices') }}" class="nav-btn">{{ trans('app.formations.c.nav_next') }}</a>
             </div>
         </main>
     </div>

@@ -161,7 +161,7 @@
         justify-content: center;
         padding: 100px 40px 80px;
         overflow: hidden;
-        background: linear-gradient(135deg, rgba(30, 41, 59, 0.4) 0%, rgba(51, 65, 85, 0.5) 100%),
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.9) 100%),
                     url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2072&q=80') center/cover no-repeat;
         background-attachment: fixed;
     }
@@ -179,7 +179,7 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.2) 0%, rgba(30, 41, 59, 0.6) 100%);
+        background: radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.1) 0%, rgba(15, 23, 42, 0.8) 100%);
         z-index: 0;
     }
     
@@ -2360,23 +2360,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     .exercices-quiz-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(90deg, #06b6d4, #14b8a6, #06b6d4);
-        background-size: 200% 100%;
-        animation: shimmer-border 3s linear infinite;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-        pointer-events: none;
-        z-index: 1;
+        display: none;
     }
     
     .exercices-quiz-card:hover::before {
-        opacity: 1;
+        display: none;
     }
     
     .exercices-quiz-card::after {

@@ -371,6 +371,11 @@
             transform: translateY(20px) scale(0.8);
         }
         
+        /* Quand le widget de langue n'existe pas, le bouton back to top prend sa place */
+        .back-to-top-button.no-language-widget {
+            bottom: 120px;
+        }
+        
         .back-to-top-button.show {
             display: flex;
             opacity: 1;
@@ -434,6 +439,10 @@
                 height: 36px;
                 font-size: 14px;
                 z-index: 10000;
+            }
+            
+            .back-to-top-button.no-language-widget {
+                bottom: 120px;
             }
             
             .language-widget {
@@ -1056,6 +1065,20 @@
                     backToTopButton.classList.add('show');
                 } else {
                     backToTopButton.classList.remove('show');
+                }
+            }
+        });
+        
+        // Ajuster la position du bouton back to top si le widget de langue n'existe pas
+        document.addEventListener('DOMContentLoaded', function() {
+            const languageWidget = document.getElementById('language-widget');
+            const backToTopButton = document.getElementById('back-to-top');
+            
+            if (backToTopButton) {
+                if (!languageWidget) {
+                    backToTopButton.classList.add('no-language-widget');
+                } else {
+                    backToTopButton.classList.remove('no-language-widget');
                 }
             }
         });

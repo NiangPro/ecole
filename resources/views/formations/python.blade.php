@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Formation Python | NiangProgrammeur')
+@section('title', trans('app.formations.python.title') . ' | NiangProgrammeur')
 
 @section('styles')
 <!-- Prism.js pour la coloration syntaxique -->
@@ -473,17 +473,17 @@
 <div class="tutorial-header">
     <h1 style="margin: 0; font-size: 48px; font-weight: 800;">
         <i class="fab fa-python" style="margin-right: 15px;"></i>
-        Formation Python
+        {{ trans('app.formations.python.title') }}
     </h1>
     <p style="font-size: 20px; margin-top: 15px; opacity: 0.9;">
-        Apprenez Python, le langage de programmation polyvalent et puissant
+        {{ trans('app.formations.python.subtitle') }}
     </p>
 </div>
 
 <div class="tutorial-content">
     <div class="content-wrapper">
         <!-- Sidebar Toggle Button (Mobile) -->
-        <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Ouvrir le menu">
+        <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="{{ trans('app.formations.python.menu_open') }}">
             <i class="fas fa-bars" id="sidebarToggleIcon"></i>
         </button>
         
@@ -493,83 +493,98 @@
         <!-- Sidebar -->
         <aside class="sidebar" id="tutorialSidebar">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid rgba(55, 118, 171, 0.2);">
-                <h3 style="margin: 0;">Python Tutorial</h3>
-                <button class="sidebar-close-btn" id="sidebarClose" style="display: none; background: none; border: none; color: #3776ab; font-size: 24px; cursor: pointer; padding: 5px; width: 35px; height: 35px; border-radius: 50%; transition: all 0.3s ease;" aria-label="Fermer le menu">
+                <h3 style="margin: 0;">{{ trans('app.formations.python.sidebar_title') }}</h3>
+                <button class="sidebar-close-btn" id="sidebarClose" style="display: none; background: none; border: none; color: #3776ab; font-size: 24px; cursor: pointer; padding: 5px; width: 35px; height: 35px; border-radius: 50%; transition: all 0.3s ease;" aria-label="{{ trans('app.formations.python.menu_close') }}">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <a href="#intro" class="active">Introduction Python</a>
-            <a href="#syntax">Syntaxe</a>
-            <a href="#variables">Variables</a>
-            <a href="#datatypes">Types de données</a>
-            <a href="#operators">Opérateurs</a>
-            <a href="#conditions">Conditions</a>
-            <a href="#loops">Boucles</a>
-            <a href="#functions">Fonctions</a>
-            <a href="#lists">Listes & Dictionnaires</a>
-            <a href="#modules">Modules</a>
-            <a href="#oop">Programmation Orientée Objet</a>
-            <a href="#files">Fichiers</a>
+            @php
+                $anchors = ['intro', 'syntax', 'variables', 'datatypes', 'operators', 'conditions', 'loops', 'functions', 'lists', 'modules', 'oop', 'files'];
+            @endphp
+            @foreach(trans('app.formations.python.sidebar_menu') as $index => $menuItem)
+            <a href="#{{ $anchors[$index] ?? 'intro' }}" class="{{ $index === 0 ? 'active' : '' }}">{{ $menuItem }}</a>
+            @endforeach
         </aside>
 
         <!-- Main Content -->
         <main class="main-content">
-            <h1 id="intro">Introduction à Python</h1>
-            <p>Python est un langage de programmation de haut niveau, interprété et polyvalent, créé par Guido van Rossum et publié pour la première fois en 1991. Python est aujourd'hui l'un des langages les plus populaires au monde, utilisé dans de nombreux domaines : développement web, data science, intelligence artificielle, automatisation, et bien plus encore.</p>
+            <h1 id="intro">{{ trans('app.formations.python.intro_title') }}</h1>
+            <p>{!! trans('app.formations.python.intro_text') !!}</p>
 
-            <h3>🐍 Qu'est-ce que Python ?</h3>
-            <p>Python est un langage de programmation <strong>interprété</strong> et <strong>orienté objet</strong>. Contrairement aux langages compilés comme C++ ou Java, Python exécute le code ligne par ligne, ce qui le rend plus facile à déboguer et à tester. Sa syntaxe simple et lisible le rend idéal pour les débutants comme pour les experts.</p>
+            <h3>{{ trans('app.formations.python.what_is_title') }}</h3>
+            <p>{!! trans('app.formations.python.what_is_text') !!}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">💡 Pourquoi Python est si populaire ?</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.python.why_popular_title') }}</h3>
                 <ol style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                    <li><strong>Syntaxe simple et lisible</strong> - Le code Python ressemble presque à de l'anglais, ce qui le rend facile à apprendre et à comprendre</li>
-                    <li><strong>Polyvalent</strong> - Utilisé pour le web (Django, Flask), la data science (Pandas, NumPy), l'IA (TensorFlow, PyTorch), l'automatisation</li>
-                    <li><strong>Vaste bibliothèque standard</strong> - Des milliers de modules disponibles pour presque tous les besoins</li>
-                    <li><strong>Communauté active</strong> - Des millions de développeurs dans le monde, documentation complète, nombreuses ressources d'apprentissage</li>
-                    <li><strong>Open-source et gratuit</strong> - Aucun coût de licence, multiplateforme (Windows, Linux, macOS)</li>
-                    <li><strong>Multi-paradigme</strong> - Supporte la programmation procédurale, orientée objet et fonctionnelle</li>
+                    @foreach(trans('app.formations.python.why_popular_items') as $item)
+                    @php
+                        $parts = explode(' - ', $item);
+                        $label = $parts[0] ?? '';
+                        $description = $parts[1] ?? '';
+                    @endphp
+                    <li><strong>{{ $label }}</strong>@if($description) - {{ $description }}@endif</li>
+                    @endforeach
                 </ol>
             </div>
 
-            <h3>🚀 Pourquoi apprendre Python ?</h3>
-            <p>Python est un excellent choix pour débuter en programmation pour plusieurs raisons :</p>
+            <h3>{{ trans('app.formations.python.why_learn_title') }}</h3>
+            <p>{{ trans('app.formations.python.why_learn_text') }}</p>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li>✅ <strong>Facile à apprendre</strong> - Syntaxe claire et intuitive, parfaite pour les débutants. La courbe d'apprentissage est douce comparée à d'autres langages</li>
-                <li>✅ <strong>Polyvalent</strong> - Développement web (Django, Flask), data science (Pandas, NumPy), IA (TensorFlow, PyTorch), automatisation, scripts système</li>
-                <li>✅ <strong>Très demandé</strong> - L'un des langages les plus recherchés sur le marché du travail. Utilisé par Google, Facebook, Netflix, Instagram, Spotify</li>
-                <li>✅ <strong>Gratuit et Open-Source</strong> - Aucun coût, multiplateforme, communauté active</li>
-                <li>✅ <strong>Vaste écosystème</strong> - Des milliers de bibliothèques disponibles via pip (gestionnaire de paquets Python)</li>
-                <li>✅ <strong>Grande communauté</strong> - Support et ressources abondantes, forums actifs, tutoriels gratuits</li>
-                <li>✅ <strong>Rapidité de développement</strong> - Permet de développer rapidement des prototypes et applications</li>
+                @foreach(trans('app.formations.python.why_learn_items') as $item)
+                @php
+                    $parts = explode(' - ', $item);
+                    $label = $parts[0] ?? '';
+                    $description = $parts[1] ?? '';
+                @endphp
+                <li>✅ <strong>{{ $label }}</strong>@if($description) - {{ $description }}@endif</li>
+                @endforeach
             </ul>
 
-            <h3>📋 Prérequis pour apprendre Python</h3>
-            <p>Python est si simple que vous pouvez commencer sans aucune expérience préalable ! Cependant, avoir des connaissances de base en :</p>
+            <h3>{{ trans('app.formations.python.prerequisites_title') }}</h3>
+            <p>{{ trans('app.formations.python.prerequisites_text') }}</p>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li>✅ <strong>Informatique de base</strong> - Savoir utiliser un ordinateur, créer et éditer des fichiers</li>
-                <li>⚠️ <strong>Logique</strong> - Comprendre les concepts de base (variables, conditions, boucles) est utile mais pas obligatoire, vous les apprendrez avec Python</li>
+                @foreach(trans('app.formations.python.prerequisites_items') as $item)
+                @php
+                    $parts = explode(' - ', $item);
+                    $label = $parts[0] ?? '';
+                    $description = $parts[1] ?? '';
+                @endphp
+                <li>✅ <strong>{{ $label }}</strong>@if($description) - {{ $description }}@endif</li>
+                @endforeach
             </ul>
 
             <div class="note-box">
-                <p style="color: #000;"><strong>💡 Note importante :</strong> Python est installé par défaut sur Linux et macOS. Pour Windows, vous pouvez télécharger Python depuis <a href="https://www.python.org/downloads/" target="_blank" style="color: #3776ab; font-weight: bold;">python.org</a>. Vous pouvez aussi utiliser un IDE comme PyCharm, VS Code, ou simplement l'interpréteur Python en ligne de commande. Pour tester rapidement, vous pouvez utiliser des environnements en ligne comme Repl.it ou Python.org/shell.</p>
+                <p style="color: #000;">{!! trans('app.formations.python.prerequisites_note') !!}</p>
             </div>
 
-            <h3>🎯 Cas d'usage de Python</h3>
-            <p>Python est utilisé dans de nombreux domaines :</p>
+            <h3>{{ trans('app.formations.python.use_cases_title') }}</h3>
+            <p>{{ trans('app.formations.python.use_cases_text') }}</p>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li>🌐 <strong>Développement web</strong> - Django, Flask pour créer des sites web et API REST. Frameworks modernes et puissants</li>
-                <li>📊 <strong>Data Science</strong> - Analyse de données, visualisation avec Pandas, NumPy, Matplotlib. Très utilisé dans la finance et la recherche</li>
-                <li>🤖 <strong>Intelligence Artificielle</strong> - Machine Learning, Deep Learning avec TensorFlow, PyTorch, Scikit-learn</li>
-                <li>🔧 <strong>Automatisation</strong> - Scripts pour automatiser des tâches répétitives, traitement de fichiers, web scraping</li>
-                <li>📱 <strong>Applications desktop</strong> - Tkinter, PyQt pour créer des interfaces graphiques multiplateformes</li>
-                <li>🎮 <strong>Développement de jeux</strong> - Pygame pour créer des jeux vidéo 2D</li>
-                <li>🌐 <strong>Scraping web</strong> - BeautifulSoup, Scrapy pour extraire des données de sites web</li>
-                <li>🔬 <strong>Calcul scientifique</strong> - NumPy, SciPy pour les calculs mathématiques et scientifiques</li>
+                @foreach(trans('app.formations.python.use_cases_items') as $item)
+                @php
+                    $parts = explode(' - ', $item);
+                    $icon = '';
+                    $label = '';
+                    $description = '';
+                    if (preg_match('/^([🌐📊🤖🔧📱🎮🔬]) (.+)$/u', $item, $matches)) {
+                        $icon = $matches[1];
+                        $rest = $matches[2];
+                        $labelParts = explode(' - ', $rest);
+                        $label = $labelParts[0] ?? '';
+                        $description = $labelParts[1] ?? '';
+                    } else {
+                        $labelParts = explode(' - ', $item);
+                        $label = $labelParts[0] ?? '';
+                        $description = $labelParts[1] ?? '';
+                    }
+                @endphp
+                <li>@if($icon){{ $icon }} @endif<strong>{{ $label }}</strong>@if($description) - {{ $description }}@endif</li>
+                @endforeach
             </ul>
 
-            <h2 id="syntax">📝 Syntaxe de base</h2>
-            <p>La syntaxe Python est simple et lisible. Python utilise l'<strong>indentation</strong> (espaces ou tabulations) pour définir les blocs de code, contrairement à d'autres langages qui utilisent des accolades <code>{}</code> ou des mots-clés comme <code>begin/end</code>.</p>
+            <h2 id="syntax">{{ trans('app.formations.python.syntax_title') }}</h2>
+            <p>{!! trans('app.formations.python.syntax_text') !!}</p>
 
             <div class="code-box">
                 <pre><code class="language-python"># Premier programme Python
@@ -588,19 +603,16 @@ print(f"10 + 5 = {resultat}")</code></pre>
             </div>
 
             <div class="example-box">
-                <h3 style="color: #000;">💡 Points importants sur la syntaxe Python :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.python.syntax_points_title') }}</h3>
                 <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                    <li><strong>Python est sensible à l'indentation</strong> - Utilisez 4 espaces (recommandé par PEP 8) ou des tabulations de manière cohérente. L'indentation définit les blocs de code</li>
-                    <li><strong>Les commentaires</strong> commencent par <code>#</code> pour une ligne, ou <code>"""</code> pour plusieurs lignes (docstrings)</li>
-                    <li><strong>Pas besoin de point-virgule</strong> à la fin des lignes (contrairement à C, Java, PHP)</li>
-                    <li><strong>Les chaînes de caractères</strong> peuvent utiliser des guillemets simples <code>'</code> ou doubles <code>"</code>. Les f-strings (f"...") permettent l'interpolation</li>
-                    <li><strong>Les deux-points</strong> <code>:</code> marquent le début d'un bloc (après if, for, def, class, etc.)</li>
-                    <li><strong>PEP 8</strong> est le guide de style officiel pour écrire du code Python lisible</li>
+                    @foreach(trans('app.formations.python.syntax_points_items') as $item)
+                    <li>{!! $item !!}</li>
+                    @endforeach
                 </ul>
             </div>
 
-            <h3>🔍 Exemple détaillé de syntaxe</h3>
-            <p>Voici un exemple complet montrant plusieurs aspects de la syntaxe Python :</p>
+            <h3>{{ trans('app.formations.python.syntax_example_title') }}</h3>
+            <p>{{ trans('app.formations.python.syntax_example_text') }}</p>
 
             <div class="code-box">
                 <pre><code class="language-python"># Définition d'une fonction
@@ -618,8 +630,8 @@ moyenne = calculer_moyenne(notes)
 print(f"La moyenne est : {moyenne}")</code></pre>
             </div>
 
-            <h2 id="variables">🔤 Variables</h2>
-            <p>En Python, les variables sont créées simplement en leur assignant une valeur. Vous n'avez <strong>pas besoin de déclarer le type</strong> de variable explicitement. Python est un langage à <strong>typage dynamique</strong>, ce qui signifie que le type est déterminé automatiquement à l'exécution.</p>
+            <h2 id="variables">{{ trans('app.formations.python.variables_title') }}</h2>
+            <p>{!! trans('app.formations.python.variables_text') !!}</p>
 
             <div class="code-box">
                 <pre><code class="language-python"># Déclaration de variables
@@ -651,19 +663,16 @@ CONSTANTE = 3.14159     # Convention pour les constantes</code></pre>
             </div>
 
             <div class="example-box">
-                <h3 style="color: #000;">📌 Règles pour les noms de variables :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.python.variables_rules_title') }}</h3>
                 <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                    <li>Doivent commencer par une lettre ou un underscore <code>_</code></li>
-                    <li>Peuvent contenir des lettres, chiffres et underscores</li>
-                    <li>Ne peuvent pas contenir d'espaces (utilisez <code>_</code> à la place)</li>
-                    <li>Sont sensibles à la casse (<code>age</code> ≠ <code>Age</code>)</li>
-                    <li>Ne peuvent pas être des mots-clés Python (<code>if</code>, <code>for</code>, <code>def</code>, etc.)</li>
-                    <li>Convention : utilisez <code>snake_case</code> pour les variables (PEP 8)</li>
+                    @foreach(trans('app.formations.python.variables_rules_items') as $item)
+                    <li>{!! $item !!}</li>
+                    @endforeach
                 </ul>
             </div>
 
-            <h2 id="datatypes">📊 Types de données</h2>
-            <p>Python a plusieurs types de données intégrés (built-in types). Voici les principaux :</p>
+            <h2 id="datatypes">{{ trans('app.formations.python.datatypes_title') }}</h2>
+            <p>{{ trans('app.formations.python.datatypes_text') }}</p>
 
             <div class="code-box">
                 <pre><code class="language-python"># Types de base (scalaires)
@@ -692,22 +701,21 @@ prix_float = float("19.99")       # Convertir en décimal</code></pre>
             </div>
 
             <div class="example-box">
-                <h3 style="color: #000;">📚 Types de données Python :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.python.datatypes_list_title') }}</h3>
                 <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                    <li><strong>str</strong> - Chaînes de caractères (texte)</li>
-                    <li><strong>int</strong> - Nombres entiers (positifs, négatifs, zéro)</li>
-                    <li><strong>float</strong> - Nombres décimaux (virgule flottante)</li>
-                    <li><strong>bool</strong> - Booléens (True ou False)</li>
-                    <li><strong>list</strong> - Listes ordonnées et modifiables</li>
-                    <li><strong>tuple</strong> - Tuples ordonnés et immuables</li>
-                    <li><strong>dict</strong> - Dictionnaires (paires clé-valeur)</li>
-                    <li><strong>set</strong> - Ensembles (éléments uniques, non ordonnés)</li>
-                    <li><strong>NoneType</strong> - Type pour la valeur None (équivalent à null)</li>
+                    @foreach(trans('app.formations.python.datatypes_list_items') as $item)
+                    @php
+                        $parts = explode(' - ', $item);
+                        $label = $parts[0] ?? '';
+                        $description = $parts[1] ?? '';
+                    @endphp
+                    <li><strong>{{ $label }}</strong>@if($description) - {{ $description }}@endif</li>
+                    @endforeach
                 </ul>
             </div>
 
-            <h2 id="operators">🔢 Opérateurs</h2>
-            <p>Python supporte les opérateurs arithmétiques, de comparaison, logiques, d'assignation et d'identité :</p>
+            <h2 id="operators">{{ trans('app.formations.python.operators_title') }}</h2>
+            <p>{{ trans('app.formations.python.operators_text') }}</p>
 
             <div class="code-box">
                 <pre><code class="language-python"># Opérateurs arithmétiques
@@ -754,8 +762,8 @@ print(liste1 is liste3)    # True (même objet)
 print(liste1 == liste2)    # True (valeurs égales)</code></pre>
             </div>
 
-            <h2 id="conditions">🔀 Structures conditionnelles</h2>
-            <p>Python utilise <code>if</code>, <code>elif</code> (else if) et <code>else</code> pour les conditions. L'indentation est cruciale pour définir les blocs de code.</p>
+            <h2 id="conditions">{{ trans('app.formations.python.conditions_title') }}</h2>
+            <p>{!! trans('app.formations.python.conditions_text') !!}</p>
 
             <div class="code-box">
                 <pre><code class="language-python"># Structure if simple
@@ -810,8 +818,8 @@ else:
     print("Vous ne pouvez pas conduire")</code></pre>
             </div>
 
-            <h2 id="loops">🔄 Boucles</h2>
-            <p>Python propose deux types de boucles : <code>for</code> (pour itérer sur une séquence) et <code>while</code> (pour répéter tant qu'une condition est vraie) :</p>
+            <h2 id="loops">{{ trans('app.formations.python.loops_title') }}</h2>
+            <p>{!! trans('app.formations.python.loops_text') !!}</p>
 
             <div class="code-box">
                 <pre><code class="language-python"># Boucle for avec range()
@@ -863,8 +871,8 @@ else:
     print("Boucle terminée")  # Exécuté si la boucle se termine normalement</code></pre>
             </div>
 
-            <h2 id="functions">⚙️ Fonctions</h2>
-            <p>Les fonctions permettent de réutiliser du code. En Python, on définit une fonction avec <code>def</code>. Les fonctions peuvent prendre des paramètres et retourner des valeurs avec <code>return</code>.</p>
+            <h2 id="functions">{{ trans('app.formations.python.functions_title') }}</h2>
+            <p>{!! trans('app.formations.python.functions_text') !!}</p>
 
             <div class="code-box">
                 <pre><code class="language-python"># Fonction simple (sans paramètres)
@@ -924,8 +932,8 @@ carres = list(map(lambda x: x ** 2, nombres))
 print(carres)  # [1, 4, 9, 16, 25]</code></pre>
             </div>
 
-            <h2 id="lists">📋 Listes et Dictionnaires</h2>
-            <p>Les listes et dictionnaires sont des structures de données très utiles en Python. Les listes sont ordonnées et modifiables, les dictionnaires stockent des paires clé-valeur.</p>
+            <h2 id="lists">{{ trans('app.formations.python.lists_title') }}</h2>
+            <p>{{ trans('app.formations.python.lists_text') }}</p>
 
             <div class="code-box">
                 <pre><code class="language-python"># ========== LISTES ==========
@@ -992,8 +1000,8 @@ del personne["email"]           # Supprimer une clé
 personne.pop("ville")           # Supprimer et retourner la valeur</code></pre>
             </div>
 
-            <h2 id="modules">📦 Modules</h2>
-            <p>Python permet d'importer des modules pour étendre ses fonctionnalités. Un module est un fichier contenant des fonctions, classes et variables que vous pouvez réutiliser.</p>
+            <h2 id="modules">{{ trans('app.formations.python.modules_title') }}</h2>
+            <p>{{ trans('app.formations.python.modules_text') }}</p>
 
             <div class="code-box">
                 <pre><code class="language-python"># Importer un module complet
@@ -1037,8 +1045,8 @@ print(sys.version)          # Version de Python
 # print(mon_module.ma_fonction())</code></pre>
             </div>
 
-            <h2 id="oop">🏗️ Programmation Orientée Objet</h2>
-            <p>Python supporte la programmation orientée objet (POO). Une classe est un modèle pour créer des objets. Les objets ont des attributs (données) et des méthodes (fonctions).</p>
+            <h2 id="oop">{{ trans('app.formations.python.oop_title') }}</h2>
+            <p>{{ trans('app.formations.python.oop_text') }}</p>
 
             <div class="code-box">
                 <pre><code class="language-python"># Définir une classe
@@ -1100,8 +1108,8 @@ print(etudiant.se_presenter())  # Méthode héritée
 print(etudiant.etudier())       # Méthode spécifique</code></pre>
             </div>
 
-            <h2 id="files">📁 Manipulation de fichiers</h2>
-            <p>Python permet de lire et écrire dans des fichiers facilement. Il est recommandé d'utiliser <code>with</code> pour garantir la fermeture automatique du fichier.</p>
+            <h2 id="files">{{ trans('app.formations.python.files_title') }}</h2>
+            <p>{!! trans('app.formations.python.files_text') !!}</p>
 
             <div class="code-box">
                 <pre><code class="language-python"># Écrire dans un fichier (mode 'w' = write)
@@ -1150,44 +1158,51 @@ except Exception as e:
             </div>
 
             <div class="note-box">
-                <p style="color: #000;"><strong>💡 Bonne pratique :</strong> Utilisez toujours <code>with</code> pour ouvrir les fichiers. Cela garantit que le fichier sera fermé automatiquement même en cas d'erreur. C'est la méthode recommandée en Python et cela évite les fuites de ressources !</p>
+                <p style="color: #000;">{!! trans('app.formations.python.files_note') !!}</p>
             </div>
 
-            <h2>🎓 Prochaines étapes</h2>
-            <p>Félicitations ! Vous avez maintenant une solide base en Python.</p>
+            <h2>{{ trans('app.formations.python.next_steps_title') }}</h2>
+            <p>{{ trans('app.formations.python.next_steps_text') }}</p>
             
             <div class="example-box" style="background-color: #d4edda; border-left-color: #28a745;">
-                <h3 style="color: #000;">✅ Ce que vous avez appris :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.python.next_steps_learned_title') }}</h3>
                 <ul style="margin-left: 20px; line-height: 2; color: #000;">
-                    <li>Syntaxe Python et variables</li>
-                    <li>Types de données (str, int, float, bool, list, dict, tuple, set)</li>
-                    <li>Opérateurs (arithmétiques, comparaison, logiques)</li>
-                    <li>Structures conditionnelles (if, elif, else)</li>
-                    <li>Boucles (for et while)</li>
-                    <li>Fonctions (définition, paramètres, return, lambda)</li>
-                    <li>Listes et dictionnaires (méthodes, slicing)</li>
-                    <li>Modules (import, création)</li>
-                    <li>Programmation Orientée Objet (classes, objets, héritage)</li>
-                    <li>Manipulation de fichiers (lecture, écriture, gestion d'erreurs)</li>
+                    @foreach(trans('app.formations.python.next_steps_learned_items') as $item)
+                    <li>{{ $item }}</li>
+                    @endforeach
                 </ul>
             </div>
 
             <div class="example-box">
-                <h3 style="color: #000;">🚀 Pour aller plus loin :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.python.next_steps_further_title') }}</h3>
                 <ul style="margin-left: 20px; line-height: 2; color: #000;">
-                    <li>📚 <strong>Compréhensions de listes</strong> - Syntaxe concise pour créer des listes</li>
-                    <li>🔧 <strong>Gestion des exceptions</strong> - try/except pour gérer les erreurs</li>
-                    <li>📦 <strong>Packages et pip</strong> - Installer des bibliothèques externes</li>
-                    <li>🌐 <strong>Développement web</strong> - Django ou Flask pour créer des sites web</li>
-                    <li>📊 <strong>Data Science</strong> - Pandas, NumPy pour l'analyse de données</li>
-                    <li>🤖 <strong>Intelligence Artificielle</strong> - TensorFlow, PyTorch pour le Machine Learning</li>
+                    @foreach(trans('app.formations.python.next_steps_further_items') as $item)
+                    @php
+                        $parts = explode(' - ', $item);
+                        $icon = '';
+                        $label = '';
+                        $description = '';
+                        if (preg_match('/^([📚🔧📦🌐📊🤖]) (.+)$/u', $item, $matches)) {
+                            $icon = $matches[1];
+                            $rest = $matches[2];
+                            $labelParts = explode(' - ', $rest);
+                            $label = $labelParts[0] ?? '';
+                            $description = $labelParts[1] ?? '';
+                        } else {
+                            $labelParts = explode(' - ', $item);
+                            $label = $labelParts[0] ?? '';
+                            $description = $labelParts[1] ?? '';
+                        }
+                    @endphp
+                    <li>@if($icon){{ $icon }} @endif<strong>{{ $label }}</strong>@if($description) - {{ $description }}@endif</li>
+                    @endforeach
                 </ul>
             </div>
 
             <!-- Navigation Buttons -->
             <div class="nav-buttons">
-                <a href="{{ route('formations.ia') }}" class="nav-btn">❮ Précédent: IA</a>
-                <a href="{{ route('exercices') }}" class="nav-btn">Pratiquer avec des exercices ❯</a>
+                <a href="{{ route('formations.ia') }}" class="nav-btn">{{ trans('app.formations.python.nav_previous') }}</a>
+                <a href="{{ route('exercices') }}" class="nav-btn">{{ trans('app.formations.python.nav_next') }}</a>
             </div>
         </main>
     </div>
