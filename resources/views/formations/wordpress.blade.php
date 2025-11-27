@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Formation WordPress | DevFormation')
+@section('title', trans('app.formations.wordpress.title') . ' | NiangProgrammeur')
 
 @section('styles')
 <style>
@@ -645,15 +645,15 @@
 @section('content')
 <!-- Header -->
 <div class="tutorial-header">
-    <h1 style="font-size: 48px; margin-bottom: 10px;">Tutoriel WordPress</h1>
-    <p style="font-size: 20px;">Créez des sites web professionnels avec WordPress</p>
+    <h1 style="font-size: 48px; margin-bottom: 10px;">{{ trans('app.formations.wordpress.title') }}</h1>
+    <p style="font-size: 20px;">{{ trans('app.formations.wordpress.subtitle') }}</p>
 </div>
 
 <!-- Content -->
 <div class="tutorial-content">
     <div class="content-wrapper">
         <!-- Sidebar Toggle Button (Mobile) -->
-        <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Ouvrir le menu">
+        <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="{{ trans('app.formations.wordpress.menu_open') }}">
             <i class="fas fa-bars" id="sidebarToggleIcon"></i>
         </button>
         
@@ -663,237 +663,225 @@
         <!-- Sidebar -->
         <aside class="sidebar" id="tutorialSidebar">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid rgba(33, 117, 155, 0.2);">
-                <h3 style="margin: 0;">WordPress Tutorial</h3>
-                <button class="sidebar-close-btn" id="sidebarClose" style="display: none; background: none; border: none; color: #21759B; font-size: 24px; cursor: pointer; padding: 5px; width: 35px; height: 35px; border-radius: 50%; transition: all 0.3s ease;" aria-label="Fermer le menu">
+                <h3 style="margin: 0;">{{ trans('app.formations.wordpress.sidebar_title') }}</h3>
+                <button class="sidebar-close-btn" id="sidebarClose" style="display: none; background: none; border: none; color: #21759B; font-size: 24px; cursor: pointer; padding: 5px; width: 35px; height: 35px; border-radius: 50%; transition: all 0.3s ease;" aria-label="{{ trans('app.formations.wordpress.menu_close') }}">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <a href="#intro" class="active">Introduction WordPress</a>
-            <a href="#install">Installation</a>
-            <a href="#dashboard">Tableau de bord</a>
-            <a href="#pages">Pages</a>
-            <a href="#posts">Articles</a>
-            <a href="#media">Médias</a>
-            <a href="#themes">Thèmes</a>
-            <a href="#plugins">Plugins</a>
-            <a href="#menus">Menus</a>
-            <a href="#widgets">Widgets</a>
-            <a href="#users">Utilisateurs</a>
-            <a href="#seo">SEO</a>
-            <a href="#security">Sécurité</a>
+            @php
+                $anchors = ['intro', 'install', 'dashboard', 'pages', 'posts', 'media', 'themes', 'plugins', 'menus', 'widgets', 'users', 'seo', 'security'];
+            @endphp
+            @foreach(trans('app.formations.wordpress.sidebar_menu') as $index => $menuItem)
+            <a href="#{{ $anchors[$index] ?? 'intro' }}" class="{{ $index === 0 ? 'active' : '' }}">{{ $menuItem }}</a>
+            @endforeach
         </aside>
 
         <!-- Main Content -->
         <main class="main-content">
-            <h1 id="intro">Introduction à WordPress</h1>
-            <p>WordPress est le système de gestion de contenu (CMS) le plus populaire au monde, alimentant plus de 43% des sites web. Il permet de créer des sites web professionnels sans connaître le code.</p>
+            <h1 id="intro">{{ trans('app.formations.wordpress.intro_title') }}</h1>
+            <p>{{ trans('app.formations.wordpress.intro_text') }}</p>
 
-            <h3>🚀 Pourquoi choisir WordPress ?</h3>
+            <h3>{{ trans('app.formations.wordpress.why_title') }}</h3>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li>✅ <strong>Facile à utiliser</strong> - Interface intuitive pour tous</li>
-                <li>✅ <strong>Flexible</strong> - Des milliers de thèmes et plugins</li>
-                <li>✅ <strong>SEO-friendly</strong> - Optimisé pour les moteurs de recherche</li>
-                <li>✅ <strong>Gratuit</strong> - Open-source et communauté active</li>
-                <li>✅ <strong>Scalable</strong> - Du blog au site e-commerce</li>
+                @foreach(trans('app.formations.wordpress.why_items') as $item)
+                @php
+                    $parts = explode(' - ', $item);
+                    $label = $parts[0] ?? '';
+                    $description = $parts[1] ?? '';
+                @endphp
+                <li>✅ <strong>{{ $label }}</strong>@if($description) - {{ $description }}@endif</li>
+                @endforeach
             </ul>
 
-            <h2 id="install">📦 Installation</h2>
-            <p>WordPress peut être installé localement ou sur un hébergeur web.</p>
+            <h2 id="install">{{ trans('app.formations.wordpress.install_title') }}</h2>
+            <p>{{ trans('app.formations.wordpress.install_text') }}</p>
 
             <div class="example-box">
-                <h3>Installation locale (XAMPP/WAMP)</h3>
+                <h3>{{ trans('app.formations.wordpress.install_local_title') }}</h3>
                 <ul style="line-height: 2; color: #000;">
-                    <li>1. Télécharger WordPress depuis wordpress.org</li>
-                    <li>2. Extraire dans le dossier htdocs</li>
-                    <li>3. Créer une base de données MySQL</li>
-                    <li>4. Lancer l'installation via navigateur</li>
+                    @foreach(trans('app.formations.wordpress.install_local_items') as $index => $item)
+                    <li>{{ $index + 1 }}. {{ $item }}</li>
+                    @endforeach
                 </ul>
             </div>
 
             <div class="note-box">
-                <p style="color: #000;"><strong>💡 Note :</strong> La plupart des hébergeurs proposent une installation WordPress en un clic.</p>
+                <p style="color: #000;"><strong>{{ trans('app.formations.wordpress.install_note') }}</strong></p>
             </div>
 
-            <h2 id="dashboard">🎛️ Tableau de bord</h2>
-            <p>Le tableau de bord WordPress est votre centre de contrôle pour gérer votre site.</p>
+            <h2 id="dashboard">{{ trans('app.formations.wordpress.dashboard_title') }}</h2>
+            <p>{{ trans('app.formations.wordpress.dashboard_text') }}</p>
 
             <div class="example-box">
-                <h3>Éléments principaux</h3>
+                <h3>{{ trans('app.formations.wordpress.dashboard_elements_title') }}</h3>
                 <ul style="line-height: 2; color: #000;">
-                    <li><strong>Articles</strong> - Gérer vos articles de blog</li>
-                    <li><strong>Médias</strong> - Bibliothèque d'images et fichiers</li>
-                    <li><strong>Pages</strong> - Créer des pages statiques</li>
-                    <li><strong>Apparence</strong> - Thèmes, menus, widgets</li>
-                    <li><strong>Extensions</strong> - Ajouter des fonctionnalités</li>
-                    <li><strong>Réglages</strong> - Configuration du site</li>
+                    @foreach(trans('app.formations.wordpress.dashboard_elements_items') as $item)
+                    @php
+                        $parts = explode(' - ', $item);
+                        $label = $parts[0] ?? '';
+                        $description = $parts[1] ?? '';
+                    @endphp
+                    <li><strong>{{ $label }}</strong>@if($description) - {{ $description }}@endif</li>
+                    @endforeach
                 </ul>
             </div>
 
-            <h2 id="pages">📄 Pages</h2>
-            <p>Les pages sont utilisées pour le contenu statique (À propos, Contact, Services).</p>
+            <h2 id="pages">{{ trans('app.formations.wordpress.pages_title') }}</h2>
+            <p>{{ trans('app.formations.wordpress.pages_text') }}</p>
 
             <div class="example-box">
-                <h3>Créer une page</h3>
+                <h3>{{ trans('app.formations.wordpress.pages_create_title') }}</h3>
                 <ul style="line-height: 2; color: #000;">
-                    <li>1. Cliquer sur <strong>Pages → Ajouter</strong></li>
-                    <li>2. Saisir le titre et le contenu</li>
-                    <li>3. Choisir un modèle de page</li>
-                    <li>4. Définir l'image à la une</li>
-                    <li>5. Publier ou enregistrer comme brouillon</li>
+                    @foreach(trans('app.formations.wordpress.pages_create_items') as $index => $item)
+                    <li>{{ $index + 1 }}. {{ $item }}</li>
+                    @endforeach
                 </ul>
             </div>
 
-            <h2 id="posts">📝 Articles</h2>
-            <p>Les articles sont pour le contenu dynamique et chronologique (blog).</p>
+            <h2 id="posts">{{ trans('app.formations.wordpress.posts_title') }}</h2>
+            <p>{{ trans('app.formations.wordpress.posts_text') }}</p>
 
             <div class="example-box">
-                <h3>Créer un article</h3>
+                <h3>{{ trans('app.formations.wordpress.posts_create_title') }}</h3>
                 <ul style="line-height: 2; color: #000;">
-                    <li>1. Aller dans <strong>Articles → Ajouter</strong></li>
-                    <li>2. Rédiger le contenu avec l'éditeur Gutenberg</li>
-                    <li>3. Ajouter des catégories et étiquettes</li>
-                    <li>4. Définir l'image à la une</li>
-                    <li>5. Publier immédiatement ou programmer</li>
+                    @foreach(trans('app.formations.wordpress.posts_create_items') as $index => $item)
+                    <li>{{ $index + 1 }}. {{ $item }}</li>
+                    @endforeach
                 </ul>
             </div>
 
-            <h2 id="media">🖼️ Médias</h2>
-            <p>La bibliothèque de médias stocke toutes vos images, vidéos et fichiers.</p>
+            <h2 id="media">{{ trans('app.formations.wordpress.media_title') }}</h2>
+            <p>{{ trans('app.formations.wordpress.media_text') }}</p>
 
             <div class="example-box">
-                <h3>Formats supportés</h3>
+                <h3>{{ trans('app.formations.wordpress.media_formats_title') }}</h3>
                 <ul style="line-height: 2; color: #000;">
-                    <li><strong>Images</strong> - JPG, PNG, GIF, WebP</li>
-                    <li><strong>Documents</strong> - PDF, DOC, XLS</li>
-                    <li><strong>Audio</strong> - MP3, WAV, OGG</li>
-                    <li><strong>Vidéo</strong> - MP4, MOV, AVI</li>
+                    @foreach(trans('app.formations.wordpress.media_formats_items') as $item)
+                    @php
+                        $parts = explode(' - ', $item);
+                        $label = $parts[0] ?? '';
+                        $description = $parts[1] ?? '';
+                    @endphp
+                    <li><strong>{{ $label }}</strong>@if($description) - {{ $description }}@endif</li>
+                    @endforeach
                 </ul>
             </div>
 
-            <h2 id="themes">🎨 Thèmes</h2>
-            <p>Les thèmes contrôlent l'apparence visuelle de votre site.</p>
+            <h2 id="themes">{{ trans('app.formations.wordpress.themes_title') }}</h2>
+            <p>{{ trans('app.formations.wordpress.themes_text') }}</p>
 
             <div class="example-box">
-                <h3>Installer un thème</h3>
+                <h3>{{ trans('app.formations.wordpress.themes_install_title') }}</h3>
                 <ul style="line-height: 2; color: #000;">
-                    <li>1. <strong>Apparence → Thèmes → Ajouter</strong></li>
-                    <li>2. Rechercher un thème gratuit</li>
-                    <li>3. Cliquer sur <strong>Installer</strong></li>
-                    <li>4. Activer le thème</li>
-                    <li>5. Personnaliser via <strong>Personnaliser</strong></li>
+                    @foreach(trans('app.formations.wordpress.themes_install_items') as $index => $item)
+                    <li>{{ $index + 1 }}. {{ $item }}</li>
+                    @endforeach
                 </ul>
             </div>
 
-            <h2 id="plugins">🔌 Plugins</h2>
-            <p>Les plugins ajoutent des fonctionnalités à votre site WordPress.</p>
+            <h2 id="plugins">{{ trans('app.formations.wordpress.plugins_title') }}</h2>
+            <p>{{ trans('app.formations.wordpress.plugins_text') }}</p>
 
             <div class="example-box">
-                <h3>Plugins essentiels</h3>
+                <h3>{{ trans('app.formations.wordpress.plugins_essential_title') }}</h3>
                 <ul style="line-height: 2; color: #000;">
-                    <li><strong>Yoast SEO</strong> - Optimisation SEO</li>
-                    <li><strong>Contact Form 7</strong> - Formulaires de contact</li>
-                    <li><strong>Wordfence</strong> - Sécurité</li>
-                    <li><strong>WP Super Cache</strong> - Performance</li>
-                    <li><strong>Elementor</strong> - Constructeur de pages</li>
+                    @foreach(trans('app.formations.wordpress.plugins_essential_items') as $item)
+                    @php
+                        $parts = explode(' - ', $item);
+                        $label = $parts[0] ?? '';
+                        $description = $parts[1] ?? '';
+                    @endphp
+                    <li><strong>{{ $label }}</strong>@if($description) - {{ $description }}@endif</li>
+                    @endforeach
                 </ul>
             </div>
 
-            <h2 id="menus">🧭 Menus</h2>
-            <p>Les menus permettent de créer la navigation de votre site.</p>
+            <h2 id="menus">{{ trans('app.formations.wordpress.menus_title') }}</h2>
+            <p>{{ trans('app.formations.wordpress.menus_text') }}</p>
 
             <div class="example-box">
-                <h3>Créer un menu</h3>
+                <h3>{{ trans('app.formations.wordpress.menus_create_title') }}</h3>
                 <ul style="line-height: 2; color: #000;">
-                    <li>1. <strong>Apparence → Menus</strong></li>
-                    <li>2. Créer un nouveau menu</li>
-                    <li>3. Ajouter des pages, articles, liens personnalisés</li>
-                    <li>4. Organiser par glisser-déposer</li>
-                    <li>5. Assigner à un emplacement (Header, Footer)</li>
+                    @foreach(trans('app.formations.wordpress.menus_create_items') as $index => $item)
+                    <li>{{ $index + 1 }}. {{ $item }}</li>
+                    @endforeach
                 </ul>
             </div>
 
-            <h2 id="widgets">📦 Widgets</h2>
-            <p>Les widgets ajoutent du contenu dans les zones comme la sidebar ou le footer.</p>
+            <h2 id="widgets">{{ trans('app.formations.wordpress.widgets_title') }}</h2>
+            <p>{{ trans('app.formations.wordpress.widgets_text') }}</p>
 
             <div class="example-box">
-                <h3>Widgets populaires</h3>
+                <h3>{{ trans('app.formations.wordpress.widgets_popular_title') }}</h3>
                 <ul style="line-height: 2; color: #000;">
-                    <li><strong>Recherche</strong> - Barre de recherche</li>
-                    <li><strong>Articles récents</strong> - Derniers articles</li>
-                    <li><strong>Catégories</strong> - Liste des catégories</li>
-                    <li><strong>Texte</strong> - Contenu personnalisé</li>
-                    <li><strong>Réseaux sociaux</strong> - Liens sociaux</li>
+                    @foreach(trans('app.formations.wordpress.widgets_popular_items') as $item)
+                    @php
+                        $parts = explode(' - ', $item);
+                        $label = $parts[0] ?? '';
+                        $description = $parts[1] ?? '';
+                    @endphp
+                    <li><strong>{{ $label }}</strong>@if($description) - {{ $description }}@endif</li>
+                    @endforeach
                 </ul>
             </div>
 
-            <h2 id="users">👥 Utilisateurs</h2>
-            <p>WordPress permet de gérer plusieurs utilisateurs avec différents rôles.</p>
+            <h2 id="users">{{ trans('app.formations.wordpress.users_title') }}</h2>
+            <p>{{ trans('app.formations.wordpress.users_text') }}</p>
 
             <div class="example-box">
-                <h3>Rôles utilisateurs</h3>
+                <h3>{{ trans('app.formations.wordpress.users_roles_title') }}</h3>
                 <ul style="line-height: 2; color: #000;">
-                    <li><strong>Administrateur</strong> - Accès complet</li>
-                    <li><strong>Éditeur</strong> - Gérer tous les contenus</li>
-                    <li><strong>Auteur</strong> - Publier ses propres articles</li>
-                    <li><strong>Contributeur</strong> - Écrire des articles</li>
-                    <li><strong>Abonné</strong> - Lecture seule</li>
+                    @foreach(trans('app.formations.wordpress.users_roles_items') as $item)
+                    @php
+                        $parts = explode(' - ', $item);
+                        $label = $parts[0] ?? '';
+                        $description = $parts[1] ?? '';
+                    @endphp
+                    <li><strong>{{ $label }}</strong>@if($description) - {{ $description }}@endif</li>
+                    @endforeach
                 </ul>
             </div>
 
-            <h2 id="seo">🔍 SEO</h2>
-            <p>Optimisez votre site pour les moteurs de recherche.</p>
+            <h2 id="seo">{{ trans('app.formations.wordpress.seo_title') }}</h2>
+            <p>{{ trans('app.formations.wordpress.seo_text') }}</p>
 
             <div class="example-box">
-                <h3>Bonnes pratiques SEO</h3>
+                <h3>{{ trans('app.formations.wordpress.seo_practices_title') }}</h3>
                 <ul style="line-height: 2; color: #000;">
-                    <li>Installer <strong>Yoast SEO</strong> ou <strong>Rank Math</strong></li>
-                    <li>Optimiser les titres et méta-descriptions</li>
-                    <li>Utiliser des URLs propres (permaliens)</li>
-                    <li>Ajouter du texte alt aux images</li>
-                    <li>Créer un sitemap XML</li>
-                    <li>Améliorer la vitesse du site</li>
+                    @foreach(trans('app.formations.wordpress.seo_practices_items') as $item)
+                    <li>{{ $item }}</li>
+                    @endforeach
                 </ul>
             </div>
 
-            <h2 id="security">🔒 Sécurité</h2>
-            <p>Protégez votre site WordPress contre les menaces.</p>
+            <h2 id="security">{{ trans('app.formations.wordpress.security_title') }}</h2>
+            <p>{{ trans('app.formations.wordpress.security_text') }}</p>
 
             <div class="example-box">
-                <h3>Mesures de sécurité</h3>
+                <h3>{{ trans('app.formations.wordpress.security_measures_title') }}</h3>
                 <ul style="line-height: 2; color: #000;">
-                    <li>Garder WordPress, thèmes et plugins à jour</li>
-                    <li>Utiliser des mots de passe forts</li>
-                    <li>Installer un plugin de sécurité (Wordfence)</li>
-                    <li>Activer l'authentification à deux facteurs</li>
-                    <li>Faire des sauvegardes régulières</li>
-                    <li>Utiliser un certificat SSL (HTTPS)</li>
+                    @foreach(trans('app.formations.wordpress.security_measures_items') as $item)
+                    <li>{{ $item }}</li>
+                    @endforeach
                 </ul>
             </div>
 
-            <h2>🎓 Prochaines étapes</h2>
-            <p>Félicitations ! Vous savez maintenant utiliser WordPress.</p>
+            <h2>{{ trans('app.formations.wordpress.next_steps_title') }}</h2>
+            <p>{{ trans('app.formations.wordpress.next_steps_text') }}</p>
             
             <div class="example-box" style="background-color: #d4edda; border-left-color: #28a745;">
-                <h3 style="color: #000;">✅ Ce que vous avez appris :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.wordpress.next_steps_learned_title') }}</h3>
                 <ul style="margin-left: 20px; line-height: 2; color: #000;">
-                    <li>Installation de WordPress</li>
-                    <li>Navigation dans le tableau de bord</li>
-                    <li>Création de pages et articles</li>
-                    <li>Gestion des médias</li>
-                    <li>Installation de thèmes</li>
-                    <li>Utilisation des plugins</li>
-                    <li>Configuration des menus</li>
-                    <li>Ajout de widgets</li>
-                    <li>Gestion des utilisateurs</li>
-                    <li>Optimisation SEO</li>
-                    <li>Sécurisation du site</li>
+                    @foreach(trans('app.formations.wordpress.next_steps_learned_items') as $item)
+                    <li>{{ $item }}</li>
+                    @endforeach
                 </ul>
             </div>
 
             <!-- Navigation Buttons -->
             <div class="nav-buttons">
-                <a href="{{ route('formations.git') }}" class="nav-btn">❮ Précédent: Git</a>
-                <a href="{{ route('formations.ia') }}" class="nav-btn">Suivant: IA ❯</a>
+                <a href="{{ route('formations.git') }}" class="nav-btn">{{ trans('app.formations.wordpress.nav_previous') }}</a>
+                <a href="{{ route('formations.ia') }}" class="nav-btn">{{ trans('app.formations.wordpress.nav_next') }}</a>
             </div>
         </main>
     </div>

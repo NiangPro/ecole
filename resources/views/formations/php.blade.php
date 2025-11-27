@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Formation PHP | DevFormation')
+@section('title', trans('app.formations.php.title') . ' | NiangProgrammeur')
 
 @section('styles')
 <style>
@@ -657,15 +657,15 @@
 @section('content')
 <!-- Header -->
 <div class="tutorial-header">
-    <h1 style="font-size: 48px; margin-bottom: 10px;">Tutoriel PHP</h1>
-    <p style="font-size: 20px;">Développez des applications web dynamiques côté serveur</p>
+    <h1 style="font-size: 48px; margin-bottom: 10px;">{{ trans('app.formations.php.title') }}</h1>
+    <p style="font-size: 20px;">{{ trans('app.formations.php.subtitle') }}</p>
 </div>
 
 <!-- Content -->
 <div class="tutorial-content">
     <div class="content-wrapper">
         <!-- Sidebar Toggle Button (Mobile) -->
-        <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Ouvrir le menu">
+        <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="{{ trans('app.formations.php.menu_open') }}">
             <i class="fas fa-bars" id="sidebarToggleIcon"></i>
         </button>
         
@@ -675,96 +675,85 @@
         <!-- Sidebar -->
         <aside class="sidebar" id="tutorialSidebar">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid rgba(119, 123, 179, 0.2);">
-                <h3 style="margin: 0;">PHP Tutorial</h3>
-                <button class="sidebar-close-btn" id="sidebarClose" style="display: none; background: none; border: none; color: #777BB3; font-size: 24px; cursor: pointer; padding: 5px; width: 35px; height: 35px; border-radius: 50%; transition: all 0.3s ease;" aria-label="Fermer le menu">
+                <h3 style="margin: 0;">{{ trans('app.formations.php.title') }}</h3>
+                <button class="sidebar-close-btn" id="sidebarClose" style="display: none; background: none; border: none; color: #777BB3; font-size: 24px; cursor: pointer; padding: 5px; width: 35px; height: 35px; border-radius: 50%; transition: all 0.3s ease;" aria-label="{{ trans('app.formations.php.menu_close') }}">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <a href="#intro" class="active">Introduction PHP</a>
-            <a href="#syntax">Syntaxe</a>
-            <a href="#variables">Variables</a>
-            <a href="#datatypes">Types de données</a>
-            <a href="#operators">Opérateurs</a>
-            <a href="#conditions">Conditions</a>
-            <a href="#loops">Boucles</a>
-            <a href="#functions">Fonctions</a>
-            <a href="#arrays">Tableaux</a>
-            <a href="#forms">Formulaires</a>
-            <a href="#sessions">Sessions</a>
-            <a href="#mysql">MySQL</a>
-            <a href="#pdo">PDO</a>
-            <a href="#oop">POO</a>
+            <a href="#intro" class="active">{{ trans('app.formations.php.sidebar_menu')[0] }}</a>
+            <a href="#syntax">{{ trans('app.formations.php.sidebar_menu')[1] }}</a>
+            <a href="#variables">{{ trans('app.formations.php.sidebar_menu')[2] }}</a>
+            <a href="#datatypes">{{ trans('app.formations.php.sidebar_menu')[3] }}</a>
+            <a href="#operators">{{ trans('app.formations.php.sidebar_menu')[4] }}</a>
+            <a href="#conditions">{{ trans('app.formations.php.sidebar_menu')[5] }}</a>
+            <a href="#loops">{{ trans('app.formations.php.sidebar_menu')[6] }}</a>
+            <a href="#functions">{{ trans('app.formations.php.sidebar_menu')[7] }}</a>
+            <a href="#arrays">{{ trans('app.formations.php.sidebar_menu')[8] }}</a>
+            <a href="#forms">{{ trans('app.formations.php.sidebar_menu')[9] }}</a>
+            <a href="#sessions">{{ trans('app.formations.php.sidebar_menu')[10] }}</a>
+            <a href="#mysql">{{ trans('app.formations.php.sidebar_menu')[11] }}</a>
+            <a href="#pdo">{{ trans('app.formations.php.sidebar_menu')[12] }}</a>
+            <a href="#oop">{{ trans('app.formations.php.sidebar_menu')[13] }}</a>
         </aside>
 
         <!-- Main Content -->
         <main class="main-content">
-            <h1 id="intro">Introduction à PHP</h1>
-            <p>PHP (Hypertext Preprocessor) est un langage de script serveur open-source conçu spécifiquement pour le développement web. Créé en 1994 par Rasmus Lerdorf, PHP est aujourd'hui l'un des langages les plus utilisés pour créer des sites web dynamiques et interactifs.</p>
+            <h1 id="intro">{{ trans('app.formations.php.intro_title') }}</h1>
+            <p>{{ trans('app.formations.php.intro_text') }}</p>
 
-            <h3>🌐 Qu'est-ce que PHP ?</h3>
-            <p>PHP est un langage de programmation qui s'exécute <strong>côté serveur</strong>, contrairement à JavaScript qui s'exécute dans le navigateur. Cela signifie que le code PHP est traité sur le serveur web avant que la page ne soit envoyée au navigateur de l'utilisateur.</p>
+            <h3>{{ trans('app.formations.php.what_is_title') }}</h3>
+            <p>{!! trans('app.formations.php.what_is_text') !!}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">💡 Comment fonctionne PHP ?</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.how_works_title') }}</h3>
                 <ol style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                    <li>L'utilisateur demande une page web (ex: <code>mon-site.com/page.php</code>)</li>
-                    <li>Le serveur web (Apache/Nginx) reçoit la requête</li>
-                    <li>Le serveur exécute le code PHP contenu dans le fichier</li>
-                    <li>PHP génère du HTML dynamique</li>
-                    <li>Le serveur envoie le HTML au navigateur de l'utilisateur</li>
-                    <li>Le navigateur affiche la page web</li>
+                    @foreach(trans('app.formations.php.how_works_list') as $index => $step)
+                    <li>{{ $step }}</li>
+                    @endforeach
                 </ol>
             </div>
 
-            <h3>🚀 Pourquoi apprendre PHP ?</h3>
-            <p>PHP est un choix excellent pour débuter en développement web pour plusieurs raisons :</p>
+            <h3>{{ trans('app.formations.php.why_learn_title') }}</h3>
+            <p>{{ trans('app.formations.php.why_learn_text') }}</p>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li>✅ <strong>Populaire</strong> - Utilisé par 77% des sites web dans le monde, y compris des géants comme WordPress, Facebook, Wikipedia, et Yahoo</li>
-                <li>✅ <strong>Facile à apprendre</strong> - Syntaxe simple et intuitive, similaire à C et Java</li>
-                <li>✅ <strong>Puissant</strong> - Permet de créer des applications web complètes : sites e-commerce, réseaux sociaux, systèmes de gestion de contenu</li>
-                <li>✅ <strong>Gratuit et Open-Source</strong> - Aucun coût de licence, multiplateforme (Windows, Linux, macOS)</li>
-                <li>✅ <strong>Vaste communauté</strong> - Des millions de développeurs, documentation complète, nombreuses ressources d'apprentissage</li>
-                <li>✅ <strong>Intégration facile</strong> - Fonctionne parfaitement avec MySQL, HTML, CSS, JavaScript</li>
-                <li>✅ <strong>Frameworks modernes</strong> - Laravel, Symfony, CodeIgniter pour développer rapidement</li>
+                @foreach(trans('app.formations.php.why_learn_items') as $item)
+                <li>✅ <strong>{{ explode(' - ', $item)[0] }}</strong>@if(isset(explode(' - ', $item)[1])) - {{ explode(' - ', $item)[1] }}@endif</li>
+                @endforeach
             </ul>
 
-            <h3>📋 Prérequis pour apprendre PHP</h3>
-            <p>Avant de commencer avec PHP, il est recommandé d'avoir des connaissances de base en :</p>
+            <h3>{{ trans('app.formations.php.prerequisites_title') }}</h3>
+            <p>{{ trans('app.formations.php.prerequisites_text') }}</p>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li>✅ <strong>HTML</strong> - Pour structurer le contenu des pages web</li>
-                <li>✅ <strong>CSS</strong> - Pour styliser les pages web</li>
-                <li>⚠️ <strong>JavaScript</strong> - Utile mais pas obligatoire au début</li>
+                @foreach(trans('app.formations.php.prerequisites_items') as $index => $item)
+                <li>@if($index < 2)✅@else⚠️@endif <strong>{{ explode(' - ', $item)[0] }}</strong>@if(isset(explode(' - ', $item)[1])) - {{ explode(' - ', $item)[1] }}@endif</li>
+                @endforeach
             </ul>
 
             <div class="note-box">
-                <p style="color: #000;"><strong>💡 Note importante :</strong> PHP nécessite un serveur web pour fonctionner. Vous pouvez installer un environnement de développement local comme <strong>XAMPP</strong>, <strong>WAMP</strong> (Windows), <strong>MAMP</strong> (Mac), ou <strong>LAMP</strong> (Linux) qui incluent Apache, MySQL et PHP.</p>
+                <p style="color: #000;"><strong>{{ trans('app.formations.php.note_important') }}</strong></p>
             </div>
 
-            <h3>🎯 Cas d'usage de PHP</h3>
-            <p>PHP est utilisé pour créer de nombreux types d'applications web :</p>
+            <h3>{{ trans('app.formations.php.use_cases_title') }}</h3>
+            <p>{{ trans('app.formations.php.use_cases_text') }}</p>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li>🌐 <strong>Sites web dynamiques</strong> - Pages qui changent selon les données</li>
-                <li>🛒 <strong>E-commerce</strong> - Boutiques en ligne, paniers d'achat</li>
-                <li>📝 <strong>Systèmes de gestion de contenu</strong> - WordPress, Drupal, Joomla</li>
-                <li>👥 <strong>Réseaux sociaux</strong> - Forums, blogs, plateformes communautaires</li>
-                <li>📊 <strong>Applications web</strong> - CRM, ERP, systèmes de gestion</li>
-                <li>🔐 <strong>Authentification</strong> - Systèmes de connexion, gestion d'utilisateurs</li>
-                <li>📧 <strong>Envoi d'emails</strong> - Formulaires de contact, newsletters</li>
+                @foreach(trans('app.formations.php.use_cases_items') as $item)
+                <li>@if(strpos($item, 'Sites web') !== false)🌐@elseif(strpos($item, 'E-commerce') !== false)🛒@elseif(strpos($item, 'Systèmes') !== false)📝@elseif(strpos($item, 'Réseaux') !== false)👥@elseif(strpos($item, 'Envoi') !== false)📧@endif <strong>{{ explode(' - ', $item)[0] }}</strong>@if(isset(explode(' - ', $item)[1])) - {{ explode(' - ', $item)[1] }}@endif</li>
+                @endforeach
             </ul>
 
-            <h2 id="syntax">📝 Syntaxe de base</h2>
-            <p>La syntaxe PHP est simple et intuitive. Tout code PHP doit être placé entre les balises d'ouverture <code>&lt;?php</code> et de fermeture <code>?&gt;</code>. Le code est ensuite exécuté sur le serveur et le résultat est envoyé au navigateur sous forme de HTML.</p>
+            <h2 id="syntax">{{ trans('app.formations.php.syntax_title') }}</h2>
+            <p>{{ trans('app.formations.php.syntax_text') }}</p>
 
-            <h3>🔤 Balises PHP</h3>
-            <p>PHP utilise des balises spéciales pour délimiter le code :</p>
+            <h3>{{ trans('app.formations.php.syntax_tags_title') }}</h3>
+            <p>{{ trans('app.formations.php.syntax_tags_text') }}</p>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li><code>&lt;?php ?&gt;</code> - Balises standard (recommandées)</li>
-                <li><code>&lt;? ?&gt;</code> - Balises courtes (nécessitent une configuration)</li>
-                <li><code>&lt;?= ?&gt;</code> - Équivalent à <code>echo</code> (depuis PHP 5.4)</li>
+                <li><code>&lt;?php ?&gt;</code> - {{ trans('app.formations.php.syntax_tags_items')[0] }}</li>
+                <li><code>&lt;? ?&gt;</code> - {{ trans('app.formations.php.syntax_tags_items')[1] }}</li>
+                <li><code>&lt;?= ?&gt;</code> - {{ trans('app.formations.php.syntax_tags_items')[2] }}</li>
             </ul>
 
             <div class="example-box">
-                <h3 style="color: #000;">Exemple basique :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.syntax_basic_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -777,17 +766,17 @@
                 </div>
             </div>
 
-            <h3>📤 Affichage de contenu</h3>
-            <p>PHP offre plusieurs façons d'afficher du contenu :</p>
+            <h3>{{ trans('app.formations.php.syntax_display_title') }}</h3>
+            <p>{{ trans('app.formations.php.syntax_display_text') }}</p>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li><code>echo</code> - Affiche une ou plusieurs chaînes (le plus utilisé)</li>
-                <li><code>print</code> - Affiche une seule chaîne (retourne 1 en cas de succès)</li>
-                <li><code>var_dump()</code> - Affiche des informations détaillées sur une variable (débogage)</li>
-                <li><code>print_r()</code> - Affiche une variable de manière lisible (débogage)</li>
+                <li><code>echo</code> - {{ trans('app.formations.php.syntax_display_items')[0] }}</li>
+                <li><code>print</code> - {{ trans('app.formations.php.syntax_display_items')[1] }}</li>
+                <li><code>var_dump()</code> - {{ trans('app.formations.php.syntax_display_items')[2] }}</li>
+                <li><code>print_r()</code> - {{ trans('app.formations.php.syntax_display_items')[3] }}</li>
             </ul>
 
             <div class="example-box">
-                <h3 style="color: #000;">Exemples d'affichage :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.syntax_display_examples_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -804,33 +793,29 @@
                 </div>
             </div>
 
-            <h3>📝 Règles de syntaxe importantes</h3>
+            <h3>{{ trans('app.formations.php.syntax_rules_title') }}</h3>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li>✅ Les instructions se terminent par un point-virgule (<code>;</code>)</li>
-                <li>✅ PHP est sensible à la casse pour les noms de variables (<code>$Nom</code> ≠ <code>$nom</code>)</li>
-                <li>✅ Les noms de fonctions ne sont pas sensibles à la casse (<code>ECHO</code> = <code>echo</code>)</li>
-                <li>✅ Les espaces et retours à la ligne sont généralement ignorés</li>
-                <li>✅ Les commentaires ne sont pas exécutés</li>
+                @foreach(trans('app.formations.php.syntax_rules_items') as $rule)
+                <li>✅ {{ $rule }}</li>
+                @endforeach
             </ul>
 
             <div class="note-box">
-                <p style="color: #000;"><strong>💡 Note importante :</strong> Les fichiers PHP doivent avoir l'extension <code>.php</code> et être exécutés sur un serveur web (Apache, Nginx). Vous ne pouvez pas simplement ouvrir un fichier PHP dans votre navigateur comme un fichier HTML. Il faut passer par un serveur web local ou distant.</p>
+                <p style="color: #000;"><strong>{{ trans('app.formations.php.syntax_note') }}</strong></p>
             </div>
 
-            <h2 id="variables">📦 Variables</h2>
-            <p>Les variables en PHP sont des conteneurs qui stockent des données. Elles sont essentielles pour créer des applications dynamiques. Contrairement à d'autres langages, PHP détermine automatiquement le type de variable selon la valeur assignée.</p>
+            <h2 id="variables">{{ trans('app.formations.php.variables_title') }}</h2>
+            <p>{{ trans('app.formations.php.variables_text') }}</p>
 
-            <h3>🔤 Règles de nommage des variables</h3>
+            <h3>{{ trans('app.formations.php.variables_naming_title') }}</h3>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li>✅ Doivent commencer par le symbole <code>$</code> suivi d'une lettre ou d'un underscore</li>
-                <li>✅ Peuvent contenir des lettres, chiffres et underscores</li>
-                <li>✅ Sont sensibles à la casse (<code>$nom</code> ≠ <code>$Nom</code> ≠ <code>$NOM</code>)</li>
-                <li>❌ Ne peuvent pas commencer par un chiffre</li>
-                <li>❌ Ne peuvent pas contenir d'espaces ou de caractères spéciaux (sauf underscore)</li>
+                @foreach(trans('app.formations.php.variables_naming_rules') as $index => $rule)
+                <li>@if($index < 3)✅@else❌@endif {!! $rule !!}</li>
+                @endforeach
             </ul>
 
             <div class="example-box">
-                <h3 style="color: #000;">Exemples de variables valides et invalides :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.variables_examples_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -849,11 +834,11 @@
                 </div>
             </div>
 
-            <h3>💾 Assignation de valeurs</h3>
-            <p>L'assignation se fait avec l'opérateur <code>=</code>. PHP détermine automatiquement le type de la variable.</p>
+            <h3>{{ trans('app.formations.php.variables_assignment_title') }}</h3>
+            <p>{!! trans('app.formations.php.variables_assignment_text') !!}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Exemples pratiques :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.variables_assignment_examples_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -873,11 +858,11 @@
                 </div>
             </div>
 
-            <h3>🔄 Variables de variables</h3>
-            <p>PHP permet d'utiliser le contenu d'une variable comme nom d'une autre variable. C'est ce qu'on appelle des "variables de variables".</p>
+            <h3>{{ trans('app.formations.php.variables_variable_title') }}</h3>
+            <p>{{ trans('app.formations.php.variables_variable_text') }}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Exemple de variable de variable :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.variables_variable_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -890,17 +875,17 @@
             </div>
 
             <div class="note-box">
-                <p style="color: #000;"><strong>💡 Bonne pratique :</strong> Utilisez des noms de variables descriptifs et cohérents. Préférez <code>$nomUtilisateur</code> plutôt que <code>$n</code> ou <code>$x</code>. Cela rend votre code plus lisible et maintenable.</p>
+                <p style="color: #000;"><strong>{{ trans('app.formations.php.variables_best_practice') }}</strong></p>
             </div>
 
-            <h2 id="datatypes">🔢 Types de données</h2>
-            <p>PHP est un langage à typage dynamique et faible. Cela signifie que vous n'avez pas besoin de déclarer le type d'une variable avant de l'utiliser, et PHP peut changer automatiquement le type d'une variable selon le contexte. PHP supporte 8 types de données primitifs.</p>
+            <h2 id="datatypes">{{ trans('app.formations.php.datatypes_title') }}</h2>
+            <p>{{ trans('app.formations.php.datatypes_text') }}</p>
 
-            <h3>📝 String (Chaîne de caractères)</h3>
-            <p>Une chaîne est une séquence de caractères, comme du texte. Les chaînes peuvent être délimitées par des guillemets simples (<code>'</code>) ou doubles (<code>"</code>).</p>
+            <h3>{{ trans('app.formations.php.string_title') }}</h3>
+            <p>{{ trans('app.formations.php.string_text') }}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Exemples de chaînes :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.string_examples_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -918,11 +903,11 @@
                 </div>
             </div>
 
-            <h3>🔢 Integer (Entier)</h3>
-            <p>Un entier est un nombre sans partie décimale. Il peut être positif, négatif ou zéro.</p>
+            <h3>{{ trans('app.formations.php.integer_title') }}</h3>
+            <p>{{ trans('app.formations.php.integer_text') }}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Exemples d'entiers :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.integer_examples_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -938,11 +923,11 @@
                 </div>
             </div>
 
-            <h3>🔢 Float (Nombre décimal)</h3>
-            <p>Un float (ou double) est un nombre avec une partie décimale. Utilisé pour les calculs nécessitant une précision décimale.</p>
+            <h3>{{ trans('app.formations.php.float_title') }}</h3>
+            <p>{{ trans('app.formations.php.float_text') }}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Exemples de décimaux :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.float_examples_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -957,11 +942,11 @@
                 </div>
             </div>
 
-            <h3>✅ Boolean (Booléen)</h3>
-            <p>Un booléen représente une valeur de vérité. Il ne peut avoir que deux valeurs : <code>true</code> (vrai) ou <code>false</code> (faux).</p>
+            <h3>{{ trans('app.formations.php.boolean_title') }}</h3>
+            <p>{!! trans('app.formations.php.boolean_text') !!}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Exemples de booléens :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.boolean_examples_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -980,11 +965,11 @@
                 </div>
             </div>
 
-            <h3>📚 Array (Tableau)</h3>
-            <p>Un tableau stocke plusieurs valeurs dans une seule variable. PHP supporte les tableaux indexés et associatifs.</p>
+            <h3>{{ trans('app.formations.php.array_title') }}</h3>
+            <p>{{ trans('app.formations.php.array_text') }}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Exemples de tableaux :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.array_examples_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -1006,14 +991,14 @@
                 </div>
             </div>
 
-            <h3>🎯 Object (Objet)</h3>
-            <p>Un objet est une instance d'une classe. Nous verrons les objets en détail dans la section POO.</p>
+            <h3>{{ trans('app.formations.php.object_title') }}</h3>
+            <p>{{ trans('app.formations.php.object_text') }}</p>
 
-            <h3>❌ NULL</h3>
-            <p><code>NULL</code> représente une variable sans valeur. Une variable est NULL si elle a été assignée à <code>NULL</code> ou n'a jamais été assignée.</p>
+            <h3>{{ trans('app.formations.php.null_title') }}</h3>
+            <p>{!! trans('app.formations.php.null_text') !!}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Exemples avec NULL :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.null_examples_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -1028,11 +1013,11 @@
                 </div>
             </div>
 
-            <h3>🔍 Vérifier le type d'une variable</h3>
-            <p>PHP fournit plusieurs fonctions pour vérifier le type d'une variable :</p>
+            <h3>{{ trans('app.formations.php.type_checking_title') }}</h3>
+            <p>{{ trans('app.formations.php.type_checking_text') }}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Fonctions de vérification de type :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.type_checking_functions_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -1056,17 +1041,17 @@
             </div>
 
             <div class="note-box">
-                <p style="color: #000;"><strong>💡 Conversion de types :</strong> PHP peut convertir automatiquement les types selon le contexte. Par exemple, <code>"5" + 3</code> donnera <code>8</code> (entier) car PHP convertit la chaîne en nombre. Vous pouvez aussi forcer une conversion avec <code>(int)</code>, <code>(string)</code>, <code>(float)</code>, <code>(bool)</code>, <code>(array)</code>.</p>
+                <p style="color: #000;"><strong>{{ trans('app.formations.php.type_conversion_note') }}</strong></p>
             </div>
 
-            <h2 id="operators">➕ Opérateurs</h2>
-            <p>Les opérateurs sont des symboles qui permettent d'effectuer des opérations sur des valeurs. PHP dispose de plusieurs catégories d'opérateurs : arithmétiques, de comparaison, logiques, d'affectation, et plus encore.</p>
+            <h2 id="operators">{{ trans('app.formations.php.operators_title') }}</h2>
+            <p>{{ trans('app.formations.php.operators_text') }}</p>
 
-            <h3>🔢 Opérateurs arithmétiques</h3>
-            <p>Les opérateurs arithmétiques effectuent des opérations mathématiques de base.</p>
+            <h3>{{ trans('app.formations.php.operators_arithmetic_title') }}</h3>
+            <p>{{ trans('app.formations.php.operators_arithmetic_text') }}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Opérateurs arithmétiques :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.operators_arithmetic_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -1089,11 +1074,11 @@
                 </div>
             </div>
 
-            <h3>🔀 Opérateurs de comparaison</h3>
-            <p>Les opérateurs de comparaison comparent deux valeurs et retournent <code>true</code> ou <code>false</code>.</p>
+            <h3>{{ trans('app.formations.php.operators_comparison_title') }}</h3>
+            <p>{{ trans('app.formations.php.operators_comparison_text') }}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Opérateurs de comparaison :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.operators_comparison_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -1120,14 +1105,14 @@
             </div>
 
             <div class="note-box">
-                <p style="color: #000;"><strong>⚠️ Important :</strong> La différence entre <code>==</code> et <code>===</code> est cruciale. <code>==</code> compare seulement les valeurs (avec conversion de type), tandis que <code>===</code> compare les valeurs ET les types. Utilisez <code>===</code> pour éviter les bugs subtils !</p>
+                <p style="color: #000;"><strong>{{ trans('app.formations.php.operators_comparison_note') }}</strong></p>
             </div>
 
-            <h3>🔗 Opérateurs logiques</h3>
-            <p>Les opérateurs logiques combinent des conditions booléennes.</p>
+            <h3>{{ trans('app.formations.php.operators_logical_title') }}</h3>
+            <p>{{ trans('app.formations.php.operators_logical_text') }}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Opérateurs logiques :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.operators_logical_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -1151,11 +1136,11 @@
                 </div>
             </div>
 
-            <h3>📝 Opérateurs d'affectation</h3>
-            <p>Les opérateurs d'affectation assignent des valeurs aux variables. PHP offre des opérateurs d'affectation combinés pour simplifier le code.</p>
+            <h3>{{ trans('app.formations.php.operators_assignment_title') }}</h3>
+            <p>{{ trans('app.formations.php.operators_assignment_text') }}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Opérateurs d'affectation :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.operators_assignment_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -1175,11 +1160,11 @@
                 </div>
             </div>
 
-            <h3>🔗 Opérateur de concaténation</h3>
-            <p>L'opérateur <code>.</code> (point) permet de concaténer (joindre) des chaînes de caractères.</p>
+            <h3>{{ trans('app.formations.php.operators_concat_title') }}</h3>
+            <p>{!! trans('app.formations.php.operators_concat_text') !!}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Exemples de concaténation :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.operators_concat_examples_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -1198,11 +1183,11 @@
                 </div>
             </div>
 
-            <h3>➕ Opérateurs d'incrémentation et décrémentation</h3>
-            <p>Ces opérateurs augmentent ou diminuent une variable de 1.</p>
+            <h3>{{ trans('app.formations.php.operators_increment_title') }}</h3>
+            <p>{{ trans('app.formations.php.operators_increment_text') }}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Incrémentation et décrémentation :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.operators_increment_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -1222,14 +1207,14 @@
                 </div>
             </div>
 
-            <h2 id="conditions">🔀 Conditions</h2>
-            <p>Les structures conditionnelles permettent d'exécuter du code uniquement si certaines conditions sont remplies. C'est l'un des concepts fondamentaux de la programmation, permettant de créer des applications qui réagissent différemment selon les situations.</p>
+            <h2 id="conditions">{{ trans('app.formations.php.conditions_title') }}</h2>
+            <p>{{ trans('app.formations.php.conditions_text') }}</p>
 
-            <h3>🔍 Structure if / elseif / else</h3>
-            <p>La structure <code>if</code> est la plus courante. Elle permet d'exécuter du code si une condition est vraie.</p>
+            <h3>{{ trans('app.formations.php.conditions_if_title') }}</h3>
+            <p>{!! trans('app.formations.php.conditions_if_text') !!}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Exemple basique avec if :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.conditions_if_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -1259,11 +1244,11 @@
                 </div>
             </div>
 
-            <h3>🎯 Opérateur ternaire</h3>
-            <p>L'opérateur ternaire est une façon concise d'écrire une condition if/else simple sur une seule ligne.</p>
+            <h3>{{ trans('app.formations.php.operators_ternary_title') }}</h3>
+            <p>{{ trans('app.formations.php.operators_ternary_text') }}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Syntaxe de l'opérateur ternaire :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.operators_ternary_syntax_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -1285,11 +1270,11 @@
                 </div>
             </div>
 
-            <h3>🔄 Structure switch</h3>
-            <p>La structure <code>switch</code> est utile quand vous avez plusieurs conditions à vérifier sur la même variable. Elle est souvent plus lisible qu'une série de <code>if/elseif</code>.</p>
+            <h3>{{ trans('app.formations.php.conditions_switch_title') }}</h3>
+            <p>{!! trans('app.formations.php.conditions_switch_text') !!}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Exemple avec switch :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.conditions_switch_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -1326,14 +1311,14 @@
             </div>
 
             <div class="note-box">
-                <p style="color: #000;"><strong>⚠️ Important :</strong> N'oubliez jamais le <code>break</code> dans un <code>switch</code> ! Sans <code>break</code>, PHP continuera à exécuter les cases suivantes (c'est ce qu'on appelle "fall-through"). C'est parfois voulu (comme dans l'exemple samedi/dimanche), mais généralement c'est une erreur.</p>
+                <p style="color: #000;"><strong>{{ trans('app.formations.php.conditions_switch_break_note') }}</strong></p>
             </div>
 
-            <h3>✅ Conditions avec opérateurs logiques</h3>
-            <p>Vous pouvez combiner plusieurs conditions avec les opérateurs logiques <code>&&</code> (ET), <code>||</code> (OU), et <code>!</code> (NON).</p>
+            <h3>{{ trans('app.formations.php.conditions_logical_title') }}</h3>
+            <p>{!! trans('app.formations.php.conditions_logical_text') !!}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Exemples avec opérateurs logiques :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.operators_logical_examples_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -1361,8 +1346,8 @@
                 </div>
             </div>
 
-            <h3>🎯 Cas d'usage pratiques</h3>
-            <p>Voici quelques exemples concrets d'utilisation des conditions dans des situations réelles :</p>
+            <h3>{{ trans('app.formations.php.conditions_real_examples_title') }}</h3>
+            <p>{{ trans('app.formations.php.conditions_real_examples_text') }}</p>
 
             <div class="example-box">
                 <h3 style="color: #000;">Exemple 1 : Vérification d'authentification</h3>
@@ -1406,14 +1391,14 @@
                 </div>
             </div>
 
-            <h2 id="loops">🔁 Boucles</h2>
-            <p>Les boucles permettent de répéter des instructions plusieurs fois sans avoir à réécrire le même code. C'est un concept fondamental qui permet d'automatiser des tâches répétitives et de traiter des collections de données.</p>
+            <h2 id="loops">{{ trans('app.formations.php.loops_title') }}</h2>
+            <p>{{ trans('app.formations.php.loops_text') }}</p>
 
-            <h3>🔄 Boucle for</h3>
-            <p>La boucle <code>for</code> est utilisée quand vous savez à l'avance combien de fois vous voulez répéter le code. Elle est composée de trois parties : initialisation, condition, et incrémentation.</p>
+            <h3>{{ trans('app.formations.php.loops_for_title') }}</h3>
+            <p>{!! trans('app.formations.php.loops_for_text') !!}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Syntaxe de la boucle for :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.loops_for_syntax_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -1439,8 +1424,8 @@
                 </div>
             </div>
 
-            <h3>🔄 Boucle while</h3>
-            <p>La boucle <code>while</code> répète le code tant qu'une condition est vraie. Elle est utile quand vous ne savez pas à l'avance combien d'itérations seront nécessaires.</p>
+            <h3>{{ trans('app.formations.php.loops_while_title') }}</h3>
+            <p>{!! trans('app.formations.php.loops_while_text') !!}</p>
 
             <div class="example-box">
                 <h3 style="color: #000;">Exemples avec while :</h3>
@@ -1464,11 +1449,11 @@
                 </div>
             </div>
 
-            <h3>🔄 Boucle do...while</h3>
-            <p>La boucle <code>do...while</code> est similaire à <code>while</code>, mais elle exécute le code au moins une fois avant de vérifier la condition.</p>
+            <h3>{{ trans('app.formations.php.loops_dowhile_title') }}</h3>
+            <p>{!! trans('app.formations.php.loops_dowhile_text') !!}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Exemple avec do...while :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.loops_dowhile_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -1487,11 +1472,11 @@
                 </div>
             </div>
 
-            <h3>🔄 Boucle foreach</h3>
-            <p>La boucle <code>foreach</code> est spécialement conçue pour parcourir les tableaux et les objets. C'est la boucle la plus utilisée en PHP pour traiter des collections de données.</p>
+            <h3>{{ trans('app.formations.php.loops_foreach_title') }}</h3>
+            <p>{!! trans('app.formations.php.loops_foreach_text') !!}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">foreach avec tableaux indexés :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.loops_foreach_indexed_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -1512,7 +1497,7 @@
             </div>
 
             <div class="example-box">
-                <h3 style="color: #000;">foreach avec tableaux associatifs :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.loops_foreach_associative_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -1530,8 +1515,8 @@
                 </div>
             </div>
 
-            <h3>⏹️ Contrôle des boucles : break et continue</h3>
-            <p>Les mots-clés <code>break</code> et <code>continue</code> permettent de contrôler l'exécution des boucles.</p>
+            <h3>{{ trans('app.formations.php.loops_control_title') }}</h3>
+            <p>{{ trans('app.formations.php.loops_control_text') }}</p>
 
             <div class="example-box">
                 <h3 style="color: #000;">break et continue :</h3>
@@ -1557,11 +1542,11 @@
                 </div>
             </div>
 
-            <h3>🎯 Cas d'usage pratiques</h3>
-            <p>Voici des exemples concrets d'utilisation des boucles dans des situations réelles :</p>
+            <h3>{{ trans('app.formations.php.loops_real_examples_title') }}</h3>
+            <p>{{ trans('app.formations.php.loops_real_examples_text') }}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Exemple 1 : Afficher une liste d'utilisateurs</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.loops_example1_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -1578,7 +1563,7 @@
             </div>
 
             <div class="example-box">
-                <h3 style="color: #000;">Exemple 2 : Calculer la somme d'un tableau</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.loops_example2_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -1594,17 +1579,17 @@
             </div>
 
             <div class="note-box">
-                <p style="color: #000;"><strong>💡 Bonne pratique :</strong> Utilisez <code>foreach</code> pour parcourir les tableaux plutôt que <code>for</code> quand c'est possible. C'est plus lisible, plus sûr (pas de risque d'erreur d'index), et plus performant.</p>
+                <p style="color: #000;"><strong>{{ trans('app.formations.php.loops_best_practice') }}</strong></p>
             </div>
 
-            <h2 id="functions">⚡ Fonctions</h2>
-            <p>Les fonctions sont des blocs de code réutilisables qui effectuent une tâche spécifique. Elles permettent d'organiser votre code, d'éviter la répétition, et de faciliter la maintenance. PHP dispose de milliers de fonctions intégrées, mais vous pouvez aussi créer vos propres fonctions.</p>
+            <h2 id="functions">{{ trans('app.formations.php.functions_title') }}</h2>
+            <p>{{ trans('app.formations.php.functions_text') }}</p>
 
-            <h3>📝 Créer une fonction</h3>
-            <p>Pour créer une fonction, utilisez le mot-clé <code>function</code> suivi du nom de la fonction et de parenthèses contenant les paramètres (optionnels).</p>
+            <h3>{{ trans('app.formations.php.functions_create_title') }}</h3>
+            <p>{!! trans('app.formations.php.functions_create_text') !!}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Syntaxe de base :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.functions_syntax_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -1623,15 +1608,16 @@
                 </div>
             </div>
 
-            <h3>📤 return vs echo</h3>
-            <p>Il y a une différence importante entre <code>return</code> et <code>echo</code> dans une fonction :</p>
+            <h3>{{ trans('app.formations.php.functions_return_title') }}</h3>
+            <p>{!! trans('app.formations.php.functions_return_text') !!}</p>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li><code>echo</code> - Affiche directement le résultat (ne peut pas être récupéré)</li>
-                <li><code>return</code> - Retourne une valeur que vous pouvez utiliser ailleurs (recommandé)</li>
+                @foreach(trans('app.formations.php.functions_return_items') as $item)
+                <li>{!! $item !!}</li>
+                @endforeach
             </ul>
 
             <div class="example-box">
-                <h3 style="color: #000;">Différence entre return et echo :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.functions_return_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -1652,11 +1638,11 @@
                 </div>
             </div>
 
-            <h3>📥 Paramètres de fonction</h3>
-            <p>Les fonctions peuvent accepter plusieurs paramètres, avec ou sans valeurs par défaut.</p>
+            <h3>{{ trans('app.formations.php.functions_parameters_title') }}</h3>
+            <p>{{ trans('app.formations.php.functions_parameters_text') }}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Fonctions avec plusieurs paramètres :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.functions_parameters_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -1681,11 +1667,11 @@
                 </div>
             </div>
 
-            <h3>🔢 Type hints et return types</h3>
-            <p>Depuis PHP 7, vous pouvez spécifier les types de paramètres et de retour pour une meilleure sécurité et lisibilité.</p>
+            <h3>{{ trans('app.formations.php.functions_types_title') }}</h3>
+            <p>{{ trans('app.formations.php.functions_types_text') }}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Fonctions avec types :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.functions_types_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -1704,11 +1690,11 @@
                 </div>
             </div>
 
-            <h3>📚 Portée des variables (scope)</h3>
-            <p>Les variables définies dans une fonction sont locales à cette fonction. Pour utiliser une variable globale, utilisez le mot-clé <code>global</code>.</p>
+            <h3>{{ trans('app.formations.php.functions_scope_title') }}</h3>
+            <p>{!! trans('app.formations.php.functions_scope_text') !!}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Portée des variables :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.functions_scope_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -1733,11 +1719,11 @@
                 </div>
             </div>
 
-            <h3>🎯 Fonctions intégrées de PHP</h3>
-            <p>PHP dispose de milliers de fonctions intégrées pour manipuler les chaînes, les tableaux, les dates, les fichiers, etc.</p>
+            <h3>{{ trans('app.formations.php.functions_builtin_title') }}</h3>
+            <p>{{ trans('app.formations.php.functions_builtin_text') }}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Exemples de fonctions intégrées :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.functions_builtin_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -1762,11 +1748,11 @@
                 </div>
             </div>
 
-            <h3>🎯 Cas d'usage pratiques</h3>
-            <p>Voici des exemples de fonctions utiles dans des situations réelles :</p>
+            <h3>{{ trans('app.formations.php.functions_real_examples_title') }}</h3>
+            <p>{{ trans('app.formations.php.functions_real_examples_text') }}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Exemple 1 : Calculer le prix TTC</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.functions_example1_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -1782,7 +1768,7 @@
             </div>
 
             <div class="example-box">
-                <h3 style="color: #000;">Exemple 2 : Valider un email</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.functions_example2_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -1800,24 +1786,25 @@
             </div>
 
             <div class="note-box">
-                <p style="color: #000;"><strong>💡 Bonne pratique :</strong> Donnez des noms descriptifs à vos fonctions. Préférez <code>calculerPrixTTC()</code> plutôt que <code>calc()</code>. Cela rend votre code auto-documenté et plus facile à comprendre.</p>
+                <p style="color: #000;"><strong>{{ trans('app.formations.php.functions_best_practice') }}</strong></p>
             </div>
 
-            <h2 id="arrays">📚 Tableaux</h2>
-            <p>Les tableaux (arrays) sont des structures de données qui permettent de stocker plusieurs valeurs dans une seule variable. Ils sont essentiels en PHP et sont utilisés partout : pour stocker des listes d'utilisateurs, des données de formulaires, des résultats de base de données, etc.</p>
+            <h2 id="arrays">{{ trans('app.formations.php.arrays_title') }}</h2>
+            <p>{{ trans('app.formations.php.arrays_text') }}</p>
 
-            <h3>📋 Types de tableaux</h3>
-            <p>PHP supporte deux types de tableaux :</p>
+            <h3>{{ trans('app.formations.php.arrays_types_title') }}</h3>
+            <p>{{ trans('app.formations.php.arrays_types_text') }}</p>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li><strong>Tableaux indexés</strong> - Les éléments sont accessibles par un index numérique (0, 1, 2, ...)</li>
-                <li><strong>Tableaux associatifs</strong> - Les éléments sont accessibles par des clés nommées ("nom", "age", etc.)</li>
+                @foreach(trans('app.formations.php.arrays_types_items') as $item)
+                <li><strong>{{ explode(' - ', $item)[0] }}</strong>@if(isset(explode(' - ', $item)[1])) - {{ explode(' - ', $item)[1] }}@endif</li>
+                @endforeach
             </ul>
 
-            <h3>🔢 Tableaux indexés</h3>
-            <p>Les tableaux indexés utilisent des indices numériques commençant à 0.</p>
+            <h3>{{ trans('app.formations.php.arrays_indexed_title') }}</h3>
+            <p>{{ trans('app.formations.php.arrays_indexed_text') }}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Créer et utiliser un tableau indexé :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.arrays_indexed_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -1839,11 +1826,11 @@
                 </div>
             </div>
 
-            <h3>🔑 Tableaux associatifs</h3>
-            <p>Les tableaux associatifs utilisent des clés nommées au lieu d'indices numériques. C'est très utile pour représenter des données structurées.</p>
+            <h3>{{ trans('app.formations.php.arrays_associative_title') }}</h3>
+            <p>{{ trans('app.formations.php.arrays_associative_text') }}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Créer et utiliser un tableau associatif :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.arrays_associative_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -1872,11 +1859,11 @@
                 </div>
             </div>
 
-            <h3>🔄 Parcourir les tableaux</h3>
-            <p>Il existe plusieurs façons de parcourir un tableau en PHP.</p>
+            <h3>{{ trans('app.formations.php.arrays_iterate_title') }}</h3>
+            <p>{{ trans('app.formations.php.arrays_iterate_text') }}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Méthodes pour parcourir un tableau :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.arrays_iterate_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -1898,11 +1885,11 @@
                 </div>
             </div>
 
-            <h3>🛠️ Fonctions utiles pour les tableaux</h3>
-            <p>PHP offre de nombreuses fonctions pour manipuler les tableaux.</p>
+            <h3>{{ trans('app.formations.php.arrays_functions_title') }}</h3>
+            <p>{{ trans('app.formations.php.arrays_functions_text') }}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Fonctions courantes pour tableaux :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.arrays_functions_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -1932,11 +1919,11 @@
                 </div>
             </div>
 
-            <h3>📊 Tableaux multidimensionnels</h3>
-            <p>Un tableau peut contenir d'autres tableaux, créant ainsi des tableaux multidimensionnels. C'est très utile pour représenter des structures de données complexes.</p>
+            <h3>{{ trans('app.formations.php.arrays_multidimensional_title') }}</h3>
+            <p>{{ trans('app.formations.php.arrays_multidimensional_text') }}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Exemple de tableau multidimensionnel :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.arrays_multidimensional_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -1970,11 +1957,11 @@
                 </div>
             </div>
 
-            <h3>🎯 Cas d'usage pratiques</h3>
-            <p>Voici des exemples concrets d'utilisation des tableaux :</p>
+            <h3>{{ trans('app.formations.php.arrays_real_examples_title') }}</h3>
+            <p>{{ trans('app.formations.php.arrays_real_examples_text') }}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Exemple 1 : Stocker des données de formulaire</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.arrays_example1_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -1999,7 +1986,7 @@
             </div>
 
             <div class="example-box">
-                <h3 style="color: #000;">Exemple 2 : Manipuler des listes</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.arrays_example2_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -2023,24 +2010,24 @@
             </div>
 
             <div class="note-box">
-                <p style="color: #000;"><strong>💡 Bonne pratique :</strong> Utilisez la syntaxe courte <code>[]</code> plutôt que <code>array()</code> pour créer des tableaux. C'est plus moderne, plus lisible, et c'est la syntaxe recommandée depuis PHP 5.4.</p>
+                <p style="color: #000;"><strong>{{ trans('app.formations.php.arrays_best_practice') }}</strong></p>
             </div>
 
-            <h2 id="forms">📝 Formulaires</h2>
-            <p>Le traitement de formulaires est l'une des fonctionnalités les plus importantes de PHP. Les formulaires permettent aux utilisateurs d'envoyer des données au serveur, que PHP peut ensuite traiter, valider et stocker.</p>
+            <h2 id="forms">{{ trans('app.formations.php.forms_title') }}</h2>
+            <p>{{ trans('app.formations.php.forms_text') }}</p>
 
-            <h3>📤 Méthodes GET et POST</h3>
-            <p>Il existe deux méthodes principales pour envoyer des données depuis un formulaire :</p>
+            <h3>{{ trans('app.formations.php.forms_methods_title') }}</h3>
+            <p>{{ trans('app.formations.php.forms_methods_text') }}</p>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li><strong>GET</strong> - Les données sont visibles dans l'URL (limité à ~2000 caractères). Utilisé pour les recherches, filtres, etc.</li>
-                <li><strong>POST</strong> - Les données sont envoyées de manière sécurisée (non visibles dans l'URL). Utilisé pour les formulaires de connexion, d'inscription, etc.</li>
+                <li><strong>GET</strong> - {{ trans('app.formations.php.forms_methods_items')[0] }}</li>
+                <li><strong>POST</strong> - {{ trans('app.formations.php.forms_methods_items')[1] }}</li>
             </ul>
 
-            <h3>📥 Récupérer les données POST</h3>
-            <p>Les données envoyées via POST sont accessibles via le superglobal <code>$_POST</code>.</p>
+            <h3>{{ trans('app.formations.php.forms_post_title') }}</h3>
+            <p>{!! trans('app.formations.php.forms_post_text') !!}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Exemple de formulaire avec POST :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.forms_post_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-comment">&lt;!-- Formulaire HTML --&gt;</span><br>
@@ -2067,11 +2054,11 @@
                 </div>
             </div>
 
-            <h3>📥 Récupérer les données GET</h3>
-            <p>Les données envoyées via GET sont accessibles via le superglobal <code>$_GET</code> et apparaissent dans l'URL.</p>
+            <h3>{{ trans('app.formations.php.forms_get_title') }}</h3>
+            <p>{!! trans('app.formations.php.forms_get_text') !!}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Exemple avec GET :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.forms_get_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-comment">// URL: recherche.php?q=php&categorie=web</span><br>
@@ -2087,11 +2074,11 @@
                 </div>
             </div>
 
-            <h3>🔒 Sécurité et validation</h3>
-            <p>Il est crucial de valider et sécuriser les données des formulaires pour éviter les attaques (XSS, injection SQL, etc.).</p>
+            <h3>{{ trans('app.formations.php.forms_security_title') }}</h3>
+            <p>{{ trans('app.formations.php.forms_validation_text') }}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Validation et sécurisation :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.forms_validation_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -2125,11 +2112,11 @@
                 </div>
             </div>
 
-            <h3>📋 Exemple complet de formulaire</h3>
-            <p>Voici un exemple complet avec formulaire HTML et traitement PHP sur la même page :</p>
+            <h3>{{ trans('app.formations.php.forms_complete_title') }}</h3>
+            <p>{{ trans('app.formations.php.forms_complete_text') }}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Formulaire complet :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.forms_complete_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -2172,20 +2159,20 @@
             </div>
 
             <div class="note-box">
-                <p style="color: #000;"><strong>⚠️ Sécurité importante :</strong> Toujours valider et nettoyer les données des formulaires ! Utilisez <code>htmlspecialchars()</code> pour éviter les attaques XSS, <code>filter_var()</code> pour valider les emails, et des requêtes préparées pour les bases de données (voir section PDO).</p>
+                <p style="color: #000;"><strong>{{ trans('app.formations.php.forms_security_note') }}</strong></p>
             </div>
 
-            <h2 id="sessions">🔐 Sessions</h2>
-            <p>Les sessions permettent de stocker des informations utilisateur entre les pages web. Contrairement aux cookies qui sont stockés côté client, les sessions sont stockées côté serveur, ce qui les rend plus sécurisées pour stocker des données sensibles.</p>
+            <h2 id="sessions">{{ trans('app.formations.php.sessions_title') }}</h2>
+            <p>{{ trans('app.formations.php.sessions_text') }}</p>
 
-            <h3>🌐 Comment fonctionnent les sessions ?</h3>
-            <p>Quand vous démarrez une session, PHP crée un identifiant unique (session ID) qui est envoyé au navigateur sous forme de cookie. Ce cookie permet au serveur de reconnaître l'utilisateur lors des requêtes suivantes et de récupérer ses données de session.</p>
+            <h3>{{ trans('app.formations.php.sessions_how_title') }}</h3>
+            <p>{{ trans('app.formations.php.sessions_how_text') }}</p>
 
-            <h3>▶️ Démarrer une session</h3>
-            <p>Avant d'utiliser les sessions, vous devez appeler <code>session_start()</code> au début de chaque page PHP qui utilise les sessions.</p>
+            <h3>{{ trans('app.formations.php.sessions_start_title') }}</h3>
+            <p>{!! trans('app.formations.php.sessions_start_text') !!}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Démarrer et utiliser une session :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.sessions_start_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -2207,11 +2194,11 @@
                 </div>
             </div>
 
-            <h3>🗑️ Supprimer des données de session</h3>
-            <p>Vous pouvez supprimer des variables individuelles ou détruire complètement la session.</p>
+            <h3>{{ trans('app.formations.php.sessions_delete_title') }}</h3>
+            <p>{{ trans('app.formations.php.sessions_delete_text') }}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Supprimer des données de session :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.sessions_delete_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -2235,11 +2222,11 @@
                 </div>
             </div>
 
-            <h3>🔐 Exemple : Système de connexion</h3>
-            <p>Voici un exemple complet d'utilisation des sessions pour un système de connexion :</p>
+            <h3>{{ trans('app.formations.php.sessions_login_example_title') }}</h3>
+            <p>{{ trans('app.formations.php.sessions_login_example_text') }}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Système de connexion avec sessions :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.sessions_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-comment">// login.php - Page de connexion</span><br>
@@ -2285,11 +2272,11 @@
                 </div>
             </div>
 
-            <h3>⏱️ Durée de vie des sessions</h3>
-            <p>Par défaut, une session PHP expire après 24 minutes d'inactivité. Vous pouvez modifier cette durée dans le fichier <code>php.ini</code> ou avec <code>ini_set()</code>.</p>
+            <h3>{{ trans('app.formations.php.sessions_lifetime_title') }}</h3>
+            <p>{!! trans('app.formations.php.sessions_lifetime_text') !!}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Configurer la durée de vie des sessions :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.sessions_lifetime_config_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -2303,14 +2290,14 @@
             </div>
 
             <div class="note-box">
-                <p style="color: #000;"><strong>⚠️ Important :</strong> <code>session_start()</code> doit être appelé avant tout output HTML (même un espace ou une ligne vide). Sinon, vous obtiendrez l'erreur "Headers already sent".</p>
+                <p style="color: #000;"><strong>{{ trans('app.formations.php.sessions_start_important') }}</strong></p>
             </div>
 
-            <h2 id="mysql">🗄️ MySQL</h2>
-            <p>MySQL est l'un des systèmes de gestion de bases de données relationnelles (SGBDR) les plus populaires. PHP peut se connecter à MySQL pour stocker, récupérer, modifier et supprimer des données. Il existe deux extensions principales : <strong>MySQLi</strong> (améliorée) et <strong>PDO</strong> (plus moderne et recommandée).</p>
+            <h2 id="mysql">{{ trans('app.formations.php.mysql_title') }}</h2>
+            <p>{{ trans('app.formations.php.mysql_text') }}</p>
 
-            <h3>🔌 Connexion à MySQL avec MySQLi</h3>
-            <p>MySQLi (MySQL Improved) est l'extension améliorée de MySQL. Elle supporte les requêtes préparées et offre de meilleures performances.</p>
+            <h3>{{ trans('app.formations.php.mysql_connection_title') }}</h3>
+            <p>{{ trans('app.formations.php.mysql_connection_text') }}</p>
 
             <div class="example-box">
                 <h3 style="color: #000;">Connexion et requêtes de base :</h3>
@@ -2335,11 +2322,11 @@
                 </div>
             </div>
 
-            <h3>📖 Requête SELECT (Lire des données)</h3>
-            <p>La requête SELECT permet de récupérer des données de la base de données.</p>
+            <h3>{{ trans('app.formations.php.mysql_select_title') }}</h3>
+            <p>{{ trans('app.formations.php.mysql_select_text') }}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Exemple de requête SELECT :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.mysql_select_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -2361,11 +2348,11 @@
                 </div>
             </div>
 
-            <h3>➕ Requête INSERT (Insérer des données)</h3>
-            <p>La requête INSERT permet d'ajouter de nouvelles données dans la base de données.</p>
+            <h3>{{ trans('app.formations.php.mysql_insert_title') }}</h3>
+            <p>{{ trans('app.formations.php.mysql_insert_text') }}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Exemple de requête INSERT :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.mysql_insert_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -2387,11 +2374,11 @@
                 </div>
             </div>
 
-            <h3>✏️ Requête UPDATE (Modifier des données)</h3>
-            <p>La requête UPDATE permet de modifier des données existantes.</p>
+            <h3>{{ trans('app.formations.php.mysql_update_title') }}</h3>
+            <p>{{ trans('app.formations.php.mysql_update_text') }}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Exemple de requête UPDATE :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.mysql_update_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -2411,11 +2398,11 @@
                 </div>
             </div>
 
-            <h3>🗑️ Requête DELETE (Supprimer des données)</h3>
-            <p>La requête DELETE permet de supprimer des données de la base de données.</p>
+            <h3>{{ trans('app.formations.php.mysql_delete_title') }}</h3>
+            <p>{{ trans('app.formations.php.mysql_delete_text') }}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Exemple de requête DELETE :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.mysql_delete_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -2434,23 +2421,26 @@
             </div>
 
             <div class="note-box" style="background-color: #fff3cd; border-left-color: #ffc107;">
-                <p style="color: #000;"><strong>⚠️ Sécurité CRITIQUE :</strong> Les exemples ci-dessus utilisent des requêtes directes qui sont vulnérables aux attaques par injection SQL ! <strong>NE JAMAIS</strong> utiliser cette méthode en production. Utilisez toujours des <strong>requêtes préparées</strong> (voir section PDO ci-dessous) pour protéger votre application.</p>
+                <p style="color: #000;"><strong>{{ trans('app.formations.php.mysql_security_note') }}</strong></p>
             </div>
 
-            <h2 id="pdo">🔗 PDO (PHP Data Objects)</h2>
-            <p>PDO (PHP Data Objects) est une interface moderne et sécurisée pour accéder aux bases de données. C'est la méthode <strong>recommandée</strong> pour travailler avec des bases de données en PHP car elle offre :</p>
+            <h2 id="pdo">{{ trans('app.formations.php.pdo_title') }}</h2>
+            <p>{{ trans('app.formations.php.pdo_text') }}</p>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li>✅ <strong>Sécurité</strong> - Protection contre les injections SQL via requêtes préparées</li>
-                <li>✅ <strong>Portabilité</strong> - Fonctionne avec MySQL, PostgreSQL, SQLite, etc.</li>
-                <li>✅ <strong>Simplicité</strong> - API cohérente pour toutes les bases de données</li>
-                <li>✅ <strong>Performance</strong> - Meilleures performances que MySQLi</li>
+                @foreach(trans('app.formations.php.pdo_items') as $index => $item)
+                @php
+                    $labels = ['Sécurité', 'Portabilité', 'Simplicité', 'Performance'];
+                    $label = $labels[$index] ?? '';
+                @endphp
+                <li>✅ <strong>{{ $label }}</strong> - {{ $item }}</li>
+                @endforeach
             </ul>
 
-            <h3>🔌 Connexion avec PDO</h3>
-            <p>La connexion PDO utilise un DSN (Data Source Name) pour spécifier la base de données.</p>
+            <h3>{{ trans('app.formations.php.pdo_connection_title') }}</h3>
+            <p>{{ trans('app.formations.php.pdo_connection_text') }}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Connexion PDO :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.pdo_connection_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -2474,11 +2464,11 @@
                 </div>
             </div>
 
-            <h3>🔒 Requêtes préparées (Sécurisées)</h3>
-            <p>Les requêtes préparées sont la meilleure façon de protéger votre application contre les injections SQL. Les valeurs sont séparées de la requête SQL elle-même.</p>
+            <h3>{{ trans('app.formations.php.pdo_prepared_title') }}</h3>
+            <p>{{ trans('app.formations.php.pdo_prepared_text') }}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">SELECT avec requête préparée :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.pdo_select_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -2502,7 +2492,7 @@
             </div>
 
             <div class="example-box">
-                <h3 style="color: #000;">INSERT avec requête préparée :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.pdo_insert_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -2524,7 +2514,7 @@
             </div>
 
             <div class="example-box">
-                <h3 style="color: #000;">UPDATE et DELETE avec requêtes préparées :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.pdo_update_delete_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -2546,11 +2536,11 @@
                 </div>
             </div>
 
-            <h3>🔄 Parcourir plusieurs résultats</h3>
-            <p>Vous pouvez parcourir les résultats d'une requête de plusieurs façons.</p>
+            <h3>{{ trans('app.formations.php.pdo_fetch_title') }}</h3>
+            <p>{{ trans('app.formations.php.pdo_fetch_text') }}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Méthodes pour récupérer les résultats :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.pdo_fetch_methods_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -2572,28 +2562,29 @@
             </div>
 
             <div class="note-box" style="background-color: #d4edda; border-left-color: #28a745;">
-                <p style="color: #000;"><strong>✅ Avantage des requêtes préparées :</strong> Les requêtes préparées protègent automatiquement contre les injections SQL. Les valeurs sont traitées comme des données, pas comme du code SQL. C'est la méthode <strong>obligatoire</strong> à utiliser en production !</p>
+                <p style="color: #000;"><strong>{{ trans('app.formations.php.pdo_advantage_note') }}</strong></p>
             </div>
 
-            <h2 id="oop">🎯 POO (Programmation Orientée Objet)</h2>
-            <p>La Programmation Orientée Objet (POO) est un paradigme de programmation qui organise le code en <strong>classes</strong> et <strong>objets</strong>. Elle permet de créer des structures de code réutilisables, maintenables et modulaires. La POO est essentielle pour développer des applications PHP modernes et complexes.</p>
+            <h2 id="oop">{{ trans('app.formations.php.oop_title') }}</h2>
+            <p>{!! trans('app.formations.php.oop_text') !!}</p>
 
-            <h3>📚 Concepts fondamentaux</h3>
-            <p>La POO repose sur plusieurs concepts clés :</p>
+            <h3>{{ trans('app.formations.php.oop_concepts_title') }}</h3>
+            <p>{{ trans('app.formations.php.oop_concepts_text') }}</p>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li><strong>Classe</strong> - Un modèle ou un plan pour créer des objets (comme un moule)</li>
-                <li><strong>Objet</strong> - Une instance concrète d'une classe (comme un gâteau fait avec le moule)</li>
-                <li><strong>Propriété</strong> - Une variable appartenant à une classe ou un objet</li>
-                <li><strong>Méthode</strong> - Une fonction appartenant à une classe ou un objet</li>
-                <li><strong>Encapsulation</strong> - Le principe de cacher les détails internes et exposer seulement ce qui est nécessaire</li>
-                <li><strong>Héritage</strong> - La capacité d'une classe à hériter des propriétés et méthodes d'une autre classe</li>
+                @foreach(trans('app.formations.php.oop_concepts_items') as $index => $concept)
+                @php
+                    $conceptLabels = trans('app.formations.php.oop_concepts_labels');
+                    $conceptLabel = $conceptLabels[$index] ?? '';
+                @endphp
+                <li><strong>{{ $conceptLabel }}</strong> - {{ $concept }}</li>
+                @endforeach
             </ul>
 
-            <h3>🏗️ Créer une classe</h3>
-            <p>Une classe est définie avec le mot-clé <code>class</code> suivi du nom de la classe.</p>
+            <h3>{{ trans('app.formations.php.oop_create_title') }}</h3>
+            <p>{!! trans('app.formations.php.oop_create_text') !!}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Exemple de classe simple :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.oop_create_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -2630,16 +2621,21 @@
                 </div>
             </div>
 
-            <h3>🔒 Visibilité des propriétés et méthodes</h3>
-            <p>PHP offre trois niveaux de visibilité pour contrôler l'accès aux propriétés et méthodes :</p>
+            <h3>{{ trans('app.formations.php.oop_visibility_title') }}</h3>
+            <p>{{ trans('app.formations.php.oop_visibility_text') }}</p>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li><strong>public</strong> - Accessible partout (dans la classe, dans les classes enfants, et depuis l'extérieur)</li>
-                <li><strong>private</strong> - Accessible uniquement dans la classe elle-même</li>
-                <li><strong>protected</strong> - Accessible dans la classe et ses classes enfants (héritage)</li>
+                @foreach(trans('app.formations.php.oop_visibility_items') as $item)
+                @php
+                    $parts = explode(' - ', $item);
+                    $label = $parts[0] ?? '';
+                    $description = $parts[1] ?? '';
+                @endphp
+                <li><strong>{{ $label }}</strong>@if($description) - {{ $description }}@endif</li>
+                @endforeach
             </ul>
 
             <div class="example-box">
-                <h3 style="color: #000;">Exemple de visibilité :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.oop_visibility_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -2661,11 +2657,11 @@
                 </div>
             </div>
 
-            <h3>🏗️ Constructeur et destructeur</h3>
-            <p>Le constructeur (<code>__construct</code>) est appelé automatiquement lors de la création d'un objet. Le destructeur (<code>__destruct</code>) est appelé quand l'objet est détruit.</p>
+            <h3>{{ trans('app.formations.php.oop_constructor_title') }}</h3>
+            <p>{!! trans('app.formations.php.oop_constructor_text') !!}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Constructeur et destructeur :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.oop_constructor_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -2695,11 +2691,11 @@
                 </div>
             </div>
 
-            <h3>🔧 Getters et Setters</h3>
-            <p>Les getters et setters sont des méthodes pour accéder et modifier les propriétés privées. C'est une bonne pratique qui permet de contrôler l'accès aux données.</p>
+            <h3>{{ trans('app.formations.php.oop_getters_setters_title') }}</h3>
+            <p>{{ trans('app.formations.php.oop_getters_setters_text') }}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Getters et Setters :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.oop_getters_setters_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -2742,11 +2738,11 @@
                 </div>
             </div>
 
-            <h3>👨‍👩‍👧‍👦 Héritage</h3>
-            <p>L'héritage permet à une classe (enfant) d'hériter des propriétés et méthodes d'une autre classe (parent). C'est très utile pour éviter la duplication de code.</p>
+            <h3>{{ trans('app.formations.php.oop_inheritance_title') }}</h3>
+            <p>{{ trans('app.formations.php.oop_inheritance_text') }}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Exemple d'héritage :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.oop_inheritance_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -2797,11 +2793,11 @@
                 </div>
             </div>
 
-            <h3>🎯 Méthodes statiques</h3>
-            <p>Les méthodes statiques appartiennent à la classe elle-même, pas à une instance. Elles sont appelées avec <code>ClassName::methodName()</code>.</p>
+            <h3>{{ trans('app.formations.php.oop_static_title') }}</h3>
+            <p>{!! trans('app.formations.php.oop_static_text') !!}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Méthodes statiques :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.oop_static_example_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -2822,11 +2818,11 @@
                 </div>
             </div>
 
-            <h3>🎯 Cas d'usage pratique : Gestion d'utilisateurs</h3>
-            <p>Voici un exemple complet utilisant la POO pour gérer des utilisateurs :</p>
+            <h3>{{ trans('app.formations.php.oop_complete_example_title') }}</h3>
+            <p>{{ trans('app.formations.php.oop_complete_example_text') }}</p>
 
             <div class="example-box">
-                <h3 style="color: #000;">Système de gestion d'utilisateurs :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.oop_complete_example_subtitle') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">&lt;?php</span><br>
@@ -2860,34 +2856,25 @@
             </div>
 
             <div class="note-box">
-                <p style="color: #000;"><strong>💡 Bonne pratique :</strong> Utilisez la POO pour organiser votre code en structures logiques. Les classes permettent de regrouper des fonctionnalités liées, de réutiliser du code via l'héritage, et de protéger les données avec l'encapsulation. C'est essentiel pour développer des applications PHP professionnelles !</p>
+                <p style="color: #000;"><strong>{{ trans('app.formations.php.oop_best_practice') }}</strong></p>
             </div>
 
-            <h2>🎓 Prochaines étapes</h2>
-            <p>Félicitations ! Vous avez maintenant une solide base en PHP.</p>
+            <h2>{{ trans('app.formations.php.next_steps_title') }}</h2>
+            <p>{{ trans('app.formations.php.next_steps_text') }}</p>
             
             <div class="example-box" style="background-color: #d4edda; border-left-color: #28a745;">
-                <h3 style="color: #000;">✅ Ce que vous avez appris :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.php.learned_title') }}</h3>
                 <ul style="margin-left: 20px; line-height: 2; color: #000;">
-                    <li>Syntaxe PHP et variables</li>
-                    <li>Types de données</li>
-                    <li>Opérateurs et expressions</li>
-                    <li>Structures conditionnelles</li>
-                    <li>Boucles</li>
-                    <li>Fonctions</li>
-                    <li>Tableaux</li>
-                    <li>Traitement de formulaires</li>
-                    <li>Sessions et cookies</li>
-                    <li>Connexion MySQL</li>
-                    <li>PDO et requêtes préparées</li>
-                    <li>Programmation Orientée Objet</li>
+                    @foreach(trans('app.formations.php.learned_list') as $item)
+                    <li>{{ $item }}</li>
+                    @endforeach
                 </ul>
             </div>
 
             <!-- Navigation Buttons -->
             <div class="nav-buttons">
-                <a href="{{ route('formations.bootstrap') }}" class="nav-btn">❮ Précédent: Bootstrap</a>
-                <a href="{{ route('formations.git') }}" class="nav-btn">Suivant: Git ❯</a>
+                <a href="{{ route('formations.bootstrap') }}" class="nav-btn">❮ {{ trans('app.formations.php.previous') }}: Bootstrap</a>
+                <a href="{{ route('formations.git') }}" class="nav-btn">{{ trans('app.formations.php.next') }}: Git ❯</a>
             </div>
         </main>
     </div>

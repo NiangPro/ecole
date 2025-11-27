@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Formation JavaScript | DevFormation')
+@section('title', trans('app.formations.javascript.title') . ' | NiangProgrammeur')
 
 @section('styles')
 <style>
@@ -659,15 +659,15 @@
 @section('content')
 <!-- Header -->
 <div class="tutorial-header">
-    <h1 style="font-size: 48px; margin-bottom: 10px; color: #000;">Tutoriel JavaScript</h1>
-    <p style="font-size: 20px; color: #000;">Apprenez à rendre vos sites web interactifs avec JavaScript</p>
+    <h1 style="font-size: 48px; margin-bottom: 10px; color: #000;">{{ trans('app.formations.javascript.title') }}</h1>
+    <p style="font-size: 20px; color: #000;">{{ trans('app.formations.javascript.subtitle') }}</p>
 </div>
 
 <!-- Content -->
 <div class="tutorial-content">
     <div class="content-wrapper">
         <!-- Sidebar Toggle Button (Mobile) -->
-        <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Ouvrir le menu">
+        <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="{{ trans('app.formations.javascript.menu_open') }}">
             <i class="fas fa-bars" id="sidebarToggleIcon"></i>
         </button>
         
@@ -677,45 +677,43 @@
         <!-- Sidebar -->
         <aside class="sidebar" id="tutorialSidebar">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid rgba(247, 223, 30, 0.2);">
-                <h3 style="margin: 0;">JavaScript Tutorial</h3>
-                <button class="sidebar-close-btn" id="sidebarClose" style="display: none; background: none; border: none; color: #F7DF1E; font-size: 24px; cursor: pointer; padding: 5px; width: 35px; height: 35px; border-radius: 50%; transition: all 0.3s ease;" aria-label="Fermer le menu">
+                <h3 style="margin: 0;">{{ trans('app.formations.javascript.title') }}</h3>
+                <button class="sidebar-close-btn" id="sidebarClose" style="display: none; background: none; border: none; color: #F7DF1E; font-size: 24px; cursor: pointer; padding: 5px; width: 35px; height: 35px; border-radius: 50%; transition: all 0.3s ease;" aria-label="{{ trans('app.formations.javascript.menu_close') }}">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <a href="#intro" class="active">Introduction JS</a>
-            <a href="#variables">Variables</a>
-            <a href="#datatypes">Types de données</a>
-            <a href="#operators">Opérateurs</a>
-            <a href="#conditions">Conditions</a>
-            <a href="#loops">Boucles</a>
-            <a href="#functions">Fonctions</a>
-            <a href="#arrays">Tableaux</a>
-            <a href="#objects">Objets</a>
-            <a href="#dom">DOM</a>
-            <a href="#events">Événements</a>
-            <a href="#es6">ES6+</a>
-            <a href="#async">Asynchrone</a>
+            <a href="#intro" class="active">{{ trans('app.formations.javascript.sidebar_menu')[0] }}</a>
+            <a href="#variables">{{ trans('app.formations.javascript.sidebar_menu')[1] }}</a>
+            <a href="#datatypes">{{ trans('app.formations.javascript.sidebar_menu')[2] }}</a>
+            <a href="#operators">{{ trans('app.formations.javascript.sidebar_menu')[3] }}</a>
+            <a href="#conditions">{{ trans('app.formations.javascript.sidebar_menu')[4] }}</a>
+            <a href="#loops">{{ trans('app.formations.javascript.sidebar_menu')[5] }}</a>
+            <a href="#functions">{{ trans('app.formations.javascript.sidebar_menu')[6] }}</a>
+            <a href="#arrays">{{ trans('app.formations.javascript.sidebar_menu')[7] }}</a>
+            <a href="#objects">{{ trans('app.formations.javascript.sidebar_menu')[8] }}</a>
+            <a href="#dom">{{ trans('app.formations.javascript.sidebar_menu')[9] }}</a>
+            <a href="#events">{{ trans('app.formations.javascript.sidebar_menu')[10] }}</a>
+            <a href="#es6">{{ trans('app.formations.javascript.sidebar_menu')[11] }}</a>
+            <a href="#async">{{ trans('app.formations.javascript.sidebar_menu')[12] }}</a>
         </aside>
 
         <!-- Main Content -->
         <main class="main-content">
-            <h1 id="intro">Introduction à JavaScript</h1>
-            <p>JavaScript est le langage de programmation du web. Il permet de rendre vos pages web interactives et dynamiques.</p>
+            <h1 id="intro">{{ trans('app.formations.javascript.intro_title') }}</h1>
+            <p>{{ trans('app.formations.javascript.intro_text') }}</p>
 
-            <h3>🚀 Pourquoi apprendre JavaScript ?</h3>
+            <h3>{{ trans('app.formations.javascript.why_learn_title') }}</h3>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li>✅ <strong>Langage incontournable</strong> - Utilisé par 98% des sites web</li>
-                <li>✅ <strong>Polyvalent</strong> - Frontend, Backend (Node.js), Mobile, Desktop</li>
-                <li>✅ <strong>Interactivité</strong> - Créez des expériences utilisateur riches</li>
-                <li>✅ <strong>Écosystème riche</strong> - Milliers de bibliothèques et frameworks</li>
-                <li>✅ <strong>Opportunités</strong> - Forte demande sur le marché du travail</li>
+                @foreach(trans('app.formations.javascript.why_learn_items') as $item)
+                <li>✅ <strong>{{ explode(' - ', $item)[0] }}</strong>@if(isset(explode(' - ', $item)[1])) - {{ explode(' - ', $item)[1] }}@endif</li>
+                @endforeach
             </ul>
 
-            <h2 id="variables">📦 Variables</h2>
-            <p>Les variables permettent de stocker des données. JavaScript offre trois façons de déclarer des variables.</p>
+            <h2 id="variables">{{ trans('app.formations.javascript.variables_title') }}</h2>
+            <p>{{ trans('app.formations.javascript.variables_text') }}</p>
 
             <div class="example-box">
-                <h3>Déclaration de variables</h3>
+                <h3>{{ trans('app.formations.javascript.variables_declaration_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-comment">// var - Ancienne méthode (éviter)</span><br>
@@ -731,11 +729,11 @@
             </div>
 
             <div class="note-box">
-                <p style="color: #000;"><strong>💡 Bonne pratique :</strong> Utilisez <code>const</code> par défaut, <code>let</code> si la valeur doit changer, et évitez <code>var</code>.</p>
+                <p style="color: #000;"><strong>{{ trans('app.formations.javascript.variables_best_practice') }}</strong></p>
             </div>
 
-            <h2 id="datatypes">🔢 Types de données</h2>
-            <p>JavaScript est un langage à typage dynamique avec plusieurs types de données primitifs et complexes.</p>
+            <h2 id="datatypes">{{ trans('app.formations.javascript.datatypes_title') }}</h2>
+            <p>{{ trans('app.formations.javascript.datatypes_text') }}</p>
 
             <div class="example-box">
                 <div class="code-box">
@@ -754,11 +752,11 @@
                 </div>
             </div>
 
-            <h2 id="operators">➕ Opérateurs</h2>
-            <p>Les opérateurs permettent d'effectuer des opérations sur les variables et valeurs.</p>
+            <h2 id="operators">{{ trans('app.formations.javascript.operators_title') }}</h2>
+            <p>{{ trans('app.formations.javascript.operators_text') }}</p>
 
             <div class="example-box">
-                <h3>Opérateurs arithmétiques</h3>
+                <h3>{{ trans('app.formations.javascript.operators_arithmetic_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">let</span> a = <span class="code-number">10</span>, b = <span class="code-number">3</span>;<br><br>
@@ -773,7 +771,7 @@
             </div>
 
             <div class="example-box">
-                <h3>Opérateurs de comparaison</h3>
+                <h3>{{ trans('app.formations.javascript.operators_comparison_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-comment">// Égalité (== compare valeur, === compare valeur ET type)</span><br>
@@ -787,11 +785,11 @@
                 </div>
             </div>
 
-            <h2 id="conditions">🔀 Conditions</h2>
-            <p>Les structures conditionnelles permettent d'exécuter du code selon des conditions.</p>
+            <h2 id="conditions">{{ trans('app.formations.javascript.conditions_title') }}</h2>
+            <p>{{ trans('app.formations.javascript.conditions_text') }}</p>
 
             <div class="example-box">
-                <h3>if / else if / else</h3>
+                <h3>{{ trans('app.formations.javascript.conditions_if_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">let</span> age = <span class="code-number">18</span>;<br><br>
@@ -807,7 +805,7 @@
             </div>
 
             <div class="example-box">
-                <h3>Opérateur ternaire</h3>
+                <h3>{{ trans('app.formations.javascript.conditions_ternary_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">let</span> age = <span class="code-number">20</span>;<br>
@@ -817,11 +815,11 @@
                 </div>
             </div>
 
-            <h2 id="loops">🔁 Boucles</h2>
-            <p>Les boucles permettent de répéter des instructions plusieurs fois.</p>
+            <h2 id="loops">{{ trans('app.formations.javascript.loops_title') }}</h2>
+            <p>{{ trans('app.formations.javascript.loops_text') }}</p>
 
             <div class="example-box">
-                <h3>Boucle for</h3>
+                <h3>{{ trans('app.formations.javascript.loops_for_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">for</span> (<span class="code-keyword">let</span> i = <span class="code-number">0</span>; i < <span class="code-number">5</span>; i++) {<br>
@@ -833,7 +831,7 @@
             </div>
 
             <div class="example-box">
-                <h3>Boucle while</h3>
+                <h3>{{ trans('app.formations.javascript.loops_while_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">let</span> i = <span class="code-number">0</span>;<br>
@@ -845,11 +843,11 @@
                 </div>
             </div>
 
-            <h2 id="functions">⚡ Fonctions</h2>
-            <p>Les fonctions sont des blocs de code réutilisables qui effectuent une tâche spécifique.</p>
+            <h2 id="functions">{{ trans('app.formations.javascript.functions_title') }}</h2>
+            <p>{{ trans('app.formations.javascript.functions_text') }}</p>
 
             <div class="example-box">
-                <h3>Déclaration de fonction</h3>
+                <h3>{{ trans('app.formations.javascript.functions_declaration_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-comment">// Fonction classique</span><br>
@@ -862,7 +860,7 @@
             </div>
 
             <div class="example-box">
-                <h3>Arrow function (ES6)</h3>
+                <h3>{{ trans('app.formations.javascript.functions_arrow_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-comment">// Syntaxe moderne et concise</span><br>
@@ -872,11 +870,11 @@
                 </div>
             </div>
 
-            <h2 id="arrays">📚 Tableaux</h2>
-            <p>Les tableaux permettent de stocker plusieurs valeurs dans une seule variable.</p>
+            <h2 id="arrays">{{ trans('app.formations.javascript.arrays_title') }}</h2>
+            <p>{{ trans('app.formations.javascript.arrays_text') }}</p>
 
             <div class="example-box">
-                <h3>Création et manipulation</h3>
+                <h3>{{ trans('app.formations.javascript.arrays_creation_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">let</span> fruits = [<span class="code-string">"Pomme"</span>, <span class="code-string">"Banane"</span>, <span class="code-string">"Orange"</span>];<br><br>
@@ -891,7 +889,7 @@
             </div>
 
             <div class="example-box">
-                <h3>Méthodes de tableau</h3>
+                <h3>{{ trans('app.formations.javascript.arrays_methods_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">let</span> nombres = [<span class="code-number">1</span>, <span class="code-number">2</span>, <span class="code-number">3</span>, <span class="code-number">4</span>, <span class="code-number">5</span>];<br><br>
@@ -905,8 +903,8 @@
                 </div>
             </div>
 
-            <h2 id="objects">🎯 Objets</h2>
-            <p>Les objets permettent de regrouper des données et fonctionnalités liées.</p>
+            <h2 id="objects">{{ trans('app.formations.javascript.objects_title') }}</h2>
+            <p>{{ trans('app.formations.javascript.objects_text') }}</p>
 
             <div class="example-box">
                 <div class="code-box">
@@ -924,11 +922,11 @@
                 </div>
             </div>
 
-            <h2 id="dom">🌐 Manipulation du DOM</h2>
-            <p>Le DOM (Document Object Model) permet d'interagir avec les éléments HTML.</p>
+            <h2 id="dom">{{ trans('app.formations.javascript.dom_title') }}</h2>
+            <p>{{ trans('app.formations.javascript.dom_text') }}</p>
 
             <div class="example-box">
-                <h3>Sélection d'éléments</h3>
+                <h3>{{ trans('app.formations.javascript.dom_selection_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-comment">// Sélectionner par ID</span><br>
@@ -943,7 +941,7 @@
             </div>
 
             <div class="example-box">
-                <h3>Modification du contenu</h3>
+                <h3>{{ trans('app.formations.javascript.dom_modification_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">let</span> titre = document.<span class="code-function">querySelector</span>(<span class="code-string">"h1"</span>);<br><br>
@@ -957,8 +955,8 @@
                 </div>
             </div>
 
-            <h2 id="events">🖱️ Événements</h2>
-            <p>Les événements permettent de réagir aux actions de l'utilisateur.</p>
+            <h2 id="events">{{ trans('app.formations.javascript.events_title') }}</h2>
+            <p>{{ trans('app.formations.javascript.events_text') }}</p>
 
             <div class="example-box">
                 <div class="code-box">
@@ -976,11 +974,11 @@
                 </div>
             </div>
 
-            <h2 id="es6">🚀 ES6+ Fonctionnalités modernes</h2>
-            <p>ES6 (ECMAScript 2015) a introduit de nombreuses fonctionnalités modernes.</p>
+            <h2 id="es6">{{ trans('app.formations.javascript.es6_title') }}</h2>
+            <p>{{ trans('app.formations.javascript.es6_text') }}</p>
 
             <div class="example-box">
-                <h3>Destructuring</h3>
+                <h3>{{ trans('app.formations.javascript.es6_destructuring_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-comment">// Destructuring d'objets</span><br>
@@ -993,7 +991,7 @@
             </div>
 
             <div class="example-box">
-                <h3>Spread operator</h3>
+                <h3>{{ trans('app.formations.javascript.es6_spread_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">let</span> arr1 = [<span class="code-number">1</span>, <span class="code-number">2</span>];<br>
@@ -1004,11 +1002,11 @@
                 </div>
             </div>
 
-            <h2 id="async">⏱️ Programmation asynchrone</h2>
-            <p>JavaScript permet d'exécuter du code de manière asynchrone pour ne pas bloquer l'exécution.</p>
+            <h2 id="async">{{ trans('app.formations.javascript.async_title') }}</h2>
+            <p>{{ trans('app.formations.javascript.async_text') }}</p>
 
             <div class="example-box">
-                <h3>Promises</h3>
+                <h3>{{ trans('app.formations.javascript.async_promises_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">let</span> promesse = <span class="code-keyword">new</span> <span class="code-function">Promise</span>((resolve, reject) => {<br>
@@ -1022,7 +1020,7 @@
             </div>
 
             <div class="example-box">
-                <h3>Async/Await</h3>
+                <h3>{{ trans('app.formations.javascript.async_await_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-keyword">async function</span> <span class="code-function">chargerDonnees</span>() {<br>
@@ -1038,30 +1036,22 @@
                 </div>
             </div>
 
-            <h2>🎓 Prochaines étapes</h2>
-            <p>Félicitations ! Vous avez maintenant une solide base en JavaScript.</p>
+            <h2>{{ trans('app.formations.javascript.next_steps_title') }}</h2>
+            <p>{{ trans('app.formations.javascript.next_steps_text') }}</p>
             
             <div class="example-box" style="background-color: #d4edda; border-left-color: #28a745;">
-                <h3 style="color: #000;">✅ Ce que vous avez appris :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.javascript.learned_title') }}</h3>
                 <ul style="margin-left: 20px; line-height: 2; color: #000;">
-                    <li>Variables et types de données</li>
-                    <li>Opérateurs et expressions</li>
-                    <li>Structures conditionnelles</li>
-                    <li>Boucles et itérations</li>
-                    <li>Fonctions et arrow functions</li>
-                    <li>Tableaux et méthodes</li>
-                    <li>Objets et propriétés</li>
-                    <li>Manipulation du DOM</li>
-                    <li>Gestion des événements</li>
-                    <li>Fonctionnalités ES6+</li>
-                    <li>Programmation asynchrone</li>
+                    @foreach(trans('app.formations.javascript.learned_list') as $item)
+                    <li>{{ $item }}</li>
+                    @endforeach
                 </ul>
             </div>
 
             <!-- Navigation Buttons -->
             <div class="nav-buttons">
-                <a href="{{ route('formations.css3') }}" class="nav-btn">❮ Précédent: CSS3</a>
-                <a href="{{ route('formations.bootstrap') }}" class="nav-btn">Suivant: Bootstrap ❯</a>
+                <a href="{{ route('formations.css3') }}" class="nav-btn">❮ {{ trans('app.formations.javascript.previous') }}: CSS3</a>
+                <a href="{{ route('formations.bootstrap') }}" class="nav-btn">{{ trans('app.formations.javascript.next') }}: Bootstrap ❯</a>
             </div>
         </main>
     </div>

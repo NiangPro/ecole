@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Formation Bootstrap | DevFormation')
+@section('title', trans('app.formations.bootstrap.title') . ' | NiangProgrammeur')
 
 @section('styles')
 <style>
@@ -657,15 +657,15 @@
 @section('content')
 <!-- Header -->
 <div class="tutorial-header">
-    <h1 style="font-size: 48px; margin-bottom: 10px;">Tutoriel Bootstrap</h1>
-    <p style="font-size: 20px;">Créez des sites responsive rapidement avec Bootstrap</p>
+    <h1 style="font-size: 48px; margin-bottom: 10px;">{{ trans('app.formations.bootstrap.title') }}</h1>
+    <p style="font-size: 20px;">{{ trans('app.formations.bootstrap.subtitle') }}</p>
 </div>
 
 <!-- Content -->
 <div class="tutorial-content">
     <div class="content-wrapper">
         <!-- Sidebar Toggle Button (Mobile) -->
-        <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Ouvrir le menu">
+        <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="{{ trans('app.formations.bootstrap.menu_open') }}">
             <i class="fas fa-bars" id="sidebarToggleIcon"></i>
         </button>
         
@@ -675,44 +675,41 @@
         <!-- Sidebar -->
         <aside class="sidebar" id="tutorialSidebar">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid rgba(121, 82, 179, 0.2);">
-                <h3 style="margin: 0;">Bootstrap Tutorial</h3>
-                <button class="sidebar-close-btn" id="sidebarClose" style="display: none; background: none; border: none; color: #7952B3; font-size: 24px; cursor: pointer; padding: 5px; width: 35px; height: 35px; border-radius: 50%; transition: all 0.3s ease;" aria-label="Fermer le menu">
+                <h3 style="margin: 0;">{{ trans('app.formations.bootstrap.sidebar_title') }}</h3>
+                <button class="sidebar-close-btn" id="sidebarClose" style="display: none; background: none; border: none; color: #7952B3; font-size: 24px; cursor: pointer; padding: 5px; width: 35px; height: 35px; border-radius: 50%; transition: all 0.3s ease;" aria-label="{{ trans('app.formations.bootstrap.menu_close') }}">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <a href="#intro" class="active">Introduction</a>
-            <a href="#installation">Installation</a>
-            <a href="#grid">Système de grille</a>
-            <a href="#containers">Containers</a>
-            <a href="#typography">Typographie</a>
-            <a href="#colors">Couleurs</a>
-            <a href="#buttons">Boutons</a>
-            <a href="#navbar">Navbar</a>
-            <a href="#cards">Cards</a>
-            <a href="#forms">Formulaires</a>
-            <a href="#modals">Modals</a>
-            <a href="#utilities">Utilitaires</a>
+            @php
+                $anchors = ['intro', 'installation', 'grid', 'containers', 'typography', 'colors', 'buttons', 'navbar', 'cards', 'forms', 'modals', 'utilities'];
+            @endphp
+            @foreach(trans('app.formations.bootstrap.sidebar_menu') as $index => $menuItem)
+            <a href="#{{ $anchors[$index] ?? 'intro' }}" class="{{ $index === 0 ? 'active' : '' }}">{{ $menuItem }}</a>
+            @endforeach
         </aside>
 
         <!-- Main Content -->
         <main class="main-content">
-            <h1 id="intro">Introduction à Bootstrap</h1>
-            <p>Bootstrap est le framework CSS le plus populaire au monde pour créer des sites web responsive et mobile-first rapidement.</p>
+            <h1 id="intro">{{ trans('app.formations.bootstrap.intro_title') }}</h1>
+            <p>{{ trans('app.formations.bootstrap.intro_text') }}</p>
 
-            <h3>🚀 Pourquoi utiliser Bootstrap ?</h3>
+            <h3>{{ trans('app.formations.bootstrap.why_title') }}</h3>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li>✅ <strong>Gain de temps</strong> - Composants prêts à l'emploi</li>
-                <li>✅ <strong>Responsive</strong> - Mobile-first par défaut</li>
-                <li>✅ <strong>Cohérence</strong> - Design uniforme</li>
-                <li>✅ <strong>Communauté</strong> - Documentation complète et support actif</li>
-                <li>✅ <strong>Personnalisable</strong> - Facile à adapter à votre marque</li>
+                @foreach(trans('app.formations.bootstrap.why_items') as $item)
+                @php
+                    $parts = explode(' - ', $item);
+                    $label = $parts[0] ?? '';
+                    $description = $parts[1] ?? '';
+                @endphp
+                <li>✅ <strong>{{ $label }}</strong>@if($description) - {{ $description }}@endif</li>
+                @endforeach
             </ul>
 
-            <h2 id="installation">📦 Installation</h2>
-            <p>Il existe plusieurs façons d'intégrer Bootstrap dans votre projet.</p>
+            <h2 id="installation">{{ trans('app.formations.bootstrap.installation_title') }}</h2>
+            <p>{{ trans('app.formations.bootstrap.installation_text') }}</p>
 
             <div class="example-box">
-                <h3>Via CDN (le plus simple)</h3>
+                <h3>{{ trans('app.formations.bootstrap.installation_cdn_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-comment">&lt;!-- CSS --&gt;</span><br>
@@ -723,11 +720,11 @@
                 </div>
             </div>
 
-            <h2 id="grid">📐 Système de grille</h2>
-            <p>Le système de grille Bootstrap utilise Flexbox et permet de créer des layouts responsive avec 12 colonnes.</p>
+            <h2 id="grid">{{ trans('app.formations.bootstrap.grid_title') }}</h2>
+            <p>{{ trans('app.formations.bootstrap.grid_text') }}</p>
 
             <div class="example-box">
-                <h3>Structure de base</h3>
+                <h3>{{ trans('app.formations.bootstrap.grid_structure_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-tag">&lt;div</span> <span class="code-attr">class</span>=<span class="code-value">"container"</span><span class="code-tag">&gt;</span><br>
@@ -740,18 +737,20 @@
                 </div>
             </div>
 
-            <h3>Breakpoints</h3>
+            <h3>{{ trans('app.formations.bootstrap.grid_breakpoints_title') }}</h3>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li><code>col-</code> - Extra small (&lt;576px)</li>
-                <li><code>col-sm-</code> - Small (≥576px)</li>
-                <li><code>col-md-</code> - Medium (≥768px)</li>
-                <li><code>col-lg-</code> - Large (≥992px)</li>
-                <li><code>col-xl-</code> - Extra large (≥1200px)</li>
-                <li><code>col-xxl-</code> - Extra extra large (≥1400px)</li>
+                @foreach(trans('app.formations.bootstrap.grid_breakpoints_items') as $item)
+                @php
+                    $parts = explode(' - ', $item);
+                    $code = $parts[0] ?? '';
+                    $description = $parts[1] ?? '';
+                @endphp
+                <li><code>{{ $code }}</code>@if($description) - {{ $description }}@endif</li>
+                @endforeach
             </ul>
 
-            <h2 id="containers">📦 Containers</h2>
-            <p>Les containers sont les éléments de base pour contenir et aligner votre contenu.</p>
+            <h2 id="containers">{{ trans('app.formations.bootstrap.containers_title') }}</h2>
+            <p>{{ trans('app.formations.bootstrap.containers_text') }}</p>
 
             <div class="example-box">
                 <div class="code-box">
@@ -766,8 +765,8 @@
                 </div>
             </div>
 
-            <h2 id="typography">✍️ Typographie</h2>
-            <p>Bootstrap fournit des styles par défaut pour tous les éléments typographiques.</p>
+            <h2 id="typography">{{ trans('app.formations.bootstrap.typography_title') }}</h2>
+            <p>{{ trans('app.formations.bootstrap.typography_text') }}</p>
 
             <div class="example-box">
                 <div class="code-box">
@@ -780,8 +779,8 @@
                 </div>
             </div>
 
-            <h2 id="colors">🎨 Couleurs</h2>
-            <p>Bootstrap propose des classes de couleurs contextuelles pour le texte et les arrière-plans.</p>
+            <h2 id="colors">{{ trans('app.formations.bootstrap.colors_title') }}</h2>
+            <p>{{ trans('app.formations.bootstrap.colors_text') }}</p>
 
             <div class="example-box">
                 <div class="code-box">
@@ -796,8 +795,8 @@
                 </div>
             </div>
 
-            <h2 id="buttons">🔘 Boutons</h2>
-            <p>Bootstrap propose de nombreux styles de boutons prêts à l'emploi.</p>
+            <h2 id="buttons">{{ trans('app.formations.bootstrap.buttons_title') }}</h2>
+            <p>{{ trans('app.formations.bootstrap.buttons_text') }}</p>
 
             <div class="example-box">
                 <div class="code-box">
@@ -810,8 +809,8 @@
                 </div>
             </div>
 
-            <h2 id="navbar">🧭 Navbar</h2>
-            <p>La navbar Bootstrap est responsive et personnalisable.</p>
+            <h2 id="navbar">{{ trans('app.formations.bootstrap.navbar_title') }}</h2>
+            <p>{{ trans('app.formations.bootstrap.navbar_text') }}</p>
 
             <div class="example-box">
                 <div class="code-box">
@@ -826,8 +825,8 @@
                 </div>
             </div>
 
-            <h2 id="cards">🃏 Cards</h2>
-            <p>Les cards sont des conteneurs flexibles pour afficher du contenu.</p>
+            <h2 id="cards">{{ trans('app.formations.bootstrap.cards_title') }}</h2>
+            <p>{{ trans('app.formations.bootstrap.cards_text') }}</p>
 
             <div class="example-box">
                 <div class="code-box">
@@ -844,8 +843,8 @@
                 </div>
             </div>
 
-            <h2 id="forms">📝 Formulaires</h2>
-            <p>Bootstrap stylise automatiquement les éléments de formulaire.</p>
+            <h2 id="forms">{{ trans('app.formations.bootstrap.forms_title') }}</h2>
+            <p>{{ trans('app.formations.bootstrap.forms_text') }}</p>
 
             <div class="example-box">
                 <div class="code-box">
@@ -861,8 +860,8 @@
                 </div>
             </div>
 
-            <h2 id="modals">🪟 Modals</h2>
-            <p>Les modals sont des fenêtres de dialogue qui s'affichent au-dessus du contenu.</p>
+            <h2 id="modals">{{ trans('app.formations.bootstrap.modals_title') }}</h2>
+            <p>{{ trans('app.formations.bootstrap.modals_text') }}</p>
 
             <div class="example-box">
                 <div class="code-box">
@@ -879,11 +878,11 @@
                 </div>
             </div>
 
-            <h2 id="utilities">🛠️ Classes utilitaires</h2>
-            <p>Bootstrap offre des classes utilitaires pour le spacing, display, flexbox, etc.</p>
+            <h2 id="utilities">{{ trans('app.formations.bootstrap.utilities_title') }}</h2>
+            <p>{{ trans('app.formations.bootstrap.utilities_text') }}</p>
 
             <div class="example-box">
-                <h3>Spacing (margin et padding)</h3>
+                <h3>{{ trans('app.formations.bootstrap.utilities_spacing_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-comment">&lt;!-- m = margin, p = padding --&gt;</span><br>
@@ -897,7 +896,7 @@
             </div>
 
             <div class="example-box">
-                <h3>Display et Flexbox</h3>
+                <h3>{{ trans('app.formations.bootstrap.utilities_display_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-tag">&lt;div</span> <span class="code-attr">class</span>=<span class="code-value">"d-flex justify-content-between"</span><span class="code-tag">&gt;</span>...<span class="code-tag">&lt;/div&gt;</span><br>
@@ -906,29 +905,22 @@
                 </div>
             </div>
 
-            <h2>🎓 Prochaines étapes</h2>
-            <p>Félicitations ! Vous maîtrisez maintenant les bases de Bootstrap.</p>
+            <h2>{{ trans('app.formations.bootstrap.next_steps_title') }}</h2>
+            <p>{{ trans('app.formations.bootstrap.next_steps_text') }}</p>
             
             <div class="example-box" style="background-color: #d4edda; border-left-color: #28a745;">
-                <h3 style="color: #000;">✅ Ce que vous avez appris :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.bootstrap.next_steps_learned_title') }}</h3>
                 <ul style="margin-left: 20px; line-height: 2; color: #000;">
-                    <li>Installation et configuration de Bootstrap</li>
-                    <li>Système de grille responsive</li>
-                    <li>Containers et breakpoints</li>
-                    <li>Typographie et couleurs</li>
-                    <li>Boutons et composants</li>
-                    <li>Navbar et navigation</li>
-                    <li>Cards pour le contenu</li>
-                    <li>Formulaires stylisés</li>
-                    <li>Modals interactifs</li>
-                    <li>Classes utilitaires</li>
+                    @foreach(trans('app.formations.bootstrap.next_steps_learned_items') as $item)
+                    <li>{{ $item }}</li>
+                    @endforeach
                 </ul>
             </div>
 
             <!-- Navigation Buttons -->
             <div class="nav-buttons">
-                <a href="{{ route('formations.javascript') }}" class="nav-btn">❮ Précédent: JavaScript</a>
-                <a href="{{ route('formations.php') }}" class="nav-btn">Suivant: PHP ❯</a>
+                <a href="{{ route('formations.javascript') }}" class="nav-btn">{{ trans('app.formations.bootstrap.nav_previous') }}</a>
+                <a href="{{ route('formations.php') }}" class="nav-btn">{{ trans('app.formations.bootstrap.nav_next') }}</a>
             </div>
         </main>
     </div>

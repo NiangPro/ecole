@@ -7702,8 +7702,20 @@ int main() {
             App::setLocale($locale);
         }
         
-        // Rediriger vers la page précédente ou la page d'accueil
-        return redirect()->back();
+        // Récupérer l'URL de redirection depuis le paramètre de requête
+        $redirectUrl = request()->get('redirect');
+        
+        // Si une URL de redirection est fournie et valide (URL relative qui commence par /)
+        if ($redirectUrl && strpos($redirectUrl, '/') === 0) {
+            // Nettoyer l'URL pour éviter les injections
+            $redirectUrl = parse_url($redirectUrl, PHP_URL_PATH);
+            if ($redirectUrl) {
+                return redirect($redirectUrl);
+            }
+        }
+        
+        // Sinon, rediriger vers la page précédente ou la page d'accueil
+        return redirect()->back()->with('language_changed', true);
     }
 
     public function html5()
@@ -7720,11 +7732,15 @@ int main() {
 
     public function javascript()
     {
+        $this->ensureLocale();
         return view('formations.javascript');
     }
 
     public function php()
     {
+        $locale = $this->ensureLocale();
+        // Forcer la recompilation de la vue si nécessaire
+        view()->share('currentLocale', $locale);
         return view('formations.php');
     }
 
@@ -7750,21 +7766,25 @@ int main() {
 
     public function bootstrap()
     {
+        $this->ensureLocale();
         return view('formations.bootstrap');
     }
 
     public function git()
     {
+        $this->ensureLocale();
         return view('formations.git');
     }
 
     public function wordpress()
     {
+        $this->ensureLocale();
         return view('formations.wordpress');
     }
 
     public function ia()
     {
+        $this->ensureLocale();
         return view('formations.ia');
     }
 

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Formation IA | DevFormation')
+@section('title', trans('app.formations.ia.title') . ' | NiangProgrammeur')
 
 @section('styles')
 <style>
@@ -657,15 +657,15 @@
 @section('content')
 <!-- Header -->
 <div class="tutorial-header">
-    <h1 style="font-size: 48px; margin-bottom: 10px;">Tutoriel Intelligence Artificielle</h1>
-    <p style="font-size: 20px;">Découvrez l'IA et ses applications</p>
+    <h1 style="font-size: 48px; margin-bottom: 10px;">{{ trans('app.formations.ia.title') }}</h1>
+    <p style="font-size: 20px;">{{ trans('app.formations.ia.subtitle') }}</p>
 </div>
 
 <!-- Content -->
 <div class="tutorial-content">
     <div class="content-wrapper">
         <!-- Sidebar Toggle Button (Mobile) -->
-        <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Ouvrir le menu">
+        <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="{{ trans('app.formations.ia.menu_open') }}">
             <i class="fas fa-bars" id="sidebarToggleIcon"></i>
         </button>
         
@@ -675,60 +675,67 @@
         <!-- Sidebar -->
         <aside class="sidebar" id="tutorialSidebar">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid rgba(20, 184, 166, 0.2);">
-                <h3 style="margin: 0;">IA Tutorial</h3>
-                <button class="sidebar-close-btn" id="sidebarClose" style="display: none; background: none; border: none; color: #14B8A6; font-size: 24px; cursor: pointer; padding: 5px; width: 35px; height: 35px; border-radius: 50%; transition: all 0.3s ease;" aria-label="Fermer le menu">
+                <h3 style="margin: 0;">{{ trans('app.formations.ia.sidebar_title') }}</h3>
+                <button class="sidebar-close-btn" id="sidebarClose" style="display: none; background: none; border: none; color: #14B8A6; font-size: 24px; cursor: pointer; padding: 5px; width: 35px; height: 35px; border-radius: 50%; transition: all 0.3s ease;" aria-label="{{ trans('app.formations.ia.menu_close') }}">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <a href="#intro" class="active">Introduction IA</a>
-            <a href="#concepts">Concepts de base</a>
-            <a href="#ml">Machine Learning</a>
-            <a href="#dl">Deep Learning</a>
-            <a href="#nlp">NLP</a>
-            <a href="#cv">Computer Vision</a>
-            <a href="#python">Python pour l'IA</a>
-            <a href="#tensorflow">TensorFlow</a>
-            <a href="#pytorch">PyTorch</a>
-            <a href="#models">Modèles pré-entraînés</a>
-            <a href="#apis">APIs IA</a>
-            <a href="#ethics">Éthique</a>
+            @php
+                $anchors = ['intro', 'concepts', 'ml', 'dl', 'nlp', 'cv', 'python', 'tensorflow', 'pytorch', 'models', 'apis', 'ethics'];
+            @endphp
+            @foreach(trans('app.formations.ia.sidebar_menu') as $index => $menuItem)
+            <a href="#{{ $anchors[$index] ?? 'intro' }}" class="{{ $index === 0 ? 'active' : '' }}">{{ $menuItem }}</a>
+            @endforeach
         </aside>
 
         <!-- Main Content -->
         <main class="main-content">
-            <h1 id="intro">Introduction à l'Intelligence Artificielle</h1>
-            <p>L'Intelligence Artificielle (IA) est la simulation de l'intelligence humaine par des machines. Elle transforme tous les secteurs, du développement web à la santé.</p>
+            <h1 id="intro">{{ trans('app.formations.ia.intro_title') }}</h1>
+            <p>{{ trans('app.formations.ia.intro_text') }}</p>
 
-            <h3>🚀 Pourquoi apprendre l'IA ?</h3>
+            <h3>{{ trans('app.formations.ia.why_title') }}</h3>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li>✅ <strong>Demande croissante</strong> - Marché en pleine expansion</li>
-                <li>✅ <strong>Automatisation</strong> - Automatisez des tâches complexes</li>
-                <li>✅ <strong>Innovation</strong> - Créez des solutions intelligentes</li>
-                <li>✅ <strong>Salaires élevés</strong> - Compétences très recherchées</li>
-                <li>✅ <strong>Futur</strong> - Technologie du futur</li>
+                @foreach(trans('app.formations.ia.why_items') as $item)
+                @php
+                    $parts = explode(' - ', $item);
+                    $label = $parts[0] ?? '';
+                    $description = $parts[1] ?? '';
+                @endphp
+                <li>✅ <strong>{{ $label }}</strong>@if($description) - {{ $description }}@endif</li>
+                @endforeach
             </ul>
 
-            <h2 id="concepts">🧠 Concepts de base</h2>
-            <p>Comprendre les concepts fondamentaux de l'IA.</p>
+            <h2 id="concepts">{{ trans('app.formations.ia.concepts_title') }}</h2>
+            <p>{{ trans('app.formations.ia.concepts_text') }}</p>
 
             <div class="example-box">
-                <h3>Types d'IA</h3>
+                <h3>{{ trans('app.formations.ia.concepts_types_title') }}</h3>
                 <ul style="line-height: 2; color: #000;">
-                    <li><strong>IA faible</strong> - Spécialisée dans une tâche (Siri, Alexa)</li>
-                    <li><strong>IA forte</strong> - Intelligence générale (théorique)</li>
-                    <li><strong>IA super</strong> - Dépasse l'intelligence humaine (futur)</li>
+                    @foreach(trans('app.formations.ia.concepts_types_items') as $item)
+                    @php
+                        $parts = explode(' - ', $item);
+                        $label = $parts[0] ?? '';
+                        $description = $parts[1] ?? '';
+                    @endphp
+                    <li><strong>{{ $label }}</strong>@if($description) - {{ $description }}@endif</li>
+                    @endforeach
                 </ul>
             </div>
 
-            <h2 id="ml">🤖 Machine Learning</h2>
-            <p>Le Machine Learning permet aux machines d'apprendre à partir de données sans être explicitement programmées.</p>
+            <h2 id="ml">{{ trans('app.formations.ia.ml_title') }}</h2>
+            <p>{{ trans('app.formations.ia.ml_text') }}</p>
 
             <div class="example-box">
-                <h3>Types d'apprentissage</h3>
+                <h3>{{ trans('app.formations.ia.ml_types_title') }}</h3>
                 <ul style="line-height: 2; color: #000;">
-                    <li><strong>Supervisé</strong> - Apprendre avec des données étiquetées</li>
-                    <li><strong>Non supervisé</strong> - Trouver des patterns dans les données</li>
-                    <li><strong>Par renforcement</strong> - Apprendre par essai-erreur</li>
+                    @foreach(trans('app.formations.ia.ml_types_items') as $item)
+                    @php
+                        $parts = explode(' - ', $item);
+                        $label = $parts[0] ?? '';
+                        $description = $parts[1] ?? '';
+                    @endphp
+                    <li><strong>{{ $label }}</strong>@if($description) - {{ $description }}@endif</li>
+                    @endforeach
                 </ul>
             </div>
 
@@ -746,62 +753,76 @@
                 </div>
             </div>
 
-            <h2 id="dl">🧬 Deep Learning</h2>
-            <p>Le Deep Learning utilise des réseaux de neurones profonds pour résoudre des problèmes complexes.</p>
+            <h2 id="dl">{{ trans('app.formations.ia.dl_title') }}</h2>
+            <p>{{ trans('app.formations.ia.dl_text') }}</p>
 
             <div class="example-box">
-                <h3>Architectures populaires</h3>
+                <h3>{{ trans('app.formations.ia.dl_architectures_title') }}</h3>
                 <ul style="line-height: 2; color: #000;">
-                    <li><strong>CNN</strong> - Réseaux convolutifs (images)</li>
-                    <li><strong>RNN</strong> - Réseaux récurrents (séquences)</li>
-                    <li><strong>Transformers</strong> - Attention mechanism (NLP)</li>
-                    <li><strong>GAN</strong> - Réseaux génératifs adverses</li>
+                    @foreach(trans('app.formations.ia.dl_architectures_items') as $item)
+                    @php
+                        $parts = explode(' - ', $item);
+                        $label = $parts[0] ?? '';
+                        $description = $parts[1] ?? '';
+                    @endphp
+                    <li><strong>{{ $label }}</strong>@if($description) - {{ $description }}@endif</li>
+                    @endforeach
                 </ul>
             </div>
 
-            <h2 id="nlp">💬 NLP (Natural Language Processing)</h2>
-            <p>Le traitement du langage naturel permet aux machines de comprendre et générer du texte.</p>
+            <h2 id="nlp">{{ trans('app.formations.ia.nlp_title') }}</h2>
+            <p>{{ trans('app.formations.ia.nlp_text') }}</p>
 
             <div class="example-box">
-                <h3>Applications NLP</h3>
+                <h3>{{ trans('app.formations.ia.nlp_applications_title') }}</h3>
                 <ul style="line-height: 2; color: #000;">
-                    <li><strong>Chatbots</strong> - Assistants conversationnels</li>
-                    <li><strong>Traduction</strong> - Google Translate</li>
-                    <li><strong>Sentiment Analysis</strong> - Analyser les émotions</li>
-                    <li><strong>Résumé automatique</strong> - Synthétiser du texte</li>
-                    <li><strong>GPT</strong> - Génération de texte</li>
+                    @foreach(trans('app.formations.ia.nlp_applications_items') as $item)
+                    @php
+                        $parts = explode(' - ', $item);
+                        $label = $parts[0] ?? '';
+                        $description = $parts[1] ?? '';
+                    @endphp
+                    <li><strong>{{ $label }}</strong>@if($description) - {{ $description }}@endif</li>
+                    @endforeach
                 </ul>
             </div>
 
-            <h2 id="cv">👁️ Computer Vision</h2>
-            <p>La vision par ordinateur permet aux machines de "voir" et interpréter les images.</p>
+            <h2 id="cv">{{ trans('app.formations.ia.cv_title') }}</h2>
+            <p>{{ trans('app.formations.ia.cv_text') }}</p>
 
             <div class="example-box">
-                <h3>Applications</h3>
+                <h3>{{ trans('app.formations.ia.cv_applications_title') }}</h3>
                 <ul style="line-height: 2; color: #000;">
-                    <li><strong>Reconnaissance faciale</strong> - Déverrouillage de téléphone</li>
-                    <li><strong>Détection d'objets</strong> - Voitures autonomes</li>
-                    <li><strong>OCR</strong> - Lecture de texte dans les images</li>
-                    <li><strong>Segmentation</strong> - Isoler des objets</li>
+                    @foreach(trans('app.formations.ia.cv_applications_items') as $item)
+                    @php
+                        $parts = explode(' - ', $item);
+                        $label = $parts[0] ?? '';
+                        $description = $parts[1] ?? '';
+                    @endphp
+                    <li><strong>{{ $label }}</strong>@if($description) - {{ $description }}@endif</li>
+                    @endforeach
                 </ul>
             </div>
 
-            <h2 id="python">🐍 Python pour l'IA</h2>
-            <p>Python est le langage de prédilection pour l'IA grâce à ses bibliothèques puissantes.</p>
+            <h2 id="python">{{ trans('app.formations.ia.python_title') }}</h2>
+            <p>{{ trans('app.formations.ia.python_text') }}</p>
 
             <div class="example-box">
-                <h3>Bibliothèques essentielles</h3>
+                <h3>{{ trans('app.formations.ia.python_libraries_title') }}</h3>
                 <ul style="line-height: 2; color: #000;">
-                    <li><strong>NumPy</strong> - Calcul numérique</li>
-                    <li><strong>Pandas</strong> - Manipulation de données</li>
-                    <li><strong>Matplotlib</strong> - Visualisation</li>
-                    <li><strong>Scikit-learn</strong> - Machine Learning</li>
-                    <li><strong>TensorFlow/PyTorch</strong> - Deep Learning</li>
+                    @foreach(trans('app.formations.ia.python_libraries_items') as $item)
+                    @php
+                        $parts = explode(' - ', $item);
+                        $label = $parts[0] ?? '';
+                        $description = $parts[1] ?? '';
+                    @endphp
+                    <li><strong>{{ $label }}</strong>@if($description) - {{ $description }}@endif</li>
+                    @endforeach
                 </ul>
             </div>
 
-            <h2 id="tensorflow">🔥 TensorFlow</h2>
-            <p>TensorFlow est une bibliothèque open-source de Google pour le Deep Learning.</p>
+            <h2 id="tensorflow">{{ trans('app.formations.ia.tensorflow_title') }}</h2>
+            <p>{{ trans('app.formations.ia.tensorflow_text') }}</p>
 
             <div class="example-box">
                 <div class="code-box">
@@ -818,8 +839,8 @@
                 </div>
             </div>
 
-            <h2 id="pytorch">⚡ PyTorch</h2>
-            <p>PyTorch est une bibliothèque de Facebook, très populaire en recherche.</p>
+            <h2 id="pytorch">{{ trans('app.formations.ia.pytorch_title') }}</h2>
+            <p>{{ trans('app.formations.ia.pytorch_text') }}</p>
 
             <div class="example-box">
                 <div class="code-box">
@@ -835,71 +856,73 @@
                 </div>
             </div>
 
-            <h2 id="models">📦 Modèles pré-entraînés</h2>
-            <p>Utilisez des modèles déjà entraînés pour gagner du temps.</p>
+            <h2 id="models">{{ trans('app.formations.ia.models_title') }}</h2>
+            <p>{{ trans('app.formations.ia.models_text') }}</p>
 
             <div class="example-box">
-                <h3>Modèles populaires</h3>
+                <h3>{{ trans('app.formations.ia.models_popular_title') }}</h3>
                 <ul style="line-height: 2; color: #000;">
-                    <li><strong>BERT</strong> - Compréhension du langage</li>
-                    <li><strong>GPT</strong> - Génération de texte</li>
-                    <li><strong>ResNet</strong> - Classification d'images</li>
-                    <li><strong>YOLO</strong> - Détection d'objets</li>
-                    <li><strong>Stable Diffusion</strong> - Génération d'images</li>
+                    @foreach(trans('app.formations.ia.models_popular_items') as $item)
+                    @php
+                        $parts = explode(' - ', $item);
+                        $label = $parts[0] ?? '';
+                        $description = $parts[1] ?? '';
+                    @endphp
+                    <li><strong>{{ $label }}</strong>@if($description) - {{ $description }}@endif</li>
+                    @endforeach
                 </ul>
             </div>
 
-            <h2 id="apis">🌐 APIs IA</h2>
-            <p>Intégrez l'IA dans vos applications via des APIs.</p>
+            <h2 id="apis">{{ trans('app.formations.ia.apis_title') }}</h2>
+            <p>{{ trans('app.formations.ia.apis_text') }}</p>
 
             <div class="example-box">
-                <h3>APIs populaires</h3>
+                <h3>{{ trans('app.formations.ia.apis_popular_title') }}</h3>
                 <ul style="line-height: 2; color: #000;">
-                    <li><strong>OpenAI API</strong> - GPT, DALL-E</li>
-                    <li><strong>Google Cloud AI</strong> - Vision, NLP</li>
-                    <li><strong>AWS AI</strong> - Rekognition, Comprehend</li>
-                    <li><strong>Hugging Face</strong> - Modèles transformers</li>
+                    @foreach(trans('app.formations.ia.apis_popular_items') as $item)
+                    @php
+                        $parts = explode(' - ', $item);
+                        $label = $parts[0] ?? '';
+                        $description = $parts[1] ?? '';
+                    @endphp
+                    <li><strong>{{ $label }}</strong>@if($description) - {{ $description }}@endif</li>
+                    @endforeach
                 </ul>
             </div>
 
-            <h2 id="ethics">⚖️ Éthique de l'IA</h2>
-            <p>L'IA soulève des questions éthiques importantes.</p>
+            <h2 id="ethics">{{ trans('app.formations.ia.ethics_title') }}</h2>
+            <p>{{ trans('app.formations.ia.ethics_text') }}</p>
 
             <div class="example-box">
-                <h3>Considérations éthiques</h3>
+                <h3>{{ trans('app.formations.ia.ethics_considerations_title') }}</h3>
                 <ul style="line-height: 2; color: #000;">
-                    <li><strong>Biais</strong> - Éviter la discrimination</li>
-                    <li><strong>Transparence</strong> - Expliquer les décisions</li>
-                    <li><strong>Vie privée</strong> - Protéger les données</li>
-                    <li><strong>Responsabilité</strong> - Qui est responsable ?</li>
-                    <li><strong>Impact social</strong> - Emploi et société</li>
+                    @foreach(trans('app.formations.ia.ethics_considerations_items') as $item)
+                    @php
+                        $parts = explode(' - ', $item);
+                        $label = $parts[0] ?? '';
+                        $description = $parts[1] ?? '';
+                    @endphp
+                    <li><strong>{{ $label }}</strong>@if($description) - {{ $description }}@endif</li>
+                    @endforeach
                 </ul>
             </div>
 
-            <h2>🎓 Prochaines étapes</h2>
-            <p>Félicitations ! Vous avez découvert les bases de l'IA.</p>
+            <h2>{{ trans('app.formations.ia.next_steps_title') }}</h2>
+            <p>{{ trans('app.formations.ia.next_steps_text') }}</p>
             
             <div class="example-box" style="background-color: #d4edda; border-left-color: #28a745;">
-                <h3 style="color: #000;">✅ Ce que vous avez appris :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.ia.next_steps_learned_title') }}</h3>
                 <ul style="margin-left: 20px; line-height: 2; color: #000;">
-                    <li>Introduction à l'IA</li>
-                    <li>Concepts fondamentaux</li>
-                    <li>Machine Learning</li>
-                    <li>Deep Learning</li>
-                    <li>NLP (traitement du langage)</li>
-                    <li>Computer Vision</li>
-                    <li>Python pour l'IA</li>
-                    <li>TensorFlow et PyTorch</li>
-                    <li>Modèles pré-entraînés</li>
-                    <li>APIs IA</li>
-                    <li>Éthique de l'IA</li>
+                    @foreach(trans('app.formations.ia.next_steps_learned_items') as $item)
+                    <li>{{ $item }}</li>
+                    @endforeach
                 </ul>
             </div>
 
             <!-- Navigation Buttons -->
             <div class="nav-buttons">
-                <a href="{{ route('formations.wordpress') }}" class="nav-btn">❮ Précédent: WordPress</a>
-                <a href="{{ route('home') }}" class="nav-btn">Accueil ❯</a>
+                <a href="{{ route('formations.wordpress') }}" class="nav-btn">{{ trans('app.formations.ia.nav_previous') }}</a>
+                <a href="{{ route('home') }}" class="nav-btn">{{ trans('app.formations.ia.nav_next') }}</a>
             </div>
         </main>
     </div>

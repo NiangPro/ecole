@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Formation Git | DevFormation')
+@section('title', trans('app.formations.git.title') . ' | NiangProgrammeur')
 
 @section('styles')
 <style>
@@ -463,15 +463,15 @@
 @section('content')
 <!-- Header -->
 <div class="tutorial-header">
-    <h1 style="font-size: 48px; margin-bottom: 10px;">Tutoriel Git</h1>
-    <p style="font-size: 20px;">Maîtrisez le contrôle de version avec Git</p>
+    <h1 style="font-size: 48px; margin-bottom: 10px;">{{ trans('app.formations.git.title') }}</h1>
+    <p style="font-size: 20px;">{{ trans('app.formations.git.subtitle') }}</p>
 </div>
 
 <!-- Content -->
 <div class="tutorial-content">
     <div class="content-wrapper">
         <!-- Sidebar Toggle Button (Mobile) -->
-        <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="Ouvrir le menu">
+        <button class="sidebar-toggle-btn" id="sidebarToggle" aria-label="{{ trans('app.formations.git.menu_open') }}">
             <i class="fas fa-bars" id="sidebarToggleIcon"></i>
         </button>
         
@@ -481,41 +481,38 @@
         <!-- Sidebar -->
         <aside class="sidebar" id="tutorialSidebar">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 2px solid rgba(240, 80, 50, 0.2);">
-                <h3 style="margin: 0;">Git Tutorial</h3>
-                <button class="sidebar-close-btn" id="sidebarClose" style="display: none; background: none; border: none; color: #F05032; font-size: 24px; cursor: pointer; padding: 5px; width: 35px; height: 35px; border-radius: 50%; transition: all 0.3s ease;" aria-label="Fermer le menu">
+                <h3 style="margin: 0;">{{ trans('app.formations.git.sidebar_title') }}</h3>
+                <button class="sidebar-close-btn" id="sidebarClose" style="display: none; background: none; border: none; color: #F05032; font-size: 24px; cursor: pointer; padding: 5px; width: 35px; height: 35px; border-radius: 50%; transition: all 0.3s ease;" aria-label="{{ trans('app.formations.git.menu_close') }}">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
-            <a href="#intro" class="active">Introduction Git</a>
-            <a href="#install">Installation</a>
-            <a href="#config">Configuration</a>
-            <a href="#init">Créer un dépôt</a>
-            <a href="#status">Status & Add</a>
-            <a href="#commit">Commit</a>
-            <a href="#branches">Branches</a>
-            <a href="#merge">Merge</a>
-            <a href="#remote">Remote</a>
-            <a href="#push">Push & Pull</a>
-            <a href="#clone">Clone</a>
-            <a href="#github">GitHub</a>
+            @php
+                $anchors = ['intro', 'install', 'config', 'init', 'status', 'commit', 'branches', 'merge', 'remote', 'push', 'clone', 'github'];
+            @endphp
+            @foreach(trans('app.formations.git.sidebar_menu') as $index => $menuItem)
+            <a href="#{{ $anchors[$index] ?? 'intro' }}" class="{{ $index === 0 ? 'active' : '' }}">{{ $menuItem }}</a>
+            @endforeach
         </aside>
 
         <!-- Main Content -->
         <main class="main-content">
-            <h1 id="intro">Introduction à Git</h1>
-            <p>Git est un système de contrôle de version distribué gratuit et open-source. Il permet de suivre les modifications de votre code et de collaborer avec d'autres développeurs.</p>
+            <h1 id="intro">{{ trans('app.formations.git.intro_title') }}</h1>
+            <p>{{ trans('app.formations.git.intro_text') }}</p>
 
-            <h3>🚀 Pourquoi utiliser Git ?</h3>
+            <h3>{{ trans('app.formations.git.why_title') }}</h3>
             <ul style="line-height: 2; font-size: 16px; margin-left: 20px; color: #000;">
-                <li>✅ <strong>Historique complet</strong> - Suivez toutes les modifications</li>
-                <li>✅ <strong>Collaboration</strong> - Travaillez en équipe efficacement</li>
-                <li>✅ <strong>Branches</strong> - Développez des fonctionnalités en parallèle</li>
-                <li>✅ <strong>Sauvegarde</strong> - Ne perdez jamais votre code</li>
-                <li>✅ <strong>Standard</strong> - Utilisé par tous les développeurs</li>
+                @foreach(trans('app.formations.git.why_items') as $item)
+                @php
+                    $parts = explode(' - ', $item);
+                    $label = $parts[0] ?? '';
+                    $description = $parts[1] ?? '';
+                @endphp
+                <li>✅ <strong>{{ $label }}</strong>@if($description) - {{ $description }}@endif</li>
+                @endforeach
             </ul>
 
-            <h2 id="install">📦 Installation</h2>
-            <p>Téléchargez et installez Git depuis le site officiel.</p>
+            <h2 id="install">{{ trans('app.formations.git.install_title') }}</h2>
+            <p>{{ trans('app.formations.git.install_text') }}</p>
 
             <div class="example-box">
                 <div class="code-box">
@@ -526,8 +523,8 @@
                 </div>
             </div>
 
-            <h2 id="config">⚙️ Configuration</h2>
-            <p>Configurez votre nom et email avant de commencer.</p>
+            <h2 id="config">{{ trans('app.formations.git.config_title') }}</h2>
+            <p>{{ trans('app.formations.git.config_text') }}</p>
 
             <div class="example-box">
                 <div class="code-box">
@@ -541,8 +538,8 @@
                 </div>
             </div>
 
-            <h2 id="init">🆕 Créer un dépôt</h2>
-            <p>Initialisez un nouveau dépôt Git dans votre projet.</p>
+            <h2 id="init">{{ trans('app.formations.git.init_title') }}</h2>
+            <p>{{ trans('app.formations.git.init_text') }}</p>
 
             <div class="example-box">
                 <div class="code-box">
@@ -554,8 +551,8 @@
                 </div>
             </div>
 
-            <h2 id="status">📊 Status & Add</h2>
-            <p>Vérifiez l'état de vos fichiers et ajoutez-les à la zone de staging.</p>
+            <h2 id="status">{{ trans('app.formations.git.status_title') }}</h2>
+            <p>{{ trans('app.formations.git.status_text') }}</p>
 
             <div class="example-box">
                 <div class="code-box">
@@ -570,8 +567,8 @@
                 </div>
             </div>
 
-            <h2 id="commit">💾 Commit</h2>
-            <p>Enregistrez vos modifications avec un message descriptif.</p>
+            <h2 id="commit">{{ trans('app.formations.git.commit_title') }}</h2>
+            <p>{{ trans('app.formations.git.commit_text') }}</p>
 
             <div class="example-box">
                 <div class="code-box">
@@ -586,8 +583,8 @@
                 </div>
             </div>
 
-            <h2 id="branches">🌿 Branches</h2>
-            <p>Les branches permettent de développer des fonctionnalités en parallèle.</p>
+            <h2 id="branches">{{ trans('app.formations.git.branches_title') }}</h2>
+            <p>{{ trans('app.formations.git.branches_text') }}</p>
 
             <div class="example-box">
                 <div class="code-box">
@@ -604,8 +601,8 @@
                 </div>
             </div>
 
-            <h2 id="merge">🔀 Merge</h2>
-            <p>Fusionnez les modifications d'une branche dans une autre.</p>
+            <h2 id="merge">{{ trans('app.formations.git.merge_title') }}</h2>
+            <p>{{ trans('app.formations.git.merge_text') }}</p>
 
             <div class="example-box">
                 <div class="code-box">
@@ -620,8 +617,8 @@
                 </div>
             </div>
 
-            <h2 id="remote">🌐 Remote</h2>
-            <p>Connectez votre dépôt local à un dépôt distant (GitHub, GitLab).</p>
+            <h2 id="remote">{{ trans('app.formations.git.remote_title') }}</h2>
+            <p>{{ trans('app.formations.git.remote_text') }}</p>
 
             <div class="example-box">
                 <div class="code-box">
@@ -634,8 +631,8 @@
                 </div>
             </div>
 
-            <h2 id="push">⬆️ Push & Pull</h2>
-            <p>Envoyez et récupérez des modifications depuis le dépôt distant.</p>
+            <h2 id="push">{{ trans('app.formations.git.push_title') }}</h2>
+            <p>{{ trans('app.formations.git.push_text') }}</p>
 
             <div class="example-box">
                 <div class="code-box">
@@ -650,8 +647,8 @@
                 </div>
             </div>
 
-            <h2 id="clone">📥 Clone</h2>
-            <p>Clonez un dépôt existant sur votre machine.</p>
+            <h2 id="clone">{{ trans('app.formations.git.clone_title') }}</h2>
+            <p>{{ trans('app.formations.git.clone_text') }}</p>
 
             <div class="example-box">
                 <div class="code-box">
@@ -664,11 +661,11 @@
                 </div>
             </div>
 
-            <h2 id="github">🐙 GitHub</h2>
-            <p>GitHub est la plateforme d'hébergement Git la plus populaire.</p>
+            <h2 id="github">{{ trans('app.formations.git.github_title') }}</h2>
+            <p>{{ trans('app.formations.git.github_text') }}</p>
 
             <div class="example-box">
-                <h3>Workflow typique</h3>
+                <h3>{{ trans('app.formations.git.github_workflow_title') }}</h3>
                 <div class="code-box">
                     <code>
                         <span class="code-comment"># 1. Cloner le projet</span><br>
@@ -685,29 +682,27 @@
                 </div>
             </div>
 
-            <h2>🎓 Commandes essentielles</h2>
-            <p>Récapitulatif des commandes Git les plus utilisées.</p>
+            <h2>{{ trans('app.formations.git.commands_title') }}</h2>
+            <p>{{ trans('app.formations.git.commands_text') }}</p>
             
             <div class="example-box" style="background-color: #d4edda; border-left-color: #28a745;">
-                <h3 style="color: #000;">✅ Commandes à connaître :</h3>
+                <h3 style="color: #000;">{{ trans('app.formations.git.commands_learned_title') }}</h3>
                 <ul style="margin-left: 20px; line-height: 2; color: #000;">
-                    <li><code>git init</code> - Initialiser un dépôt</li>
-                    <li><code>git status</code> - Voir l'état des fichiers</li>
-                    <li><code>git add</code> - Ajouter à la zone de staging</li>
-                    <li><code>git commit -m</code> - Créer un commit</li>
-                    <li><code>git branch</code> - Gérer les branches</li>
-                    <li><code>git checkout</code> - Changer de branche</li>
-                    <li><code>git merge</code> - Fusionner des branches</li>
-                    <li><code>git push</code> - Envoyer vers le distant</li>
-                    <li><code>git pull</code> - Récupérer du distant</li>
-                    <li><code>git clone</code> - Cloner un dépôt</li>
+                    @foreach(trans('app.formations.git.commands_learned_items') as $item)
+                    @php
+                        $parts = explode(' - ', $item);
+                        $command = $parts[0] ?? '';
+                        $description = $parts[1] ?? '';
+                    @endphp
+                    <li><code>{{ $command }}</code>@if($description) - {{ $description }}@endif</li>
+                    @endforeach
                 </ul>
             </div>
 
             <!-- Navigation Buttons -->
             <div class="nav-buttons">
-                <a href="{{ route('formations.php') }}" class="nav-btn">❮ Précédent: PHP</a>
-                <a href="{{ route('formations.wordpress') }}" class="nav-btn">Suivant: WordPress ❯</a>
+                <a href="{{ route('formations.php') }}" class="nav-btn">{{ trans('app.formations.git.nav_previous') }}</a>
+                <a href="{{ route('formations.wordpress') }}" class="nav-btn">{{ trans('app.formations.git.nav_next') }}</a>
             </div>
         </main>
     </div>

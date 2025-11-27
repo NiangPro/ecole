@@ -1108,8 +1108,11 @@
             const currentLang = document.body.getAttribute('lang') || 'fr';
             const newLang = currentLang === 'fr' ? 'en' : 'fr';
             
-            // Rediriger vers la route de changement de langue
-            window.location.href = '{{ route("language.set", ":locale") }}'.replace(':locale', newLang);
+            // Récupérer l'URL actuelle
+            const currentUrl = window.location.pathname + window.location.search;
+            
+            // Rediriger vers la route de changement de langue avec l'URL actuelle en paramètre
+            window.location.href = '{{ route("language.set", ":locale") }}'.replace(':locale', newLang) + '?redirect=' + encodeURIComponent(currentUrl);
         }
         
         function toggleWhatsApp() {
