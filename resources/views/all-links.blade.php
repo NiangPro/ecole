@@ -25,7 +25,8 @@
     }
     
     body.dark-mode {
-        background: #ffffff !important;
+        background: #0a0a0f !important;
+        color: #e5e7eb !important;
     }
     
     .links-hero {
@@ -34,6 +35,11 @@
         padding: 60px 20px 40px;
         text-align: center;
         margin-bottom: 40px;
+    }
+    
+    body.dark-mode .links-hero {
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(20, 184, 166, 0.15) 100%);
+        border-bottom-color: rgba(6, 182, 212, 0.4);
     }
     
     .links-hero h1 {
@@ -46,6 +52,13 @@
         margin-bottom: 15px;
     }
     
+    body.dark-mode .links-hero h1 {
+        background: linear-gradient(135deg, #06b6d4 0%, #14b8a6 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
     .links-hero p {
         font-size: 1.1rem;
         color: rgba(0, 0, 0, 0.7);
@@ -54,7 +67,7 @@
     }
     
     body.dark-mode .links-hero p {
-        color: rgba(255, 255, 255, 0.8);
+        color: rgba(255, 255, 255, 0.9);
     }
     
     .links-container {
@@ -79,6 +92,11 @@
         gap: 10px;
     }
     
+    body.dark-mode .section-title {
+        color: #06b6d4;
+        border-bottom-color: rgba(6, 182, 212, 0.6);
+    }
+    
     .links-group {
         background: #ffffff;
         border: 2px solid rgba(6, 182, 212, 0.2);
@@ -89,9 +107,20 @@
         transition: all 0.3s ease;
     }
     
+    body.dark-mode .links-group {
+        background: rgba(15, 23, 42, 0.8);
+        border-color: rgba(6, 182, 212, 0.4);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+    
     .links-group:hover {
         box-shadow: 0 8px 24px rgba(6, 182, 212, 0.15);
         transform: translateY(-2px);
+    }
+    
+    body.dark-mode .links-group:hover {
+        box-shadow: 0 8px 24px rgba(6, 182, 212, 0.3);
+        border-color: rgba(6, 182, 212, 0.6);
     }
     
     .links-group h3 {
@@ -105,7 +134,7 @@
     }
     
     body.dark-mode .links-group h3 {
-        color: #fff;
+        color: #ffffff;
     }
     
     .link-item {
@@ -121,10 +150,20 @@
         gap: 15px;
     }
     
+    body.dark-mode .link-item {
+        background: rgba(6, 182, 212, 0.1);
+        border-left-color: rgba(6, 182, 212, 0.6);
+    }
+    
     .link-item:hover {
         transform: translateX(5px);
         box-shadow: 0 4px 12px rgba(6, 182, 212, 0.2);
         background: rgba(6, 182, 212, 0.1);
+    }
+    
+    body.dark-mode .link-item:hover {
+        background: rgba(6, 182, 212, 0.2);
+        box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
     }
     
     .link-url {
@@ -173,6 +212,11 @@
         margin-top: 40px;
     }
     
+    body.dark-mode .copy-all-section {
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(20, 184, 166, 0.15) 100%);
+        border-color: rgba(6, 182, 212, 0.5);
+    }
+    
     .copy-all-section h2 {
         font-size: 1.5em;
         font-weight: 700;
@@ -181,6 +225,10 @@
         display: flex;
         align-items: center;
         gap: 10px;
+    }
+    
+    body.dark-mode .copy-all-section h2 {
+        color: #06b6d4;
     }
     
     .all-links-textarea {
@@ -199,8 +247,8 @@
     }
     
     body.dark-mode .all-links-textarea {
-        background: #1a1a1a;
-        color: #fff;
+        background: rgba(15, 23, 42, 0.9);
+        color: #e2e8f0;
         border-color: rgba(6, 182, 212, 0.5);
     }
     

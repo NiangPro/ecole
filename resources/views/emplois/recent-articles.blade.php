@@ -25,7 +25,8 @@
     }
     
     body.dark-mode {
-        background: #ffffff !important;
+        background: #0a0a0f !important;
+        color: #e5e7eb !important;
     }
     
     .recent-articles-hero {
@@ -72,11 +73,20 @@
         text-align: center;
     }
     
+    body.dark-mode .articles-intro {
+        background: rgba(6, 182, 212, 0.1);
+        border-color: rgba(6, 182, 212, 0.4);
+    }
+    
     .articles-intro h2 {
         font-size: 1.5rem;
         font-weight: 700;
         color: #06b6d4;
         margin-bottom: 15px;
+    }
+    
+    body.dark-mode .articles-intro h2 {
+        color: #06b6d4;
     }
     
     .articles-intro p {
@@ -86,7 +96,7 @@
     }
     
     body.dark-mode .articles-intro p {
-        color: rgba(255, 255, 255, 0.8);
+        color: rgba(255, 255, 255, 0.9);
     }
     
     .articles-list {
@@ -105,7 +115,13 @@
     }
     
     body.dark-mode .article-card {
-        background: rgba(15, 23, 42, 0.6);
+        background: rgba(15, 23, 42, 0.8);
+        border-color: rgba(6, 182, 212, 0.4);
+    }
+    
+    body.dark-mode .article-card:hover {
+        border-color: rgba(6, 182, 212, 0.6);
+        box-shadow: 0 10px 30px rgba(6, 182, 212, 0.3);
     }
     
     .article-card::before {
@@ -148,6 +164,10 @@
         font-size: 1.2rem;
         color: #000;
         flex-shrink: 0;
+    }
+    
+    body.dark-mode .article-number {
+        color: #ffffff;
     }
     
     .article-content {
@@ -249,6 +269,12 @@
         border: 1px solid rgba(34, 197, 94, 0.3);
     }
     
+    body.dark-mode .seo-badge {
+        background: rgba(34, 197, 94, 0.2);
+        color: #4ade80;
+        border-color: rgba(34, 197, 94, 0.5);
+    }
+    
     .copy-btn {
         padding: 8px 16px;
         background: rgba(6, 182, 212, 0.1);
@@ -265,10 +291,21 @@
         margin-top: 10px;
     }
     
+    body.dark-mode .copy-btn {
+        background: rgba(6, 182, 212, 0.2);
+        border-color: rgba(6, 182, 212, 0.5);
+        color: #06b6d4;
+    }
+    
     .copy-btn:hover {
         background: rgba(6, 182, 212, 0.2);
         border-color: rgba(6, 182, 212, 0.5);
         transform: translateY(-2px);
+    }
+    
+    body.dark-mode .copy-btn:hover {
+        background: rgba(6, 182, 212, 0.3);
+        border-color: rgba(6, 182, 212, 0.7);
     }
     
     .copy-btn i {
@@ -284,6 +321,11 @@
         text-align: center;
     }
     
+    body.dark-mode .seo-info-box {
+        background: rgba(6, 182, 212, 0.1);
+        border-color: rgba(6, 182, 212, 0.4);
+    }
+    
     .seo-info-box h3 {
         font-size: 1.2rem;
         font-weight: 700;
@@ -295,6 +337,10 @@
         gap: 10px;
     }
     
+    body.dark-mode .seo-info-box h3 {
+        color: #06b6d4;
+    }
+    
     .seo-info-box p {
         color: rgba(0, 0, 0, 0.7);
         line-height: 1.8;
@@ -302,7 +348,15 @@
     }
     
     body.dark-mode .seo-info-box p {
-        color: rgba(255, 255, 255, 0.7);
+        color: rgba(255, 255, 255, 0.9);
+    }
+    
+    body.dark-mode .empty-state {
+        color: rgba(255, 255, 255, 0.6) !important;
+    }
+    
+    body.dark-mode .empty-state p {
+        color: rgba(255, 255, 255, 0.8) !important;
     }
     
     @media (max-width: 768px) {
@@ -347,6 +401,9 @@
     
     <!-- Articles List -->
     <div class="articles-list">
+        @php
+            $productionUrl = 'https://www.niangprogrammeur.com';
+        @endphp
         @forelse($recentArticles as $index => $article)
         <article class="article-card" itemscope itemtype="https://schema.org/Article">
             <div class="article-header">
@@ -361,13 +418,16 @@
                     </h2>
                     
                     <div class="article-url">
+                        @php
+                            $articleUrl = $productionUrl . '/emplois/article/' . $article->slug;
+                        @endphp
                         <a href="{{ route('emplois.article', $article->slug) }}" 
                            target="_blank"
                            rel="noopener noreferrer"
                            itemprop="url"
                            title="Ouvrir l'article dans un nouvel onglet">
                             <i class="fas fa-external-link-alt"></i>
-                            {{ url('/emplois/article/' . $article->slug) }}
+                            {{ $articleUrl }}
                         </a>
                     </div>
                     
@@ -405,7 +465,7 @@
                     @endif
                     
                     <button class="copy-btn" 
-                            onclick="copyToClipboard('{{ url('/emplois/article/' . $article->slug) }}', {{ $index + 1 }})"
+                            onclick="copyToClipboard('{{ $articleUrl }}', {{ $index + 1 }})"
                             title="Copier l'URL de l'article">
                         <i class="fas fa-copy"></i>
                         Copier l'URL
@@ -421,7 +481,7 @@
             @endif
         </article>
         @empty
-        <div style="text-align: center; padding: 60px 20px; color: rgba(0, 0, 0, 0.5);">
+        <div class="empty-state" style="text-align: center; padding: 60px 20px; color: rgba(0, 0, 0, 0.5);">
             <i class="fas fa-newspaper" style="font-size: 4rem; margin-bottom: 20px; opacity: 0.5;"></i>
             <p style="font-size: 1.2rem;">Aucun article publié pour le moment</p>
         </div>
