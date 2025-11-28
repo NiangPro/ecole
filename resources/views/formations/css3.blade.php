@@ -20,12 +20,92 @@
         height: 100%;
     }
     .tutorial-header {
-        background-color: #1E90FF;
+        position: relative;
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.9) 100%),
+                    url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2072&q=80') center/cover no-repeat;
+        background-attachment: fixed;
         color: white;
-        padding: 80px 20px 40px;
+        padding: 120px 20px 80px;
         text-align: center;
         width: 100%;
         margin: 0;
+        overflow: hidden;
+        min-height: 50vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .tutorial-header::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            radial-gradient(circle at 20% 30%, rgba(30, 144, 255, 0.2) 0%, transparent 50%),
+            radial-gradient(circle at 80% 70%, rgba(30, 144, 255, 0.15) 0%, transparent 50%);
+        pointer-events: none;
+    }
+    
+    .tutorial-header::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('data:image/svg+xml,<svg width="60" height="60" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse"><path d="M 60 0 L 0 0 0 60" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="60" height="60" fill="url(%23grid)"/></svg>');
+        opacity: 0.4;
+        pointer-events: none;
+    }
+    
+    .tutorial-header-content {
+        position: relative;
+        z-index: 2;
+        max-width: 1200px;
+        margin: 0 auto;
+        width: 100%;
+    }
+    
+    .tutorial-header h1 {
+        font-size: clamp(2.5rem, 6vw, 4.5rem);
+        font-weight: 800;
+        margin-bottom: 20px;
+        text-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        animation: fadeInUp 0.8s ease;
+        letter-spacing: -0.02em;
+        line-height: 1.1;
+    }
+    
+    .tutorial-header p {
+        font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+        color: rgba(255, 255, 255, 0.95);
+        margin-bottom: 0;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        animation: fadeInUp 1s ease;
+        line-height: 1.6;
+        max-width: 800px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    body.dark-mode .tutorial-header {
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.9) 0%, rgba(30, 41, 59, 0.95) 100%),
+                    url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2072&q=80') center/cover no-repeat;
+        background-attachment: fixed;
     }
     .tutorial-content {
         max-width: 1400px;
@@ -439,14 +519,107 @@
             left: 15px;
         }
     }
+    
+    /* Dark Mode Styles */
+    body.dark-mode {
+        background-color: #0a0a0f !important;
+        color: #e5e7eb !important;
+    }
+    
+    body.dark-mode .tutorial-content {
+        background: #0a0a0f;
+    }
+    
+    body.dark-mode .sidebar {
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.9) 100%);
+        border-color: rgba(30, 144, 255, 0.3);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+    
+    body.dark-mode .sidebar h3 {
+        color: #1E90FF;
+        border-bottom-color: rgba(30, 144, 255, 0.3);
+    }
+    
+    body.dark-mode .sidebar a {
+        color: rgba(255, 255, 255, 0.8);
+    }
+    
+    body.dark-mode .sidebar a:hover {
+        background: linear-gradient(135deg, rgba(30, 144, 255, 0.2) 0%, rgba(30, 144, 255, 0.1) 100%);
+        color: #1E90FF;
+    }
+    
+    body.dark-mode .sidebar a.active::before {
+        background: rgba(255, 255, 255, 0.2);
+    }
+    
+    body.dark-mode .main-content {
+        background: rgba(15, 23, 42, 0.5);
+    }
+    
+    body.dark-mode .main-content h1,
+    body.dark-mode .main-content h2,
+    body.dark-mode .main-content h3 {
+        color: #ffffff !important;
+    }
+    
+    body.dark-mode .main-content p {
+        color: rgba(255, 255, 255, 0.9) !important;
+    }
+    
+    body.dark-mode .main-content ul,
+    body.dark-mode .main-content ol {
+        color: rgba(255, 255, 255, 0.9) !important;
+    }
+    
+    body.dark-mode .main-content li {
+        color: rgba(255, 255, 255, 0.9) !important;
+    }
+    
+    body.dark-mode .example-box {
+        background-color: rgba(30, 41, 59, 0.8);
+        border-left-color: #1E90FF;
+    }
+    
+    body.dark-mode .example-box h3 {
+        color: #ffffff !important;
+    }
+    
+    body.dark-mode .example-box p {
+        color: rgba(255, 255, 255, 0.9) !important;
+    }
+    
+    body.dark-mode .note-box {
+        background-color: rgba(251, 191, 36, 0.15);
+        border-left-color: #fbbf24;
+    }
+    
+    body.dark-mode .note-box p {
+        color: rgba(255, 255, 255, 0.9) !important;
+    }
+    
+    body.dark-mode .nav-buttons {
+        border-top-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    body.dark-mode [style*="color: #000"],
+    body.dark-mode [style*="color:#000"] {
+        color: rgba(255, 255, 255, 0.9) !important;
+    }
 </style>
 @endsection
 
 @section('content')
-<!-- Header -->
+<!-- Hero Section -->
 <div class="tutorial-header">
-    <h1 style="font-size: 48px; margin-bottom: 10px;">{{ trans('app.formations.css3.title') }}</h1>
-    <p style="font-size: 20px;">{{ trans('app.formations.css3.subtitle') }}</p>
+    <div class="tutorial-header-content">
+        <h1>
+            <i class="fab fa-css3-alt" style="margin-right: 15px;"></i>
+            {{ trans('app.formations.css3.title') }}
+        </h1>
+        <p>{{ trans('app.formations.css3.subtitle') }}</p>
+    </div>
 </div>
 
 <!-- Content -->
