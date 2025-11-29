@@ -377,10 +377,10 @@
                         <p class="font-semibold">Création d'un utilisateur</p>
                         <p class="text-sm text-gray-400">Hier à 15:30</p>
                     </div>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 </div>
 @endsection

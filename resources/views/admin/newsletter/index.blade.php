@@ -227,69 +227,69 @@
     <div>
         <h3 class="text-3xl font-bold mb-2 flex items-center gap-3">
             <i class="fas fa-envelope-open-text text-cyan-400"></i>
-            Gestion Newsletter
-        </h3>
-        <p class="text-gray-400">Gérez vos abonnés à la newsletter</p>
-    </div>
+        Gestion Newsletter
+    </h3>
+    <p class="text-gray-400">Gérez vos abonnés à la newsletter</p>
+</div>
 </div>
 
-@if(session('success'))
+            @if(session('success'))
     <div class="mb-4 p-4 bg-green-500/20 border border-green-500/50 rounded-lg text-green-400 flex items-center gap-2">
         <i class="fas fa-check-circle"></i>
         {{ session('success') }}
-    </div>
-@endif
+            </div>
+            @endif
 
-@if(session('error'))
+            @if(session('error'))
     <div class="mb-4 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400 flex items-center gap-2">
         <i class="fas fa-exclamation-circle"></i>
         {{ session('error') }}
-    </div>
-@endif
+            </div>
+            @endif
 
-<!-- Statistiques -->
+            <!-- Statistiques -->
 <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
     <div class="stat-card">
         <div class="stat-card-content">
             <div class="flex items-center justify-between mb-3">
-                <div>
-                    <p class="text-gray-400 text-sm mb-1">Total Abonnés</p>
+                        <div>
+                            <p class="text-gray-400 text-sm mb-1">Total Abonnés</p>
                     <p class="text-3xl font-bold text-cyan-400">{{ $totalAll }}</p>
+                        </div>
+                        <div class="w-16 h-16 bg-cyan-500/20 rounded-full flex items-center justify-center">
+                            <i class="fas fa-users text-3xl text-cyan-400"></i>
                 </div>
-                <div class="w-16 h-16 bg-cyan-500/20 rounded-full flex items-center justify-center">
-                    <i class="fas fa-users text-3xl text-cyan-400"></i>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </div>
 
     <div class="stat-card" style="background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(16, 185, 129, 0.1)); border-color: rgba(34, 197, 94, 0.3);">
         <div class="stat-card-content">
             <div class="flex items-center justify-between mb-3">
-                <div>
-                    <p class="text-gray-400 text-sm mb-1">Actifs</p>
-                    <p class="text-3xl font-bold text-green-400">{{ $totalSubscribers }}</p>
+                        <div>
+                            <p class="text-gray-400 text-sm mb-1">Actifs</p>
+                            <p class="text-3xl font-bold text-green-400">{{ $totalSubscribers }}</p>
+                        </div>
+                        <div class="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center">
+                            <i class="fas fa-check-circle text-3xl text-green-400"></i>
                 </div>
-                <div class="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center">
-                    <i class="fas fa-check-circle text-3xl text-green-400"></i>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </div>
 
     <div class="stat-card" style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(245, 101, 101, 0.1)); border-color: rgba(239, 68, 68, 0.3);">
         <div class="stat-card-content">
             <div class="flex items-center justify-between mb-3">
-                <div>
-                    <p class="text-gray-400 text-sm mb-1">Inactifs</p>
-                    <p class="text-3xl font-bold text-red-400">{{ $totalInactive }}</p>
-                </div>
-                <div class="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center">
-                    <i class="fas fa-times-circle text-3xl text-red-400"></i>
+                        <div>
+                            <p class="text-gray-400 text-sm mb-1">Inactifs</p>
+                            <p class="text-3xl font-bold text-red-400">{{ $totalInactive }}</p>
+                        </div>
+                        <div class="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center">
+                            <i class="fas fa-times-circle text-3xl text-red-400"></i>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
 
     <div class="stat-card" style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(147, 51, 234, 0.1)); border-color: rgba(168, 85, 247, 0.3);">
         <div class="stat-card-content">
@@ -384,12 +384,12 @@
                 <button type="button" onclick="applyBulkAction()" class="px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-black font-semibold rounded-lg transition">
                     Appliquer
                 </button>
+                </div>
             </div>
-        </div>
-        
-        <!-- Table -->
-        <div class="overflow-x-auto">
-            <table class="w-full">
+
+            <!-- Table -->
+                <div class="overflow-x-auto">
+                    <table class="w-full">
                 <thead>
                     <tr class="border-b border-cyan-500/20">
                         <th class="text-left p-4 text-cyan-400">
@@ -400,80 +400,80 @@
                         <th class="text-left p-4 text-cyan-400">Date d'abonnement</th>
                         <th class="text-left p-4 text-cyan-400">Statut</th>
                         <th class="text-right p-4 text-cyan-400">Actions</th>
-                    </tr>
-                </thead>
+                            </tr>
+                        </thead>
                 <tbody>
-                    @forelse($subscribers as $subscriber)
+                            @forelse($subscribers as $subscriber)
                     <tr class="border-b border-cyan-500/10 table-row-hover transition">
                         <td class="p-4">
                             <input type="checkbox" name="ids[]" value="{{ $subscriber->id }}" class="checkbox-admin row-checkbox">
                         </td>
                         <td class="p-4">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 bg-cyan-500/20 rounded-full flex items-center justify-center">
-                                    <i class="fas fa-envelope text-cyan-400"></i>
-                                </div>
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 bg-cyan-500/20 rounded-full flex items-center justify-center">
+                                            <i class="fas fa-envelope text-cyan-400"></i>
+                                        </div>
                                 <span class="text-white font-medium">{{ $subscriber->email }}</span>
-                            </div>
-                        </td>
+                                    </div>
+                                </td>
                         <td class="p-4 text-gray-400">
                             {{ $subscriber->created_at->format('d/m/Y à H:i') }}
                         </td>
                         <td class="p-4 text-gray-400">
                             {{ $subscriber->subscribed_at ? $subscriber->subscribed_at->format('d/m/Y à H:i') : '-' }}
-                        </td>
+                                </td>
                         <td class="p-4">
-                            @if($subscriber->is_active)
+                                    @if($subscriber->is_active)
                                 <span class="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-sm font-semibold flex items-center gap-1 w-fit">
                                     <i class="fas fa-check-circle"></i>
                                     Actif
-                                </span>
-                            @else
+                                        </span>
+                                    @else
                                 <span class="px-3 py-1 bg-red-500/20 text-red-400 rounded-full text-sm font-semibold flex items-center gap-1 w-fit">
                                     <i class="fas fa-times-circle"></i>
                                     Inactif
-                                </span>
-                            @endif
-                        </td>
+                                        </span>
+                                    @endif
+                                </td>
                         <td class="p-4">
                             <div class="flex justify-end gap-2">
-                                <form action="{{ route('admin.newsletter.toggle', $subscriber->id) }}" method="POST" class="inline">
-                                    @csrf
+                                        <form action="{{ route('admin.newsletter.toggle', $subscriber->id) }}" method="POST" class="inline">
+                                            @csrf
                                     <button type="submit" class="px-3 py-1 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 rounded transition" title="{{ $subscriber->is_active ? 'Désactiver' : 'Activer' }}">
                                         <i class="fas fa-sync-alt"></i>
-                                    </button>
-                                </form>
-                                <form action="{{ route('admin.newsletter.destroy', $subscriber->id) }}" method="POST" class="inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet abonné ?')">
-                                    @csrf
-                                    @method('DELETE')
+                                            </button>
+                                        </form>
+                                        <form action="{{ route('admin.newsletter.destroy', $subscriber->id) }}" method="POST" class="inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet abonné ?')">
+                                            @csrf
+                                            @method('DELETE')
                                     <button type="submit" class="px-3 py-1 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded transition" title="Supprimer">
                                         <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            @empty
+                            <tr>
                         <td colspan="6" class="p-12 text-center text-gray-400">
-                            <i class="fas fa-inbox text-5xl mb-4 block"></i>
+                                    <i class="fas fa-inbox text-5xl mb-4 block"></i>
                             <p class="text-lg">Aucun abonné trouvé</p>
                             @if(request()->hasAny(['search', 'status']))
                                 <p class="text-sm mt-2">Essayez de modifier vos filtres de recherche</p>
                             @endif
-                        </td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-        
-        <!-- Pagination -->
-        @if($subscribers->hasPages())
+                                </td>
+                            </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                @if($subscribers->hasPages())
         <div class="mt-6 pt-6 border-t border-cyan-500/20">
-            {{ $subscribers->links() }}
-        </div>
-        @endif
+                    {{ $subscribers->links() }}
+                </div>
+                @endif
     </div>
 </form>
 
@@ -518,5 +518,5 @@ document.querySelectorAll('.row-checkbox').forEach(checkbox => {
     });
     });
 </script>
-</div>
+            </div>
 @endsection

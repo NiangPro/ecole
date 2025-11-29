@@ -142,50 +142,50 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
                 <label class="block text-gray-300 mb-2 text-sm font-semibold">Recherche</label>
-                <input type="text" name="search" value="{{ $search }}" 
-                       placeholder="Rechercher par nom, email ou téléphone..." 
+            <input type="text" name="search" value="{{ $search }}" 
+                   placeholder="Rechercher par nom, email ou téléphone..." 
                        class="input-admin w-full">
             </div>
             <div>
                 <label class="block text-gray-300 mb-2 text-sm font-semibold">Rôle</label>
                 <select name="role" class="input-admin w-full">
-                    <option value="">Tous les rôles</option>
-                    <option value="admin" {{ $role == 'admin' ? 'selected' : '' }}>Admin</option>
-                    <option value="user" {{ $role == 'user' ? 'selected' : '' }}>Utilisateur</option>
-                </select>
+                <option value="">Tous les rôles</option>
+                <option value="admin" {{ $role == 'admin' ? 'selected' : '' }}>Admin</option>
+                <option value="user" {{ $role == 'user' ? 'selected' : '' }}>Utilisateur</option>
+            </select>
             </div>
             <div>
                 <label class="block text-gray-300 mb-2 text-sm font-semibold">Statut</label>
                 <select name="status" class="input-admin w-full">
-                    <option value="">Tous les statuts</option>
-                    <option value="active" {{ $status == 'active' ? 'selected' : '' }}>Actifs</option>
-                    <option value="inactive" {{ $status == 'inactive' ? 'selected' : '' }}>Inactifs</option>
-                </select>
+                <option value="">Tous les statuts</option>
+                <option value="active" {{ $status == 'active' ? 'selected' : '' }}>Actifs</option>
+                <option value="inactive" {{ $status == 'inactive' ? 'selected' : '' }}>Inactifs</option>
+            </select>
             </div>
             <div>
                 <label class="block text-gray-300 mb-2 text-sm font-semibold">Trier par</label>
                 <select name="sort" class="input-admin w-full">
-                    <option value="created_at" {{ $sortBy == 'created_at' ? 'selected' : '' }}>Date d'inscription</option>
-                    <option value="name" {{ $sortBy == 'name' ? 'selected' : '' }}>Nom</option>
-                    <option value="email" {{ $sortBy == 'email' ? 'selected' : '' }}>Email</option>
-                </select>
+                <option value="created_at" {{ $sortBy == 'created_at' ? 'selected' : '' }}>Date d'inscription</option>
+                <option value="name" {{ $sortBy == 'name' ? 'selected' : '' }}>Nom</option>
+                <option value="email" {{ $sortBy == 'email' ? 'selected' : '' }}>Email</option>
+            </select>
             </div>
             <div>
                 <label class="block text-gray-300 mb-2 text-sm font-semibold">Ordre</label>
                 <select name="order" class="input-admin w-full">
-                    <option value="desc" {{ $sortOrder == 'desc' ? 'selected' : '' }}>Décroissant</option>
-                    <option value="asc" {{ $sortOrder == 'asc' ? 'selected' : '' }}>Croissant</option>
-                </select>
+                <option value="desc" {{ $sortOrder == 'desc' ? 'selected' : '' }}>Décroissant</option>
+                <option value="asc" {{ $sortOrder == 'asc' ? 'selected' : '' }}>Croissant</option>
+            </select>
             </div>
             <div class="flex items-end gap-2">
                 <button type="submit" class="btn-primary flex-1">
-                    <i class="fas fa-search mr-2"></i>Rechercher
-                </button>
-                @if($search || $role || $status)
+                <i class="fas fa-search mr-2"></i>Rechercher
+            </button>
+            @if($search || $role || $status)
                 <a href="{{ route('admin.users') }}" class="px-4 py-3 bg-gray-600 hover:bg-gray-700 rounded-lg font-semibold transition">
                     <i class="fas fa-times"></i>
-                </a>
-                @endif
+            </a>
+            @endif
             </div>
         </div>
     </form>
@@ -277,6 +277,6 @@
         {{ $users->links() }}
     </div>
     @endif
-</div>
+    </div>
 </div>
 @endsection

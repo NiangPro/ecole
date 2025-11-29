@@ -290,8 +290,8 @@
                 Votre site doit être optimisé pour mobile. Assurez-vous que tous les contenus sont accessibles sur tous les appareils.
             </p>
         </div>
+        </div>
     </div>
-</div>
 </div>
 @endsection
 

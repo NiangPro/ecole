@@ -607,8 +607,8 @@
             <p class="text-gray-400 text-center py-8">Aucune donnée</p>
             @endforelse
         </div>
+        </div>
     </div>
-</div>
 </div>
 
 <style>
@@ -645,33 +645,33 @@
         const visitsChartElement = document.getElementById('visitsChart');
         if (!visitsChartElement) return;
         
-        // Graphique principal
+    // Graphique principal
         const ctx = visitsChartElement.getContext('2d');
-        const dailyStats = @json($dailyStats);
-        const filter = '{{ $filter }}';
+    const dailyStats = @json($dailyStats);
+    const filter = '{{ $filter }}';
+    
+    let labels, data;
+    
+    if (filter === 'year') {
+        // Graphique mensuel
+        const monthNames = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
+        const monthlyData = new Array(12).fill(0);
         
-        let labels, data;
+        dailyStats.forEach(stat => {
+            monthlyData[stat.month - 1] = stat.visits;
+        });
         
-        if (filter === 'year') {
-            // Graphique mensuel
-            const monthNames = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
-            const monthlyData = new Array(12).fill(0);
-            
-            dailyStats.forEach(stat => {
-                monthlyData[stat.month - 1] = stat.visits;
-            });
-            
-            labels = monthNames;
-            data = monthlyData;
-        } else {
-            // Graphique quotidien
-            labels = dailyStats.map(stat => {
-                const date = new Date(stat.date);
-                return date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' });
-            });
-            data = dailyStats.map(stat => stat.visits);
-        }
-        
+        labels = monthNames;
+        data = monthlyData;
+    } else {
+        // Graphique quotidien
+        labels = dailyStats.map(stat => {
+            const date = new Date(stat.date);
+            return date.toLocaleDateString('fr-FR', { day: '2-digit', month: 'short' });
+        });
+        data = dailyStats.map(stat => stat.visits);
+    }
+    
         // Détecter le mode clair/sombre
         const isLightMode = document.body && document.body.classList.contains('light-mode');
     const textColor = isLightMode ? '#64748b' : '#9ca3af';
@@ -739,9 +739,9 @@
         }
     });
     
-        // Graphique hebdomadaire du mois actuel
-        const weeklyCtx = document.getElementById('weeklyChart');
-        if (weeklyCtx) {
+    // Graphique hebdomadaire du mois actuel
+    const weeklyCtx = document.getElementById('weeklyChart');
+    if (weeklyCtx) {
         const weeklyStats = @json($weeklyStats);
         const weeklyLabels = weeklyStats.map(stat => stat.label);
         const weeklyData = weeklyStats.map(stat => stat.visits);

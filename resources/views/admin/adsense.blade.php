@@ -214,8 +214,8 @@
                     <span class="px-3 py-1 bg-gray-500/20 text-gray-400 rounded-full text-xs">Aucune</span>
                 @endif
             </div>
+            </div>
         </div>
     </div>
-</div>
 </div>
 @endsection

@@ -4,8 +4,136 @@
 @section('meta_description', 'Découvrez l\'histoire de Bassirou Niang, développeur Full-Stack et formateur passionné. Plus de 5 ans d\'expérience chez Sunucode, spécialisé en Laravel, React et Vue.js.')
 @section('meta_keywords', 'Bassirou Niang, NiangProgrammeur, développeur full-stack, formateur développement web, Sunucode, Laravel expert, React Vue.js')
 
-@section('styles')
+@push('styles')
 <style>
+    /* CSS Critique pour éviter le FOUC - Section Hero About */
+    section.relative.min-h-screen {
+        position: relative;
+        min-height: 100vh;
+        background: #000;
+        padding-top: 5rem;
+        padding-bottom: 3rem;
+        overflow: hidden;
+    }
+    
+    section.relative.min-h-screen .absolute.inset-0 {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        opacity: 0.2;
+    }
+    
+    section.relative.min-h-screen .bg-cyan-500 {
+        background-color: #06b6d4;
+        border-radius: 9999px;
+        filter: blur(3rem);
+    }
+    
+    section.relative.min-h-screen .bg-teal-500 {
+        background-color: #14b8a6;
+        border-radius: 9999px;
+        filter: blur(3rem);
+    }
+    
+    section.relative.min-h-screen .container {
+        max-width: 1280px;
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        position: relative;
+        z-index: 10;
+    }
+    
+    section.relative.min-h-screen h1 {
+        font-size: clamp(2.25rem, 5vw, 4.5rem);
+        font-weight: 900;
+        margin-bottom: 1.5rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        color: #fff;
+        text-align: center;
+    }
+    
+    section.relative.min-h-screen .text-xl {
+        font-size: 1.25rem;
+        color: rgba(209, 213, 219, 1);
+        margin-bottom: 2rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        text-align: center;
+    }
+    
+    section.relative.min-h-screen .text-base {
+        font-size: 1rem;
+        color: rgba(156, 163, 175, 1);
+        max-width: 48rem;
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        text-align: center;
+    }
+    
+    section.relative.min-h-screen .gradient-text {
+        background: linear-gradient(135deg, #06b6d4, #14b8a6, #06b6d4);
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    section.relative.min-h-screen .text-cyan-400 {
+        color: #22d3ee;
+        font-weight: 700;
+    }
+    
+    @media (min-width: 640px) {
+        section.relative.min-h-screen {
+            padding-top: 6rem;
+            padding-bottom: 4rem;
+        }
+        
+        section.relative.min-h-screen h1 {
+            font-size: clamp(3rem, 5vw, 4.5rem);
+        }
+        
+        section.relative.min-h-screen .text-xl {
+            font-size: 1.5rem;
+        }
+        
+        section.relative.min-h-screen .text-base {
+            font-size: 1.125rem;
+        }
+    }
+    
+    @media (min-width: 768px) {
+        section.relative.min-h-screen {
+            padding-top: 8rem;
+            padding-bottom: 5rem;
+        }
+        
+        section.relative.min-h-screen h1 {
+            font-size: clamp(3.75rem, 5vw, 4.5rem);
+        }
+        
+        section.relative.min-h-screen .text-xl {
+            font-size: 1.875rem;
+        }
+        
+        section.relative.min-h-screen .text-base {
+            font-size: 1.25rem;
+        }
+    }
+    
+    @media (min-width: 1024px) {
+        section.relative.min-h-screen h1 {
+            font-size: 4.5rem;
+        }
+    }
+    
     body {
         overflow-x: hidden;
     }
@@ -668,9 +796,57 @@
         color: #14b8a6;
     }
     
+    @media (max-width: 968px) {
+        .modern-about-container {
+            grid-template-columns: 1fr;
+            gap: 40px;
+        }
+        
+        .avatar-section-modern {
+            position: relative;
+            top: 0;
+            display: flex;
+            justify-content: center;
+        }
+        
+        .avatar-image-modern {
+            width: 240px;
+            height: 240px;
+        }
+        
+        .avatar-glow {
+            width: 280px;
+            height: 280px;
+        }
+        
+        .title-modern {
+            font-size: 2.5rem;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .title-line {
+            width: 80px;
+        }
+        
+        .timeline-cards {
+            padding-left: 30px;
+        }
+        
+        .timeline-marker {
+            left: -20px;
+        }
+        
+        .contact-cards-modern {
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+    }
+    
     @media (max-width: 768px) {
         .modern-about-container {
             gap: 30px;
+            padding: 0 15px;
         }
         
         .avatar-section-modern {
@@ -679,8 +855,30 @@
         }
         
         .avatar-image-modern {
-            width: 220px;
-            height: 220px;
+            width: 200px;
+            height: 200px;
+        }
+        
+        .avatar-glow {
+            width: 240px;
+            height: 240px;
+        }
+        
+        .status-badge-modern {
+            width: 50px;
+            height: 50px;
+            bottom: 15px;
+            right: 15px;
+        }
+        
+        .status-badge-modern i {
+            font-size: 1.2rem;
+        }
+        
+        .float-element {
+            width: 40px;
+            height: 40px;
+            font-size: 1.2rem;
         }
         
         .title-modern {
@@ -690,15 +888,131 @@
         }
         
         .title-line {
-            width: 100px;
+            width: 60px;
+        }
+        
+        .badge-modern {
+            font-size: 0.85rem;
+            padding: 6px 16px;
         }
         
         .timeline-cards {
+            padding-left: 25px;
+        }
+        
+        .timeline-cards::before {
+            left: 12px;
+        }
+        
+        .timeline-marker {
+            left: -18px;
+            width: 16px;
+            height: 16px;
+        }
+        
+        .timeline-card {
             padding-left: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .timeline-content {
+            padding: 20px;
+            border-radius: 20px;
+        }
+        
+        .timeline-icon {
+            width: 50px;
+            height: 50px;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+        
+        .timeline-title {
+            font-size: 1.3rem;
+            margin-bottom: 12px;
+        }
+        
+        .timeline-text {
+            font-size: 0.95rem;
+            line-height: 1.7;
         }
         
         .contact-cards-modern {
             grid-template-columns: 1fr;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .contact-card-modern {
+            padding: 20px;
+            flex-direction: column;
+            text-align: center;
+            gap: 15px;
+        }
+        
+        .contact-icon-wrapper {
+            width: 50px;
+            height: 50px;
+            font-size: 1.3rem;
+        }
+        
+        .contact-info {
+            width: 100%;
+        }
+        
+        .contact-label {
+            font-size: 0.8rem;
+        }
+        
+        .contact-value {
+            font-size: 0.95rem;
+        }
+    }
+    
+    @media (max-width: 640px) {
+        .avatar-image-modern {
+            width: 180px;
+            height: 180px;
+        }
+        
+        .avatar-glow {
+            width: 220px;
+            height: 220px;
+        }
+        
+        .title-modern {
+            font-size: 1.75rem;
+        }
+        
+        .timeline-cards {
+            padding-left: 20px;
+        }
+        
+        .timeline-cards::before {
+            left: 10px;
+        }
+        
+        .timeline-marker {
+            left: -15px;
+            width: 14px;
+            height: 14px;
+        }
+        
+        .timeline-card {
+            padding-left: 25px;
+            margin-bottom: 25px;
+        }
+        
+        .timeline-content {
+            padding: 18px;
+        }
+        
+        .timeline-title {
+            font-size: 1.2rem;
+        }
+        
+        .timeline-text {
+            font-size: 0.9rem;
         }
     }
     
@@ -1889,33 +2203,33 @@
         color: rgba(30, 41, 59, 0.9) !important;
     }
 </style>
-@endsection
+@endpush
 
 @section('content')
 <!-- Hero Section -->
-<section class="relative min-h-screen bg-black pt-32 pb-20 overflow-hidden">
+<section class="relative min-h-screen bg-black pt-20 sm:pt-24 md:pt-32 pb-12 sm:pb-16 md:pb-20 overflow-hidden">
     <!-- Background Effects -->
     <div class="absolute inset-0 opacity-20">
         <div class="absolute top-20 left-10 w-72 h-72 bg-cyan-500 rounded-full filter blur-3xl"></div>
         <div class="absolute bottom-20 right-10 w-96 h-96 bg-teal-500 rounded-full filter blur-3xl"></div>
     </div>
     
-    <div class="container mx-auto px-6 relative z-10">
+    <div class="container mx-auto px-4 sm:px-6 relative z-10">
         <!-- Hero Content -->
-        <div class="max-w-5xl mx-auto text-center mb-20">
-            <h1 class="text-6xl md:text-7xl font-black mb-6">
+        <div class="max-w-5xl mx-auto text-center mb-12 sm:mb-16 md:mb-20">
+            <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-6 px-4">
                 Bonjour, C'est <span class="gradient-text">Bassirou Niang</span>
             </h1>
-            <p class="text-2xl md:text-3xl text-gray-300 mb-8">
+            <p class="text-xl sm:text-2xl md:text-3xl text-gray-300 mb-8 px-4">
                 Je suis <span class="text-cyan-400 font-bold">NiangProgrammeur</span>
             </p>
-            <p class="text-xl text-gray-400 max-w-3xl mx-auto">
+            <p class="text-base sm:text-lg md:text-xl text-gray-400 max-w-3xl mx-auto px-4">
                 Développeur Full-Stack & Formateur passionné
             </p>
         </div>
         
         <!-- Profile Card - Design Ultra Moderne -->
-        <div class="max-w-7xl mx-auto">
+        <div class="max-w-7xl mx-auto px-2 sm:px-0">
             <div class="modern-about-container">
                 <!-- Avatar Section avec effet Glassmorphism -->
                 <div class="avatar-section-modern">
@@ -2078,16 +2392,16 @@
         <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-teal-500 rounded-full filter blur-3xl"></div>
     </div>
     
-    <div class="container mx-auto px-6 relative z-10">
-        <div class="text-center mb-16">
-            <div class="inline-flex items-center gap-3 mb-4">
-                <div class="w-1 h-12 bg-gradient-to-b from-cyan-500 to-teal-500 rounded-full"></div>
-                <h2 class="text-5xl md:text-6xl font-black">
+    <div class="container mx-auto px-4 sm:px-6 relative z-10">
+        <div class="text-center mb-12 sm:mb-16 px-4">
+            <div class="inline-flex items-center gap-2 sm:gap-3 mb-4 flex-wrap justify-center">
+                <div class="w-1 h-8 sm:h-12 bg-gradient-to-b from-cyan-500 to-teal-500 rounded-full"></div>
+                <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black">
                     <span class="gradient-text">Compétences & Capacités</span>
                 </h2>
-                <div class="w-1 h-12 bg-gradient-to-b from-cyan-500 to-teal-500 rounded-full"></div>
+                <div class="w-1 h-8 sm:h-12 bg-gradient-to-b from-cyan-500 to-teal-500 rounded-full"></div>
             </div>
-            <p class="text-center text-gray-400 mb-16 max-w-3xl mx-auto text-lg">
+            <p class="text-center text-gray-400 mb-12 sm:mb-16 max-w-3xl mx-auto text-sm sm:text-base md:text-lg">
                 Maîtrise approfondie des technologies modernes du développement web, acquise à travers des années d'expérience pratique, 
                 de formation continue et de projets réels. Chaque technologie que je maîtrise a été apprise et perfectionnée dans le cadre 
                 de projets concrets, garantissant une compréhension pratique et applicable.
@@ -2165,17 +2479,17 @@
         <div class="bg-orb bg-orb-3"></div>
     </div>
     
-    <div class="container mx-auto px-6 relative z-10">
+    <div class="container mx-auto px-4 sm:px-6 relative z-10">
         <!-- Section Header -->
-        <div class="text-center mb-20">
-            <div class="inline-flex items-center gap-4 mb-6">
-                <div class="w-1.5 h-16 bg-gradient-to-b from-cyan-400 via-teal-400 to-cyan-400 rounded-full animate-pulse"></div>
-                <h2 class="text-6xl md:text-7xl font-black tracking-tight">
+        <div class="text-center mb-12 sm:mb-16 md:mb-20 px-4">
+            <div class="inline-flex items-center gap-2 sm:gap-4 mb-4 sm:mb-6 flex-wrap justify-center">
+                <div class="w-1 sm:w-1.5 h-10 sm:h-12 md:h-16 bg-gradient-to-b from-cyan-400 via-teal-400 to-cyan-400 rounded-full animate-pulse"></div>
+                <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black tracking-tight">
                     <span class="achievements-title-gradient">Mes Réalisations</span>
                 </h2>
-                <div class="w-1.5 h-16 bg-gradient-to-b from-cyan-400 via-teal-400 to-cyan-400 rounded-full animate-pulse"></div>
+                <div class="w-1 sm:w-1.5 h-10 sm:h-12 md:h-16 bg-gradient-to-b from-cyan-400 via-teal-400 to-cyan-400 rounded-full animate-pulse"></div>
             </div>
-            <p class="text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed">
+            <p class="text-base sm:text-lg md:text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed px-4">
                 Découvrez quelques-unes de mes réalisations et projets qui témoignent de mon expertise et de ma passion pour le développement web.
             </p>
         </div>
@@ -2238,11 +2552,11 @@
 
 <!-- Formation Section - Design Ultra Moderne -->
 <section class="py-20 bg-gray-900">
-    <div class="container mx-auto px-6">
-        <h2 class="text-5xl font-bold text-center mb-4">
+    <div class="container mx-auto px-4 sm:px-6">
+        <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-4 px-4">
             <span class="gradient-text">Mes Formations</span>
         </h2>
-        <p class="text-center text-gray-400 mb-16 max-w-2xl mx-auto">
+        <p class="text-center text-gray-400 mb-12 sm:mb-16 max-w-2xl mx-auto text-sm sm:text-base px-4">
             L'éducation ne se limite pas seulement au domaine scolaire mais englobe également l'apprentissage tout au long de la vie. 
             Mon parcours éducatif reflète ma conviction que l'apprentissage est un processus continu qui ne s'arrête jamais. Chaque 
             formation que j'ai suivie m'a apporté des compétences précieuses et m'a préparé pour les défis professionnels à venir.
@@ -2320,16 +2634,16 @@
         <div class="absolute bottom-1/4 left-0 w-96 h-96 bg-teal-500 rounded-full filter blur-3xl"></div>
     </div>
     
-    <div class="container mx-auto px-6 relative z-10">
-        <div class="text-center mb-16">
-            <div class="inline-flex items-center gap-3 mb-4">
-                <div class="w-1 h-12 bg-gradient-to-b from-cyan-500 to-teal-500 rounded-full"></div>
-                <h2 class="text-5xl md:text-6xl font-black">
+    <div class="container mx-auto px-4 sm:px-6 relative z-10">
+        <div class="text-center mb-12 sm:mb-16 px-4">
+            <div class="inline-flex items-center gap-2 sm:gap-3 mb-4 flex-wrap justify-center">
+                <div class="w-1 h-8 sm:h-12 bg-gradient-to-b from-cyan-500 to-teal-500 rounded-full"></div>
+                <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black">
                     <span class="gradient-text">Expériences Professionnelles</span>
                 </h2>
-                <div class="w-1 h-12 bg-gradient-to-b from-cyan-500 to-teal-500 rounded-full"></div>
+                <div class="w-1 h-8 sm:h-12 bg-gradient-to-b from-cyan-500 to-teal-500 rounded-full"></div>
             </div>
-            <p class="text-center text-gray-400 mb-16 max-w-3xl mx-auto text-lg">
+            <p class="text-center text-gray-400 mb-12 sm:mb-16 max-w-3xl mx-auto text-sm sm:text-base md:text-lg">
                 Mon parcours professionnel dans le développement web témoigne d'une évolution constante, de l'apprentissage des bases 
                 à la maîtrise des technologies avancées. Chaque expérience professionnelle a contribué à façonner mon expertise et ma 
                 vision du développement web moderne.
@@ -2475,19 +2789,19 @@
 
 <!-- CTA Section -->
 <section class="py-20 bg-black">
-    <div class="container mx-auto px-6">
-        <div class="max-w-4xl mx-auto bg-gradient-to-br from-cyan-600/20 to-teal-600/20 rounded-3xl p-12 border border-cyan-500/30 text-center">
-            <h2 class="text-4xl font-bold mb-6">
+    <div class="container mx-auto px-4 sm:px-6">
+        <div class="max-w-4xl mx-auto bg-gradient-to-br from-cyan-600/20 to-teal-600/20 rounded-3xl p-6 sm:p-8 md:p-12 border border-cyan-500/30 text-center">
+            <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6">
                 <span class="gradient-text">Prêt à apprendre ?</span>
             </h2>
-            <p class="text-xl text-gray-300 mb-8">
+            <p class="text-base sm:text-lg md:text-xl text-gray-300 mb-6 sm:mb-8 px-4">
                 Rejoignez des milliers d'apprenants et commencez votre parcours dans le développement web
             </p>
-            <div class="flex flex-wrap justify-center gap-4">
-                <a href="{{ route('home') }}" class="px-8 py-4 bg-gradient-to-r from-cyan-500 to-teal-600 rounded-xl font-bold text-lg hover:shadow-2xl hover:scale-105 transition">
+            <div class="flex flex-col sm:flex-row flex-wrap justify-center gap-3 sm:gap-4">
+                <a href="{{ route('home') }}" class="px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-cyan-500 to-teal-600 rounded-xl font-bold text-base sm:text-lg hover:shadow-2xl hover:scale-105 transition">
                     <i class="fas fa-home mr-2"></i>Retour à l'accueil
                 </a>
-                <a href="{{ route('home') }}#contact" class="px-8 py-4 bg-gray-800 hover:bg-gray-700 rounded-xl font-bold text-lg border border-cyan-500/30 hover:border-cyan-500/60 transition">
+                <a href="{{ route('home') }}#contact" class="px-6 sm:px-8 py-3 sm:py-4 bg-gray-800 hover:bg-gray-700 rounded-xl font-bold text-base sm:text-lg border border-cyan-500/30 hover:border-cyan-500/60 transition">
                     <i class="fas fa-envelope mr-2"></i>Me contacter
                 </a>
             </div>

@@ -535,8 +535,8 @@
                 font-size: 22px;
                 bottom: 15px;
                 left: 15px;
+            }
         }
-    }
     
     /* Dark Mode Styles */
     body.dark-mode {

@@ -79,9 +79,11 @@
         <p class="text-gray-400">Gérez vos réalisations et projets</p>
     </div>
     <div class="flex gap-3">
-        <form action="{{ route('admin.achievements.toggle-section') }}" method="POST" class="inline">
+        <form action="{{ route('admin.achievements.toggle-section') }}" method="POST" class="inline" id="toggleSectionForm" onsubmit="handleToggleSubmit(event)">
             @csrf
-            <button type="submit" class="px-4 py-2 {{ $showSection ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-green-500 hover:bg-green-600' }} text-black font-semibold rounded-lg transition flex items-center gap-2">
+            <button type="submit" 
+                    id="toggleSectionBtn"
+                    class="px-4 py-2 {{ $showSection ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-green-500 hover:bg-green-600' }} text-black font-semibold rounded-lg transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
                 <i class="fas {{ $showSection ? 'fa-eye-slash' : 'fa-eye' }}"></i>
                 <span>{{ $showSection ? 'Masquer la section' : 'Afficher la section' }}</span>
             </button>
@@ -180,5 +182,19 @@
     </div>
 </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+    function handleToggleSubmit(event) {
+        const button = document.getElementById('toggleSectionBtn');
+        if (button) {
+            button.disabled = true;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Chargement...</span>';
+        }
+        // Le formulaire se soumet normalement
+        return true;
+    }
+</script>
 @endsection
 

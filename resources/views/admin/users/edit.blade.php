@@ -196,7 +196,7 @@
             <p class="text-gray-400 text-sm mb-2">Dernière modification</p>
             <p class="font-mono text-cyan-400">{{ $user->updated_at->format('d/m/Y à H:i') }}</p>
         </div>
+        </div>
     </div>
-</div>
 </div>
 @endsection

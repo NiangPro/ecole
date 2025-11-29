@@ -668,9 +668,9 @@
 <div class="tutorial-header">
     <div class="tutorial-header-content">
         <h1>
-            <i class="fab fa-python" style="margin-right: 15px;"></i>
+        <i class="fab fa-python" style="margin-right: 15px;"></i>
             {{ trans('app.formations.python.title') }}
-        </h1>
+    </h1>
         <p>{{ trans('app.formations.python.subtitle') }}</p>
     </div>
 </div>

@@ -3,9 +3,10 @@
 @section('title', 'NiangProgrammeur - Formation Gratuite en Développement Web')
 @section('meta_description', 'Plateforme de formation gratuite en développement web. Apprenez HTML5, CSS3, JavaScript, PHP, Laravel, Bootstrap, Git, WordPress et Intelligence Artificielle.')
 
-@section('styles')
+@push('styles')
+<!-- CSS non critique - Chargé en bas de page pour ne pas bloquer le rendu -->
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;700;900&display=swap');
+    /* Fonts chargées via preload dans le head - pas de @import bloquant */
     
     * {
         margin: 0;
@@ -150,25 +151,15 @@
         }
     }
     
-    /* Hero Section Style Sunu Code - Design Centré et Professionnel */
+    /* Hero Section - Styles déjà dans le CSS critique, ici pour complément */
     .hero-section {
-        position: relative;
-        z-index: 2;
-        width: 100%;
-        min-height: 85vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 100px 40px 80px;
-        overflow: hidden;
-        background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.9) 100%),
-                    url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2072&q=80') center/cover no-repeat;
-        background-attachment: fixed;
+        /* Styles critiques déjà dans le head, ici pour les styles supplémentaires */
     }
     
     body.dark-mode .hero-section {
         background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.9) 100%),
-                    url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2072&q=80') center/cover no-repeat;
+                    url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=75') center/cover no-repeat;
+        background-attachment: fixed;
     }
     
     /* Overlay pour améliorer la lisibilité */
@@ -288,6 +279,11 @@
     }
     
     @media (max-width: 768px) {
+        .hero-section {
+            min-height: 55vh;
+            padding: 60px 20px 40px;
+        }
+        
         .christmas-hat {
             font-size: 2.5rem;
             top: -35px;
@@ -665,9 +661,46 @@
         padding: 20px 0 30px;
     }
     
+    /* Styles pour les slides */
     .tech-carousel .swiper-slide {
         height: auto;
         display: flex;
+        min-width: 0;
+        flex-shrink: 0;
+    }
+    
+    /* Layout avant initialisation de Swiper - Grid pour afficher 4 cartes */
+    .tech-carousel:not(.swiper-initialized) .swiper-wrapper {
+        display: grid !important;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 30px;
+        width: 100%;
+    }
+    
+    @media (max-width: 1023px) {
+        .tech-carousel:not(.swiper-initialized) .swiper-wrapper {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 25px;
+        }
+    }
+    
+    @media (max-width: 639px) {
+        .tech-carousel:not(.swiper-initialized) .swiper-wrapper {
+            grid-template-columns: 1fr !important;
+            gap: 20px;
+        }
+    }
+    
+    /* Une fois Swiper initialisé, utiliser le layout flex natif */
+    .tech-carousel.swiper-initialized .swiper-wrapper {
+        display: flex !important;
+    }
+    
+    /* S'assurer que les slides sont toujours visibles */
+    .tech-carousel .swiper-slide {
+        opacity: 1 !important;
+        visibility: visible !important;
+        height: auto !important;
     }
     
     .tech-card-carousel {
@@ -677,12 +710,15 @@
         border-radius: 20px;
         padding: 0;
         height: 100%;
+        min-height: 320px;
         display: flex;
         flex-direction: column;
         transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         cursor: pointer;
         overflow: hidden;
         box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+        width: 100%;
+        max-width: 100%;
     }
     
     body.dark-mode .tech-card-carousel {
@@ -954,7 +990,7 @@
         }
     }
 </style>
-@endsection
+@endpush
 
 @section('content')
 <!-- Background Canvas -->
@@ -1106,10 +1142,9 @@
                     @if($ad->image)
                     <img src="{{ $ad->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($ad->image) : $ad->image }}"
                          loading="lazy"
+                         decoding="async"
                          alt="{{ $ad->name ?? 'Publicité' }}" 
-                         alt="{{ $ad->name }} - Publicité" 
                          style="width: 100%; height: auto; border-radius: 12px; display: block;"
-                         loading="lazy"
                          onerror="this.style.display='none'">
                     @endif
                 </a>
@@ -1143,6 +1178,7 @@
                                  alt="{{ $ad->name ?? 'Publicité' }}"
                                  class="ad-main-image"
                                  loading="lazy"
+                                 decoding="async"
                                  onerror="this.style.display='none'">
                             <div class="image-reflection"></div>
                         </div>
@@ -2066,43 +2102,78 @@
 </section>
 
 @section('scripts')
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<!-- Swiper CSS - Chargement asynchrone pour ne pas bloquer le rendu -->
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"></noscript>
+<!-- Swiper JS - Chargement optimisé pour éviter le layout shift -->
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    if (typeof Swiper !== 'undefined') {
-        const techSwiper = new Swiper('.tech-carousel', {
-            slidesPerView: 1,
-            spaceBetween: 20,
-            loop: true,
-            autoplay: {
-                delay: 4000,
-                disableOnInteraction: false,
-            },
-            breakpoints: {
-                640: {
-                    slidesPerView: 2,
-                    spaceBetween: 25,
-                },
-                1024: {
-                    slidesPerView: 4,
-                    spaceBetween: 30,
-                },
-            },
-            navigation: {
-                nextEl: '.tech-carousel-next',
-                prevEl: '.tech-carousel-prev',
-            },
-            pagination: {
-                el: '.tech-carousel-pagination',
-                clickable: true,
-                renderBullet: function (index, className) {
-                    return '<span class="' + className + ' tech-carousel-pagination-bullet"></span>';
-                },
-            },
-        });
-    }
-});
+    // Charger et initialiser Swiper.js
+    (function() {
+        function initSwiper() {
+            const carousel = document.querySelector('.tech-carousel');
+            if (!carousel) return;
+            
+            if (typeof Swiper !== 'undefined') {
+                const techSwiper = new Swiper('.tech-carousel', {
+                    slidesPerView: 1,
+                    spaceBetween: 20,
+                    loop: true,
+                    autoplay: {
+                        delay: 4000,
+                        disableOnInteraction: false,
+                    },
+                    breakpoints: {
+                        640: {
+                            slidesPerView: 2,
+                            spaceBetween: 25,
+                        },
+                        1024: {
+                            slidesPerView: 4,
+                            spaceBetween: 30,
+                        },
+                    },
+                    navigation: {
+                        nextEl: '.tech-carousel-next',
+                        prevEl: '.tech-carousel-prev',
+                    },
+                    pagination: {
+                        el: '.tech-carousel-pagination',
+                        clickable: true,
+                        renderBullet: function (index, className) {
+                            return '<span class="' + className + ' tech-carousel-pagination-bullet"></span>';
+                        },
+                    },
+                });
+            } else {
+                // Si Swiper n'est pas encore chargé, réessayer
+                setTimeout(initSwiper, 100);
+            }
+        }
+        
+        // Charger Swiper.js
+        const swiperScript = document.createElement('script');
+        swiperScript.src = 'https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js';
+        swiperScript.async = true;
+        swiperScript.defer = true;
+        
+        swiperScript.onload = function() {
+            // Attendre que le DOM soit prêt
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initSwiper);
+            } else {
+                initSwiper();
+            }
+        };
+        
+        // Ajouter le script
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                document.head.appendChild(swiperScript);
+            });
+        } else {
+            document.head.appendChild(swiperScript);
+        }
+    })();
 </script>
 @endsection
 
@@ -2197,12 +2268,18 @@ document.addEventListener('DOMContentLoaded', function() {
                                      alt="{{ $article->title }}" 
                                      class="modern-sidebar-ad-image"
                                      loading="lazy"
+                                     decoding="async"
+                                     width="300"
+                                     height="180"
                                      onerror="this.style.display='none'">
                             @else
                                 <img src="{{ asset('storage/' . $article->cover_image) }}" 
                                      alt="{{ $article->title }}" 
                                      class="modern-sidebar-ad-image"
                                      loading="lazy"
+                                     decoding="async"
+                                     width="300"
+                                     height="180"
                                      onerror="this.style.display='none'">
                             @endif
                             <div class="modern-sidebar-ad-overlay">
@@ -2248,8 +2325,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 @if($job->cover_image)
                 <div style="width: 100%; height: 140px; overflow: hidden;">
                     <img src="{{ $job->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($job->cover_image) : $job->cover_image }}"
+                         loading="lazy"
+                         decoding="async"
+                         width="400"
+                         height="250"
                          alt="{{ $job->title }} - {{ $job->category->name ?? 'Article d\'emploi' }}"
-                         loading="lazy" 
                          style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;"
                          onerror="this.src='https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=400&h=250&fit=crop'">
                 </div>
@@ -3053,4 +3133,3 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 </style>
 @endif
-@endsection

@@ -167,16 +167,43 @@ class AchievementController extends Controller
     {
         // Le middleware AdminAuth gère déjà l'authentification
 
-        $settings = SiteSetting::firstOrNew();
-        $settings->show_achievements_section = !$settings->show_achievements_section;
-        $settings->save();
-        
-        // Invalider le cache
-        \App\Models\SiteSetting::clearCache();
-
-        return redirect()->route('admin.achievements.index')
-            ->with('success', $settings->show_achievements_section 
+        try {
+            // Récupérer les paramètres existants ou créer un nouvel enregistrement
+            $settings = SiteSetting::first();
+            
+            if (!$settings) {
+                // Si aucun paramètre n'existe, créer un nouvel enregistrement
+                $settings = new SiteSetting();
+                $settings->show_achievements_section = true; // Valeur par défaut
+                $settings->save();
+            } else {
+                // Inverser la valeur actuelle
+                $currentValue = $settings->show_achievements_section ?? true;
+                $settings->show_achievements_section = !$currentValue;
+                $settings->save();
+            }
+            
+            // Invalider le cache immédiatement
+            SiteSetting::clearCache();
+            
+            // Récupérer la nouvelle valeur depuis la base de données
+            $settings->refresh();
+            $newValue = $settings->show_achievements_section;
+            
+            $message = $newValue 
                 ? 'Section "Mes Réalisations" affichée' 
-                : 'Section "Mes Réalisations" masquée');
+                : 'Section "Mes Réalisations" masquée';
+
+            return redirect()->route('admin.achievements.index')
+                ->with('success', $message);
+                
+        } catch (\Exception $e) {
+            Log::error('Erreur lors du toggle de la section achievements: ' . $e->getMessage(), [
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return redirect()->route('admin.achievements.index')
+                ->with('error', 'Erreur lors de la modification. Veuillez réessayer.');
+        }
     }
 }

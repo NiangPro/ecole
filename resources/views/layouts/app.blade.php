@@ -36,49 +36,86 @@
     <meta name="twitter:description" content="@yield('meta_description', 'Plateforme de formation gratuite en développement web.')">
     <meta name="twitter:image" content="{{ asset('images/logo.png') }}">
     
-    <!-- DNS Prefetch pour améliorer les performances -->
+    <!-- DNS Prefetch et Preconnect optimisés pour améliorer les performances -->
     <link rel="dns-prefetch" href="//fonts.googleapis.com">
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+    <link rel="dns-prefetch" href="//images.unsplash.com">
     <link rel="dns-prefetch" href="//www.google-analytics.com">
     
-    <!-- Preconnect pour les ressources critiques -->
+    <!-- Preconnect pour les ressources critiques (priorité) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
+    
+    <!-- Précharger l'image de fond du hero optimisée pour améliorer le LCP -->
+    <link rel="preload" as="image" href="https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=75" fetchpriority="high">
     
     @stack('meta')
     
     <title>@yield('title', 'NiangProgrammeur - Formation Gratuite en Développement Web')</title>
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     
-    <!-- CSS critique inline pour éviter le FOUC - DOIT être en premier -->
+    <!-- CSS critique minimal pour éviter le FOUC -->
     <style id="critical-css">
-        /* Masquer le body immédiatement pour éviter le FOUC */
-        body {
-            opacity: 0;
-            visibility: hidden;
+        /* Styles critiques minimaux - Above the fold */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html, body {
             margin: 0;
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+            background: #ffffff;
+            color: #1e293b;
+            visibility: visible !important;
+            opacity: 1 !important;
+            overflow-x: hidden;
         }
         
-        /* Afficher le body une fois que tout est chargé */
-        body.loaded {
-            opacity: 1;
-            visibility: visible;
+        /* Hero Section - Critique pour LCP */
+        .hero-section {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            min-height: 65vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 40px 60px;
+            overflow: hidden;
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.9) 100%),
+                        url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=75') center/cover no-repeat;
+            background-attachment: fixed;
         }
         
-        /* Masquer le HTML jusqu'à ce que Tailwind soit chargé */
-        html:not(.tailwind-loaded) {
-            visibility: hidden;
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+            text-align: center;
         }
         
-        html.tailwind-loaded {
-            visibility: visible;
+        .main-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 900;
+            line-height: 1.2;
+            margin-bottom: 30px;
+            color: #fff;
         }
         
-        /* Loader minimal pendant le chargement */
+        .subtitle {
+            font-size: clamp(1rem, 2vw, 1.3rem);
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+        
+        /* Loader minimal */
         .page-loader {
             position: fixed;
             top: 0;
@@ -111,35 +148,165 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+        
+        @media (max-width: 768px) {
+            .hero-section {
+                min-height: 55vh;
+                padding: 60px 20px 40px;
+            }
+            
+            .main-title {
+                font-size: clamp(1.8rem, 4vw, 2.2rem);
+                line-height: 1.3;
+                margin-bottom: 20px;
+            }
+        }
+        
+        /* CSS Critique pour la page About - Section Hero */
+        section.relative.min-h-screen {
+            position: relative;
+            min-height: 100vh;
+            background: #000;
+            padding-top: 5rem;
+            padding-bottom: 3rem;
+            overflow: hidden;
+        }
+        
+        section.relative.min-h-screen .absolute.inset-0 {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0.2;
+        }
+        
+        section.relative.min-h-screen .absolute.inset-0 .bg-cyan-500 {
+            position: absolute;
+            top: 5rem;
+            left: 2.5rem;
+            width: 18rem;
+            height: 18rem;
+            background-color: #06b6d4;
+            border-radius: 9999px;
+            filter: blur(3rem);
+        }
+        
+        section.relative.min-h-screen .absolute.inset-0 .bg-teal-500 {
+            position: absolute;
+            bottom: 5rem;
+            right: 2.5rem;
+            width: 24rem;
+            height: 24rem;
+            background-color: #14b8a6;
+            border-radius: 9999px;
+            filter: blur(3rem);
+        }
+        
+        section.relative.min-h-screen .container {
+            max-width: 1280px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 1rem;
+            padding-right: 1rem;
+            position: relative;
+            z-index: 10;
+        }
+        
+        section.relative.min-h-screen h1 {
+            font-size: clamp(2.25rem, 5vw, 4.5rem);
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+            padding-left: 1rem;
+            padding-right: 1rem;
+            color: #fff;
+            text-align: center;
+            line-height: 1.2;
+        }
+        
+        section.relative.min-h-screen .text-xl {
+            font-size: 1.25rem;
+            color: rgba(209, 213, 219, 1);
+            margin-bottom: 2rem;
+            padding-left: 1rem;
+            padding-right: 1rem;
+            text-align: center;
+        }
+        
+        section.relative.min-h-screen .text-base {
+            font-size: 1rem;
+            color: rgba(156, 163, 175, 1);
+            max-width: 48rem;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 1rem;
+            padding-right: 1rem;
+            text-align: center;
+        }
+        
+        section.relative.min-h-screen .gradient-text {
+            background: linear-gradient(135deg, #06b6d4, #14b8a6, #06b6d4);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        section.relative.min-h-screen .text-cyan-400 {
+            color: #22d3ee;
+            font-weight: 700;
+        }
+        
+        @media (min-width: 640px) {
+            section.relative.min-h-screen {
+                padding-top: 6rem;
+                padding-bottom: 4rem;
+            }
+            
+            section.relative.min-h-screen h1 {
+                font-size: clamp(3rem, 5vw, 4.5rem);
+            }
+            
+            section.relative.min-h-screen .text-xl {
+                font-size: 1.5rem;
+            }
+            
+            section.relative.min-h-screen .text-base {
+                font-size: 1.125rem;
+            }
+        }
+        
+        @media (min-width: 768px) {
+            section.relative.min-h-screen {
+                padding-top: 8rem;
+                padding-bottom: 5rem;
+            }
+            
+            section.relative.min-h-screen h1 {
+                font-size: clamp(3.75rem, 5vw, 4.5rem);
+            }
+            
+            section.relative.min-h-screen .text-xl {
+                font-size: 1.875rem;
+            }
+            
+            section.relative.min-h-screen .text-base {
+                font-size: 1.25rem;
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            section.relative.min-h-screen h1 {
+                font-size: 4.5rem;
+            }
+        }
     </style>
     
-    <!-- Script anti-FOUC qui s'exécute immédiatement -->
+    <!-- Script optimisé pour charger Tailwind CSS sans bloquer -->
     <script>
-        // Masquer le body immédiatement AVANT le rendu
         (function() {
-            // Masquer le HTML et le body
-            if (document.documentElement) {
-                document.documentElement.style.visibility = 'hidden';
-            }
-            if (document.body) {
-                document.body.style.opacity = '0';
-                document.body.style.visibility = 'hidden';
-            }
-            
-            // Fonction pour afficher le contenu
-            function showContent() {
-                // Attendre que le DOM soit complètement chargé
-                if (document.readyState === 'loading') {
-                    document.addEventListener('DOMContentLoaded', function() {
-                        setTimeout(displayContent, 100);
-                    });
-                } else {
-                    setTimeout(displayContent, 100);
-                }
-            }
-            
-            function displayContent() {
-                // Masquer le loader
+            // Masquer le loader une fois que la page est chargée
+            function hideLoader() {
                 const loader = document.getElementById('page-loader');
                 if (loader) {
                     loader.classList.add('hidden');
@@ -149,71 +316,25 @@
                         }
                     }, 300);
                 }
-                
-                // Afficher le HTML
-                if (document.documentElement) {
-                    document.documentElement.classList.add('tailwind-loaded');
-                    document.documentElement.style.visibility = 'visible';
-                }
-                
-                // Afficher le body
-                if (document.body) {
-                    document.body.classList.add('loaded');
-                    document.body.style.opacity = '1';
-                    document.body.style.visibility = 'visible';
-                }
             }
             
-            // Charger Tailwind CSS
+            // Charger Tailwind CSS immédiatement mais de manière asynchrone
             const tailwindScript = document.createElement('script');
             tailwindScript.src = 'https://cdn.tailwindcss.com';
             tailwindScript.async = true;
             tailwindScript.defer = true;
-            
-            let tailwindLoaded = false;
-            let stylesLoaded = false;
-            
-            function checkAndShow() {
-                if (tailwindLoaded && stylesLoaded) {
-                    showContent();
-                }
-            }
-            
-            tailwindScript.onload = function() {
-                tailwindLoaded = true;
-                // Attendre un peu pour que Tailwind s'initialise
-                setTimeout(function() {
-                    checkAndShow();
-                }, 50);
-            };
-            
-            tailwindScript.onerror = function() {
-                tailwindLoaded = true; // Considérer comme chargé même en cas d'erreur
-                checkAndShow();
-            };
-            
+            // Charger immédiatement (pas de requestIdleCallback pour éviter le délai)
             document.head.appendChild(tailwindScript);
             
-            // Vérifier que les styles personnalisés sont chargés
-            function checkStylesLoaded() {
-                // Attendre que tous les styles soient appliqués
-                if (document.styleSheets.length > 0) {
-                    stylesLoaded = true;
-                    checkAndShow();
-                } else {
-                    setTimeout(checkStylesLoaded, 50);
-                }
+            // Masquer le loader dès que le DOM est prêt
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', hideLoader);
+            } else {
+                hideLoader();
             }
             
-            // Démarrer la vérification après un court délai
-            setTimeout(checkStylesLoaded, 100);
-            
-            // Fallback : afficher après 2 secondes maximum
-            setTimeout(function() {
-                tailwindLoaded = true;
-                stylesLoaded = true;
-                showContent();
-            }, 2000);
+            // Fallback : masquer après 800ms maximum
+            setTimeout(hideLoader, 800);
         })();
     </script>
     
@@ -222,7 +343,7 @@
         $recaptchaSiteKey = config('services.recaptcha.site_key', '');
     @endphp
     @if(!empty($recaptchaSiteKey))
-    <script src="https://www.google.com/recaptcha/api.js?render={{ $recaptchaSiteKey }}" async defer></script>
+    <!-- reCAPTCHA v3 - Chargé de manière différée pour ne pas bloquer le rendu -->
     <script>
         // Fonction pour exécuter reCAPTCHA avant la soumission du formulaire
         function executeRecaptcha(formId, callback) {
@@ -256,15 +377,27 @@
                 });
             });
         }
+        
+        // Charger reCAPTCHA après le chargement de la page
+        window.addEventListener('load', function() {
+            const script = document.createElement('script');
+            script.src = 'https://www.google.com/recaptcha/api.js?render={{ $recaptchaSiteKey }}';
+            script.async = true;
+            script.defer = true;
+            document.head.appendChild(script);
+        });
     </script>
     @endif
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" media="print" onload="this.media='all'">
+    <!-- Font Awesome - Chargement asynchrone optimisé -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"></noscript>
     <!-- Google Fonts optimisé avec preload et font-display: swap -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet"></noscript>
+    <!-- Précharger les fonts critiques -->
+    <link rel="preload" href="https://fonts.gstatic.com/s/orbitron/v25/yMJMMIlzdpvBhQQL_SC3X9yhF25-T1nyGy6xpmE.woff2" as="font" type="font/woff2" crossorigin>
     
     <!-- Toastr CSS - Chargé de manière asynchrone -->
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
@@ -277,7 +410,14 @@
     @endphp
     
     @if($adsenseSettings && $adsenseSettings->adsense_code)
-        {!! $adsenseSettings->adsense_code !!}
+        <!-- AdSense chargé de manière différée -->
+        <script>
+            window.addEventListener('load', function() {
+                const adsenseDiv = document.createElement('div');
+                adsenseDiv.innerHTML = {!! json_encode($adsenseSettings->adsense_code) !!};
+                document.body.appendChild(adsenseDiv);
+            });
+        </script>
     @endif
     
     <!-- Google Analytics -->
@@ -330,10 +470,10 @@
             visibility: visible !important;
         }
         
-        /* S'assurer que le body reste masqué jusqu'à ce qu'il soit marqué comme chargé */
-        body:not(.loaded) {
-            opacity: 0 !important;
-            visibility: hidden !important;
+        /* Le body doit toujours être visible */
+        body {
+            opacity: 1 !important;
+            visibility: visible !important;
         }
         
         body {
@@ -900,7 +1040,7 @@
         </style>
     </noscript>
 </head>
-<body class="bg-black text-white" lang="{{ app()->getLocale() }}">
+<body class="bg-white text-gray-900" lang="{{ app()->getLocale() }}">
     <!-- Loader pendant le chargement -->
     <div id="page-loader" class="page-loader">
         <div class="page-loader-spinner"></div>
@@ -1200,29 +1340,37 @@
         });
     </script>
     
-    <script src="{{ asset('js/main.js') }}" defer></script>
-    <script src="{{ asset('js/pwa.js') }}" defer></script>
-    
-    <!-- Script pour marquer le HTML comme chargé et éviter le FOUC -->
+    <!-- Scripts JS - Chargement différé avec requestIdleCallback -->
     <script>
-        // Marquer le HTML comme chargé une fois que tout est prêt
+        // Charger les scripts JS de manière non-bloquante
         (function() {
-            function markAsLoaded() {
-                document.documentElement.classList.add('loaded', 'tailwind-loaded');
-                document.documentElement.style.visibility = 'visible';
+            function loadScripts() {
+                const scripts = [
+                    '{{ asset("js/main.js") }}',
+                    '{{ asset("js/pwa.js") }}'
+                ];
+                
+                scripts.forEach(function(src) {
+                    const script = document.createElement('script');
+                    script.src = src;
+                    script.defer = true;
+                    script.async = true;
+                    document.body.appendChild(script);
+                });
             }
             
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', markAsLoaded);
+            // Utiliser requestIdleCallback si disponible, sinon après window.load
+            if ('requestIdleCallback' in window) {
+                requestIdleCallback(loadScripts, { timeout: 2000 });
             } else {
-                markAsLoaded();
+                window.addEventListener('load', loadScripts);
             }
-            
-            // Fallback : marquer comme chargé après un court délai
-            setTimeout(markAsLoaded, 100);
         })();
     </script>
     
     @yield('scripts')
+    
+    <!-- CSS non critique chargé en bas de page pour ne pas bloquer le rendu -->
+    @stack('styles')
 </body>
 </html>

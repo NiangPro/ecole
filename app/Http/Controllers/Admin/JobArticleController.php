@@ -205,6 +205,7 @@ class JobArticleController extends Controller
             'meta_description' => 'nullable|string|max:500',
             'meta_keywords' => 'nullable|string',
             'status' => 'required|in:draft,published,archived',
+            'published_at' => 'nullable|date',
             'is_sponsored' => 'nullable|boolean'
         ]);
         
@@ -276,9 +277,26 @@ class JobArticleController extends Controller
         $validated['seo_score'] = $this->calculateSeoScore($validated);
         $validated['readability_score'] = $this->calculateReadabilityScore($validated['content']);
 
-        // Toujours définir published_at à maintenant si publié
+        // Gérer la date de publication
         if ($validated['status'] === 'published') {
-            $validated['published_at'] = now();
+            // Si l'article passe de non publié à publié, définir published_at
+            if ($article->status !== 'published') {
+                // Utiliser la date fournie dans le formulaire ou maintenant
+                $validated['published_at'] = $request->has('published_at') && !empty($request->published_at) 
+                    ? \Carbon\Carbon::parse($request->published_at) 
+                    : now();
+            } else {
+                // Si l'article était déjà publié, utiliser la date du formulaire si fournie, sinon conserver l'ancienne
+                if ($request->has('published_at') && !empty($request->published_at)) {
+                    $validated['published_at'] = \Carbon\Carbon::parse($request->published_at);
+                } else {
+                    // Conserver la date de publication existante
+                    $validated['published_at'] = $article->published_at;
+                }
+            }
+        } else {
+            // Si l'article n'est plus publié, ne pas modifier published_at (garder l'historique)
+            unset($validated['published_at']);
         }
 
         // Sauvegarder les anciennes valeurs pour le log
