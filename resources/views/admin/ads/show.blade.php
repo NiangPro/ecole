@@ -63,6 +63,16 @@
         font-size: 1.1rem;
         color: rgba(255, 255, 255, 0.7);
         font-weight: 400;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .ad-hero {
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.05) 0%, rgba(20, 184, 166, 0.05) 100%);
+        border-color: rgba(6, 182, 212, 0.4);
+    }
+    
+    body.light-mode .ad-hero p {
+        color: rgba(30, 41, 59, 0.8);
     }
     
     .ad-grid {
@@ -81,6 +91,16 @@
         position: relative;
         overflow: hidden;
         margin-bottom: 25px;
+    }
+    
+    body.light-mode .ad-card {
+        background: rgba(255, 255, 255, 0.8);
+        border-color: rgba(6, 182, 212, 0.3);
+    }
+    
+    body.light-mode .ad-card:hover {
+        border-color: rgba(6, 182, 212, 0.5);
+        box-shadow: 0 15px 40px rgba(6, 182, 212, 0.15);
     }
     
     .ad-card::before {
@@ -148,10 +168,20 @@
         transition: all 0.3s ease;
     }
     
+    body.light-mode .info-item {
+        background: rgba(255, 255, 255, 0.9);
+        border-color: rgba(6, 182, 212, 0.3);
+    }
+    
     .info-item:hover {
         border-color: rgba(6, 182, 212, 0.4);
         background: rgba(10, 10, 26, 0.8);
         transform: translateX(5px);
+    }
+    
+    body.light-mode .info-item:hover {
+        background: rgba(255, 255, 255, 1);
+        border-color: rgba(6, 182, 212, 0.5);
     }
     
     .info-label {
@@ -161,12 +191,22 @@
         letter-spacing: 0.5px;
         margin-bottom: 8px;
         font-weight: 600;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .info-label {
+        color: rgba(30, 41, 59, 0.7);
     }
     
     .info-value {
         font-size: 1.1rem;
         color: #fff;
         font-weight: 700;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .info-value {
+        color: #1e293b;
     }
     
     .badge-status {
@@ -217,6 +257,12 @@
         text-align: center;
         position: relative;
         overflow: hidden;
+        transition: all 0.3s ease;
+    }
+    
+    body.light-mode .preview-container {
+        background: rgba(255, 255, 255, 0.9);
+        border-color: rgba(6, 182, 212, 0.4);
     }
     
     .preview-container::before {
@@ -255,6 +301,13 @@
         color: rgba(255, 255, 255, 0.9);
         line-height: 1.6;
         position: relative;
+        transition: all 0.3s ease;
+    }
+    
+    body.light-mode .code-block {
+        background: rgba(255, 255, 255, 0.9);
+        border-color: rgba(6, 182, 212, 0.3);
+        color: rgba(30, 41, 59, 0.9);
     }
     
     .code-block::before {
@@ -321,6 +374,11 @@
         overflow: hidden;
     }
     
+    body.light-mode .stat-box-modern {
+        background: rgba(255, 255, 255, 0.9);
+        border-color: rgba(6, 182, 212, 0.3);
+    }
+    
     .stat-box-modern::before {
         content: '';
         position: absolute;
@@ -360,6 +418,11 @@
         text-transform: uppercase;
         letter-spacing: 1px;
         font-weight: 600;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .stat-label-modern {
+        color: rgba(30, 41, 59, 0.7);
     }
     
     .ctr-progress {
@@ -370,6 +433,12 @@
         overflow: hidden;
         margin-top: 15px;
         border: 1px solid rgba(6, 182, 212, 0.2);
+        transition: all 0.3s ease;
+    }
+    
+    body.light-mode .ctr-progress {
+        background: rgba(241, 245, 249, 0.8);
+        border-color: rgba(6, 182, 212, 0.3);
     }
     
     .ctr-progress-bar {
@@ -398,6 +467,11 @@
         margin-top: 40px;
         padding-top: 30px;
         border-top: 2px solid rgba(6, 182, 212, 0.2);
+        transition: border-color 0.3s ease;
+    }
+    
+    body.light-mode .action-buttons-modern {
+        border-top-color: rgba(6, 182, 212, 0.3);
     }
     
     .btn-edit-modern {
@@ -443,10 +517,21 @@
         font-family: 'Inter', sans-serif;
     }
     
+    body.light-mode .btn-back-modern {
+        background: rgba(148, 163, 184, 0.2);
+        border-color: rgba(148, 163, 184, 0.4);
+        color: #1e293b;
+    }
+    
     .btn-back-modern:hover {
         background: rgba(100, 100, 100, 0.3);
         border-color: rgba(255, 255, 255, 0.2);
         transform: translateY(-2px);
+    }
+    
+    body.light-mode .btn-back-modern:hover {
+        background: rgba(148, 163, 184, 0.3);
+        border-color: rgba(148, 163, 184, 0.6);
     }
     
     .dates-card {
@@ -456,6 +541,12 @@
         border-radius: 20px;
         padding: 30px;
         margin-bottom: 25px;
+        transition: all 0.3s ease;
+    }
+    
+    body.light-mode .dates-card {
+        background: rgba(255, 255, 255, 0.8);
+        border-color: rgba(6, 182, 212, 0.3);
     }
     
     .date-item {
@@ -470,9 +561,18 @@
         transition: all 0.3s ease;
     }
     
+    body.light-mode .date-item {
+        background: rgba(255, 255, 255, 0.9);
+        border-color: rgba(6, 182, 212, 0.3);
+    }
+    
     .date-item:hover {
         border-color: rgba(6, 182, 212, 0.4);
         transform: translateX(5px);
+    }
+    
+    body.light-mode .date-item:hover {
+        border-color: rgba(6, 182, 212, 0.5);
     }
     
     .date-item:last-child {
@@ -483,12 +583,47 @@
         font-size: 0.9rem;
         color: rgba(255, 255, 255, 0.7);
         font-weight: 600;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .date-label {
+        color: rgba(30, 41, 59, 0.7);
     }
     
     .date-value {
         font-size: 1rem;
         color: #06b6d4;
         font-weight: 700;
+    }
+    
+    .ad-description-text {
+        color: rgba(255, 255, 255, 0.8);
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .ad-description-text {
+        color: rgba(30, 41, 59, 0.9);
+    }
+    
+    body.light-mode .stats-card-modern {
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(20, 184, 166, 0.1));
+        border-color: rgba(6, 182, 212, 0.4);
+    }
+    
+    body.light-mode .card-title-modern {
+        color: #06b6d4;
+    }
+    
+    body.light-mode span[style*="color: rgba(255, 255, 255, 0.7)"] {
+        color: rgba(30, 41, 59, 0.7) !important;
+    }
+    
+    body.light-mode div[style*="background: rgba(10, 10, 26, 0.6)"] {
+        background: rgba(255, 255, 255, 0.9) !important;
+    }
+    
+    body.light-mode div[style*="border-top: 2px solid rgba(6, 182, 212, 0.2)"] {
+        border-top-color: rgba(6, 182, 212, 0.3) !important;
     }
     
     @media (max-width: 1200px) {
@@ -598,7 +733,7 @@
                 @if($ad->description)
                 <div style="margin-top: 25px; padding-top: 25px; border-top: 2px solid rgba(6, 182, 212, 0.2);">
                     <div class="info-label" style="margin-bottom: 12px;">Description</div>
-                    <p style="color: rgba(255, 255, 255, 0.8); line-height: 1.8; font-size: 1rem;">{{ $ad->description }}</p>
+                    <p style="color: rgba(255, 255, 255, 0.8); line-height: 1.8; font-size: 1rem; transition: color 0.3s ease;" class="ad-description-text">{{ $ad->description }}</p>
                 </div>
                 @endif
                 

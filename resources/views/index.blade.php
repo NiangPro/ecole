@@ -222,11 +222,88 @@
         color: #ffffff;
         letter-spacing: -0.02em;
         text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        position: relative;
     }
     
     body.dark-mode .main-title {
         color: #fff;
         text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    }
+    
+    /* Arbre de Noël animé avec brillance */
+    .christmas-hat {
+        position: absolute;
+        top: -45px;
+        left: -8px;
+        font-size: 3.5rem;
+        animation: treeBounce 2.5s ease-in-out infinite, treeShine 1.5s ease-in-out infinite;
+        z-index: 10;
+        filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4));
+        line-height: 1;
+        text-shadow: 0 0 20px rgba(34, 197, 94, 0.8),
+                     0 0 40px rgba(34, 197, 94, 0.6),
+                     0 0 60px rgba(34, 197, 94, 0.4);
+    }
+    
+    @keyframes treeBounce {
+        0%, 100% {
+            transform: translateY(0) rotate(-10deg) scale(1);
+        }
+        25% {
+            transform: translateY(-10px) rotate(8deg) scale(1.08);
+        }
+        50% {
+            transform: translateY(-15px) rotate(-8deg) scale(1.12);
+        }
+        75% {
+            transform: translateY(-10px) rotate(10deg) scale(1.08);
+        }
+    }
+    
+    @keyframes treeShine {
+        0%, 100% {
+            filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4))
+                    drop-shadow(0 0 20px rgba(34, 197, 94, 0.8))
+                    drop-shadow(0 0 40px rgba(34, 197, 94, 0.6))
+                    drop-shadow(0 0 60px rgba(34, 197, 94, 0.4))
+                    brightness(1);
+            text-shadow: 0 0 20px rgba(34, 197, 94, 0.8),
+                         0 0 40px rgba(34, 197, 94, 0.6),
+                         0 0 60px rgba(34, 197, 94, 0.4),
+                         0 0 80px rgba(34, 197, 94, 0.3);
+        }
+        50% {
+            filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4))
+                    drop-shadow(0 0 30px rgba(34, 197, 94, 1))
+                    drop-shadow(0 0 60px rgba(34, 197, 94, 0.8))
+                    drop-shadow(0 0 90px rgba(34, 197, 94, 0.6))
+                    drop-shadow(0 0 120px rgba(34, 197, 94, 0.4))
+                    brightness(1.3);
+            text-shadow: 0 0 30px rgba(34, 197, 94, 1),
+                         0 0 60px rgba(34, 197, 94, 0.8),
+                         0 0 90px rgba(34, 197, 94, 0.6),
+                         0 0 120px rgba(34, 197, 94, 0.4),
+                         0 0 150px rgba(34, 197, 94, 0.3);
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .christmas-hat {
+            font-size: 2.5rem;
+            top: -35px;
+            left: -6px;
+        }
+        
+        .main-title {
+            font-size: clamp(1.8rem, 4vw, 2.2rem) !important;
+            line-height: 1.3;
+            margin-bottom: 20px;
+        }
+    }
+    
+    .main-title-wrapper {
+        position: relative;
+        display: inline-block;
     }
     
     .title-gradient {
@@ -894,7 +971,12 @@
 <section class="hero-section">
     <div class="hero-content">
         <h1 class="main-title">
-            Apprenez la <span class="title-gradient">Programmation</span><br>
+            <span class="main-title-wrapper">
+                @if(date('m') == '12')
+                <span class="christmas-hat">🎄</span>
+                @endif
+                <span>A</span>
+            </span>pprenez la <span class="title-gradient">Programmation</span><br>
             Gratuitement avec <span class="title-gradient">NiangProgrammeur</span>
         </h1>
         
@@ -2040,7 +2122,7 @@ document.addEventListener('DOMContentLoaded', function() {
             @if(isset($categories) && $categories->count() > 0)
             <div class="categories-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; flex: 1; overflow-y: auto; min-height: 0;">
                 @foreach($categories as $category)
-                <a href="{{ route('emplois.category', $category->slug) }}" class="category-card" style="display: block; text-decoration: none;">
+                <a href="{{ route('emplois.offres') }}?category={{ $category->slug }}" class="category-card" style="display: block; text-decoration: none;">
                     <div class="category-card-inner" style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(20, 184, 166, 0.1)); border: 2px solid rgba(6, 182, 212, 0.3); border-radius: 16px; padding: 24px; transition: all 0.3s ease; height: 100%; position: relative; overflow: hidden;">
                         <!-- Effet de brillance au survol -->
                         <div class="category-shine" style="position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(45deg, transparent, rgba(6, 182, 212, 0.1), transparent); transform: rotate(45deg); transition: all 0.5s ease; opacity: 0;"></div>

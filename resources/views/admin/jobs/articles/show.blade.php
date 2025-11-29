@@ -2,7 +2,89 @@
 
 @section('title', 'Voir Article')
 
+@section('styles')
+<style>
+    /* Styles pour la page Show Article */
+    .article-show-page h3 {
+        color: #fff;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .article-show-page h3 {
+        color: #1e293b;
+    }
+    
+    .article-show-page p.text-gray-400 {
+        color: rgba(156, 163, 175, 1);
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .article-show-page p.text-gray-400 {
+        color: rgba(100, 116, 139, 1);
+    }
+    
+    .article-show-page h1 {
+        color: #fff;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .article-show-page h1 {
+        color: #1e293b;
+    }
+    
+    .article-show-page .text-gray-300 {
+        color: rgba(209, 213, 219, 1);
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .article-show-page .text-gray-300 {
+        color: rgba(30, 41, 59, 0.8);
+    }
+    
+    .article-show-page .text-white {
+        color: #fff;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .article-show-page .text-white {
+        color: #1e293b;
+    }
+    
+    .article-show-page .text-gray-500 {
+        color: rgba(107, 114, 128, 1);
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .article-show-page .text-gray-500 {
+        color: rgba(148, 163, 184, 1);
+    }
+    
+    .article-show-page .bg-gray-700 {
+        background: rgba(55, 65, 81, 1);
+        transition: background 0.3s ease;
+    }
+    
+    body.light-mode .article-show-page .bg-gray-700 {
+        background: rgba(241, 245, 249, 1);
+    }
+    
+    .article-show-page .prose {
+        color: rgba(209, 213, 219, 1);
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .article-show-page .prose {
+        color: rgba(30, 41, 59, 0.9);
+    }
+    
+    body.light-mode .article-show-page .prose.prose-invert {
+        color: rgba(30, 41, 59, 0.9);
+    }
+</style>
+@endsection
+
 @section('content')
+<div class="article-show-page">
 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
     <div>
         <h3 class="text-3xl font-bold mb-2">Détails de l'article</h3>
@@ -177,5 +259,5 @@
         @endif
     </div>
 </div>
+</div>
 @endsection
-

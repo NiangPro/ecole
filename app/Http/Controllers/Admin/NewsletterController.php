@@ -34,6 +34,9 @@ class NewsletterController extends Controller
         
         $subscribers = $query->paginate(20)->withQueryString();
         
+        // Marquer tous les abonnés comme lus lorsqu'on visite la page
+        Newsletter::where('is_read', false)->update(['is_read' => true]);
+        
         // Statistiques
         $totalSubscribers = Newsletter::where('is_active', true)->count();
         $totalInactive = Newsletter::where('is_active', false)->count();

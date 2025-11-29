@@ -2,7 +2,162 @@
 
 @section('title', 'Vérification AdSense')
 
+@section('styles')
+<style>
+    /* Styles pour la page AdSense Check */
+    .adsense-check-page h3 {
+        color: #fff;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .adsense-check-page h3 {
+        color: #1e293b;
+    }
+    
+    .adsense-check-page h4 {
+        color: #fff;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .adsense-check-page h4 {
+        color: #1e293b;
+    }
+    
+    .adsense-check-page h5 {
+        color: #fff;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .adsense-check-page h5 {
+        color: #1e293b;
+    }
+    
+    .adsense-check-page .text-gray-400 {
+        color: rgba(156, 163, 175, 1);
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .adsense-check-page .text-gray-400 {
+        color: rgba(100, 116, 139, 1);
+    }
+    
+    .adsense-check-page .text-gray-700 {
+        color: rgba(55, 65, 81, 1);
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .adsense-check-page .text-gray-700 {
+        color: rgba(203, 213, 225, 1);
+    }
+    
+    .adsense-check-page .bg-black\/30 {
+        background: rgba(0, 0, 0, 0.3);
+        transition: background 0.3s ease;
+    }
+    
+    body.light-mode .adsense-check-page .bg-black\/30 {
+        background: rgba(255, 255, 255, 0.9);
+    }
+    
+    .adsense-check-page .border-green-500\/30 {
+        border-color: rgba(34, 197, 94, 0.3);
+        transition: border-color 0.3s ease;
+    }
+    
+    body.light-mode .adsense-check-page .border-green-500\/30 {
+        border-color: rgba(34, 197, 94, 0.4);
+    }
+    
+    .adsense-check-page .border-red-500\/30 {
+        border-color: rgba(239, 68, 68, 0.3);
+        transition: border-color 0.3s ease;
+    }
+    
+    body.light-mode .adsense-check-page .border-red-500\/30 {
+        border-color: rgba(239, 68, 68, 0.4);
+    }
+    
+    .adsense-check-page .border-cyan-500\/20 {
+        border-color: rgba(6, 182, 212, 0.2);
+        transition: border-color 0.3s ease;
+    }
+    
+    body.light-mode .adsense-check-page .border-cyan-500\/20 {
+        border-color: rgba(6, 182, 212, 0.3);
+    }
+    
+    .adsense-check-page .bg-green-500\/20 {
+        background: rgba(34, 197, 94, 0.2);
+    }
+    
+    body.light-mode .adsense-check-page .bg-green-500\/20 {
+        background: rgba(34, 197, 94, 0.15);
+    }
+    
+    .adsense-check-page .bg-red-500\/20 {
+        background: rgba(239, 68, 68, 0.2);
+    }
+    
+    body.light-mode .adsense-check-page .bg-red-500\/20 {
+        background: rgba(239, 68, 68, 0.15);
+    }
+    
+    .adsense-check-page .bg-yellow-500\/20 {
+        background: rgba(234, 179, 8, 0.2);
+    }
+    
+    body.light-mode .adsense-check-page .bg-yellow-500\/20 {
+        background: rgba(234, 179, 8, 0.15);
+    }
+    
+    .adsense-check-page .bg-red-500\/10 {
+        background: rgba(239, 68, 68, 0.1);
+        border-color: rgba(239, 68, 68, 0.3);
+    }
+    
+    body.light-mode .adsense-check-page .bg-red-500\/10 {
+        background: rgba(239, 68, 68, 0.15);
+        border-color: rgba(239, 68, 68, 0.4);
+    }
+    
+    .adsense-check-page .text-green-400 {
+        color: #4ade80;
+    }
+    
+    .adsense-check-page .text-yellow-400 {
+        color: #facc15;
+    }
+    
+    .adsense-check-page .text-red-400 {
+        color: #f87171;
+    }
+    
+    .adsense-check-page .text-cyan-400 {
+        color: #06b6d4;
+    }
+    
+    .adsense-check-page .font-semibold {
+        color: rgba(255, 255, 255, 0.9);
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .adsense-check-page .font-semibold {
+        color: rgba(30, 41, 59, 0.9);
+    }
+    
+    .adsense-check-page .text-sm {
+        color: rgba(156, 163, 175, 1);
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .adsense-check-page .text-sm {
+        color: rgba(100, 116, 139, 1);
+    }
+</style>
+@endsection
+
 @section('content')
+<div class="adsense-check-page">
 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
     <div>
         <h3 class="text-3xl font-bold mb-2">Vérification AdSense</h3>
@@ -136,6 +291,7 @@
             </p>
         </div>
     </div>
+</div>
 </div>
 @endsection
 

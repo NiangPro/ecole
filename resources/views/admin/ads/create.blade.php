@@ -63,6 +63,16 @@
         font-size: 1.1rem;
         color: rgba(255, 255, 255, 0.7);
         font-weight: 400;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .form-hero {
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.05) 0%, rgba(20, 184, 166, 0.05) 100%);
+        border-color: rgba(6, 182, 212, 0.4);
+    }
+    
+    body.light-mode .form-hero p {
+        color: rgba(30, 41, 59, 0.8);
     }
     
     .form-grid {
@@ -86,6 +96,16 @@
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         position: relative;
         overflow: hidden;
+    }
+    
+    body.light-mode .form-card {
+        background: rgba(255, 255, 255, 0.8);
+        border-color: rgba(6, 182, 212, 0.3);
+    }
+    
+    body.light-mode .form-card:hover {
+        border-color: rgba(6, 182, 212, 0.5);
+        box-shadow: 0 15px 40px rgba(6, 182, 212, 0.15);
     }
     
     .form-card::before {
@@ -137,6 +157,11 @@
         font-weight: 700;
         color: #fff;
         margin: 0;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .card-title {
+        color: #1e293b;
     }
     
     .field-group {
@@ -173,6 +198,12 @@
         transition: all 0.3s ease;
     }
     
+    body.light-mode .field-input {
+        background: rgba(255, 255, 255, 0.9);
+        border-color: rgba(6, 182, 212, 0.3);
+        color: #1e293b;
+    }
+    
     .field-input:focus {
         outline: none;
         border-color: #06b6d4;
@@ -180,8 +211,17 @@
         box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.15);
     }
     
+    body.light-mode .field-input:focus {
+        background: rgba(255, 255, 255, 1);
+        box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.15);
+    }
+    
     .field-input::placeholder {
         color: rgba(255, 255, 255, 0.3);
+    }
+    
+    body.light-mode .field-input::placeholder {
+        color: rgba(30, 41, 59, 0.5);
     }
     
     .field-select {
@@ -203,10 +243,21 @@
         padding-right: 40px;
     }
     
+    body.light-mode .field-select {
+        background: rgba(255, 255, 255, 0.9);
+        border-color: rgba(6, 182, 212, 0.3);
+        color: #1e293b;
+    }
+    
     .field-select:focus {
         outline: none;
         border-color: #06b6d4;
         background-color: rgba(10, 10, 26, 0.95);
+        box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.15);
+    }
+    
+    body.light-mode .field-select:focus {
+        background-color: rgba(255, 255, 255, 1);
         box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.15);
     }
     
@@ -216,6 +267,11 @@
         padding: 12px;
     }
     
+    body.light-mode .field-select option {
+        background: #ffffff;
+        color: #1e293b;
+    }
+    
     .field-help {
         color: rgba(255, 255, 255, 0.5);
         font-size: 0.85rem;
@@ -223,6 +279,19 @@
         display: flex;
         align-items: center;
         gap: 6px;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .field-help {
+        color: rgba(30, 41, 59, 0.6);
+    }
+    
+    body.light-mode .field-help a {
+        color: #06b6d4;
+    }
+    
+    body.light-mode .field-help a:hover {
+        color: #14b8a6;
     }
     
     .field-help i {
@@ -237,6 +306,12 @@
         border: 2px solid rgba(6, 182, 212, 0.3);
         background: rgba(10, 10, 26, 0.6);
         position: relative;
+        transition: all 0.3s ease;
+    }
+    
+    body.light-mode .image-preview-box {
+        background: rgba(255, 255, 255, 0.9);
+        border-color: rgba(6, 182, 212, 0.4);
     }
     
     .image-preview-box img {
@@ -261,8 +336,17 @@
         transition: all 0.3s ease;
     }
     
+    body.light-mode .sidebar-card {
+        background: rgba(255, 255, 255, 0.8);
+        border-color: rgba(6, 182, 212, 0.3);
+    }
+    
     .sidebar-card:hover {
         border-color: rgba(6, 182, 212, 0.4);
+    }
+    
+    body.light-mode .sidebar-card:hover {
+        border-color: rgba(6, 182, 212, 0.5);
     }
     
     .location-warning {
@@ -271,6 +355,12 @@
         border-radius: 12px;
         padding: 15px;
         margin-top: 15px;
+        transition: all 0.3s ease;
+    }
+    
+    body.light-mode .location-warning {
+        background: rgba(239, 68, 68, 0.15);
+        border-color: rgba(239, 68, 68, 0.4);
     }
     
     .location-warning i {
@@ -282,6 +372,15 @@
         color: rgba(255, 255, 255, 0.8);
         font-size: 0.9rem;
         line-height: 1.6;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .location-warning-text {
+        color: rgba(30, 41, 59, 0.9);
+    }
+    
+    body.light-mode .location-warning-text strong {
+        color: #1e293b;
     }
     
     .action-buttons {
@@ -290,6 +389,11 @@
         margin-top: 40px;
         padding-top: 30px;
         border-top: 2px solid rgba(6, 182, 212, 0.2);
+        transition: border-color 0.3s ease;
+    }
+    
+    body.light-mode .action-buttons {
+        border-top-color: rgba(6, 182, 212, 0.3);
     }
     
     .btn-save {
@@ -334,9 +438,20 @@
         font-family: 'Inter', sans-serif;
     }
     
+    body.light-mode .btn-cancel {
+        background: rgba(148, 163, 184, 0.2);
+        border-color: rgba(148, 163, 184, 0.4);
+        color: #1e293b;
+    }
+    
     .btn-cancel:hover {
         background: rgba(100, 100, 100, 0.3);
         border-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    body.light-mode .btn-cancel:hover {
+        background: rgba(148, 163, 184, 0.3);
+        border-color: rgba(148, 163, 184, 0.6);
     }
     
     .error-message {

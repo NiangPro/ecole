@@ -10,6 +10,27 @@
     
     <!-- Toastr CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <script>
+        // Appliquer le mode immédiatement pour éviter le flash
+        (function() {
+            const darkMode = localStorage.getItem('adminDarkMode');
+            if (darkMode === 'light') {
+                if (document.documentElement) {
+                    document.documentElement.classList.add('light-mode');
+                }
+                if (document.body) {
+                    document.body.classList.add('light-mode');
+                } else {
+                    // Si le body n'existe pas encore, attendre qu'il soit chargé
+                    document.addEventListener('DOMContentLoaded', function() {
+                        if (document.body) {
+                            document.body.classList.add('light-mode');
+                        }
+                    });
+                }
+            }
+        })();
+    </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
         
@@ -24,6 +45,14 @@
             overflow-y: auto;
         }
         
+        html {
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        html.light-mode {
+            background: #f8f9fa;
+        }
+        
         body {
             font-family: 'Inter', sans-serif;
             background: #0a0a0f;
@@ -31,6 +60,12 @@
             overflow-x: hidden !important;
             overflow-y: auto;
             max-width: 100vw;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        body.light-mode {
+            background: #f8f9fa;
+            color: #1e293b;
         }
         
         .sidebar {
@@ -46,7 +81,28 @@
             overflow-y: auto;
             overflow-x: hidden;
             z-index: 100;
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+        }
+        
+        body.light-mode .sidebar {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 249, 250, 0.95) 100%);
+            border-right-color: rgba(6, 182, 212, 0.3);
+        }
+        
+        body.light-mode .sidebar-item {
+            color: #64748b;
+        }
+        
+        body.light-mode .sidebar-item:hover,
+        body.light-mode .sidebar-item.active {
+            background: rgba(6, 182, 212, 0.1);
+            color: #06b6d4;
+        }
+        
+        body.light-mode .logo-admin h1 {
+            background: linear-gradient(135deg, #06b6d4, #14b8a6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
         
         @media (max-width: 1024px) {
@@ -131,6 +187,12 @@
             padding-left: 1rem;
             border-left: 2px solid rgba(6, 182, 212, 0.2);
             margin-left: 1.25rem;
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+        
+        body.light-mode .sidebar-dropdown-menu {
+            background: rgba(241, 245, 249, 0.5);
+            border-left-color: rgba(6, 182, 212, 0.3);
         }
         
         .sidebar-dropdown-item {
@@ -145,8 +207,19 @@
             border-left: 2px solid transparent;
         }
         
+        body.light-mode .sidebar-dropdown-item {
+            color: rgba(71, 85, 105, 1);
+        }
+        
         .sidebar-dropdown-item:hover, .sidebar-dropdown-item.active {
             background: rgba(6, 182, 212, 0.1);
+            color: #06b6d4;
+            border-left-color: #06b6d4;
+        }
+        
+        body.light-mode .sidebar-dropdown-item:hover, 
+        body.light-mode .sidebar-dropdown-item.active {
+            background: rgba(6, 182, 212, 0.15);
             color: #06b6d4;
             border-left-color: #06b6d4;
         }
@@ -176,10 +249,19 @@
             transition: all 0.3s ease;
         }
         
+        body.light-mode .stat-card {
+            background: rgba(255, 255, 255, 0.8);
+            border-color: rgba(6, 182, 212, 0.3);
+        }
+        
         .stat-card:hover {
             border-color: rgba(6, 182, 212, 0.5);
             box-shadow: 0 10px 30px rgba(6, 182, 212, 0.2);
             transform: translateY(-5px);
+        }
+        
+        body.light-mode .stat-card:hover {
+            box-shadow: 0 10px 30px rgba(6, 182, 212, 0.15);
         }
         
         .stat-number {
@@ -213,6 +295,12 @@
             border-radius: 16px;
             padding: 2rem;
             margin-bottom: 2rem;
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+        
+        body.light-mode .content-section {
+            background: rgba(255, 255, 255, 0.8);
+            border-color: rgba(6, 182, 212, 0.3);
         }
         
         .input-admin {
@@ -226,10 +314,21 @@
             font-size: 0.9rem;
         }
         
+        body.light-mode .input-admin {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: rgba(6, 182, 212, 0.3);
+            color: #1e293b;
+        }
+        
         .input-admin:focus {
             outline: none;
             border-color: #06b6d4;
             background: rgba(6, 182, 212, 0.1);
+        }
+        
+        body.light-mode .input-admin:focus {
+            background: rgba(255, 255, 255, 1);
+            border-color: #06b6d4;
         }
         
         textarea.input-admin {
@@ -250,18 +349,36 @@
             -moz-appearance: none;
         }
         
+        body.light-mode select.input-admin {
+            color: #1e293b;
+            background: rgba(255, 255, 255, 0.9);
+        }
+        
         select.input-admin option {
             background: #0f172a;
             color: white;
             padding: 10px;
         }
         
+        body.light-mode select.input-admin option {
+            background: #ffffff;
+            color: #1e293b;
+        }
+        
         select.input-admin:focus {
             background-color: rgba(15, 23, 42, 0.9);
         }
         
+        body.light-mode select.input-admin:focus {
+            background-color: rgba(255, 255, 255, 1);
+        }
+        
         select.input-admin:focus option {
             background: rgba(6, 182, 212, 0.1);
+        }
+        
+        body.light-mode select.input-admin:focus option {
+            background: #ffffff;
         }
         
         .mobile-menu-btn {
@@ -323,6 +440,55 @@
             align-items: center;
             z-index: 99;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            transition: background 0.3s ease, border-color 0.3s ease;
+        }
+        
+        body.light-mode .header-admin {
+            background: rgba(255, 255, 255, 0.98);
+            border-bottom-color: rgba(6, 182, 212, 0.3);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        body.light-mode .header-title h2 {
+            color: #1e293b;
+        }
+        
+        body.light-mode .header-title p {
+            color: #64748b;
+        }
+        
+        body.light-mode .user-btn {
+            background: rgba(6, 182, 212, 0.1);
+            border-color: rgba(6, 182, 212, 0.3);
+        }
+        
+        body.light-mode .user-btn:hover {
+            background: rgba(6, 182, 212, 0.2);
+        }
+        
+        body.light-mode .user-btn p {
+            color: #1e293b;
+        }
+        
+        body.light-mode .user-btn .text-gray-400 {
+            color: #64748b !important;
+        }
+        
+        body.light-mode .user-btn {
+            background: rgba(6, 182, 212, 0.1);
+            border-color: rgba(6, 182, 212, 0.3);
+        }
+        
+        body.light-mode .user-btn:hover {
+            background: rgba(6, 182, 212, 0.2);
+        }
+        
+        body.light-mode .user-btn p {
+            color: #1e293b;
+        }
+        
+        body.light-mode .user-btn .text-gray-400 {
+            color: #64748b !important;
         }
         
         .user-dropdown {
@@ -377,6 +543,20 @@
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
         }
         
+        body.light-mode .dropdown-menu {
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        body.light-mode .dropdown-item {
+            color: #475569;
+        }
+        
+        body.light-mode .dropdown-item:hover {
+            background: rgba(6, 182, 212, 0.1);
+            color: #06b6d4;
+        }
+        
         .user-dropdown.active .dropdown-menu {
             opacity: 1;
             visibility: visible;
@@ -422,6 +602,37 @@
             .main-content {
                 padding-top: calc(1rem + 100px);
             }
+        }
+        
+        /* Dark Mode Toggle Button */
+        .dark-mode-toggle-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            color: #06b6d4;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .dark-mode-toggle-btn:hover {
+            background: rgba(6, 182, 212, 0.2);
+            border-color: rgba(6, 182, 212, 0.5);
+            transform: scale(1.1);
+        }
+        
+        body.light-mode .dark-mode-toggle-btn {
+            background: rgba(6, 182, 212, 0.1);
+            color: #06b6d4;
+        }
+        
+        body.light-mode .dark-mode-toggle-btn:hover {
+            background: rgba(6, 182, 212, 0.2);
         }
         
         @media (max-width: 768px) {
@@ -496,6 +707,7 @@
                         <i class="fas fa-newspaper"></i>
                         <span>Articles</span>
                     </a>
+                    {{-- Générateur d'Articles désactivé
                     @auth
                     @if(Auth::user()->isAdmin())
                     <a href="{{ route('admin.jobs.seeder.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.jobs.seeder.*') ? 'active' : '' }}">
@@ -504,6 +716,7 @@
                     </a>
                     @endif
                     @endauth
+                    --}}
                 </div>
             </div>
             
@@ -547,10 +760,10 @@
                 <i class="fas fa-envelope-open-text text-xl"></i>
                 <span>Newsletter</span>
                 @php
-                    $subscribersCount = \App\Models\Newsletter::where('is_active', true)->count();
+                    $unreadNewsletters = \App\Models\Newsletter::unread()->where('is_active', true)->count();
                 @endphp
-                @if($subscribersCount > 0)
-                    <span class="ml-auto px-2 py-1 bg-blue-500 text-white text-xs rounded-full">{{ $subscribersCount }}</span>
+                @if($unreadNewsletters > 0)
+                    <span class="ml-auto px-2 py-1 bg-blue-500 text-white text-xs rounded-full">{{ $unreadNewsletters }}</span>
                 @endif
             </a>
             <a href="{{ route('admin.achievements.index') }}" class="sidebar-item {{ request()->routeIs('admin.achievements.*') ? 'active' : '' }}">
@@ -607,17 +820,22 @@
                 <p class="text-gray-400 mt-1">Gérez votre plateforme de formation</p>
             </div>
             
-            <div class="user-dropdown" id="userDropdown">
-                <div class="user-btn" onclick="toggleDropdown()">
-                    <div class="user-avatar">
-                        <i class="fas fa-user-shield"></i>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <!-- Dark Mode Toggle -->
+                <button id="dark-mode-toggle" class="dark-mode-toggle-btn" onclick="toggleDarkMode()" title="Basculer le mode sombre">
+                    <i class="fas fa-moon" id="dark-mode-icon"></i>
+                </button>
+                
+                <div class="user-dropdown" id="userDropdown">
+                    <div class="user-btn" onclick="toggleDropdown()">
+                        <div class="user-avatar">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                        <div class="hidden sm:block text-left">
+                            <p class="font-semibold text-sm">@auth{{ explode(' ', Auth::user()->name)[0] }}@else Admin @endauth</p>
+                        </div>
+                        <i class="fas fa-chevron-down text-sm"></i>
                     </div>
-                    <div class="hidden sm:block text-left">
-                        <p class="font-semibold text-sm">@auth{{ explode(' ', Auth::user()->name)[0] }}@else Admin @endauth</p>
-                        <p class="text-xs text-gray-400">@auth{{ Auth::user()->email }}@else{{ session('admin_email') }}@endauth</p>
-                    </div>
-                    <i class="fas fa-chevron-down text-sm"></i>
-                </div>
                 
                 <div class="dropdown-menu">
                     <a href="{{ route('admin.profile') }}" class="dropdown-item">
@@ -642,6 +860,7 @@
                         <span>Déconnexion</span>
                     </a>
                 </div>
+            </div>
             </div>
         </div>
         
@@ -676,6 +895,44 @@
                 if (parent) parent.classList.remove('active');
             }
         }
+        
+        // Dark Mode Toggle
+        function toggleDarkMode() {
+            const body = document.body;
+            const html = document.documentElement;
+            const isLight = body.classList.toggle('light-mode');
+            html.classList.toggle('light-mode');
+            const icon = document.getElementById('dark-mode-icon');
+            
+            // Sauvegarder la préférence
+            localStorage.setItem('adminDarkMode', isLight ? 'light' : 'dark');
+            
+            // Mettre à jour l'icône
+            if (isLight) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+        }
+        
+        // Initialiser le dark mode au chargement
+        document.addEventListener('DOMContentLoaded', function() {
+            const darkMode = localStorage.getItem('adminDarkMode');
+            const body = document.body;
+            const html = document.documentElement;
+            const icon = document.getElementById('dark-mode-icon');
+            
+            if (darkMode === 'light') {
+                body.classList.add('light-mode');
+                html.classList.add('light-mode');
+                if (icon) {
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
+                }
+            }
+        });
         
         // Close dropdown when clicking outside
         document.addEventListener('click', function(event) {

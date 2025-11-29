@@ -1,6 +1,114 @@
 @extends('admin.layout')
 
+@section('styles')
+<style>
+    /* Styles pour la page AdSense */
+    .adsense-page h3 {
+        color: #fff;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .adsense-page h3 {
+        color: #1e293b;
+    }
+    
+    .adsense-page h4 {
+        color: #fff;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .adsense-page h4 {
+        color: #1e293b;
+    }
+    
+    .adsense-page .text-gray-300 {
+        color: rgba(209, 213, 219, 1);
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .adsense-page .text-gray-300 {
+        color: rgba(30, 41, 59, 0.8);
+    }
+    
+    .adsense-page .text-gray-400 {
+        color: rgba(156, 163, 175, 1);
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .adsense-page .text-gray-400 {
+        color: rgba(100, 116, 139, 1);
+    }
+    
+    .adsense-page .text-gray-500 {
+        color: rgba(107, 114, 128, 1);
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .adsense-page .text-gray-500 {
+        color: rgba(148, 163, 184, 1);
+    }
+    
+    .adsense-page .bg-black\/30 {
+        background: rgba(0, 0, 0, 0.3);
+        transition: background 0.3s ease;
+    }
+    
+    body.light-mode .adsense-page .bg-black\/30 {
+        background: rgba(255, 255, 255, 0.9);
+    }
+    
+    .adsense-page .hover\:bg-black\/40:hover {
+        background: rgba(0, 0, 0, 0.4);
+    }
+    
+    body.light-mode .adsense-page .hover\:bg-black\/40:hover {
+        background: rgba(255, 255, 255, 1);
+    }
+    
+    .adsense-page .bg-gray-600 {
+        background: rgba(75, 85, 99, 1);
+        transition: background 0.3s ease;
+    }
+    
+    body.light-mode .adsense-page .bg-gray-600 {
+        background: rgba(148, 163, 184, 1);
+    }
+    
+    .adsense-page .bg-green-500\/20 {
+        background: rgba(34, 197, 94, 0.2);
+        border-color: rgba(34, 197, 94, 0.3);
+    }
+    
+    body.light-mode .adsense-page .bg-green-500\/20 {
+        background: rgba(34, 197, 94, 0.15);
+        border-color: rgba(34, 197, 94, 0.4);
+    }
+    
+    .adsense-page .bg-gray-500\/20 {
+        background: rgba(107, 114, 128, 0.2);
+    }
+    
+    body.light-mode .adsense-page .bg-gray-500\/20 {
+        background: rgba(148, 163, 184, 0.15);
+    }
+    
+    .adsense-page .text-cyan-400 {
+        color: #06b6d4;
+    }
+    
+    .adsense-page .font-semibold {
+        color: rgba(255, 255, 255, 0.9);
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .adsense-page .font-semibold {
+        color: rgba(30, 41, 59, 0.9);
+    }
+</style>
+@endsection
+
 @section('content')
+<div class="adsense-page">
 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
     <h3 class="text-3xl font-bold">Configuration Google AdSense</h3>
     <a href="{{ route('admin.adsense.check') }}" class="btn-primary">
@@ -108,5 +216,6 @@
             </div>
         </div>
     </div>
+</div>
 </div>
 @endsection

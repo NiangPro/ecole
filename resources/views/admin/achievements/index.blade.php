@@ -2,7 +2,77 @@
 
 @section('title', 'Réalisations')
 
+@section('styles')
+<style>
+    /* Styles pour la page Achievements */
+    .achievements-page h3 {
+        color: #fff;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .achievements-page h3 {
+        color: #1e293b;
+    }
+    
+    .achievements-page .text-gray-400 {
+        color: rgba(156, 163, 175, 1);
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .achievements-page .text-gray-400 {
+        color: rgba(100, 116, 139, 1);
+    }
+    
+    .achievements-page .hover\:bg-cyan-500\/5:hover {
+        background: rgba(6, 182, 212, 0.05);
+    }
+    
+    body.light-mode .achievements-page .hover\:bg-cyan-500\/5:hover {
+        background: rgba(6, 182, 212, 0.1);
+    }
+    
+    .achievements-page .bg-green-500\/20 {
+        background: rgba(34, 197, 94, 0.2);
+        border-color: rgba(34, 197, 94, 0.5);
+    }
+    
+    body.light-mode .achievements-page .bg-green-500\/20 {
+        background: rgba(34, 197, 94, 0.15);
+        border-color: rgba(34, 197, 94, 0.4);
+    }
+    
+    .achievements-page .bg-red-500\/20 {
+        background: rgba(239, 68, 68, 0.2);
+        border-color: rgba(239, 68, 68, 0.5);
+    }
+    
+    body.light-mode .achievements-page .bg-red-500\/20 {
+        background: rgba(239, 68, 68, 0.15);
+        border-color: rgba(239, 68, 68, 0.4);
+    }
+    
+    .achievements-page table td {
+        color: rgba(255, 255, 255, 0.9);
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .achievements-page table td {
+        color: rgba(30, 41, 59, 0.9);
+    }
+    
+    .achievements-page .font-semibold {
+        color: rgba(255, 255, 255, 0.9);
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .achievements-page .font-semibold {
+        color: rgba(30, 41, 59, 0.9);
+    }
+</style>
+@endsection
+
 @section('content')
+<div class="achievements-page">
 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
     <div>
         <h3 class="text-3xl font-bold mb-2">Réalisations</h3>
@@ -108,6 +178,7 @@
             </tbody>
         </table>
     </div>
+</div>
 </div>
 @endsection
 

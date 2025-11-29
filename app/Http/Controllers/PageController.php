@@ -7562,6 +7562,7 @@ int main() {
             'email' => $request->email,
             'token' => $token,
             'is_active' => true,
+            'is_read' => false,
             'subscribed_at' => now()
         ]);
 

@@ -105,10 +105,124 @@
     .table-row-hover:hover {
         background: rgba(6, 182, 212, 0.05);
     }
+    
+    body.light-mode::-webkit-scrollbar-track {
+        background: rgba(241, 245, 249, 0.5);
+    }
+    
+    body.light-mode .content-section {
+        background: rgba(255, 255, 255, 0.8);
+        border-color: rgba(6, 182, 212, 0.3);
+    }
+    
+    body.light-mode .input-admin {
+        background: rgba(255, 255, 255, 0.9);
+        border-color: rgba(6, 182, 212, 0.3);
+        color: #1e293b;
+    }
+    
+    body.light-mode .input-admin:focus {
+        background: rgba(255, 255, 255, 1);
+        box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.15);
+    }
+    
+    body.light-mode .input-admin option {
+        background: #ffffff;
+        color: #1e293b;
+    }
+    
+    body.light-mode .stat-card {
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(20, 184, 166, 0.1));
+        border-color: rgba(6, 182, 212, 0.4);
+    }
+    
+    body.light-mode .stat-card:hover {
+        border-color: rgba(6, 182, 212, 0.6);
+        box-shadow: 0 15px 40px rgba(6, 182, 212, 0.15);
+    }
+    
+    .newsletter-page h3 {
+        color: #fff;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .newsletter-page h3 {
+        color: #1e293b;
+    }
+    
+    .newsletter-page h4 {
+        color: #fff;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .newsletter-page h4 {
+        color: #1e293b;
+    }
+    
+    .newsletter-page .text-gray-400 {
+        color: rgba(156, 163, 175, 1);
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .newsletter-page .text-gray-400 {
+        color: rgba(100, 116, 139, 1);
+    }
+    
+    .newsletter-page .text-gray-300 {
+        color: rgba(209, 213, 219, 1);
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .newsletter-page .text-gray-300 {
+        color: rgba(30, 41, 59, 0.8);
+    }
+    
+    .newsletter-page .text-white {
+        color: #fff;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .newsletter-page .text-white {
+        color: #1e293b;
+    }
+    
+    .newsletter-page .bg-gray-600 {
+        background: rgba(75, 85, 99, 1);
+        transition: background 0.3s ease;
+    }
+    
+    body.light-mode .newsletter-page .bg-gray-600 {
+        background: rgba(148, 163, 184, 1);
+    }
+    
+    .newsletter-page .bg-green-500\/20 {
+        background: rgba(34, 197, 94, 0.2);
+        border-color: rgba(34, 197, 94, 0.5);
+    }
+    
+    body.light-mode .newsletter-page .bg-green-500\/20 {
+        background: rgba(34, 197, 94, 0.15);
+        border-color: rgba(34, 197, 94, 0.4);
+    }
+    
+    .newsletter-page .bg-red-500\/20 {
+        background: rgba(239, 68, 68, 0.2);
+        border-color: rgba(239, 68, 68, 0.5);
+    }
+    
+    body.light-mode .newsletter-page .bg-red-500\/20 {
+        background: rgba(239, 68, 68, 0.15);
+        border-color: rgba(239, 68, 68, 0.4);
+    }
+    
+    body.light-mode .table-row-hover:hover {
+        background: rgba(6, 182, 212, 0.1);
+    }
 </style>
 @endsection
 
 @section('content')
+<div class="newsletter-page">
 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
     <div>
         <h3 class="text-3xl font-bold mb-2 flex items-center gap-3">
@@ -402,6 +516,7 @@ document.querySelectorAll('.row-checkbox').forEach(checkbox => {
         const allChecked = document.querySelectorAll('.row-checkbox:checked').length === document.querySelectorAll('.row-checkbox').length;
         document.getElementById('select-all').checked = allChecked;
     });
-});
+    });
 </script>
+</div>
 @endsection

@@ -2,7 +2,76 @@
 
 @section('title', 'Gestion des Publicités')
 
+@section('styles')
+<style>
+    /* Styles pour la page Ads Index */
+    .ads-index-page h3 {
+        color: #fff;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .ads-index-page h3 {
+        color: #1e293b;
+    }
+    
+    .ads-index-page .text-gray-400 {
+        color: rgba(156, 163, 175, 1);
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .ads-index-page .text-gray-400 {
+        color: rgba(100, 116, 139, 1);
+    }
+    
+    .ads-index-page .text-gray-300 {
+        color: rgba(209, 213, 219, 1);
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .ads-index-page .text-gray-300 {
+        color: rgba(30, 41, 59, 0.8);
+    }
+    
+    .ads-index-page .text-white {
+        color: #fff;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .ads-index-page .text-white {
+        color: #1e293b;
+    }
+    
+    .ads-index-page .bg-gray-700 {
+        background: rgba(55, 65, 81, 1);
+        transition: background 0.3s ease;
+    }
+    
+    body.light-mode .ads-index-page .bg-gray-700 {
+        background: rgba(241, 245, 249, 1);
+    }
+    
+    .ads-index-page .hover\:bg-cyan-500\/5:hover {
+        background: rgba(6, 182, 212, 0.05);
+    }
+    
+    body.light-mode .ads-index-page .hover\:bg-cyan-500\/5:hover {
+        background: rgba(6, 182, 212, 0.1);
+    }
+    
+    .ads-index-page .bg-green-500\/10 {
+        background: rgba(34, 197, 94, 0.1);
+        border-color: rgba(34, 197, 94, 0.3);
+    }
+    
+    body.light-mode .ads-index-page .bg-green-500\/10 {
+        background: rgba(34, 197, 94, 0.15);
+        border-color: rgba(34, 197, 94, 0.4);
+    }
+</style>
+@endsection
+
 @section('content')
+<div class="ads-index-page">
 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
     <div>
         <h3 class="text-3xl font-bold mb-2">Gestion des Publicités</h3>
@@ -103,6 +172,7 @@
         {{ $ads->links() }}
     </div>
     @endif
+</div>
 </div>
 @endsection
 

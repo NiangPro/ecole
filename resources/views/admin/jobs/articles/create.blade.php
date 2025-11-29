@@ -87,6 +87,26 @@
         font-size: 1.1rem;
         color: rgba(255, 255, 255, 0.7);
         font-weight: 400;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .form-hero {
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.05) 0%, rgba(20, 184, 166, 0.05) 100%);
+        border-color: rgba(6, 182, 212, 0.4);
+    }
+    
+    body.light-mode .form-hero p {
+        color: rgba(30, 41, 59, 0.8);
+    }
+    
+    body.light-mode .btn-back {
+        background: rgba(6, 182, 212, 0.08);
+        border-color: rgba(6, 182, 212, 0.4);
+    }
+    
+    body.light-mode .btn-back:hover {
+        background: rgba(6, 182, 212, 0.15);
+        border-color: rgba(6, 182, 212, 0.6);
     }
     
     .form-grid {
@@ -105,6 +125,16 @@
         position: relative;
         overflow: hidden;
         margin-bottom: 25px;
+    }
+    
+    body.light-mode .form-card {
+        background: rgba(255, 255, 255, 0.8);
+        border-color: rgba(6, 182, 212, 0.3);
+    }
+    
+    body.light-mode .form-card:hover {
+        border-color: rgba(6, 182, 212, 0.5);
+        box-shadow: 0 20px 60px rgba(6, 182, 212, 0.15);
     }
     
     .form-card::before {
@@ -174,6 +204,14 @@
         transition: all 0.3s ease;
     }
     
+    body.light-mode .form-input,
+    body.light-mode .form-select,
+    body.light-mode .form-textarea {
+        background: rgba(255, 255, 255, 0.9);
+        border-color: rgba(6, 182, 212, 0.3);
+        color: #1e293b;
+    }
+    
     .form-input:focus,
     .form-select:focus,
     .form-textarea:focus {
@@ -181,6 +219,18 @@
         border-color: #06b6d4;
         background: rgba(15, 23, 42, 0.95);
         box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.1);
+    }
+    
+    body.light-mode .form-input:focus,
+    body.light-mode .form-select:focus,
+    body.light-mode .form-textarea:focus {
+        background: rgba(255, 255, 255, 1);
+        box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.15);
+    }
+    
+    body.light-mode .form-select option {
+        background: #ffffff;
+        color: #1e293b;
     }
     
     .form-textarea {
@@ -199,6 +249,19 @@
         color: rgba(255, 255, 255, 0.5);
         margin-top: 8px;
         font-style: italic;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .form-help {
+        color: rgba(30, 41, 59, 0.6);
+    }
+    
+    body.light-mode .form-help a {
+        color: #06b6d4;
+    }
+    
+    body.light-mode .form-help a:hover {
+        color: #14b8a6;
     }
     
     .form-error {
@@ -219,6 +282,12 @@
         border: 2px solid rgba(6, 182, 212, 0.2);
         border-radius: 12px;
         margin-bottom: 15px;
+        transition: all 0.3s ease;
+    }
+    
+    body.light-mode .editor-toolbar {
+        background: rgba(6, 182, 212, 0.08);
+        border-color: rgba(6, 182, 212, 0.3);
     }
     
     .editor-buttons {
@@ -248,6 +317,11 @@
         font-size: 0.9rem;
         color: rgba(255, 255, 255, 0.6);
         font-weight: 600;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .word-count {
+        color: rgba(30, 41, 59, 0.7);
     }
     
     .seo-card {
@@ -256,6 +330,12 @@
         border-radius: 16px;
         padding: 25px;
         margin-bottom: 20px;
+        transition: all 0.3s ease;
+    }
+    
+    body.light-mode .seo-card {
+        background: rgba(255, 255, 255, 0.7);
+        border-color: rgba(6, 182, 212, 0.3);
     }
     
     .seo-score {
@@ -281,6 +361,11 @@
         border-radius: 10px;
         overflow: hidden;
         margin-bottom: 20px;
+        transition: background 0.3s ease;
+    }
+    
+    body.light-mode .seo-progress {
+        background: rgba(241, 245, 249, 0.8);
     }
     
     .seo-progress-bar {
@@ -296,6 +381,27 @@
         justify-content: space-between;
         padding: 12px 0;
         border-bottom: 1px solid rgba(6, 182, 212, 0.1);
+        transition: border-color 0.3s ease;
+    }
+    
+    body.light-mode .seo-detail-item {
+        border-bottom-color: rgba(6, 182, 212, 0.2);
+    }
+    
+    body.light-mode .seo-detail-item span {
+        color: rgba(30, 41, 59, 0.7) !important;
+    }
+    
+    body.light-mode .seo-detail-item span[style*="color: rgba(255, 255, 255, 0.5)"] {
+        color: rgba(30, 41, 59, 0.6) !important;
+    }
+    
+    body.light-mode .seo-detail-item span[style*="color: rgba(255, 255, 255, 0.7)"] {
+        color: rgba(30, 41, 59, 0.7) !important;
+    }
+    
+    body.light-mode span[style*="color: rgba(255, 255, 255, 0.9)"] {
+        color: rgba(30, 41, 59, 0.9) !important;
     }
     
     .seo-detail-item:last-child {
@@ -324,6 +430,11 @@
         margin-top: 40px;
         padding-top: 30px;
         border-top: 2px solid rgba(6, 182, 212, 0.2);
+        transition: border-color 0.3s ease;
+    }
+    
+    body.light-mode .form-actions {
+        border-top-color: rgba(6, 182, 212, 0.3);
     }
     
     .btn-submit {
@@ -571,7 +682,7 @@
                             <input type="checkbox" name="is_sponsored" value="1" 
                                    {{ old('is_sponsored', isset($article) && $article->is_sponsored ? true : false) ? 'checked' : '' }}
                                    class="form-checkbox" style="width: 20px; height: 20px; margin-right: 10px; cursor: pointer;">
-                            <span style="font-weight: 600; color: rgba(255, 255, 255, 0.9);">
+                            <span style="font-weight: 600; color: rgba(255, 255, 255, 0.9); transition: color 0.3s ease;">
                                 <i class="fas fa-star" style="color: #f59e0b; margin-right: 6px;"></i>
                                 Article sponsorisé
                             </span>
@@ -629,7 +740,7 @@
                             <input type="file" name="cover_image_file" id="coverImageFile" accept="image/*" class="form-input">
                             @if(isset($article) && $article->cover_type === 'internal' && $article->cover_image)
                                 <div class="form-help">
-                                    Image actuelle: <a href="{{ \Illuminate\Support\Facades\Storage::url($article->cover_image) }}" target="_blank" class="text-cyan-400 hover:underline">{{ basename($article->cover_image) }}</a>
+                                    Image actuelle: <a href="{{ \Illuminate\Support\Facades\Storage::url($article->cover_image) }}" target="_blank" style="color: #06b6d4; text-decoration: none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">{{ basename($article->cover_image) }}</a>
                                 </div>
                             @else
                                 <div class="form-help">Formats acceptés: JPG, PNG, GIF</div>

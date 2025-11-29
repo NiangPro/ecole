@@ -63,6 +63,16 @@
         font-size: 1.1rem;
         color: rgba(255, 255, 255, 0.7);
         font-weight: 400;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .form-hero {
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.05) 0%, rgba(20, 184, 166, 0.05) 100%);
+        border-color: rgba(6, 182, 212, 0.4);
+    }
+    
+    body.light-mode .form-hero p {
+        color: rgba(30, 41, 59, 0.8);
     }
     
     .form-grid {
@@ -80,6 +90,16 @@
         transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         position: relative;
         overflow: hidden;
+    }
+    
+    body.light-mode .form-card {
+        background: rgba(255, 255, 255, 0.8);
+        border-color: rgba(6, 182, 212, 0.3);
+    }
+    
+    body.light-mode .form-card:hover {
+        border-color: rgba(6, 182, 212, 0.5);
+        box-shadow: 0 20px 60px rgba(6, 182, 212, 0.15);
     }
     
     .form-card::before {
@@ -149,6 +169,14 @@
         transition: all 0.3s ease;
     }
     
+    body.light-mode .form-input,
+    body.light-mode .form-select,
+    body.light-mode .form-textarea {
+        background: rgba(255, 255, 255, 0.9);
+        border-color: rgba(6, 182, 212, 0.3);
+        color: #1e293b;
+    }
+    
     .form-input:focus,
     .form-select:focus,
     .form-textarea:focus {
@@ -156,6 +184,13 @@
         border-color: #06b6d4;
         background: rgba(15, 23, 42, 0.95);
         box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.1);
+    }
+    
+    body.light-mode .form-input:focus,
+    body.light-mode .form-select:focus,
+    body.light-mode .form-textarea:focus {
+        background: rgba(255, 255, 255, 1);
+        box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.15);
     }
     
     .form-select {
@@ -174,6 +209,11 @@
         padding: 10px;
     }
     
+    body.light-mode .form-select option {
+        background: #ffffff;
+        color: #1e293b;
+    }
+    
     .form-textarea {
         resize: vertical;
         min-height: 120px;
@@ -184,6 +224,19 @@
         color: rgba(255, 255, 255, 0.5);
         margin-top: 8px;
         font-style: italic;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .form-help {
+        color: rgba(30, 41, 59, 0.6);
+    }
+    
+    body.light-mode .form-help a {
+        color: #06b6d4;
+    }
+    
+    body.light-mode .form-help a:hover {
+        color: #14b8a6;
     }
     
     .form-error {
@@ -212,9 +265,19 @@
         cursor: pointer;
     }
     
+    body.light-mode .checkbox-wrapper {
+        background: rgba(6, 182, 212, 0.08);
+        border-color: rgba(6, 182, 212, 0.3);
+    }
+    
     .checkbox-wrapper:hover {
         background: rgba(6, 182, 212, 0.1);
         border-color: rgba(6, 182, 212, 0.4);
+    }
+    
+    body.light-mode .checkbox-wrapper:hover {
+        background: rgba(6, 182, 212, 0.12);
+        border-color: rgba(6, 182, 212, 0.5);
     }
     
     .checkbox-wrapper input[type="checkbox"] {
@@ -240,6 +303,12 @@
         border: 2px dashed rgba(6, 182, 212, 0.3);
         border-radius: 12px;
         text-align: center;
+        transition: all 0.3s ease;
+    }
+    
+    body.light-mode .image-preview-wrapper {
+        background: rgba(6, 182, 212, 0.08);
+        border-color: rgba(6, 182, 212, 0.4);
     }
     
     .image-preview-wrapper img {
@@ -256,6 +325,11 @@
         margin-top: 40px;
         padding-top: 30px;
         border-top: 2px solid rgba(6, 182, 212, 0.2);
+        transition: border-color 0.3s ease;
+    }
+    
+    body.light-mode .form-actions {
+        border-top-color: rgba(6, 182, 212, 0.3);
     }
     
     .btn-submit {
@@ -298,10 +372,21 @@
         justify-content: center;
     }
     
+    body.light-mode .btn-cancel {
+        background: rgba(148, 163, 184, 0.2);
+        color: #1e293b;
+        border-color: rgba(148, 163, 184, 0.4);
+    }
+    
     .btn-cancel:hover {
         background: rgba(107, 114, 128, 0.3);
         border-color: rgba(107, 114, 128, 0.5);
         transform: translateY(-2px);
+    }
+    
+    body.light-mode .btn-cancel:hover {
+        background: rgba(148, 163, 184, 0.3);
+        border-color: rgba(148, 163, 184, 0.6);
     }
     
     @media (max-width: 1024px) {
@@ -414,7 +499,7 @@
                         <input type="file" name="image_file" accept="image/*" class="form-input">
                         @if($category->image_type === 'internal' && $category->image)
                             <div class="form-help">
-                                Image actuelle: <a href="{{ \Illuminate\Support\Facades\Storage::url($category->image) }}" target="_blank" class="text-cyan-400 hover:underline">{{ basename($category->image) }}</a>
+                                Image actuelle: <a href="{{ \Illuminate\Support\Facades\Storage::url($category->image) }}" target="_blank" style="color: #06b6d4; text-decoration: none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">{{ basename($category->image) }}</a>
                             </div>
                         @else
                             <div class="form-help">Formats acceptés: JPG, PNG, GIF</div>

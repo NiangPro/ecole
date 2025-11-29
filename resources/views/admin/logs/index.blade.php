@@ -2,8 +2,160 @@
 
 @section('title', 'Logs Admin - NiangProgrammeur')
 
+@section('styles')
+<style>
+    /* Styles pour la page Logs */
+    .logs-page {
+        min-height: 100vh;
+        padding: 1.5rem;
+        transition: background 0.3s ease;
+    }
+    
+    .logs-page.dark-mode {
+        background: linear-gradient(to bottom right, rgb(15, 23, 42), rgb(30, 41, 59), rgb(15, 23, 42));
+    }
+    
+    body.light-mode .logs-page {
+        background: linear-gradient(to bottom right, rgba(248, 250, 252, 1), rgba(241, 245, 249, 1), rgba(248, 250, 252, 1));
+    }
+    
+    .logs-page h1 {
+        color: transparent;
+        background: linear-gradient(to right, #06b6d4, #14b8a6);
+        -webkit-background-clip: text;
+        background-clip: text;
+    }
+    
+    .logs-page .text-gray-400 {
+        color: rgba(156, 163, 175, 1);
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .logs-page .text-gray-400 {
+        color: rgba(100, 116, 139, 1);
+    }
+    
+    .logs-page .bg-slate-800\/50 {
+        background: rgba(30, 41, 59, 0.5);
+        transition: background 0.3s ease;
+    }
+    
+    body.light-mode .logs-page .bg-slate-800\/50 {
+        background: rgba(255, 255, 255, 0.8);
+    }
+    
+    .logs-page .border-cyan-500\/20 {
+        border-color: rgba(6, 182, 212, 0.2);
+        transition: border-color 0.3s ease;
+    }
+    
+    body.light-mode .logs-page .border-cyan-500\/20 {
+        border-color: rgba(6, 182, 212, 0.3);
+    }
+    
+    .logs-page .border-teal-500\/20 {
+        border-color: rgba(20, 184, 166, 0.2);
+        transition: border-color 0.3s ease;
+    }
+    
+    body.light-mode .logs-page .border-teal-500\/20 {
+        border-color: rgba(20, 184, 166, 0.3);
+    }
+    
+    .logs-page .border-purple-500\/20 {
+        border-color: rgba(168, 85, 247, 0.2);
+        transition: border-color 0.3s ease;
+    }
+    
+    body.light-mode .logs-page .border-purple-500\/20 {
+        border-color: rgba(168, 85, 247, 0.3);
+    }
+    
+    .logs-page .border-pink-500\/20 {
+        border-color: rgba(236, 72, 153, 0.2);
+        transition: border-color 0.3s ease;
+    }
+    
+    body.light-mode .logs-page .border-pink-500\/20 {
+        border-color: rgba(236, 72, 153, 0.3);
+    }
+    
+    .logs-page .text-white {
+        color: #fff;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .logs-page .text-white {
+        color: #1e293b;
+    }
+    
+    .logs-page .text-gray-300 {
+        color: rgba(209, 213, 219, 1);
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .logs-page .text-gray-300 {
+        color: rgba(30, 41, 59, 0.8);
+    }
+    
+    .logs-page .bg-slate-700\/50 {
+        background: rgba(51, 65, 85, 0.5);
+        transition: background 0.3s ease;
+    }
+    
+    body.light-mode .logs-page .bg-slate-700\/50 {
+        background: rgba(241, 245, 249, 0.9);
+    }
+    
+    .logs-page .divide-slate-700\/50 > * {
+        border-color: rgba(51, 65, 85, 0.5);
+        transition: border-color 0.3s ease;
+    }
+    
+    body.light-mode .logs-page .divide-slate-700\/50 > * {
+        border-color: rgba(226, 232, 240, 0.5);
+    }
+    
+    .logs-page .hover\:bg-slate-700\/30:hover {
+        background: rgba(51, 65, 85, 0.3);
+    }
+    
+    body.light-mode .logs-page .hover\:bg-slate-700\/30:hover {
+        background: rgba(6, 182, 212, 0.05);
+    }
+    
+    .logs-page .bg-gray-600 {
+        background: rgba(75, 85, 99, 1);
+        transition: background 0.3s ease;
+    }
+    
+    body.light-mode .logs-page .bg-gray-600 {
+        background: rgba(148, 163, 184, 1);
+    }
+    
+    .logs-page .text-gray-500 {
+        color: rgba(107, 114, 128, 1);
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .logs-page .text-gray-500 {
+        color: rgba(148, 163, 184, 1);
+    }
+    
+    .logs-page .border-slate-700\/50 {
+        border-color: rgba(51, 65, 85, 0.5);
+        transition: border-color 0.3s ease;
+    }
+    
+    body.light-mode .logs-page .border-slate-700\/50 {
+        border-color: rgba(226, 232, 240, 0.5);
+    }
+</style>
+@endsection
+
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6">
+<div class="logs-page dark-mode">
+<div class="max-w-7xl mx-auto">
     <div class="max-w-7xl mx-auto">
         <!-- Header -->
         <div class="mb-8">
@@ -161,6 +313,7 @@
             @endif
         </div>
     </div>
+</div>
 </div>
 @endsection
 

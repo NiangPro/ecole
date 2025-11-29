@@ -1,6 +1,148 @@
 @extends('admin.layout')
 
+@section('styles')
+<style>
+    /* Styles pour la page Profile */
+    .profile-page h3 {
+        color: #fff;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .profile-page h3 {
+        color: #1e293b;
+    }
+    
+    .profile-page p.text-gray-400 {
+        color: rgba(156, 163, 175, 1);
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .profile-page p.text-gray-400 {
+        color: rgba(100, 116, 139, 1);
+    }
+    
+    /* Labels */
+    .profile-page label {
+        color: rgba(209, 213, 219, 1);
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .profile-page label {
+        color: rgba(30, 41, 59, 0.9);
+    }
+    
+    /* Cards avec bg-black/30 */
+    .profile-card {
+        background: rgba(0, 0, 0, 0.3);
+        transition: background 0.3s ease;
+    }
+    
+    body.light-mode .profile-card {
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(6, 182, 212, 0.2);
+    }
+    
+    /* Bordures */
+    .profile-page .border-gray-700 {
+        border-color: rgba(55, 65, 81, 1);
+        transition: border-color 0.3s ease;
+    }
+    
+    body.light-mode .profile-page .border-gray-700 {
+        border-color: rgba(226, 232, 240, 1);
+    }
+    
+    /* Textes dans les cards */
+    .profile-page .text-gray-400 {
+        color: rgba(156, 163, 175, 1);
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .profile-page .text-gray-400 {
+        color: rgba(100, 116, 139, 1);
+    }
+    
+    .profile-page .text-gray-300 {
+        color: rgba(209, 213, 219, 1);
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .profile-page .text-gray-300 {
+        color: rgba(30, 41, 59, 0.9);
+    }
+    
+    .profile-page .text-gray-500 {
+        color: rgba(107, 114, 128, 1);
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .profile-page .text-gray-500 {
+        color: rgba(148, 163, 184, 1);
+    }
+    
+    /* Font semibold */
+    .profile-page .font-semibold {
+        color: rgba(255, 255, 255, 1);
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .profile-page .font-semibold {
+        color: rgba(30, 41, 59, 0.9);
+    }
+    
+    /* Warning box */
+    .profile-page .bg-yellow-500\/10 {
+        background: rgba(234, 179, 8, 0.1);
+        border-color: rgba(234, 179, 8, 0.3);
+        transition: all 0.3s ease;
+    }
+    
+    body.light-mode .profile-page .bg-yellow-500\/10 {
+        background: rgba(234, 179, 8, 0.1);
+        border-color: rgba(234, 179, 8, 0.3);
+    }
+    
+    .profile-page .text-yellow-400 {
+        color: rgba(250, 204, 21, 1);
+    }
+    
+    body.light-mode .profile-page .text-yellow-400 {
+        color: rgba(202, 138, 4, 1);
+    }
+    
+    /* Bouton Annuler */
+    .profile-page .bg-gray-600 {
+        background: rgba(75, 85, 99, 1);
+        transition: background 0.3s ease;
+    }
+    
+    .profile-page .bg-gray-600:hover {
+        background: rgba(55, 65, 81, 1);
+    }
+    
+    body.light-mode .profile-page .bg-gray-600 {
+        background: rgba(226, 232, 240, 1);
+        color: rgba(30, 41, 59, 1);
+    }
+    
+    body.light-mode .profile-page .bg-gray-600:hover {
+        background: rgba(203, 213, 225, 1);
+    }
+    
+    /* Titres h4 */
+    .profile-page h4 {
+        color: #fff;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .profile-page h4 {
+        color: #1e293b;
+    }
+</style>
+@endsection
+
 @section('content')
+<div class="profile-page">
 <div class="flex items-center gap-4 mb-8">
     <div class="w-16 h-16 bg-gradient-to-br from-cyan-500 to-teal-500 rounded-full flex items-center justify-center text-2xl font-bold">
         <i class="fas fa-user-shield"></i>
@@ -42,17 +184,17 @@
             
             <div class="mt-6 pt-6 border-t border-gray-700">
                 <div class="space-y-3">
-                    <div class="flex items-center justify-between p-3 bg-black/30 rounded-lg">
+                    <div class="flex items-center justify-between p-3 profile-card rounded-lg">
                         <span class="text-gray-400">Rôle</span>
                         <span class="font-semibold text-cyan-400">Admin</span>
                     </div>
-                    <div class="flex items-center justify-between p-3 bg-black/30 rounded-lg">
+                    <div class="flex items-center justify-between p-3 profile-card rounded-lg">
                         <span class="text-gray-400">Statut</span>
                         <span class="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-semibold">
                             <i class="fas fa-check-circle mr-1"></i>Actif
                         </span>
                     </div>
-                    <div class="flex items-center justify-between p-3 bg-black/30 rounded-lg">
+                    <div class="flex items-center justify-between p-3 profile-card rounded-lg">
                         <span class="text-gray-400">Connexion</span>
                         <span class="font-semibold">Aujourd'hui</span>
                     </div>
@@ -64,14 +206,14 @@
         <div class="content-section mt-6">
             <h4 class="text-lg font-bold mb-4">Statistiques</h4>
             <div class="space-y-3">
-                <div class="flex items-center justify-between p-3 bg-black/30 rounded-lg">
+                <div class="flex items-center justify-between p-3 profile-card rounded-lg">
                     <div class="flex items-center gap-3">
                         <i class="fas fa-users text-cyan-400 text-xl"></i>
                         <span class="text-gray-400">Utilisateurs</span>
                     </div>
                     <span class="font-bold text-cyan-400">{{ \App\Models\User::count() }}</span>
                 </div>
-                <div class="flex items-center justify-between p-3 bg-black/30 rounded-lg">
+                <div class="flex items-center justify-between p-3 profile-card rounded-lg">
                     <div class="flex items-center gap-3">
                         <i class="fas fa-eye text-purple-400 text-xl"></i>
                         <span class="text-gray-400">Visites (mois)</span>
@@ -207,7 +349,7 @@
             </h4>
             
             <div class="space-y-3">
-                <div class="flex items-center gap-4 p-4 bg-black/30 rounded-lg">
+                <div class="flex items-center gap-4 p-4 profile-card rounded-lg">
                     <div class="w-10 h-10 bg-cyan-500/20 rounded-lg flex items-center justify-center">
                         <i class="fas fa-sign-in-alt text-cyan-400"></i>
                     </div>
@@ -217,7 +359,7 @@
                     </div>
                 </div>
                 
-                <div class="flex items-center gap-4 p-4 bg-black/30 rounded-lg">
+                <div class="flex items-center gap-4 p-4 profile-card rounded-lg">
                     <div class="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center">
                         <i class="fas fa-cog text-purple-400"></i>
                     </div>
@@ -227,7 +369,7 @@
                     </div>
                 </div>
                 
-                <div class="flex items-center gap-4 p-4 bg-black/30 rounded-lg">
+                <div class="flex items-center gap-4 p-4 profile-card rounded-lg">
                     <div class="w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center">
                         <i class="fas fa-user-plus text-green-400"></i>
                     </div>
@@ -239,5 +381,6 @@
             </div>
         </div>
     </div>
+</div>
 </div>
 @endsection

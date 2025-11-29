@@ -1,6 +1,195 @@
 @extends('admin.layout')
 
+@section('styles')
+<style>
+    /* Styles pour la page Bing Submission */
+    .bing-page h3 {
+        color: #fff;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .bing-page h3 {
+        color: #1e293b;
+    }
+    
+    .bing-page h4 {
+        color: #fff;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .bing-page h4 {
+        color: #1e293b;
+    }
+    
+    .bing-page .text-gray-400 {
+        color: rgba(156, 163, 175, 1);
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .bing-page .text-gray-400 {
+        color: rgba(100, 116, 139, 1);
+    }
+    
+    .bing-page .text-gray-300 {
+        color: rgba(209, 213, 219, 1);
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .bing-page .text-gray-300 {
+        color: rgba(30, 41, 59, 0.8);
+    }
+    
+    .bing-page .bg-gray-800\/50 {
+        background: rgba(31, 41, 55, 0.5);
+        transition: background 0.3s ease;
+    }
+    
+    body.light-mode .bing-page .bg-gray-800\/50 {
+        background: rgba(255, 255, 255, 0.9);
+    }
+    
+    .bing-page .border-gray-700 {
+        border-color: rgba(55, 65, 81, 1);
+        transition: border-color 0.3s ease;
+    }
+    
+    body.light-mode .bing-page .border-gray-700 {
+        border-color: rgba(226, 232, 240, 1);
+    }
+    
+    .bing-page .bg-gray-900 {
+        background: rgba(17, 24, 39, 1);
+        transition: background 0.3s ease;
+    }
+    
+    body.light-mode .bing-page .bg-gray-900 {
+        background: rgba(241, 245, 249, 1);
+    }
+    
+    .bing-page .text-gray-300 {
+        color: rgba(209, 213, 219, 1);
+    }
+    
+    body.light-mode .bing-page .text-gray-300 {
+        color: rgba(30, 41, 59, 0.8);
+    }
+    
+    .bing-page .bg-green-500\/10 {
+        background: rgba(34, 197, 94, 0.1);
+        border-color: rgba(34, 197, 94, 0.3);
+    }
+    
+    body.light-mode .bing-page .bg-green-500\/10 {
+        background: rgba(34, 197, 94, 0.15);
+        border-color: rgba(34, 197, 94, 0.4);
+    }
+    
+    .bing-page .bg-red-500\/10 {
+        background: rgba(239, 68, 68, 0.1);
+        border-color: rgba(239, 68, 68, 0.3);
+    }
+    
+    body.light-mode .bing-page .bg-red-500\/10 {
+        background: rgba(239, 68, 68, 0.15);
+        border-color: rgba(239, 68, 68, 0.4);
+    }
+    
+    .bing-page .bg-yellow-500\/10 {
+        background: rgba(234, 179, 8, 0.1);
+        border-color: rgba(234, 179, 8, 0.3);
+    }
+    
+    body.light-mode .bing-page .bg-yellow-500\/10 {
+        background: rgba(234, 179, 8, 0.15);
+        border-color: rgba(234, 179, 8, 0.4);
+    }
+    
+    .bing-page .bg-blue-500\/10 {
+        background: rgba(59, 130, 246, 0.1);
+        border-color: rgba(59, 130, 246, 0.3);
+    }
+    
+    body.light-mode .bing-page .bg-blue-500\/10 {
+        background: rgba(59, 130, 246, 0.15);
+        border-color: rgba(59, 130, 246, 0.4);
+    }
+    
+    .bing-page .bg-green-500\/10 {
+        background: rgba(34, 197, 94, 0.1);
+        border-color: rgba(34, 197, 94, 0.3);
+    }
+    
+    body.light-mode .bing-page .bg-green-500\/10 {
+        background: rgba(34, 197, 94, 0.15);
+        border-color: rgba(34, 197, 94, 0.4);
+    }
+    
+    .bing-page .bg-yellow-500\/10 {
+        background: rgba(234, 179, 8, 0.1);
+        border-color: rgba(234, 179, 8, 0.3);
+    }
+    
+    body.light-mode .bing-page .bg-yellow-500\/10 {
+        background: rgba(234, 179, 8, 0.15);
+        border-color: rgba(234, 179, 8, 0.4);
+    }
+    
+    .bing-page .bg-purple-500\/10 {
+        background: rgba(168, 85, 247, 0.1);
+        border-color: rgba(168, 85, 247, 0.3);
+    }
+    
+    body.light-mode .bing-page .bg-purple-500\/10 {
+        background: rgba(168, 85, 247, 0.15);
+        border-color: rgba(168, 85, 247, 0.4);
+    }
+    
+    .bing-page .bg-cyan-500\/10 {
+        background: rgba(6, 182, 212, 0.1);
+        border-color: rgba(6, 182, 212, 0.3);
+    }
+    
+    body.light-mode .bing-page .bg-cyan-500\/10 {
+        background: rgba(6, 182, 212, 0.15);
+        border-color: rgba(6, 182, 212, 0.4);
+    }
+    
+    .bing-page .text-yellow-400 {
+        color: #facc15;
+    }
+    
+    .bing-page .text-yellow-300 {
+        color: #fde047;
+    }
+    
+    body.light-mode .bing-page .text-yellow-300 {
+        color: #ca8a04;
+    }
+    
+    .bing-page .text-blue-400 {
+        color: #60a5fa;
+    }
+    
+    .bing-page .text-green-400 {
+        color: #4ade80;
+    }
+    
+    .bing-page .text-yellow-400 {
+        color: #facc15;
+    }
+    
+    .bing-page .text-purple-400 {
+        color: #a78bfa;
+    }
+    
+    .bing-page .text-cyan-400 {
+        color: #06b6d4;
+    }
+</style>
+@endsection
+
 @section('content')
+<div class="bing-page">
 <h3 class="text-3xl font-bold mb-8">
     <i class="fab fa-microsoft mr-2 text-blue-400"></i>
     Soumission d'URLs à Bing
@@ -118,6 +307,7 @@
             php artisan bing:submit-urls
         </code>
     </div>
+</div>
 </div>
 @endsection
 

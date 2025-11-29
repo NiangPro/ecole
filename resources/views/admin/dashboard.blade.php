@@ -14,6 +14,12 @@
         margin-bottom: 40px;
         position: relative;
         overflow: hidden;
+        transition: background 0.3s ease, border-color 0.3s ease;
+    }
+    
+    body.light-mode .dashboard-hero {
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.08) 0%, rgba(20, 184, 166, 0.08) 100%);
+        border-color: rgba(6, 182, 212, 0.4);
     }
     
     .dashboard-hero::before {
@@ -57,6 +63,11 @@
     .dashboard-hero p {
         font-size: 1.1rem;
         color: rgba(255, 255, 255, 0.7);
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .dashboard-hero p {
+        color: rgba(30, 41, 59, 0.8);
     }
     
     /* Alertes publicités expirantes */
@@ -135,10 +146,20 @@
         transition: all 0.3s ease;
     }
     
+    body.light-mode .expiring-ad-item {
+        background: rgba(255, 255, 255, 0.8);
+        border-color: rgba(239, 68, 68, 0.4);
+    }
+    
     .expiring-ad-item:hover {
         background: rgba(15, 23, 42, 0.8);
         border-color: rgba(239, 68, 68, 0.5);
         transform: translateX(5px);
+    }
+    
+    body.light-mode .expiring-ad-item:hover {
+        background: rgba(255, 255, 255, 0.95);
+        border-color: rgba(239, 68, 68, 0.6);
     }
     
     .expiring-ad-info {
@@ -149,6 +170,11 @@
         font-weight: 700;
         color: #fff;
         margin-bottom: 5px;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .expiring-ad-name {
+        color: #1e293b;
     }
     
     .expiring-ad-date {
@@ -157,6 +183,11 @@
         display: flex;
         align-items: center;
         gap: 8px;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .expiring-ad-date {
+        color: rgba(30, 41, 59, 0.7);
     }
     
     .expiring-ad-badge {
@@ -225,6 +256,11 @@
         overflow: hidden;
     }
     
+    body.light-mode .stat-card-modern {
+        background: rgba(255, 255, 255, 0.8);
+        border-color: rgba(6, 182, 212, 0.3);
+    }
+    
     .stat-card-modern::before {
         content: '';
         position: absolute;
@@ -282,12 +318,22 @@
         font-weight: 600;
         font-size: 0.9rem;
         margin-bottom: 4px;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .stat-card-label {
+        color: rgba(30, 41, 59, 0.9);
     }
     
     .stat-card-subtext {
         color: rgba(255, 255, 255, 0.5);
         font-size: 0.75rem;
         line-height: 1.3;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .stat-card-subtext {
+        color: rgba(30, 41, 59, 0.6);
     }
     
     /* Content Sections Modernes */
@@ -297,6 +343,13 @@
         border: 2px solid rgba(6, 182, 212, 0.2);
         border-radius: 24px;
         padding: 35px;
+        transition: background 0.3s ease, border-color 0.3s ease;
+    }
+    
+    body.light-mode .content-section-modern {
+        background: rgba(255, 255, 255, 0.8);
+        border-color: rgba(6, 182, 212, 0.3);
+    }
         transition: all 0.3s ease;
         width: 100%;
         box-sizing: border-box;
@@ -344,6 +397,11 @@
         overflow: hidden;
     }
     
+    body.light-mode .quick-action-card {
+        background: rgba(255, 255, 255, 0.8);
+        border-color: rgba(6, 182, 212, 0.3);
+    }
+    
     .quick-action-card::before {
         content: '';
         position: absolute;
@@ -383,11 +441,21 @@
         color: #fff;
         margin-bottom: 5px;
         font-size: 1rem;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .quick-action-title {
+        color: #1e293b;
     }
     
     .quick-action-desc {
         color: rgba(255, 255, 255, 0.6);
         font-size: 0.85rem;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .quick-action-desc {
+        color: rgba(30, 41, 59, 0.7);
     }
     
     /* Top Pages Modernes */
@@ -403,10 +471,20 @@
         margin-bottom: 12px;
     }
     
+    body.light-mode .top-page-item {
+        background: rgba(255, 255, 255, 0.8);
+        border-color: rgba(6, 182, 212, 0.3);
+    }
+    
     .top-page-item:hover {
         background: rgba(15, 23, 42, 0.7);
         border-color: rgba(6, 182, 212, 0.4);
         transform: translateX(5px);
+    }
+    
+    body.light-mode .top-page-item:hover {
+        background: rgba(255, 255, 255, 0.95);
+        border-color: rgba(6, 182, 212, 0.5);
     }
     
     .top-page-rank {
@@ -435,6 +513,11 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .top-page-title {
+        color: #1e293b;
     }
     
     .top-page-url {
@@ -443,6 +526,11 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .top-page-url {
+        color: rgba(30, 41, 59, 0.7);
     }
     
     .top-page-visits {
@@ -460,6 +548,116 @@
         .quick-actions-grid {
             grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
         }
+    }
+    
+    /* Styles pour classes Tailwind en dark mode */
+    body.light-mode .text-gray-400 {
+        color: #64748b !important;
+    }
+    
+    body.light-mode .text-gray-500 {
+        color: #94a3b8 !important;
+    }
+    
+    body.light-mode .text-white {
+        color: #1e293b !important;
+    }
+    
+    /* Styles pour Articles Récents et Plus Vus */
+    .article-item-card {
+        background: rgba(15, 23, 42, 0.6);
+        border: 1px solid rgba(6, 182, 212, 0.2);
+        border-radius: 12px;
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: all 0.3s ease;
+    }
+    
+    body.light-mode .article-item-card {
+        background: rgba(255, 255, 255, 0.9);
+        border-color: rgba(6, 182, 212, 0.3);
+    }
+    
+    .article-item-card:hover {
+        border-color: rgba(6, 182, 212, 0.4);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(6, 182, 212, 0.2);
+    }
+    
+    body.light-mode .article-item-card:hover {
+        box-shadow: 0 4px 12px rgba(6, 182, 212, 0.15);
+    }
+    
+    .article-item-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 5px;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .article-item-title {
+        color: #1e293b;
+    }
+    
+    .article-item-title a {
+        color: inherit;
+        text-decoration: none;
+    }
+    
+    .article-item-title a:hover {
+        color: #06b6d4;
+    }
+    
+    .article-item-meta {
+        display: flex;
+        gap: 15px;
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.6);
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .article-item-meta {
+        color: rgba(30, 41, 59, 0.7);
+    }
+    
+    .article-status-badge {
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+    
+    .article-status-published {
+        background: rgba(34, 197, 94, 0.2);
+        color: #22c55e;
+    }
+    
+    .article-status-draft {
+        background: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+    }
+    
+    .article-status-top {
+        background: rgba(245, 158, 11, 0.2);
+        color: #f59e0b;
+    }
+    
+    /* Graphique des visites */
+    .visits-chart-container {
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 16px;
+        padding: 25px;
+        height: 400px;
+        width: 100%;
+        transition: background 0.3s ease;
+    }
+    
+    body.light-mode .visits-chart-container {
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid rgba(6, 182, 212, 0.2);
     }
     
     @media (max-width: 768px) {
@@ -666,19 +864,19 @@
     </h4>
     <div style="display: grid; gap: 15px;">
         @foreach($stats['recentArticles'] as $article)
-        <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 12px; padding: 20px; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s ease;">
+        <div class="article-item-card">
             <div style="flex: 1;">
-                <h5 style="font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 5px;">
-                    <a href="{{ route('admin.jobs.articles.edit', $article->id) }}" style="color: inherit; text-decoration: none;">{{ $article->title }}</a>
+                <h5 class="article-item-title">
+                    <a href="{{ route('admin.jobs.articles.edit', $article->id) }}">{{ $article->title }}</a>
                 </h5>
-                <div style="display: flex; gap: 15px; font-size: 0.85rem; color: rgba(255, 255, 255, 0.6);">
+                <div class="article-item-meta">
                     <span><i class="fas fa-folder mr-1"></i>{{ $article->category->name ?? 'Non catégorisé' }}</span>
                     <span><i class="fas fa-eye mr-1"></i>{{ number_format($article->views) }} vues</span>
                     <span><i class="fas fa-calendar mr-1"></i>{{ $article->created_at->format('d/m/Y') }}</span>
                 </div>
             </div>
             <div>
-                <span style="padding: 6px 12px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; {{ $article->status === 'published' ? 'background: rgba(34, 197, 94, 0.2); color: #22c55e;' : 'background: rgba(239, 68, 68, 0.2); color: #ef4444;' }}">
+                <span class="article-status-badge {{ $article->status === 'published' ? 'article-status-published' : 'article-status-draft' }}">
                     {{ $article->status === 'published' ? 'Publié' : 'Brouillon' }}
                 </span>
             </div>
@@ -697,19 +895,19 @@
     </h4>
     <div style="display: grid; gap: 15px;">
         @foreach($stats['topArticles'] as $article)
-        <div style="background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 12px; padding: 20px; display: flex; justify-content: space-between; align-items: center; transition: all 0.3s ease;">
+        <div class="article-item-card">
             <div style="flex: 1;">
-                <h5 style="font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 5px;">
-                    <a href="{{ route('admin.jobs.articles.edit', $article->id) }}" style="color: inherit; text-decoration: none;">{{ $article->title }}</a>
+                <h5 class="article-item-title">
+                    <a href="{{ route('admin.jobs.articles.edit', $article->id) }}">{{ $article->title }}</a>
                 </h5>
-                <div style="display: flex; gap: 15px; font-size: 0.85rem; color: rgba(255, 255, 255, 0.6);">
+                <div class="article-item-meta">
                     <span><i class="fas fa-folder mr-1"></i>{{ $article->category->name ?? 'Non catégorisé' }}</span>
                     <span><i class="fas fa-eye mr-1" style="color: #f59e0b;"></i><strong style="color: #f59e0b;">{{ number_format($article->views) }}</strong> vues</span>
                     <span><i class="fas fa-calendar mr-1"></i>{{ $article->published_at ? $article->published_at->format('d/m/Y') : $article->created_at->format('d/m/Y') }}</span>
                 </div>
             </div>
             <div>
-                <span style="padding: 6px 12px; background: rgba(245, 158, 11, 0.2); color: #f59e0b; border-radius: 6px; font-size: 0.75rem; font-weight: 600;">
+                <span class="article-status-badge article-status-top">
                     🔥 Top
                 </span>
             </div>
@@ -725,7 +923,7 @@
         <i class="fas fa-chart-area"></i>
         Visites (7 derniers jours)
     </h4>
-    <div style="background: rgba(0, 0, 0, 0.3); border-radius: 16px; padding: 25px; height: 400px; width: 100%;">
+    <div class="visits-chart-container">
         <canvas id="visitsChart" height="350" style="width: 100% !important; max-width: 100%;"></canvas>
     </div>
 </div>
@@ -909,7 +1107,17 @@
         
         const data = dailyStats.map(stat => stat.visits);
         
-        new Chart(ctx, {
+        // Détecter le mode clair/sombre
+        const isLightMode = document.body.classList.contains('light-mode');
+        
+        // Couleurs adaptées au mode
+        const textColor = isLightMode ? '#64748b' : '#9ca3af';
+        const gridColor = isLightMode ? 'rgba(100, 116, 139, 0.2)' : 'rgba(156, 163, 175, 0.1)';
+        const tooltipBg = isLightMode ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 0, 0, 0.9)';
+        const tooltipTextColor = isLightMode ? '#1e293b' : '#fff';
+        const pointBorderColor = isLightMode ? '#fff' : '#fff';
+        
+        const chart = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: labels,
@@ -917,12 +1125,12 @@
                     label: 'Visites',
                     data: data,
                     borderColor: '#06b6d4',
-                    backgroundColor: 'rgba(6, 182, 212, 0.1)',
+                    backgroundColor: isLightMode ? 'rgba(6, 182, 212, 0.15)' : 'rgba(6, 182, 212, 0.1)',
                     borderWidth: 3,
                     fill: true,
                     tension: 0.4,
                     pointBackgroundColor: '#06b6d4',
-                    pointBorderColor: '#fff',
+                    pointBorderColor: pointBorderColor,
                     pointBorderWidth: 2,
                     pointRadius: 6,
                     pointHoverRadius: 8
@@ -944,9 +1152,9 @@
                         display: false
                     },
                     tooltip: {
-                        backgroundColor: 'rgba(0, 0, 0, 0.9)',
+                        backgroundColor: tooltipBg,
                         titleColor: '#06b6d4',
-                        bodyColor: '#fff',
+                        bodyColor: tooltipTextColor,
                         borderColor: '#06b6d4',
                         borderWidth: 2,
                         padding: 15,
@@ -958,28 +1166,56 @@
                     y: {
                         beginAtZero: true,
                         ticks: {
-                            color: '#9ca3af',
+                            color: textColor,
                             precision: 0,
                             font: {
                                 size: 12
                             }
                         },
                         grid: {
-                            color: 'rgba(156, 163, 175, 0.1)'
+                            color: gridColor
                         }
                     },
                     x: {
                         ticks: {
-                            color: '#9ca3af',
+                            color: textColor,
                             font: {
                                 size: 12
                             }
                         },
                         grid: {
-                            color: 'rgba(156, 163, 175, 0.1)'
+                            color: gridColor
                         }
                     }
                 }
+            }
+        });
+        
+        // Mettre à jour le graphique quand le mode change
+        document.addEventListener('DOMContentLoaded', function() {
+            const darkModeToggle = document.getElementById('dark-mode-toggle');
+            if (darkModeToggle) {
+                darkModeToggle.addEventListener('click', function() {
+                    setTimeout(function() {
+                        const isLight = document.body.classList.contains('light-mode');
+                        const newTextColor = isLight ? '#64748b' : '#9ca3af';
+                        const newGridColor = isLight ? 'rgba(100, 116, 139, 0.2)' : 'rgba(156, 163, 175, 0.1)';
+                        const newTooltipBg = isLight ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 0, 0, 0.9)';
+                        const newTooltipTextColor = isLight ? '#1e293b' : '#fff';
+                        const newBgColor = isLight ? 'rgba(6, 182, 212, 0.15)' : 'rgba(6, 182, 212, 0.1)';
+                        
+                        if (chart) {
+                            chart.data.datasets[0].backgroundColor = newBgColor;
+                            chart.options.scales.y.ticks.color = newTextColor;
+                            chart.options.scales.x.ticks.color = newTextColor;
+                            chart.options.scales.y.grid.color = newGridColor;
+                            chart.options.scales.x.grid.color = newGridColor;
+                            chart.options.plugins.tooltip.backgroundColor = newTooltipBg;
+                            chart.options.plugins.tooltip.bodyColor = newTooltipTextColor;
+                            chart.update();
+                        }
+                    }, 100);
+                });
             }
         });
     }

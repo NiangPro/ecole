@@ -1,6 +1,92 @@
 @extends('admin.layout')
 
+@section('styles')
+<style>
+    /* Styles pour la page Messages */
+    .messages-page h3 {
+        color: #fff;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .messages-page h3 {
+        color: #1e293b;
+    }
+    
+    .messages-page .text-gray-400 {
+        color: rgba(156, 163, 175, 1);
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .messages-page .text-gray-400 {
+        color: rgba(100, 116, 139, 1);
+    }
+    
+    .messages-page .bg-gray-700 {
+        background: rgba(55, 65, 81, 1);
+        transition: background 0.3s ease;
+    }
+    
+    body.light-mode .messages-page .bg-gray-700 {
+        background: rgba(241, 245, 249, 1);
+    }
+    
+    .messages-page .text-gray-300 {
+        color: rgba(209, 213, 219, 1);
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .messages-page .text-gray-300 {
+        color: rgba(30, 41, 59, 0.8);
+    }
+    
+    .messages-page .bg-black\/30 {
+        background: rgba(0, 0, 0, 0.3);
+        transition: background 0.3s ease;
+    }
+    
+    body.light-mode .messages-page .bg-black\/30 {
+        background: rgba(255, 255, 255, 0.9);
+    }
+    
+    .messages-page .bg-black\/50 {
+        background: rgba(0, 0, 0, 0.5);
+        transition: background 0.3s ease;
+    }
+    
+    body.light-mode .messages-page .bg-black\/50 {
+        background: rgba(255, 255, 255, 0.95);
+    }
+    
+    .messages-page .border-gray-700 {
+        border-color: rgba(55, 65, 81, 1);
+        transition: border-color 0.3s ease;
+    }
+    
+    body.light-mode .messages-page .border-gray-700 {
+        border-color: rgba(226, 232, 240, 1);
+    }
+    
+    .messages-page h4 {
+        color: #fff;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .messages-page h4 {
+        color: #1e293b;
+    }
+    
+    .messages-page .border-cyan-500\/30 {
+        border-color: rgba(6, 182, 212, 0.3);
+    }
+    
+    body.light-mode .messages-page .border-cyan-500\/30 {
+        border-color: rgba(6, 182, 212, 0.4);
+    }
+</style>
+@endsection
+
 @section('content')
+<div class="messages-page">
 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
     <div>
         <h3 class="text-3xl font-bold mb-2">Messages de contact</h3>
@@ -139,5 +225,6 @@
         {{ $messages->links() }}
     </div>
     @endif
+</div>
 </div>
 @endsection

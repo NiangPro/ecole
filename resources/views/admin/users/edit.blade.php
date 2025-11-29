@@ -1,6 +1,91 @@
 @extends('admin.layout')
 
+@section('styles')
+<style>
+    /* Styles pour la page Users Edit */
+    .users-edit-page h3 {
+        color: #fff;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .users-edit-page h3 {
+        color: #1e293b;
+    }
+    
+    .users-edit-page h4 {
+        color: #fff;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .users-edit-page h4 {
+        color: #1e293b;
+    }
+    
+    .users-edit-page .text-gray-300 {
+        color: rgba(209, 213, 219, 1);
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .users-edit-page .text-gray-300 {
+        color: rgba(30, 41, 59, 0.8);
+    }
+    
+    .users-edit-page .text-gray-400 {
+        color: rgba(156, 163, 175, 1);
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .users-edit-page .text-gray-400 {
+        color: rgba(100, 116, 139, 1);
+    }
+    
+    .users-edit-page .text-gray-500 {
+        color: rgba(107, 114, 128, 1);
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .users-edit-page .text-gray-500 {
+        color: rgba(148, 163, 184, 1);
+    }
+    
+    .users-edit-page .bg-gray-700 {
+        background: rgba(55, 65, 81, 1);
+        transition: background 0.3s ease;
+    }
+    
+    body.light-mode .users-edit-page .bg-gray-700 {
+        background: rgba(241, 245, 249, 1);
+    }
+    
+    .users-edit-page .bg-black\/30 {
+        background: rgba(0, 0, 0, 0.3);
+        transition: background 0.3s ease;
+    }
+    
+    body.light-mode .users-edit-page .bg-black\/30 {
+        background: rgba(255, 255, 255, 0.9);
+    }
+    
+    .users-edit-page .hover\:bg-black\/40:hover {
+        background: rgba(0, 0, 0, 0.4);
+    }
+    
+    body.light-mode .users-edit-page .hover\:bg-black\/40:hover {
+        background: rgba(255, 255, 255, 1);
+    }
+    
+    .users-edit-page .text-cyan-400 {
+        color: #06b6d4;
+    }
+    
+    .users-edit-page .text-red-400 {
+        color: #f87171;
+    }
+</style>
+@endsection
+
 @section('content')
+<div class="users-edit-page">
 <div class="flex items-center gap-4 mb-8">
     <a href="{{ route('admin.users') }}" class="w-10 h-10 bg-gray-700 hover:bg-gray-600 rounded-lg flex items-center justify-center transition">
         <i class="fas fa-arrow-left"></i>
@@ -112,5 +197,6 @@
             <p class="font-mono text-cyan-400">{{ $user->updated_at->format('d/m/Y à H:i') }}</p>
         </div>
     </div>
+</div>
 </div>
 @endsection

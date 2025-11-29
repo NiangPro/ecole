@@ -1,6 +1,166 @@
 @extends('admin.layout')
 
+@section('styles')
+<style>
+    /* Styles pour la page Settings */
+    .settings-page h3 {
+        color: #fff;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .settings-page h3 {
+        color: #1e293b;
+    }
+    
+    .settings-page h4 {
+        color: #fff;
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .settings-page h4 {
+        color: #1e293b;
+    }
+    
+    .settings-page .text-gray-300 {
+        color: rgba(209, 213, 219, 1);
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .settings-page .text-gray-300 {
+        color: rgba(30, 41, 59, 0.8);
+    }
+    
+    .settings-page .text-gray-400 {
+        color: rgba(156, 163, 175, 1);
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .settings-page .text-gray-400 {
+        color: rgba(100, 116, 139, 1);
+    }
+    
+    .settings-page .text-gray-500 {
+        color: rgba(107, 114, 128, 1);
+        transition: color 0.3s ease;
+    }
+    
+    body.light-mode .settings-page .text-gray-500 {
+        color: rgba(148, 163, 184, 1);
+    }
+    
+    .settings-page .bg-gray-600 {
+        background: rgba(75, 85, 99, 1);
+        transition: background 0.3s ease;
+    }
+    
+    body.light-mode .settings-page .bg-gray-600 {
+        background: rgba(148, 163, 184, 1);
+    }
+    
+    .settings-page .bg-green-500\/10 {
+        background: rgba(34, 197, 94, 0.1);
+        border-color: rgba(34, 197, 94, 0.3);
+    }
+    
+    body.light-mode .settings-page .bg-green-500\/10 {
+        background: rgba(34, 197, 94, 0.15);
+        border-color: rgba(34, 197, 94, 0.4);
+    }
+    
+    .settings-page .bg-yellow-500\/10 {
+        background: rgba(234, 179, 8, 0.1);
+        border-color: rgba(234, 179, 8, 0.3);
+    }
+    
+    body.light-mode .settings-page .bg-yellow-500\/10 {
+        background: rgba(234, 179, 8, 0.15);
+        border-color: rgba(234, 179, 8, 0.4);
+    }
+    
+    .settings-page .bg-blue-500\/10 {
+        background: rgba(59, 130, 246, 0.1);
+        border-color: rgba(59, 130, 246, 0.3);
+    }
+    
+    body.light-mode .settings-page .bg-blue-500\/10 {
+        background: rgba(59, 130, 246, 0.15);
+        border-color: rgba(59, 130, 246, 0.4);
+    }
+    
+    .settings-page .bg-cyan-500\/10 {
+        background: rgba(6, 182, 212, 0.1);
+        border-color: rgba(6, 182, 212, 0.3);
+    }
+    
+    body.light-mode .settings-page .bg-cyan-500\/10 {
+        background: rgba(6, 182, 212, 0.15);
+        border-color: rgba(6, 182, 212, 0.4);
+    }
+    
+    .settings-page .text-yellow-400 {
+        color: #facc15;
+    }
+    
+    .settings-page .text-blue-400 {
+        color: #60a5fa;
+    }
+    
+    .settings-page .text-cyan-400 {
+        color: #06b6d4;
+    }
+    
+    .settings-page .text-green-400 {
+        color: #4ade80;
+    }
+    
+    .settings-page .text-purple-400 {
+        color: #a78bfa;
+    }
+    
+    .settings-page .text-pink-500 {
+        color: #ec4899;
+    }
+    
+    .settings-page .text-red-500 {
+        color: #ef4444;
+    }
+    
+    .settings-page .text-blue-500 {
+        color: #3b82f6;
+    }
+    
+    .settings-page .text-blue-600 {
+        color: #2563eb;
+    }
+    
+    .settings-page .text-gray-400 {
+        color: rgba(156, 163, 175, 1);
+    }
+    
+    body.light-mode .settings-page .text-gray-400 {
+        color: rgba(100, 116, 139, 1);
+    }
+    
+    .settings-page .text-gray-300 {
+        color: rgba(209, 213, 219, 1);
+    }
+    
+    body.light-mode .settings-page .text-gray-300 {
+        color: rgba(30, 41, 59, 0.8);
+    }
+    
+    .settings-page a {
+        color: #06b6d4;
+    }
+    
+    .settings-page a:hover {
+        color: #14b8a6;
+    }
+</style>
+@endsection
+
 @section('content')
+<div class="settings-page">
 <h3 class="text-3xl font-bold mb-8">Paramètres du site</h3>
 
 @if(session('success'))
@@ -408,4 +568,5 @@
         </a>
     </div>
 </form>
+</div>
 @endsection
