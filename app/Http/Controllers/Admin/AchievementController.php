@@ -7,6 +7,7 @@ use App\Models\Achievement;
 use App\Models\SiteSetting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class AchievementController extends Controller
@@ -19,7 +20,11 @@ class AchievementController extends Controller
         // Le middleware AdminAuth gère déjà l'authentification
 
         $achievements = Achievement::ordered()->get();
-        $showSection = SiteSetting::get('show_achievements_section', true);
+        
+        // Récupérer la valeur directement depuis la base de données pour éviter les problèmes de cache
+        $settings = SiteSetting::first();
+        $showSection = $settings ? ($settings->show_achievements_section ?? true) : true;
+        
         return view('admin.achievements.index', compact('achievements', 'showSection'));
     }
 
@@ -168,39 +173,28 @@ class AchievementController extends Controller
         // Le middleware AdminAuth gère déjà l'authentification
 
         try {
-            // Récupérer les paramètres existants ou créer un nouvel enregistrement
-            $settings = SiteSetting::first();
+            // Récupérer ou créer les paramètres
+            $settings = SiteSetting::firstOrNew([]);
             
-            if (!$settings) {
-                // Si aucun paramètre n'existe, créer un nouvel enregistrement
-                $settings = new SiteSetting();
-                $settings->show_achievements_section = true; // Valeur par défaut
-                $settings->save();
-            } else {
-                // Inverser la valeur actuelle
-                $currentValue = $settings->show_achievements_section ?? true;
-                $settings->show_achievements_section = !$currentValue;
-                $settings->save();
-            }
+            // Inverser la valeur actuelle
+            $currentValue = $settings->show_achievements_section ?? true;
+            $newValue = !$currentValue;
             
-            // Invalider le cache immédiatement
-            SiteSetting::clearCache();
+            // Mettre à jour la valeur
+            $settings->show_achievements_section = $newValue;
             
-            // Récupérer la nouvelle valeur depuis la base de données
-            $settings->refresh();
-            $newValue = $settings->show_achievements_section;
+            // Sauvegarder (le cache sera invalidé automatiquement par la méthode save() du modèle)
+            $settings->save();
             
             $message = $newValue 
                 ? 'Section "Mes Réalisations" affichée' 
                 : 'Section "Mes Réalisations" masquée';
-
+            
             return redirect()->route('admin.achievements.index')
                 ->with('success', $message);
                 
         } catch (\Exception $e) {
-            Log::error('Erreur lors du toggle de la section achievements: ' . $e->getMessage(), [
-                'trace' => $e->getTraceAsString()
-            ]);
+            Log::error('Erreur lors du toggle de la section achievements: ' . $e->getMessage());
             
             return redirect()->route('admin.achievements.index')
                 ->with('error', 'Erreur lors de la modification. Veuillez réessayer.');

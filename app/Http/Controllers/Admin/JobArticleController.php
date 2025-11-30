@@ -466,4 +466,37 @@ class JobArticleController extends Controller
 
         return max(0, min(100, $score));
     }
+
+    /**
+     * Recalculer les scores SEO et lisibilité pour tous les articles
+     */
+    public function recalculateScores()
+    {
+        $articles = JobArticle::all();
+        $updated = 0;
+        
+        foreach ($articles as $article) {
+            $data = [
+                'title' => $article->title,
+                'meta_title' => $article->meta_title,
+                'meta_description' => $article->meta_description,
+                'meta_keywords' => $article->meta_keywords,
+                'content' => $article->content,
+                'excerpt' => $article->excerpt,
+                'cover_image' => $article->cover_image,
+            ];
+            
+            $seoScore = $this->calculateSeoScore($data);
+            $readabilityScore = $this->calculateReadabilityScore($article->content);
+            
+            $article->seo_score = $seoScore;
+            $article->readability_score = $readabilityScore;
+            $article->save();
+            
+            $updated++;
+        }
+        
+        return redirect()->route('admin.jobs.articles.index')
+            ->with('success', "Scores recalculés pour {$updated} article(s)");
+    }
 }

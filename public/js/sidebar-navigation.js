@@ -5,12 +5,9 @@
     let isScrolling = false;
     
     function initSidebarNavigation() {
-        console.log('Sidebar navigation: Initializing...');
-        
         // Récupérer tous les liens du sidebar
         const sidebar = document.querySelector('.sidebar');
         if (!sidebar) {
-            console.warn('Sidebar navigation: .sidebar not found');
             return;
         }
         
@@ -20,19 +17,14 @@
         });
         
         if (navLinks.length === 0) {
-            console.warn('Sidebar navigation: No navigation links found');
             return;
         }
-        
-        console.log('Sidebar navigation: Found', navLinks.length, 'links');
         
         // Récupérer toutes les sections avec un ID
         const sections = Array.from(document.querySelectorAll('[id]')).filter(section => {
             const id = section.getAttribute('id');
             return id && id.trim() !== '' && !id.startsWith('__');
         });
-        
-        console.log('Sidebar navigation: Found', sections.length, 'sections');
         
         // Récupérer la hauteur de la navbar
         const navbar = document.querySelector('.navbar-modern') || document.querySelector('.navbar') || document.querySelector('nav');
@@ -95,10 +87,7 @@
                 const targetHref = this.getAttribute('href');
                 const targetId = targetHref.substring(1).trim();
                 
-                console.log('Sidebar navigation: Clicked on', targetId);
-                
                 if (!targetId) {
-                    console.warn('Sidebar navigation: Empty target ID');
                     return;
                 }
                 
@@ -117,14 +106,10 @@
                 }
                 
                 if (!targetSection) {
-                    console.error('Sidebar navigation: Section not found for ID:', targetId);
                     // Fallback: navigation native
                     window.location.hash = targetId;
                     return;
                 }
-                
-                console.log('Sidebar navigation: Found section:', targetSection);
-                console.log('Sidebar navigation: Section element:', targetSection);
                 
                 // Marquer qu'on est en train de scroller
                 isScrolling = true;
@@ -136,8 +121,6 @@
                 const navbarEl = document.querySelector('.navbar-modern') || document.querySelector('.navbar') || document.querySelector('nav');
                 const actualNavbarHeight = navbarEl ? navbarEl.offsetHeight : 70;
                 const offset = actualNavbarHeight + 20;
-                
-                console.log('Sidebar navigation: Navbar height:', actualNavbarHeight, 'Offset:', offset);
                 
                 // Fonction de scroll avec plusieurs méthodes de fallback
                 function scrollToSection() {
@@ -153,11 +136,6 @@
                     const elementTop = rect.top + scrollTop;
                     const targetPosition = Math.max(0, elementTop - offset);
                     
-                    console.log('Sidebar navigation: Current scroll:', scrollTop);
-                    console.log('Sidebar navigation: Element rect.top:', rect.top);
-                    console.log('Sidebar navigation: Element absolute top:', elementTop);
-                    console.log('Sidebar navigation: Target position:', targetPosition);
-                    
                     // Méthode 1: window.scrollTo (la plus directe)
                     try {
                         window.scrollTo({
@@ -171,13 +149,8 @@
                             const newScroll = window.pageYOffset || window.scrollY || document.documentElement.scrollTop || document.body.scrollTop || 0;
                             const newRect = targetSection.getBoundingClientRect();
                             
-                            console.log('Sidebar navigation: After scroll - Position:', newScroll);
-                            console.log('Sidebar navigation: After scroll - Element distance from top:', newRect.top);
-                            
                             // Si le scroll ne s'est pas fait, essayer une autre méthode
                             if (Math.abs(newScroll - scrollTop) < 10) {
-                                console.warn('Sidebar navigation: window.scrollTo did not work, trying scrollIntoView');
-                                
                                 // Méthode 2: scrollIntoView
                                 targetSection.scrollIntoView({
                                     behavior: 'smooth',
@@ -197,7 +170,6 @@
                                 // Ajuster la position si nécessaire
                                 const distanceFromTop = newRect.top;
                                 if (Math.abs(distanceFromTop - offset) > 30) {
-                                    console.log('Sidebar navigation: Adjusting position by', (distanceFromTop - offset));
                                     window.scrollBy({
                                         top: -(distanceFromTop - offset),
                                         left: 0,
@@ -207,8 +179,6 @@
                             }
                         }, 200);
                     } catch (error) {
-                        console.error('Sidebar navigation: Error with window.scrollTo:', error);
-                        
                         // Méthode 3: Fallback avec scrollIntoView direct
                         try {
                             targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -216,8 +186,6 @@
                                 window.scrollBy(0, -offset);
                             }, 300);
                         } catch (e2) {
-                            console.error('Sidebar navigation: Error with scrollIntoView:', e2);
-                            
                             // Méthode 4: Fallback ultime - scroll instantané
                             document.documentElement.scrollTop = targetPosition;
                             document.body.scrollTop = targetPosition;
@@ -242,7 +210,6 @@
                 // Réinitialiser le flag après le scroll
                 setTimeout(() => {
                     isScrolling = false;
-                    console.log('Sidebar navigation: Scroll completed');
                 }, 800);
             });
         });
@@ -298,8 +265,6 @@
             clearTimeout(resizeTimer);
             resizeTimer = setTimeout(updateActiveOnLoad, 250);
         });
-        
-        console.log('Sidebar navigation: Initialized successfully');
     }
     
     // Initialiser quand le DOM est prêt
@@ -309,8 +274,5 @@
         initSidebarNavigation();
     }
     
-    // Réessayer après le chargement complet (au cas où)
-    window.addEventListener('load', function() {
-        setTimeout(initSidebarNavigation, 500);
-    });
+    // Ne pas réessayer après le chargement complet pour éviter les doubles initialisations
 })();

@@ -454,9 +454,17 @@
         <h3 class="text-3xl font-bold mb-2">Articles Emplois</h3>
         <p class="text-gray-400">Gérez les articles d'emplois</p>
     </div>
-    <a href="{{ route('admin.jobs.articles.create') }}" class="px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-black font-semibold rounded-lg transition">
-        <i class="fas fa-plus mr-2"></i>Nouvel article
-    </a>
+    <div class="flex gap-2">
+        <form action="{{ route('admin.jobs.articles.recalculate-scores') }}" method="POST" class="inline" onsubmit="return confirm('Recalculer les scores SEO et lisibilité pour tous les articles ?');">
+            @csrf
+            <button type="submit" class="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-black font-semibold rounded-lg transition">
+                <i class="fas fa-sync-alt mr-2"></i>Recalculer les scores
+            </button>
+        </form>
+        <a href="{{ route('admin.jobs.articles.create') }}" class="px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-black font-semibold rounded-lg transition">
+            <i class="fas fa-plus mr-2"></i>Nouvel article
+        </a>
+    </div>
 </div>
 
 @if(session('success'))
@@ -618,18 +626,24 @@
                     </td>
                     <td class="p-4">
                         <div class="flex items-center gap-2">
+                            @php
+                                $seoScore = $article->seo_score ?? 0;
+                            @endphp
                             <div class="w-16 h-2 bg-gray-700 rounded-full overflow-hidden">
-                                <div class="h-full bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 rounded-full" style="width: {{ $article->seo_score }}%"></div>
+                                <div class="h-full bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 rounded-full" style="width: {{ $seoScore }}%"></div>
                             </div>
-                            <span class="text-sm text-gray-400">{{ $article->seo_score }}/100</span>
+                            <span class="text-sm text-gray-400">{{ $seoScore }}/100</span>
                         </div>
                     </td>
                     <td class="p-4">
                         <div class="flex items-center gap-2">
+                            @php
+                                $readabilityScore = $article->readability_score ?? 0;
+                            @endphp
                             <div class="w-16 h-2 bg-gray-700 rounded-full overflow-hidden">
-                                <div class="h-full bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 rounded-full" style="width: {{ $article->readability_score }}%"></div>
+                                <div class="h-full bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 rounded-full" style="width: {{ $readabilityScore }}%"></div>
                             </div>
-                            <span class="text-sm text-gray-400">{{ $article->readability_score }}/100</span>
+                            <span class="text-sm text-gray-400">{{ $readabilityScore }}/100</span>
                         </div>
                     </td>
                     <td class="p-4 text-gray-400">{{ $article->views }}</td>

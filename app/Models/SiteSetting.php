@@ -44,4 +44,20 @@ class SiteSetting extends Model
     {
         \Illuminate\Support\Facades\Cache::forget('site_settings');
     }
+    
+    /**
+     * Surcharge de la méthode save pour invalider le cache automatiquement
+     */
+    public function save(array $options = [])
+    {
+        $result = parent::save($options);
+        
+        // Invalider le cache après chaque sauvegarde réussie
+        if ($result) {
+            // Utiliser forget au lieu de clearCache pour éviter les problèmes récursifs
+            \Illuminate\Support\Facades\Cache::forget('site_settings');
+        }
+        
+        return $result;
+    }
 }

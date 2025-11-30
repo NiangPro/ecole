@@ -4,136 +4,8 @@
 @section('meta_description', 'Découvrez l\'histoire de Bassirou Niang, développeur Full-Stack et formateur passionné. Plus de 5 ans d\'expérience chez Sunucode, spécialisé en Laravel, React et Vue.js.')
 @section('meta_keywords', 'Bassirou Niang, NiangProgrammeur, développeur full-stack, formateur développement web, Sunucode, Laravel expert, React Vue.js')
 
-@push('styles')
+@section('styles')
 <style>
-    /* CSS Critique pour éviter le FOUC - Section Hero About */
-    section.relative.min-h-screen {
-        position: relative;
-        min-height: 100vh;
-        background: #000;
-        padding-top: 5rem;
-        padding-bottom: 3rem;
-        overflow: hidden;
-    }
-    
-    section.relative.min-h-screen .absolute.inset-0 {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        opacity: 0.2;
-    }
-    
-    section.relative.min-h-screen .bg-cyan-500 {
-        background-color: #06b6d4;
-        border-radius: 9999px;
-        filter: blur(3rem);
-    }
-    
-    section.relative.min-h-screen .bg-teal-500 {
-        background-color: #14b8a6;
-        border-radius: 9999px;
-        filter: blur(3rem);
-    }
-    
-    section.relative.min-h-screen .container {
-        max-width: 1280px;
-        margin-left: auto;
-        margin-right: auto;
-        padding-left: 1rem;
-        padding-right: 1rem;
-        position: relative;
-        z-index: 10;
-    }
-    
-    section.relative.min-h-screen h1 {
-        font-size: clamp(2.25rem, 5vw, 4.5rem);
-        font-weight: 900;
-        margin-bottom: 1.5rem;
-        padding-left: 1rem;
-        padding-right: 1rem;
-        color: #fff;
-        text-align: center;
-    }
-    
-    section.relative.min-h-screen .text-xl {
-        font-size: 1.25rem;
-        color: rgba(209, 213, 219, 1);
-        margin-bottom: 2rem;
-        padding-left: 1rem;
-        padding-right: 1rem;
-        text-align: center;
-    }
-    
-    section.relative.min-h-screen .text-base {
-        font-size: 1rem;
-        color: rgba(156, 163, 175, 1);
-        max-width: 48rem;
-        margin-left: auto;
-        margin-right: auto;
-        padding-left: 1rem;
-        padding-right: 1rem;
-        text-align: center;
-    }
-    
-    section.relative.min-h-screen .gradient-text {
-        background: linear-gradient(135deg, #06b6d4, #14b8a6, #06b6d4);
-        background-size: 200% 200%;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-    
-    section.relative.min-h-screen .text-cyan-400 {
-        color: #22d3ee;
-        font-weight: 700;
-    }
-    
-    @media (min-width: 640px) {
-        section.relative.min-h-screen {
-            padding-top: 6rem;
-            padding-bottom: 4rem;
-        }
-        
-        section.relative.min-h-screen h1 {
-            font-size: clamp(3rem, 5vw, 4.5rem);
-        }
-        
-        section.relative.min-h-screen .text-xl {
-            font-size: 1.5rem;
-        }
-        
-        section.relative.min-h-screen .text-base {
-            font-size: 1.125rem;
-        }
-    }
-    
-    @media (min-width: 768px) {
-        section.relative.min-h-screen {
-            padding-top: 8rem;
-            padding-bottom: 5rem;
-        }
-        
-        section.relative.min-h-screen h1 {
-            font-size: clamp(3.75rem, 5vw, 4.5rem);
-        }
-        
-        section.relative.min-h-screen .text-xl {
-            font-size: 1.875rem;
-        }
-        
-        section.relative.min-h-screen .text-base {
-            font-size: 1.25rem;
-        }
-    }
-    
-    @media (min-width: 1024px) {
-        section.relative.min-h-screen h1 {
-            font-size: 4.5rem;
-        }
-    }
-    
     body {
         overflow-x: hidden;
     }
@@ -2203,7 +2075,7 @@
         color: rgba(30, 41, 59, 0.9) !important;
     }
 </style>
-@endpush
+@endsection
 
 @section('content')
 <!-- Hero Section -->

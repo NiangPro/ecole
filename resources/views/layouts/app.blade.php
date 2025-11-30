@@ -49,10 +49,189 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
     
-    <!-- Précharger l'image de fond du hero optimisée pour améliorer le LCP -->
-    <link rel="preload" as="image" href="https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=75" fetchpriority="high">
-    
     @stack('meta')
+    @stack('head')
+    @stack('preload_images')
+    
+    <!-- Surcharger console.error IMMÉDIATEMENT (AVANT tout autre script) -->
+    <script>
+        (function() {
+            'use strict';
+            if (window.console && window.console.error) {
+                const originalError = window.console.error;
+                window.console.error = function() {
+                    const args = Array.from(arguments);
+                    const message = args.map(a => String(a)).join(' ').toLowerCase();
+                    if (message.includes('content.js') || 
+                        message.includes('extension://') || 
+                        message.includes('chrome-extension://') ||
+                        message.includes('moz-extension://') ||
+                        message.includes('edge-extension://') ||
+                        (message.includes('unknown error') && message.includes('content'))) {
+                        return; // Ne pas afficher
+                    }
+                    return originalError.apply(console, args);
+                };
+            }
+        })();
+    </script>
+    
+    <!-- Gestionnaire d'erreurs ULTRA-PRIORITAIRE - Doit être le PREMIER script -->
+    <script>
+        (function() {
+            'use strict';
+            
+            // Intercepter TOUTES les erreurs d'extensions AVANT qu'elles n'apparaissent
+            // Surcharger console.error et console.warn IMMÉDIATEMENT
+            if (window.console) {
+                const originalConsoleError = window.console.error;
+                const originalConsoleWarn = window.console.warn;
+                const originalConsoleLog = window.console.log;
+                
+                // Fonction pour détecter les erreurs d'extensions
+                function isExtensionError(message) {
+                    if (!message) return false;
+                    const msg = String(message).toLowerCase();
+                    return msg.includes('content.js') || 
+                           msg.includes('extension://') || 
+                           msg.includes('chrome-extension://') ||
+                           msg.includes('moz-extension://') ||
+                           msg.includes('edge-extension://') ||
+                           msg.includes('safari-extension://') ||
+                           (msg.includes('unknown error') && msg.includes('content'));
+                }
+                
+                // Masquer les erreurs d'extensions dans console.error
+                window.console.error = function(...args) {
+                    const message = args.map(arg => String(arg)).join(' ').toLowerCase();
+                    if (isExtensionError(message)) {
+                        return; // Ne pas afficher
+                    }
+                    originalConsoleError.apply(console, args);
+                };
+                
+                // Masquer les avertissements d'extensions dans console.warn
+                window.console.warn = function(...args) {
+                    const message = args.map(arg => String(arg)).join(' ').toLowerCase();
+                    if (isExtensionError(message)) {
+                        return; // Ne pas afficher
+                    }
+                    originalConsoleWarn.apply(console, args);
+                };
+                
+                // Optionnel : masquer aussi les logs d'extensions
+                window.console.log = function(...args) {
+                    const message = args.map(arg => String(arg)).join(' ').toLowerCase();
+                    if (isExtensionError(message)) {
+                        return; // Ne pas afficher
+                    }
+                    originalConsoleLog.apply(console, args);
+                };
+            }
+            
+            // Gestionnaire d'erreurs de promesses - Version ultra-robuste
+            function handleUnhandledRejection(event) {
+                try {
+                    if (!event || !event.reason) return false;
+                    
+                    const errorSource = String(event.reason.stack || event.reason.toString() || '').toLowerCase();
+                    const errorMessage = String(event.reason.message || event.reason.toString() || '').toLowerCase();
+                    const errorFile = String(event.reason.fileName || event.reason.source || event.reason.filename || '').toLowerCase();
+                    
+                    // Détecter toutes les variantes d'extensions
+                    const isExtensionError = 
+                        errorSource.includes('content.js') || 
+                        errorSource.includes('extension://') || 
+                        errorSource.includes('chrome-extension://') ||
+                        errorSource.includes('moz-extension://') ||
+                        errorSource.includes('edge-extension://') ||
+                        errorSource.includes('safari-extension://') ||
+                        errorFile.includes('content.js') ||
+                        errorFile.includes('extension://') ||
+                        (errorMessage.includes('unknown error') && (errorSource.includes('content') || errorFile.includes('content')));
+                    
+                    if (isExtensionError) {
+                        if (event.preventDefault) event.preventDefault();
+                        if (event.stopPropagation) event.stopPropagation();
+                        if (event.stopImmediatePropagation) event.stopImmediatePropagation();
+                        return true;
+                    }
+                } catch (e) {
+                    // Ignorer silencieusement
+                }
+                return false;
+            }
+            
+            // Gestionnaire d'erreurs JavaScript classiques
+            function handleError(event) {
+                try {
+                    if (!event) return false;
+                    const errorSource = String(event.filename || event.source || event.target?.src || event.fileName || '').toLowerCase();
+                    const errorMessage = String(event.message || '').toLowerCase();
+                    
+                    if (errorSource.includes('content.js') || 
+                        errorSource.includes('extension://') || 
+                        errorSource.includes('chrome-extension://') ||
+                        errorSource.includes('moz-extension://') ||
+                        (errorMessage.includes('unknown error') && errorSource.includes('content'))) {
+                        if (event.preventDefault) event.preventDefault();
+                        if (event.stopPropagation) event.stopPropagation();
+                        return true;
+                    }
+                } catch (e) {
+                    // Ignorer
+                }
+                return false;
+            }
+            
+            // Ajouter les gestionnaires IMMÉDIATEMENT avec capture (priorité maximale)
+            if (window.addEventListener) {
+                // Utiliser capture: true pour intercepter AVANT les autres gestionnaires
+                window.addEventListener('unhandledrejection', handleUnhandledRejection, { 
+                    capture: true, 
+                    passive: false,
+                    once: false
+                });
+                window.addEventListener('error', handleError, { 
+                    capture: true, 
+                    passive: false,
+                    once: false
+                });
+            }
+            
+            // Surcharger window.onunhandledrejection si disponible
+            if (typeof window.onunhandledrejection !== 'undefined') {
+                const originalOnUnhandledRejection = window.onunhandledrejection;
+                window.onunhandledrejection = function(event) {
+                    if (!handleUnhandledRejection(event) && originalOnUnhandledRejection) {
+                        return originalOnUnhandledRejection.call(this, event);
+                    }
+                    return false;
+                };
+            }
+            
+            // Surcharger window.onerror si disponible
+            if (typeof window.onerror !== 'undefined') {
+                const originalOnError = window.onerror;
+                window.onerror = function(msg, source, lineno, colno, error) {
+                    const event = { 
+                        filename: source, 
+                        message: msg, 
+                        error: error,
+                        lineno: lineno,
+                        colno: colno
+                    };
+                    if (handleError(event)) {
+                        return true; // Erreur gérée, ne pas afficher
+                    }
+                    if (originalOnError) {
+                        return originalOnError.call(this, msg, source, lineno, colno, error);
+                    }
+                    return false;
+                };
+            }
+        })();
+    </script>
     
     <title>@yield('title', 'NiangProgrammeur - Formation Gratuite en Développement Web')</title>
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
@@ -72,10 +251,9 @@
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background: #ffffff;
             color: #1e293b;
-            visibility: visible !important;
-            opacity: 1 !important;
             overflow-x: hidden;
         }
+        
         
         /* Hero Section - Critique pour LCP */
         .hero-section {
@@ -162,147 +340,164 @@
             }
         }
         
-        /* CSS Critique pour la page About - Section Hero */
-        section.relative.min-h-screen {
-            position: relative;
-            min-height: 100vh;
-            background: #000;
-            padding-top: 5rem;
-            padding-bottom: 3rem;
-            overflow: hidden;
-        }
-        
-        section.relative.min-h-screen .absolute.inset-0 {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            opacity: 0.2;
-        }
-        
-        section.relative.min-h-screen .absolute.inset-0 .bg-cyan-500 {
-            position: absolute;
-            top: 5rem;
-            left: 2.5rem;
-            width: 18rem;
-            height: 18rem;
-            background-color: #06b6d4;
-            border-radius: 9999px;
-            filter: blur(3rem);
-        }
-        
-        section.relative.min-h-screen .absolute.inset-0 .bg-teal-500 {
-            position: absolute;
-            bottom: 5rem;
-            right: 2.5rem;
-            width: 24rem;
-            height: 24rem;
-            background-color: #14b8a6;
-            border-radius: 9999px;
-            filter: blur(3rem);
-        }
-        
-        section.relative.min-h-screen .container {
-            max-width: 1280px;
-            margin-left: auto;
-            margin-right: auto;
-            padding-left: 1rem;
-            padding-right: 1rem;
-            position: relative;
-            z-index: 10;
-        }
-        
-        section.relative.min-h-screen h1 {
-            font-size: clamp(2.25rem, 5vw, 4.5rem);
-            font-weight: 900;
-            margin-bottom: 1.5rem;
-            padding-left: 1rem;
-            padding-right: 1rem;
-            color: #fff;
-            text-align: center;
-            line-height: 1.2;
-        }
-        
-        section.relative.min-h-screen .text-xl {
-            font-size: 1.25rem;
-            color: rgba(209, 213, 219, 1);
-            margin-bottom: 2rem;
-            padding-left: 1rem;
-            padding-right: 1rem;
-            text-align: center;
-        }
-        
-        section.relative.min-h-screen .text-base {
-            font-size: 1rem;
-            color: rgba(156, 163, 175, 1);
-            max-width: 48rem;
-            margin-left: auto;
-            margin-right: auto;
-            padding-left: 1rem;
-            padding-right: 1rem;
-            text-align: center;
-        }
-        
-        section.relative.min-h-screen .gradient-text {
-            background: linear-gradient(135deg, #06b6d4, #14b8a6, #06b6d4);
-            background-size: 200% 200%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        section.relative.min-h-screen .text-cyan-400 {
-            color: #22d3ee;
-            font-weight: 700;
+        /* CSS Critique pour la page About - Centrage immédiat */
+        .container {
+            width: 100% !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
         }
         
         @media (min-width: 640px) {
-            section.relative.min-h-screen {
-                padding-top: 6rem;
-                padding-bottom: 4rem;
-            }
-            
-            section.relative.min-h-screen h1 {
-                font-size: clamp(3rem, 5vw, 4.5rem);
-            }
-            
-            section.relative.min-h-screen .text-xl {
-                font-size: 1.5rem;
-            }
-            
-            section.relative.min-h-screen .text-base {
-                font-size: 1.125rem;
+            .container {
+                padding-left: 1.5rem !important;
+                padding-right: 1.5rem !important;
             }
         }
         
-        @media (min-width: 768px) {
-            section.relative.min-h-screen {
-                padding-top: 8rem;
-                padding-bottom: 5rem;
-            }
-            
-            section.relative.min-h-screen h1 {
-                font-size: clamp(3.75rem, 5vw, 4.5rem);
-            }
-            
-            section.relative.min-h-screen .text-xl {
-                font-size: 1.875rem;
-            }
-            
-            section.relative.min-h-screen .text-base {
-                font-size: 1.25rem;
-            }
+        /* Centrage du contenu hero immédiatement pour About */
+        section.relative.min-h-screen > div.container {
+            text-align: center !important;
         }
         
-        @media (min-width: 1024px) {
-            section.relative.min-h-screen h1 {
-                font-size: 4.5rem;
-            }
+        section.relative.min-h-screen > div.container > div {
+            margin-left: auto !important;
+            margin-right: auto !important;
+            text-align: center !important;
+        }
+        
+        /* Centrage du texte dans le hero */
+        section.relative.min-h-screen h1,
+        section.relative.min-h-screen p {
+            text-align: center !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+        }
+        
+        /* Centrage des conteneurs de largeur maximale */
+        .max-w-5xl {
+            max-width: 64rem !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+            display: block !important;
+        }
+        
+        .max-w-7xl {
+            max-width: 80rem !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+            display: block !important;
+        }
+        
+        .max-w-3xl {
+            max-width: 48rem !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+            display: block !important;
+        }
+        
+        /* Force le centrage du hero content avant le chargement de Tailwind */
+        section.relative.min-h-screen .container > div.max-w-5xl {
+            display: block !important;
+            width: 100% !important;
+            max-width: 64rem !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+            text-align: center !important;
+        }
+        
+        section.relative.min-h-screen .container > div.max-w-5xl > h1,
+        section.relative.min-h-screen .container > div.max-w-5xl > p {
+            text-align: center !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+        }
+        
+        section.relative.min-h-screen .container > div.max-w-5xl > p.max-w-3xl {
+            max-width: 48rem !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+            text-align: center !important;
         }
     </style>
     
-    <!-- Script optimisé pour charger Tailwind CSS sans bloquer -->
+    <!-- Script IMMÉDIAT pour appliquer les styles critiques avant le rendu -->
+    <script>
+        (function() {
+            'use strict';
+            // Appliquer les styles critiques IMMÉDIATEMENT via JavaScript
+            // Ce script s'exécute AVANT que le DOM ne soit rendu
+            function applyCriticalStyles() {
+                // Créer un style inline pour forcer le centrage
+                const criticalStyle = document.createElement('style');
+                criticalStyle.id = 'about-critical-inline';
+                criticalStyle.textContent = `
+                    /* Force le centrage IMMÉDIAT */
+                    body section.relative.min-h-screen,
+                    body section.relative.min-h-screen > div,
+                    body section.relative.min-h-screen > div > div {
+                        text-align: center !important;
+                    }
+                    body .container {
+                        margin-left: auto !important;
+                        margin-right: auto !important;
+                        text-align: center !important;
+                    }
+                    body .max-w-5xl,
+                    body .max-w-7xl,
+                    body .max-w-3xl {
+                        margin-left: auto !important;
+                        margin-right: auto !important;
+                        display: block !important;
+                        text-align: center !important;
+                    }
+                    body section.relative.min-h-screen h1,
+                    body section.relative.min-h-screen p {
+                        text-align: center !important;
+                        margin-left: auto !important;
+                        margin-right: auto !important;
+                    }
+                `;
+                // Insérer AVANT le premier élément du head
+                if (document.head) {
+                    const firstChild = document.head.firstChild;
+                    if (firstChild) {
+                        document.head.insertBefore(criticalStyle, firstChild);
+                    } else {
+                        document.head.appendChild(criticalStyle);
+                    }
+                } else {
+                    // Si head n'existe pas encore, attendre et réessayer
+                    (function checkHead() {
+                        if (document.head) {
+                            const firstChild = document.head.firstChild;
+                            if (firstChild) {
+                                document.head.insertBefore(criticalStyle, firstChild);
+                            } else {
+                                document.head.appendChild(criticalStyle);
+                            }
+                        } else {
+                            setTimeout(checkHead, 0);
+                        }
+                    })();
+                }
+            }
+            
+            // Appliquer immédiatement
+            if (document.readyState === 'loading' || document.readyState === 'interactive') {
+                applyCriticalStyles();
+            } else {
+                // DOM déjà chargé, appliquer quand même
+                applyCriticalStyles();
+            }
+        })();
+    </script>
+    
+    <!-- Tailwind CSS - Chargé de manière SYNCHRONE pour éviter le FOUC -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Script pour masquer le loader une fois que la page est chargée -->
     <script>
         (function() {
             // Masquer le loader une fois que la page est chargée
@@ -318,14 +513,6 @@
                 }
             }
             
-            // Charger Tailwind CSS immédiatement mais de manière asynchrone
-            const tailwindScript = document.createElement('script');
-            tailwindScript.src = 'https://cdn.tailwindcss.com';
-            tailwindScript.async = true;
-            tailwindScript.defer = true;
-            // Charger immédiatement (pas de requestIdleCallback pour éviter le délai)
-            document.head.appendChild(tailwindScript);
-            
             // Masquer le loader dès que le DOM est prêt
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', hideLoader);
@@ -333,8 +520,8 @@
                 hideLoader();
             }
             
-            // Fallback : masquer après 800ms maximum
-            setTimeout(hideLoader, 800);
+            // Fallback : masquer après 500ms maximum
+            setTimeout(hideLoader, 500);
         })();
     </script>
     
@@ -396,8 +583,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet"></noscript>
-    <!-- Précharger les fonts critiques -->
-    <link rel="preload" href="https://fonts.gstatic.com/s/orbitron/v25/yMJMMIlzdpvBhQQL_SC3X9yhF25-T1nyGy6xpmE.woff2" as="font" type="font/woff2" crossorigin>
     
     <!-- Toastr CSS - Chargé de manière asynchrone -->
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
@@ -439,20 +624,36 @@
             document.head.appendChild(script);
             
             script.onload = function() {
-                window.dataLayer = window.dataLayer || [];
-                function gtag(){dataLayer.push(arguments);}
-                gtag('js', new Date());
-                
-                // Vérifier le consentement cookies
-                const cookieConsent = localStorage.getItem('cookieConsent');
-                if (cookieConsent === 'accepted') {
-                    gtag('config', '{{ $gaId }}');
-                } else if (cookieConsent === 'refused') {
-                    gtag('config', '{{ $gaId }}', {
-                        'anonymize_ip': true,
-                        'storage': 'none'
-                    });
+                try {
+                    window.dataLayer = window.dataLayer || [];
+                    function gtag(){dataLayer.push(arguments);}
+                    gtag('js', new Date());
+                    
+                    // Vérifier le consentement cookies
+                    const cookieConsent = localStorage.getItem('cookieConsent');
+                    if (cookieConsent === 'accepted') {
+                        try {
+                            gtag('config', '{{ $gaId }}');
+                        } catch (configError) {
+                            console.warn('Erreur lors de la configuration gtag:', configError);
+                        }
+                    } else if (cookieConsent === 'refused') {
+                        try {
+                            gtag('config', '{{ $gaId }}', {
+                                'anonymize_ip': true,
+                                'storage': 'none'
+                            });
+                        } catch (configError) {
+                            console.warn('Erreur lors de la configuration gtag:', configError);
+                        }
+                    }
+                } catch (error) {
+                    console.error('Erreur lors du chargement de Google Analytics:', error);
                 }
+            };
+            
+            script.onerror = function() {
+                console.warn('Erreur lors du chargement du script Google Analytics');
             };
         });
     </script>
@@ -470,18 +671,15 @@
             visibility: visible !important;
         }
         
-        /* Le body doit toujours être visible */
-        body {
-            opacity: 1 !important;
-            visibility: visible !important;
-        }
-        
+        /* Le body est toujours visible */
         body {
             margin: 0;
             padding: 0;
             padding-top: 70px;
             overflow-x: hidden;
             min-height: 100vh;
+            opacity: 1 !important;
+            visibility: visible !important;
         }
         
         * {

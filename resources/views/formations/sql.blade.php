@@ -715,7 +715,7 @@
         <h1>
             <i class="fas fa-database" style="margin-right: 15px;"></i>
             {{ trans('app.formations.sql.title') }}
-        </h1>
+    </h1>
         <p>{{ trans('app.formations.sql.subtitle') }}</p>
     </div>
 </div>
@@ -1781,7 +1781,7 @@ ANALYZE TABLE utilisateurs;</code></pre>
     // Initialiser Prism.js après le chargement de la page
     document.addEventListener('DOMContentLoaded', function() {
         function highlightCode() {
-            if (typeof Prism !== 'undefined') {
+        if (typeof Prism !== 'undefined') {
                 // Forcer la coloration de tous les blocs de code
                 const codeElements = document.querySelectorAll('code[class*="language-"]');
                 codeElements.forEach(function(code) {

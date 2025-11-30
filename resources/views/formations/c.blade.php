@@ -715,7 +715,7 @@
         <h1>
             <i class="fab fa-c" style="margin-right: 15px;"></i>
             {{ trans('app.formations.c.title') }}
-        </h1>
+    </h1>
         <p>{{ trans('app.formations.c.subtitle') }}</p>
     </div>
 </div>
@@ -1785,7 +1785,7 @@ int main() {
     // Initialiser Prism.js après le chargement de la page
     document.addEventListener('DOMContentLoaded', function() {
         function highlightCode() {
-            if (typeof Prism !== 'undefined') {
+        if (typeof Prism !== 'undefined') {
                 // Forcer la coloration de tous les blocs de code
                 const codeElements = document.querySelectorAll('code[class*="language-"]');
                 codeElements.forEach(function(code) {

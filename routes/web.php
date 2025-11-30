@@ -136,6 +136,7 @@ Route::middleware(['admin'])->group(function () {
         // Articles
         Route::resource('articles', \App\Http\Controllers\Admin\JobArticleController::class);
         Route::post('articles/{id}/send-newsletter', [\App\Http\Controllers\Admin\JobArticleController::class, 'sendNewsletter'])->name('articles.send-newsletter');
+        Route::post('articles/recalculate-scores', [\App\Http\Controllers\Admin\JobArticleController::class, 'recalculateScores'])->name('articles.recalculate-scores');
         
         // Seeder d'articles
         Route::get('seeder', [\App\Http\Controllers\Admin\ArticleSeederController::class, 'index'])->name('seeder.index');

@@ -3,6 +3,10 @@
 @section('title', 'NiangProgrammeur - Formation Gratuite en Développement Web')
 @section('meta_description', 'Plateforme de formation gratuite en développement web. Apprenez HTML5, CSS3, JavaScript, PHP, Laravel, Bootstrap, Git, WordPress et Intelligence Artificielle.')
 
+@push('preload_images')
+<link rel="preload" as="image" href="https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=75" fetchpriority="high">
+@endpush
+
 @push('styles')
 <!-- CSS non critique - Chargé en bas de page pour ne pas bloquer le rendu -->
 <style>
@@ -710,7 +714,7 @@
         border-radius: 20px;
         padding: 0;
         height: 100%;
-        min-height: 320px;
+        min-height: 280px;
         display: flex;
         flex-direction: column;
         transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -779,18 +783,19 @@
     
     /* Section contenu */
     .tech-card-content-section {
-        padding: 25px 30px 30px;
+        padding: 28px 30px 30px;
         flex: 1;
         display: flex;
         flex-direction: column;
+        gap: 4px;
     }
     
     .tech-desc-carousel {
         color: rgba(30, 41, 59, 0.7);
-        line-height: 1.7;
-        margin-bottom: 25px;
+        line-height: 1.75;
+        margin-bottom: 0;
         text-align: center;
-        font-size: 0.9rem;
+        font-size: 1.05rem;
         flex: 1;
     }
     
@@ -799,6 +804,7 @@
     }
     
     .tech-link-carousel {
+        position: relative;
         color: #fff;
         text-decoration: none;
         font-weight: 700;
@@ -806,23 +812,121 @@
         align-items: center;
         justify-content: center;
         gap: 10px;
-        padding: 12px 24px;
-        background: linear-gradient(135deg, #06b6d4, #14b8a6);
-        border-radius: 12px;
-        transition: all 0.3s ease;
-        box-shadow: 0 2px 10px rgba(6, 182, 212, 0.3);
-        font-size: 0.85rem;
+        padding: 14px 28px;
+        background: linear-gradient(135deg, #06b6d4, #14b8a6, #06b6d4);
+        background-size: 200% 200%;
+        border-radius: 16px;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 
+            0 4px 20px rgba(6, 182, 212, 0.4),
+            0 0 0 1px rgba(255, 255, 255, 0.1) inset,
+            0 0 30px rgba(6, 182, 212, 0.2);
+        font-size: 0.9rem;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 1px;
         width: 100%;
         margin-top: auto;
+        flex-shrink: 0;
+        overflow: hidden;
+        backdrop-filter: blur(10px);
+        animation: gradientShift 3s ease infinite;
+    }
+    
+    /* Effet de brillance animé (shimmer) */
+    .tech-link-carousel::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 0.3),
+            transparent
+        );
+        transition: left 0.5s ease;
+    }
+    
+    .tech-link-carousel:hover::before {
+        left: 100%;
+    }
+    
+    /* Effet de glow au hover */
+    .tech-link-carousel::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s ease, height 0.6s ease;
+        pointer-events: none;
+    }
+    
+    .tech-link-carousel:hover::after {
+        width: 300px;
+        height: 300px;
+    }
+    
+    /* Animation du gradient */
+    @keyframes gradientShift {
+        0%, 100% {
+            background-position: 0% 50%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
     }
     
     .tech-link-carousel:hover {
         gap: 12px;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 15px rgba(6, 182, 212, 0.4);
-        background: linear-gradient(135deg, #14b8a6, #06b6d4);
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 
+            0 8px 30px rgba(6, 182, 212, 0.6),
+            0 0 0 1px rgba(255, 255, 255, 0.2) inset,
+            0 0 50px rgba(6, 182, 212, 0.4),
+            0 0 80px rgba(20, 184, 166, 0.3);
+        background: linear-gradient(135deg, #14b8a6, #06b6d4, #14b8a6);
+        background-size: 200% 200%;
+        animation: gradientShift 1.5s ease infinite;
+    }
+    
+    /* Animation de l'icône */
+    .tech-link-carousel i {
+        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        display: inline-block;
+    }
+    
+    .tech-link-carousel:hover i {
+        transform: translateX(4px) scale(1.1);
+    }
+    
+    /* Effet de texte brillant */
+    .tech-link-carousel span,
+    .tech-link-carousel {
+        text-shadow: 
+            0 0 10px rgba(255, 255, 255, 0.5),
+            0 0 20px rgba(6, 182, 212, 0.3);
+    }
+    
+    body.dark-mode .tech-link-carousel {
+        box-shadow: 
+            0 4px 20px rgba(6, 182, 212, 0.5),
+            0 0 0 1px rgba(255, 255, 255, 0.15) inset,
+            0 0 40px rgba(6, 182, 212, 0.3);
+    }
+    
+    body.dark-mode .tech-link-carousel:hover {
+        box-shadow: 
+            0 8px 30px rgba(6, 182, 212, 0.7),
+            0 0 0 1px rgba(255, 255, 255, 0.25) inset,
+            0 0 60px rgba(6, 182, 212, 0.5),
+            0 0 100px rgba(20, 184, 166, 0.4);
     }
     
     .tech-card-carousel:hover {
@@ -967,7 +1071,8 @@
         }
         
         .tech-card-carousel {
-            padding: 30px 22px;
+            padding: 25px 20px;
+            min-height: 260px;
         }
         
         .tech-icon-carousel {
@@ -981,12 +1086,18 @@
         }
         
         .tech-desc-carousel {
-            font-size: 0.9rem;
+            font-size: 1rem;
         }
         
         .tech-link-carousel {
-            padding: 12px 28px;
-            font-size: 0.85rem;
+            padding: 12px 24px;
+            font-size: 0.8rem;
+            letter-spacing: 0.8px;
+        }
+        
+        .tech-link-carousel:hover::after {
+            width: 200px;
+            height: 200px;
         }
     }
 </style>
@@ -1858,7 +1969,7 @@
                         </div>
                         <div class="tech-card-content-section">
                             <p class="tech-desc-carousel">
-                                Apprenez les fondamentaux du web avec HTML5. Structure, sémantique et bonnes pratiques.
+                                Maîtrisez HTML5 : structure sémantique, formulaires avancés, APIs modernes et bonnes pratiques pour des sites accessibles et performants.
                             </p>
                             <a href="{{ route('formations.html5') }}" class="tech-link-carousel">
                                 Commencer <i class="fas fa-arrow-right"></i>
@@ -1878,7 +1989,7 @@
                         </div>
                         <div class="tech-card-content-section">
                             <p class="tech-desc-carousel">
-                                Créez des designs modernes et responsives avec CSS3, Flexbox, Grid et animations.
+                                Créez des designs modernes avec CSS3 : Flexbox, Grid, animations, transitions et techniques avancées pour des interfaces professionnelles.
                             </p>
                             <a href="{{ route('formations.css3') }}" class="tech-link-carousel">
                                 Commencer <i class="fas fa-arrow-right"></i>
@@ -1898,7 +2009,7 @@
                         </div>
                         <div class="tech-card-content-section">
                             <p class="tech-desc-carousel">
-                                Maîtrisez JavaScript ES6+, DOM manipulation, programmation asynchrone et frameworks.
+                                Maîtrisez JavaScript ES6+ : DOM, programmation asynchrone, Promises, async/await et frameworks modernes React et Vue.js.
                             </p>
                             <a href="{{ route('formations.javascript') }}" class="tech-link-carousel">
                                 Commencer <i class="fas fa-arrow-right"></i>
@@ -1918,7 +2029,7 @@
                         </div>
                         <div class="tech-card-content-section">
                             <p class="tech-desc-carousel">
-                                Développez des applications web dynamiques avec PHP, MySQL, Laravel et Symfony.
+                                Développez des applications web avec PHP : POO, intégration MySQL et frameworks Laravel et Symfony pour des solutions professionnelles.
                             </p>
                             <a href="{{ route('formations.php') }}" class="tech-link-carousel">
                                 Commencer <i class="fas fa-arrow-right"></i>
@@ -1938,7 +2049,7 @@
                         </div>
                         <div class="tech-card-content-section">
                             <p class="tech-desc-carousel">
-                                Créez rapidement des interfaces responsives et modernes avec Bootstrap 5.
+                                Créez des interfaces responsives avec Bootstrap 5 : système de grille, composants prêts à l'emploi et personnalisation avancée.
                             </p>
                             <a href="{{ route('formations.bootstrap') }}" class="tech-link-carousel">
                                 Commencer <i class="fas fa-arrow-right"></i>
@@ -1958,7 +2069,7 @@
                         </div>
                         <div class="tech-card-content-section">
                             <p class="tech-desc-carousel">
-                                Gérez vos projets avec Git et GitHub. Versioning, collaboration et workflows.
+                                Gérez vos projets avec Git et GitHub : versioning, branches, merges, collaboration et workflows professionnels pour un développement efficace.
                             </p>
                             <a href="{{ route('formations.git') }}" class="tech-link-carousel">
                                 Commencer <i class="fas fa-arrow-right"></i>
@@ -1978,7 +2089,7 @@
                         </div>
                         <div class="tech-card-content-section">
                             <p class="tech-desc-carousel">
-                                Créez des sites web professionnels avec WordPress. Thèmes et plugins personnalisés.
+                                Créez des sites professionnels avec WordPress : développement de thèmes, plugins personnalisés, optimisation et sécurisation avancée.
                             </p>
                             <a href="{{ route('formations.wordpress') }}" class="tech-link-carousel">
                                 Commencer <i class="fas fa-arrow-right"></i>
@@ -1994,11 +2105,11 @@
                             <div class="tech-icon-carousel">
                                 <i class="fas fa-robot" style="color: #06b6d4;"></i>
                             </div>
-                            <h3 class="tech-name-carousel">Intelligence Artificielle</h3>
+                            <h3 class="tech-name-carousel">IA</h3>
                         </div>
                         <div class="tech-card-content-section">
                             <p class="tech-desc-carousel">
-                                Découvrez l'IA, le Machine Learning et leurs applications pratiques.
+                                Découvrez l'IA et le Machine Learning : concepts fondamentaux, algorithmes essentiels et applications pratiques en développement web et data science.
                             </p>
                             <a href="{{ route('formations.ia') }}" class="tech-link-carousel">
                                 Commencer <i class="fas fa-arrow-right"></i>
@@ -2018,7 +2129,7 @@
                         </div>
                         <div class="tech-card-content-section">
                             <p class="tech-desc-carousel">
-                                Apprenez Python pour le web, la data science, l'IA et l'automatisation.
+                                Apprenez Python : développement web avec Django et Flask, data science, IA, automatisation et bien plus encore.
                             </p>
                             <a href="{{ route('formations.python') }}" class="tech-link-carousel">
                                 Commencer <i class="fas fa-arrow-right"></i>
@@ -2038,7 +2149,7 @@
                         </div>
                         <div class="tech-card-content-section">
                             <p class="tech-desc-carousel">
-                                Maîtrisez Java, l'un des langages les plus populaires. POO, collections, threads et Spring.
+                                Maîtrisez Java : POO, collections, threads, design patterns et framework Spring pour développer des applications robustes et professionnelles.
                             </p>
                             <a href="{{ route('formations.java') }}" class="tech-link-carousel">
                                 Commencer <i class="fas fa-arrow-right"></i>
@@ -2058,7 +2169,7 @@
                         </div>
                         <div class="tech-card-content-section">
                             <p class="tech-desc-carousel">
-                                Apprenez SQL pour gérer les bases de données. Requêtes, jointures, fonctions et optimisation.
+                                Maîtrisez SQL : requêtes complexes, jointures, fonctions d'agrégation, vues, procédures stockées et techniques d'optimisation avancées.
                             </p>
                             <a href="{{ route('formations.sql') }}" class="tech-link-carousel">
                                 Commencer <i class="fas fa-arrow-right"></i>
@@ -2078,7 +2189,7 @@
                         </div>
                         <div class="tech-card-content-section">
                             <p class="tech-desc-carousel">
-                                Découvrez le langage C, fondement de nombreux langages modernes. Pointeurs, structures et mémoire.
+                                Découvrez le langage C : pointeurs, structures de données, gestion mémoire, algorithmes et bases de la programmation système.
                             </p>
                             <a href="{{ route('formations.c') }}" class="tech-link-carousel">
                                 Commencer <i class="fas fa-arrow-right"></i>

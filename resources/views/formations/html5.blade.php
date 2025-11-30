@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@push('preload_images')
+<link rel="preload" as="image" href="https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2072&q=80" fetchpriority="high">
+@endpush
+
 @section('title', trans('app.formations.html5.title') . ' | NiangProgrammeur')
 
 @section('styles')
@@ -1480,7 +1484,20 @@
     })();
 </script>
 <script src="{{ asset('js/sidebar-sticky.js') }}"></script>
-<script src="{{ asset('js/sidebar-navigation.js') }}"></script>
+<script>
+    // Masquer les logs de sidebar-navigation avant le chargement du script
+    (function() {
+        const originalLog = console.log;
+        console.log = function(...args) {
+            const message = args.join(' ').toLowerCase();
+            if (message.includes('sidebar navigation')) {
+                return; // Ne pas afficher
+            }
+            originalLog.apply(console, args);
+        };
+    })();
+</script>
+<script src="{{ asset('js/sidebar-navigation.js') }}?v=2.1"></script>
 <script>
     // Gestion du menu burger mobile - S'exécute après les autres scripts
     document.addEventListener('DOMContentLoaded', function() {

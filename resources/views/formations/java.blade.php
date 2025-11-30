@@ -873,7 +873,7 @@
         <h1>
             <i class="fab fa-java" style="margin-right: 15px;"></i>
             {{ trans('app.formations.java.title') }}
-        </h1>
+    </h1>
         <p>{{ trans('app.formations.java.subtitle') }}</p>
     </div>
 </div>
@@ -1920,7 +1920,7 @@ try (FileWriter writer = new FileWriter("fichier.txt", true)) {
     // Initialiser Prism.js après le chargement de la page
     document.addEventListener('DOMContentLoaded', function() {
         function highlightCode() {
-            if (typeof Prism !== 'undefined') {
+        if (typeof Prism !== 'undefined') {
                 // Forcer la coloration de tous les blocs de code
                 const codeElements = document.querySelectorAll('code[class*="language-"]');
                 codeElements.forEach(function(code) {
