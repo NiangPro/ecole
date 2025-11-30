@@ -64,7 +64,7 @@
             padding-bottom: 40px !important;
         }
         
-        .container.mx-auto.px-6 {
+        .w-full.px-6 {
             padding-left: 16px !important;
             padding-right: 16px !important;
             width: 100% !important;
@@ -526,7 +526,7 @@
 
 @section('content')
 <section class="py-20 relative overflow-hidden pt-8">
-    <div class="container mx-auto px-6">
+    <div class="w-full px-6">
         <!-- Breadcrumb & Navigation -->
         <div class="flex items-center justify-between mb-3 flex-wrap gap-4">
             <div>
@@ -760,6 +760,10 @@
             codeMirrorMode = 'text/x-java';
         } else if (language === 'c' || language === 'cpp' || language === 'c++') {
             codeMirrorMode = 'text/x-csrc';
+        } else if (language === 'csharp' || language === 'c#') {
+            codeMirrorMode = 'text/x-csharp';
+        } else if (language === 'dart') {
+            codeMirrorMode = 'text/x-csrc'; // Utiliser clike pour Dart (syntaxe similaire)
         } else if (language === 'sql') {
             codeMirrorMode = 'text/x-sql';
         }
@@ -1070,8 +1074,8 @@
                 `);
         iframeDoc.close();
         
-                // Si c'est du PHP, Python, Java ou C, exécuter côté serveur
-                if (language === 'php' || language === 'python' || language === 'java' || language === 'c' || language === 'cpp' || language === 'c++') {
+                // Si c'est du PHP, Python, Java, C, C++, C# ou Dart, exécuter côté serveur
+                if (language === 'php' || language === 'python' || language === 'java' || language === 'c' || language === 'cpp' || language === 'c++' || language === 'csharp' || language === 'c#' || language === 'dart') {
                     fetch(`/exercices/${language}/run`, {
                         method: 'POST',
                         headers: {
@@ -1095,7 +1099,7 @@
                         iframeDoc.open();
                         
                         if (data.error) {
-                            const langName = language === 'python' ? 'Python' : (language === 'java' ? 'Java' : (language === 'c' || language === 'cpp' || language === 'c++') ? 'C' : 'PHP');
+                            const langName = language === 'python' ? 'Python' : (language === 'java' ? 'Java' : (language === 'c' || language === 'cpp' || language === 'c++') ? 'C' : (language === 'csharp' || language === 'c#') ? 'C#' : (language === 'dart') ? 'Dart' : 'PHP');
                             iframeDoc.write(`
                                 <!DOCTYPE html>
                                 <html>
@@ -1318,7 +1322,7 @@
                                             }
                                         </style>
                                     </head>
-                                    <body style="margin: 0 !important; padding: 0 !important; padding-top: 0 !important; margin-top: 0 !important;">${hasOutput ? output : '<p class="no-output">' + (language === 'java' ? 'Aucune sortie. Le code s\'est exécuté sans erreur mais n\'a rien affiché. Utilisez System.out.println() pour afficher des résultats.' : language === 'python' ? 'Aucune sortie. Le code s\'est exécuté sans erreur mais n\'a rien affiché. Utilisez print() pour afficher des résultats.' : (language === 'c' || language === 'cpp' || language === 'c++') ? 'Aucune sortie. Le code s\'est exécuté sans erreur mais n\'a rien affiché. Utilisez printf() pour afficher des résultats.' : translations.noOutput) + '</p>'}
+                                    <body style="margin: 0 !important; padding: 0 !important; padding-top: 0 !important; margin-top: 0 !important;">${hasOutput ? output : '<p class="no-output">' + (language === 'java' ? 'Aucune sortie. Le code s\'est exécuté sans erreur mais n\'a rien affiché. Utilisez System.out.println() pour afficher des résultats.' : language === 'python' ? 'Aucune sortie. Le code s\'est exécuté sans erreur mais n\'a rien affiché. Utilisez print() pour afficher des résultats.' : (language === 'c' || language === 'cpp' || language === 'c++') ? 'Aucune sortie. Le code s\'est exécuté sans erreur mais n\'a rien affiché. Utilisez printf() pour afficher des résultats.' : (language === 'csharp' || language === 'c#') ? 'Aucune sortie. Le code s\'est exécuté sans erreur mais n\'a rien affiché. Utilisez Console.WriteLine() pour afficher des résultats.' : (language === 'dart') ? 'Aucune sortie. Le code s\'est exécuté sans erreur mais n\'a rien affiché. Utilisez print() pour afficher des résultats.' : translations.noOutput) + '</p>'}
                                     </body>
                                     </html>
                                 `);
@@ -1766,7 +1770,7 @@
                                         }
                                     </style>
                                 </head>
-                                <body style="margin: 0 !important; padding: 0 !important;">${hasOutput ? output : '<p class="no-output">' + (language === 'java' ? 'Aucune sortie. Le code s\'est exécuté sans erreur mais n\'a rien affiché. Utilisez System.out.println() pour afficher des résultats.' : language === 'python' ? 'Aucune sortie. Le code s\'est exécuté sans erreur mais n\'a rien affiché. Utilisez print() pour afficher des résultats.' : (language === 'c' || language === 'cpp' || language === 'c++') ? 'Aucune sortie. Le code s\'est exécuté sans erreur mais n\'a rien affiché. Utilisez printf() pour afficher des résultats.' : 'Aucune sortie.') + '</p>'}
+                                <body style="margin: 0 !important; padding: 0 !important;">${hasOutput ? output : '<p class="no-output">' + (language === 'java' ? 'Aucune sortie. Le code s\'est exécuté sans erreur mais n\'a rien affiché. Utilisez System.out.println() pour afficher des résultats.' : language === 'python' ? 'Aucune sortie. Le code s\'est exécuté sans erreur mais n\'a rien affiché. Utilisez print() pour afficher des résultats.' : (language === 'c' || language === 'cpp' || language === 'c++') ? 'Aucune sortie. Le code s\'est exécuté sans erreur mais n\'a rien affiché. Utilisez printf() pour afficher des résultats.' : (language === 'csharp' || language === 'c#') ? 'Aucune sortie. Le code s\'est exécuté sans erreur mais n\'a rien affiché. Utilisez Console.WriteLine() pour afficher des résultats.' : (language === 'dart') ? 'Aucune sortie. Le code s\'est exécuté sans erreur mais n\'a rien affiché. Utilisez print() pour afficher des résultats.' : 'Aucune sortie.') + '</p>'}
                                 </body>
                                 </html>
                             `);

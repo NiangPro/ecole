@@ -181,7 +181,7 @@
 
 @section('content')
 <section class="py-20 relative overflow-hidden pt-8">
-    <div class="container mx-auto px-6">
+    <div class="w-full px-6">
         <!-- Breadcrumb -->
         <div class="mb-8">
             <a href="{{ route('exercices') }}" class="text-cyan-400 hover:text-cyan-300 transition">
@@ -208,19 +208,19 @@
 
         <!-- Stats Section -->
         <div class="mb-12 grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div class="bg-gradient-to-br from-cyan-500/10 to-teal-500/10 border border-cyan-500/20 rounded-xl p-6 text-center">
+            <div class="bg-gradient-to-br from-cyan-500/10 to-teal-500/10 border border-cyan-500/20 rounded-xl p-6">
                 <div class="text-4xl font-bold text-cyan-400 mb-2">{{ count($exercises) }}+</div>
                 <div class="text-gray-300">{{ trans('app.exercices.exercises') }}</div>
             </div>
-            <div class="bg-gradient-to-br from-green-500/10 to-emerald-500/10 border border-green-500/20 rounded-xl p-6 text-center">
+            <div class="bg-gradient-to-br from-green-500/10 to-emerald-500/10 border border-green-500/20 rounded-xl p-6">
                 <div class="text-4xl font-bold text-green-400 mb-2">{{ collect($exercises)->where('difficulty', $easyDifficulty)->count() }}</div>
                 <div class="text-gray-300">{{ trans('app.exercices.difficulty.easy') }}</div>
             </div>
-            <div class="bg-gradient-to-br from-yellow-500/10 to-amber-500/10 border border-yellow-500/20 rounded-xl p-6 text-center">
+            <div class="bg-gradient-to-br from-yellow-500/10 to-amber-500/10 border border-yellow-500/20 rounded-xl p-6">
                 <div class="text-4xl font-bold text-yellow-400 mb-2">{{ collect($exercises)->where('difficulty', $mediumDifficulty)->count() }}</div>
                 <div class="text-gray-300">{{ trans('app.exercices.difficulty.medium') }}</div>
             </div>
-            <div class="bg-gradient-to-br from-red-500/10 to-rose-500/10 border border-red-500/20 rounded-xl p-6 text-center">
+            <div class="bg-gradient-to-br from-red-500/10 to-rose-500/10 border border-red-500/20 rounded-xl p-6">
                 <div class="text-4xl font-bold text-red-400 mb-2">{{ collect($exercises)->where('difficulty', $hardDifficulty)->count() }}</div>
                 <div class="text-gray-300">{{ trans('app.exercices.difficulty.hard') }}</div>
             </div>
@@ -286,23 +286,23 @@
 
         <!-- Statistiques -->
         <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-gradient-to-br from-green-500/10 to-emerald-500/10 border border-green-500/20 rounded-2xl p-6 text-center">
+            <div class="bg-gradient-to-br from-green-500/10 to-emerald-500/10 border border-green-500/20 rounded-2xl p-6">
                 <div class="text-3xl font-bold text-green-400 mb-2">{{ count($exercises) }}</div>
                 <div class="text-gray-400">{{ trans('app.exercices.available_exercices') }}</div>
             </div>
-            <div class="bg-gradient-to-br from-yellow-500/10 to-orange-500/10 border border-yellow-500/20 rounded-2xl p-6 text-center">
+            <div class="bg-gradient-to-br from-yellow-500/10 to-orange-500/10 border border-yellow-500/20 rounded-2xl p-6">
                 <div class="text-3xl font-bold text-yellow-400 mb-2">{{ array_sum(array_column($exercises, 'points')) }}</div>
                 <div class="text-gray-400">{{ trans('app.exercices.total_points') }}</div>
             </div>
-            <div class="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-2xl p-6 text-center">
+            <div class="bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-2xl p-6">
                 <div class="text-3xl font-bold text-purple-400 mb-2">0%</div>
                 <div class="text-gray-400">{{ trans('app.exercices.progress') }}</div>
             </div>
         </div>
         @else
         <!-- Aucun exercice -->
-        <div class="text-center py-20">
-            <div class="w-32 h-32 mx-auto mb-6 bg-cyan-500/10 rounded-full flex items-center justify-center">
+        <div class="py-20">
+            <div class="w-32 h-32 mb-6 bg-cyan-500/10 rounded-full flex items-center justify-center">
                 <i class="fas fa-dumbbell text-cyan-400 text-5xl"></i>
             </div>
             <h3 class="text-2xl font-bold text-white mb-4">{{ trans('app.exercices.coming_soon') }}</h3>

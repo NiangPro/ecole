@@ -248,7 +248,7 @@ class PageController extends Controller
             ['name' => trans('app.formations.languages.c'), 'slug' => 'c', 'icon' => 'fab fa-c', 'color' => 'gray', 'exercises' => 18],
             ['name' => trans('app.formations.languages.cpp'), 'slug' => 'cpp', 'icon' => 'fab fa-cuttlefish', 'color' => 'blue', 'exercises' => 20],
             ['name' => trans('app.formations.languages.csharp'), 'slug' => 'csharp', 'icon' => 'fab fa-microsoft', 'color' => 'green', 'exercises' => 22],
-            ['name' => trans('app.formations.languages.dart'), 'slug' => 'dart', 'icon' => 'fab fa-dart', 'color' => 'blue', 'exercises' => 18],
+            ['name' => trans('app.formations.languages.dart'), 'slug' => 'dart', 'icon' => 'fas fa-feather-alt', 'color' => 'blue', 'exercises' => 18],
         ];
         
         // Créer la réponse avec des headers pour empêcher le cache
@@ -1123,7 +1123,7 @@ class PageController extends Controller
         }
         
         // Exécution C
-        if ($language === 'c' || $language === 'cpp' || $language === 'c++') {
+        if ($language === 'c') {
             try {
                 // Vérifications de sécurité pour C
                 $dangerousPatterns = [
@@ -1225,6 +1225,363 @@ class PageController extends Controller
                     return response()->json([
                         'output' => '',
                         'error' => 'Erreur de connexion : L\'API d\'exécution C est temporairement indisponible. Veuillez réessayer dans quelques instants.'
+                    ]);
+                }
+                return response()->json([
+                    'output' => '',
+                    'error' => 'Erreur : ' . $errorMessage
+                ]);
+            }
+        }
+        
+        // Exécution C++
+        if ($language === 'cpp' || $language === 'c++') {
+            try {
+                // Vérifications de sécurité pour C++
+                $dangerousPatterns = [
+                    '/system\s*\(/', '/exec\s*\(/', '/popen\s*\(/', '/fopen\s*\(/',
+                    '/socket\s*\(/', '/connect\s*\(/', '/fork\s*\(/', '/vfork\s*\(/',
+                    '/chmod\s*\(/', '/chown\s*\(/', '/unlink\s*\(/', '/remove\s*\(/',
+                ];
+                
+                foreach ($dangerousPatterns as $pattern) {
+                    if (preg_match($pattern, $code)) {
+                        return response()->json([
+                            'output' => '',
+                            'error' => 'Code non autorisé détecté. Certaines fonctionnalités sont désactivées pour des raisons de sécurité.'
+                        ]);
+                    }
+                }
+                
+                // Préparer la requête pour Piston API
+                $pistonApiUrl = 'https://emkc.org/api/v2/piston/execute';
+                
+                // Optimiser la requête avec timeout approprié pour C++ (compilation + exécution)
+                $response = Http::timeout(20)
+                    ->retry(2, 1000)
+                    ->withOptions([
+                        'http_errors' => false,
+                        'verify' => true,
+                        'timeout' => 20,
+                        'connect_timeout' => 10,
+                    ])
+                    ->post($pistonApiUrl, [
+                        'language' => 'cpp',
+                        'version' => '10.2.0',
+                        'files' => [
+                            [
+                                'name' => 'main.cpp',
+                                'content' => $code
+                            ]
+                        ],
+                        'stdin' => '',
+                        'args' => []
+                    ]);
+                
+                if ($response->successful()) {
+                    $data = $response->json();
+                    
+                    $output = '';
+                    $error = null;
+                    
+                    if (isset($data['run']['stdout'])) {
+                        $output = $data['run']['stdout'];
+                    }
+                    
+                    if (isset($data['run']['stderr']) && !empty($data['run']['stderr'])) {
+                        $error = $data['run']['stderr'];
+                    } elseif (isset($data['run']['code']) && $data['run']['code'] !== 0) {
+                        $error = 'Erreur lors de l\'exécution (code de retour: ' . $data['run']['code'] . ')';
+                        if (!empty($output)) {
+                            $error .= "\n" . $output;
+                        }
+                    }
+                    
+                    // Nettoyer l'output
+                    if (!empty($output)) {
+                        $output = trim($output);
+                        if (!mb_check_encoding($output, 'UTF-8')) {
+                            $output = mb_convert_encoding($output, 'UTF-8', 'UTF-8');
+                        }
+                    }
+                    
+                    if (!empty($error)) {
+                        $error = trim($error);
+                        if (!mb_check_encoding($error, 'UTF-8')) {
+                            $error = mb_convert_encoding($error, 'UTF-8', 'UTF-8');
+                        }
+                    }
+                    
+                    return response()->json([
+                        'output' => $output,
+                        'error' => $error
+                    ], 200, [], JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_IGNORE);
+                } else {
+                    $statusCode = $response->status();
+                    $errorBody = $response->body();
+                    return response()->json([
+                        'output' => '',
+                        'error' => 'Erreur lors de l\'exécution du code C++ (HTTP ' . $statusCode . '). L\'API d\'exécution peut être temporairement indisponible. Veuillez réessayer dans quelques instants.'
+                    ]);
+                }
+            } catch (\Illuminate\Http\Client\ConnectionException $e) {
+                // Erreur de connexion/timeout
+                return response()->json([
+                    'output' => '',
+                    'error' => 'Erreur de connexion : Impossible de se connecter à l\'API d\'exécution C++. Vérifiez votre connexion internet et réessayez.'
+                ]);
+            } catch (\Exception $e) {
+                $errorMessage = $e->getMessage();
+                // Masquer les détails techniques de cURL pour l'utilisateur
+                if (strpos($errorMessage, 'cURL error') !== false) {
+                    return response()->json([
+                        'output' => '',
+                        'error' => 'Erreur de connexion : L\'API d\'exécution C++ est temporairement indisponible. Veuillez réessayer dans quelques instants.'
+                    ]);
+                }
+                return response()->json([
+                    'output' => '',
+                    'error' => 'Erreur : ' . $errorMessage
+                ]);
+            }
+        }
+        
+        // Exécution C#
+        if ($language === 'csharp' || $language === 'c#') {
+            try {
+                // Vérifications de sécurité pour C#
+                $dangerousPatterns = [
+                    '/Process\.Start/',
+                    '/ProcessStartInfo/',
+                    '/System\.Diagnostics\.Process/',
+                    '/File\.WriteAllText/',
+                    '/File\.WriteAllBytes/',
+                    '/File\.AppendAllText/',
+                    '/Socket/',
+                    '/TcpClient/',
+                    '/TcpListener/',
+                    '/UdpClient/',
+                    '/WebClient/',
+                    '/HttpWebRequest/',
+                    '/Assembly\.Load/',
+                    '/Type\.GetType/',
+                    '/Activator\.CreateInstance/',
+                ];
+                
+                foreach ($dangerousPatterns as $pattern) {
+                    if (preg_match($pattern, $code)) {
+                        return response()->json([
+                            'output' => '',
+                            'error' => 'Code non autorisé détecté. Certaines fonctionnalités sont désactivées pour des raisons de sécurité.'
+                        ]);
+                    }
+                }
+                
+                // Préparer la requête pour Piston API
+                $pistonApiUrl = 'https://emkc.org/api/v2/piston/execute';
+                
+                // Optimiser la requête avec timeout approprié pour C# (compilation + exécution)
+                $response = Http::timeout(20)
+                    ->retry(2, 1000)
+                    ->withOptions([
+                        'http_errors' => false,
+                        'verify' => true,
+                        'timeout' => 20,
+                        'connect_timeout' => 10,
+                    ])
+                    ->post($pistonApiUrl, [
+                        'language' => 'csharp',
+                        'version' => '6.12.0',
+                        'files' => [
+                            [
+                                'name' => 'Program.cs',
+                                'content' => $code
+                            ]
+                        ],
+                        'stdin' => '',
+                        'args' => []
+                    ]);
+                
+                if ($response->successful()) {
+                    $data = $response->json();
+                    
+                    $output = '';
+                    $error = null;
+                    
+                    if (isset($data['run']['stdout'])) {
+                        $output = $data['run']['stdout'];
+                    }
+                    
+                    if (isset($data['run']['stderr']) && !empty($data['run']['stderr'])) {
+                        $error = $data['run']['stderr'];
+                    } elseif (isset($data['run']['code']) && $data['run']['code'] !== 0) {
+                        $error = 'Erreur lors de l\'exécution (code de retour: ' . $data['run']['code'] . ')';
+                        if (!empty($output)) {
+                            $error .= "\n" . $output;
+                        }
+                    }
+                    
+                    // Nettoyer l'output
+                    if (!empty($output)) {
+                        $output = trim($output);
+                        if (!mb_check_encoding($output, 'UTF-8')) {
+                            $output = mb_convert_encoding($output, 'UTF-8', 'UTF-8');
+                        }
+                    }
+                    
+                    if (!empty($error)) {
+                        $error = trim($error);
+                        if (!mb_check_encoding($error, 'UTF-8')) {
+                            $error = mb_convert_encoding($error, 'UTF-8', 'UTF-8');
+                        }
+                    }
+                    
+                    return response()->json([
+                        'output' => $output,
+                        'error' => $error
+                    ], 200, [], JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_IGNORE);
+                } else {
+                    $statusCode = $response->status();
+                    $errorBody = $response->body();
+                    return response()->json([
+                        'output' => '',
+                        'error' => 'Erreur lors de l\'exécution du code C# (HTTP ' . $statusCode . '). L\'API d\'exécution peut être temporairement indisponible. Veuillez réessayer dans quelques instants.'
+                    ]);
+                }
+            } catch (\Illuminate\Http\Client\ConnectionException $e) {
+                // Erreur de connexion/timeout
+                return response()->json([
+                    'output' => '',
+                    'error' => 'Erreur de connexion : Impossible de se connecter à l\'API d\'exécution C#. Vérifiez votre connexion internet et réessayez.'
+                ]);
+            } catch (\Exception $e) {
+                $errorMessage = $e->getMessage();
+                // Masquer les détails techniques de cURL pour l'utilisateur
+                if (strpos($errorMessage, 'cURL error') !== false) {
+                    return response()->json([
+                        'output' => '',
+                        'error' => 'Erreur de connexion : L\'API d\'exécution C# est temporairement indisponible. Veuillez réessayer dans quelques instants.'
+                    ]);
+                }
+                return response()->json([
+                    'output' => '',
+                    'error' => 'Erreur : ' . $errorMessage
+                ]);
+            }
+        }
+        
+        // Exécution Dart
+        if ($language === 'dart') {
+            try {
+                // Vérifications de sécurité pour Dart
+                $dangerousPatterns = [
+                    '/Process\.start/',
+                    '/Process\.run/',
+                    '/Process\.runSync/',
+                    '/File\.writeAsString/',
+                    '/File\.writeAsBytes/',
+                    '/File\.writeAsStringSync/',
+                    '/File\.writeAsBytesSync/',
+                    '/Socket/',
+                    '/ServerSocket/',
+                    '/HttpClient/',
+                    '/HttpServer/',
+                    '/dart:io/',
+                ];
+                
+                foreach ($dangerousPatterns as $pattern) {
+                    if (preg_match($pattern, $code)) {
+                        return response()->json([
+                            'output' => '',
+                            'error' => 'Code non autorisé détecté. Certaines fonctionnalités sont désactivées pour des raisons de sécurité.'
+                        ]);
+                    }
+                }
+                
+                // Préparer la requête pour Piston API
+                $pistonApiUrl = 'https://emkc.org/api/v2/piston/execute';
+                
+                // Optimiser la requête avec timeout approprié pour Dart (compilation + exécution)
+                $response = Http::timeout(20)
+                    ->retry(2, 1000)
+                    ->withOptions([
+                        'http_errors' => false,
+                        'verify' => true,
+                        'timeout' => 20,
+                        'connect_timeout' => 10,
+                    ])
+                    ->post($pistonApiUrl, [
+                        'language' => 'dart',
+                        'version' => '*',
+                        'files' => [
+                            [
+                                'name' => 'main.dart',
+                                'content' => $code
+                            ]
+                        ],
+                        'stdin' => '',
+                        'args' => []
+                    ]);
+                
+                if ($response->successful()) {
+                    $data = $response->json();
+                    
+                    $output = '';
+                    $error = null;
+                    
+                    if (isset($data['run']['stdout'])) {
+                        $output = $data['run']['stdout'];
+                    }
+                    
+                    if (isset($data['run']['stderr']) && !empty($data['run']['stderr'])) {
+                        $error = $data['run']['stderr'];
+                    } elseif (isset($data['run']['code']) && $data['run']['code'] !== 0) {
+                        $error = 'Erreur lors de l\'exécution (code de retour: ' . $data['run']['code'] . ')';
+                        if (!empty($output)) {
+                            $error .= "\n" . $output;
+                        }
+                    }
+                    
+                    // Nettoyer l'output
+                    if (!empty($output)) {
+                        $output = trim($output);
+                        if (!mb_check_encoding($output, 'UTF-8')) {
+                            $output = mb_convert_encoding($output, 'UTF-8', 'UTF-8');
+                        }
+                    }
+                    
+                    if (!empty($error)) {
+                        $error = trim($error);
+                        if (!mb_check_encoding($error, 'UTF-8')) {
+                            $error = mb_convert_encoding($error, 'UTF-8', 'UTF-8');
+                        }
+                    }
+                    
+                    return response()->json([
+                        'output' => $output,
+                        'error' => $error
+                    ], 200, [], JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_IGNORE);
+                } else {
+                    $statusCode = $response->status();
+                    $errorBody = $response->body();
+                    return response()->json([
+                        'output' => '',
+                        'error' => 'Erreur lors de l\'exécution du code Dart (HTTP ' . $statusCode . '). L\'API d\'exécution peut être temporairement indisponible. Veuillez réessayer dans quelques instants.'
+                    ]);
+                }
+            } catch (\Illuminate\Http\Client\ConnectionException $e) {
+                // Erreur de connexion/timeout
+                return response()->json([
+                    'output' => '',
+                    'error' => 'Erreur de connexion : Impossible de se connecter à l\'API d\'exécution Dart. Vérifiez votre connexion internet et réessayez.'
+                ]);
+            } catch (\Exception $e) {
+                $errorMessage = $e->getMessage();
+                // Masquer les détails techniques de cURL pour l'utilisateur
+                if (strpos($errorMessage, 'cURL error') !== false) {
+                    return response()->json([
+                        'output' => '',
+                        'error' => 'Erreur de connexion : L\'API d\'exécution Dart est temporairement indisponible. Veuillez réessayer dans quelques instants.'
                     ]);
                 }
                 return response()->json([
@@ -6926,6 +7283,152 @@ int main() {
 }',
                     'hint' => $getTranslated('hint', 'Utilisez int age = 25; puis cout << "Age : " << age << endl;')
                 ],
+                3 => [
+                    'title' => $getTranslated('title', 'Opérateurs arithmétiques'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 10,
+                    'instruction' => $getTranslated('instruction', 'Calculez la somme de deux nombres (10 et 5) et affichez le résultat.'),
+                    'description' => $getTranslated('description', 'En C++, utilisez les opérateurs arithmétiques +, -, *, / pour effectuer des calculs.'),
+                    'startCode' => '#include <iostream>
+using namespace std;
+
+int main() {
+    int a = 10;
+    int b = 5;
+    // Calculez et affichez la somme de a et b
+    return 0;
+}',
+                    'solution' => '#include <iostream>
+using namespace std;
+
+int main() {
+    int a = 10;
+    int b = 5;
+    int somme = a + b;
+    cout << "Somme : " << somme << endl;
+    return 0;
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez int somme = a + b; puis affichez le résultat avec cout.')
+                ],
+                4 => [
+                    'title' => $getTranslated('title', 'Conditions if/else'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 12,
+                    'instruction' => $getTranslated('instruction', 'Vérifiez si un nombre est pair ou impair et affichez le résultat.'),
+                    'description' => $getTranslated('description', 'Utilisez l\'opérateur modulo % pour vérifier si un nombre est divisible par 2.'),
+                    'startCode' => '#include <iostream>
+using namespace std;
+
+int main() {
+    int nombre = 7;
+    // Vérifiez si nombre est pair ou impair
+    return 0;
+}',
+                    'solution' => '#include <iostream>
+using namespace std;
+
+int main() {
+    int nombre = 7;
+    if (nombre % 2 == 0) {
+        cout << nombre << " est pair" << endl;
+    } else {
+        cout << nombre << " est impair" << endl;
+    }
+    return 0;
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez if (nombre % 2 == 0) pour vérifier si le nombre est pair.')
+                ],
+                5 => [
+                    'title' => $getTranslated('title', 'Boucles for et while'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 12,
+                    'instruction' => $getTranslated('instruction', 'Affichez les nombres de 1 à 10 en utilisant une boucle for.'),
+                    'description' => $getTranslated('description', 'Les boucles for permettent de répéter du code un nombre défini de fois.'),
+                    'startCode' => '#include <iostream>
+using namespace std;
+
+int main() {
+    // Utilisez une boucle for pour afficher les nombres de 1 à 10
+    return 0;
+}',
+                    'solution' => '#include <iostream>
+using namespace std;
+
+int main() {
+    for (int i = 1; i <= 10; i++) {
+        cout << i << " ";
+    }
+    cout << endl;
+    return 0;
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez for (int i = 1; i <= 10; i++) pour itérer de 1 à 10.')
+                ],
+                6 => [
+                    'title' => $getTranslated('title', 'Fonctions C++'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 18,
+                    'instruction' => $getTranslated('instruction', 'Créez une fonction qui calcule la somme de deux nombres et retourne le résultat.'),
+                    'description' => $getTranslated('description', 'Les fonctions permettent de réutiliser du code. Déclarez le type de retour, le nom de la fonction et ses paramètres.'),
+                    'startCode' => '#include <iostream>
+using namespace std;
+
+// Créez une fonction somme qui prend deux int et retourne leur somme
+int main() {
+    int resultat = somme(10, 5);
+    cout << "Résultat : " << resultat << endl;
+    return 0;
+}',
+                    'solution' => '#include <iostream>
+using namespace std;
+
+int somme(int a, int b) {
+    return a + b;
+}
+
+int main() {
+    int resultat = somme(10, 5);
+    cout << "Résultat : " << resultat << endl;
+    return 0;
+}',
+                    'hint' => $getTranslated('hint', 'Créez int somme(int a, int b) { return a + b; } avant main().')
+                ],
+                7 => [
+                    'title' => $getTranslated('title', 'Classes et objets'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 20,
+                    'instruction' => $getTranslated('instruction', 'Créez une classe Personne avec un attribut nom et une méthode afficher().'),
+                    'description' => $getTranslated('description', 'Les classes permettent de créer des types personnalisés avec des attributs et des méthodes.'),
+                    'startCode' => '#include <iostream>
+#include <string>
+using namespace std;
+
+// Créez une classe Personne avec nom et méthode afficher()
+int main() {
+    Personne p("Bassirou");
+    p.afficher();
+    return 0;
+}',
+                    'solution' => '#include <iostream>
+#include <string>
+using namespace std;
+
+class Personne {
+private:
+    string nom;
+public:
+    Personne(string n) : nom(n) {}
+    void afficher() {
+        cout << "Nom : " << nom << endl;
+    }
+};
+
+int main() {
+    Personne p("Bassirou");
+    p.afficher();
+    return 0;
+}',
+                    'hint' => $getTranslated('hint', 'Créez class Personne { private: string nom; public: Personne(string n) : nom(n) {} void afficher() { ... } };')
+                ],
             ],
             'csharp' => [
                 1 => [
@@ -6974,6 +7477,152 @@ class Program {
 }',
                     'hint' => $getTranslated('hint', 'Utilisez int age = 25; puis Console.WriteLine("Age : " + age);')
                 ],
+                3 => [
+                    'title' => $getTranslated('title', 'Opérateurs arithmétiques'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 10,
+                    'instruction' => $getTranslated('instruction', 'Calculez la somme de deux nombres (10 et 5) et affichez le résultat.'),
+                    'description' => $getTranslated('description', 'En C#, utilisez les opérateurs arithmétiques +, -, *, / pour effectuer des calculs.'),
+                    'startCode' => 'using System;
+
+class Program {
+    static void Main() {
+        int a = 10;
+        int b = 5;
+        // Calculez et affichez la somme de a et b
+    }
+}',
+                    'solution' => 'using System;
+
+class Program {
+    static void Main() {
+        int a = 10;
+        int b = 5;
+        int somme = a + b;
+        Console.WriteLine("Somme : " + somme);
+    }
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez int somme = a + b; puis affichez le résultat avec Console.WriteLine.')
+                ],
+                4 => [
+                    'title' => $getTranslated('title', 'Conditions if/else'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 12,
+                    'instruction' => $getTranslated('instruction', 'Vérifiez si un nombre est pair ou impair et affichez le résultat.'),
+                    'description' => $getTranslated('description', 'Utilisez l\'opérateur modulo % pour vérifier si un nombre est divisible par 2.'),
+                    'startCode' => 'using System;
+
+class Program {
+    static void Main() {
+        int nombre = 7;
+        // Vérifiez si nombre est pair ou impair
+    }
+}',
+                    'solution' => 'using System;
+
+class Program {
+    static void Main() {
+        int nombre = 7;
+        if (nombre % 2 == 0) {
+            Console.WriteLine(nombre + " est pair");
+        } else {
+            Console.WriteLine(nombre + " est impair");
+        }
+    }
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez if (nombre % 2 == 0) pour vérifier si le nombre est pair.')
+                ],
+                5 => [
+                    'title' => $getTranslated('title', 'Boucles for et while'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 12,
+                    'instruction' => $getTranslated('instruction', 'Affichez les nombres de 1 à 10 en utilisant une boucle for.'),
+                    'description' => $getTranslated('description', 'Les boucles for permettent de répéter du code un nombre défini de fois.'),
+                    'startCode' => 'using System;
+
+class Program {
+    static void Main() {
+        // Utilisez une boucle for pour afficher les nombres de 1 à 10
+    }
+}',
+                    'solution' => 'using System;
+
+class Program {
+    static void Main() {
+        for (int i = 1; i <= 10; i++) {
+            Console.Write(i + " ");
+        }
+        Console.WriteLine();
+    }
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez for (int i = 1; i <= 10; i++) pour itérer de 1 à 10.')
+                ],
+                6 => [
+                    'title' => $getTranslated('title', 'Méthodes C#'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 18,
+                    'instruction' => $getTranslated('instruction', 'Créez une méthode qui calcule la somme de deux nombres et retourne le résultat.'),
+                    'description' => $getTranslated('description', 'Les méthodes permettent de réutiliser du code. Déclarez le type de retour, le nom de la méthode et ses paramètres.'),
+                    'startCode' => 'using System;
+
+class Program {
+    // Créez une méthode Somme qui prend deux int et retourne leur somme
+    static void Main() {
+        int resultat = Somme(10, 5);
+        Console.WriteLine("Résultat : " + resultat);
+    }
+}',
+                    'solution' => 'using System;
+
+class Program {
+    static int Somme(int a, int b) {
+        return a + b;
+    }
+    
+    static void Main() {
+        int resultat = Somme(10, 5);
+        Console.WriteLine("Résultat : " + resultat);
+    }
+}',
+                    'hint' => $getTranslated('hint', 'Créez static int Somme(int a, int b) { return a + b; } dans la classe Program.')
+                ],
+                7 => [
+                    'title' => $getTranslated('title', 'Classes et objets'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 20,
+                    'instruction' => $getTranslated('instruction', 'Créez une classe Personne avec une propriété Nom et une méthode Afficher().'),
+                    'description' => $getTranslated('description', 'Les classes permettent de créer des types personnalisés avec des propriétés et des méthodes.'),
+                    'startCode' => 'using System;
+
+// Créez une classe Personne avec Nom et méthode Afficher()
+class Program {
+    static void Main() {
+        Personne p = new Personne("Bassirou");
+        p.Afficher();
+    }
+}',
+                    'solution' => 'using System;
+
+class Personne {
+    public string Nom { get; set; }
+    
+    public Personne(string nom) {
+        Nom = nom;
+    }
+    
+    public void Afficher() {
+        Console.WriteLine("Nom : " + Nom);
+    }
+}
+
+class Program {
+    static void Main() {
+        Personne p = new Personne("Bassirou");
+        p.Afficher();
+    }
+}',
+                    'hint' => $getTranslated('hint', 'Créez class Personne { public string Nom { get; set; } public Personne(string nom) { ... } public void Afficher() { ... } }')
+                ],
             ],
             'dart' => [
                 1 => [
@@ -7005,6 +7654,109 @@ class Program {
     print("Age : $age");
 }',
                     'hint' => $getTranslated('hint', 'Utilisez int age = 25; puis print("Age : $age"); (interpolation de chaîne)')
+                ],
+                3 => [
+                    'title' => $getTranslated('title', 'Opérateurs arithmétiques'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 10,
+                    'instruction' => $getTranslated('instruction', 'Calculez la somme de deux nombres (10 et 5) et affichez le résultat.'),
+                    'description' => $getTranslated('description', 'En Dart, utilisez les opérateurs arithmétiques +, -, *, / pour effectuer des calculs.'),
+                    'startCode' => 'void main() {
+  int a = 10;
+  int b = 5;
+  // Calculez et affichez la somme de a et b
+}',
+                    'solution' => 'void main() {
+  int a = 10;
+  int b = 5;
+  int somme = a + b;
+  print("Somme : $somme");
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez int somme = a + b; puis affichez le résultat avec print("Somme : $somme").')
+                ],
+                4 => [
+                    'title' => $getTranslated('title', 'Conditions if/else'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 12,
+                    'instruction' => $getTranslated('instruction', 'Vérifiez si un nombre est pair ou impair et affichez le résultat.'),
+                    'description' => $getTranslated('description', 'Utilisez l\'opérateur modulo % pour vérifier si un nombre est divisible par 2.'),
+                    'startCode' => 'void main() {
+  int nombre = 7;
+  // Vérifiez si nombre est pair ou impair
+}',
+                    'solution' => 'void main() {
+  int nombre = 7;
+  if (nombre % 2 == 0) {
+    print("$nombre est pair");
+  } else {
+    print("$nombre est impair");
+  }
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez if (nombre % 2 == 0) pour vérifier si le nombre est pair.')
+                ],
+                5 => [
+                    'title' => $getTranslated('title', 'Boucles for et while'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 12,
+                    'instruction' => $getTranslated('instruction', 'Affichez les nombres de 1 à 10 en utilisant une boucle for.'),
+                    'description' => $getTranslated('description', 'Les boucles for permettent de répéter du code un nombre défini de fois.'),
+                    'startCode' => 'void main() {
+  // Utilisez une boucle for pour afficher les nombres de 1 à 10
+}',
+                    'solution' => 'void main() {
+  for (int i = 1; i <= 10; i++) {
+    print(i);
+  }
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez for (int i = 1; i <= 10; i++) pour itérer de 1 à 10.')
+                ],
+                6 => [
+                    'title' => $getTranslated('title', 'Fonctions Dart'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 18,
+                    'instruction' => $getTranslated('instruction', 'Créez une fonction qui calcule la somme de deux nombres et retourne le résultat.'),
+                    'description' => $getTranslated('description', 'Les fonctions permettent de réutiliser du code. Déclarez le type de retour, le nom de la fonction et ses paramètres.'),
+                    'startCode' => '// Créez une fonction somme qui prend deux int et retourne leur somme
+void main() {
+  int resultat = somme(10, 5);
+  print("Résultat : $resultat");
+}',
+                    'solution' => 'int somme(int a, int b) {
+  return a + b;
+}
+
+void main() {
+  int resultat = somme(10, 5);
+  print("Résultat : $resultat");
+}',
+                    'hint' => $getTranslated('hint', 'Créez int somme(int a, int b) { return a + b; } avant main().')
+                ],
+                7 => [
+                    'title' => $getTranslated('title', 'Classes et objets'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 20,
+                    'instruction' => $getTranslated('instruction', 'Créez une classe Personne avec un attribut nom et une méthode afficher().'),
+                    'description' => $getTranslated('description', 'Les classes permettent de créer des types personnalisés avec des attributs et des méthodes.'),
+                    'startCode' => '// Créez une classe Personne avec nom et méthode afficher()
+void main() {
+  Personne p = Personne("Bassirou");
+  p.afficher();
+}',
+                    'solution' => 'class Personne {
+  String nom;
+  
+  Personne(this.nom);
+  
+  void afficher() {
+    print("Nom : $nom");
+  }
+}
+
+void main() {
+  Personne p = Personne("Bassirou");
+  p.afficher();
+}',
+                    'hint' => $getTranslated('hint', 'Créez class Personne { String nom; Personne(this.nom); void afficher() { ... } }')
                 ],
             ],
         ];
@@ -7330,7 +8082,7 @@ class Program {
             ['name' => trans('app.formations.languages.c'), 'slug' => 'c', 'icon' => 'fab fa-c', 'color' => 'gray', 'questions' => 20],
             ['name' => trans('app.formations.languages.cpp'), 'slug' => 'cpp', 'icon' => 'fab fa-cuttlefish', 'color' => 'blue', 'questions' => 20],
             ['name' => trans('app.formations.languages.csharp'), 'slug' => 'csharp', 'icon' => 'fab fa-microsoft', 'color' => 'green', 'questions' => 20],
-            ['name' => trans('app.formations.languages.dart'), 'slug' => 'dart', 'icon' => 'fab fa-dart', 'color' => 'blue', 'questions' => 20],
+            ['name' => trans('app.formations.languages.dart'), 'slug' => 'dart', 'icon' => 'fas fa-feather-alt', 'color' => 'blue', 'questions' => 20],
         ];
         
         return view('quiz', compact('languages'));
