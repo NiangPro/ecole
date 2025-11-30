@@ -51,6 +51,9 @@ Route::get('/formations/git', [PageController::class, 'git'])->name('formations.
 Route::get('/formations/wordpress', [PageController::class, 'wordpress'])->name('formations.wordpress');
 Route::get('/formations/ia', [PageController::class, 'ia'])->name('formations.ia');
 Route::get('/formations/python', [PageController::class, 'python'])->name('formations.python');
+Route::get('/formations/cpp', [PageController::class, 'cpp'])->name('formations.cpp');
+Route::get('/formations/csharp', [PageController::class, 'csharp'])->name('formations.csharp');
+Route::get('/formations/dart', [PageController::class, 'dart'])->name('formations.dart');
 
 // Routes Emplois
 Route::get('/emplois', [PageController::class, 'emplois'])->name('emplois');

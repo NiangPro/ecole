@@ -246,6 +246,9 @@ class PageController extends Controller
             ['name' => trans('app.formations.languages.java'), 'slug' => 'java', 'icon' => 'fab fa-java', 'color' => 'orange', 'exercises' => 25],
             ['name' => trans('app.formations.languages.sql'), 'slug' => 'sql', 'icon' => 'fas fa-database', 'color' => 'blue', 'exercises' => 20],
             ['name' => trans('app.formations.languages.c'), 'slug' => 'c', 'icon' => 'fab fa-c', 'color' => 'gray', 'exercises' => 18],
+            ['name' => trans('app.formations.languages.cpp'), 'slug' => 'cpp', 'icon' => 'fab fa-cuttlefish', 'color' => 'blue', 'exercises' => 20],
+            ['name' => trans('app.formations.languages.csharp'), 'slug' => 'csharp', 'icon' => 'fab fa-microsoft', 'color' => 'green', 'exercises' => 22],
+            ['name' => trans('app.formations.languages.dart'), 'slug' => 'dart', 'icon' => 'fab fa-dart', 'color' => 'blue', 'exercises' => 18],
         ];
         
         // Créer la réponse avec des headers pour empêcher le cache
@@ -6876,6 +6879,134 @@ int main() {
                     'hint' => $getTranslated('hint', 'Utilisez pid_t pid = fork(); pour créer un processus enfant. Vérifiez pid pour distinguer le parent et l\'enfant.')
                 ],
             ],
+            'cpp' => [
+                1 => [
+                    'title' => $getTranslated('title', 'Premier programme C++'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 10,
+                    'instruction' => $getTranslated('instruction', 'Créez un programme C++ qui affiche "Bonjour C++ !" dans la console.'),
+                    'description' => $getTranslated('description', 'En C++, on utilise iostream et cout pour afficher du texte. using namespace std; permet d\'utiliser cout sans std::.'),
+                    'startCode' => '#include <iostream>
+using namespace std;
+
+int main() {
+    // Affichez "Bonjour C++ !"
+    return 0;
+}',
+                    'solution' => '#include <iostream>
+using namespace std;
+
+int main() {
+    cout << "Bonjour C++ !" << endl;
+    return 0;
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez cout << "Bonjour C++ !" << endl; dans la fonction main().')
+                ],
+                2 => [
+                    'title' => $getTranslated('title', 'Variables et types'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 10,
+                    'instruction' => $getTranslated('instruction', 'Déclarez une variable age de type int avec la valeur 25 et affichez-la.'),
+                    'description' => $getTranslated('description', 'En C++, les variables sont déclarées comme en C. On utilise cout pour afficher.'),
+                    'startCode' => '#include <iostream>
+using namespace std;
+
+int main() {
+    // Déclarez une variable age de type int avec la valeur 25
+    // Affichez-la
+    return 0;
+}',
+                    'solution' => '#include <iostream>
+using namespace std;
+
+int main() {
+    int age = 25;
+    cout << "Age : " << age << endl;
+    return 0;
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez int age = 25; puis cout << "Age : " << age << endl;')
+                ],
+            ],
+            'csharp' => [
+                1 => [
+                    'title' => $getTranslated('title', 'Premier programme C#'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 10,
+                    'instruction' => $getTranslated('instruction', 'Créez un programme C# qui affiche "Bonjour C# !" dans la console.'),
+                    'description' => $getTranslated('description', 'En C#, on utilise System.Console.WriteLine() pour afficher du texte. Chaque programme C# a une classe avec une méthode Main().'),
+                    'startCode' => 'using System;
+
+class Program {
+    static void Main() {
+        // Affichez "Bonjour C# !"
+    }
+}',
+                    'solution' => 'using System;
+
+class Program {
+    static void Main() {
+        Console.WriteLine("Bonjour C# !");
+    }
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez Console.WriteLine("Bonjour C# !"); dans la méthode Main().')
+                ],
+                2 => [
+                    'title' => $getTranslated('title', 'Variables et types'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 10,
+                    'instruction' => $getTranslated('instruction', 'Déclarez une variable age de type int avec la valeur 25 et affichez-la.'),
+                    'description' => $getTranslated('description', 'En C#, les variables sont typées. int est utilisé pour les nombres entiers. Console.WriteLine() peut afficher directement les variables.'),
+                    'startCode' => 'using System;
+
+class Program {
+    static void Main() {
+        // Déclarez une variable age de type int avec la valeur 25
+        // Affichez-la
+    }
+}',
+                    'solution' => 'using System;
+
+class Program {
+    static void Main() {
+        int age = 25;
+        Console.WriteLine("Age : " + age);
+    }
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez int age = 25; puis Console.WriteLine("Age : " + age);')
+                ],
+            ],
+            'dart' => [
+                1 => [
+                    'title' => $getTranslated('title', 'Premier programme Dart'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 10,
+                    'instruction' => $getTranslated('instruction', 'Créez un programme Dart qui affiche "Bonjour Dart !" dans la console.'),
+                    'description' => $getTranslated('description', 'En Dart, on utilise print() pour afficher du texte. Chaque programme Dart a une fonction main().'),
+                    'startCode' => 'void main() {
+    // Affichez "Bonjour Dart !"
+}',
+                    'solution' => 'void main() {
+    print("Bonjour Dart !");
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez print("Bonjour Dart !"); dans la fonction main().')
+                ],
+                2 => [
+                    'title' => $getTranslated('title', 'Variables et types'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 10,
+                    'instruction' => $getTranslated('instruction', 'Déclarez une variable age de type int avec la valeur 25 et affichez-la.'),
+                    'description' => $getTranslated('description', 'En Dart, les variables peuvent être déclarées avec var (inférence de type) ou explicitement avec int. print() peut afficher directement les variables.'),
+                    'startCode' => 'void main() {
+    // Déclarez une variable age de type int avec la valeur 25
+    // Affichez-la
+}',
+                    'solution' => 'void main() {
+    int age = 25;
+    print("Age : $age");
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez int age = 25; puis print("Age : $age"); (interpolation de chaîne)')
+                ],
+            ],
         ];
 
         return $allExercises[$language][$id] ?? null;
@@ -7123,6 +7254,57 @@ int main() {
                 ['title' => $getTitle(14, 'Chaînes de caractères'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 25],
                 ['title' => $getTitle(15, 'Programmation système'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
             ],
+            'cpp' => [
+                ['title' => $getTitle(1, 'Premier programme C++'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(2, 'Variables et types'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(3, 'Opérateurs arithmétiques'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(4, 'Conditions if/else'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 12],
+                ['title' => $getTitle(5, 'Boucles for et while'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 12],
+                ['title' => $getTitle(6, 'Fonctions C++'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 18],
+                ['title' => $getTitle(7, 'Classes et objets'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
+                ['title' => $getTitle(8, 'Héritage'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 22],
+                ['title' => $getTitle(9, 'Polymorphisme'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 25],
+                ['title' => $getTitle(10, 'Templates'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 25],
+                ['title' => $getTitle(11, 'STL - Vector'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(12, 'STL - Map et Set'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+                ['title' => $getTitle(13, 'Gestion mémoire'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(14, 'Pointeurs intelligents'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+                ['title' => $getTitle(15, 'Algorithmes STL'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+            ],
+            'csharp' => [
+                ['title' => $getTitle(1, 'Premier programme C#'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(2, 'Variables et types'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(3, 'Opérateurs arithmétiques'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(4, 'Conditions if/else'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 12],
+                ['title' => $getTitle(5, 'Boucles for et while'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 12],
+                ['title' => $getTitle(6, 'Méthodes C#'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 18],
+                ['title' => $getTitle(7, 'Classes et objets'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
+                ['title' => $getTitle(8, 'Héritage'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 22],
+                ['title' => $getTitle(9, 'Interfaces'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 25],
+                ['title' => $getTitle(10, 'Collections'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 22],
+                ['title' => $getTitle(11, 'LINQ'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(12, 'Async/Await'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+                ['title' => $getTitle(13, 'Génériques'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(14, 'Délégués et événements'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+                ['title' => $getTitle(15, 'Exceptions'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 25],
+            ],
+            'dart' => [
+                ['title' => $getTitle(1, 'Premier programme Dart'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(2, 'Variables et types'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(3, 'Opérateurs arithmétiques'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(4, 'Conditions if/else'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 12],
+                ['title' => $getTitle(5, 'Boucles for et while'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 12],
+                ['title' => $getTitle(6, 'Fonctions Dart'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 18],
+                ['title' => $getTitle(7, 'Classes et objets'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
+                ['title' => $getTitle(8, 'Mixins'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 22],
+                ['title' => $getTitle(9, 'Futures et Async'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 25],
+                ['title' => $getTitle(10, 'Streams'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 25],
+                ['title' => $getTitle(11, 'Collections Dart'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(12, 'Flutter - Widgets'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+                ['title' => $getTitle(13, 'Flutter - State Management'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+                ['title' => $getTitle(14, 'Flutter - Navigation'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(15, 'Flutter - API et HTTP'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+            ],
         ];
 
         return $allExercises[$language] ?? [];
@@ -7146,6 +7328,9 @@ int main() {
             ['name' => trans('app.formations.languages.java'), 'slug' => 'java', 'icon' => 'fab fa-java', 'color' => 'orange', 'questions' => 20],
             ['name' => trans('app.formations.languages.sql'), 'slug' => 'sql', 'icon' => 'fas fa-database', 'color' => 'blue', 'questions' => 20],
             ['name' => trans('app.formations.languages.c'), 'slug' => 'c', 'icon' => 'fab fa-c', 'color' => 'gray', 'questions' => 20],
+            ['name' => trans('app.formations.languages.cpp'), 'slug' => 'cpp', 'icon' => 'fab fa-cuttlefish', 'color' => 'blue', 'questions' => 20],
+            ['name' => trans('app.formations.languages.csharp'), 'slug' => 'csharp', 'icon' => 'fab fa-microsoft', 'color' => 'green', 'questions' => 20],
+            ['name' => trans('app.formations.languages.dart'), 'slug' => 'dart', 'icon' => 'fab fa-dart', 'color' => 'blue', 'questions' => 20],
         ];
         
         return view('quiz', compact('languages'));
@@ -7524,6 +7709,72 @@ int main() {
                 ['question' => 'Comment copier une chaîne ?', 'options' => ['strcpy()', 'copy()', 'string_copy()', 'str_dup()'], 'correct' => 0],
                 ['question' => 'Comment concaténer deux chaînes ?', 'options' => ['strcat()', 'concat()', 'string_concat()', 'str_join()'], 'correct' => 0],
             ],
+            'cpp' => [
+                ['question' => 'Qui a créé C++ ?', 'options' => ['Dennis Ritchie', 'Bjarne Stroustrup', 'James Gosling', 'Guido van Rossum'], 'correct' => 1],
+                ['question' => 'En quelle année C++ a-t-il été créé ?', 'options' => ['1972', '1983', '1990', '1995'], 'correct' => 1],
+                ['question' => 'Comment afficher du texte en C++ ?', 'options' => ['cout <<', 'print()', 'printf()', 'echo'], 'correct' => 0],
+                ['question' => 'Comment déclarer une variable en C++ ?', 'options' => ['int x = 5', 'var x = 5', 'x = 5', 'variable x = 5'], 'correct' => 0],
+                ['question' => 'Comment créer une classe ?', 'options' => ['class MaClasse {}', 'create class MaClasse', 'new class MaClasse', 'define class MaClasse'], 'correct' => 0],
+                ['question' => 'Comment créer un objet ?', 'options' => ['MaClasse obj;', 'obj = new MaClasse()', 'obj = MaClasse()', 'create obj MaClasse'], 'correct' => 0],
+                ['question' => 'Comment utiliser l\'héritage ?', 'options' => ['class Enfant : public Parent', 'class Enfant extends Parent', 'class Enfant inherits Parent', 'class Enfant : Parent'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce qu\'un template ?', 'options' => ['Une fonction générique', 'Une classe générique', 'Les deux A et B', 'Un fichier modèle'], 'correct' => 2],
+                ['question' => 'Comment utiliser un vector ?', 'options' => ['vector<int> v;', 'vector v = []', 'int[] v', 'array v'], 'correct' => 0],
+                ['question' => 'Comment allouer de la mémoire en C++ ?', 'options' => ['new', 'malloc()', 'alloc()', 'Les deux A et B'], 'correct' => 3],
+                ['question' => 'Comment libérer la mémoire allouée avec new ?', 'options' => ['delete', 'free()', 'release()', 'remove()'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce que la STL ?', 'options' => ['Standard Template Library', 'Simple Template Library', 'System Template Library', 'Standard Type Library'], 'correct' => 0],
+                ['question' => 'Comment créer un pointeur intelligent ?', 'options' => ['unique_ptr', 'smart_ptr', 'auto_ptr', 'Les deux A et C'], 'correct' => 3],
+                ['question' => 'Comment utiliser namespace ?', 'options' => ['using namespace std;', 'namespace std;', 'import std;', 'include std;'], 'correct' => 0],
+                ['question' => 'Comment créer une fonction virtuelle ?', 'options' => ['virtual void f()', 'void virtual f()', 'void f() virtual', 'virtual f()'], 'correct' => 0],
+                ['question' => 'Comment utiliser auto ?', 'options' => ['auto x = 5;', 'var x = 5;', 'x = auto 5;', 'auto(5)'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce qu\'un lambda ?', 'options' => ['Une fonction anonyme', 'Une fonction nommée', 'Une classe', 'Un template'], 'correct' => 0],
+                ['question' => 'Comment utiliser range-based for ?', 'options' => ['for (auto x : vec)', 'for x in vec', 'for (x : vec)', 'foreach x in vec'], 'correct' => 0],
+                ['question' => 'Comment utiliser std::string ?', 'options' => ['string s = "hello";', 'char* s = "hello";', 'string s("hello");', 'Les deux A et C'], 'correct' => 3],
+                ['question' => 'Qu\'est-ce qu\'un constexpr ?', 'options' => ['Une constante calculée à la compilation', 'Une constante calculée à l\'exécution', 'Une variable', 'Une fonction'], 'correct' => 0],
+            ],
+            'csharp' => [
+                ['question' => 'Qui a créé C# ?', 'options' => ['Microsoft', 'Google', 'Oracle', 'Apple'], 'correct' => 0],
+                ['question' => 'En quelle année C# a-t-il été créé ?', 'options' => ['1995', '2000', '2005', '2010'], 'correct' => 1],
+                ['question' => 'Comment afficher du texte en C# ?', 'options' => ['Console.WriteLine()', 'print()', 'printf()', 'echo'], 'correct' => 0],
+                ['question' => 'Comment déclarer une variable en C# ?', 'options' => ['int x = 5', 'var x = 5', 'Les deux A et B', 'x = 5'], 'correct' => 2],
+                ['question' => 'Comment créer une classe ?', 'options' => ['class MaClasse {}', 'create class MaClasse', 'new class MaClasse', 'define class MaClasse'], 'correct' => 0],
+                ['question' => 'Comment créer un objet ?', 'options' => ['MaClasse obj = new MaClasse();', 'obj = new MaClasse()', 'obj = MaClasse()', 'create obj MaClasse'], 'correct' => 0],
+                ['question' => 'Comment utiliser l\'héritage ?', 'options' => ['class Enfant : Parent', 'class Enfant extends Parent', 'class Enfant inherits Parent', 'class Enfant : public Parent'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce que LINQ ?', 'options' => ['Language Integrated Query', 'Language Internal Query', 'Library Integrated Query', 'Language Input Query'], 'correct' => 0],
+                ['question' => 'Comment utiliser async/await ?', 'options' => ['async Task f() { await ... }', 'async void f() { await ... }', 'async Task f() { wait ... }', 'Les deux A et B'], 'correct' => 3],
+                ['question' => 'Comment créer une liste ?', 'options' => ['List<int> list = new List<int>();', 'list = []', 'int[] list', 'array list'], 'correct' => 0],
+                ['question' => 'Comment créer un dictionnaire ?', 'options' => ['Dictionary<string, int>', 'dict = {}', 'map<string, int>', 'hash<string, int>'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce qu\'une interface ?', 'options' => ['Un contrat que les classes doivent implémenter', 'Une classe abstraite', 'Une méthode', 'Un namespace'], 'correct' => 0],
+                ['question' => 'Comment utiliser using ?', 'options' => ['using System;', 'import System;', 'include System;', 'namespace System;'], 'correct' => 0],
+                ['question' => 'Comment créer une propriété ?', 'options' => ['public int Age { get; set; }', 'int age;', 'property int Age;', 'var Age;'], 'correct' => 0],
+                ['question' => 'Comment utiliser var ?', 'options' => ['var x = 5;', 'var int x = 5;', 'x = var 5;', 'var(5)'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce qu\'un délégué ?', 'options' => ['Un type qui représente une référence à une méthode', 'Une classe', 'Une interface', 'Un namespace'], 'correct' => 0],
+                ['question' => 'Comment utiliser try/catch ?', 'options' => ['try { } catch { }', 'try { } catch (Exception e) { }', 'try { } finally { }', 'Toutes les réponses'], 'correct' => 3],
+                ['question' => 'Comment utiliser foreach ?', 'options' => ['foreach (var item in list)', 'for item in list', 'for (item : list)', 'foreach item in list'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce que .NET ?', 'options' => ['Une plateforme de développement', 'Un langage', 'Un framework', 'Les deux A et C'], 'correct' => 3],
+                ['question' => 'Comment utiliser string interpolation ?', 'options' => ['$"Hello {name}"', '"Hello " + name', 'string.Format("Hello {0}", name)', 'Les deux A et C'], 'correct' => 3],
+            ],
+            'dart' => [
+                ['question' => 'Qui a créé Dart ?', 'options' => ['Google', 'Microsoft', 'Oracle', 'Facebook'], 'correct' => 0],
+                ['question' => 'En quelle année Dart a-t-il été créé ?', 'options' => ['2008', '2011', '2015', '2017'], 'correct' => 1],
+                ['question' => 'Comment afficher du texte en Dart ?', 'options' => ['print()', 'console.log()', 'printf()', 'echo'], 'correct' => 0],
+                ['question' => 'Comment déclarer une variable en Dart ?', 'options' => ['int x = 5', 'var x = 5', 'Les deux A et B', 'x = 5'], 'correct' => 2],
+                ['question' => 'Comment créer une classe ?', 'options' => ['class MaClasse {}', 'create class MaClasse', 'new class MaClasse', 'define class MaClasse'], 'correct' => 0],
+                ['question' => 'Comment créer un objet ?', 'options' => ['MaClasse obj = MaClasse();', 'obj = new MaClasse()', 'obj = MaClasse()', 'create obj MaClasse'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce qu\'un mixin ?', 'options' => ['Un moyen de réutiliser du code dans plusieurs classes', 'Une classe', 'Une interface', 'Une fonction'], 'correct' => 0],
+                ['question' => 'Comment utiliser un Future ?', 'options' => ['Future<String>', 'Promise<String>', 'async String', 'String async'], 'correct' => 0],
+                ['question' => 'Comment utiliser async/await ?', 'options' => ['Future<void> f() async { await ... }', 'async void f() { await ... }', 'async f() { wait ... }', 'Future f() async { wait ... }'], 'correct' => 0],
+                ['question' => 'Comment créer une liste ?', 'options' => ['List<int> list = [];', 'list = []', 'int[] list', 'array list'], 'correct' => 0],
+                ['question' => 'Comment créer un Map ?', 'options' => ['Map<String, int>', 'map = {}', 'dict = {}', 'hash = {}'], 'correct' => 0],
+                ['question' => 'Comment utiliser string interpolation ?', 'options' => ['"Hello $name"', '"Hello " + name', 'string.format("Hello {0}", name)', 'Les deux A et B'], 'correct' => 3],
+                ['question' => 'Qu\'est-ce que Flutter ?', 'options' => ['Un framework UI pour créer des applications multiplateformes', 'Un langage', 'Une bibliothèque', 'Un IDE'], 'correct' => 0],
+                ['question' => 'Comment créer un Widget en Flutter ?', 'options' => ['class MonWidget extends StatelessWidget', 'widget MonWidget', 'create widget MonWidget', 'define widget MonWidget'], 'correct' => 0],
+                ['question' => 'Comment utiliser setState ?', 'options' => ['setState(() { })', 'state.set()', 'updateState()', 'changeState()'], 'correct' => 0],
+                ['question' => 'Comment utiliser un Stream ?', 'options' => ['Stream<int>', 'stream<int>', 'async int', 'int stream'], 'correct' => 0],
+                ['question' => 'Comment utiliser forEach sur une liste ?', 'options' => ['list.forEach((item) { })', 'for item in list', 'for (item : list)', 'foreach item in list'], 'correct' => 0],
+                ['question' => 'Comment utiliser where sur une liste ?', 'options' => ['list.where((x) => x > 5)', 'list.filter((x) => x > 5)', 'list.select((x) => x > 5)', 'list.find((x) => x > 5)'], 'correct' => 0],
+                ['question' => 'Comment utiliser map sur une liste ?', 'options' => ['list.map((x) => x * 2)', 'list.transform((x) => x * 2)', 'list.apply((x) => x * 2)', 'list.change((x) => x * 2)'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce qu\'un const en Dart ?', 'options' => ['Une constante calculée à la compilation', 'Une constante calculée à l\'exécution', 'Une variable', 'Une fonction'], 'correct' => 0],
+            ],
         ];
 
         return $allQuestions[$language] ?? [];
@@ -7686,6 +7937,30 @@ int main() {
                 'description' => trans('app.formations.c.description'),
                 'route' => route('formations.c')
             ],
+            [
+                'name' => trans('app.formations.languages.cpp'),
+                'slug' => 'cpp',
+                'icon' => 'fab fa-cuttlefish',
+                'color' => '#00599c',
+                'description' => trans('app.formations.cpp.description'),
+                'route' => route('formations.cpp')
+            ],
+            [
+                'name' => trans('app.formations.languages.csharp'),
+                'slug' => 'csharp',
+                'icon' => 'fab fa-microsoft',
+                'color' => '#239120',
+                'description' => trans('app.formations.csharp.description'),
+                'route' => route('formations.csharp')
+            ],
+            [
+                'name' => trans('app.formations.languages.dart'),
+                'slug' => 'dart',
+                'icon' => 'fas fa-feather-alt',
+                'color' => '#0175c2',
+                'description' => trans('app.formations.dart.description'),
+                'route' => route('formations.dart')
+            ],
         ];
         
         return view('formations.all', compact('formations'));
@@ -7789,6 +8064,24 @@ int main() {
     {
         $this->ensureLocale();
         return view('formations.ia');
+    }
+
+    public function cpp()
+    {
+        $this->ensureLocale();
+        return view('formations.cpp');
+    }
+
+    public function csharp()
+    {
+        $this->ensureLocale();
+        return view('formations.csharp');
+    }
+
+    public function dart()
+    {
+        $this->ensureLocale();
+        return view('formations.dart');
     }
 
     // Pages Emplois
