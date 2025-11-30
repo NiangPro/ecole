@@ -821,7 +821,27 @@
 <script>
     // S'assurer que le script s'exécute après le chargement du DOM
     document.addEventListener('DOMContentLoaded', function() {
+        // Initialiser les scores à 0 pour un nouvel article
         setTimeout(function() {
+            const seoScoreDetail = document.getElementById('seoScoreDetail');
+            const seoBarDetail = document.getElementById('seoBarDetail');
+            const readabilityScoreDetail = document.getElementById('readabilityScoreDetail');
+            const readabilityBarDetail = document.getElementById('readabilityBarDetail');
+            const seoScore = document.getElementById('seoScore');
+            const seoBar = document.getElementById('seoBar');
+            const readabilityScore = document.getElementById('readabilityScore');
+            const readabilityBar = document.getElementById('readabilityBar');
+            
+            // Initialiser à 0 pour un nouvel article
+            if (seoScoreDetail) seoScoreDetail.textContent = '0/100';
+            if (seoBarDetail) seoBarDetail.style.width = '0%';
+            if (readabilityScoreDetail) readabilityScoreDetail.textContent = '0/100';
+            if (readabilityBarDetail) readabilityBarDetail.style.width = '0%';
+            if (seoScore) seoScore.textContent = '0';
+            if (seoBar) seoBar.style.width = '0%';
+            if (readabilityScore) readabilityScore.textContent = '0';
+            if (readabilityBar) readabilityBar.style.width = '0%';
+            
             const wordCountSpan = document.getElementById('wordCount');
             const contentTextarea = document.getElementById('articleContent');
             

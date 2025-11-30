@@ -10,10 +10,15 @@
     const wordCountSpan = document.getElementById('wordCount');
     const wordLabel = document.getElementById('wordLabel');
     
-    // Fonction pour compter les mots
+    // Fonction pour compter les mots (identique au serveur avec str_word_count)
     function countWords(text) {
         if (!text) return 0;
-        return text.trim().split(/\s+/).filter(word => word.length > 0).length;
+        // Enlever les balises HTML comme le fait strip_tags côté serveur
+        const cleanText = text.replace(/<[^>]*>/g, '');
+        // Utiliser la même logique que str_word_count PHP
+        // str_word_count compte les séquences de lettres et chiffres séparées par des espaces/punctuation
+        const words = cleanText.match(/[\p{L}\p{N}]+/gu);
+        return words ? words.length : 0;
     }
     
     // Fonction pour calculer le score SEO
@@ -64,21 +69,35 @@
             score += 5;
         }
         
+        // Mots-clés (10 points)
+        const keywordsInput = document.querySelector('input[name="meta_keywords"]');
+        if (keywordsInput && keywordsInput.value) {
+            const keywords = keywordsInput.value.split(',').map(k => k.trim()).filter(k => k.length > 0);
+            if (keywords.length >= 3 && keywords.length <= 10) {
+                score += 10;
+            } else if (keywords.length > 0) {
+                score += 5;
+            }
+        }
+        
         // Image de couverture (10 points)
         const coverTypeSelect = document.getElementById('coverType');
         const coverType = coverTypeSelect ? coverTypeSelect.value : 'internal';
         const coverImageFile = document.getElementById('coverImageFile');
         const coverImageUrl = document.getElementById('coverImageUrl');
-        const hasCover = coverType === 'external' ? 
-            (coverImageUrl && coverImageUrl.value) : 
-            (coverImageFile && coverImageFile.files && coverImageFile.files.length > 0);
-        if (hasCover) {
-            score += 10;
+        const previewImg = document.getElementById('previewImg');
+        // Vérifier si une image existe (fichier uploadé, URL remplie, ou image existante affichée)
+        let hasCover = false;
+        if (coverType === 'external') {
+            hasCover = coverImageUrl && coverImageUrl.value && coverImageUrl.value.trim().length > 0;
+        } else {
+            // Pour interne : vérifier si un fichier est uploadé OU si une image existe déjà (via preview)
+            hasCover = (coverImageFile && coverImageFile.files && coverImageFile.files.length > 0) ||
+                       (previewImg && previewImg.src && previewImg.src.length > 0 && 
+                        !previewImg.src.includes('data:image') && 
+                        !previewImg.src.includes('about:blank'));
         }
-        
-        // Catégorie (10 points)
-        const category = document.querySelector('select[name="category_id"]')?.value;
-        if (category) {
+        if (hasCover) {
             score += 10;
         }
         
@@ -409,9 +428,18 @@
         const coverType = coverTypeSelect ? coverTypeSelect.value : 'internal';
         const coverImageFile = document.getElementById('coverImageFile');
         const coverImageUrl = document.getElementById('coverImageUrl');
-        const hasCover = coverType === 'external' ? 
-            (coverImageUrl && coverImageUrl.value) : 
-            (coverImageFile && coverImageFile.files && coverImageFile.files.length > 0);
+        const previewImg = document.getElementById('previewImg');
+        // Vérifier si une image existe (fichier uploadé, URL remplie, ou image existante affichée)
+        let hasCover = false;
+        if (coverType === 'external') {
+            hasCover = coverImageUrl && coverImageUrl.value && coverImageUrl.value.trim().length > 0;
+        } else {
+            // Pour interne : vérifier si un fichier est uploadé OU si une image existe déjà (via preview)
+            hasCover = (coverImageFile && coverImageFile.files && coverImageFile.files.length > 0) ||
+                       (previewImg && previewImg.src && previewImg.src.length > 0 && 
+                        !previewImg.src.includes('data:image') && 
+                        !previewImg.src.includes('about:blank'));
+        }
         const imageCheck = document.getElementById('imageCheck');
         if (imageCheck) {
             if (hasCover) {

@@ -899,6 +899,53 @@
             });
         }
         
+        // Initialiser les scores avec les valeurs de l'article si elles existent
+        // Attendre que le script article-editor.js soit chargé et que le DOM soit prêt
+        @if(isset($article))
+            // Fonction pour initialiser les scores depuis la base de données
+            function initializeScoresFromDatabase() {
+                const initialSeoScore = {{ $article->seo_score ?? 0 }};
+                const initialReadabilityScore = {{ $article->readability_score ?? 0 }};
+                
+                // Mettre à jour les scores dans la section détaillée
+                const seoScoreDetail = document.getElementById('seoScoreDetail');
+                const seoBarDetail = document.getElementById('seoBarDetail');
+                const readabilityScoreDetail = document.getElementById('readabilityScoreDetail');
+                const readabilityBarDetail = document.getElementById('readabilityBarDetail');
+                
+                // Mettre à jour les scores dans la section simple
+                const seoScore = document.getElementById('seoScore');
+                const seoBar = document.getElementById('seoBar');
+                const readabilityScore = document.getElementById('readabilityScore');
+                const readabilityBar = document.getElementById('readabilityBar');
+                
+                if (seoScoreDetail) seoScoreDetail.textContent = initialSeoScore + '/100';
+                if (seoBarDetail) seoBarDetail.style.width = initialSeoScore + '%';
+                if (readabilityScoreDetail) readabilityScoreDetail.textContent = initialReadabilityScore + '/100';
+                if (readabilityBarDetail) readabilityBarDetail.style.width = initialReadabilityScore + '%';
+                
+                if (seoScore) seoScore.textContent = initialSeoScore;
+                if (seoBar) seoBar.style.width = initialSeoScore + '%';
+                if (readabilityScore) readabilityScore.textContent = initialReadabilityScore;
+                if (readabilityBar) readabilityBar.style.width = initialReadabilityScore + '%';
+            }
+            
+            // Initialiser immédiatement
+            initializeScoresFromDatabase();
+            
+            // Réinitialiser après le chargement du script article-editor.js
+            setTimeout(function() {
+                initializeScoresFromDatabase();
+            }, 200);
+            
+            // Réinitialiser après le chargement complet de la page
+            window.addEventListener('load', function() {
+                setTimeout(function() {
+                    initializeScoresFromDatabase();
+                }, 300);
+            });
+        @endif
+        
         setTimeout(function() {
             const wordCountSpan = document.getElementById('wordCount');
             const contentTextarea = document.getElementById('articleContent');

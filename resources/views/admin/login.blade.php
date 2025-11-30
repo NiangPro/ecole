@@ -99,7 +99,7 @@
                 <label class="block text-gray-300 mb-2 font-semibold">
                     <i class="fas fa-envelope mr-2"></i>Email
                 </label>
-                <input type="email" name="email" class="input-field" placeholder="admin@niangprogrammeur.com" required>
+                <input type="email" name="email" class="input-field" placeholder="votre@email.com" required>
             </div>
             
             <div class="mb-6">
