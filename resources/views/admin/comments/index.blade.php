@@ -194,7 +194,7 @@
         background: rgba(6, 182, 212, 0.25);
     }
     
-    /* Modal pour les détails */
+    /* Modal ultra moderne */
     .modal-overlay {
         display: none;
         position: fixed;
@@ -202,30 +202,380 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background: rgba(0, 0, 0, 0.7);
+        background: rgba(0, 0, 0, 0.85);
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
         z-index: 1000;
         align-items: center;
         justify-content: center;
+        animation: fadeIn 0.3s ease;
+    }
+    
+    body.light-mode .modal-overlay {
+        background: rgba(0, 0, 0, 0.6);
     }
     
     .modal-overlay.active {
         display: flex;
     }
     
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px) scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+    
     .modal-content {
-        background: rgba(15, 23, 42, 0.95);
-        border: 1px solid rgba(6, 182, 212, 0.3);
-        border-radius: 12px;
-        padding: 24px;
-        max-width: 700px;
+        background: linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95));
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        border: 1px solid rgba(6, 182, 212, 0.2);
+        border-radius: 24px;
+        padding: 0;
+        max-width: 850px;
         width: 90%;
         max-height: 90vh;
-        overflow-y: auto;
+        overflow: hidden;
+        box-shadow: 
+            0 25px 50px -12px rgba(0, 0, 0, 0.5),
+            0 0 0 1px rgba(6, 182, 212, 0.1),
+            inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        position: relative;
+    }
+    
+    .modal-content::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, 
+            transparent, 
+            rgba(6, 182, 212, 0.5), 
+            rgba(20, 184, 166, 0.5), 
+            transparent
+        );
     }
     
     body.light-mode .modal-content {
-        background: rgba(255, 255, 255, 0.98);
-        border-color: rgba(6, 182, 212, 0.4);
+        background: linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.98));
+        border-color: rgba(6, 182, 212, 0.3);
+        box-shadow: 
+            0 25px 50px -12px rgba(0, 0, 0, 0.15),
+            0 0 0 1px rgba(6, 182, 212, 0.1),
+            inset 0 1px 0 rgba(255, 255, 255, 0.8);
+    }
+    
+    body.light-mode .modal-content::before {
+        background: linear-gradient(90deg, 
+            transparent, 
+            rgba(6, 182, 212, 0.3), 
+            rgba(20, 184, 166, 0.3), 
+            transparent
+        );
+    }
+    
+    .modal-header {
+        background: linear-gradient(135deg, 
+            rgba(6, 182, 212, 0.08), 
+            rgba(20, 184, 166, 0.08),
+            rgba(6, 182, 212, 0.05)
+        );
+        border-bottom: 1px solid rgba(6, 182, 212, 0.15);
+        padding: 24px 28px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
+    }
+    
+    .modal-header::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, 
+            transparent, 
+            rgba(6, 182, 212, 0.3), 
+            transparent
+        );
+    }
+    
+    body.light-mode .modal-header {
+        background: linear-gradient(135deg, 
+            rgba(6, 182, 212, 0.04), 
+            rgba(20, 184, 166, 0.04),
+            rgba(6, 182, 212, 0.02)
+        );
+        border-bottom-color: rgba(6, 182, 212, 0.12);
+    }
+    
+    .modal-body {
+        padding: 28px;
+        overflow-y: auto;
+        max-height: calc(90vh - 100px);
+        scrollbar-width: thin;
+        scrollbar-color: rgba(6, 182, 212, 0.3) transparent;
+    }
+    
+    .modal-body::-webkit-scrollbar {
+        width: 6px;
+    }
+    
+    .modal-body::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    
+    .modal-body::-webkit-scrollbar-thumb {
+        background: rgba(6, 182, 212, 0.3);
+        border-radius: 3px;
+    }
+    
+    .modal-body::-webkit-scrollbar-thumb:hover {
+        background: rgba(6, 182, 212, 0.5);
+    }
+    
+    .modal-info-item {
+        margin-bottom: 24px;
+        padding: 20px;
+        background: linear-gradient(135deg, 
+            rgba(6, 182, 212, 0.05), 
+            rgba(20, 184, 166, 0.03)
+        );
+        border: 1px solid rgba(6, 182, 212, 0.15);
+        border-radius: 16px;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .modal-info-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 3px;
+        height: 100%;
+        background: linear-gradient(180deg, #06b6d4, #14b8a6);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .modal-info-item:hover {
+        transform: translateX(4px);
+        border-color: rgba(6, 182, 212, 0.3);
+        box-shadow: 0 4px 12px rgba(6, 182, 212, 0.1);
+    }
+    
+    .modal-info-item:hover::before {
+        opacity: 1;
+    }
+    
+    body.light-mode .modal-info-item {
+        background: linear-gradient(135deg, 
+            rgba(6, 182, 212, 0.03), 
+            rgba(20, 184, 166, 0.02)
+        );
+        border-color: rgba(6, 182, 212, 0.12);
+    }
+    
+    body.light-mode .modal-info-item:hover {
+        border-color: rgba(6, 182, 212, 0.25);
+        box-shadow: 0 4px 12px rgba(6, 182, 212, 0.08);
+    }
+    
+    .modal-info-item:last-child {
+        margin-bottom: 0;
+    }
+    
+    .modal-info-label {
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1.2px;
+        color: #06b6d4;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        position: relative;
+    }
+    
+    .modal-info-label i {
+        font-size: 0.85rem;
+        width: 20px;
+        text-align: center;
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2));
+        padding: 6px;
+        border-radius: 8px;
+        border: 1px solid rgba(6, 182, 212, 0.2);
+    }
+    
+    body.light-mode .modal-info-label {
+        color: #0891b2;
+    }
+    
+    body.light-mode .modal-info-label i {
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(20, 184, 166, 0.15));
+        border-color: rgba(6, 182, 212, 0.2);
+    }
+    
+    .modal-info-value {
+        font-size: 1rem;
+        color: rgba(209, 213, 219, 1);
+        word-break: break-word;
+        line-height: 1.6;
+    }
+    
+    body.light-mode .modal-info-value {
+        color: rgba(30, 41, 59, 0.9);
+    }
+    
+    .modal-content-box {
+        background: linear-gradient(135deg, 
+            rgba(0, 0, 0, 0.4), 
+            rgba(15, 23, 42, 0.4)
+        );
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(6, 182, 212, 0.2);
+        border-radius: 16px;
+        padding: 24px;
+        margin-top: 12px;
+        position: relative;
+        box-shadow: 
+            inset 0 1px 0 rgba(255, 255, 255, 0.05),
+            0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .modal-content-box::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, 
+            transparent, 
+            rgba(6, 182, 212, 0.5), 
+            rgba(20, 184, 166, 0.5), 
+            transparent
+        );
+        border-radius: 16px 16px 0 0;
+    }
+    
+    body.light-mode .modal-content-box {
+        background: linear-gradient(135deg, 
+            rgba(248, 250, 252, 0.9), 
+            rgba(241, 245, 249, 0.9)
+        );
+        border-color: rgba(6, 182, 212, 0.25);
+        box-shadow: 
+            inset 0 1px 0 rgba(255, 255, 255, 0.8),
+            0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    
+    .modal-close-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, 
+            rgba(239, 68, 68, 0.1), 
+            rgba(220, 38, 38, 0.1)
+        );
+        color: #ef4444;
+        border: 1px solid rgba(239, 68, 68, 0.2);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .modal-close-btn::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(239, 68, 68, 0.2);
+        transform: translate(-50%, -50%);
+        transition: width 0.3s ease, height 0.3s ease;
+    }
+    
+    .modal-close-btn:hover {
+        background: linear-gradient(135deg, 
+            rgba(239, 68, 68, 0.2), 
+            rgba(220, 38, 38, 0.2)
+        );
+        transform: rotate(90deg) scale(1.1);
+        border-color: rgba(239, 68, 68, 0.4);
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+    }
+    
+    .modal-close-btn:hover::before {
+        width: 100%;
+        height: 100%;
+    }
+    
+    .modal-close-btn i {
+        position: relative;
+        z-index: 1;
+    }
+    
+    .modal-title {
+        font-size: 1.75rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #06b6d4, #14b8a6, #06b6d4);
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        animation: gradientShift 3s ease infinite;
+        letter-spacing: -0.5px;
+    }
+    
+    @keyframes gradientShift {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+    }
+    
+    body.light-mode .modal-title {
+        background: linear-gradient(135deg, #0891b2, #0d9488, #0891b2);
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    .modal-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+    
+    @media (max-width: 640px) {
+        .modal-grid {
+            grid-template-columns: 1fr;
+        }
     }
     
     /* Responsive */
@@ -566,13 +916,13 @@
 <!-- Modal pour les détails du commentaire -->
 <div class="modal-overlay" id="commentModal" onclick="closeModal(event)">
     <div class="modal-content" onclick="event.stopPropagation()">
-        <div class="flex justify-between items-center mb-4">
-            <h4 class="text-xl font-bold text-white">Détails du commentaire</h4>
-            <button onclick="closeModal()" class="text-gray-400 hover:text-white">
-                <i class="fas fa-times text-2xl"></i>
+        <div class="modal-header">
+            <h4 class="modal-title">Détails du commentaire</h4>
+            <button onclick="closeModal()" class="modal-close-btn">
+                <i class="fas fa-times"></i>
             </button>
         </div>
-        <div id="commentDetails"></div>
+        <div class="modal-body" id="commentDetails"></div>
     </div>
 </div>
 
@@ -603,51 +953,73 @@ function showCommentDetails(commentId) {
     const details = document.getElementById('commentDetails');
     
     details.innerHTML = `
-        <div class="space-y-4">
-            <div>
-                <label class="text-gray-400 text-sm">Auteur</label>
-                <p class="text-white font-semibold">${comment.author_name}</p>
+        <div class="modal-info-item">
+            <div class="modal-info-label">
+                <i class="fas fa-user"></i> Auteur
             </div>
-            <div>
-                <label class="text-gray-400 text-sm">Email</label>
-                <p class="text-white">
-                    <a href="mailto:${comment.author_email}" class="text-cyan-400 hover:text-cyan-300">${comment.author_email}</a>
-                </p>
+            <div class="modal-info-value font-semibold">${comment.author_name}</div>
+        </div>
+        
+        <div class="modal-info-item">
+            <div class="modal-info-label">
+                <i class="fas fa-envelope"></i> Email
             </div>
-            ${comment.phone ? `
-            <div>
-                <label class="text-gray-400 text-sm">Téléphone</label>
-                <p class="text-white">
-                    <a href="tel:${comment.phone}" class="text-cyan-400 hover:text-cyan-300">${comment.phone}</a>
-                </p>
+            <div class="modal-info-value">
+                <a href="mailto:${comment.author_email}" class="text-cyan-400 hover:text-cyan-300 transition">${comment.author_email}</a>
             </div>
-            ` : ''}
-            <div>
-                <label class="text-gray-400 text-sm">Contenu</label>
-                <div class="bg-black/50 rounded-lg p-4 border border-gray-700 mt-2">
-                    <p class="text-gray-300 whitespace-pre-wrap">${comment.content}</p>
+        </div>
+        
+        ${comment.phone ? `
+        <div class="modal-info-item">
+            <div class="modal-info-label">
+                <i class="fas fa-phone"></i> Téléphone
+            </div>
+            <div class="modal-info-value">
+                <a href="tel:${comment.phone}" class="text-cyan-400 hover:text-cyan-300 transition">${comment.phone}</a>
+            </div>
+        </div>
+        ` : ''}
+        
+        <div class="modal-info-item">
+            <div class="modal-info-label">
+                <i class="fas fa-comment-alt"></i> Contenu
+            </div>
+            <div class="modal-content-box">
+                <p class="modal-info-value whitespace-pre-wrap leading-relaxed">${comment.content}</p>
+            </div>
+        </div>
+        
+        <div class="modal-info-item">
+            <div class="modal-info-label">
+                <i class="fas fa-file-alt"></i> Article
+            </div>
+            <div class="modal-info-value">
+                <a href="/emplois/${comment.article_slug}" target="_blank" class="text-cyan-400 hover:text-cyan-300 transition">${comment.article_title}</a>
+            </div>
+        </div>
+        
+        ${comment.parent_author ? `
+        <div class="modal-info-item">
+            <div class="modal-info-label">
+                <i class="fas fa-reply"></i> Réponse à
+            </div>
+            <div class="modal-info-value text-cyan-400">${comment.parent_author}</div>
+        </div>
+        ` : ''}
+        
+        <div class="modal-grid">
+            <div class="modal-info-item">
+                <div class="modal-info-label">
+                    <i class="fas fa-calendar"></i> Date
                 </div>
+                <div class="modal-info-value">${comment.created_at}</div>
             </div>
-            <div>
-                <label class="text-gray-400 text-sm">Article</label>
-                <p class="text-white">
-                    <a href="/emplois/${comment.article_slug}" target="_blank" class="text-cyan-400 hover:text-cyan-300">${comment.article_title}</a>
-                </p>
-            </div>
-            ${comment.parent_author ? `
-            <div>
-                <label class="text-gray-400 text-sm">Réponse à</label>
-                <p class="text-cyan-400">${comment.parent_author}</p>
-            </div>
-            ` : ''}
-            <div class="grid grid-cols-2 gap-4">
-                <div>
-                    <label class="text-gray-400 text-sm">Date</label>
-                    <p class="text-white">${comment.created_at}</p>
+            <div class="modal-info-item">
+                <div class="modal-info-label">
+                    <i class="fas fa-heart"></i> Likes
                 </div>
-                <div>
-                    <label class="text-gray-400 text-sm">Likes</label>
-                    <p class="text-white">${comment.likes}</p>
+                <div class="modal-info-value">
+                    <span class="text-pink-400 font-semibold">${comment.likes}</span>
                 </div>
             </div>
         </div>
