@@ -581,8 +581,30 @@
     <!-- Google Fonts optimisé avec preload et font-display: swap -->
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Inter - Police principale (chargée en priorité) -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"></noscript>
+    <!-- Poppins - Police secondaire -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"></noscript>
+    <!-- Orbitron - Police pour titres -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet"></noscript>
+    <!-- Force font-display: swap pour toutes les polices -->
+    <style>
+        @font-face {
+            font-family: 'Inter';
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Poppins';
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Orbitron';
+            font-display: swap;
+        }
+    </style>
     
     <!-- Toastr CSS - Chargé de manière asynchrone -->
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">

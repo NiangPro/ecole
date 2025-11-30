@@ -4,7 +4,7 @@
 
 @section('styles')
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800;900&display=swap');
+    /* Fonts chargées via preload dans admin.layout - pas de @import bloquant */
     
     .seeder-hero {
         background: linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(20, 184, 166, 0.15) 50%, rgba(139, 92, 246, 0.15) 100%);

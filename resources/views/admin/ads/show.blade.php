@@ -4,7 +4,7 @@
 
 @section('styles')
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800;900&display=swap');
+    /* Fonts chargées via preload dans admin.layout - pas de @import bloquant */
     
     .ad-details-wrapper {
         max-width: 1600px;

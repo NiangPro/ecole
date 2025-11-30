@@ -1,0 +1,58 @@
+================================================================================
+CORRECTIONS MISE EN PAGE - PAGE D'ACCUEIL
+Date: 2024
+Projet: Formation Laravel - NiangProgrammeur
+================================================================================
+
+PROBLÈME IDENTIFIÉ:
+-------------------
+Décalage de mise en page sur la page d'accueil (index.blade.php)
+
+CORRECTIONS APPORTÉES:
+----------------------
+
+1. Section Hero (.hero-section)
+   - Ajout des styles de base manquants (position, padding, margin, etc.)
+   - Définition explicite: position relative, z-index 2, padding 80px 40px 60px
+   - Suppression des marges négatives qui causaient des décalages
+
+2. Section Stats (.stats-section)
+   - Correction de la marge: remplacement de "margin: 30px 0" par "margin: 0"
+   - Ajout de "width: 100%" pour assurer un alignement correct
+
+3. Section Exercices & Quiz (.exercices-quiz-section)
+   - Création d'une classe CSS dédiée pour remplacer les styles inline
+   - Styles définis: position relative, z-index 2, padding 50px 20px 30px
+   - Max-width: 1600px avec margin auto pour centrage
+
+4. Section Catégories & Articles Sponsorisés (.categories-sponsored-section)
+   - Création d'une classe CSS pour remplacer les styles inline
+   - Styles définis: position relative, z-index 2, padding 60px 20px
+   - Ajout de la classe .categories-sponsored-container avec display grid
+
+5. Section Dernières Opportunités (.latest-jobs-section)
+   - Création d'une classe CSS pour remplacer les styles inline
+   - Styles définis: position relative, z-index 2, padding 50px 20px
+   - Max-width: 1600px avec margin auto pour centrage
+
+BÉNÉFICES:
+----------
+- Harmonisation des marges et paddings entre toutes les sections
+- Suppression des styles inline au profit de classes CSS réutilisables
+- Meilleure cohérence visuelle et alignement
+- Code plus maintenable et professionnel
+- Réduction des problèmes de décalage sur différents écrans
+
+FICHIERS MODIFIÉS:
+------------------
+- resources/views/index.blade.php
+
+NOTES TECHNIQUES:
+-----------------
+- Toutes les sections principales ont maintenant un max-width de 1600px
+- Les paddings sont harmonisés (50px-60px vertical, 20px horizontal)
+- Le z-index est cohérent (z-index: 2 pour toutes les sections de contenu)
+- Les marges sont définies à 0 pour éviter les décalages inattendus
+
+================================================================================
+

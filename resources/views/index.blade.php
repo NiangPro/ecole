@@ -157,7 +157,16 @@
     
     /* Hero Section - Styles déjà dans le CSS critique, ici pour complément */
     .hero-section {
-        /* Styles critiques déjà dans le head, ici pour les styles supplémentaires */
+        position: relative;
+        z-index: 2;
+        width: 100%;
+        min-height: 65vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 80px 40px 60px;
+        margin: 0;
+        overflow: hidden;
     }
     
     body.dark-mode .hero-section {
@@ -386,7 +395,8 @@
         position: relative;
         z-index: 2;
         padding: 40px 20px;
-        margin: 30px 0;
+        margin: 0;
+        width: 100%;
     }
     
     /* Masquer la section stats sur mobile */
@@ -620,6 +630,15 @@
     }
     
     /* Styles spécifiques pour la section Exercices & Quiz */
+    .exercices-quiz-section {
+        position: relative;
+        z-index: 2;
+        padding: 50px 20px 30px;
+        max-width: 1600px;
+        margin: 0 auto;
+        width: 100%;
+    }
+    
     .exercices-quiz-section-title {
         font-family: 'Orbitron', sans-serif;
         font-size: clamp(1.5rem, 2.5vw, 2rem);
@@ -1187,7 +1206,7 @@
 </section>
 
 <!-- Exercices & Quiz Section -->
-<section class="exercices-quiz-section" style="position: relative; z-index: 2; padding: 50px 20px 30px; max-width: 1600px; margin: 0 auto;">
+<section class="exercices-quiz-section">
     <h2 class="exercices-quiz-section-title">Pratiquez avec nos Exercices & Quiz</h2>
     <p class="exercices-quiz-section-subtitle">
         Renforcez vos compétences avec des exercices pratiques et testez vos connaissances avec nos quiz interactifs. La pratique est essentielle 
@@ -2289,7 +2308,7 @@
 @endsection
 
 <!-- Categories and Sponsored Articles Section -->
-<section class="categories-sponsored-section" style="position: relative; z-index: 2; padding: 60px 20px; max-width: 1600px; margin: 0 auto;">
+<section class="categories-sponsored-section">
     <div class="categories-sponsored-container" style="display: grid; grid-template-columns: {{ (isset($sponsoredArticles) && $sponsoredArticles->count() > 0) ? '2.5fr 1fr' : '1fr' }}; gap: 30px; align-items: stretch;">
         
         <!-- Partie 1: Catégories d'articles (plus grande) -->
@@ -2421,7 +2440,7 @@
 
 <!-- Latest Jobs Section -->
 @if(isset($latestJobs) && $latestJobs->count() > 0)
-<section class="latest-jobs-section" style="position: relative; z-index: 2; padding: 50px 20px; max-width: 1600px; margin: 0 auto;">
+<section class="latest-jobs-section">
     <div style="text-align: center; margin-bottom: 50px;">
         <h2 class="section-title">💼 Dernières Opportunités d'Emploi</h2>
         <p class="section-subtitle">
@@ -2921,6 +2940,30 @@
     }
     
     /* Styles pour la section Catégories et Articles Sponsorisés */
+    .categories-sponsored-section {
+        position: relative;
+        z-index: 2;
+        padding: 60px 20px;
+        max-width: 1600px;
+        margin: 0 auto;
+        width: 100%;
+    }
+    
+    .categories-sponsored-container {
+        display: grid;
+        gap: 30px;
+        align-items: stretch;
+    }
+    
+    .latest-jobs-section {
+        position: relative;
+        z-index: 2;
+        padding: 50px 20px;
+        max-width: 1600px;
+        margin: 0 auto;
+        width: 100%;
+    }
+    
     @media (max-width: 1024px) {
         .categories-sponsored-container {
             grid-template-columns: 1fr !important;
