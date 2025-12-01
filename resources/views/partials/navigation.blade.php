@@ -756,6 +756,27 @@
         padding-left: 22px;
     }
     
+    /* Language dans le menu mobile */
+    .mobile-language-flag {
+        border-radius: 2px;
+        object-fit: cover;
+        display: inline-block;
+        vertical-align: middle;
+    }
+    
+    .mobile-menu-link[onclick="toggleLanguage()"] {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        cursor: pointer;
+    }
+    
+    .mobile-menu-link[onclick="toggleLanguage()"]:hover {
+        background: rgba(6, 182, 212, 0.2) !important;
+        border-color: rgba(6, 182, 212, 0.5) !important;
+        color: #06b6d4 !important;
+    }
+    
     /* Responsive */
     @media (max-width: 968px) {
         .navbar-menu {
@@ -772,6 +793,10 @@
         
         .navbar-search-container {
             margin-right: 10px;
+        }
+        
+        .navbar-language-widget {
+            display: none;
         }
         
         .navbar-search-icon {
@@ -884,14 +909,14 @@
         <ul class="navbar-menu">
             <li class="navbar-item">
                 <a href="{{ route('home') }}" class="navbar-link {{ request()->routeIs('home') ? 'active' : '' }}">
-                    Accueil
+                    {{ trans('app.nav.home') }}
                 </a>
             </li>
             
             <!-- Dropdown Formations -->
             <li class="navbar-item dropdown">
                 <a href="#" class="navbar-link dropdown-toggle">
-                    Formations
+                    {{ trans('app.nav.formations') }}
                     <i class="fas fa-chevron-down dropdown-icon"></i>
                 </a>
                 <div class="dropdown-menu">
@@ -900,8 +925,8 @@
                             <i class="fas fa-graduation-cap" style="color: #06b6d4;"></i>
                         </div>
                         <div class="dropdown-item-content">
-                            <div class="dropdown-item-title">Toutes les formations</div>
-                            <div class="dropdown-item-desc">Voir toutes les formations</div>
+                            <div class="dropdown-item-title">{{ trans('app.nav.dropdown.formations.all') }}</div>
+                            <div class="dropdown-item-desc">{{ trans('app.nav.dropdown.formations.all_desc') }}</div>
                         </div>
                     </a>
                     <a href="{{ route('formations.html5') }}" class="dropdown-item" data-parent-active="formations">
@@ -909,8 +934,8 @@
                             <i class="fab fa-html5" style="color: #e34c26;"></i>
                         </div>
                         <div class="dropdown-item-content">
-                            <div class="dropdown-item-title">HTML5</div>
-                            <div class="dropdown-item-desc">Structure web</div>
+                            <div class="dropdown-item-title">{{ trans('app.nav.dropdown.formations.html5') }}</div>
+                            <div class="dropdown-item-desc">{{ trans('app.nav.dropdown.formations.html5_desc') }}</div>
                         </div>
                     </a>
                     <a href="{{ route('formations.css3') }}" class="dropdown-item" data-parent-active="formations">
@@ -918,8 +943,8 @@
                             <i class="fab fa-css3-alt" style="color: #264de4;"></i>
                         </div>
                         <div class="dropdown-item-content">
-                            <div class="dropdown-item-title">CSS3</div>
-                            <div class="dropdown-item-desc">Style & design</div>
+                            <div class="dropdown-item-title">{{ trans('app.nav.dropdown.formations.css3') }}</div>
+                            <div class="dropdown-item-desc">{{ trans('app.nav.dropdown.formations.css3_desc') }}</div>
                         </div>
                     </a>
                     <a href="{{ route('formations.javascript') }}" class="dropdown-item" data-parent-active="formations">
@@ -927,8 +952,8 @@
                             <i class="fab fa-js" style="color: #f0db4f;"></i>
                         </div>
                         <div class="dropdown-item-content">
-                            <div class="dropdown-item-title">JavaScript</div>
-                            <div class="dropdown-item-desc">Interactivité</div>
+                            <div class="dropdown-item-title">{{ trans('app.nav.dropdown.formations.javascript') }}</div>
+                            <div class="dropdown-item-desc">{{ trans('app.nav.dropdown.formations.javascript_desc') }}</div>
                         </div>
                     </a>
                     <a href="{{ route('formations.php') }}" class="dropdown-item" data-parent-active="formations">
@@ -936,8 +961,8 @@
                             <i class="fab fa-php" style="color: #8993be;"></i>
                         </div>
                         <div class="dropdown-item-content">
-                            <div class="dropdown-item-title">PHP</div>
-                            <div class="dropdown-item-desc">Backend</div>
+                            <div class="dropdown-item-title">{{ trans('app.nav.dropdown.formations.php') }}</div>
+                            <div class="dropdown-item-desc">{{ trans('app.nav.dropdown.formations.php_desc') }}</div>
                         </div>
                     </a>
                     <a href="{{ route('formations.bootstrap') }}" class="dropdown-item" data-parent-active="formations">
@@ -945,8 +970,8 @@
                             <i class="fab fa-bootstrap" style="color: #7952b3;"></i>
                         </div>
                         <div class="dropdown-item-content">
-                            <div class="dropdown-item-title">Bootstrap</div>
-                            <div class="dropdown-item-desc">Framework CSS</div>
+                            <div class="dropdown-item-title">{{ trans('app.nav.dropdown.formations.bootstrap') }}</div>
+                            <div class="dropdown-item-desc">{{ trans('app.nav.dropdown.formations.bootstrap_desc') }}</div>
                         </div>
                     </a>
                     <a href="{{ route('formations.git') }}" class="dropdown-item" data-parent-active="formations">
@@ -954,8 +979,8 @@
                             <i class="fab fa-git-alt" style="color: #f34f29;"></i>
                         </div>
                         <div class="dropdown-item-content">
-                            <div class="dropdown-item-title">Git</div>
-                            <div class="dropdown-item-desc">Versioning</div>
+                            <div class="dropdown-item-title">{{ trans('app.nav.dropdown.formations.git') }}</div>
+                            <div class="dropdown-item-desc">{{ trans('app.nav.dropdown.formations.git_desc') }}</div>
                         </div>
                     </a>
                     <a href="{{ route('formations.java') }}" class="dropdown-item" data-parent-active="formations">
@@ -963,8 +988,8 @@
                             <i class="fab fa-java" style="color: #ed8b00;"></i>
                         </div>
                         <div class="dropdown-item-content">
-                            <div class="dropdown-item-title">Java</div>
-                            <div class="dropdown-item-desc">Programmation orientée objet</div>
+                            <div class="dropdown-item-title">{{ trans('app.nav.dropdown.formations.java') }}</div>
+                            <div class="dropdown-item-desc">{{ trans('app.nav.dropdown.formations.java_desc') }}</div>
                         </div>
                     </a>
                 </div>
@@ -973,7 +998,7 @@
             <!-- Dropdown Pratique -->
             <li class="navbar-item dropdown">
                 <a href="#" class="navbar-link dropdown-toggle">
-                    Pratique
+                    {{ trans('app.nav.practice') }}
                     <i class="fas fa-chevron-down dropdown-icon"></i>
                 </a>
                 <div class="dropdown-menu">
@@ -982,8 +1007,8 @@
                             <i class="fas fa-laptop-code" style="color: #06b6d4;"></i>
                         </div>
                         <div class="dropdown-item-content">
-                            <div class="dropdown-item-title">Exercices</div>
-                            <div class="dropdown-item-desc">Pratiquer le code</div>
+                            <div class="dropdown-item-title">{{ trans('app.nav.dropdown.practice.exercices') }}</div>
+                            <div class="dropdown-item-desc">{{ trans('app.nav.dropdown.practice.exercices_desc') }}</div>
                         </div>
                     </a>
                     <a href="{{ route('quiz') }}" class="dropdown-item" data-parent-active="pratique">
@@ -991,8 +1016,8 @@
                             <i class="fas fa-question-circle" style="color: #a855f7;"></i>
                         </div>
                         <div class="dropdown-item-content">
-                            <div class="dropdown-item-title">Quiz</div>
-                            <div class="dropdown-item-desc">Tester vos connaissances</div>
+                            <div class="dropdown-item-title">{{ trans('app.nav.dropdown.practice.quiz') }}</div>
+                            <div class="dropdown-item-desc">{{ trans('app.nav.dropdown.practice.quiz_desc') }}</div>
                         </div>
                     </a>
                 </div>
@@ -1001,7 +1026,7 @@
             <!-- Dropdown Emplois -->
             <li class="navbar-item dropdown">
                 <a href="#" class="navbar-link dropdown-toggle">
-                    Emplois
+                    {{ trans('app.nav.jobs') }}
                     <i class="fas fa-chevron-down dropdown-icon"></i>
                 </a>
                 <div class="dropdown-menu">
@@ -1010,8 +1035,8 @@
                             <i class="fas fa-search" style="color: #22c55e;"></i>
                         </div>
                         <div class="dropdown-item-content">
-                            <div class="dropdown-item-title">Toutes les opportunités</div>
-                            <div class="dropdown-item-desc">Vue d'ensemble</div>
+                            <div class="dropdown-item-title">{{ trans('app.nav.dropdown.jobs.all') }}</div>
+                            <div class="dropdown-item-desc">{{ trans('app.nav.dropdown.jobs.all_desc') }}</div>
                         </div>
                     </a>
                     @if(isset($jobCategories) && $jobCategories->count() > 0)
@@ -1026,7 +1051,7 @@
                             </div>
                             <div class="dropdown-item-content">
                                 <div class="dropdown-item-title">{{ $category->name }}</div>
-                                <div class="dropdown-item-desc">{{ $category->published_articles_count ?? 0 }} articles</div>
+                                <div class="dropdown-item-desc">{{ $category->published_articles_count ?? 0 }} {{ trans('app.nav.dropdown.jobs.articles') }}</div>
                             </div>
                         </a>
                         @endforeach
@@ -1036,8 +1061,8 @@
                                 <i class="fas fa-briefcase" style="color: #3b82f6;"></i>
                             </div>
                             <div class="dropdown-item-content">
-                                <div class="dropdown-item-title">Offres d'Emploi</div>
-                                <div class="dropdown-item-desc">Emplois disponibles</div>
+                                <div class="dropdown-item-title">{{ trans('app.nav.dropdown.jobs.offers') }}</div>
+                                <div class="dropdown-item-desc">{{ trans('app.nav.dropdown.jobs.offers_desc') }}</div>
                             </div>
                         </a>
                         <a href="{{ route('emplois.bourses') }}" class="dropdown-item" data-parent-active="emplois">
@@ -1045,8 +1070,8 @@
                                 <i class="fas fa-graduation-cap" style="color: #a855f7;"></i>
                             </div>
                             <div class="dropdown-item-content">
-                                <div class="dropdown-item-title">Bourses d'Études</div>
-                                <div class="dropdown-item-desc">Financez vos études</div>
+                                <div class="dropdown-item-title">{{ trans('app.nav.dropdown.jobs.scholarships') }}</div>
+                                <div class="dropdown-item-desc">{{ trans('app.nav.dropdown.jobs.scholarships_desc') }}</div>
                             </div>
                         </a>
                         <a href="{{ route('emplois.candidature') }}" class="dropdown-item" data-parent-active="emplois">
@@ -1054,8 +1079,8 @@
                                 <i class="fas fa-paper-plane" style="color: #ec4899;"></i>
                             </div>
                             <div class="dropdown-item-content">
-                                <div class="dropdown-item-title">Candidature Spontanée</div>
-                                <div class="dropdown-item-desc">Faites-vous connaître</div>
+                                <div class="dropdown-item-title">{{ trans('app.nav.dropdown.jobs.application') }}</div>
+                                <div class="dropdown-item-desc">{{ trans('app.nav.dropdown.jobs.application_desc') }}</div>
                             </div>
                         </a>
                         <a href="{{ route('emplois.opportunites') }}" class="dropdown-item" data-parent-active="emplois">
@@ -1063,8 +1088,8 @@
                                 <i class="fas fa-star" style="color: #fbbf24;"></i>
                             </div>
                             <div class="dropdown-item-content">
-                                <div class="dropdown-item-title">Opportunités</div>
-                                <div class="dropdown-item-desc">Stages & freelance</div>
+                                <div class="dropdown-item-title">{{ trans('app.nav.dropdown.jobs.opportunities') }}</div>
+                                <div class="dropdown-item-desc">{{ trans('app.nav.dropdown.jobs.opportunities_desc') }}</div>
                             </div>
                         </a>
                     @endif
@@ -1073,16 +1098,96 @@
             
             <li class="navbar-item">
                 <a href="{{ route('about') }}" class="navbar-link {{ request()->routeIs('about') ? 'active' : '' }}">
-                    À propos
+                    {{ trans('app.nav.about') }}
                 </a>
             </li>
         </ul>
         
+        <!-- Language Toggle (dans la navbar) -->
+        @php
+            $showLanguageWidget = request()->routeIs([
+                'home',
+                'about',
+                'formations.all',
+                'formations.html5',
+                'formations.css3',
+                'formations.javascript',
+                'formations.php',
+                'formations.bootstrap',
+                'formations.java',
+                'formations.sql',
+                'formations.c',
+                'formations.cpp',
+                'formations.csharp',
+                'formations.dart',
+                'formations.git',
+                'formations.wordpress',
+                'formations.ia',
+                'formations.python',
+                'exercices',
+                'exercices.language',
+                'exercices.detail',
+                'exercices.run',
+                'quiz',
+                'quiz.language',
+                'quiz.result'
+            ]);
+        @endphp
+        
+        @if($showLanguageWidget)
+        @php
+            $currentLang = app()->getLocale();
+            $tooltipText = $currentLang === 'fr' ? 'Changer en anglais' : 'Switch to French';
+        @endphp
+        <div class="navbar-language-widget">
+            <button id="language-toggle" class="navbar-language-button" onclick="toggleLanguage()" title="{{ $tooltipText }}" aria-label="{{ $tooltipText }}">
+                @if($currentLang === 'fr')
+                <!-- Drapeau français -->
+                <svg class="navbar-language-flag" viewBox="0 0 640 480" xmlns="http://www.w3.org/2000/svg">
+                    <g fill-rule="evenodd" stroke-width="1pt">
+                        <path fill="#fff" d="M0 0h640v480H0z"/>
+                        <path fill="#00267f" d="M0 0h213.3v480H0z"/>
+                        <path fill="#f31830" d="M426.7 0H640v480H426.7z"/>
+                    </g>
+                </svg>
+                @else
+                <!-- Drapeau américain simplifié -->
+                <svg class="navbar-language-flag" viewBox="0 0 7410 3900" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#b22234" d="M0 0h7410v3900H0z"/>
+                    <path d="M0 450h7410m0 600H0m0 600h7410m0 600H0m0 600h7410m0 600H0m0 600h7410m0 600H0" stroke="#fff" stroke-width="300"/>
+                    <path fill="#3c3b6e" d="M0 0h2964v2100H0z"/>
+                    <g fill="#fff">
+                        <g id="star">
+                            <path d="M247 90l70.534 217.082-184.66-134.164h228.253L176.466 307.082z"/>
+                        </g>
+                        <use href="#star" x="988" y="210"/>
+                        <use href="#star" x="1976" y="420"/>
+                        <use href="#star" x="494" y="420"/>
+                        <use href="#star" x="1482" y="630"/>
+                        <use href="#star" x="2470" y="630"/>
+                        <use href="#star" x="988" y="840"/>
+                        <use href="#star" x="1976" y="840"/>
+                        <use href="#star" x="494" y="1050"/>
+                        <use href="#star" x="1482" y="1260"/>
+                        <use href="#star" x="2470" y="1260"/>
+                        <use href="#star" x="988" y="1470"/>
+                        <use href="#star" x="1976" y="1470"/>
+                        <use href="#star" x="494" y="1680"/>
+                        <use href="#star" x="1482" y="1890"/>
+                        <use href="#star" x="2470" y="1890"/>
+                    </g>
+                </svg>
+                @endif
+                <span class="navbar-language-tooltip" id="language-tooltip">{{ $tooltipText }}</span>
+            </button>
+        </div>
+        @endif
+        
         <!-- Search Icon -->
         <div class="navbar-search-container" style="position: relative;">
-            <button type="button" class="navbar-search-icon" id="searchIcon" aria-label="Rechercher" aria-expanded="false" aria-controls="searchForm">
+            <button type="button" class="navbar-search-icon" id="searchIcon" aria-label="{{ trans('app.home.search.button') }}" aria-expanded="false" aria-controls="searchForm">
                 <i class="fas fa-search" aria-hidden="true"></i>
-                <span class="sr-only">Rechercher</span>
+                <span class="sr-only">{{ trans('app.home.search.button') }}</span>
             </button>
             
             <!-- Search Form (hidden by default) -->
@@ -1090,27 +1195,27 @@
                 <div class="search-header">
                     <div class="search-title">
                         <i class="fas fa-search"></i>
-                        <span>Recherche</span>
+                        <span>{{ trans('app.home.search.title') }}</span>
                     </div>
-                    <button type="button" class="search-close" id="searchClose" aria-label="Fermer la recherche">
+                    <button type="button" class="search-close" id="searchClose" aria-label="{{ trans('app.home.search.close') }}">
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
                 <div class="search-wrapper">
                     <input type="search" name="q" id="navbarSearch" 
                            value="{{ request('q') }}" 
-                           placeholder="Rechercher une formation, un article..." 
+                           placeholder="{{ trans('app.home.search.placeholder') }}" 
                            class="search-input"
-                           aria-label="Rechercher sur le site"
+                           aria-label="{{ trans('app.home.search.label') }}"
                            autocomplete="off">
-                    <button type="submit" class="search-button" aria-label="Lancer la recherche">
+                    <button type="submit" class="search-button" aria-label="{{ trans('app.home.search.submit') }}">
                         <i class="fas fa-search"></i>
-                        <span>Rechercher</span>
+                        <span>{{ trans('app.home.search.button') }}</span>
                     </button>
                 </div>
                 <div class="search-hint">
                     <i class="fas fa-lightbulb"></i>
-                    <span>Astuce : Recherchez par titre, contenu ou catégorie</span>
+                    <span>{{ trans('app.home.search.hint') }}</span>
                 </div>
             </form>
         </div>
@@ -1119,7 +1224,7 @@
         <!-- CTA Button -->
         <a href="{{ route('contact') }}" class="navbar-cta" aria-label="Page de contact">
             <i class="fas fa-envelope" aria-hidden="true"></i>
-            Contact
+            {{ trans('app.nav.contact') }}
         </a>
         
         <!-- Mobile Toggle -->
@@ -1146,19 +1251,19 @@
         <li class="mobile-menu-item">
             <a href="{{ route('home') }}" class="mobile-menu-link">
                 <i class="fas fa-home"></i>
-                Accueil
+                {{ trans('app.nav.home') }}
             </a>
         </li>
         
         <!-- Mobile Dropdown Formations -->
         <li class="mobile-menu-item">
             <button class="mobile-dropdown-toggle" onclick="toggleMobileDropdown('formations')">
-                <span><i class="fas fa-graduation-cap"></i> Formations</span>
+                <span><i class="fas fa-graduation-cap"></i> {{ trans('app.nav.formations') }}</span>
                 <i class="fas fa-chevron-down dropdown-icon" id="formations-icon"></i>
             </button>
             <div class="mobile-dropdown-content" id="formations-dropdown">
                 <a href="{{ route('formations.all') }}" class="mobile-dropdown-item">
-                    <i class="fas fa-graduation-cap" style="color: #06b6d4;"></i> Toutes les formations
+                    <i class="fas fa-graduation-cap" style="color: #06b6d4;"></i> {{ trans('app.nav.dropdown.formations.all') }}
                 </a>
                 <a href="{{ route('formations.html5') }}" class="mobile-dropdown-item">
                     <i class="fab fa-html5" style="color: #e34c26;"></i> HTML5
@@ -1187,15 +1292,15 @@
         <!-- Mobile Dropdown Pratique -->
         <li class="mobile-menu-item">
             <button class="mobile-dropdown-toggle" onclick="toggleMobileDropdown('pratique')">
-                <span><i class="fas fa-code"></i> Pratique</span>
+                <span><i class="fas fa-code"></i> {{ trans('app.nav.practice') }}</span>
                 <i class="fas fa-chevron-down dropdown-icon" id="pratique-icon"></i>
             </button>
             <div class="mobile-dropdown-content" id="pratique-dropdown">
                 <a href="{{ route('exercices') }}" class="mobile-dropdown-item">
-                    <i class="fas fa-laptop-code" style="color: #06b6d4;"></i> Exercices
+                    <i class="fas fa-laptop-code" style="color: #06b6d4;"></i> {{ trans('app.nav.dropdown.practice.exercices') }}
                 </a>
                 <a href="{{ route('quiz') }}" class="mobile-dropdown-item">
-                    <i class="fas fa-question-circle" style="color: #a855f7;"></i> Quiz
+                    <i class="fas fa-question-circle" style="color: #a855f7;"></i> {{ trans('app.nav.dropdown.practice.quiz') }}
                 </a>
             </div>
         </li>
@@ -1203,12 +1308,12 @@
         <!-- Mobile Dropdown Emplois -->
         <li class="mobile-menu-item">
             <button class="mobile-dropdown-toggle" onclick="toggleMobileDropdown('emplois')">
-                <span><i class="fas fa-briefcase"></i> Emplois</span>
+                <span><i class="fas fa-briefcase"></i> {{ trans('app.nav.jobs') }}</span>
                 <i class="fas fa-chevron-down dropdown-icon" id="emplois-icon"></i>
             </button>
             <div class="mobile-dropdown-content" id="emplois-dropdown">
                 <a href="{{ route('emplois') }}" class="mobile-dropdown-item">
-                    <i class="fas fa-search" style="color: #22c55e;"></i> Toutes les opportunités
+                    <i class="fas fa-search" style="color: #22c55e;"></i> {{ trans('app.nav.dropdown.jobs.all') }}
                 </a>
                 @if(isset($jobCategories) && $jobCategories->count() > 0)
                     @foreach($jobCategories as $category)
@@ -1223,16 +1328,16 @@
                     @endforeach
                 @else
                     <a href="{{ route('emplois.offres') }}" class="mobile-dropdown-item">
-                        <i class="fas fa-briefcase" style="color: #3b82f6;"></i> Offres d'Emploi
+                        <i class="fas fa-briefcase" style="color: #3b82f6;"></i> {{ trans('app.nav.dropdown.jobs.offers') }}
                     </a>
                     <a href="{{ route('emplois.bourses') }}" class="mobile-dropdown-item">
-                        <i class="fas fa-graduation-cap" style="color: #a855f7;"></i> Bourses d'Études
+                        <i class="fas fa-graduation-cap" style="color: #a855f7;"></i> {{ trans('app.nav.dropdown.jobs.scholarships') }}
                     </a>
                     <a href="{{ route('emplois.candidature') }}" class="mobile-dropdown-item">
-                        <i class="fas fa-paper-plane" style="color: #ec4899;"></i> Candidature Spontanée
+                        <i class="fas fa-paper-plane" style="color: #ec4899;"></i> {{ trans('app.nav.dropdown.jobs.application') }}
                     </a>
                     <a href="{{ route('emplois.opportunites') }}" class="mobile-dropdown-item">
-                        <i class="fas fa-star" style="color: #fbbf24;"></i> Opportunités
+                        <i class="fas fa-star" style="color: #fbbf24;"></i> {{ trans('app.nav.dropdown.jobs.opportunities') }}
                     </a>
                 @endif
             </div>
@@ -1241,14 +1346,94 @@
         <li class="mobile-menu-item">
             <a href="{{ route('about') }}" class="mobile-menu-link">
                 <i class="fas fa-info-circle"></i>
-                À propos
+                {{ trans('app.nav.about') }}
             </a>
         </li>
+        
+        <!-- Language Toggle dans le menu mobile -->
+        @php
+            $showLanguageWidget = request()->routeIs([
+                'home',
+                'about',
+                'formations.all',
+                'formations.html5',
+                'formations.css3',
+                'formations.javascript',
+                'formations.php',
+                'formations.bootstrap',
+                'formations.java',
+                'formations.sql',
+                'formations.c',
+                'formations.cpp',
+                'formations.csharp',
+                'formations.dart',
+                'formations.git',
+                'formations.wordpress',
+                'formations.ia',
+                'formations.python',
+                'exercices',
+                'exercices.language',
+                'exercices.detail',
+                'exercices.run',
+                'quiz',
+                'quiz.language',
+                'quiz.result'
+            ]);
+        @endphp
+        
+        @if($showLanguageWidget)
+        @php
+            $currentLang = app()->getLocale();
+            $tooltipText = $currentLang === 'fr' ? 'Changer en anglais' : 'Switch to French';
+        @endphp
+        <li class="mobile-menu-item">
+            <a href="javascript:void(0)" class="mobile-menu-link" onclick="toggleLanguage()" style="background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.3);">
+                @if($currentLang === 'fr')
+                <!-- Drapeau français -->
+                <svg class="mobile-language-flag" viewBox="0 0 640 480" xmlns="http://www.w3.org/2000/svg" style="width: 24px; height: 18px; margin-right: 12px;">
+                    <g fill-rule="evenodd" stroke-width="1pt">
+                        <path fill="#fff" d="M0 0h640v480H0z"/>
+                        <path fill="#00267f" d="M0 0h213.3v480H0z"/>
+                        <path fill="#f31830" d="M426.7 0H640v480H426.7z"/>
+                    </g>
+                </svg>
+                @else
+                <!-- Drapeau américain simplifié -->
+                <svg class="mobile-language-flag" viewBox="0 0 7410 3900" xmlns="http://www.w3.org/2000/svg" style="width: 24px; height: 18px; margin-right: 12px;">
+                    <path fill="#b22234" d="M0 0h7410v3900H0z"/>
+                    <path d="M0 450h7410m0 600H0m0 600h7410m0 600H0m0 600h7410m0 600H0m0 600h7410m0 600H0" stroke="#fff" stroke-width="300"/>
+                    <path fill="#3c3b6e" d="M0 0h2964v2100H0z"/>
+                    <g fill="#fff">
+                        <g id="star">
+                            <path d="M247 90l70.534 217.082-184.66-134.164h228.253L176.466 307.082z"/>
+                        </g>
+                        <use href="#star" x="988" y="210"/>
+                        <use href="#star" x="1976" y="420"/>
+                        <use href="#star" x="494" y="420"/>
+                        <use href="#star" x="1482" y="630"/>
+                        <use href="#star" x="2470" y="630"/>
+                        <use href="#star" x="988" y="840"/>
+                        <use href="#star" x="1976" y="840"/>
+                        <use href="#star" x="494" y="1050"/>
+                        <use href="#star" x="1482" y="1260"/>
+                        <use href="#star" x="2470" y="1260"/>
+                        <use href="#star" x="988" y="1470"/>
+                        <use href="#star" x="1976" y="1470"/>
+                        <use href="#star" x="494" y="1680"/>
+                        <use href="#star" x="1482" y="1890"/>
+                        <use href="#star" x="2470" y="1890"/>
+                    </g>
+                </svg>
+                @endif
+                <span>{{ $tooltipText }}</span>
+            </a>
+        </li>
+        @endif
         
         <li class="mobile-menu-item">
             <a href="{{ route('contact') }}" class="mobile-menu-link" style="background: linear-gradient(135deg, #06b6d4, #14b8a6); color: #000; font-weight: 700;">
                 <i class="fas fa-envelope"></i>
-                Contact
+                {{ trans('app.nav.contact') }}
             </a>
         </li>
     </ul>

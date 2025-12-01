@@ -582,8 +582,8 @@
     @media (max-width: 1024px) {
         .comments-table {
             font-size: 0.8rem;
-        }
-        
+    }
+    
         .comments-table th,
         .comments-table td {
             padding: 8px 6px;
@@ -619,8 +619,8 @@
             border-radius: 8px;
             padding: 12px;
             background: rgba(0, 0, 0, 0.2);
-        }
-        
+    }
+    
         body.light-mode .comments-table tr {
             background: rgba(255, 255, 255, 0.5);
             border-color: rgba(226, 232, 240, 0.5);
@@ -769,7 +769,7 @@
                     </td>
                     <td>
                         <div class="comment-avatar bg-gradient-to-br from-cyan-500 to-teal-500 text-white">
-                            {{ strtoupper(substr($comment->author_name, 0, 1)) }}
+                        {{ strtoupper(substr($comment->author_name, 0, 1)) }}
                         </div>
                     </td>
                     <td data-label="Auteur">
@@ -809,78 +809,78 @@
                             {{ $comment->created_at->format('d/m/Y') }}
                             <br>
                             {{ $comment->created_at->format('H:i') }}
-                        </div>
+                    </div>
                     </td>
                     <td data-label="Actions">
                         <div class="flex flex-wrap gap-1">
                             <div class="flex flex-wrap gap-1">
-                                @if($comment->status == 'pending')
+                    @if($comment->status == 'pending')
                                 <form action="{{ route('admin.comments.approve', $comment->id) }}" method="POST" class="inline">
-                                    @csrf
+                        @csrf
                                     <button type="submit" class="action-btn btn-approve" title="Approuver">
                                         <i class="fas fa-check"></i>
-                                    </button>
-                                </form>
+                        </button>
+                    </form>
                                 <form action="{{ route('admin.comments.reject', $comment->id) }}" method="POST" class="inline">
-                                    @csrf
+                        @csrf
                                     <button type="submit" class="action-btn btn-reject" title="Rejeter">
                                         <i class="fas fa-times"></i>
-                                    </button>
-                                </form>
-                                @elseif($comment->status == 'rejected')
+                        </button>
+                    </form>
+                    @elseif($comment->status == 'rejected')
                                 <form action="{{ route('admin.comments.approve', $comment->id) }}" method="POST" class="inline">
-                                    @csrf
+                        @csrf
                                     <button type="submit" class="action-btn btn-approve" title="Approuver">
                                         <i class="fas fa-check"></i>
-                                    </button>
-                                </form>
-                                @else
+                        </button>
+                    </form>
+                    @else
                                 <form action="{{ route('admin.comments.reject', $comment->id) }}" method="POST" class="inline">
-                                    @csrf
+                        @csrf
                                     <button type="submit" class="action-btn btn-reject" title="Rejeter">
                                         <i class="fas fa-times"></i>
-                                    </button>
-                                </form>
-                                @endif
-                                
-                                @if($comment->phone)
+                        </button>
+                    </form>
+                    @endif
+                    
+                        @if($comment->phone)
                                 <button onclick="openWhatsApp({{ $comment->id }})" class="action-btn btn-contact" title="Contacter par WhatsApp">
                                     <i class="fab fa-whatsapp"></i>
                                 </button>
                                 @else
                                 <button class="action-btn btn-contact" style="opacity: 0.4; cursor: not-allowed;" title="Pas de numéro de téléphone" disabled>
-                                    <i class="fab fa-whatsapp"></i>
-                                </button>
-                                @endif
-                                
+                            <i class="fab fa-whatsapp"></i>
+                        </button>
+                        @endif
+                        
                                 <button onclick="openEmail({{ $comment->id }})" class="action-btn btn-contact" title="Contacter par Email">
-                                    <i class="fas fa-envelope"></i>
+                            <i class="fas fa-envelope"></i>
                                 </button>
                                 
                                 <button onclick="showCommentDetails({{ $comment->id }})" class="action-btn btn-contact" title="Voir les détails">
                                     <i class="fas fa-eye"></i>
-                                </button>
-                                
-                                @auth
-                                @if(Auth::user()->isAdmin())
-                                <form action="{{ route('admin.comments.delete', $comment->id) }}" method="POST" 
+                        </button>
+                    
+                    @auth
+                    @if(Auth::user()->isAdmin())
+                    <form action="{{ route('admin.comments.delete', $comment->id) }}" method="POST" 
                                       onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?')" class="inline">
-                                    @csrf
-                                    @method('DELETE')
+                        @csrf
+                        @method('DELETE')
                                     <button type="submit" class="action-btn btn-delete" title="Supprimer">
                                         <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
-                                @endif
-                                @endauth
-                            </div>
-                        </div>
+                        </button>
+                    </form>
+                    @endif
+                    @endauth
+                </div>
+            </div>
                     </td>
                 </tr>
                 @endforeach
             </tbody>
         </table>
-    </div>
+        </div>
     
     <!-- Actions en masse -->
     <div class="bulk-actions" id="bulkActions" style="display: none;">
@@ -1147,7 +1147,7 @@ function openEmail(commentId) {
     const emailUrl = `mailto:${comment.author_email}?subject=${subject}&body=${body}`;
     
     window.location.href = emailUrl;
-}
+    }
 </script>
 </div>
 @endsection

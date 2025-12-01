@@ -40,6 +40,9 @@ class PageController extends Controller
     
     public function index()
     {
+        // Forcer la locale AVANT tout traitement pour la traduction
+        $locale = $this->ensureLocale();
+        
         // Cache les 8 derniers articles publiés (15 minutes) - Triés par date de création (plus récent au plus ancien)
         $latestJobs = \Illuminate\Support\Facades\Cache::remember('latest_jobs', 900, function () {
             return \App\Models\JobArticle::where('status', 'published')
@@ -95,6 +98,7 @@ class PageController extends Controller
 
     public function about()
     {
+        $this->ensureLocale();
         $achievements = \App\Models\Achievement::visible()->ordered()->get();
         $showAchievementsSection = \App\Models\SiteSetting::get('show_achievements_section', true);
         return view('about', compact('achievements', 'showAchievementsSection'));

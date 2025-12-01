@@ -543,9 +543,41 @@
                 Retour aux offres
             </a>
             
+            <!-- Note importante sur le recrutement -->
+            <div style="margin-bottom: 30px; padding: 20px; background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1)); border-left: 4px solid #ef4444; border-radius: 8px; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.1);">
+                <div style="display: flex; align-items: flex-start; gap: 15px;">
+                    <div style="flex-shrink: 0; width: 40px; height: 40px; background: linear-gradient(135deg, #ef4444, #dc2626); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem;">
+                        <i class="fas fa-info-circle"></i>
+                    </div>
+                    <div style="flex: 1;">
+                        <h4 style="margin: 0 0 8px 0; font-size: 1.1rem; font-weight: 700; color: rgba(30, 41, 59, 0.9);">
+                            {{ app()->getLocale() === 'fr' ? 'Note importante' : 'Important Note' }}
+                        </h4>
+                        <p style="margin: 0; color: rgba(30, 41, 59, 0.8); line-height: 1.6; font-size: 0.95rem;">
+                            {{ app()->getLocale() === 'fr' 
+                                ? 'NiangProgrammeur ne recrute pas directement. Nous partageons uniquement les offres d\'emploi, bourses d\'études et opportunités disponibles au Sénégal. Pour postuler, veuillez contacter directement l\'organisme ou l\'entreprise concernée via les coordonnées fournies dans l\'article.' 
+                                : 'NiangProgrammeur does not recruit directly. We only share job offers, scholarships and opportunities available in Senegal. To apply, please contact the organization or company directly using the contact information provided in the article.' }}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
             <div class="article-content">
                 {!! markdown_to_html($article->content) !!}
             </div>
+            
+            <style>
+                body.dark-mode div[style*="background: linear-gradient"][style*="rgba(239, 68, 68"] {
+                    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(220, 38, 38, 0.15)) !important;
+                    border-left-color: #ef4444 !important;
+                }
+                body.dark-mode div[style*="background: linear-gradient"][style*="rgba(239, 68, 68"] h4 {
+                    color: rgba(255, 255, 255, 0.9) !important;
+                }
+                body.dark-mode div[style*="background: linear-gradient"][style*="rgba(239, 68, 68"] p {
+                    color: rgba(255, 255, 255, 0.8) !important;
+                }
+            </style>
             
             @include('partials.share-buttons', ['article' => $article])
         </div>

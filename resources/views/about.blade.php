@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
-@section('title', 'À Propos - NiangProgrammeur | Développeur Full-Stack & Formateur')
-@section('meta_description', 'Découvrez l\'histoire de Bassirou Niang, développeur Full-Stack et formateur passionné. Plus de 5 ans d\'expérience chez Sunucode, spécialisé en Laravel, React et Vue.js.')
-@section('meta_keywords', 'Bassirou Niang, NiangProgrammeur, développeur full-stack, formateur développement web, Sunucode, Laravel expert, React Vue.js')
+@section('title', trans('app.about.meta.title'))
+@section('meta_description', trans('app.about.meta.description'))
+@section('meta_keywords', trans('app.about.meta.keywords'))
 
 @section('styles')
 <style>
@@ -1612,6 +1612,7 @@
         color: #fff;
         margin-bottom: 8px;
         line-height: 1.3;
+        text-align: left;
     }
     
     body:not(.dark-mode) .skill-name {
@@ -2090,13 +2091,13 @@
         <!-- Hero Content -->
         <div class="max-w-5xl mx-auto text-center mb-12 sm:mb-16 md:mb-20">
             <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-6 px-4">
-                Bonjour, C'est <span class="gradient-text">Bassirou Niang</span>
+                {{ trans('app.about.hero.greeting') }} <span class="gradient-text">{{ trans('app.about.hero.name') }}</span>
             </h1>
             <p class="text-xl sm:text-2xl md:text-3xl text-gray-300 mb-8 px-4">
-                Je suis <span class="text-cyan-400 font-bold">NiangProgrammeur</span>
+                {{ trans('app.about.hero.brand') }}
             </p>
             <p class="text-base sm:text-lg md:text-xl text-gray-400 max-w-3xl mx-auto px-4">
-                Développeur Full-Stack & Formateur passionné
+                {{ trans('app.about.hero.subtitle') }}
             </p>
         </div>
         
@@ -2128,11 +2129,11 @@
                     <div class="content-header-modern">
                         <div class="badge-modern">
                             <span class="badge-dot"></span>
-                            <span>Développeur Full-Stack</span>
+                            <span>{{ trans('app.about.badge') }}</span>
                         </div>
                         <h2 class="title-modern">
                             <span class="title-line"></span>
-                            <span class="title-text">À propos de moi</span>
+                            <span class="title-text">{{ trans('app.about.title') }}</span>
                             <span class="title-line"></span>
                         </h2>
                     </div>
@@ -2145,12 +2146,9 @@
                                 <div class="timeline-icon">
                                     <i class="fas fa-seedling"></i>
                                 </div>
-                                <h3 class="timeline-title">Les Débuts</h3>
+                                <h3 class="timeline-title">{{ trans('app.about.timeline.beginnings.title') }}</h3>
                                 <p class="timeline-text">
-                                    Voici l'histoire d'un développeur passionné qui a suivi une voie conventionnelle pour arriver à son métier actuel. 
-                                    Issu d'une famille modeste, dès mon plus jeune âge, j'étais fasciné par la technologie et passais des heures sur mon 
-                                    ordinateur personnel à explorer différents programmes et langages de programmation. Cette curiosité précoce m'a conduit à 
-                                    découvrir le monde fascinant du développement web, où chaque ligne de code représente une possibilité infinie de création.
+                                    {{ trans('app.about.timeline.beginnings.text') }}
                                 </p>
                             </div>
                         </div>
@@ -2161,13 +2159,9 @@
                                 <div class="timeline-icon">
                                     <i class="fas fa-graduation-cap"></i>
                                 </div>
-                                <h3 class="timeline-title">Formation Académique</h3>
+                                <h3 class="timeline-title">{{ trans('app.about.timeline.education.title') }}</h3>
                                 <p class="timeline-text">
-                                    Mon parcours académique a commencé par un Baccalauréat Scientifique au Lycée Seydina Limamou Laye, où j'ai développé 
-                                    une solide base en mathématiques et en logique. Cette formation m'a préparé pour ma Licence Professionnelle en Génie Logiciel 
-                                    à l'Institut Supérieur d'Informatique, où j'ai approfondi mes connaissances en programmation, algorithmes et architecture logicielle. 
-                                    J'ai ensuite complété ma formation par une spécialisation en Développement Web & Mobile à l'Access Code School, où j'ai maîtrisé 
-                                    les technologies modernes du développement web.
+                                    {{ trans('app.about.timeline.education.text') }}
                                 </p>
                             </div>
                         </div>
@@ -2178,12 +2172,9 @@
                                 <div class="timeline-icon">
                                     <i class="fas fa-code"></i>
                                 </div>
-                                <h3 class="timeline-title">Expérience Professionnelle</h3>
+                                <h3 class="timeline-title">{{ trans('app.about.timeline.experience.title') }}</h3>
                                 <p class="timeline-text">
-                                    Au fil du temps, ma passion est devenue évidente auprès de mes collègues qui ont commencé à me confier des projets liés 
-                                    au développement web. Petit-à-petit, je me suis constitué un portefeuille impressionnant avec diverses réalisations allant 
-                                    du simple site vitrine jusqu'à la création complète d'applications complexes. Chaque projet a été une opportunité d'apprendre, 
-                                    de grandir et de perfectionner mes compétences techniques et créatives.
+                                    {{ trans('app.about.timeline.experience.text') }}
                                 </p>
                             </div>
                         </div>
@@ -2194,13 +2185,9 @@
                                 <div class="timeline-icon">
                                     <i class="fas fa-briefcase"></i>
                                 </div>
-                                <h3 class="timeline-title">Chez Sunucode</h3>
+                                <h3 class="timeline-title">{{ trans('app.about.timeline.sunucode.title') }}</h3>
                                 <p class="timeline-text">
-                                    Aujourd'hui, avec plus de 5 ans d'expérience professionnelle chez Sunucode, j'ai eu l'opportunité de travailler sur des projets 
-                                    variés et stimulants. J'ai développé des applications web complexes utilisant Laravel, React et Vue.js, formé et accompagné 
-                                    de nombreux développeurs juniors, et géré des projets d'envergure nécessitant une architecture logicielle solide. Cette expérience 
-                                    m'a permis de comprendre que le développement web ne se limite pas à écrire du code, mais implique également la résolution 
-                                    de problèmes complexes, la collaboration en équipe, et la transmission de connaissances.
+                                    {{ trans('app.about.timeline.sunucode.text') }}
                                 </p>
                             </div>
                         </div>
@@ -2211,12 +2198,9 @@
                                 <div class="timeline-icon">
                                     <i class="fas fa-heart"></i>
                                 </div>
-                                <h3 class="timeline-title">NiangProgrammeur</h3>
+                                <h3 class="timeline-title">{{ trans('app.about.timeline.niangprogrammeur.title') }}</h3>
                                 <p class="timeline-text">
-                                    C'est cette passion pour l'enseignement et le partage de connaissances qui m'a poussé à créer NiangProgrammeur, une plateforme 
-                                    entièrement gratuite dédiée à l'apprentissage du développement web. Mon objectif est de démocratiser l'accès à l'éducation 
-                                    en programmation, particulièrement en Afrique, où les ressources éducatives de qualité sont parfois limitées. Je crois fermement 
-                                    que tout le monde devrait avoir la possibilité d'apprendre à coder, indépendamment de sa situation financière ou géographique.
+                                    {{ trans('app.about.timeline.niangprogrammeur.text') }}
                                 </p>
                             </div>
                         </div>
@@ -2229,7 +2213,7 @@
                                 <i class="fas fa-envelope"></i>
                             </div>
                             <div class="contact-info">
-                                <p class="contact-label">Email</p>
+                                <p class="contact-label">{{ trans('app.about.contact.email') }}</p>
                                 <a href="mailto:NiangProgrammeur@gmail.com" class="contact-value">
                                     NiangProgrammeur@gmail.com
                                 </a>
@@ -2242,7 +2226,7 @@
                                 <i class="fas fa-phone"></i>
                             </div>
                             <div class="contact-info">
-                                <p class="contact-label">Téléphone</p>
+                                <p class="contact-label">{{ trans('app.about.contact.phone') }}</p>
                                 <a href="tel:+221783123657" class="contact-value">
                                     +221 78 312 36 57
                                 </a>
@@ -2269,14 +2253,12 @@
             <div class="inline-flex items-center gap-2 sm:gap-3 mb-4 flex-wrap justify-center">
                 <div class="w-1 h-8 sm:h-12 bg-gradient-to-b from-cyan-500 to-teal-500 rounded-full"></div>
                 <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black">
-                    <span class="gradient-text">Compétences & Capacités</span>
+                    <span class="gradient-text">{{ trans('app.about.skills.title') }}</span>
                 </h2>
                 <div class="w-1 h-8 sm:h-12 bg-gradient-to-b from-cyan-500 to-teal-500 rounded-full"></div>
             </div>
             <p class="text-center text-gray-400 mb-12 sm:mb-16 max-w-3xl mx-auto text-sm sm:text-base md:text-lg">
-                Maîtrise approfondie des technologies modernes du développement web, acquise à travers des années d'expérience pratique, 
-                de formation continue et de projets réels. Chaque technologie que je maîtrise a été apprise et perfectionnée dans le cadre 
-                de projets concrets, garantissant une compréhension pratique et applicable.
+                {{ trans('app.about.skills.subtitle') }}
             </p>
         </div>
         
@@ -2327,7 +2309,7 @@
                         </div>
                     </div>
                     <div class="skill-card-footer">
-                        <span class="skill-status">Maîtrisé</span>
+                        <span class="skill-status">{{ trans('app.about.skills.mastered') }}</span>
                         <div class="skill-stars">
                             @for($i = 0; $i < 5; $i++)
                                 <i class="fas fa-star {{ $i < ($skill['level'] / 20) ? 'star-filled' : 'star-empty' }}"></i>
@@ -2357,12 +2339,12 @@
             <div class="inline-flex items-center gap-2 sm:gap-4 mb-4 sm:mb-6 flex-wrap justify-center">
                 <div class="w-1 sm:w-1.5 h-10 sm:h-12 md:h-16 bg-gradient-to-b from-cyan-400 via-teal-400 to-cyan-400 rounded-full animate-pulse"></div>
                 <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black tracking-tight">
-                    <span class="achievements-title-gradient">Mes Réalisations</span>
+                    <span class="achievements-title-gradient">{{ trans('app.about.achievements.title') }}</span>
                 </h2>
                 <div class="w-1 sm:w-1.5 h-10 sm:h-12 md:h-16 bg-gradient-to-b from-cyan-400 via-teal-400 to-cyan-400 rounded-full animate-pulse"></div>
             </div>
             <p class="text-base sm:text-lg md:text-xl text-gray-400 max-w-3xl mx-auto leading-relaxed px-4">
-                Découvrez quelques-unes de mes réalisations et projets qui témoignent de mon expertise et de ma passion pour le développement web.
+                {{ trans('app.about.achievements.subtitle') }}
             </p>
         </div>
         
@@ -2406,7 +2388,7 @@
                         <!-- Link Button -->
                         @if($achievement->link_url)
                         <a href="{{ $achievement->link_url }}" target="_blank" rel="noopener noreferrer" class="achievement-link-ultra">
-                            <span>Voir le projet</span>
+                            <span>{{ trans('app.about.achievements.view_project') }}</span>
                             <i class="fas fa-arrow-right"></i>
                         </a>
                         @endif
@@ -2426,12 +2408,10 @@
 <section class="py-20 bg-gray-900">
     <div class="container mx-auto px-4 sm:px-6">
         <h2 class="text-3xl sm:text-4xl md:text-5xl font-bold text-center mb-4 px-4">
-            <span class="gradient-text">Mes Formations</span>
+            <span class="gradient-text">{{ trans('app.about.formations.title') }}</span>
         </h2>
         <p class="text-center text-gray-400 mb-12 sm:mb-16 max-w-2xl mx-auto text-sm sm:text-base px-4">
-            L'éducation ne se limite pas seulement au domaine scolaire mais englobe également l'apprentissage tout au long de la vie. 
-            Mon parcours éducatif reflète ma conviction que l'apprentissage est un processus continu qui ne s'arrête jamais. Chaque 
-            formation que j'ai suivie m'a apporté des compétences précieuses et m'a préparé pour les défis professionnels à venir.
+            {{ trans('app.about.formations.subtitle') }}
         </p>
         
         <div class="max-w-7xl mx-auto">
@@ -2487,7 +2467,7 @@
                             <div class="formation-card-progress">
                                 <div class="formation-card-progress-bar" style="width: {{ 100 - ($loop->index * 10) }}%"></div>
                             </div>
-                            <span class="formation-card-status">Diplômé</span>
+                            <span class="formation-card-status">{{ trans('app.about.formations.graduated') }}</span>
                         </div>
                     </div>
                     <div class="formation-card-glow"></div>
@@ -2511,14 +2491,12 @@
             <div class="inline-flex items-center gap-2 sm:gap-3 mb-4 flex-wrap justify-center">
                 <div class="w-1 h-8 sm:h-12 bg-gradient-to-b from-cyan-500 to-teal-500 rounded-full"></div>
                 <h2 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black">
-                    <span class="gradient-text">Expériences Professionnelles</span>
+                    <span class="gradient-text">{{ trans('app.about.experience.title') }}</span>
                 </h2>
                 <div class="w-1 h-8 sm:h-12 bg-gradient-to-b from-cyan-500 to-teal-500 rounded-full"></div>
             </div>
             <p class="text-center text-gray-400 mb-12 sm:mb-16 max-w-3xl mx-auto text-sm sm:text-base md:text-lg">
-                Mon parcours professionnel dans le développement web témoigne d'une évolution constante, de l'apprentissage des bases 
-                à la maîtrise des technologies avancées. Chaque expérience professionnelle a contribué à façonner mon expertise et ma 
-                vision du développement web moderne.
+                {{ trans('app.about.experience.subtitle') }}
             </p>
         </div>
         
@@ -2540,11 +2518,11 @@
                     <div class="experience-badges">
                         <span class="experience-badge experience-badge-active">
                             <i class="fas fa-briefcase"></i>
-                            <span>En cours</span>
+                            <span>{{ trans('app.about.experience.active') }}</span>
                         </span>
                         <span class="experience-badge experience-badge-fulltime">
                             <i class="fas fa-clock"></i>
-                            <span>Temps plein</span>
+                            <span>{{ trans('app.about.experience.fulltime') }}</span>
                         </span>
                     </div>
                 </div>
@@ -2552,12 +2530,12 @@
                 <div class="experience-card-body">
                     <div class="experience-role">
                         <i class="fas fa-code"></i>
-                        <span>Développeur Full-Stack & Formateur</span>
+                        <span>{{ trans('app.about.experience.role') }}</span>
                     </div>
                     
                     <div class="experience-period">
                         <i class="fas fa-calendar-alt"></i>
-                        <span class="period-text">2020 - Présent</span>
+                        <span class="period-text">{{ trans('app.about.experience.period') }}</span>
                         <span class="period-separator">•</span>
                         <span class="period-duration">{{ \Carbon\Carbon::parse('2020-01-01')->diffForHumans(null, true) }}</span>
                     </div>
@@ -2568,11 +2546,9 @@
                                 <i class="fas fa-check-circle"></i>
                             </div>
                             <div class="achievement-content">
-                                <h4 class="achievement-title">Développement Full-Stack</h4>
+                                <h4 class="achievement-title">{{ trans('app.about.experience.achievements.fullstack.title') }}</h4>
                                 <p class="achievement-description">
-                                    Développement d'applications web complexes avec Laravel, React et Vue.js, incluant la conception de 
-                                    systèmes backend robustes, la création d'interfaces utilisateur modernes et réactives, et l'intégration 
-                                    d'APIs RESTful pour des solutions complètes et performantes.
+                                    {{ trans('app.about.experience.achievements.fullstack.description') }}
                                 </p>
                             </div>
                         </div>
@@ -2582,11 +2558,9 @@
                                 <i class="fas fa-check-circle"></i>
                             </div>
                             <div class="achievement-content">
-                                <h4 class="achievement-title">Formation & Mentorat</h4>
+                                <h4 class="achievement-title">{{ trans('app.about.experience.achievements.training.title') }}</h4>
                                 <p class="achievement-description">
-                                    Formation et accompagnement de développeurs juniors, avec la création de programmes de mentorat, 
-                                    l'organisation de sessions de code review, et le partage de bonnes pratiques pour accélérer leur 
-                                    progression professionnelle et technique.
+                                    {{ trans('app.about.experience.achievements.training.description') }}
                                 </p>
                             </div>
                         </div>
@@ -2596,11 +2570,9 @@
                                 <i class="fas fa-check-circle"></i>
                             </div>
                             <div class="achievement-content">
-                                <h4 class="achievement-title">Gestion de Projets</h4>
+                                <h4 class="achievement-title">{{ trans('app.about.experience.achievements.management.title') }}</h4>
                                 <p class="achievement-description">
-                                    Gestion de projets et architecture logicielle, incluant la planification de sprints, la coordination 
-                                    d'équipes multidisciplinaires, la conception d'architectures scalables, et l'optimisation des performances 
-                                    pour garantir la qualité et la maintenabilité des applications.
+                                    {{ trans('app.about.experience.achievements.management.description') }}
                                 </p>
                             </div>
                         </div>
@@ -2610,11 +2582,9 @@
                                 <i class="fas fa-check-circle"></i>
                             </div>
                             <div class="achievement-content">
-                                <h4 class="achievement-title">Solutions E-commerce</h4>
+                                <h4 class="achievement-title">{{ trans('app.about.experience.achievements.ecommerce.title') }}</h4>
                                 <p class="achievement-description">
-                                    Développement de solutions e-commerce et applications métier sur mesure, avec intégration de systèmes 
-                                    de paiement, gestion de stocks, et interfaces d'administration complètes pour répondre aux besoins 
-                                    spécifiques des clients.
+                                    {{ trans('app.about.experience.achievements.ecommerce.description') }}
                                 </p>
                             </div>
                         </div>
@@ -2624,11 +2594,9 @@
                                 <i class="fas fa-check-circle"></i>
                             </div>
                             <div class="achievement-content">
-                                <h4 class="achievement-title">Optimisation & SEO</h4>
+                                <h4 class="achievement-title">{{ trans('app.about.experience.achievements.seo.title') }}</h4>
                                 <p class="achievement-description">
-                                    Optimisation SEO et performance web, avec l'implémentation de techniques avancées de référencement, 
-                                    l'optimisation des temps de chargement, et l'amélioration de l'expérience utilisateur pour maximiser 
-                                    la visibilité et l'engagement.
+                                    {{ trans('app.about.experience.achievements.seo.description') }}
                                 </p>
                             </div>
                         </div>
@@ -2640,17 +2608,17 @@
                         <div class="stat-item">
                             <i class="fas fa-calendar-check"></i>
                             <span class="stat-value">{{ number_format(\Carbon\Carbon::parse('2020-01-01')->diffInDays() / 365.25, 2, '.', '') }}</span>
-                            <span class="stat-label">Années</span>
+                            <span class="stat-label">{{ trans('app.about.experience.stats.years') }}</span>
                         </div>
                         <div class="stat-item">
                             <i class="fas fa-project-diagram"></i>
                             <span class="stat-value">120+</span>
-                            <span class="stat-label">Projets</span>
+                            <span class="stat-label">{{ trans('app.about.experience.stats.projects') }}</span>
                         </div>
                         <div class="stat-item">
                             <i class="fas fa-users"></i>
                             <span class="stat-value">300+</span>
-                            <span class="stat-label">Formés</span>
+                            <span class="stat-label">{{ trans('app.about.experience.stats.trained') }}</span>
                         </div>
                     </div>
                 </div>
@@ -2664,17 +2632,17 @@
     <div class="container mx-auto px-4 sm:px-6">
         <div class="max-w-4xl mx-auto bg-gradient-to-br from-cyan-600/20 to-teal-600/20 rounded-3xl p-6 sm:p-8 md:p-12 border border-cyan-500/30 text-center">
             <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6">
-                <span class="gradient-text">Prêt à apprendre ?</span>
+                <span class="gradient-text">{{ trans('app.about.cta.title') }}</span>
             </h2>
             <p class="text-base sm:text-lg md:text-xl text-gray-300 mb-6 sm:mb-8 px-4">
-                Rejoignez des milliers d'apprenants et commencez votre parcours dans le développement web
+                {{ trans('app.about.cta.subtitle') }}
             </p>
             <div class="flex flex-col sm:flex-row flex-wrap justify-center gap-3 sm:gap-4">
                 <a href="{{ route('home') }}" class="px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-cyan-500 to-teal-600 rounded-xl font-bold text-base sm:text-lg hover:shadow-2xl hover:scale-105 transition">
-                    <i class="fas fa-home mr-2"></i>Retour à l'accueil
+                    <i class="fas fa-home mr-2"></i>{{ trans('app.about.cta.back_home') }}
                 </a>
                 <a href="{{ route('home') }}#contact" class="px-6 sm:px-8 py-3 sm:py-4 bg-gray-800 hover:bg-gray-700 rounded-xl font-bold text-base sm:text-lg border border-cyan-500/30 hover:border-cyan-500/60 transition">
-                    <i class="fas fa-envelope mr-2"></i>Me contacter
+                    <i class="fas fa-envelope mr-2"></i>{{ trans('app.about.cta.contact_me') }}
                 </a>
             </div>
         </div>

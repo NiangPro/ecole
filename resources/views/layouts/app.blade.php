@@ -49,6 +49,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
     
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="{{ asset('manifest.json') }}">
+    <meta name="theme-color" content="#06b6d4">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="NiangProgrammeur">
+    <link rel="apple-touch-icon" href="{{ asset('images/logo.png') }}">
+    
     @stack('meta')
     @stack('head')
     @stack('preload_images')
@@ -235,6 +243,15 @@
     
     <title>@yield('title', 'NiangProgrammeur - Formation Gratuite en Développement Web')</title>
     <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
+    
+    <!-- Variable globale pour l'authentification (doit être définie avant tous les scripts) -->
+    <script>
+        window.userIsAuthenticated = {{ auth()->check() ? 'true' : 'false' }};
+        // S'assurer que c'est bien une chaîne pour la comparaison
+        if (typeof window.userIsAuthenticated === 'boolean') {
+            window.userIsAuthenticated = window.userIsAuthenticated.toString();
+        }
+    </script>
     
     <!-- CSS critique minimal pour éviter le FOUC -->
     <style id="critical-css">
@@ -805,16 +822,14 @@
                 bottom: 120px;
             }
             
-            .language-widget {
-                bottom: 120px;
-                right: 12px;
-                z-index: 9997;
-            }
-            
-            .language-button {
+            .navbar-language-button {
                 width: 36px;
                 height: 36px;
-                font-size: 14px;
+            }
+            
+            .navbar-language-flag {
+                width: 20px;
+                height: 15px;
             }
             
             .dark-mode-widget {
@@ -846,33 +861,30 @@
             }
         }
         
-        /* Language Widget */
-        .language-widget {
-            position: fixed;
-            bottom: 120px;
-            right: 20px;
-            z-index: 9997;
+        /* Language Widget dans la navbar */
+        .navbar-language-widget {
+            display: flex;
+            align-items: center;
+            margin-right: 12px;
         }
         
-        .language-button {
+        .navbar-language-button {
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #06b6d4, #14b8a6);
-            border: 2px solid rgba(6, 182, 212, 0.3);
-            color: #fff;
-            font-size: 16px;
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            color: #06b6d4;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            box-shadow: 0 4px 20px rgba(6, 182, 212, 0.4);
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
-            overflow: hidden;
+            overflow: visible;
         }
         
-        .language-flag {
+        .navbar-language-flag {
             width: 24px;
             height: 18px;
             border-radius: 2px;
@@ -880,41 +892,44 @@
             display: block;
         }
         
-        .language-button:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 6px 25px rgba(6, 182, 212, 0.5);
+        .navbar-language-button:hover {
+            background: rgba(6, 182, 212, 0.2);
             border-color: rgba(6, 182, 212, 0.5);
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
         }
         
-        .language-tooltip {
+        .navbar-language-tooltip {
             position: absolute;
-            bottom: 60px;
+            top: calc(100% + 10px);
             right: 0;
-            background: rgba(0, 0, 0, 0.9);
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
             color: #fff;
-            padding: 10px 15px;
+            padding: 8px 12px;
             border-radius: 8px;
-            font-size: 13px;
+            font-size: 12px;
             white-space: nowrap;
             opacity: 0;
             visibility: hidden;
-            transform: translateY(10px);
+            transform: translateY(-5px);
             transition: all 0.3s ease;
             pointer-events: none;
             z-index: 10000;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(6, 182, 212, 0.3);
         }
         
-        .language-tooltip::after {
+        .navbar-language-tooltip::after {
             content: '';
             position: absolute;
-            top: 100%;
-            right: 20px;
-            border: 6px solid transparent;
-            border-top-color: rgba(0, 0, 0, 0.9);
+            bottom: 100%;
+            right: 12px;
+            border: 5px solid transparent;
+            border-bottom-color: rgba(15, 23, 42, 0.95);
         }
         
-        .language-button:hover .language-tooltip {
+        .navbar-language-button:hover .navbar-language-tooltip {
             opacity: 1;
             visibility: visible;
             transform: translateY(0);
@@ -1286,6 +1301,7 @@
     @php
         // Pages où afficher le widget de langue
         $showLanguageWidget = request()->routeIs([
+            'home',
             'formations.all',
             'formations.html5',
             'formations.css3',
@@ -1312,55 +1328,6 @@
         ]);
     @endphp
     
-    @if($showLanguageWidget)
-    @php
-        $currentLang = app()->getLocale();
-        $tooltipText = $currentLang === 'fr' ? 'Changer en anglais' : 'Switch to French';
-    @endphp
-    <!-- Language Toggle Button -->
-    <div id="language-widget" class="language-widget">
-        <button id="language-toggle" class="language-button" onclick="toggleLanguage()" title="{{ $tooltipText }}">
-            @if($currentLang === 'fr')
-            <!-- Drapeau français -->
-            <svg class="language-flag" viewBox="0 0 640 480" xmlns="http://www.w3.org/2000/svg">
-                <g fill-rule="evenodd" stroke-width="1pt">
-                    <path fill="#fff" d="M0 0h640v480H0z"/>
-                    <path fill="#00267f" d="M0 0h213.3v480H0z"/>
-                    <path fill="#f31830" d="M426.7 0H640v480H426.7z"/>
-                </g>
-            </svg>
-            @else
-            <!-- Drapeau américain simplifié -->
-            <svg class="language-flag" viewBox="0 0 7410 3900" xmlns="http://www.w3.org/2000/svg">
-                <path fill="#b22234" d="M0 0h7410v3900H0z"/>
-                <path d="M0 450h7410m0 600H0m0 600h7410m0 600H0m0 600h7410m0 600H0m0 600h7410m0 600H0" stroke="#fff" stroke-width="300"/>
-                <path fill="#3c3b6e" d="M0 0h2964v2100H0z"/>
-                <g fill="#fff">
-                    <g id="star">
-                        <path d="M247 90l70.534 217.082-184.66-134.164h228.253L176.466 307.082z"/>
-                    </g>
-                    <use href="#star" x="988" y="210"/>
-                    <use href="#star" x="1976" y="420"/>
-                    <use href="#star" x="494" y="420"/>
-                    <use href="#star" x="1482" y="630"/>
-                    <use href="#star" x="2470" y="630"/>
-                    <use href="#star" x="988" y="840"/>
-                    <use href="#star" x="1976" y="840"/>
-                    <use href="#star" x="494" y="1050"/>
-                    <use href="#star" x="1482" y="1260"/>
-                    <use href="#star" x="2470" y="1260"/>
-                    <use href="#star" x="988" y="1470"/>
-                    <use href="#star" x="1976" y="1470"/>
-                    <use href="#star" x="494" y="1680"/>
-                    <use href="#star" x="1482" y="1890"/>
-                    <use href="#star" x="2470" y="1890"/>
-                </g>
-            </svg>
-            @endif
-            <span class="language-tooltip" id="language-tooltip">{{ $tooltipText }}</span>
-        </button>
-    </div>
-    @endif
     
     <!-- Dark Mode Toggle Button -->
     <div id="dark-mode-widget" class="dark-mode-widget">
@@ -1432,17 +1399,11 @@
             }
         });
         
-        // Ajuster la position du bouton back to top si le widget de langue n'existe pas
+        // Ajuster la position du bouton back to top (le widget de langue est maintenant dans la navbar)
         document.addEventListener('DOMContentLoaded', function() {
-            const languageWidget = document.getElementById('language-widget');
             const backToTopButton = document.getElementById('back-to-top');
-            
             if (backToTopButton) {
-                if (!languageWidget) {
-                    backToTopButton.classList.add('no-language-widget');
-                } else {
-                    backToTopButton.classList.remove('no-language-widget');
-                }
+                backToTopButton.classList.add('no-language-widget');
             }
         });
         

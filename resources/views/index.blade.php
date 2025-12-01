@@ -234,74 +234,12 @@
         text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
     }
     
-    /* Arbre de Noël animé avec brillance */
-    .christmas-hat {
-        position: absolute;
-        top: -45px;
-        left: -8px;
-        font-size: 3.5rem;
-        animation: treeBounce 2.5s ease-in-out infinite, treeShine 1.5s ease-in-out infinite;
-        z-index: 10;
-        filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4));
-        line-height: 1;
-        text-shadow: 0 0 20px rgba(34, 197, 94, 0.8),
-                     0 0 40px rgba(34, 197, 94, 0.6),
-                     0 0 60px rgba(34, 197, 94, 0.4);
-    }
-    
-    @keyframes treeBounce {
-        0%, 100% {
-            transform: translateY(0) rotate(-10deg) scale(1);
-        }
-        25% {
-            transform: translateY(-10px) rotate(8deg) scale(1.08);
-        }
-        50% {
-            transform: translateY(-15px) rotate(-8deg) scale(1.12);
-        }
-        75% {
-            transform: translateY(-10px) rotate(10deg) scale(1.08);
-        }
-    }
-    
-    @keyframes treeShine {
-        0%, 100% {
-            filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4))
-                    drop-shadow(0 0 20px rgba(34, 197, 94, 0.8))
-                    drop-shadow(0 0 40px rgba(34, 197, 94, 0.6))
-                    drop-shadow(0 0 60px rgba(34, 197, 94, 0.4))
-                    brightness(1);
-            text-shadow: 0 0 20px rgba(34, 197, 94, 0.8),
-                         0 0 40px rgba(34, 197, 94, 0.6),
-                         0 0 60px rgba(34, 197, 94, 0.4),
-                         0 0 80px rgba(34, 197, 94, 0.3);
-        }
-        50% {
-            filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4))
-                    drop-shadow(0 0 30px rgba(34, 197, 94, 1))
-                    drop-shadow(0 0 60px rgba(34, 197, 94, 0.8))
-                    drop-shadow(0 0 90px rgba(34, 197, 94, 0.6))
-                    drop-shadow(0 0 120px rgba(34, 197, 94, 0.4))
-                    brightness(1.3);
-            text-shadow: 0 0 30px rgba(34, 197, 94, 1),
-                         0 0 60px rgba(34, 197, 94, 0.8),
-                         0 0 90px rgba(34, 197, 94, 0.6),
-                         0 0 120px rgba(34, 197, 94, 0.4),
-                         0 0 150px rgba(34, 197, 94, 0.3);
-        }
-    }
-    
     @media (max-width: 768px) {
         .hero-section {
             min-height: 55vh;
             padding: 60px 20px 40px;
         }
         
-        .christmas-hat {
-            font-size: 2.5rem;
-            top: -35px;
-            left: -6px;
-        }
         
         .main-title {
             font-size: clamp(1.8rem, 4vw, 2.2rem) !important;
@@ -1137,32 +1075,29 @@
 <section class="hero-section">
     <div class="hero-content">
         <h1 class="main-title">
-            <span class="main-title-wrapper">
-                @if(date('m') == '12')
-                <span class="christmas-hat">🎄</span>
-                @endif
-                <span>A</span>
-            </span>pprenez la <span class="title-gradient">Programmation</span><br>
-            Gratuitement avec <span class="title-gradient">NiangProgrammeur</span>
+            @if(app()->getLocale() === 'fr')
+                <span class="main-title-wrapper">
+                    <span>A</span>
+                </span>pprenez la <span class="title-gradient">{{ trans('app.home.hero_title_programming') }}</span><br>
+                Gratuitement avec <span class="title-gradient">{{ trans('app.home.hero_title_brand') }}</span>
+            @else
+                Learn <span class="title-gradient">{{ trans('app.home.hero_title_programming') }}</span><br>
+                for Free with <span class="title-gradient">{{ trans('app.home.hero_title_brand') }}</span>
+            @endif
         </h1>
         
         <p class="subtitle">
-            La meilleure plateforme gratuite pour apprendre le développement web. Maîtrisez HTML, CSS, JavaScript, PHP, Laravel, Python et bien 
-            plus encore avec nos tutoriels interactifs, exemples pratiques et exercices. Notre mission est de démocratiser l'accès à l'éducation 
-            en programmation, particulièrement en Afrique, en offrant des formations de qualité professionnelle accessibles à tous, sans aucun 
-            frais. Que vous soyez débutant complet ou développeur expérimenté souhaitant vous perfectionner, nos cours progressifs vous guideront 
-            vers la maîtrise des technologies modernes du développement web. Apprenez à votre rythme, pratiquez avec plus de 100 exercices interactifs, 
-            et testez vos connaissances avec nos quiz détaillés.
+            {{ trans('app.home.hero_subtitle') }}
         </p>
         
         <div class="cta-buttons">
             <a href="#technologies" class="btn-3d btn-primary">
                 <i class="fas fa-book-open"></i>
-                Commencer à apprendre
+                {{ trans('app.home.cta_start_learning') }}
             </a>
             <a href="{{ route('exercices') }}" class="btn-3d btn-secondary">
                 <i class="fas fa-code"></i>
-                Essayer gratuitement
+                {{ trans('app.home.cta_try_free') }}
             </a>
         </div>
     </div>
@@ -1176,7 +1111,7 @@
                 <i class="fas fa-graduation-cap" style="color: #06b6d4;"></i>
             </div>
             <div class="stat-number">9+</div>
-            <div class="stat-label">Technologies</div>
+            <div class="stat-label">{{ trans('app.home.stats.technologies') }}</div>
         </div>
         
         <div class="stat-card">
@@ -1184,7 +1119,7 @@
                 <i class="fas fa-code" style="color: #14b8a6;"></i>
             </div>
             <div class="stat-number">100+</div>
-            <div class="stat-label">Exercices</div>
+            <div class="stat-label">{{ trans('app.home.stats.exercices') }}</div>
         </div>
         
         <div class="stat-card">
@@ -1192,7 +1127,7 @@
                 <i class="fas fa-infinity" style="color: #06b6d4;"></i>
             </div>
             <div class="stat-number">24/7</div>
-            <div class="stat-label">Disponible</div>
+            <div class="stat-label">{{ trans('app.home.stats.available') }}</div>
         </div>
         
         <div class="stat-card">
@@ -1200,21 +1135,16 @@
                 <i class="fas fa-gift" style="color: #14b8a6;"></i>
             </div>
             <div class="stat-number">100%</div>
-            <div class="stat-label">Gratuit</div>
+            <div class="stat-label">{{ trans('app.home.stats.free') }}</div>
         </div>
     </div>
 </section>
 
 <!-- Exercices & Quiz Section -->
 <section class="exercices-quiz-section">
-    <h2 class="exercices-quiz-section-title">Pratiquez avec nos Exercices & Quiz</h2>
+    <h2 class="exercices-quiz-section-title">{{ trans('app.home.exercices_quiz.section_title') }}</h2>
     <p class="exercices-quiz-section-subtitle">
-        Renforcez vos compétences avec des exercices pratiques et testez vos connaissances avec nos quiz interactifs. La pratique est essentielle 
-        pour maîtriser le développement web, c'est pourquoi nous proposons plus de 100 exercices interactifs couvrant tous les niveaux, du débutant 
-        à l'expert. Chaque exercice vous permet d'écrire du code directement dans votre navigateur, de tester vos solutions en temps réel, et de 
-        recevoir des feedbacks immédiats. Nos quiz détaillés vous aident à évaluer votre compréhension des concepts clés, avec des explications 
-        pour chaque réponse. Cette approche pratique garantit que vous ne vous contentez pas de mémoriser, mais que vous comprenez vraiment 
-        comment appliquer vos connaissances dans des situations réelles.
+        {{ trans('app.home.exercices_quiz.section_subtitle') }}
     </p>
     
     <div class="exercices-quiz-container">
@@ -1225,12 +1155,12 @@
                 <div class="exercices-quiz-icon-wrapper">
                     <i class="fas fa-code"></i>
                 </div>
-                <h3 class="exercices-quiz-title">Exercices Pratiques</h3>
+                <h3 class="exercices-quiz-title">{{ trans('app.home.exercices_quiz.exercices_title') }}</h3>
                 <p class="exercices-quiz-description">
-                Plus de 100 exercices interactifs couvrant 9 technologies différentes, répartis en trois niveaux de difficulté. Écrivez du code directement dans votre navigateur avec notre éditeur intégré et recevez des feedbacks immédiats.
+                {{ trans('app.home.exercices_quiz.exercices_description') }}
             </p>
                 <a href="{{ route('exercices') }}" class="exercices-quiz-btn exercices-btn">
-                Commencer <i class="fas fa-arrow-right"></i>
+                {{ trans('app.home.exercices_quiz.exercices_button') }} <i class="fas fa-arrow-right"></i>
             </a>
         </div>
         
@@ -1239,12 +1169,12 @@
                 <div class="exercices-quiz-icon-wrapper quiz-icon-wrapper">
                     <i class="fas fa-question-circle"></i>
                 </div>
-                <h3 class="exercices-quiz-title">Quiz Interactifs</h3>
+                <h3 class="exercices-quiz-title">{{ trans('app.home.exercices_quiz.quiz_title') }}</h3>
                 <p class="exercices-quiz-description">
-                Testez vos connaissances avec nos quiz détaillés couvrant toutes les technologies enseignées. Obtenez un score détaillé avec des explications complètes pour chaque question.
+                {{ trans('app.home.exercices_quiz.quiz_description') }}
             </p>
                 <a href="{{ route('quiz') }}" class="exercices-quiz-btn quiz-btn">
-                Faire un quiz <i class="fas fa-arrow-right"></i>
+                {{ trans('app.home.exercices_quiz.quiz_button') }} <i class="fas fa-arrow-right"></i>
             </a>
         </div>
         
@@ -1253,12 +1183,12 @@
                 <div class="exercices-quiz-icon-wrapper formations-icon-wrapper">
                     <i class="fas fa-graduation-cap"></i>
                 </div>
-                <h3 class="exercices-quiz-title">Formations Complètes</h3>
+                <h3 class="exercices-quiz-title">{{ trans('app.home.exercices_quiz.formations_title') }}</h3>
                 <p class="exercices-quiz-description">
-                Découvrez nos formations complètes et structurées pour maîtriser le développement web. Des parcours progressifs avec des leçons détaillées, des exemples pratiques et des projets réels.
+                {{ trans('app.home.exercices_quiz.formations_description') }}
             </p>
                 <a href="{{ route('formations.all') }}" class="exercices-quiz-btn formations-btn">
-                Voir les formations <i class="fas fa-arrow-right"></i>
+                {{ trans('app.home.exercices_quiz.formations_button') }} <i class="fas fa-arrow-right"></i>
             </a>
         </div>
         </div>
@@ -1296,7 +1226,7 @@
         <article class="nextgen-ad-card" data-tilt>
             <div class="ad-sponsor-label">
                 <i class="fas fa-star"></i>
-                <span>Partenariat</span>
+                <span>{{ trans('app.home.ads.partnership') }}</span>
             </div>
             <a href="{{ $ad->link_url ?? '#' }}" target="_blank" onclick="trackAdClick({{ $ad->id }})" class="nextgen-ad-link">
                 <div class="ad-background-pattern"></div>
@@ -1327,18 +1257,18 @@
                         <div class="ad-stats">
                             <div class="stat-bubble">
                                 <i class="fas fa-rocket"></i>
-                                <span>Innovant</span>
+                                <span>{{ trans('app.home.ads.innovative') }}</span>
                             </div>
                             <div class="stat-bubble">
                                 <i class="fas fa-award"></i>
-                                <span>Certifié</span>
+                                <span>{{ trans('app.home.ads.certified') }}</span>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="ad-action-bar">
                     <button class="ad-action-btn" type="button">
-                        <span class="btn-text">Explorer</span>
+                        <span class="btn-text">{{ trans('app.home.ads.explore') }}</span>
                         <span class="btn-icon">
                             <i class="fas fa-arrow-right"></i>
                         </span>
@@ -1969,9 +1899,9 @@
 
 <!-- Technologies Section - Carousel Ultra Moderne -->
 <section id="technologies" class="tech-section">
-    <h2 class="section-title">Technologies Enseignées</h2>
+    <h2 class="section-title">{{ trans('app.home.technologies.section_title') }}</h2>
     <p class="section-subtitle">
-        Maîtrisez les technologies les plus demandées du marché avec nos formations complètes et pratiques.
+        {{ trans('app.home.technologies.section_subtitle') }}
     </p>
     
     <div class="tech-carousel-wrapper">
@@ -1988,10 +1918,10 @@
                         </div>
                         <div class="tech-card-content-section">
                             <p class="tech-desc-carousel">
-                                Maîtrisez HTML5 : structure sémantique, formulaires avancés, APIs modernes et bonnes pratiques pour des sites accessibles et performants.
+                                {{ trans('app.home.technologies.html5_desc') }}
                             </p>
                             <a href="{{ route('formations.html5') }}" class="tech-link-carousel">
-                                Commencer <i class="fas fa-arrow-right"></i>
+                                {{ trans('app.home.technologies.start_button') }} <i class="fas fa-arrow-right"></i>
                             </a>
                         </div>
                     </div>
@@ -2008,10 +1938,10 @@
                         </div>
                         <div class="tech-card-content-section">
                             <p class="tech-desc-carousel">
-                                Créez des designs modernes avec CSS3 : Flexbox, Grid, animations, transitions et techniques avancées pour des interfaces professionnelles.
+                                {{ trans('app.home.technologies.css3_desc') }}
                             </p>
                             <a href="{{ route('formations.css3') }}" class="tech-link-carousel">
-                                Commencer <i class="fas fa-arrow-right"></i>
+                                {{ trans('app.home.technologies.start_button') }} <i class="fas fa-arrow-right"></i>
                             </a>
                         </div>
                     </div>
@@ -2028,10 +1958,10 @@
                         </div>
                         <div class="tech-card-content-section">
                             <p class="tech-desc-carousel">
-                                Maîtrisez JavaScript ES6+ : DOM, programmation asynchrone, Promises, async/await et frameworks modernes React et Vue.js.
+                                {{ trans('app.home.technologies.javascript_desc') }}
                             </p>
                             <a href="{{ route('formations.javascript') }}" class="tech-link-carousel">
-                                Commencer <i class="fas fa-arrow-right"></i>
+                                {{ trans('app.home.technologies.start_button') }} <i class="fas fa-arrow-right"></i>
                             </a>
                         </div>
                     </div>
@@ -2048,10 +1978,10 @@
                         </div>
                         <div class="tech-card-content-section">
                             <p class="tech-desc-carousel">
-                                Développez des applications web avec PHP : POO, intégration MySQL et frameworks Laravel et Symfony pour des solutions professionnelles.
+                                {{ trans('app.home.technologies.php_desc') }}
                             </p>
                             <a href="{{ route('formations.php') }}" class="tech-link-carousel">
-                                Commencer <i class="fas fa-arrow-right"></i>
+                                {{ trans('app.home.technologies.start_button') }} <i class="fas fa-arrow-right"></i>
                             </a>
                         </div>
                     </div>
@@ -2068,10 +1998,10 @@
                         </div>
                         <div class="tech-card-content-section">
                             <p class="tech-desc-carousel">
-                                Créez des interfaces responsives avec Bootstrap 5 : système de grille, composants prêts à l'emploi et personnalisation avancée.
+                                {{ trans('app.home.technologies.bootstrap_desc') }}
                             </p>
                             <a href="{{ route('formations.bootstrap') }}" class="tech-link-carousel">
-                                Commencer <i class="fas fa-arrow-right"></i>
+                                {{ trans('app.home.technologies.start_button') }} <i class="fas fa-arrow-right"></i>
                             </a>
                         </div>
                     </div>
@@ -2088,10 +2018,10 @@
                         </div>
                         <div class="tech-card-content-section">
                             <p class="tech-desc-carousel">
-                                Gérez vos projets avec Git et GitHub : versioning, branches, merges, collaboration et workflows professionnels pour un développement efficace.
+                                {{ trans('app.home.technologies.git_desc') }}
                             </p>
                             <a href="{{ route('formations.git') }}" class="tech-link-carousel">
-                                Commencer <i class="fas fa-arrow-right"></i>
+                                {{ trans('app.home.technologies.start_button') }} <i class="fas fa-arrow-right"></i>
                             </a>
                         </div>
                     </div>
@@ -2108,10 +2038,10 @@
                         </div>
                         <div class="tech-card-content-section">
                             <p class="tech-desc-carousel">
-                                Créez des sites professionnels avec WordPress : développement de thèmes, plugins personnalisés, optimisation et sécurisation avancée.
+                                {{ trans('app.home.technologies.wordpress_desc') }}
                             </p>
                             <a href="{{ route('formations.wordpress') }}" class="tech-link-carousel">
-                                Commencer <i class="fas fa-arrow-right"></i>
+                                {{ trans('app.home.technologies.start_button') }} <i class="fas fa-arrow-right"></i>
                             </a>
                         </div>
                     </div>
@@ -2128,10 +2058,10 @@
                         </div>
                         <div class="tech-card-content-section">
                             <p class="tech-desc-carousel">
-                                Découvrez l'IA et le Machine Learning : concepts fondamentaux, algorithmes essentiels et applications pratiques en développement web et data science.
+                                {{ trans('app.home.technologies.ia_desc') }}
                             </p>
                             <a href="{{ route('formations.ia') }}" class="tech-link-carousel">
-                                Commencer <i class="fas fa-arrow-right"></i>
+                                {{ trans('app.home.technologies.start_button') }} <i class="fas fa-arrow-right"></i>
                             </a>
                         </div>
                     </div>
@@ -2148,10 +2078,10 @@
                         </div>
                         <div class="tech-card-content-section">
                             <p class="tech-desc-carousel">
-                                Apprenez Python : développement web avec Django et Flask, data science, IA, automatisation et bien plus encore.
+                                {{ trans('app.home.technologies.python_desc') }}
                             </p>
                             <a href="{{ route('formations.python') }}" class="tech-link-carousel">
-                                Commencer <i class="fas fa-arrow-right"></i>
+                                {{ trans('app.home.technologies.start_button') }} <i class="fas fa-arrow-right"></i>
                             </a>
                         </div>
                     </div>
@@ -2168,10 +2098,10 @@
                         </div>
                         <div class="tech-card-content-section">
                             <p class="tech-desc-carousel">
-                                Maîtrisez Java : POO, collections, threads, design patterns et framework Spring pour développer des applications robustes et professionnelles.
+                                {{ trans('app.home.technologies.java_desc') }}
                             </p>
                             <a href="{{ route('formations.java') }}" class="tech-link-carousel">
-                                Commencer <i class="fas fa-arrow-right"></i>
+                                {{ trans('app.home.technologies.start_button') }} <i class="fas fa-arrow-right"></i>
                             </a>
                         </div>
                     </div>
@@ -2188,10 +2118,10 @@
                         </div>
                         <div class="tech-card-content-section">
                             <p class="tech-desc-carousel">
-                                Maîtrisez SQL : requêtes complexes, jointures, fonctions d'agrégation, vues, procédures stockées et techniques d'optimisation avancées.
+                                {{ trans('app.home.technologies.sql_desc') }}
                             </p>
                             <a href="{{ route('formations.sql') }}" class="tech-link-carousel">
-                                Commencer <i class="fas fa-arrow-right"></i>
+                                {{ trans('app.home.technologies.start_button') }} <i class="fas fa-arrow-right"></i>
                             </a>
                         </div>
                     </div>
@@ -2208,10 +2138,10 @@
                         </div>
                         <div class="tech-card-content-section">
                             <p class="tech-desc-carousel">
-                                Découvrez le langage C : pointeurs, structures de données, gestion mémoire, algorithmes et bases de la programmation système.
+                                {{ trans('app.home.technologies.c_desc') }}
                             </p>
                             <a href="{{ route('formations.c') }}" class="tech-link-carousel">
-                                Commencer <i class="fas fa-arrow-right"></i>
+                                {{ trans('app.home.technologies.start_button') }} <i class="fas fa-arrow-right"></i>
                             </a>
                         </div>
                     </div>
@@ -2314,9 +2244,9 @@
         <!-- Partie 1: Catégories d'articles (plus grande) -->
         <div class="categories-section" style="display: flex; flex-direction: column; height: 100%;">
             <div style="text-align: center; margin-bottom: 40px; flex-shrink: 0;">
-                <h2 class="section-title">📂 Catégories d'Articles</h2>
+                <h2 class="section-title">📂 {{ trans('app.home.categories.section_title') }}</h2>
                 <p class="section-subtitle">
-                    Explorez nos différentes catégories d'articles et trouvez le contenu qui vous intéresse
+                    {{ trans('app.home.categories.section_subtitle') }}
                 </p>
             </div>
             
@@ -2345,13 +2275,13 @@
                         <!-- Nombre d'articles -->
                         <div class="category-count" style="text-align: center; color: rgba(6, 182, 212, 0.8); font-size: 0.9rem; font-weight: 600;">
                             <i class="fas fa-file-alt" style="margin-right: 6px;"></i>
-                            {{ $category->published_articles_count ?? 0 }} article{{ ($category->published_articles_count ?? 0) > 1 ? 's' : '' }}
+                            {{ $category->published_articles_count ?? 0 }} {{ ($category->published_articles_count ?? 0) > 1 ? trans('app.home.categories.articles_count_plural') : trans('app.home.categories.articles_count') }}
                         </div>
                         
                         <!-- Badge "Nouveau" si récent -->
                         @if($category->created_at && $category->created_at->gt(now()->subDays(30)))
                         <div style="position: absolute; top: 12px; right: 12px; background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff; padding: 4px 10px; border-radius: 12px; font-size: 0.7rem; font-weight: 700; box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);">
-                            Nouveau
+                            {{ trans('app.home.categories.new') }}
                         </div>
                         @endif
                     </div>
@@ -2361,7 +2291,7 @@
             @else
             <div style="text-align: center; padding: 40px; background: rgba(6, 182, 212, 0.05); border-radius: 16px; border: 2px dashed rgba(6, 182, 212, 0.3);">
                 <i class="fas fa-folder-open" style="font-size: 48px; color: rgba(6, 182, 212, 0.5); margin-bottom: 16px;"></i>
-                <p style="color: rgba(30, 41, 59, 0.6);">Aucune catégorie disponible pour le moment.</p>
+                <p style="color: rgba(30, 41, 59, 0.6);">{{ trans('app.home.categories.no_categories') }}</p>
             </div>
             @endif
         </div>
@@ -2373,12 +2303,12 @@
                 <div style="display: inline-flex; align-items: center; gap: 10px; margin-bottom: 8px;">
                     <div style="width: 4px; height: 24px; background: linear-gradient(180deg, #06b6d4, #14b8a6); border-radius: 2px;"></div>
                     <h2 class="section-title" style="font-size: 1.2rem; font-weight: 800; color: rgba(30, 41, 59, 0.95); letter-spacing: -0.5px; margin: 0;">
-                        Articles Premium
+                        {{ trans('app.home.sponsored.section_title') }}
                     </h2>
                     <div style="width: 4px; height: 24px; background: linear-gradient(180deg, #14b8a6, #06b6d4); border-radius: 2px;"></div>
                 </div>
                 <p class="section-subtitle" style="font-size: 0.85rem; color: rgba(30, 41, 59, 0.6); margin: 0;">
-                    Contenu sélectionné pour vous
+                    {{ app()->getLocale() === 'fr' ? 'Contenu sélectionné pour vous' : 'Content selected for you' }}
                 </p>
             </div>
             
@@ -2388,7 +2318,7 @@
                     <!-- Badge Sponsorisé -->
                     <div class="sponsored-badge-top">
                         <i class="fas fa-star"></i>
-                        <span>Sponsorisé</span>
+                        <span>{{ trans('app.home.sponsored.badge') }}</span>
                     </div>
                     <a href="{{ route('emplois.article', $article->slug) }}" class="modern-sidebar-ad-link">
                         @if($article->cover_image)
@@ -2442,9 +2372,9 @@
 @if(isset($latestJobs) && $latestJobs->count() > 0)
 <section class="latest-jobs-section">
     <div style="text-align: center; margin-bottom: 50px;">
-        <h2 class="section-title">💼 Dernières Opportunités d'Emploi</h2>
+        <h2 class="section-title">💼 {{ trans('app.home.latest_jobs.section_title') }}</h2>
         <p class="section-subtitle">
-            Découvrez les dernières offres d'emploi, bourses et opportunités professionnelles publiées au Sénégal
+            {{ trans('app.home.latest_jobs.section_subtitle') }}
         </p>
     </div>
     
@@ -2483,7 +2413,7 @@
                             <span><i class="fas fa-calendar" style="color: #06b6d4;"></i> {{ $job->published_at ? $job->published_at->format('d/m/Y') : '' }}</span>
                         </div>
                         <span style="padding: 6px 14px; background: linear-gradient(135deg, #06b6d4, #14b8a6); color: #000; border-radius: 8px; font-weight: 700; font-size: 0.75rem; transition: all 0.3s ease;">
-                            Voir <i class="fas fa-arrow-right"></i>
+                            {{ trans('app.home.latest_jobs.view_button') }} <i class="fas fa-arrow-right"></i>
                         </span>
                     </div>
                 </div>
@@ -2494,7 +2424,7 @@
     
     <div style="text-align: center; margin-top: 40px;">
         <a href="{{ route('emplois') }}" style="display: inline-flex; align-items: center; gap: 10px; padding: 14px 32px; background: linear-gradient(135deg, #06b6d4, #14b8a6); color: #000; border-radius: 12px; font-weight: 700; text-decoration: none; transition: all 0.3s ease;">
-            Voir toutes les opportunités <i class="fas fa-arrow-right"></i>
+            {{ trans('app.home.latest_jobs.view_all') }} <i class="fas fa-arrow-right"></i>
         </a>
     </div>
 </section>

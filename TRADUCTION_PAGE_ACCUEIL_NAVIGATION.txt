@@ -1,0 +1,94 @@
+TRADUCTION COMPLÈTE DE LA PAGE D'ACCUEIL ET DE LA NAVIGATION
+================================================================
+
+Date: {{ date('Y-m-d H:i:s') }}
+
+OBJECTIF
+--------
+Traduire toutes les sections de la page d'accueil et la barre de navigation en français et en anglais.
+
+SECTIONS TRADUITES
+------------------
+
+1. NAVIGATION (resources/views/partials/navigation.blade.php)
+   - Menu principal (Accueil, Formations, Pratique, Emplois, À propos, Contact)
+   - Dropdown Formations (toutes les formations, HTML5, CSS3, JavaScript, PHP, Bootstrap, Git, Java)
+   - Dropdown Pratique (Exercices, Quiz)
+   - Dropdown Emplois (Toutes les opportunités, Offres d'Emploi, Bourses d'Études, Candidature Spontanée, Opportunités)
+   - Menu mobile (tous les éléments du menu desktop)
+   - Barre de recherche (titre, placeholder, bouton, astuce)
+
+2. PAGE D'ACCUEIL (resources/views/index.blade.php)
+   - Section Stats (Technologies, Exercices, Disponible, Gratuit)
+   - Section Exercices & Quiz
+     * Titre et sous-titre de la section
+     * Carte Exercices Pratiques (titre, description, bouton)
+     * Carte Quiz Interactifs (titre, description, bouton)
+     * Carte Formations Complètes (titre, description, bouton)
+   - Section Technologies Enseignées
+     * Titre et sous-titre de la section
+     * Descriptions de toutes les technologies (HTML5, CSS3, JavaScript, PHP, Bootstrap, Git, WordPress, IA, Python, Java, SQL, C)
+     * Bouton "Commencer" pour chaque technologie
+   - Section Catégories d'Articles
+     * Titre et sous-titre
+     * Compteur d'articles (singulier/pluriel)
+     * Badge "Nouveau"
+     * Message "Aucune catégorie disponible"
+   - Section Articles Premium
+     * Titre et sous-titre
+     * Badge "Sponsorisé"
+   - Section Dernières Opportunités
+     * Titre et sous-titre
+     * Bouton "Voir"
+     * Bouton "Voir toutes les opportunités"
+   - Section Publicités
+     * Badge "Partenariat"
+     * Badges "Innovant" et "Certifié"
+     * Bouton "Explorer"
+
+FICHIERS DE TRADUCTION MODIFIÉS
+--------------------------------
+
+1. lang/fr/app.php
+   - Ajout de toutes les traductions en français
+   - Structure organisée par sections
+
+2. lang/en/app.php
+   - Ajout de toutes les traductions en anglais
+   - Structure identique à la version française
+
+STRUCTURE DES TRADUCTIONS
+--------------------------
+
+app.nav.*
+  - home, formations, practice, jobs, about, contact
+  - dropdown.formations.* (all, html5, css3, javascript, php, bootstrap, git, java + descriptions)
+  - dropdown.practice.* (exercices, quiz + descriptions)
+  - dropdown.jobs.* (all, offers, scholarships, application, opportunities + descriptions, articles)
+
+app.home.*
+  - stats.* (technologies, exercices, available, free)
+  - exercices_quiz.* (section_title, section_subtitle, exercices_*, quiz_*, formations_*)
+  - technologies.* (section_title, section_subtitle, start_button, *_desc pour chaque technologie)
+  - categories.* (section_title, section_subtitle, articles_count, articles_count_plural, no_categories, new)
+  - sponsored.* (section_title, subtitle, badge)
+  - latest_jobs.* (section_title, section_subtitle, view_button, view_all)
+  - ads.* (partnership, innovative, certified, explore)
+  - search.* (title, placeholder, button, hint, close, label, submit)
+
+REMARQUES TECHNIQUES
+--------------------
+
+- Tous les textes en dur ont été remplacés par des appels à trans()
+- Les traductions sont organisées de manière hiérarchique pour faciliter la maintenance
+- Les textes dynamiques (compteurs, noms de catégories) restent en dur car ils proviennent de la base de données
+- Les emojis (📂, 💼) sont conservés dans les titres car ils sont universels
+- Les traductions sont disponibles en français (fr) et en anglais (en)
+
+STATUT
+------
+✅ Traduction complète de la navigation
+✅ Traduction complète de la page d'accueil
+✅ Fichiers de traduction mis à jour
+✅ Aucune erreur de linting détectée
+
