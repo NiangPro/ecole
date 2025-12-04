@@ -48,7 +48,7 @@
             
             <div style="display: grid; gap: 1.25rem;">
                 <div>
-                    <label for="name" class="dashboard-text-primary form-label" style="display: block; color: #2c3e50; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem;">
+                    <label for="name" class="dashboard-text-primary form-label" style="display: block; color: #2c3e50; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; text-align: left;">
                         {{ trans('app.profile.dashboard.profile.full_name') }} <span style="color: #ef4444;">*</span>
                     </label>
                     <input 
@@ -68,7 +68,7 @@
                 </div>
                 
                 <div>
-                    <label for="email" class="dashboard-text-primary form-label" style="display: block; color: #2c3e50; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem;">
+                    <label for="email" class="dashboard-text-primary form-label" style="display: block; color: #2c3e50; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; text-align: left;">
                         {{ trans('app.profile.dashboard.profile.email') }} <span style="color: #ef4444;">*</span>
                     </label>
                     <input 
@@ -88,22 +88,24 @@
                 </div>
                 
                 <div>
-                    <label for="phone" class="dashboard-text-primary form-label" style="display: block; color: #2c3e50; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem;">
+                    <label for="phone" class="dashboard-text-primary form-label" style="display: block; color: #2c3e50; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; text-align: left;">
                         {{ trans('app.profile.dashboard.profile.phone') }}
                     </label>
-                    <input 
-                        type="tel" 
-                        id="phone" 
-                        name="phone" 
-                        value="{{ old('phone', $user->phone) }}" 
-                        placeholder="+33 6 12 34 56 78"
-                        class="form-input"
-                        style="width: 100%; padding: 0.875rem 1rem; background: #ffffff; border: 1px solid rgba(4, 170, 109, 0.2); border-radius: 8px; color: #2c3e50; font-size: 0.95rem; transition: all 0.3s ease;"
-                        onfocus="this.style.borderColor='#04AA6D'; this.style.boxShadow='0 0 0 3px rgba(4, 170, 109, 0.1)';"
-                        onblur="this.style.borderColor='rgba(4, 170, 109, 0.2)'; this.style.boxShadow='none';"
-                    >
+                    <div style="width: 100%;">
+                        <input 
+                            type="tel" 
+                            id="phone" 
+                            name="phone" 
+                            value="{{ old('phone', $user->phone) }}" 
+                            class="form-input"
+                            style="width: 100%; padding: 0.875rem 1rem; background: #ffffff; border: 1px solid rgba(4, 170, 109, 0.2); border-radius: 8px; color: #2c3e50; font-size: 0.95rem; transition: all 0.3s ease;"
+                            onfocus="this.style.borderColor='#04AA6D'; this.style.boxShadow='0 0 0 3px rgba(4, 170, 109, 0.1)';"
+                            onblur="this.style.borderColor='rgba(4, 170, 109, 0.2)'; this.style.boxShadow='none';"
+                        >
+                    </div>
+                    <input type="hidden" id="phone_country" name="phone_country" value="">
                     @error('phone')
-                        <div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem;">{{ $message }}</div>
+                        <div style="color: #ef4444; font-size: 0.85rem; margin-top: 0.25rem;padding-left: 30px;">{{ $message }}</div>
                     @enderror
                 </div>
             </div>
@@ -135,7 +137,7 @@
             
             <div style="display: grid; gap: 1.25rem;">
                 <div>
-                    <label for="current_password" class="dashboard-text-primary form-label" style="display: block; color: #2c3e50; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem;">
+                    <label for="current_password" class="dashboard-text-primary form-label" style="display: block; color: #2c3e50; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; text-align: left;">
                         {{ trans('app.profile.dashboard.profile.current_password') }} <span style="color: #ef4444;">*</span>
                     </label>
                     <input 
@@ -154,7 +156,7 @@
                 </div>
                 
                 <div>
-                    <label for="password" class="dashboard-text-primary form-label" style="display: block; color: #2c3e50; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem;">
+                    <label for="password" class="dashboard-text-primary form-label" style="display: block; color: #2c3e50; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; text-align: left;">
                         {{ trans('app.profile.dashboard.profile.new_password') }} <span style="color: #ef4444;">*</span>
                     </label>
                     <input 
@@ -175,7 +177,7 @@
                 </div>
                 
                 <div>
-                    <label for="password_confirmation" class="dashboard-text-primary form-label" style="display: block; color: #2c3e50; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem;">
+                    <label for="password_confirmation" class="dashboard-text-primary form-label" style="display: block; color: #2c3e50; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.9rem; text-align: left;">
                         {{ trans('app.profile.dashboard.profile.confirm_password') }} <span style="color: #ef4444;">*</span>
                     </label>
                     <input 
@@ -240,7 +242,85 @@
     </div>
 </div>
 
+<!-- Intl Tel Input CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@19.5.3/build/css/intlTelInput.css">
+
+<!-- Intl Tel Input JS -->
+<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@19.5.3/build/js/intlTelInput.min.js"></script>
+
 <script>
+// Initialiser intl-tel-input pour le champ téléphone
+document.addEventListener('DOMContentLoaded', function() {
+    const phoneInput = document.getElementById('phone');
+    if (phoneInput && window.intlTelInput) {
+        // Sauvegarder la valeur existante
+        const existingPhone = phoneInput.value;
+        
+        // Déterminer le pays initial basé sur le numéro existant
+        let initialCountry = 'sn';
+        if (existingPhone) {
+            if (existingPhone.startsWith('+221')) initialCountry = 'sn';
+            else if (existingPhone.startsWith('+33')) initialCountry = 'fr';
+            else if (existingPhone.startsWith('+1')) initialCountry = 'us';
+            else if (existingPhone.startsWith('+44')) initialCountry = 'gb';
+        }
+        
+        const iti = window.intlTelInput(phoneInput, {
+            initialCountry: initialCountry,
+            preferredCountries: ['sn', 'fr', 'us', 'gb', 'de', 'es', 'it', 'ma', 'ci', 'cm', 'bf', 'ml', 'ne', 'td', 'mr'],
+            utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@19.5.3/build/js/utils.js",
+            separateDialCode: true,
+            nationalMode: false,
+            autoPlaceholder: "aggressive",
+            formatOnDisplay: true,
+        });
+        
+        // Si une valeur existe, la formater correctement
+        if (existingPhone) {
+            // Attendre que l'initialisation soit complète
+            setTimeout(function() {
+                try {
+                    iti.setNumber(existingPhone);
+                } catch(e) {
+                    // Si le formatage échoue, garder la valeur originale
+                    console.log('Erreur formatage téléphone:', e);
+                }
+            }, 100);
+        }
+        
+        // Mettre à jour le champ hidden avec le pays sélectionné
+        phoneInput.addEventListener('countrychange', function() {
+            const countryField = document.getElementById('phone_country');
+            if (countryField) {
+                countryField.value = iti.getSelectedCountryData().iso2;
+            }
+        });
+        
+        // Mettre à jour le champ hidden au chargement
+        const countryField = document.getElementById('phone_country');
+        if (countryField) {
+            countryField.value = iti.getSelectedCountryData().iso2;
+        }
+        
+        // Valider le numéro avant la soumission
+        const form = phoneInput.closest('form');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                if (phoneInput.value.trim()) {
+                    if (!iti.isValidNumber()) {
+                        e.preventDefault();
+                        alert('{{ trans('app.profile.dashboard.profile.invalid_phone') ?? 'Numéro de téléphone invalide. Veuillez vérifier le format.' }}');
+                        phoneInput.focus();
+                        return false;
+                    }
+                    // Mettre à jour le champ avec le numéro formaté international
+                    phoneInput.value = iti.getNumber();
+                }
+            });
+        }
+    }
+});
+
 // Validation du formulaire de mot de passe
 const passwordForm = document.getElementById('passwordForm');
 if (passwordForm) {
@@ -256,6 +336,9 @@ if (passwordForm) {
     });
 }
 </script>
+
+<!-- Intl Tel Input JS -->
+<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@19.5.3/build/js/intlTelInput.min.js"></script>
 
 <style>
     /* Dark Mode Styles pour la page Profile */
@@ -326,6 +409,134 @@ if (passwordForm) {
     body.dark-mode .error-message {
         background: rgba(239, 68, 68, 0.2) !important;
         border-color: rgba(239, 68, 68, 0.4) !important;
+    }
+    
+    /* Styles pour intl-tel-input */
+    .iti {
+        width: 100%;
+        display: flex !important;
+        align-items: center !important;
+    }
+    
+    .iti__flag-container {
+        z-index: 10;
+        flex-shrink: 0;
+        width: auto !important;
+        min-width: auto !important;
+        max-width: 80px !important;
+    }
+    
+    .iti__selected-flag {
+        padding: 0 6px !important;
+        border-radius: 8px 0 0 8px;
+        background: rgba(255, 255, 255, 0.9);
+        display: flex !important;
+        align-items: center !important;
+        width: auto !important;
+        min-width: auto !important;
+        max-width: 75px !important;
+    }
+    
+    body.dark-mode .iti__selected-flag {
+        background: rgba(15, 23, 42, 0.8) !important;
+    }
+    
+    /* Réduire la largeur du drapeau */
+    .iti__flag {
+        width: 18px !important;
+        height: 14px !important;
+        margin-right: 3px !important;
+    }
+    
+    /* Réduire la largeur du code pays - comme dans contact */
+    .iti__selected-dial-code {
+        font-size: 0.9rem !important;
+        padding: 0 4px !important;
+        margin-right: 8px !important;
+    }
+    
+    /* Réduire la largeur de la flèche dropdown */
+    .iti__arrow {
+        margin-left: 2px !important;
+        width: 8px !important;
+    }
+    
+    /* S'assurer que l'input a un padding à gauche pour l'espace après le drapeau - comme dans contact */
+    .iti input[type="tel"],
+    .iti input[type="text"],
+    #phone {
+        padding-left: 50px !important;
+        flex: 1 !important;
+        margin-left: 0 !important;
+        min-width: 0 !important;
+    }
+    
+    /* Ajouter un espace supplémentaire après le conteneur du drapeau */
+    .iti__flag-container {
+        margin-right: 0 !important;
+    }
+    
+    /* Conteneur parent pour éviter les retours à la ligne */
+    #phone {
+        display: inline-block !important;
+    }
+    
+    /* S'assurer que le wrapper est en ligne */
+    .iti__tel-input {
+        display: inline-flex !important;
+        align-items: center !important;
+        width: 100% !important;
+    }
+    
+    .iti__selected-flag {
+        border-right: none !important;
+    }
+    
+    /* S'assurer que le conteneur principal est en ligne */
+    .iti__tel-input {
+        display: flex !important;
+        align-items: center !important;
+        width: 100% !important;
+    }
+    
+    .iti__country-list {
+        z-index: 10000;
+        background: rgba(15, 23, 42, 0.98);
+        border: 1px solid rgba(4, 170, 109, 0.3);
+        border-radius: 8px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    }
+    
+    body:not(.dark-mode) .iti__country-list {
+        background: rgba(255, 255, 255, 0.98) !important;
+        border-color: rgba(4, 170, 109, 0.3) !important;
+    }
+    
+    .iti__country {
+        color: rgba(255, 255, 255, 0.9);
+        padding: 8px 12px;
+    }
+    
+    body:not(.dark-mode) .iti__country {
+        color: rgba(30, 41, 59, 0.9) !important;
+    }
+    
+    .iti__country:hover,
+    .iti__country.iti__highlight {
+        background: rgba(4, 170, 109, 0.2);
+    }
+    
+    body:not(.dark-mode) .iti__country:hover,
+    body:not(.dark-mode) .iti__country.iti__highlight {
+        background: rgba(4, 170, 109, 0.1) !important;
+    }
+    
+    .iti__dial-code {
+        color: rgba(255, 255, 255, 0.7);
+    }
+    
+    body:not(.dark-mode) .iti__dial-code {
+        color: rgba(30, 41, 59, 0.7) !important;
     }
 </style>
 @endsection

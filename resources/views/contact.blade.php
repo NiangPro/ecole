@@ -276,7 +276,72 @@
             height: 2.75rem !important;
         }
     }
+    
+    /* Styles pour intl-tel-input */
+    .iti {
+        width: 100%;
+    }
+    
+    .iti__flag-container {
+        z-index: 10;
+    }
+    
+    .iti__selected-flag {
+        padding: 0 12px;
+        border-radius: 10px 0 0 10px;
+    }
+    
+    body:not(.dark-mode) .iti__selected-flag {
+        background: rgba(255, 255, 255, 0.9) !important;
+    }
+    
+    body.dark-mode .iti__selected-flag {
+        background: rgba(15, 23, 42, 0.8) !important;
+    }
+    
+    .iti__country-list {
+        z-index: 10000;
+        background: rgba(15, 23, 42, 0.98);
+        border: 1px solid rgba(6, 182, 212, 0.3);
+        border-radius: 10px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    }
+    
+    body:not(.dark-mode) .iti__country-list {
+        background: rgba(255, 255, 255, 0.98) !important;
+        border-color: rgba(6, 182, 212, 0.3) !important;
+    }
+    
+    .iti__country {
+        color: rgba(255, 255, 255, 0.9);
+        padding: 8px 12px;
+    }
+    
+    body:not(.dark-mode) .iti__country {
+        color: rgba(30, 41, 59, 0.9) !important;
+    }
+    
+    .iti__country:hover,
+    .iti__country.iti__highlight {
+        background: rgba(6, 182, 212, 0.2);
+    }
+    
+    body:not(.dark-mode) .iti__country:hover,
+    body:not(.dark-mode) .iti__country.iti__highlight {
+        background: rgba(6, 182, 212, 0.1) !important;
+    }
+    
+    .iti__dial-code {
+        color: rgba(255, 255, 255, 0.7);
+    }
+    
+    body:not(.dark-mode) .iti__dial-code {
+        color: rgba(30, 41, 59, 0.7) !important;
+    }
 </style>
+
+<!-- Intl Tel Input CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@19.5.3/build/css/intlTelInput.css">
 @endsection
 
 @section('content')
@@ -327,7 +392,7 @@
                     <input type="hidden" name="_form_time" id="form-time" value="{{ microtime(true) }}">
                     
                     <div>
-                        <label for="name" class="block text-sm font-semibold mb-2 text-gray-300">
+                        <label for="name" class="block text-sm font-semibold mb-2 text-gray-300 text-left">
                             <i class="fas fa-user mr-2 text-cyan-400"></i>Nom complet *
                         </label>
                         <input type="text" id="name" name="name" required 
@@ -335,7 +400,7 @@
                     </div>
                     
                     <div>
-                        <label for="email" class="block text-sm font-semibold mb-2 text-gray-300">
+                        <label for="email" class="block text-sm font-semibold mb-2 text-gray-300 text-left">
                             <i class="fas fa-envelope mr-2 text-cyan-400"></i>Email *
                         </label>
                         <input type="email" id="email" name="email" required 
@@ -343,15 +408,16 @@
                     </div>
                     
                     <div>
-                        <label for="phone" class="block text-sm font-semibold mb-2 text-gray-300">
+                        <label for="phone" class="block text-sm font-semibold mb-2 text-gray-300 text-left">
                             <i class="fas fa-phone mr-2 text-cyan-400"></i>Téléphone
                         </label>
                         <input type="tel" id="phone" name="phone" 
-                               class="contact-input" placeholder="+221 77 123 45 67">
+                               class="contact-input" placeholder="">
+                        <input type="hidden" id="phone_country" name="phone_country" value="">
                     </div>
                     
                     <div>
-                        <label for="subject" class="block text-sm font-semibold mb-2 text-gray-300">
+                        <label for="subject" class="block text-sm font-semibold mb-2 text-gray-300 text-left">
                             <i class="fas fa-tag mr-2 text-cyan-400"></i>Sujet *
                         </label>
                         <input type="text" id="subject" name="subject" required 
@@ -359,7 +425,7 @@
                     </div>
                     
                     <div>
-                        <label for="message" class="block text-sm font-semibold mb-2 text-gray-300">
+                        <label for="message" class="block text-sm font-semibold mb-2 text-gray-300 text-left">
                             <i class="fas fa-comment mr-2 text-cyan-400"></i>Message *
                         </label>
                         <textarea id="message" name="message" required 
@@ -496,4 +562,55 @@
         </div>
     </div>
 </section>
+
+<!-- Intl Tel Input JS -->
+<script src="https://cdn.jsdelivr.net/npm/intl-tel-input@19.5.3/build/js/intlTelInput.min.js"></script>
+<script>
+// Initialiser intl-tel-input pour le champ téléphone
+document.addEventListener('DOMContentLoaded', function() {
+    const phoneInput = document.getElementById('phone');
+    if (phoneInput && window.intlTelInput) {
+        const iti = window.intlTelInput(phoneInput, {
+            initialCountry: "sn",
+            preferredCountries: ['sn', 'fr', 'us', 'gb', 'de', 'es', 'it', 'ma', 'ci', 'cm', 'bf', 'ml', 'ne', 'td', 'mr'],
+            utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@19.5.3/build/js/utils.js",
+            separateDialCode: true,
+            nationalMode: false,
+            autoPlaceholder: "aggressive",
+            formatOnDisplay: true,
+        });
+        
+        // Mettre à jour le champ hidden avec le pays sélectionné
+        phoneInput.addEventListener('countrychange', function() {
+            const countryField = document.getElementById('phone_country');
+            if (countryField) {
+                countryField.value = iti.getSelectedCountryData().iso2;
+            }
+        });
+        
+        // Mettre à jour le champ hidden au chargement
+        const countryField = document.getElementById('phone_country');
+        if (countryField) {
+            countryField.value = iti.getSelectedCountryData().iso2;
+        }
+        
+        // Valider le numéro avant la soumission
+        const contactForm = document.getElementById('contact-form');
+        if (contactForm) {
+            contactForm.addEventListener('submit', function(e) {
+                if (phoneInput.value.trim()) {
+                    if (!iti.isValidNumber()) {
+                        e.preventDefault();
+                        alert('Numéro de téléphone invalide. Veuillez vérifier le format.');
+                        phoneInput.focus();
+                        return false;
+                    }
+                    // Mettre à jour le champ avec le numéro formaté international
+                    phoneInput.value = iti.getNumber();
+                }
+            });
+        }
+    }
+});
+</script>
 @endsection

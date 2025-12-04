@@ -215,12 +215,12 @@
 
         <!-- Filtres -->
         <div class="bg-slate-800/50 backdrop-blur-xl border border-cyan-500/20 rounded-xl p-6 mb-6">
-            <form action="{{ route('admin.logs.index') }}" method="GET" class="space-y-4">
-                <div class="flex flex-wrap gap-3">
+            <form action="{{ route('admin.logs.index') }}" method="GET">
+                <div class="flex flex-wrap gap-3 items-end mb-3">
                     <input type="text" name="search" value="{{ $search }}" 
                            placeholder="Rechercher dans les logs..." 
-                           class="input-admin flex-1 min-w-[200px]">
-                    <select name="action" class="input-admin" style="min-width: 150px;">
+                           class="input-admin" style="flex: 2; min-width: 200px;">
+                    <select name="action" class="input-admin" style="flex: 1.5; min-width: 150px;">
                         <option value="">Toutes les actions</option>
                         @foreach($actions as $actionOption)
                         <option value="{{ $actionOption }}" {{ $action == $actionOption ? 'selected' : '' }}>
@@ -228,11 +228,11 @@
                         </option>
                         @endforeach
                     </select>
-                    <select name="sort" class="input-admin" style="min-width: 150px;">
+                    <select name="sort" class="input-admin" style="flex: 1; min-width: 140px;">
                         <option value="created_at" {{ $sortBy == 'created_at' ? 'selected' : '' }}>Date</option>
                         <option value="action" {{ $sortBy == 'action' ? 'selected' : '' }}>Action</option>
                     </select>
-                    <select name="order" class="input-admin" style="min-width: 120px;">
+                    <select name="order" class="input-admin" style="flex: 1; min-width: 130px;">
                         <option value="desc" {{ $sortOrder == 'desc' ? 'selected' : '' }}>Décroissant</option>
                         <option value="asc" {{ $sortOrder == 'asc' ? 'selected' : '' }}>Croissant</option>
                     </select>

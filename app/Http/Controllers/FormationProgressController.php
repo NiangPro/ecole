@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\FormationProgress;
 use Illuminate\Support\Facades\Auth;
 use App\Models\UserActivity;
+use App\Services\BadgeService;
 
 class FormationProgressController extends Controller
 {
@@ -38,9 +39,27 @@ class FormationProgressController extends Controller
         }
 
         // Calculer le pourcentage (basé sur les sections complétées)
-        // Ici on suppose qu'il y a environ 10 sections par formation
+        // Définir le nombre total de sections par formation
+        $totalSectionsByFormation = [
+            'html5' => 22, // intro, editors, basic, elements, attributes, headings, paragraphs, styles, formatting, quotations, comments, colors, links, images, tables, lists, forms, media, canvas, svg, apis, semantic
+            'css3' => 14, // intro, syntax, selectors, colors, backgrounds, borders, margins, text, fonts, flexbox, grid, transitions, animations, responsive
+            'javascript' => 13, // intro, variables, datatypes, operators, conditions, loops, functions, arrays, objects, dom, events, es6, async
+            'php' => 14, // intro, syntax, variables, datatypes, operators, conditions, loops, functions, arrays, forms, sessions, mysql, pdo, oop
+            'bootstrap' => 12, // intro, installation, grid, containers, typography, colors, buttons, navbar, cards, forms, modals, utilities
+            'python' => 12, // intro, syntax, variables, datatypes, operators, conditions, loops, functions, lists, modules, oop, files
+            'java' => 13, // intro, syntax, variables, datatypes, operators, conditions, loops, methods, arrays, oop, collections, exceptions, files
+            'sql' => 13, // intro, syntax, datatypes, operators, select, where, conditions, joins, aggregate, groupby, insert, subqueries, tables
+            'c' => 13, // intro, syntax, variables, datatypes, operators, conditions, loops, functions, pointers, arrays, structs, memory, files
+            'git' => 12, // intro, install, config, init, status, commit, branches, merge, remote, push, clone, github
+            'wordpress' => 13, // intro, install, dashboard, pages, posts, media, themes, plugins, menus, widgets, users, seo, security
+            'ia' => 12, // intro, concepts, ml, dl, nlp, cv, python, tensorflow, pytorch, models, apis, ethics
+            'dart' => 13, // intro, syntax, variables, datatypes, operators, conditions, loops, functions, classes, mixins, futures, streams, flutter
+            'csharp' => 14, // intro, syntax, variables, datatypes, operators, conditions, loops, methods, classes, collections, inheritance, interfaces, linq, async
+            'cpp' => 13, // intro, syntax, variables, datatypes, operators, conditions, loops, functions, classes, inheritance, polymorphism, templates, stl
+        ];
+        
+        $totalSections = $totalSectionsByFormation[$request->formation_slug] ?? 10;
         $completedSections = count($progress->completed_sections ?? []);
-        $totalSections = 10; // À ajuster selon la formation
         $previousPercentage = $progress->progress_percentage;
         $progress->updateProgress($totalSections, $completedSections);
         
@@ -61,6 +80,10 @@ class FormationProgressController extends Controller
                     'time_spent_minutes' => $progress->time_spent_minutes,
                 ]
             );
+            
+            // Vérifier et attribuer des badges
+            $badgeService = new BadgeService();
+            $badgeService->checkAndAwardBadges($user);
             
             // Invalider le cache du dashboard
             \App\Http\Controllers\ProfileController::clearCache($user->id);

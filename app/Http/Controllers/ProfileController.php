@@ -259,8 +259,51 @@ class ProfileController extends Controller
         $this->ensureLocale();
         
         $data = $this->getCommonData();
+        $user = Auth::user();
         
-        // Filtres
+        // Liste des langages disponibles (identique à PageController::quiz())
+        $languages = [
+            ['name' => trans('app.formations.languages.html5'), 'slug' => 'html5', 'icon' => 'fab fa-html5', 'color' => 'orange', 'questions' => 20],
+            ['name' => trans('app.formations.languages.css3'), 'slug' => 'css3', 'icon' => 'fab fa-css3-alt', 'color' => 'blue', 'questions' => 20],
+            ['name' => trans('app.formations.languages.javascript'), 'slug' => 'javascript', 'icon' => 'fab fa-js', 'color' => 'yellow', 'questions' => 20],
+            ['name' => trans('app.formations.languages.php'), 'slug' => 'php', 'icon' => 'fab fa-php', 'color' => 'purple', 'questions' => 20],
+            ['name' => trans('app.formations.languages.bootstrap'), 'slug' => 'bootstrap', 'icon' => 'fab fa-bootstrap', 'color' => 'purple', 'questions' => 15],
+            ['name' => trans('app.formations.languages.git'), 'slug' => 'git', 'icon' => 'fab fa-git-alt', 'color' => 'red', 'questions' => 15],
+            ['name' => trans('app.formations.languages.wordpress'), 'slug' => 'wordpress', 'icon' => 'fab fa-wordpress', 'color' => 'blue', 'questions' => 15],
+            ['name' => trans('app.formations.languages.ia'), 'slug' => 'ia', 'icon' => 'fas fa-robot', 'color' => 'green', 'questions' => 15],
+            ['name' => trans('app.formations.languages.python'), 'slug' => 'python', 'icon' => 'fab fa-python', 'color' => 'blue', 'questions' => 20],
+            ['name' => trans('app.formations.languages.java'), 'slug' => 'java', 'icon' => 'fab fa-java', 'color' => 'orange', 'questions' => 20],
+            ['name' => trans('app.formations.languages.sql'), 'slug' => 'sql', 'icon' => 'fas fa-database', 'color' => 'blue', 'questions' => 20],
+            ['name' => trans('app.formations.languages.c'), 'slug' => 'c', 'icon' => 'fab fa-c', 'color' => 'gray', 'questions' => 20],
+            ['name' => trans('app.formations.languages.cpp'), 'slug' => 'cpp', 'icon' => 'fab fa-cuttlefish', 'color' => 'blue', 'questions' => 20],
+            ['name' => trans('app.formations.languages.csharp'), 'slug' => 'csharp', 'icon' => 'fab fa-microsoft', 'color' => 'green', 'questions' => 20],
+            ['name' => trans('app.formations.languages.dart'), 'slug' => 'dart', 'icon' => 'fas fa-feather-alt', 'color' => 'blue', 'questions' => 20],
+        ];
+        
+        // Enrichir chaque langage avec les statistiques de l'utilisateur
+        $allQuizResults = $data['quizResults'];
+        $languagesWithStats = [];
+        
+        foreach ($languages as $lang) {
+            $langResults = $allQuizResults->where('language', $lang['slug']);
+            $bestResult = $langResults->sortByDesc(function($result) {
+                return $result->percentage;
+            })->first();
+            
+            $languagesWithStats[] = [
+                'name' => $lang['name'],
+                'slug' => $lang['slug'],
+                'icon' => $lang['icon'],
+                'color' => $lang['color'],
+                'questions' => $lang['questions'],
+                'completed' => $langResults->count() > 0,
+                'attempts' => $langResults->count(),
+                'best_score' => $bestResult ? $bestResult->percentage : null,
+                'last_completed' => $bestResult ? $bestResult->completed_at : null,
+            ];
+        }
+        
+        // Filtres pour l'historique
         $query = $data['quizResults'];
         
         // Filtre par langage
@@ -270,7 +313,10 @@ class ProfileController extends Controller
         
         // Filtre par score
         if ($request->filled('score_min')) {
-            $query = $query->where('percentage', '>=', $request->score_min);
+            $scoreMin = $request->score_min;
+            $query = $query->filter(function($result) use ($scoreMin) {
+                return $result->percentage >= $scoreMin;
+            });
         }
         
         // Recherche
@@ -287,7 +333,9 @@ class ProfileController extends Controller
         $sortOrder = $request->get('order', 'desc');
         
         if ($sortBy === 'score') {
-            $query = $query->sortBy('percentage', SORT_NUMERIC, $sortOrder === 'desc');
+            $query = $query->sortBy(function($result) {
+                return $result->percentage;
+            }, SORT_NUMERIC, $sortOrder === 'desc');
         } elseif ($sortBy === 'language') {
             $query = $query->sortBy('language', SORT_REGULAR, $sortOrder === 'desc');
         } else {
@@ -296,6 +344,7 @@ class ProfileController extends Controller
         
         $data['quizResults'] = $query->values();
         $data['filters'] = $request->only(['language', 'score_min', 'search', 'sort', 'order']);
+        $data['languages'] = $languagesWithStats;
         
         return view('dashboard.quiz', $data);
     }
@@ -424,7 +473,8 @@ class ProfileController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . $user->id,
-            'phone' => 'nullable|string|max:20',
+            'phone' => 'nullable|string|max:30',
+            'phone_country' => 'nullable|string|max:2',
         ]);
         
         $user->name = $request->name;
@@ -684,7 +734,9 @@ class ProfileController extends Controller
         
         // 5. Recommandation : Quiz pour tester les connaissances
         $quizLanguages = $quizResults->pluck('language')->unique()->toArray();
-        $lowScores = $quizResults->where('percentage', '<', 70)
+        $lowScores = $quizResults->filter(function($result) {
+                return $result->percentage < 70;
+            })
             ->pluck('language')
             ->unique()
             ->toArray();

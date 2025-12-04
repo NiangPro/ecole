@@ -819,6 +819,50 @@
     body.dark-mode [style*="color:#000"] {
         color: rgba(255, 255, 255, 0.9) !important;
     }
+    
+    /* Dark mode pour la section progression/CTA */
+    body.dark-mode [style*="background: linear-gradient(135deg, rgba(4, 170, 109"] {
+        background: linear-gradient(135deg, rgba(4, 170, 109, 0.2) 0%, rgba(4, 170, 109, 0.1) 100%) !important;
+        border-color: rgba(4, 170, 109, 0.4) !important;
+    }
+    
+    body.dark-mode [style*="color: #2c3e50"] {
+        color: rgba(255, 255, 255, 0.9) !important;
+    }
+    
+    body.dark-mode [style*="background: white"] {
+        background: rgba(15, 23, 42, 0.8) !important;
+        border-color: rgba(4, 170, 109, 0.4) !important;
+        color: rgba(255, 255, 255, 0.9) !important;
+    }
+    
+    body.dark-mode [style*="background: linear-gradient(135deg, rgba(4, 170, 109, 0.15)"] {
+        background: linear-gradient(135deg, rgba(4, 170, 109, 0.25) 0%, rgba(6, 182, 212, 0.15) 100%) !important;
+        border-color: rgba(4, 170, 109, 0.5) !important;
+    }
+    
+    /* Animations pour les notifications */
+    @keyframes slideInRight {
+        from {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        to {
+            transform: translateX(0);
+            opacity: 1;
+        }
+    }
+    
+    @keyframes slideOutRight {
+        from {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        to {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+    }
 </style>
 @endsection
 
@@ -833,6 +877,102 @@
         <p>{{ trans('app.formations.ia.subtitle') }}</p>
     </div>
 </div>
+
+<!-- Progression ou Message d'incitation -->
+@auth
+    @if($progress)
+    <div style="max-width: 1200px; margin: 20px auto; padding: 0 20px;">
+        <div style="background: linear-gradient(135deg, rgba(4, 170, 109, 0.1) 0%, rgba(4, 170, 109, 0.05) 100%); border: 2px solid rgba(4, 170, 109, 0.3); border-radius: 15px; padding: 1.5rem; box-shadow: 0 4px 15px rgba(4, 170, 109, 0.1);">
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
+                <div style="flex: 1; min-width: 250px;">
+                    <h3 style="font-size: 1.25rem; font-weight: 700; color: #04AA6D; margin: 0 0 0.75rem 0; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas fa-chart-line"></i>
+                        {{ trans('app.formations.progress.title') }}
+                    </h3>
+                    <div style="width: 100%; height: 12px; background: rgba(4, 170, 109, 0.2); border-radius: 6px; overflow: hidden; margin-bottom: 0.75rem;">
+                        <div id="progress-bar-fill" style="height: 100%; width: {{ $progress->progress_percentage }}%; background: linear-gradient(90deg, #04AA6D, #06b6d4); transition: width 0.6s ease; border-radius: 6px;"></div>
+                    </div>
+                    <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; font-size: 0.9rem; color: #2c3e50;">
+                        <span style="display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-percentage" style="color: #04AA6D;"></i>
+                            <strong id="progress-percentage-text">{{ $progress->progress_percentage }}%</strong> {{ trans('app.formations.progress.completed') }}
+                        </span>
+                        <span style="display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="fas fa-clock" style="color: #06b6d4;"></i>
+                            <strong id="time-spent-text">{{ $progress->time_spent_minutes }}</strong> {{ trans('app.profile.dashboard.overview.minutes') }}
+                        </span>
+                        @if($progress->completed_at)
+                            <span style="display: flex; align-items: center; gap: 0.5rem; color: #10b981;">
+                                <i class="fas fa-check-circle"></i>
+                                {{ trans('app.formations.progress.completed_on') }} {{ $progress->completed_at->format('d/m/Y') }}
+                            </span>
+                        @endif
+                    </div>
+                </div>
+                <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                    <a href="{{ route('dashboard.formations') }}" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #04AA6D, #038f5a); color: white; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(4, 170, 109, 0.3);">
+                        <i class="fas fa-tachometer-alt"></i>
+                        {{ trans('app.formations.progress.view_dashboard') }}
+                    </a>
+                    @if($progress->progress_percentage < 100)
+                    <a href="#intro" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: white; color: #04AA6D; border: 2px solid #04AA6D; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: all 0.3s ease;">
+                        <i class="fas fa-arrow-down"></i>
+                        {{ trans('app.formations.progress.continue') }}
+                    </a>
+                    @endif
+                </div>
+            </div>
+        </div>
+    </div>
+    @endif
+@else
+    <div style="max-width: 1200px; margin: 20px auto; padding: 0 20px;">
+        <div style="background: linear-gradient(135deg, rgba(4, 170, 109, 0.15) 0%, rgba(6, 182, 212, 0.1) 100%); border: 2px solid rgba(4, 170, 109, 0.4); border-radius: 15px; padding: 2rem; box-shadow: 0 8px 25px rgba(4, 170, 109, 0.2); position: relative; overflow: hidden;">
+            <div style="position: absolute; top: -50px; right: -50px; width: 200px; height: 200px; background: radial-gradient(circle, rgba(4, 170, 109, 0.2) 0%, transparent 70%); border-radius: 50%;"></div>
+            <div style="position: relative; z-index: 2;">
+                <div style="display: flex; align-items: start; gap: 1.5rem; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 300px;">
+                        <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                            <div style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #04AA6D, #06b6d4); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.75rem; box-shadow: 0 4px 15px rgba(4, 170, 109, 0.4);">
+                                <i class="fas fa-rocket"></i>
+                            </div>
+                            <h3 style="font-size: 1.5rem; font-weight: 700; color: #2c3e50; margin: 0;">
+                                {{ trans('app.formations.cta.title') }}
+                            </h3>
+                        </div>
+                        <p style="font-size: 1.1rem; color: #2c3e50; margin-bottom: 1.5rem; line-height: 1.7;">
+                            {{ trans('app.formations.cta.description') }}
+                        </p>
+                        <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem; color: #2c3e50; font-size: 0.95rem;">
+                                <i class="fas fa-check-circle" style="color: #04AA6D;"></i>
+                                <span>{{ trans('app.formations.cta.benefit1') }}</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem; color: #2c3e50; font-size: 0.95rem;">
+                                <i class="fas fa-check-circle" style="color: #04AA6D;"></i>
+                                <span>{{ trans('app.formations.cta.benefit2') }}</span>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.5rem; color: #2c3e50; font-size: 0.95rem;">
+                                <i class="fas fa-check-circle" style="color: #04AA6D;"></i>
+                                <span>{{ trans('app.formations.cta.benefit3') }}</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                            <a href="{{ route('register') }}" style="display: inline-flex; align-items: center; gap: 0.75rem; padding: 1rem 2rem; background: linear-gradient(135deg, #04AA6D, #038f5a); color: white; border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 1.1rem; transition: all 0.3s ease; box-shadow: 0 6px 20px rgba(4, 170, 109, 0.4);">
+                                <i class="fas fa-user-plus"></i>
+                                {{ trans('app.formations.cta.create_account') }}
+                            </a>
+                            <a href="{{ route('login') }}" style="display: inline-flex; align-items: center; gap: 0.75rem; padding: 1rem 2rem; background: white; color: #04AA6D; border: 2px solid #04AA6D; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 1.1rem; transition: all 0.3s ease;">
+                                <i class="fas fa-sign-in-alt"></i>
+                                {{ trans('app.formations.cta.login') }}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@endauth
 
 <!-- Content -->
 <div class="tutorial-content">
@@ -1418,5 +1558,121 @@
             codeBox.appendChild(copyButton);
         });
     });
+    
+    // Système de suivi automatique de progression
+    @auth
+    (function() {
+        const formationSlug = 'ia';
+        const sections = [
+            'intro', 'concepts', 'ml', 'dl', 'nlp', 'cv', 
+            'python', 'tensorflow', 'pytorch', 'models', 'apis', 'ethics'
+        ];
+        
+        let completedSections = new Set();
+        let progressData = null;
+        
+        function loadProgress() {
+            fetch(`/api/formation-progress/${formationSlug}`)
+                .then(response => response.json())
+                .then(data => {
+                    progressData = data;
+                    if (data.completed_sections) {
+                        completedSections = new Set(data.completed_sections);
+                    }
+                    updateProgressDisplay();
+                })
+                .catch(err => console.error('Erreur chargement progression:', err));
+        }
+        
+        function updateProgressDisplay() {
+            const progressBar = document.getElementById('progress-bar-fill');
+            const progressText = document.getElementById('progress-percentage-text');
+            const timeSpentText = document.getElementById('time-spent-text');
+            if (progressBar && progressData) progressBar.style.width = progressData.progress_percentage + '%';
+            if (progressText && progressData) progressText.textContent = progressData.progress_percentage + '%';
+            if (timeSpentText && progressData) timeSpentText.textContent = progressData.time_spent_minutes;
+        }
+        
+        function markSectionAsCompleted(sectionId) {
+            if (completedSections.has(sectionId)) return;
+            completedSections.add(sectionId);
+            
+            fetch('/api/formation-progress/update', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                },
+                body: JSON.stringify({
+                    formation_slug: formationSlug,
+                    section_id: sectionId,
+                    completed: true
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                progressData = data;
+                updateProgressDisplay();
+                if (data.progress_percentage === 100) showCompletionNotification();
+            })
+            .catch(err => console.error('Erreur mise à jour progression:', err));
+        }
+        
+        function showCompletionNotification() {
+            const notification = document.createElement('div');
+            notification.style.cssText = 'position: fixed; top: 20px; right: 20px; background: linear-gradient(135deg, #04AA6D, #06b6d4); color: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 8px 25px rgba(4, 170, 109, 0.4); z-index: 10000; max-width: 350px; animation: slideInRight 0.5s ease;';
+            notification.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 1rem;">
+                    <div style="width: 50px; height: 50px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <div>
+                        <h4 style="margin: 0 0 0.5rem 0; font-size: 1.1rem;">🎉 Formation Complétée !</h4>
+                        <p style="margin: 0; font-size: 0.9rem; opacity: 0.9;">Félicitations ! Vous avez terminé la formation IA.</p>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.5s ease';
+                setTimeout(() => notification.remove(), 500);
+            }, 5000);
+        }
+        
+        const observerOptions = {
+            root: null,
+            rootMargin: '-10% 0px -10% 0px',
+            threshold: 0.3
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const sectionId = entry.target.id;
+                    if (sectionId && sections.includes(sectionId) && !completedSections.has(sectionId)) {
+                        setTimeout(() => {
+                            const rect = entry.target.getBoundingClientRect();
+                            if (rect.top < window.innerHeight && rect.bottom > 0) {
+                                markSectionAsCompleted(sectionId);
+                                observer.unobserve(entry.target);
+                            }
+                        }, 5000);
+                    }
+                }
+            });
+        }, observerOptions);
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            sections.forEach(sectionId => {
+                const section = document.getElementById(sectionId);
+                if (section) observer.observe(section);
+            });
+            loadProgress();
+        });
+        
+        setInterval(loadProgress, 30000);
+    })();
+    @endauth
+    
 </script>
 @endsection

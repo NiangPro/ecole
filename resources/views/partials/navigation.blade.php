@@ -816,7 +816,7 @@
         }
         
         .navbar-language-widget {
-            display: flex !important;
+            display: none !important;
         }
         
         .navbar-search-icon {
@@ -1134,6 +1134,7 @@
             $showLanguageWidget = request()->routeIs([
                 'home',
                 'about',
+                'contact',
                 'login',
                 'register',
                 'formations.all',
@@ -1271,7 +1272,7 @@
                         <div class="dropdown-item-title">Dashboard</div>
                     </div>
                 </a>
-                <a href="{{ route('profile') }}" class="dropdown-item">
+                <a href="{{ route('dashboard.profile') }}" class="dropdown-item">
                     <div class="dropdown-item-icon" style="background: rgba(6, 182, 212, 0.2); color: #06b6d4;">
                         <i class="fas fa-user"></i>
                     </div>
@@ -1435,6 +1436,7 @@
             $showLanguageWidget = request()->routeIs([
                 'home',
                 'about',
+                'contact',
                 'formations.all',
                 'formations.html5',
                 'formations.css3',
@@ -1519,7 +1521,7 @@
             </a>
         </li>
         <li class="mobile-menu-item">
-            <a href="{{ route('profile') }}" class="mobile-menu-link">
+            <a href="{{ route('dashboard.profile') }}" class="mobile-menu-link">
                 <i class="fas fa-user"></i>
                 Profil
             </a>

@@ -258,8 +258,9 @@
         <p class="text-sm text-gray-300">
             <i class="fas fa-lightbulb mr-2 text-cyan-400"></i>
             Cette fonctionnalité soumet automatiquement toutes les URLs importantes de votre site à Bing pour un indexation rapide. 
-            Les URLs incluent toutes les formations, exercices, quiz, les pages statiques (à propos, contact), 
-            les pages emplois et les articles publiés (dynamique pour atteindre 100 URLs au total).
+            <strong>Ordre de soumission :</strong> D'abord tous les liens des formations, exercices et quiz (48 URLs), 
+            ensuite les 10 liens des pages statiques à conserver, puis compléter avec les liens des nouveaux articles 
+            jusqu'à atteindre 100 URLs au total.
         </p>
     </div>
 </div>

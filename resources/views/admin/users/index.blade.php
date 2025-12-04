@@ -74,6 +74,256 @@
         background: rgba(34, 197, 94, 0.15);
         border-color: rgba(34, 197, 94, 0.4);
     }
+    
+    /* Scrollbar moderne */
+    .modern-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(6, 182, 212, 0.5) rgba(15, 23, 42, 0.3);
+    }
+    
+    .modern-scrollbar::-webkit-scrollbar {
+        height: 10px;
+        width: 10px;
+    }
+    
+    .modern-scrollbar::-webkit-scrollbar-track {
+        background: rgba(15, 23, 42, 0.3);
+        border-radius: 10px;
+    }
+    
+    .modern-scrollbar::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.8), rgba(20, 184, 166, 0.8));
+        border-radius: 10px;
+        border: 2px solid rgba(15, 23, 42, 0.3);
+    }
+    
+    .modern-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, rgba(6, 182, 212, 1), rgba(20, 184, 166, 1));
+    }
+    
+    body.light-mode .modern-scrollbar {
+        scrollbar-color: rgba(6, 182, 212, 0.6) rgba(241, 245, 249, 0.5);
+    }
+    
+    body.light-mode .modern-scrollbar::-webkit-scrollbar-track {
+        background: rgba(241, 245, 249, 0.5);
+    }
+    
+    body.light-mode .modern-scrollbar::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.7), rgba(20, 184, 166, 0.7));
+        border-color: rgba(241, 245, 249, 0.5);
+    }
+    
+    /* Modal moderne */
+    .user-info-modal {
+        display: none;
+        position: fixed;
+        z-index: 10000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        animation: fadeIn 0.3s ease-out;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    
+    .user-info-modal.active {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+    
+    .user-info-modal-content {
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(30, 41, 59, 0.98));
+        border: 2px solid rgba(6, 182, 212, 0.3);
+        border-radius: 24px;
+        width: 90%;
+        max-width: 700px;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+        animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+    }
+    
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(50px) scale(0.95);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+    }
+    
+    body.light-mode .user-info-modal-content {
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.98));
+        border-color: rgba(6, 182, 212, 0.4);
+    }
+    
+    .user-info-modal-header {
+        padding: 2rem 2.5rem 1.5rem;
+        border-bottom: 2px solid rgba(6, 182, 212, 0.2);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(20, 184, 166, 0.1));
+        border-radius: 24px 24px 0 0;
+    }
+    
+    .user-info-modal-header h3 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #06b6d4, #14b8a6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    
+    .user-info-modal-close {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        background: rgba(6, 182, 212, 0.1);
+        border: 2px solid rgba(6, 182, 212, 0.3);
+        color: #06b6d4;
+        font-size: 1.25rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+    
+    .user-info-modal-close:hover {
+        background: rgba(6, 182, 212, 0.2);
+        border-color: rgba(6, 182, 212, 0.5);
+        transform: rotate(90deg);
+    }
+    
+    .user-info-modal-body {
+        padding: 2rem 2.5rem;
+    }
+    
+    .user-info-avatar-section {
+        text-align: center;
+        margin-bottom: 2rem;
+        padding-bottom: 2rem;
+        border-bottom: 2px solid rgba(6, 182, 212, 0.2);
+    }
+    
+    .user-info-avatar-large {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #06b6d4, #14b8a6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 3rem;
+        font-weight: 700;
+        margin: 0 auto 1.5rem;
+        box-shadow: 0 10px 30px rgba(6, 182, 212, 0.4);
+        border: 4px solid rgba(6, 182, 212, 0.3);
+    }
+    
+    .user-info-name {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: rgba(209, 213, 219, 1);
+        margin-bottom: 0.5rem;
+    }
+    
+    body.light-mode .user-info-name {
+        color: rgba(30, 41, 59, 0.9);
+    }
+    
+    .user-info-badges {
+        display: flex;
+        justify-content: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+    }
+    
+    .user-info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+    }
+    
+    .user-info-item {
+        background: rgba(6, 182, 212, 0.1);
+        border: 1px solid rgba(6, 182, 212, 0.2);
+        border-radius: 16px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+    }
+    
+    .user-info-item:hover {
+        background: rgba(6, 182, 212, 0.15);
+        border-color: rgba(6, 182, 212, 0.4);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(6, 182, 212, 0.2);
+    }
+    
+    .user-info-item-label {
+        font-size: 0.875rem;
+        color: rgba(156, 163, 175, 1);
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .user-info-item-label i {
+        color: #06b6d4;
+        width: 20px;
+        text-align: center;
+    }
+    
+    .user-info-item-value {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: rgba(209, 213, 219, 1);
+    }
+    
+    body.light-mode .user-info-item-value {
+        color: rgba(30, 41, 59, 0.9);
+    }
+    
+    .user-info-modal-content::-webkit-scrollbar {
+        width: 8px;
+    }
+    
+    .user-info-modal-content::-webkit-scrollbar-track {
+        background: rgba(15, 23, 42, 0.3);
+        border-radius: 10px;
+    }
+    
+    .user-info-modal-content::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.8), rgba(20, 184, 166, 0.8));
+        border-radius: 10px;
+    }
+    
+    .user-info-modal-content::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(135deg, rgba(6, 182, 212, 1), rgba(20, 184, 166, 1));
+    }
 </style>
 @endsection
 
@@ -143,7 +393,7 @@
             <div>
                 <label class="block text-gray-300 mb-2 text-sm font-semibold">Recherche</label>
             <input type="text" name="search" value="{{ $search }}" 
-                   placeholder="Rechercher par nom, email ou téléphone..." 
+                   placeholder="Rechercher par nom ou email..." 
                        class="input-admin w-full">
             </div>
             <div>
@@ -193,13 +443,11 @@
 
 <!-- Liste des utilisateurs -->
 <div class="content-section">
-    <div class="overflow-x-auto">
+    <div class="overflow-x-auto modern-scrollbar">
         <table class="w-full">
             <thead>
                 <tr class="border-b border-gray-700">
                     <th class="text-left py-4 px-4 font-semibold text-gray-300">Nom</th>
-                    <th class="text-left py-4 px-4 font-semibold text-gray-300">Email</th>
-                    <th class="text-left py-4 px-4 font-semibold text-gray-300">Téléphone</th>
                     <th class="text-left py-4 px-4 font-semibold text-gray-300">Rôle</th>
                     <th class="text-left py-4 px-4 font-semibold text-gray-300">Statut</th>
                     <th class="text-left py-4 px-4 font-semibold text-gray-300">Inscrit le</th>
@@ -217,8 +465,6 @@
                             <span class="font-semibold">{{ $user->name }}</span>
                         </div>
                     </td>
-                    <td class="py-4 px-4 text-gray-400">{{ $user->email }}</td>
-                    <td class="py-4 px-4 text-gray-400">{{ $user->phone ?? '-' }}</td>
                     <td class="py-4 px-4">
                         @if($user->role == 'admin')
                             <span class="px-3 py-1 bg-purple-500/20 text-purple-400 rounded-full text-xs font-semibold">
@@ -244,24 +490,32 @@
                     <td class="py-4 px-4 text-gray-400">{{ $user->created_at->format('d/m/Y') }}</td>
                     <td class="py-4 px-4">
                         <div class="flex justify-end gap-2">
+                            <button onclick="showUserInfo({{ $user->id }})" 
+                               class="px-3 py-2 bg-cyan-500/20 text-cyan-400 rounded-lg hover:bg-cyan-500/30 transition"
+                               title="Voir les détails">
+                                <i class="fas fa-info-circle"></i>
+                            </button>
                             <a href="{{ route('admin.users.edit', $user->id) }}" 
-                               class="px-3 py-2 bg-cyan-500/20 text-cyan-400 rounded-lg hover:bg-cyan-500/30 transition">
+                               class="px-3 py-2 bg-cyan-500/20 text-cyan-400 rounded-lg hover:bg-cyan-500/30 transition"
+                               title="Modifier">
                                 <i class="fas fa-edit"></i>
                             </a>
+                            @if($user->role != 'admin')
                             <form action="{{ route('admin.users.delete', $user->id) }}" method="POST" 
                                   onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="px-3 py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition">
+                                <button type="submit" class="px-3 py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition" title="Supprimer">
                                     <i class="fas fa-trash"></i>
                                 </button>
                             </form>
+                            @endif
                         </div>
                     </td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="7" class="text-center py-12 text-gray-400">
+                    <td colspan="5" class="text-center py-12 text-gray-400">
                         <i class="fas fa-users text-5xl mb-4 opacity-50"></i>
                         <p>Aucun utilisateur trouvé</p>
                     </td>
@@ -279,4 +533,168 @@
     @endif
     </div>
 </div>
+
+<!-- Modal d'informations utilisateur -->
+<div id="userInfoModal" class="user-info-modal">
+    <div class="user-info-modal-content">
+        <div class="user-info-modal-header">
+            <h3>
+                <i class="fas fa-user-circle"></i>
+                <span id="modalUserName">Informations utilisateur</span>
+            </h3>
+            <button class="user-info-modal-close" onclick="closeUserInfo()" aria-label="Fermer">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="user-info-modal-body">
+            <div class="user-info-avatar-section">
+                <div class="user-info-avatar-large" id="modalUserAvatar">
+                    U
+                </div>
+                <div class="user-info-name" id="modalUserFullName">Nom utilisateur</div>
+                <div class="user-info-badges" id="modalUserBadges">
+                    <!-- Badges seront ajoutés dynamiquement -->
+                </div>
+            </div>
+            <div class="user-info-grid" id="modalUserInfo">
+                <!-- Informations seront ajoutées dynamiquement -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Données des utilisateurs pour le modal
+const usersData = {
+    @foreach($users as $user)
+    {{ $user->id }}: {
+        id: {{ $user->id }},
+        name: @json($user->name),
+        email: @json($user->email),
+        phone: @json($user->phone ?? 'Non renseigné'),
+        role: @json($user->role),
+        is_active: {{ $user->is_active ? 'true' : 'false' }},
+        created_at: @json($user->created_at->format('d/m/Y à H:i')),
+        updated_at: @json($user->updated_at->format('d/m/Y à H:i')),
+        member_since: @json($user->created_at->diffForHumans()),
+    },
+    @endforeach
+};
+
+function showUserInfo(userId) {
+    const user = usersData[userId];
+    if (!user) {
+        console.error('Utilisateur non trouvé:', userId);
+        return;
+    }
+    
+    // Mettre à jour l'avatar
+    const avatar = document.getElementById('modalUserAvatar');
+    if (avatar) {
+        avatar.textContent = user.name.charAt(0).toUpperCase();
+    }
+    
+    // Mettre à jour le nom
+    const fullName = document.getElementById('modalUserFullName');
+    if (fullName) {
+        fullName.textContent = user.name;
+    }
+    
+    // Mettre à jour les badges
+    const badgesContainer = document.getElementById('modalUserBadges');
+    if (badgesContainer) {
+        badgesContainer.innerHTML = `
+            <span class="px-3 py-1 ${user.role === 'admin' ? 'bg-purple-500/20 text-purple-400' : 'bg-blue-500/20 text-blue-400'} rounded-full text-sm font-semibold">
+                <i class="fas ${user.role === 'admin' ? 'fa-shield-alt' : 'fa-user'} mr-1"></i>${user.role === 'admin' ? 'Administrateur' : 'Utilisateur'}
+            </span>
+            <span class="px-3 py-1 ${user.is_active ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'} rounded-full text-sm font-semibold">
+                <i class="fas ${user.is_active ? 'fa-check-circle' : 'fa-times-circle'} mr-1"></i>${user.is_active ? 'Actif' : 'Inactif'}
+            </span>
+        `;
+    }
+    
+    // Mettre à jour les informations
+    const infoContainer = document.getElementById('modalUserInfo');
+    if (infoContainer) {
+        infoContainer.innerHTML = `
+            <div class="user-info-item">
+                <div class="user-info-item-label">
+                    <i class="fas fa-envelope"></i>
+                    <span>Email</span>
+                </div>
+                <div class="user-info-item-value">${user.email}</div>
+            </div>
+            <div class="user-info-item">
+                <div class="user-info-item-label">
+                    <i class="fas fa-phone"></i>
+                    <span>Téléphone</span>
+                </div>
+                <div class="user-info-item-value">${user.phone}</div>
+            </div>
+            <div class="user-info-item">
+                <div class="user-info-item-label">
+                    <i class="fas fa-calendar-plus"></i>
+                    <span>Date d'inscription</span>
+                </div>
+                <div class="user-info-item-value">${user.created_at}</div>
+            </div>
+            <div class="user-info-item">
+                <div class="user-info-item-label">
+                    <i class="fas fa-calendar-edit"></i>
+                    <span>Dernière modification</span>
+                </div>
+                <div class="user-info-item-value">${user.updated_at}</div>
+            </div>
+            <div class="user-info-item">
+                <div class="user-info-item-label">
+                    <i class="fas fa-clock"></i>
+                    <span>Membre depuis</span>
+                </div>
+                <div class="user-info-item-value">${user.member_since}</div>
+            </div>
+            <div class="user-info-item">
+                <div class="user-info-item-label">
+                    <i class="fas fa-id-card"></i>
+                    <span>ID Utilisateur</span>
+                </div>
+                <div class="user-info-item-value">#${user.id}</div>
+            </div>
+        `;
+    }
+    
+    // Afficher le modal
+    const modal = document.getElementById('userInfoModal');
+    if (modal) {
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+}
+
+function closeUserInfo() {
+    const modal = document.getElementById('userInfoModal');
+    if (modal) {
+        modal.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+}
+
+// Fermer le modal en cliquant en dehors
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('userInfoModal');
+    if (modal) {
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeUserInfo();
+            }
+        });
+    }
+    
+    // Fermer avec la touche Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeUserInfo();
+        }
+    });
+});
+</script>
 @endsection

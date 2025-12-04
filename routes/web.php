@@ -83,6 +83,14 @@ Route::post('/logout', [\App\Http\Controllers\Auth\LoginController::class, 'logo
 
 // Routes utilisateur authentifié - Dashboard
 Route::middleware('auth')->prefix('dashboard')->name('dashboard.')->group(function () {
+    // Badges
+    Route::get('/badges', [App\Http\Controllers\BadgeController::class, 'index'])->name('badges');
+    
+    // Certificats
+    Route::get('/certificates', [App\Http\Controllers\CertificateController::class, 'index'])->name('certificates');
+    Route::get('/certificates/{id}', [App\Http\Controllers\CertificateController::class, 'show'])->name('certificates.show');
+    Route::get('/certificates/{id}/download', [App\Http\Controllers\CertificateController::class, 'download'])->name('certificates.download');
+    Route::post('/certificates/generate/{formationSlug}', [App\Http\Controllers\CertificateController::class, 'generate'])->name('certificates.generate');
     // Page principale (redirige vers overview)
     Route::get('/', [\App\Http\Controllers\ProfileController::class, 'overview'])->name('index');
     
@@ -220,6 +228,12 @@ Route::post('/api/ads/{id}/click', function($id) {
 })->name('api.ads.click');
 
 Route::get('/admin/logout', [App\Http\Controllers\AdminController::class, 'logout'])->name('admin.logout');
+
+// Routes API pour la progression des formations
+Route::middleware('auth')->group(function () {
+    Route::post('/api/formation-progress/update', [App\Http\Controllers\FormationProgressController::class, 'update'])->name('api.formation-progress.update');
+    Route::get('/api/formation-progress/{formationSlug}', [App\Http\Controllers\FormationProgressController::class, 'get'])->name('api.formation-progress.get');
+});
 
 // Robots.txt dynamique
 Route::get('/robots.txt', function () {

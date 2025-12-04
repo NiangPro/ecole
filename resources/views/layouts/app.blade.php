@@ -11,6 +11,24 @@
     <meta name="bingbot" content="index, follow">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     
+    <!-- Favicon - Logo du site (placé tôt pour un chargement prioritaire) -->
+    @php
+        $faviconUrl = asset('images/logo.png');
+    @endphp
+    <link rel="preload" as="image" href="{{ $faviconUrl }}" fetchpriority="high">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ $faviconUrl }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ $faviconUrl }}">
+    <link rel="shortcut icon" type="image/png" href="{{ $faviconUrl }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ $faviconUrl }}">
+    <link rel="apple-touch-icon" sizes="152x152" href="{{ $faviconUrl }}">
+    <link rel="apple-touch-icon" sizes="144x144" href="{{ $faviconUrl }}">
+    <link rel="apple-touch-icon" sizes="120x120" href="{{ $faviconUrl }}">
+    <link rel="apple-touch-icon" sizes="114x114" href="{{ $faviconUrl }}">
+    <link rel="apple-touch-icon" sizes="76x76" href="{{ $faviconUrl }}">
+    <link rel="apple-touch-icon" sizes="72x72" href="{{ $faviconUrl }}">
+    <link rel="apple-touch-icon" sizes="60x60" href="{{ $faviconUrl }}">
+    <link rel="apple-touch-icon" sizes="57x57" href="{{ $faviconUrl }}">
+    
     <!-- Canonical URL -->
     @hasSection('canonical')
         <link rel="canonical" href="@yield('canonical')">
@@ -56,7 +74,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="NiangProgrammeur">
-    <link rel="apple-touch-icon" href="{{ asset('images/logo.png') }}">
     
     @stack('meta')
     @stack('head')
@@ -243,7 +260,6 @@
     </script>
     
     <title>@yield('title', 'NiangProgrammeur - Formation Gratuite en Développement Web')</title>
-    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     
     <!-- Variable globale pour l'authentification (doit être définie avant tous les scripts) -->
     <script>
@@ -593,21 +609,13 @@
         });
     </script>
     @endif
-    <!-- Font Awesome - Chargement asynchrone optimisé -->
-    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"></noscript>
+    <!-- Font Awesome - Chargement synchrone pour éviter le FOUC -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <!-- Google Fonts optimisé avec preload et font-display: swap -->
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Inter - Police principale (chargée en priorité) -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"></noscript>
-    <!-- Poppins - Police secondaire -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"></noscript>
-    <!-- Orbitron - Police pour titres -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet"></noscript>
+    <!-- Google Fonts - Chargement synchrone pour éviter le FOUC -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800;900&family=Orbitron:wght@400;700;900&display=swap">
     <!-- Force font-display: swap pour toutes les polices -->
     <style>
         @font-face {
@@ -624,9 +632,8 @@
         }
     </style>
     
-    <!-- Toastr CSS - Chargé de manière asynchrone -->
-    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"></noscript>
+    <!-- Toastr CSS - Chargé de manière synchrone -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     
     @php
         $adsenseSettings = \Illuminate\Support\Facades\Cache::remember('adsense_settings', 3600, function () {
@@ -1263,18 +1270,39 @@
     </style>
     @yield('styles')
     
-    <!-- Fallback pour navigateurs sans JavaScript -->
-    <noscript>
-        <style>
-            body {
-                opacity: 1 !important;
-                visibility: visible !important;
+    <!-- Style critique pour éviter le FOUC -->
+    <style>
+        /* Masquer le contenu jusqu'à ce que les CSS soient chargés */
+        html {
+            visibility: hidden;
+            opacity: 0;
+        }
+        html.css-loaded {
+            visibility: visible;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+        /* Fallback pour navigateurs sans JavaScript */
+        body {
+            opacity: 1 !important;
+            visibility: visible !important;
+        }
+        .page-loader {
+            display: none !important;
+        }
+    </style>
+    <script>
+        // Marquer comme chargé une fois que les CSS critiques sont prêts
+        (function() {
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function() {
+                    document.documentElement.classList.add('css-loaded');
+                });
+            } else {
+                document.documentElement.classList.add('css-loaded');
             }
-            .page-loader {
-                display: none !important;
-            }
-        </style>
-    </noscript>
+        })();
+    </script>
 </head>
 <body class="bg-white text-gray-900" lang="{{ app()->getLocale() }}">
     <!-- Loader pendant le chargement -->

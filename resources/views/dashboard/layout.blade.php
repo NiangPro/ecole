@@ -90,12 +90,12 @@
     }
     
     .dashboard-sidebar::-webkit-scrollbar-thumb {
-        background: linear-gradient(180deg, #04AA6D 0%, #038f5a 100%);
+        background: linear-gradient(180deg, #06b6d4 0%, #0891b2 100%);
         border-radius: 10px;
     }
     
     .dashboard-sidebar::-webkit-scrollbar-thumb:hover {
-        background: linear-gradient(180deg, #038f5a 0%, #027049 100%);
+        background: linear-gradient(180deg, #0891b2 0%, #0e7490 100%);
     }
     
     /* Sidebar Header */
@@ -105,11 +105,11 @@
         justify-content: space-between;
         margin-bottom: 20px;
         padding-bottom: 15px;
-        border-bottom: 2px solid rgba(4, 170, 109, 0.2);
+        border-bottom: 2px solid rgba(6, 182, 212, 0.2);
     }
     
     .sidebar-header h3 {
-        color: #04AA6D;
+        color: #06b6d4;
         font-size: 20px;
         margin: 0;
         font-weight: 700;
@@ -117,7 +117,7 @@
     }
     
     body.dark-mode .sidebar-header h3 {
-        color: #04AA6D;
+        color: #06b6d4;
         border-bottom-color: rgba(4, 170, 109, 0.3);
     }
     
@@ -131,7 +131,7 @@
         width: 45px;
         height: 45px;
         border-radius: 50%;
-        background: linear-gradient(135deg, #04AA6D, #038f5a);
+        background: linear-gradient(135deg, #06b6d4, #14b8a6);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -139,7 +139,7 @@
         font-size: 1.1rem;
         font-weight: 700;
         flex-shrink: 0;
-        box-shadow: 0 4px 12px rgba(4, 170, 109, 0.3);
+        box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
     }
     
     .sidebar-user-info h3 {
@@ -181,7 +181,7 @@
         letter-spacing: 0.1em;
         padding: 0 0 10px 0;
         margin-bottom: 10px;
-        border-bottom: 1px solid rgba(4, 170, 109, 0.1);
+        border-bottom: 1px solid rgba(6, 182, 212, 0.1);
     }
     
     body.dark-mode .nav-section-title {
@@ -215,7 +215,7 @@
         top: 0;
         height: 100%;
         width: 3px;
-        background: #04AA6D;
+        background: #06b6d4;
         transform: scaleY(0);
         transition: transform 0.3s ease;
     }
@@ -228,15 +228,15 @@
     }
     
     .nav-item:hover {
-        background: linear-gradient(135deg, rgba(4, 170, 109, 0.1) 0%, rgba(4, 170, 109, 0.05) 100%);
-        color: #04AA6D;
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(6, 182, 212, 0.05) 100%);
+        color: #06b6d4;
         transform: translateX(5px);
-        box-shadow: 0 4px 12px rgba(4, 170, 109, 0.15);
+        box-shadow: 0 4px 12px rgba(6, 182, 212, 0.15);
     }
     
     body.dark-mode .nav-item:hover {
-        background: linear-gradient(135deg, rgba(4, 170, 109, 0.2) 0%, rgba(4, 170, 109, 0.1) 100%);
-        color: #04AA6D;
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.2) 0%, rgba(6, 182, 212, 0.1) 100%);
+        color: #06b6d4;
     }
     
     .nav-item:hover::before {
@@ -244,10 +244,10 @@
     }
     
     .nav-item.active {
-        background: linear-gradient(135deg, #04AA6D 0%, #038f5a 100%);
+        background: linear-gradient(135deg, #06b6d4 0%, #14b8a6 100%);
         color: white;
         font-weight: 600;
-        box-shadow: 0 6px 20px rgba(4, 170, 109, 0.3);
+        box-shadow: 0 6px 20px rgba(6, 182, 212, 0.3);
         transform: translateX(5px);
     }
     
@@ -361,7 +361,7 @@
     
     .card-title i {
         font-size: 1.3rem;
-        color: #04AA6D;
+        color: #06b6d4;
     }
     
     /* Mobile Styles */
@@ -546,6 +546,16 @@
                     <a href="{{ route('dashboard.statistics') }}" class="nav-item {{ request()->routeIs('dashboard.statistics') ? 'active' : '' }}">
                         <i class="fas fa-chart-line"></i>
                         <span>{{ trans('app.profile.dashboard.statistics.title') }}</span>
+                    </a>
+                    
+                    <a href="{{ route('dashboard.badges') }}" class="nav-item {{ request()->routeIs('dashboard.badges') ? 'active' : '' }}">
+                        <i class="fas fa-trophy"></i>
+                        <span>{{ trans('app.profile.sidebar.badges') ?? 'Badges' }}</span>
+                    </a>
+                    
+                    <a href="{{ route('dashboard.certificates') }}" class="nav-item {{ request()->routeIs('dashboard.certificates') ? 'active' : '' }}">
+                        <i class="fas fa-certificate"></i>
+                        <span>{{ trans('app.profile.sidebar.certificates') ?? 'Certificats' }}</span>
                     </a>
                 </div>
                 

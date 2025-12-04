@@ -115,7 +115,10 @@ class BingUrlSubmissionService
     }
 
     /**
-     * Récupère toutes les URLs à soumettre (pages statiques + formations/exercices/quiz + articles dynamiques)
+     * Récupère toutes les URLs à soumettre dans l'ordre spécifique :
+     * 1. Tous les liens des formations, exercices et quiz
+     * 2. Les 10 liens des pages statiques à conserver
+     * 3. Compléter avec les liens des nouveaux articles jusqu'à atteindre 100
      */
     public function getAllUrlsToSubmit(): array
     {
@@ -129,31 +132,21 @@ class BingUrlSubmissionService
             $baseUrl = $appUrl;
         }
         
-        // Ajouter l'URL de base
-        $urls[] = $baseUrl . '/';
+        // ============================================
+        // ÉTAPE 1 : Tous les liens des formations, exercices et quiz
+        // ============================================
         
-        // Pages statiques importantes (sans faq, legal, privacy-policy, terms, all-links)
-        $urls[] = $baseUrl . '/about';
-        $urls[] = $baseUrl . '/contact';
-        
-        // Pages Emplois
-        $urls[] = $baseUrl . '/emplois';
-        $urls[] = $baseUrl . '/emplois/offres';
-        $urls[] = $baseUrl . '/emplois/bourses';
-        $urls[] = $baseUrl . '/emplois/candidature-spontanee';
-        $urls[] = $baseUrl . '/emplois/opportunites';
-        $urls[] = $baseUrl . '/emplois/concours';
-        $urls[] = $baseUrl . '/emplois/articles-recents';
-        
+        // Tous les 15 langages disponibles
         $languages = [
             'html5', 'css3', 'javascript', 'php', 'bootstrap', 
-            'git', 'wordpress', 'ia', 'python', 'java', 'sql', 'c'
+            'python', 'java', 'sql', 'c', 'git', 'wordpress', 
+            'ia', 'cpp', 'csharp', 'dart'
         ];
 
         // Page principale formations
         $urls[] = $baseUrl . '/formations';
         
-        // Formations par langage
+        // Formations par langage (15 langages)
         foreach ($languages as $lang) {
             $urls[] = $baseUrl . '/formations/' . $lang;
         }
@@ -161,7 +154,7 @@ class BingUrlSubmissionService
         // Page principale exercices
         $urls[] = $baseUrl . '/exercices';
         
-        // Exercices par langage
+        // Exercices par langage (15 langages)
         foreach ($languages as $lang) {
             $urls[] = $baseUrl . '/exercices/' . $lang;
         }
@@ -169,27 +162,53 @@ class BingUrlSubmissionService
         // Page principale quiz
         $urls[] = $baseUrl . '/quiz';
         
-        // Quiz par langage
+        // Quiz par langage (15 langages)
         foreach ($languages as $lang) {
             $urls[] = $baseUrl . '/quiz/' . $lang;
         }
-
-        // Calculer le nombre d'URLs fixes déjà ajoutées
-        $fixedUrlsCount = count($urls);
+        
+        // Total formations/exercices/quiz : 1 + 15 + 1 + 15 + 1 + 15 = 48 URLs
+        
+        // ============================================
+        // ÉTAPE 2 : Les 10 liens des pages statiques à conserver
+        // ============================================
+        
+        $urls[] = $baseUrl . '/'; // Accueil
+        $urls[] = $baseUrl . '/about'; // À propos
+        $urls[] = $baseUrl . '/contact'; // Contact
+        $urls[] = $baseUrl . '/emplois'; // Emplois
+        $urls[] = $baseUrl . '/emplois/offres'; // Offres d'emploi
+        $urls[] = $baseUrl . '/emplois/bourses'; // Bourses
+        $urls[] = $baseUrl . '/emplois/candidature-spontanee'; // Candidature spontanée
+        $urls[] = $baseUrl . '/emplois/opportunites'; // Opportunités
+        $urls[] = $baseUrl . '/emplois/concours'; // Concours
+        $urls[] = $baseUrl . '/faq'; // FAQ
+        
+        // Total pages statiques : 10 URLs
+        
+        // ============================================
+        // ÉTAPE 3 : Compléter avec les liens des nouveaux articles jusqu'à atteindre 100
+        // ============================================
+        
+        // Calculer le nombre d'URLs déjà ajoutées
+        $fixedUrlsCount = count($urls); // 48 (formations/exercices/quiz) + 10 (pages statiques) = 58
         
         // Objectif : 100 URLs au total
         $targetTotal = 100;
-        $articlesNeeded = max(0, $targetTotal - $fixedUrlsCount);
+        $articlesNeeded = max(0, $targetTotal - $fixedUrlsCount); // 100 - 58 = 42 articles
         
         // Récupérer tous les articles publiés disponibles
-        $totalPublishedArticles = \App\Models\JobArticle::where('status', 'published')->count();
+        $totalPublishedArticles = \App\Models\JobArticle::where('status', 'published')
+            ->whereNotNull('published_at')
+            ->count();
         
         // Prendre le minimum entre les articles nécessaires et les articles disponibles
         $articlesToTake = min($articlesNeeded, $totalPublishedArticles);
         
-        // Si on a besoin de plus d'articles que disponibles, prendre tous les articles disponibles
+        // Si on a besoin d'articles, récupérer les plus récents
         if ($articlesToTake > 0) {
             $recentArticles = \App\Models\JobArticle::where('status', 'published')
+                ->whereNotNull('published_at')
                 ->orderBy('published_at', 'desc')
                 ->orderBy('created_at', 'desc')
                 ->take($articlesToTake)

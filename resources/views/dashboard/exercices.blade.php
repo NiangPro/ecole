@@ -13,29 +13,38 @@
 @if(isset($exerciseProgress) && $exerciseProgress->count() > 0)
 <div style="display: grid; gap: 0.75rem;">
     @foreach($exerciseProgress->take(30) as $exercise)
-    <div class="content-card exercise-item" style="padding: 1rem; background: rgba(6, 182, 212, 0.05); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 0;">
-        <div style="display: flex; align-items: center; gap: 1rem;">
+    <div class="content-card exercise-item" style="padding: 1rem; background: rgba(6, 182, 212, 0.05); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 0; transition: all 0.3s ease; cursor: pointer;" onclick="window.location.href='{{ route('exercices.language', $exercise->language) }}'">
+        <div style="display: flex; align-items: center; gap: 1rem; flex: 1;">
             <div class="exercise-icon" style="width: 40px; height: 40px; border-radius: 8px; background: rgba(6, 182, 212, 0.2); display: flex; align-items: center; justify-content: center; color: #06b6d4;">
                 <i class="fas fa-code"></i>
             </div>
-            <div>
+            <div style="flex: 1;">
                 <div class="dashboard-text-primary" style="font-weight: 500; color: #2c3e50; margin-bottom: 0.125rem; font-size: 0.9rem;">
                     {{ trans('app.profile.dashboard.exercices.exercise') }} {{ $exercise->exercise_id }} - {{ ucfirst($exercise->language) }}
                 </div>
                 <div class="dashboard-text-secondary" style="font-size: 0.8rem; color: #64748b;">
                     @if($exercise->completed)
                         <i class="fas fa-check-circle" style="color: #10b981;"></i> {{ trans('app.profile.dashboard.exercices.completed') }}
+                        @if($exercise->completed_at)
+                            <span style="margin-left: 0.5rem;">• {{ $exercise->completed_at->format('d/m/Y') }}</span>
+                        @endif
                     @else
                         <i class="fas fa-clock" style="color: #06b6d4;"></i> {{ trans('app.profile.dashboard.exercices.in_progress') }}
                     @endif
                 </div>
             </div>
         </div>
-        @if($exercise->completed)
-        <div class="exercise-score-badge" style="padding: 0.375rem 0.75rem; background: rgba(16, 185, 129, 0.2); border-radius: 6px;">
-            <div style="font-size: 1rem; font-weight: 600; color: #10b981;">{{ $exercise->score }}%</div>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            @if($exercise->completed)
+            <div class="exercise-score-badge" style="padding: 0.375rem 0.75rem; background: rgba(16, 185, 129, 0.2); border-radius: 6px;">
+                <div style="font-size: 1rem; font-weight: 600; color: #10b981;">{{ $exercise->score }}%</div>
+            </div>
+            @endif
+            <a href="{{ route('exercices.language', $exercise->language) }}" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.5rem 1rem; background: linear-gradient(135deg, #06b6d4, #0891b2); color: white; border-radius: 6px; text-decoration: none; font-weight: 500; font-size: 0.875rem; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(6, 182, 212, 0.3);" onclick="event.stopPropagation();">
+                <i class="fas fa-arrow-right"></i>
+                {{ trans('app.profile.dashboard.exercices.view') }}
+            </a>
         </div>
-        @endif
     </div>
     @endforeach
 </div>

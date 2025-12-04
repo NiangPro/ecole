@@ -86,27 +86,5 @@
         box-shadow: 0 8px 25px rgba(4, 170, 109, 0.15) !important;
     }
     
-    /* Styles pour la pagination en dark mode */
-    body.dark-mode .pagination {
-        color: rgba(255, 255, 255, 0.9) !important;
-    }
-    
-    body.dark-mode .pagination a,
-    body.dark-mode .pagination span {
-        color: rgba(255, 255, 255, 0.9) !important;
-        background: rgba(15, 23, 42, 0.6) !important;
-        border-color: rgba(4, 170, 109, 0.2) !important;
-    }
-    
-    body.dark-mode .pagination a:hover {
-        background: rgba(4, 170, 109, 0.2) !important;
-        border-color: rgba(4, 170, 109, 0.3) !important;
-    }
-    
-    body.dark-mode .pagination .active span {
-        background: rgba(6, 182, 212, 0.3) !important;
-        border-color: rgba(6, 182, 212, 0.5) !important;
-        color: #06b6d4 !important;
-    }
 </style>
 @endsection

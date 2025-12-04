@@ -31,5 +31,8 @@ class DatabaseSeeder extends Seeder
             JobArticlesSeeder::class,
             SponsoredArticleSeeder::class,
         ]);
+        
+        // Seeder pour les badges
+        $this->call(BadgeSeeder::class);
     }
 }

@@ -80,6 +80,11 @@ class JobArticle extends Model
             Cache::forget('latest_jobs');
             Cache::forget('recent_job_articles');
             Cache::forget('sponsored_articles');
+            Cache::forget('career_advice_articles');
+            // Invalider le cache du sitemap pour forcer sa régénération
+            Cache::forget('sitemap_articles_lastmod');
+            Cache::forget('sitemap_index_' . md5('https://niangprogrammeur.com'));
+            Cache::forget('sitemap_articles_' . md5('https://niangprogrammeur.com'));
             if ($article->category_id) {
                 $category = $article->category ?? Category::find($article->category_id);
                 if ($category) {
@@ -94,6 +99,11 @@ class JobArticle extends Model
             Cache::forget("job_article_{$article->slug}");
             Cache::forget("related_articles_{$article->id}");
             Cache::forget('sponsored_articles');
+            Cache::forget('career_advice_articles');
+            // Invalider le cache du sitemap pour forcer sa régénération
+            Cache::forget('sitemap_articles_lastmod');
+            Cache::forget('sitemap_index_' . md5('https://niangprogrammeur.com'));
+            Cache::forget('sitemap_articles_' . md5('https://niangprogrammeur.com'));
             if ($article->category_id) {
                 $category = $article->category ?? Category::find($article->category_id);
                 if ($category) {
@@ -109,6 +119,11 @@ class JobArticle extends Model
             Cache::forget('recent_job_articles');
             Cache::forget("job_article_{$article->slug}");
             Cache::forget("related_articles_{$article->id}");
+            Cache::forget('career_advice_articles');
+            // Invalider le cache du sitemap pour forcer sa régénération
+            Cache::forget('sitemap_articles_lastmod');
+            Cache::forget('sitemap_index_' . md5('https://niangprogrammeur.com'));
+            Cache::forget('sitemap_articles_' . md5('https://niangprogrammeur.com'));
             if ($article->category_id) {
                 $category = Category::find($article->category_id);
                 if ($category) {

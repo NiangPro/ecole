@@ -94,4 +94,38 @@ class User extends Authenticatable
     {
         return $this->hasMany(UserGoal::class);
     }
+
+    public function badges()
+    {
+        return $this->belongsToMany(Badge::class, 'user_badges')
+            ->withPivot('earned_at', 'metadata')
+            ->withTimestamps()
+            ->orderBy('user_badges.earned_at', 'desc');
+    }
+
+    public function userBadges()
+    {
+        return $this->hasMany(UserBadge::class);
+    }
+
+    public function certificates()
+    {
+        return $this->hasMany(Certificate::class);
+    }
+
+    /**
+     * Vérifier si l'utilisateur a un badge spécifique
+     */
+    public function hasBadge(string $badgeCode): bool
+    {
+        return $this->badges()->where('code', $badgeCode)->exists();
+    }
+
+    /**
+     * Obtenir un badge spécifique de l'utilisateur
+     */
+    public function getBadge(string $badgeCode): ?Badge
+    {
+        return $this->badges()->where('code', $badgeCode)->first();
+    }
 }

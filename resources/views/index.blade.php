@@ -567,6 +567,26 @@
         color: rgba(255, 255, 255, 0.7);
     }
     
+    /* Style spécifique pour le sous-titre de la section Articles Premium en dark mode */
+    body.dark-mode .sponsored-section .section-subtitle,
+    body.dark-mode .sponsored-subtitle {
+        color: rgba(255, 255, 255, 0.7) !important;
+    }
+    
+    body.dark-mode .sponsored-section .section-title,
+    body.dark-mode .sponsored-title {
+        color: rgba(255, 255, 255, 0.9) !important;
+    }
+    
+    /* Style pour le mode clair */
+    .sponsored-section .section-subtitle {
+        color: rgba(30, 41, 59, 0.6);
+    }
+    
+    .sponsored-section .section-title {
+        color: rgba(30, 41, 59, 0.95);
+    }
+    
     /* Styles spécifiques pour la section Exercices & Quiz */
     .exercices-quiz-section {
         position: relative;
@@ -1043,7 +1063,8 @@
         }
         
         .tech-desc-carousel {
-            font-size: 1rem;
+            font-size: 1.75rem;
+            line-height: 1.8;
         }
         
         .tech-link-carousel {
@@ -2244,7 +2265,7 @@
         <!-- Partie 1: Catégories d'articles (plus grande) -->
         <div class="categories-section" style="display: flex; flex-direction: column; height: 100%;">
             <div style="text-align: center; margin-bottom: 40px; flex-shrink: 0;">
-                <h2 class="section-title">📂 {{ trans('app.home.categories.section_title') }}</h2>
+                <h2 class="section-title">{{ trans('app.home.categories.section_title') }}</h2>
                 <p class="section-subtitle">
                     {{ trans('app.home.categories.section_subtitle') }}
                 </p>
@@ -2302,12 +2323,12 @@
             <div style="text-align: center; margin-bottom: 32px; flex-shrink: 0;">
                 <div style="display: inline-flex; align-items: center; gap: 10px; margin-bottom: 8px;">
                     <div style="width: 4px; height: 24px; background: linear-gradient(180deg, #06b6d4, #14b8a6); border-radius: 2px;"></div>
-                    <h2 class="section-title" style="font-size: 1.2rem; font-weight: 800; color: rgba(30, 41, 59, 0.95); letter-spacing: -0.5px; margin: 0;">
+                    <h2 class="section-title sponsored-title" style="font-size: 1.2rem; font-weight: 800; letter-spacing: -0.5px; margin: 0;">
                         {{ trans('app.home.sponsored.section_title') }}
                     </h2>
                     <div style="width: 4px; height: 24px; background: linear-gradient(180deg, #14b8a6, #06b6d4); border-radius: 2px;"></div>
                 </div>
-                <p class="section-subtitle" style="font-size: 0.85rem; color: rgba(30, 41, 59, 0.6); margin: 0;">
+                <p class="section-subtitle sponsored-subtitle" style="font-size: 0.85rem; margin: 0;">
                     {{ app()->getLocale() === 'fr' ? 'Contenu sélectionné pour vous' : 'Content selected for you' }}
                 </p>
             </div>
@@ -2371,78 +2392,164 @@
 <!-- Latest Jobs Section -->
 @if(isset($latestJobs) && $latestJobs->count() > 0)
 <section class="latest-jobs-section">
-    <div style="text-align: center; margin-bottom: 50px;">
-        <h2 class="section-title">💼 {{ trans('app.home.latest_jobs.section_title') }}</h2>
-        <p class="section-subtitle">
-            {{ trans('app.home.latest_jobs.section_subtitle') }}
-        </p>
-    </div>
-    
-    <div class="latest-jobs-grid" style="margin-bottom: 40px;">
-        @foreach($latestJobs as $index => $job)
-        <a href="{{ route('emplois.article', $job->slug) }}" class="latest-job-item @if($index >= 4) hide-on-mobile @endif" style="text-decoration: none; display: block;">
-            <div class="latest-job-card" style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.95)); border: 2px solid rgba(6, 182, 212, 0.25); border-radius: 20px; overflow: hidden; transition: all 0.5s ease; height: 100%; box-shadow: 0 8px 30px rgba(6, 182, 212, 0.1);">
-                @if($job->cover_image)
-                <div style="width: 100%; height: 140px; overflow: hidden;">
-                    <img src="{{ $job->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($job->cover_image) : $job->cover_image }}"
-                         loading="lazy"
-                         decoding="async"
-                         width="400"
-                         height="250"
-                         alt="{{ $job->title }} - {{ $job->category->name ?? 'Article d\'emploi' }}"
-                         style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;"
-                         onerror="this.src='https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=400&h=250&fit=crop'">
+    <div class="container mx-auto px-6">
+        <div class="latest-jobs-layout" style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; align-items: start;">
+            <!-- Colonne gauche : Articles d'emploi -->
+            <div class="latest-jobs-main">
+                <div style="margin-bottom: 2rem;">
+                    <h2 class="section-title" style="text-align: left; margin-bottom: 0.5rem; font-size: 1.5rem;">💼 {{ trans('app.home.latest_jobs.section_title') }}</h2>
+                    <p class="section-subtitle" style="text-align: left; margin: 0; font-size: 0.9rem;">
+                        {{ trans('app.home.latest_jobs.section_subtitle') }}
+                    </p>
                 </div>
-                @else
-                <div class="latest-job-placeholder" style="width: 100%; height: 140px; background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(20, 184, 166, 0.15)); display: flex; align-items: center; justify-content: center;">
-                    <i class="fas fa-briefcase text-4xl" style="color: rgba(6, 182, 212, 0.4);"></i>
-                </div>
-                @endif
                 
-                <div style="padding: 18px;">
-                    <span class="latest-job-category" style="display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; background: rgba(6, 182, 212, 0.1); color: #06b6d4; border-radius: 16px; font-size: 0.7rem; font-weight: 700; margin-bottom: 10px; border: 1px solid rgba(6, 182, 212, 0.25);">
-                        <i class="fas fa-folder"></i>{{ $job->category->name }}
-                    </span>
-                    
-                    <h3 class="latest-job-title" style="font-size: 0.95rem; font-weight: 800; color: rgba(30, 41, 59, 0.9); margin-bottom: 12px; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 2.7em;">
-                        {{ $job->title }}
+                <div class="latest-jobs-grid" style="margin-bottom: 40px;">
+                    @foreach($latestJobs->take(9) as $index => $job)
+                    <a href="{{ route('emplois.article', $job->slug) }}" class="latest-job-item modern-job-card-wrapper" style="text-decoration: none; display: block;">
+                        <div class="modern-job-card">
+                            <!-- Effet de brillance animé -->
+                            <div class="card-shine"></div>
+                            
+                            <!-- Image avec overlay gradient -->
+                            <div class="modern-job-image-wrapper">
+                                @if($job->cover_image)
+                                <img src="{{ $job->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($job->cover_image) : $job->cover_image }}"
+                                     loading="lazy"
+                                     decoding="async"
+                                     width="400"
+                                     height="250"
+                                     alt="{{ $job->title }} - {{ $job->category->name ?? 'Article d\'emploi' }}"
+                                     class="modern-job-image"
+                                     onerror="this.src='https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=400&h=250&fit=crop'">
+                                @else
+                                <div class="modern-job-placeholder">
+                                    <i class="fas fa-briefcase"></i>
+                                </div>
+                                @endif
+                                <!-- Overlay gradient animé -->
+                                <div class="image-overlay"></div>
+                                <!-- Badge catégorie flottant -->
+                                <div class="floating-category-badge">
+                                    <i class="fas fa-folder"></i>
+                                    <span>{{ $job->category->name }}</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Contenu de la card -->
+                            <div class="modern-job-content">
+                                <h3 class="modern-job-title">
+                                    {{ $job->title }}
+                                </h3>
+                                
+                                <div class="modern-job-footer">
+                                    <div class="modern-job-meta">
+                                        <div class="meta-item">
+                                            <i class="fas fa-calendar-alt"></i>
+                                            <span>{{ $job->published_at ? $job->published_at->format('d M Y') : $job->created_at->format('d M Y') }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="modern-job-action">
+                                        <span class="action-text">{{ trans('app.home.latest_jobs.view_button') }}</span>
+                                        <i class="fas fa-arrow-right action-icon"></i>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Bordure animée -->
+                            <div class="card-border"></div>
+                        </div>
+                    </a>
+                    @endforeach
+                </div>
+                
+                <div style="text-align: center; margin-top: 40px;">
+                    <a href="{{ route('emplois') }}" style="display: inline-flex; align-items: center; gap: 10px; padding: 14px 32px; background: linear-gradient(135deg, #06b6d4, #14b8a6); color: #000; border-radius: 12px; font-weight: 700; text-decoration: none; transition: all 0.3s ease;">
+                        {{ trans('app.home.latest_jobs.view_all') }} <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Colonne droite : Articles conseils et carrières -->
+            @if(isset($careerAdviceArticles) && $careerAdviceArticles->count() > 0)
+            <div class="trending-articles-sidebar career-advice-sidebar" style="position: sticky; top: 100px;">
+                <div style="background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.95)); border: 2px solid rgba(6, 182, 212, 0.25); border-radius: 20px; padding: 1.5rem; box-shadow: 0 8px 30px rgba(6, 182, 212, 0.1);">
+                    <h3 style="font-size: 1.25rem; font-weight: 800; color: rgba(30, 41, 59, 0.95); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
+                        <i class="fas fa-lightbulb" style="color: #06b6d4; font-size: 1.3rem;"></i>
+                        <span>Conseils Carrière</span>
                     </h3>
                     
-                    <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 12px; border-top: 1px solid rgba(6, 182, 212, 0.2);">
-                        <div class="latest-job-meta" style="display: flex; align-items: center; gap: 8px; color: rgba(30, 41, 59, 0.6); font-size: 0.75rem;">
-                            <span><i class="fas fa-calendar" style="color: #06b6d4;"></i> {{ $job->published_at ? $job->published_at->format('d/m/Y') : '' }}</span>
-                        </div>
-                        <span style="padding: 6px 14px; background: linear-gradient(135deg, #06b6d4, #14b8a6); color: #000; border-radius: 8px; font-weight: 700; font-size: 0.75rem; transition: all 0.3s ease;">
-                            {{ trans('app.home.latest_jobs.view_button') }} <i class="fas fa-arrow-right"></i>
-                        </span>
+                    <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+                        @foreach($careerAdviceArticles as $index => $article)
+                        <a href="{{ route('emplois.article', $article->slug) }}" class="trending-article-item" style="text-decoration: none; display: flex; gap: 1rem; align-items: flex-start; padding: 0.75rem; border-radius: 8px; transition: all 0.3s ease;">
+                            <div style="position: relative; flex-shrink: 0; width: 120px; height: 90px;">
+                                @if($article->cover_image)
+                                <div style="width: 100%; height: 100%; border-radius: 8px; overflow: hidden; position: relative; background: #f0f0f0;">
+                                    <img src="{{ $article->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($article->cover_image) : $article->cover_image }}"
+                                         loading="lazy"
+                                         alt="{{ $article->title }}"
+                                         style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;"
+                                         onerror="this.src='https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=300&h=200&fit=crop'">
+                                    <div style="position: absolute; top: 6px; left: 6px; width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #06b6d4, #14b8a6); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 0.85rem; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3); z-index: 2;">
+                                        {{ $index + 1 }}
+                                    </div>
+                                </div>
+                                @else
+                                <div style="width: 100%; height: 100%; border-radius: 8px; background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(20, 184, 166, 0.15)); position: relative; display: flex; align-items: center; justify-content: center;">
+                                    <i class="fas fa-lightbulb" style="color: rgba(6, 182, 212, 0.4); font-size: 1.5rem;"></i>
+                                    <div style="position: absolute; top: 6px; left: 6px; width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #06b6d4, #14b8a6); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 0.85rem; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3); z-index: 2;">
+                                        {{ $index + 1 }}
+                                    </div>
+                                </div>
+                                @endif
+                            </div>
+                            <div style="flex: 1; min-width: 0;">
+                                <h4 style="font-size: 0.95rem; font-weight: 700; color: rgba(30, 41, 59, 0.95); margin-bottom: 0.5rem; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                                    {{ $article->title }}
+                                </h4>
+                                <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: rgba(30, 41, 59, 0.65); flex-wrap: wrap;">
+                                    @if($article->views)
+                                    <span style="display: flex; align-items: center; gap: 0.25rem;">
+                                        <span style="color: #f59e0b;">🔥</span>
+                                        <i class="fas fa-eye" style="color: rgba(30, 41, 59, 0.65); font-size: 0.7rem;"></i>
+                                        <span style="font-weight: 500;">
+                                            @if($article->views < 1000)
+                                                1K
+                                            @else
+                                                {{ number_format($article->views / 1000, 1) }}K
+                                            @endif
+                                        </span>
+                                    </span>
+                                    @endif
+                                    <span style="font-weight: 500;">
+                                        {{ $article->published_at ? $article->published_at->format('d M') : $article->created_at->format('d M') }}
+                                    </span>
+                                </div>
+                            </div>
+                        </a>
+                        @endforeach
                     </div>
                 </div>
             </div>
-        </a>
-        @endforeach
-    </div>
-    
-    <div style="text-align: center; margin-top: 40px;">
-        <a href="{{ route('emplois') }}" style="display: inline-flex; align-items: center; gap: 10px; padding: 14px 32px; background: linear-gradient(135deg, #06b6d4, #14b8a6); color: #000; border-radius: 12px; font-weight: 700; text-decoration: none; transition: all 0.3s ease;">
-            {{ trans('app.home.latest_jobs.view_all') }} <i class="fas fa-arrow-right"></i>
-        </a>
+            @endif
+        </div>
     </div>
 </section>
 
 <style>
+    .latest-jobs-layout {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 2rem;
+        align-items: start;
+    }
+    
     .latest-jobs-grid {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 18px;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
     }
     
     @media (max-width: 1200px) {
-        .latest-jobs-grid {
-            grid-template-columns: repeat(3, 1fr);
-        }
-    }
-    
-    @media (max-width: 900px) {
         .latest-jobs-grid {
             grid-template-columns: repeat(2, 1fr);
         }
@@ -2451,59 +2558,473 @@
     @media (max-width: 768px) {
         .latest-jobs-grid {
             grid-template-columns: 1fr;
-            gap: 20px;
+        }
+    }
+    
+    @media (max-width: 1024px) {
+        .latest-jobs-layout {
+            grid-template-columns: 1fr;
         }
         
-        .hide-on-mobile {
-            display: none !important;
+        .trending-articles-sidebar {
+            position: relative !important;
+            top: 0 !important;
         }
     }
     
-    /* Mode jour - cards des dernières opportunités */
-    .latest-job-card {
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.95)) !important;
-        border: 2px solid rgba(6, 182, 212, 0.25) !important;
-        box-shadow: 0 10px 40px rgba(6, 182, 212, 0.1) !important;
+    @media (max-width: 768px) {
+        /* Masquer la section "Conseils Carrière" en mode mobile */
+        .career-advice-sidebar,
+        .trending-articles-sidebar {
+            display: none !important;
+        }
+        
+        /* Rendre responsive la section "Dernières Opportunités d'Emploi" */
+        .latest-jobs-layout {
+            grid-template-columns: 1fr !important;
+            gap: 1.5rem !important;
+        }
+        
+        .latest-jobs-main {
+            width: 100% !important;
+        }
+        
+        .latest-jobs-grid {
+            grid-template-columns: 1fr !important;
+            gap: 1.25rem !important;
+        }
+        
+        .latest-jobs-main .section-title,
+        .latest-jobs-main .section-subtitle {
+            text-align: center !important;
+        }
+        
+        .latest-job-card {
+            margin-bottom: 0 !important;
+        }
+        
+        .latest-job-item {
+            margin-bottom: 0 !important;
+        }
     }
     
-    .latest-job-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 20px 60px rgba(6, 182, 212, 0.2) !important;
-        border-color: rgba(6, 182, 212, 0.4) !important;
+    /* ============================================
+       DESIGN ULTRA MODERNE - CARDS D'ARTICLES
+       ============================================ */
+    
+    .modern-job-card-wrapper {
+        position: relative;
+        height: 100%;
     }
     
-    .latest-job-title {
-        color: rgba(30, 41, 59, 0.9) !important;
+    .modern-job-card {
+        position: relative;
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.95));
+        border-radius: 24px;
+        overflow: hidden;
+        height: 100%;
+        transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        box-shadow: 
+            0 4px 20px rgba(6, 182, 212, 0.08),
+            0 1px 3px rgba(0, 0, 0, 0.05);
+        border: 1px solid rgba(6, 182, 212, 0.15);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
     }
     
-    .latest-job-excerpt {
-        color: rgba(30, 41, 59, 0.7) !important;
+    .modern-job-card:hover {
+        transform: translateY(-12px) scale(1.02);
+        box-shadow: 
+            0 20px 60px rgba(6, 182, 212, 0.25),
+            0 8px 30px rgba(20, 184, 166, 0.15),
+            0 0 0 1px rgba(6, 182, 212, 0.2);
+        border-color: rgba(6, 182, 212, 0.4);
     }
     
-    .latest-job-meta {
-        color: rgba(30, 41, 59, 0.6) !important;
+    /* Effet de brillance animé */
+    .card-shine {
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+            45deg,
+            transparent 30%,
+            rgba(255, 255, 255, 0.3) 50%,
+            transparent 70%
+        );
+        transform: rotate(45deg);
+        transition: all 0.8s ease;
+        opacity: 0;
+        z-index: 1;
+        pointer-events: none;
     }
     
-    body.dark-mode .latest-job-card {
-        background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.9)) !important;
+    .modern-job-card:hover .card-shine {
+        animation: shine 1.5s ease-in-out;
+    }
+    
+    @keyframes shine {
+        0% {
+            transform: translateX(-100%) translateY(-100%) rotate(45deg);
+            opacity: 0;
+        }
+        50% {
+            opacity: 1;
+        }
+        100% {
+            transform: translateX(100%) translateY(100%) rotate(45deg);
+            opacity: 0;
+        }
+    }
+    
+    /* Bordure animée */
+    .card-border {
+        position: absolute;
+        inset: 0;
+        border-radius: 24px;
+        padding: 2px;
+        background: linear-gradient(135deg, #06b6d4, #14b8a6, #06b6d4);
+        background-size: 200% 200%;
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        opacity: 0;
+        transition: opacity 0.6s ease;
+        z-index: 0;
+        animation: borderGlow 3s ease infinite;
+    }
+    
+    .modern-job-card:hover .card-border {
+        opacity: 1;
+    }
+    
+    @keyframes borderGlow {
+        0%, 100% {
+            background-position: 0% 50%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
+    }
+    
+    /* Image wrapper */
+    .modern-job-image-wrapper {
+        position: relative;
+        width: 100%;
+        height: 180px;
+        overflow: hidden;
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(20, 184, 166, 0.1));
+    }
+    
+    .modern-job-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);
+        filter: brightness(0.95) saturate(1.1);
+    }
+    
+    .modern-job-card:hover .modern-job-image {
+        transform: scale(1.15) rotate(2deg);
+        filter: brightness(1.05) saturate(1.2);
+    }
+    
+    .modern-job-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(20, 184, 166, 0.15));
+    }
+    
+    .modern-job-placeholder i {
+        font-size: 3.5rem;
+        color: rgba(6, 182, 212, 0.4);
+        animation: pulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+            opacity: 0.4;
+        }
+        50% {
+            transform: scale(1.1);
+            opacity: 0.6;
+        }
+    }
+    
+    /* Overlay gradient */
+    .image-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 60%;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+        opacity: 0;
+        transition: opacity 0.6s ease;
+        z-index: 1;
+    }
+    
+    .modern-job-card:hover .image-overlay {
+        opacity: 1;
+    }
+    
+    /* Badge catégorie flottant */
+    .floating-category-badge {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 8px 16px;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(6, 182, 212, 0.3);
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        color: #06b6d4;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        z-index: 2;
+        transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        transform: translateY(0) scale(1);
+    }
+    
+    .modern-job-card:hover .floating-category-badge {
+        transform: translateY(-4px) scale(1.05);
+        background: rgba(6, 182, 212, 0.15);
+        border-color: rgba(6, 182, 212, 0.5);
+        box-shadow: 0 8px 25px rgba(6, 182, 212, 0.3);
+    }
+    
+    .floating-category-badge i {
+        font-size: 0.7rem;
+    }
+    
+    /* Contenu */
+    .modern-job-content {
+        position: relative;
+        padding: 24px;
+        z-index: 2;
+        background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.98));
+    }
+    
+    .modern-job-title {
+        font-size: 0.95rem;
+        font-weight: 800;
+        color: rgba(30, 41, 59, 0.95);
+        margin: 0 0 16px 0;
+        line-height: 1.4;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        min-height: 2.66em;
+        transition: color 0.3s ease;
+    }
+    
+    .modern-job-card:hover .modern-job-title {
+        color: #06b6d4;
+    }
+    
+    /* Footer */
+    .modern-job-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-top: 16px;
+        border-top: 1px solid rgba(6, 182, 212, 0.15);
+        gap: 12px;
+    }
+    
+    .modern-job-meta {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .meta-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: rgba(30, 41, 59, 0.65);
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+    
+    .meta-item i {
+        color: #06b6d4;
+        font-size: 0.75rem;
+    }
+    
+    /* Action button */
+    .modern-job-action {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 18px;
+        background: linear-gradient(135deg, #06b6d4, #14b8a6);
+        color: #000;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 0.8rem;
+        transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .modern-job-action::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        transition: left 0.5s ease;
+    }
+    
+    .modern-job-card:hover .modern-job-action::before {
+        left: 100%;
+    }
+    
+    .modern-job-card:hover .modern-job-action {
+        transform: translateX(4px);
+        box-shadow: 0 6px 20px rgba(6, 182, 212, 0.4);
+    }
+    
+    .action-text {
+        position: relative;
+        z-index: 1;
+    }
+    
+    .action-icon {
+        position: relative;
+        z-index: 1;
+        transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+    
+    .modern-job-card:hover .action-icon {
+        transform: translateX(4px);
+    }
+    
+    /* Dark Mode */
+    body.dark-mode .modern-job-card {
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.9));
+        border-color: rgba(6, 182, 212, 0.2);
+        box-shadow: 
+            0 4px 20px rgba(0, 0, 0, 0.3),
+            0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+    
+    body.dark-mode .modern-job-card:hover {
+        box-shadow: 
+            0 20px 60px rgba(6, 182, 212, 0.3),
+            0 8px 30px rgba(20, 184, 166, 0.2),
+            0 0 0 1px rgba(6, 182, 212, 0.3);
+    }
+    
+    body.dark-mode .modern-job-title {
+        color: rgba(255, 255, 255, 0.95);
+    }
+    
+    body.dark-mode .modern-job-card:hover .modern-job-title {
+        color: #06b6d4;
+    }
+    
+    body.dark-mode .meta-item {
+        color: rgba(255, 255, 255, 0.65);
+    }
+    
+    body.dark-mode .floating-category-badge {
+        background: rgba(15, 23, 42, 0.95);
+        color: #06b6d4;
+        border-color: rgba(6, 182, 212, 0.4);
+    }
+    
+    body.dark-mode .modern-job-card:hover .floating-category-badge {
+        background: rgba(6, 182, 212, 0.2);
+    }
+    
+    body.dark-mode .modern-job-content {
+        background: linear-gradient(to bottom, transparent, rgba(15, 23, 42, 0.95));
+    }
+    
+    body.dark-mode .modern-job-footer {
+        border-top-color: rgba(6, 182, 212, 0.2);
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .modern-job-image-wrapper {
+            height: 150px;
+        }
+        
+        .modern-job-content {
+            padding: 20px;
+        }
+        
+        .modern-job-title {
+            font-size: 0.9rem;
+        }
+        
+        .modern-job-footer {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        
+        .modern-job-action {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+    
+    /* Styles pour la sidebar Trending Articles */
+    body.dark-mode .trending-articles-sidebar > div {
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95)) !important;
         border-color: rgba(6, 182, 212, 0.3) !important;
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3) !important;
     }
     
-    body.dark-mode .latest-job-card:hover {
-        box-shadow: 0 20px 60px rgba(6, 182, 212, 0.4) !important;
+    body.dark-mode .trending-articles-sidebar h3 {
+        color: rgba(255, 255, 255, 0.9) !important;
     }
     
-    body.dark-mode .latest-job-title {
-        color: #fff !important;
+    body.dark-mode .trending-articles-sidebar h4 {
+        color: rgba(255, 255, 255, 0.9) !important;
     }
     
-    body.dark-mode .latest-job-excerpt {
-        color: rgba(255, 255, 255, 0.7) !important;
-    }
-    
-    body.dark-mode .latest-job-meta {
+    body.dark-mode .trending-articles-sidebar span {
         color: rgba(255, 255, 255, 0.6) !important;
+    }
+    
+    .trending-article-item {
+        transition: all 0.3s ease;
+    }
+    
+    .trending-article-item:hover {
+        background: rgba(6, 182, 212, 0.05) !important;
+    }
+    
+    .trending-article-item:hover h4 {
+        color: #06b6d4 !important;
+    }
+    
+    .trending-article-item:hover img {
+        transform: scale(1.05);
+    }
+    
+    body.dark-mode .trending-article-item:hover {
+        background: rgba(6, 182, 212, 0.1) !important;
     }
     
     body.dark-mode [style*="rgba(51, 65, 85, 0.85"] {

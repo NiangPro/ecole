@@ -359,32 +359,32 @@
             
             <!-- Section Liens rapides -->
             <div class="footer-section">
-                <h3>Liens rapides</h3>
+                <h3>{{ trans('app.footer.quick_links') }}</h3>
                 <a href="{{ route('home') }}" class="footer-link">
-                    <i class="fas fa-home mr-2"></i> Accueil
+                    <i class="fas fa-home mr-2"></i> {{ trans('app.footer.home') }}
                 </a>
                 <a href="{{ route('about') }}" class="footer-link">
-                    <i class="fas fa-info-circle mr-2"></i> À propos
+                    <i class="fas fa-info-circle mr-2"></i> {{ trans('app.footer.about') }}
                 </a>
                 <a href="{{ route('contact') }}" class="footer-link">
-                    <i class="fas fa-envelope mr-2"></i> Contact
+                    <i class="fas fa-envelope mr-2"></i> {{ trans('app.footer.contact') }}
                 </a>
                 <a href="{{ route('faq') }}" class="footer-link">
-                    <i class="fas fa-question-circle mr-2"></i> FAQ
+                    <i class="fas fa-question-circle mr-2"></i> {{ trans('app.footer.faq') }}
                 </a>
             </div>
             
             <!-- Section Newsletter -->
             <div class="footer-section">
-                <h3>Newsletter</h3>
+                <h3>{{ trans('app.footer.newsletter') }}</h3>
                 <p class="text-gray-400 mb-4">
-                    Recevez nos dernières formations et actualités directement dans votre boîte mail.
+                    {{ trans('app.footer.newsletter_description') }}
                 </p>
                 <form id="newsletterForm" class="newsletter-form">
                     @csrf
-                    <input type="email" name="email" id="newsletterEmail" placeholder="Votre email" class="newsletter-input" required>
+                    <input type="email" name="email" id="newsletterEmail" placeholder="{{ trans('app.footer.newsletter_placeholder') }}" class="newsletter-input" required>
                     <button type="submit" class="newsletter-btn" id="newsletterBtn">
-                        <i class="fas fa-paper-plane mr-2"></i>S'abonner
+                        <i class="fas fa-paper-plane mr-2"></i>{{ trans('app.footer.newsletter_subscribe') }}
                     </button>
                 </form>
                 <div id="newsletterMessage" class="mt-3 text-sm"></div>
@@ -396,33 +396,33 @@
             <!-- Liens légaux -->
             <div class="legal-links">
                 <a href="{{ route('legal') }}" class="legal-link">
-                    <i class="fas fa-balance-scale mr-1"></i>Mentions légales
+                    <i class="fas fa-balance-scale mr-1"></i>{{ trans('app.footer.legal_notice') }}
                 </a>
                 <span class="text-gray-700">•</span>
                 <a href="{{ route('privacy-policy') }}" class="legal-link">
-                    <i class="fas fa-shield-alt mr-1"></i>Politique de confidentialité
+                    <i class="fas fa-shield-alt mr-1"></i>{{ trans('app.footer.privacy_policy') }}
                 </a>
                 <span class="text-gray-700">•</span>
                 <a href="{{ route('terms') }}" class="legal-link">
-                    <i class="fas fa-file-contract mr-1"></i>Conditions d'utilisation
+                    <i class="fas fa-file-contract mr-1"></i>{{ trans('app.footer.terms') }}
                 </a>
                 <span class="text-gray-700">•</span>
                 <a href="{{ route('privacy-policy') }}#cookies" class="legal-link">
-                    <i class="fas fa-cookie-bite mr-1"></i>Politique des cookies
+                    <i class="fas fa-cookie-bite mr-1"></i>{{ trans('app.footer.cookie_policy') }}
                 </a>
             </div>
             
             <!-- Copyright -->
             <div class="copyright-text">
-                <p>&copy; {{ date('Y') }} <strong>{{ $siteSettings->site_name ?? 'NiangProgrammeur' }}</strong>. Tous droits réservés.</p>
+                <p>&copy; {{ date('Y') }} <strong>{{ $siteSettings->site_name ?? 'NiangProgrammeur' }}</strong>. {{ trans('app.footer.copyright') }}</p>
                 <p class="mt-2 text-xs">
                     @if($siteSettings && $siteSettings->contact_email)
-                        Contact: <a href="mailto:{{ $siteSettings->contact_email }}" class="text-cyan-400 hover:text-cyan-300">{{ $siteSettings->contact_email }}</a>
+                        {{ trans('app.footer.contact_label') }}: <a href="mailto:{{ $siteSettings->contact_email }}" class="text-cyan-400 hover:text-cyan-300">{{ $siteSettings->contact_email }}</a>
                         @if($siteSettings->contact_phone)
-                            | Tél: <a href="tel:{{ $siteSettings->contact_phone }}" class="text-cyan-400 hover:text-cyan-300">{{ $siteSettings->contact_phone }}</a>
+                            | {{ trans('app.footer.phone_label') }}: <a href="tel:{{ $siteSettings->contact_phone }}" class="text-cyan-400 hover:text-cyan-300">{{ $siteSettings->contact_phone }}</a>
                         @endif
                     @else
-                        Formation professionnelle en développement web | Contenu 100% gratuit
+                        {{ trans('app.footer.tagline') }}
                     @endif
                 </p>
             </div>
@@ -443,7 +443,7 @@
         
         // Désactiver le bouton
         btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Envoi...';
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>{{ trans('app.footer.newsletter_sending') }}';
         
         try {
             const response = await fetch('{{ route("newsletter.subscribe") }}', {
@@ -459,17 +459,17 @@
             const data = await response.json();
             
             if (response.ok) {
-                message.innerHTML = '<div class="text-green-400"><i class="fas fa-check-circle mr-2"></i>' + data.message + '</div>';
+                message.innerHTML = '<div class="text-green-400"><i class="fas fa-check-circle mr-2"></i>' + (data.message || '{{ trans('app.footer.newsletter_success') }}') + '</div>';
                 form.reset();
             } else {
-                const errorMessage = data.errors?.email?.[0] || data.message || 'Une erreur est survenue.';
+                const errorMessage = data.errors?.email?.[0] || data.message || '{{ trans('app.footer.newsletter_error') }}';
                 message.innerHTML = '<div class="text-red-400"><i class="fas fa-exclamation-circle mr-2"></i>' + errorMessage + '</div>';
             }
         } catch (error) {
-            message.innerHTML = '<div class="text-red-400"><i class="fas fa-exclamation-circle mr-2"></i>Erreur de connexion. Veuillez réessayer.</div>';
+            message.innerHTML = '<div class="text-red-400"><i class="fas fa-exclamation-circle mr-2"></i>{{ trans('app.footer.newsletter_connection_error') }}</div>';
         } finally {
             btn.disabled = false;
-            btn.innerHTML = '<i class="fas fa-paper-plane mr-2"></i>S\'abonner';
+            btn.innerHTML = '<i class="fas fa-paper-plane mr-2"></i>{{ trans('app.footer.newsletter_subscribe') }}';
             
             // Effacer le message après 5 secondes
             setTimeout(() => {

@@ -52,6 +52,13 @@ class AdminController extends Controller
                 return back()->with('error', 'Votre compte a été désactivé.');
             }
 
+            // Vérifier que l'utilisateur est un administrateur
+            if (!$user->isAdmin()) {
+                Auth::logout();
+                RateLimiter::hit($key, 300);
+                return back()->with('error', 'Accès refusé. Seuls les administrateurs peuvent accéder au panel admin.');
+            }
+
             // Réinitialiser le rate limiter en cas de succès
             RateLimiter::clear($key);
 
@@ -575,14 +582,21 @@ class AdminController extends Controller
         
         // Calculer les statistiques dynamiques
         $totalUrls = count($urls);
-        // 1 (formations) + 12 (langages) + 1 (exercices) + 12 (langages) + 1 (quiz) + 12 (langages) = 40
-        $formationsExercicesQuiz = 40;
-        // 1 (base) + 2 (about, contact) + 7 (emplois) = 10
+        
+        // Formations/Exercices/Quiz : 1 (formations) + 15 (langages) + 1 (exercices) + 15 (langages) + 1 (quiz) + 15 (langages) = 48
+        $formationsExercicesQuiz = 48;
+        
+        // Pages statiques : 10 pages à conserver
         $pagesStatiques = 10;
-        $articlesCount = \App\Models\JobArticle::where('status', 'published')->count();
-        // Calculer le nombre d'articles nécessaires pour atteindre exactement 100 URLs
-        // Total fixe = 40 (formations/exercices/quiz) + 10 (pages statiques) = 50
-        // Articles nécessaires = 100 - 50 = 50
+        
+        // Articles
+        $articlesCount = \App\Models\JobArticle::where('status', 'published')
+            ->whereNotNull('published_at')
+            ->count();
+        
+        // Calculer le nombre d'articles inclus (pour atteindre 100 URLs au total)
+        // Total fixe = 48 (formations/exercices/quiz) + 10 (pages statiques) = 58
+        // Articles nécessaires = 100 - 58 = 42
         $articlesIncluded = min($articlesCount, max(0, 100 - ($formationsExercicesQuiz + $pagesStatiques)));
         
         return view('admin.bing-submission', compact('urls', 'isConfigured', 'totalUrls', 'formationsExercicesQuiz', 'pagesStatiques', 'articlesIncluded', 'articlesCount'));

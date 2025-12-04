@@ -247,14 +247,31 @@
         <!-- Liste des exercices -->
         <div class="grid grid-cols-1 gap-6" id="exercisesList">
             @foreach($exercises as $index => $exercise)
-            <div class="exercise-item" data-difficulty="{{ $exercise['difficulty'] }}">
+            @php
+                $exerciseId = $exercise['original_index'] ?? ($exercise['display_index'] ?? ($index + 1));
+                $progress = $exerciseProgress->get($exerciseId) ?? null;
+                $isCompleted = $progress && $progress->completed;
+            @endphp
+            <div class="exercise-item" data-difficulty="{{ $exercise['difficulty'] }}" style="position: relative;">
+                @if($isCompleted)
+                <div style="position: absolute; top: 10px; right: 10px; width: 40px; height: 40px; background: linear-gradient(135deg, #10b981, #059669); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4); z-index: 10;">
+                    <i class="fas fa-check"></i>
+                </div>
+                @endif
                 <div class="flex items-center justify-between flex-wrap gap-4">
                     <div class="flex items-center gap-4 flex-1">
-                        <div class="w-12 h-12 rounded-full bg-cyan-500/10 border-2 border-cyan-500/30 flex items-center justify-center text-cyan-400 font-bold text-lg">
+                        <div class="w-12 h-12 rounded-full bg-cyan-500/10 border-2 border-cyan-500/30 flex items-center justify-center text-cyan-400 font-bold text-lg" style="{{ $isCompleted ? 'background: rgba(16, 185, 129, 0.2); border-color: rgba(16, 185, 129, 0.4);' : '' }}">
                             {{ $exercise['display_index'] ?? ($index + 1) }}
                         </div>
                         <div class="flex-1">
-                            <h3 class="text-xl font-bold text-white mb-2">{{ $exercise['title'] }}</h3>
+                            <h3 class="text-xl font-bold text-white mb-2" style="{{ $isCompleted ? 'opacity: 0.8;' : '' }}">
+                                {{ $exercise['title'] }}
+                                @if($isCompleted)
+                                    <span style="margin-left: 0.5rem; font-size: 0.875rem; color: #10b981; font-weight: 600;">
+                                        ({{ trans('app.profile.dashboard.exercices.completed') }})
+                                    </span>
+                                @endif
+                            </h3>
                             <div class="flex items-center gap-4 flex-wrap">
                                 @php
                                     $difficultyLower = strtolower($exercise['difficulty']);
@@ -273,11 +290,16 @@
                                 <span class="text-gray-400 text-sm">
                                     <i class="fas fa-star text-yellow-400 mr-1"></i>{{ $exercise['points'] }} {{ trans('app.exercices.points') }}
                                 </span>
+                                @if($isCompleted && $progress->score)
+                                <span class="text-green-400 text-sm font-semibold">
+                                    <i class="fas fa-trophy mr-1"></i>{{ $progress->score }}%
+                                </span>
+                                @endif
                             </div>
                         </div>
                     </div>
-                    <a href="{{ route('exercices.detail', [$language, $exercise['display_index'] ?? ($index + 1)]) }}" class="px-6 py-3 bg-gradient-to-r from-cyan-500 to-teal-600 text-white font-bold rounded-lg hover:shadow-lg hover:scale-105 transition inline-block">
-                        <i class="fas fa-play mr-2"></i>{{ trans('app.exercices.start_exercise') }}
+                    <a href="{{ route('exercices.detail', [$language, $exercise['display_index'] ?? ($index + 1)]) }}" class="px-6 py-3 bg-gradient-to-r from-cyan-500 to-teal-600 text-white font-bold rounded-lg hover:shadow-lg hover:scale-105 transition inline-block" style="{{ $isCompleted ? 'background: linear-gradient(to right, #10b981, #059669);' : '' }}">
+                        <i class="fas {{ $isCompleted ? 'fa-redo' : 'fa-play' }} mr-2"></i>{{ $isCompleted ? trans('app.exercices.review_exercise') : trans('app.exercices.start_exercise') }}
                     </a>
                 </div>
             </div>

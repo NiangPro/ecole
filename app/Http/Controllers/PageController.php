@@ -47,14 +47,14 @@ class PageController extends Controller
         // Forcer la locale AVANT tout traitement pour la traduction
         $locale = $this->ensureLocale();
         
-        // Cache les 8 derniers articles publiés (15 minutes) - Triés par date de création (plus récent au plus ancien)
+        // Cache les 9 derniers articles publiés (15 minutes) - Triés par date de création (plus récent au plus ancien)
         $latestJobs = \Illuminate\Support\Facades\Cache::remember('latest_jobs', 900, function () {
             return \App\Models\JobArticle::where('status', 'published')
                 ->where('is_sponsored', false)
                 ->with('category:id,name,slug')
                 ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'created_at', 'views')
                 ->orderBy('created_at', 'desc')
-                ->take(8)
+                ->take(9)
                 ->get();
         });
         
@@ -97,7 +97,23 @@ class PageController extends Controller
                 ->get();
         });
         
-        return view('index', compact('latestJobs', 'categories', 'sponsoredArticles', 'sidebarAds', 'homepageAds'));
+        // Cache les articles conseils et carrières pour la sidebar (15 minutes) - Triés du plus récent au plus ancien
+        $careerAdviceArticles = \Illuminate\Support\Facades\Cache::remember('career_advice_articles', 900, function () {
+            $conseilsCategory = \App\Models\Category::where('slug', 'conseils-carriere')->first();
+            if ($conseilsCategory) {
+                return \App\Models\JobArticle::where('status', 'published')
+                    ->where('category_id', $conseilsCategory->id)
+                    ->with('category:id,name,slug')
+                    ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')
+                    ->orderBy('published_at', 'desc')
+                    ->orderBy('created_at', 'desc')
+                    ->take(9)
+                    ->get();
+            }
+            return collect();
+        });
+        
+        return view('index', compact('latestJobs', 'categories', 'sponsoredArticles', 'sidebarAds', 'homepageAds', 'careerAdviceArticles'));
     }
 
     public function about()
@@ -280,7 +296,18 @@ class PageController extends Controller
         $userIdentifier = md5(request()->ip() . session()->getId() . $language);
         $exercises = !empty($allExercises) ? $this->getVariedExercises($allExercises, $userIdentifier) : [];
         
-        return view('exercices-language', compact('language', 'exercises'));
+        // Récupérer la progression de l'utilisateur si connecté
+        $exerciseProgress = collect();
+        if (Auth::check()) {
+            $exerciseProgress = \App\Models\ExerciseProgress::where('user_id', Auth::id())
+                ->where('language', $language)
+                ->get()
+                ->keyBy(function($progress) {
+                    return $progress->exercise_id;
+                });
+        }
+        
+        return view('exercices-language', compact('language', 'exercises', 'exerciseProgress'));
     }
     
     /**
@@ -498,11 +525,14 @@ class PageController extends Controller
         if (Auth::check() && $isCorrect) {
             $user = Auth::user();
             
+            // Utiliser l'ID réel (originalIndex) au lieu du display_index
+            $realExerciseId = $originalIndex ?? $id;
+            
             // Sauvegarder ou mettre à jour la progression de l'exercice
             $exerciseProgress = ExerciseProgress::firstOrCreate(
                 [
                     'user_id' => $user->id,
-                    'exercise_id' => $id,
+                    'exercise_id' => $realExerciseId,
                     'language' => $language,
                 ],
                 [
@@ -525,7 +555,8 @@ class PageController extends Controller
                     [
                         'score' => 100,
                         'language' => $language,
-                        'exercise_id' => $id,
+                        'exercise_id' => $realExerciseId,
+                        'display_index' => $id,
                         'exercise_title' => $exercise['title'] ?? null,
                     ]
                 );
@@ -8841,93 +8872,182 @@ void main() {
     public function html5()
     {
         $this->ensureLocale();
-        return view('formations.html5');
+        
+        $progress = null;
+        if (Auth::check()) {
+            $progress = Auth::user()->getProgressForFormation('html5');
+        }
+        
+        return view('formations.html5', compact('progress'));
     }
 
     public function css3()
     {
         $this->ensureLocale();
-        return view('formations.css3');
+        
+        $progress = null;
+        if (Auth::check()) {
+            $progress = Auth::user()->getProgressForFormation('css3');
+        }
+        
+        return view('formations.css3', compact('progress'));
     }
 
     public function javascript()
     {
         $this->ensureLocale();
-        return view('formations.javascript');
+        
+        $progress = null;
+        if (Auth::check()) {
+            $progress = Auth::user()->getProgressForFormation('javascript');
+        }
+        
+        return view('formations.javascript', compact('progress'));
     }
 
     public function php()
     {
         $locale = $this->ensureLocale();
-        // Forcer la recompilation de la vue si nécessaire
         view()->share('currentLocale', $locale);
-        return view('formations.php');
+        
+        $progress = null;
+        if (Auth::check()) {
+            $progress = Auth::user()->getProgressForFormation('php');
+        }
+        
+        return view('formations.php', compact('progress'));
     }
 
     public function python()
     {
         $this->ensureLocale();
-        return view('formations.python');
+        
+        $progress = null;
+        if (Auth::check()) {
+            $progress = Auth::user()->getProgressForFormation('python');
+        }
+        
+        return view('formations.python', compact('progress'));
     }
 
     public function java()
     {
         $this->ensureLocale();
-        return view('formations.java');
+        
+        $progress = null;
+        if (Auth::check()) {
+            $progress = Auth::user()->getProgressForFormation('java');
+        }
+        
+        return view('formations.java', compact('progress'));
     }
 
     public function sql()
     {
         $this->ensureLocale();
-        return view('formations.sql');
+        
+        $progress = null;
+        if (Auth::check()) {
+            $progress = Auth::user()->getProgressForFormation('sql');
+        }
+        
+        return view('formations.sql', compact('progress'));
     }
 
     public function c()
     {
         $this->ensureLocale();
-        return view('formations.c');
+        
+        $progress = null;
+        if (Auth::check()) {
+            $progress = Auth::user()->getProgressForFormation('c');
+        }
+        
+        return view('formations.c', compact('progress'));
     }
 
     public function bootstrap()
     {
         $this->ensureLocale();
-        return view('formations.bootstrap');
+        
+        $progress = null;
+        if (Auth::check()) {
+            $progress = Auth::user()->getProgressForFormation('bootstrap');
+        }
+        
+        return view('formations.bootstrap', compact('progress'));
     }
 
     public function git()
     {
         $this->ensureLocale();
-        return view('formations.git');
+        
+        $progress = null;
+        if (Auth::check()) {
+            $progress = Auth::user()->getProgressForFormation('git');
+        }
+        
+        return view('formations.git', compact('progress'));
     }
 
     public function wordpress()
     {
         $this->ensureLocale();
-        return view('formations.wordpress');
+        
+        $progress = null;
+        if (Auth::check()) {
+            $progress = Auth::user()->getProgressForFormation('wordpress');
+        }
+        
+        return view('formations.wordpress', compact('progress'));
     }
 
     public function ia()
     {
         $this->ensureLocale();
-        return view('formations.ia');
+        
+        $progress = null;
+        if (Auth::check()) {
+            $progress = Auth::user()->getProgressForFormation('ia');
+        }
+        
+        return view('formations.ia', compact('progress'));
     }
 
     public function cpp()
     {
         $this->ensureLocale();
-        return view('formations.cpp');
+        
+        $progress = null;
+        if (Auth::check()) {
+            $progress = Auth::user()->getProgressForFormation('cpp');
+        }
+        
+        return view('formations.cpp', compact('progress'));
     }
 
     public function csharp()
     {
         $this->ensureLocale();
-        return view('formations.csharp');
+        
+        $progress = null;
+        if (Auth::check()) {
+            $progress = Auth::user()->getProgressForFormation('csharp');
+        }
+        
+        return view('formations.csharp', compact('progress'));
     }
 
     public function dart()
     {
         $this->ensureLocale();
-        return view('formations.dart');
+        
+        $progress = null;
+        if (Auth::check()) {
+            $progress = Auth::user()->getProgressForFormation('dart');
+        }
+        
+        return view('formations.dart', compact('progress'));
     }
 
     // Pages Emplois
@@ -9005,7 +9125,7 @@ void main() {
             return $query->orderBy('published_at', 'desc')
                 ->orderBy('updated_at', 'desc')
                 ->orderBy('created_at', 'desc')
-                ->paginate(10);
+                ->paginate(12);
         });
         
         return view('emplois.offres', compact('articles', 'category'));

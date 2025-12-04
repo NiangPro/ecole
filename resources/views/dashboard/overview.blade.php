@@ -77,6 +77,268 @@
     </div>
 </div>
 
+<!-- Formations en cours -->
+@if(isset($formationProgress) && $formationProgress->where('progress_percentage', '<', 100)->count() > 0)
+<div class="content-card" style="margin-bottom: 2.5rem;">
+    <h2 class="card-title dashboard-text-primary">
+        <i class="fas fa-book-open"></i>
+        {{ trans('app.profile.dashboard.overview.ongoing_formations') ?? 'Formations en cours' }}
+    </h2>
+    <div style="display: grid; gap: 1.25rem;">
+        @foreach($formationProgress->where('progress_percentage', '<', 100)->take(5) as $progress)
+        <div style="padding: 1.25rem; background: linear-gradient(135deg, rgba(6, 182, 212, 0.05), rgba(6, 182, 212, 0.02)); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 12px; transition: all 0.3s ease;">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                <div style="flex: 1;">
+                    <h3 class="dashboard-text-primary" style="font-size: 1.15rem; font-weight: 600; color: #2c3e50; margin: 0 0 0.5rem 0;">
+                        {{ ucfirst(str_replace('-', ' ', $progress->formation_slug)) }}
+                    </h3>
+                    <div class="dashboard-text-secondary" style="display: flex; gap: 1.5rem; color: #64748b; font-size: 0.875rem; margin-top: 0.5rem;">
+                        <span><i class="fas fa-clock"></i> {{ $progress->time_spent_minutes }} {{ trans('app.profile.dashboard.overview.minutes') }}</span>
+                        <span style="color: #06b6d4;"><i class="fas fa-hourglass-half"></i> {{ trans('app.profile.dashboard.formations.in_progress') }}</span>
+                    </div>
+                </div>
+                <div class="dashboard-progress-badge" style="padding: 0.5rem 1rem; background: rgba(6, 182, 212, 0.2); border-radius: 6px;">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: #06b6d4;">{{ $progress->progress_percentage }}%</div>
+                </div>
+            </div>
+            <div class="dashboard-progress-bar-bg" style="width: 100%; height: 10px; background: rgba(6, 182, 212, 0.1); border-radius: 5px; overflow: hidden; margin-bottom: 1rem;">
+                <div class="dashboard-progress-bar-fill" style="height: 100%; width: {{ $progress->progress_percentage }}%; background: linear-gradient(90deg, #06b6d4, #22d3ee); transition: width 0.6s ease;"></div>
+            </div>
+            <div style="text-align: right;">
+                <a href="{{ route('formations.' . $progress->formation_slug) }}" class="dashboard-button-primary" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1.25rem; background: linear-gradient(135deg, #06b6d4, #0891b2); color: white; border-radius: 6px; text-decoration: none; font-weight: 500; font-size: 0.9rem; transition: all 0.2s ease; box-shadow: 0 4px 6px rgba(6, 182, 212, 0.3);">
+                    {{ trans('app.profile.dashboard.formations.continue') }}
+                    <i class="fas fa-arrow-right" style="font-size: 0.8rem;"></i>
+                </a>
+            </div>
+        </div>
+        @endforeach
+    </div>
+    @if($formationProgress->where('progress_percentage', '<', 100)->count() > 5)
+    <div style="margin-top: 1.5rem; text-align: center;">
+        <a href="{{ route('dashboard.formations') }}" style="display: inline-flex; align-items: center; gap: 0.75rem; padding: 0.875rem 1.75rem; background: linear-gradient(135deg, #06b6d4, #0891b2); color: white; border-radius: 12px; text-decoration: none; font-weight: 600; font-size: 1rem; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);">
+            {{ trans('app.profile.dashboard.overview.view_all_formations') ?? 'Voir toutes les formations' }}
+            <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+    @endif
+</div>
+@endif
+
+<!-- Graphiques de progression -->
+@if(isset($chartData))
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
+    <!-- Graphique 1: Activité sur 30 jours -->
+    <div class="content-card">
+        <h2 class="card-title dashboard-text-primary">
+            <i class="fas fa-chart-line"></i>
+            {{ trans('app.profile.dashboard.statistics.activity_over_time') }}
+        </h2>
+        <div style="height: 300px; position: relative;">
+            <canvas id="activityChart" height="300"></canvas>
+        </div>
+    </div>
+    
+    <!-- Graphique 2: Répartition des activités -->
+    <div class="content-card">
+        <h2 class="card-title dashboard-text-primary">
+            <i class="fas fa-chart-pie"></i>
+            {{ trans('app.profile.dashboard.statistics.activity_distribution') ?? 'Répartition des activités' }}
+        </h2>
+        <div style="height: 300px; position: relative;">
+            <canvas id="distributionChart" height="300"></canvas>
+        </div>
+    </div>
+    
+    <!-- Graphique 3: Progression par formation -->
+    @if(isset($chartData['formation_progress']) && count($chartData['formation_progress']['labels']) > 0)
+    <div class="content-card">
+        <h2 class="card-title dashboard-text-primary">
+            <i class="fas fa-chart-bar"></i>
+            {{ trans('app.profile.dashboard.statistics.formation_progress') ?? 'Progression par formation' }}
+        </h2>
+        <div style="height: 300px; position: relative;">
+            <canvas id="formationChart" height="300"></canvas>
+        </div>
+    </div>
+    @endif
+    
+    <!-- Graphique 4: Scores des quiz -->
+    @if(isset($chartData['quiz_scores']) && count($chartData['quiz_scores']['labels']) > 0)
+    <div class="content-card">
+        <h2 class="card-title dashboard-text-primary">
+            <i class="fas fa-chart-bar"></i>
+            {{ trans('app.profile.dashboard.statistics.quiz_scores') ?? 'Scores des quiz' }}
+        </h2>
+        <div style="height: 300px; position: relative;">
+            <canvas id="quizChart" height="300"></canvas>
+        </div>
+    </div>
+    @endif
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    (function() {
+        const isDarkMode = document.body.classList.contains('dark-mode');
+        const textColor = isDarkMode ? 'rgba(255, 255, 255, 0.6)' : '#94a3b8';
+        const gridColor = isDarkMode ? 'rgba(6, 182, 212, 0.2)' : 'rgba(6, 182, 212, 0.1)';
+        const backgroundColor = isDarkMode ? 'rgba(6, 182, 212, 0.2)' : 'rgba(6, 182, 212, 0.1)';
+        
+        // Graphique 1: Activité sur 30 jours
+        const activityCtx = document.getElementById('activityChart');
+        if (activityCtx) {
+            const activityData = @json($chartData['progression_over_time'] ?? []);
+            new Chart(activityCtx, {
+                type: 'line',
+                data: {
+                    labels: activityData.labels || [],
+                    datasets: [{
+                        label: '{{ trans('app.profile.dashboard.statistics.activities') ?? 'Activités' }}',
+                        data: activityData.data || [],
+                        borderColor: '#06b6d4',
+                        backgroundColor: backgroundColor,
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: '#06b6d4',
+                        pointBorderColor: isDarkMode ? '#ffffff' : '#1e293b',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: textColor, font: { size: 12 } },
+                            grid: { color: gridColor }
+                        },
+                        x: {
+                            ticks: { color: textColor, font: { size: 12 } },
+                            grid: { color: gridColor }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Graphique 2: Répartition des activités
+        const distributionCtx = document.getElementById('distributionChart');
+        if (distributionCtx) {
+            const distributionData = @json($chartData['activity_distribution'] ?? []);
+            new Chart(distributionCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: distributionData.labels || [],
+                    datasets: [{
+                        data: distributionData.data || [],
+                        backgroundColor: [
+                            'rgba(6, 182, 212, 0.8)',
+                            'rgba(4, 170, 109, 0.8)',
+                            'rgba(239, 68, 68, 0.8)',
+                        ],
+                        borderColor: isDarkMode ? 'rgba(15, 23, 42, 0.8)' : '#ffffff',
+                        borderWidth: 2,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: textColor, font: { size: 12 } }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Graphique 3: Progression par formation
+        const formationCtx = document.getElementById('formationChart');
+        if (formationCtx) {
+            const formationData = @json($chartData['formation_progress'] ?? []);
+            new Chart(formationCtx, {
+                type: 'bar',
+                data: {
+                    labels: formationData.labels || [],
+                    datasets: [{
+                        label: '{{ trans('app.profile.dashboard.statistics.progress') ?? 'Progression' }} (%)',
+                        data: formationData.data || [],
+                        backgroundColor: 'rgba(6, 182, 212, 0.8)',
+                        borderColor: '#06b6d4',
+                        borderWidth: 1,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: { color: textColor, font: { size: 12 } },
+                            grid: { color: gridColor }
+                        },
+                        x: {
+                            ticks: { color: textColor, font: { size: 12 }, maxRotation: 45, minRotation: 45 },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Graphique 4: Scores des quiz
+        const quizCtx = document.getElementById('quizChart');
+        if (quizCtx) {
+            const quizData = @json($chartData['quiz_scores'] ?? []);
+            new Chart(quizCtx, {
+                type: 'bar',
+                data: {
+                    labels: quizData.labels || [],
+                    datasets: [{
+                        label: '{{ trans('app.profile.dashboard.statistics.score') ?? 'Score' }} (%)',
+                        data: quizData.data || [],
+                        backgroundColor: 'rgba(4, 170, 109, 0.8)',
+                        borderColor: '#04AA6D',
+                        borderWidth: 1,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: { color: textColor, font: { size: 12 } },
+                            grid: { color: gridColor }
+                        },
+                        x: {
+                            ticks: { color: textColor, font: { size: 12 }, maxRotation: 45, minRotation: 45 },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+        }
+    })();
+</script>
+@endif
+
 <!-- Recommandations -->
 @if(isset($recommendations) && count($recommendations) > 0)
 <div class="content-card">
@@ -219,6 +481,40 @@
     body.dark-mode span[style*="background: white"] {
         background: rgba(15, 23, 42, 0.8) !important;
         border-color: rgba(4, 170, 109, 0.3) !important;
+    }
+    
+    body.dark-mode .dashboard-progress-badge {
+        background: rgba(6, 182, 212, 0.3) !important;
+    }
+    
+    body.dark-mode .dashboard-progress-badge div[style*="color: #06b6d4"] {
+        color: #06b6d4 !important;
+    }
+    
+    body.dark-mode .dashboard-progress-bar-bg {
+        background: rgba(6, 182, 212, 0.2) !important;
+    }
+    
+    body.dark-mode .dashboard-progress-bar-fill {
+        background: linear-gradient(90deg, #06b6d4, #22d3ee) !important;
+    }
+    
+    body.dark-mode .card-title {
+        color: rgba(255, 255, 255, 0.9) !important;
+    }
+    
+    body.dark-mode .dashboard-button-primary {
+        box-shadow: 0 4px 6px rgba(6, 182, 212, 0.4) !important;
+    }
+    
+    body.dark-mode .dashboard-button-primary:hover {
+        box-shadow: 0 6px 12px rgba(6, 182, 212, 0.5) !important;
+        transform: translateY(-2px);
+    }
+    
+    body.dark-mode div[style*="background: linear-gradient(135deg, rgba(6, 182, 212"] {
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(6, 182, 212, 0.05)) !important;
+        border-color: rgba(6, 182, 212, 0.3) !important;
     }
 </style>
 @endsection

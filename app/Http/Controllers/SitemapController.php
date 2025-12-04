@@ -5,44 +5,53 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\JobArticle;
 use App\Models\Category;
+use Illuminate\Support\Facades\Cache;
 
 class SitemapController extends Controller
 {
     public function index()
     {
-        $sitemap = '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
-        $sitemap .= '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . PHP_EOL;
-        
         // Détecter l'URL de base (production ou local)
         $baseUrl = config('app.env') === 'production' 
             ? 'https://niangprogrammeur.com' 
             : (request()->getSchemeAndHttpHost());
         
-        // Calculer la date de dernière modification des articles
-        $lastArticleUpdate = null;
-        try {
-            $lastArticle = JobArticle::where('status', 'published')
-                ->whereNotNull('published_at')
-                ->orderBy('updated_at', 'desc')
-                ->first();
-            if ($lastArticle && $lastArticle->updated_at) {
-                $lastArticleUpdate = $lastArticle->updated_at->format('Y-m-d');
-            }
-        } catch (\Exception $e) {
-            // Ignorer si la table n'existe pas
-        }
-        
-        $sitemap .= '  <sitemap>' . PHP_EOL;
-        $sitemap .= '    <loc>' . htmlspecialchars($baseUrl . '/sitemap-pages.xml', ENT_XML1, 'UTF-8') . '</loc>' . PHP_EOL;
-        $sitemap .= '    <lastmod>' . now()->format('Y-m-d') . '</lastmod>' . PHP_EOL;
-        $sitemap .= '  </sitemap>' . PHP_EOL;
-        
-        $sitemap .= '  <sitemap>' . PHP_EOL;
-        $sitemap .= '    <loc>' . htmlspecialchars($baseUrl . '/sitemap-articles.xml', ENT_XML1, 'UTF-8') . '</loc>' . PHP_EOL;
-        $sitemap .= '    <lastmod>' . ($lastArticleUpdate ?? now()->format('Y-m-d')) . '</lastmod>' . PHP_EOL;
-        $sitemap .= '  </sitemap>' . PHP_EOL;
-        
-        $sitemap .= '</sitemapindex>';
+        // Cache du sitemap index pendant 1 heure (3600 secondes)
+        // Le cache est invalidé automatiquement quand un article est créé/modifié/supprimé
+        $sitemap = Cache::remember('sitemap_index_' . md5($baseUrl), 3600, function () use ($baseUrl) {
+            $sitemap = '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
+            $sitemap .= '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . PHP_EOL;
+            
+            // Calculer la date de dernière modification des articles
+            $lastArticleUpdate = Cache::remember('sitemap_articles_lastmod', 3600, function () {
+                try {
+                    $lastArticle = JobArticle::where('status', 'published')
+                        ->whereNotNull('published_at')
+                        ->orderBy('updated_at', 'desc')
+                        ->first();
+                    if ($lastArticle && $lastArticle->updated_at) {
+                        return $lastArticle->updated_at->format('Y-m-d');
+                    }
+                } catch (\Exception $e) {
+                    // Ignorer si la table n'existe pas
+                }
+                return now()->format('Y-m-d');
+            });
+            
+            $sitemap .= '  <sitemap>' . PHP_EOL;
+            $sitemap .= '    <loc>' . htmlspecialchars($baseUrl . '/sitemap-pages.xml', ENT_XML1, 'UTF-8') . '</loc>' . PHP_EOL;
+            $sitemap .= '    <lastmod>' . now()->format('Y-m-d') . '</lastmod>' . PHP_EOL;
+            $sitemap .= '  </sitemap>' . PHP_EOL;
+            
+            $sitemap .= '  <sitemap>' . PHP_EOL;
+            $sitemap .= '    <loc>' . htmlspecialchars($baseUrl . '/sitemap-articles.xml', ENT_XML1, 'UTF-8') . '</loc>' . PHP_EOL;
+            $sitemap .= '    <lastmod>' . ($lastArticleUpdate ?? now()->format('Y-m-d')) . '</lastmod>' . PHP_EOL;
+            $sitemap .= '  </sitemap>' . PHP_EOL;
+            
+            $sitemap .= '</sitemapindex>';
+            
+            return $sitemap;
+        });
         
         return response($sitemap, 200)
             ->header('Content-Type', 'application/xml; charset=utf-8')
@@ -51,13 +60,16 @@ class SitemapController extends Controller
     
     public function pages()
     {
-        $sitemap = '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
-        $sitemap .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">' . PHP_EOL;
-        
         // Détecter l'URL de base (production ou local)
         $baseUrl = config('app.env') === 'production' 
             ? 'https://niangprogrammeur.com' 
             : (request()->getSchemeAndHttpHost());
+        
+        // Cache du sitemap pages pendant 6 heures (21600 secondes)
+        // Les pages statiques changent rarement
+        $sitemap = Cache::remember('sitemap_pages_' . md5($baseUrl), 21600, function () use ($baseUrl) {
+            $sitemap = '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
+            $sitemap .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">' . PHP_EOL;
         
         // Pages principales avec dates de modification dynamiques
         $pages = [
@@ -72,8 +84,9 @@ class SitemapController extends Controller
             ['url' => '/quiz', 'priority' => '0.9', 'changefreq' => 'weekly', 'lastmod' => now()->format('Y-m-d')],
         ];
         
-        // Pages de formations
+        // Pages de formations (toutes les formations)
         $formations = [
+            '/formations',
             '/formations/html5',
             '/formations/css3',
             '/formations/javascript',
@@ -86,10 +99,25 @@ class SitemapController extends Controller
             '/formations/java',
             '/formations/sql',
             '/formations/c',
+            '/formations/cpp',
+            '/formations/csharp',
+            '/formations/dart',
         ];
         
         foreach ($formations as $formation) {
             $pages[] = ['url' => $formation, 'priority' => '0.9', 'changefreq' => 'weekly', 'lastmod' => now()->format('Y-m-d')];
+        }
+        
+        // Pages Exercices par langue
+        $exercicesLanguages = ['html5', 'css3', 'javascript', 'php', 'bootstrap', 'python', 'java', 'sql', 'c', 'git', 'wordpress', 'ia', 'cpp', 'csharp', 'dart'];
+        foreach ($exercicesLanguages as $lang) {
+            $pages[] = ['url' => '/exercices/' . $lang, 'priority' => '0.8', 'changefreq' => 'weekly', 'lastmod' => now()->format('Y-m-d')];
+        }
+        
+        // Pages Quiz par langue
+        $quizLanguages = ['html5', 'css3', 'javascript', 'php', 'bootstrap', 'python', 'java', 'sql', 'c', 'git', 'wordpress', 'ia', 'cpp', 'csharp', 'dart'];
+        foreach ($quizLanguages as $lang) {
+            $pages[] = ['url' => '/quiz/' . $lang, 'priority' => '0.8', 'changefreq' => 'weekly', 'lastmod' => now()->format('Y-m-d')];
         }
         
         // Pages Emplois
@@ -98,6 +126,17 @@ class SitemapController extends Controller
         $pages[] = ['url' => '/emplois/bourses', 'priority' => '0.8', 'changefreq' => 'daily', 'lastmod' => now()->format('Y-m-d')];
         $pages[] = ['url' => '/emplois/candidature-spontanee', 'priority' => '0.8', 'changefreq' => 'daily', 'lastmod' => now()->format('Y-m-d')];
         $pages[] = ['url' => '/emplois/opportunites', 'priority' => '0.8', 'changefreq' => 'daily', 'lastmod' => now()->format('Y-m-d')];
+        $pages[] = ['url' => '/emplois/concours', 'priority' => '0.8', 'changefreq' => 'daily', 'lastmod' => now()->format('Y-m-d')];
+        
+        // Pages catégories d'emplois
+        try {
+            $categories = Category::where('is_active', true)->get();
+            foreach ($categories as $category) {
+                $pages[] = ['url' => '/emplois/categorie/' . $category->slug, 'priority' => '0.7', 'changefreq' => 'daily', 'lastmod' => now()->format('Y-m-d')];
+            }
+        } catch (\Exception $e) {
+            // Ignorer si la table n'existe pas
+        }
         
         // Générer les entrées XML
         foreach ($pages as $page) {
@@ -110,24 +149,30 @@ class SitemapController extends Controller
             $sitemap .= '  </url>' . PHP_EOL;
         }
         
-        $sitemap .= '</urlset>';
+            $sitemap .= '</urlset>';
+            
+            return $sitemap;
+        });
         
         return response($sitemap, 200)
             ->header('Content-Type', 'application/xml; charset=utf-8')
-            ->header('Cache-Control', 'public, max-age=3600');
+            ->header('Cache-Control', 'public, max-age=21600');
     }
     
     public function articles()
     {
-        $sitemap = '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
-        $sitemap .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">' . PHP_EOL;
-        
         // Détecter l'URL de base (production ou local)
         $baseUrl = config('app.env') === 'production' 
             ? 'https://niangprogrammeur.com' 
             : (request()->getSchemeAndHttpHost());
         
-        try {
+        // Cache du sitemap articles pendant 1 heure (3600 secondes)
+        // Le cache est invalidé automatiquement quand un article est créé/modifié/supprimé
+        $sitemap = Cache::remember('sitemap_articles_' . md5($baseUrl), 3600, function () use ($baseUrl) {
+            $sitemap = '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
+            $sitemap .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">' . PHP_EOL;
+            
+            try {
             $articles = JobArticle::where('status', 'published')
                 ->whereNotNull('published_at')
                 ->with('category')
@@ -187,12 +232,15 @@ class SitemapController extends Controller
                 }
                 
                 $sitemap .= '  </url>' . PHP_EOL;
+                }
+            } catch (\Exception $e) {
+                // Ignorer si la table n'existe pas encore
             }
-        } catch (\Exception $e) {
-            // Ignorer si la table n'existe pas encore
-        }
-        
-        $sitemap .= '</urlset>';
+            
+            $sitemap .= '</urlset>';
+            
+            return $sitemap;
+        });
         
         return response($sitemap, 200)
             ->header('Content-Type', 'application/xml; charset=utf-8')
