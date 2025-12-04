@@ -7,6 +7,10 @@ use App\Models\ContactMessage;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Auth;
+use App\Models\ExerciseProgress;
+use App\Models\QuizResult;
+use App\Models\UserActivity;
 
 class PageController extends Controller
 {
@@ -489,6 +493,47 @@ class PageController extends Controller
         
         // Vérification simple (à améliorer)
         $isCorrect = $this->checkAnswer($exercise, $userCode);
+        
+        // Enregistrer la progression et l'activité si l'utilisateur est connecté
+        if (Auth::check() && $isCorrect) {
+            $user = Auth::user();
+            
+            // Sauvegarder ou mettre à jour la progression de l'exercice
+            $exerciseProgress = ExerciseProgress::firstOrCreate(
+                [
+                    'user_id' => $user->id,
+                    'exercise_id' => $id,
+                    'language' => $language,
+                ],
+                [
+                    'completed' => false,
+                    'score' => 0,
+                    'time_spent_seconds' => 0,
+                ]
+            );
+            
+            // Marquer comme complété si c'est correct
+            if ($isCorrect && !$exerciseProgress->completed) {
+                $exerciseProgress->markAsCompleted(100, 0, $userCode);
+                
+                // Enregistrer l'activité
+                UserActivity::log(
+                    $user->id,
+                    'exercise',
+                    'Exercice complété : ' . ($exercise['title'] ?? 'Exercice ' . $language),
+                    "exercices/{$language}/{$id}",
+                    [
+                        'score' => 100,
+                        'language' => $language,
+                        'exercise_id' => $id,
+                        'exercise_title' => $exercise['title'] ?? null,
+                    ]
+                );
+                
+                // Invalider le cache du dashboard
+                \App\Http\Controllers\ProfileController::clearCache($user->id);
+            }
+        }
         
         return response()->json([
             'correct' => $isCorrect,
@@ -8171,6 +8216,45 @@ void main() {
         
         $percentage = ($score / $total) * 100;
         
+        // Enregistrer le résultat du quiz si l'utilisateur est connecté
+        if (Auth::check()) {
+            $user = Auth::user();
+            
+            // Calculer les bonnes et mauvaises réponses
+            $correctAnswers = $score;
+            $wrongAnswers = $total - $score;
+            
+            // Sauvegarder le résultat du quiz
+            $quizResult = QuizResult::create([
+                'user_id' => $user->id,
+                'quiz_id' => $language,
+                'language' => $language,
+                'score' => $score,
+                'total_questions' => $total,
+                'correct_answers' => $correctAnswers,
+                'wrong_answers' => $wrongAnswers,
+                'answers' => $results,
+                'completed_at' => now(),
+            ]);
+            
+            // Enregistrer l'activité
+            UserActivity::log(
+                $user->id,
+                'quiz',
+                'Quiz complété : ' . ucfirst($language),
+                "quiz/{$language}",
+                [
+                    'score' => $score,
+                    'total_questions' => $total,
+                    'percentage' => round($percentage, 2),
+                    'language' => $language,
+                ]
+            );
+            
+            // Invalider le cache du dashboard
+            \App\Http\Controllers\ProfileController::clearCache($user->id);
+        }
+        
         // Stocker les résultats en session pour éviter la re-soumission
         session([
             'quiz_results_' . $language => [
@@ -8729,7 +8813,11 @@ void main() {
     {
         if (in_array($locale, ['fr', 'en'])) {
             Session::put('language', $locale);
+            Session::save(); // Forcer la sauvegarde de la session
             App::setLocale($locale);
+            \Illuminate\Support\Facades\Lang::setLocale($locale);
+            config(['app.locale' => $locale]);
+            config(['app.fallback_locale' => 'fr']);
         }
         
         // Récupérer l'URL de redirection depuis le paramètre de requête
@@ -8740,7 +8828,9 @@ void main() {
             // Nettoyer l'URL pour éviter les injections
             $redirectUrl = parse_url($redirectUrl, PHP_URL_PATH);
             if ($redirectUrl) {
-                return redirect($redirectUrl);
+                // Ajouter le paramètre lang à l'URL pour forcer la locale
+                $separator = strpos($redirectUrl, '?') !== false ? '&' : '?';
+                return redirect($redirectUrl . $separator . 'lang=' . $locale);
             }
         }
         

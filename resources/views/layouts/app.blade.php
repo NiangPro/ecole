@@ -52,6 +52,7 @@
     <!-- PWA Manifest -->
     <link rel="manifest" href="{{ asset('manifest.json') }}">
     <meta name="theme-color" content="#06b6d4">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="NiangProgrammeur">
@@ -714,7 +715,7 @@
         body {
             margin: 0;
             padding: 0;
-            padding-top: 70px;
+            padding-top: 60px;
             overflow-x: hidden;
             min-height: 100vh;
             opacity: 1 !important;
@@ -823,13 +824,13 @@
             }
             
             .navbar-language-button {
-                width: 36px;
-                height: 36px;
+                width: 32px;
+                height: 32px;
             }
             
             .navbar-language-flag {
-                width: 20px;
-                height: 15px;
+                width: 18px;
+                height: 13px;
             }
             
             .dark-mode-widget {
@@ -869,8 +870,8 @@
         }
         
         .navbar-language-button {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             background: rgba(6, 182, 212, 0.1);
             border: 1px solid rgba(6, 182, 212, 0.3);
@@ -885,8 +886,8 @@
         }
         
         .navbar-language-flag {
-            width: 24px;
-            height: 18px;
+            width: 22px;
+            height: 16px;
             border-radius: 2px;
             object-fit: cover;
             display: block;
@@ -1403,7 +1404,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             const backToTopButton = document.getElementById('back-to-top');
             if (backToTopButton) {
-                backToTopButton.classList.add('no-language-widget');
+                    backToTopButton.classList.add('no-language-widget');
             }
         });
         

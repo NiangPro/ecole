@@ -74,6 +74,45 @@ Route::get('/emplois/article/{slug}', [PageController::class, 'showArticle'])
 Route::post('/comments', [\App\Http\Controllers\CommentController::class, 'store'])->middleware('throttle:5,15')->name('comments.store');
 Route::post('/comments/{id}/like', [\App\Http\Controllers\CommentController::class, 'like'])->middleware('throttle:10,1')->name('comments.like');
 
+// Routes d'authentification utilisateur
+Route::get('/login', [\App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [\App\Http\Controllers\Auth\LoginController::class, 'login'])->name('login.post');
+Route::get('/register', [\App\Http\Controllers\Auth\RegisterController::class, 'showRegistrationForm'])->name('register');
+Route::post('/register', [\App\Http\Controllers\Auth\RegisterController::class, 'register'])->name('register.post');
+Route::post('/logout', [\App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
+
+// Routes utilisateur authentifié - Dashboard
+Route::middleware('auth')->prefix('dashboard')->name('dashboard.')->group(function () {
+    // Page principale (redirige vers overview)
+    Route::get('/', [\App\Http\Controllers\ProfileController::class, 'overview'])->name('index');
+    
+    // Routes pour chaque section
+    Route::get('/overview', [\App\Http\Controllers\ProfileController::class, 'overview'])->name('overview');
+    Route::get('/formations', [\App\Http\Controllers\ProfileController::class, 'formations'])->name('formations');
+    Route::get('/exercices', [\App\Http\Controllers\ProfileController::class, 'exercices'])->name('exercices');
+    Route::get('/quiz', [\App\Http\Controllers\ProfileController::class, 'quiz'])->name('quiz');
+    Route::get('/goals', [\App\Http\Controllers\ProfileController::class, 'goals'])->name('goals');
+    Route::get('/activities', [\App\Http\Controllers\ProfileController::class, 'activities'])->name('activities');
+    Route::get('/statistics', [\App\Http\Controllers\ProfileController::class, 'statistics'])->name('statistics');
+    Route::get('/settings', [\App\Http\Controllers\ProfileController::class, 'settings'])->name('settings');
+    Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'profile'])->name('profile');
+    Route::post('/profile', [\App\Http\Controllers\ProfileController::class, 'updateProfile'])->name('profile.update');
+    
+    // Routes pour les objectifs (API)
+    Route::post('/goals', [\App\Http\Controllers\UserGoalController::class, 'store'])->name('goals.store');
+    Route::put('/goals/{id}', [\App\Http\Controllers\UserGoalController::class, 'update'])->name('goals.update');
+    Route::delete('/goals/{id}', [\App\Http\Controllers\UserGoalController::class, 'destroy'])->name('goals.destroy');
+    Route::post('/goals/{id}/complete', [\App\Http\Controllers\UserGoalController::class, 'complete'])->name('goals.complete');
+    Route::post('/goals/{id}/progress', [\App\Http\Controllers\UserGoalController::class, 'updateProgress'])->name('goals.progress');
+});
+
+// Route legacy pour compatibilité
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', function () {
+        return view('profile');
+    })->name('profile');
+});
+
 
 // Routes Admin (pas de lien public)
 // Routes publiques (login)

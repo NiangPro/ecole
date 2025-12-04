@@ -74,4 +74,24 @@ class User extends Authenticatable
     {
         return $this->formationProgress()->where('formation_slug', $formationSlug)->first();
     }
+
+    public function exerciseProgress()
+    {
+        return $this->hasMany(ExerciseProgress::class);
+    }
+
+    public function quizResults()
+    {
+        return $this->hasMany(QuizResult::class);
+    }
+
+    public function activities()
+    {
+        return $this->hasMany(UserActivity::class);
+    }
+
+    public function goals()
+    {
+        return $this->hasMany(UserGoal::class);
+    }
 }

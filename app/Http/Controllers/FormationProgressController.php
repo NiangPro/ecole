@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\FormationProgress;
 use Illuminate\Support\Facades\Auth;
+use App\Models\UserActivity;
 
 class FormationProgressController extends Controller
 {
@@ -40,7 +41,30 @@ class FormationProgressController extends Controller
         // Ici on suppose qu'il y a environ 10 sections par formation
         $completedSections = count($progress->completed_sections ?? []);
         $totalSections = 10; // À ajuster selon la formation
+        $previousPercentage = $progress->progress_percentage;
         $progress->updateProgress($totalSections, $completedSections);
+        
+        // Enregistrer l'activité si la progression a changé significativement
+        if ($progress->progress_percentage > $previousPercentage) {
+            $formationName = ucfirst(str_replace('-', ' ', $request->formation_slug));
+            
+            // Enregistrer l'activité
+            UserActivity::log(
+                $user->id,
+                'formation',
+                'Formation : ' . $formationName,
+                "formations/{$request->formation_slug}",
+                [
+                    'progress_percentage' => $progress->progress_percentage,
+                    'sections_completed' => $completedSections,
+                    'total_sections' => $totalSections,
+                    'time_spent_minutes' => $progress->time_spent_minutes,
+                ]
+            );
+            
+            // Invalider le cache du dashboard
+            \App\Http\Controllers\ProfileController::clearCache($user->id);
+        }
 
         return response()->json([
             'progress_percentage' => $progress->progress_percentage,

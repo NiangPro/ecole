@@ -1076,8 +1076,8 @@
     <div class="hero-content">
         <h1 class="main-title">
             @if(app()->getLocale() === 'fr')
-                <span class="main-title-wrapper">
-                    <span>A</span>
+            <span class="main-title-wrapper">
+                <span>A</span>
                 </span>pprenez la <span class="title-gradient">{{ trans('app.home.hero_title_programming') }}</span><br>
                 Gratuitement avec <span class="title-gradient">{{ trans('app.home.hero_title_brand') }}</span>
             @else

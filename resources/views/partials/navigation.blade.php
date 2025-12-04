@@ -46,7 +46,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        height: 70px;
+        height: 60px;
     }
     
     /* Logo */
@@ -63,15 +63,15 @@
     }
     
     .logo-image {
-        width: 40px;
-        height: 40px;
-        border-radius: 10px;
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
         filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.5));
     }
     
     .logo-text {
         font-family: 'Orbitron', sans-serif;
-        font-size: 1.05rem;
+        font-size: 0.95rem;
         font-weight: 800;
         background: linear-gradient(135deg, #06b6d4, #14b8a6);
         -webkit-background-clip: text;
@@ -96,13 +96,13 @@
     .navbar-link {
         display: flex;
         align-items: center;
-        gap: 6px;
-        padding: 10px 16px;
+        gap: 5px;
+        padding: 7px 12px;
         color: rgba(255, 255, 255, 0.9);
         text-decoration: none;
-        font-size: 0.9rem;
+        font-size: 0.8rem;
         font-weight: 600;
-        border-radius: 12px;
+        border-radius: 10px;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative;
         overflow: hidden;
@@ -164,7 +164,7 @@
     }
     
     .dropdown-icon {
-        font-size: 0.7rem;
+        font-size: 0.65rem;
         transition: transform 0.3s ease;
     }
     
@@ -281,23 +281,42 @@
         line-height: 1.2;
     }
     
+    .dropdown-divider {
+        height: 1px;
+        background: rgba(6, 182, 212, 0.2);
+        margin: 8px 0;
+        border: none;
+    }
+    
+    .dropdown-item.danger {
+        color: #ef4444;
+    }
+    
+    .dropdown-item.danger:hover {
+        background: rgba(239, 68, 68, 0.15);
+        color: #ef4444;
+    }
+    
     /* CTA Button */
     .navbar-cta {
-        padding: 8px 16px;
+        padding: 6px 10px;
         background: linear-gradient(135deg, #06b6d4, #14b8a6);
         color: #000;
         text-decoration: none;
         font-weight: 600;
-        border-radius: 10px;
-        font-size: 0.85rem;
+        border-radius: 8px;
+        font-size: 0.75rem;
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         display: flex;
         align-items: center;
-        gap: 6px;
+        justify-content: center;
+        gap: 4px;
         border: 2px solid transparent;
         position: relative;
         overflow: hidden;
         box-shadow: 0 3px 12px rgba(6, 182, 212, 0.25);
+        min-width: 36px;
+        height: 36px;
     }
     
     .navbar-cta::before {
@@ -326,15 +345,16 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 40px;
-        height: 40px;
+        width: 36px;
+        height: 36px;
         background: rgba(6, 182, 212, 0.1);
         border: 1px solid rgba(6, 182, 212, 0.3);
         border-radius: 50%;
         color: #06b6d4;
         cursor: pointer;
         transition: all 0.3s ease;
-        margin-right: 15px;
+        margin-right: 12px;
+        font-size: 0.9rem;
     }
     
     .navbar-search-icon:hover {
@@ -796,7 +816,7 @@
         }
         
         .navbar-language-widget {
-            display: none;
+            display: flex !important;
         }
         
         .navbar-search-icon {
@@ -1101,6 +1121,12 @@
                     {{ trans('app.nav.about') }}
                 </a>
             </li>
+            
+            <li class="navbar-item">
+                <a href="{{ route('contact') }}" class="navbar-link {{ request()->routeIs('contact') ? 'active' : '' }}">
+                    {{ trans('app.nav.contact') }}
+                </a>
+            </li>
         </ul>
         
         <!-- Language Toggle (dans la navbar) -->
@@ -1108,6 +1134,8 @@
             $showLanguageWidget = request()->routeIs([
                 'home',
                 'about',
+                'login',
+                'register',
                 'formations.all',
                 'formations.html5',
                 'formations.css3',
@@ -1130,7 +1158,8 @@
                 'exercices.run',
                 'quiz',
                 'quiz.language',
-                'quiz.result'
+                'quiz.result',
+                'dashboard.*'
             ]);
         @endphp
         
@@ -1221,11 +1250,55 @@
         </div>
         
         
-        <!-- CTA Button -->
-        <a href="{{ route('contact') }}" class="navbar-cta" aria-label="Page de contact">
-            <i class="fas fa-envelope" aria-hidden="true"></i>
-            {{ trans('app.nav.contact') }}
+        <!-- User Dropdown -->
+        @auth
+        <div class="navbar-item dropdown" id="userDropdown">
+            <a href="#" class="navbar-cta dropdown-toggle" aria-label="Menu utilisateur" onclick="event.preventDefault(); toggleUserDropdown();" style="padding: 6px 10px; min-width: auto; height: auto;">
+                <div style="display: flex; align-items: center; gap: 6px;">
+                    <div style="width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #06b6d4, #14b8a6); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 0.75rem; flex-shrink: 0;">
+                        {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
+                    </div>
+                    <span style="max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.75rem;">{{ Auth::user()->name }}</span>
+                    <i class="fas fa-chevron-down dropdown-icon" style="font-size: 0.6rem; margin-left: 2px;"></i>
+                </div>
+            </a>
+            <div class="dropdown-menu" id="userDropdownMenu" style="right: 0; left: auto; min-width: 220px;">
+                <a href="{{ route('dashboard.overview') }}" class="dropdown-item">
+                    <div class="dropdown-item-icon" style="background: rgba(6, 182, 212, 0.2); color: #06b6d4;">
+                        <i class="fas fa-tachometer-alt"></i>
+                    </div>
+                    <div class="dropdown-item-content">
+                        <div class="dropdown-item-title">Dashboard</div>
+                    </div>
+                </a>
+                <a href="{{ route('profile') }}" class="dropdown-item">
+                    <div class="dropdown-item-icon" style="background: rgba(6, 182, 212, 0.2); color: #06b6d4;">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="dropdown-item-content">
+                        <div class="dropdown-item-title">Profil</div>
+                    </div>
+                </a>
+                <div class="dropdown-divider"></div>
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button type="submit" class="dropdown-item danger" style="width: 100%; border: none; background: none; text-align: left; cursor: pointer; padding: 12px 16px;">
+                        <div class="dropdown-item-icon" style="background: rgba(239, 68, 68, 0.2); color: #ef4444;">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </div>
+                        <div class="dropdown-item-content">
+                            <div class="dropdown-item-title" style="color: #ef4444;">Déconnexion</div>
+                        </div>
+                    </button>
+                </form>
+            </div>
+        </div>
+        @else
+        <a href="{{ route('login') }}" class="navbar-cta" aria-label="Connexion">
+            <i class="fas fa-sign-in-alt" aria-hidden="true"></i>
+            {{ trans('app.nav.login') ?? 'Connexion' }}
         </a>
+        @endauth
         
         <!-- Mobile Toggle -->
         <button class="mobile-toggle" id="mobileToggle" aria-label="Ouvrir le menu mobile" aria-expanded="false">
@@ -1350,6 +1423,13 @@
             </a>
         </li>
         
+        <li class="mobile-menu-item">
+            <a href="{{ route('contact') }}" class="mobile-menu-link">
+                <i class="fas fa-envelope"></i>
+                {{ trans('app.nav.contact') }}
+            </a>
+        </li>
+        
         <!-- Language Toggle dans le menu mobile -->
         @php
             $showLanguageWidget = request()->routeIs([
@@ -1377,7 +1457,8 @@
                 'exercices.run',
                 'quiz',
                 'quiz.language',
-                'quiz.result'
+                'quiz.result',
+                'dashboard.*'
             ]);
         @endphp
         
@@ -1430,12 +1511,36 @@
         </li>
         @endif
         
+        @auth
         <li class="mobile-menu-item">
-            <a href="{{ route('contact') }}" class="mobile-menu-link" style="background: linear-gradient(135deg, #06b6d4, #14b8a6); color: #000; font-weight: 700;">
-                <i class="fas fa-envelope"></i>
-                {{ trans('app.nav.contact') }}
+            <a href="{{ route('dashboard.overview') }}" class="mobile-menu-link" style="background: linear-gradient(135deg, #06b6d4, #14b8a6); color: #000; font-weight: 700;">
+                <i class="fas fa-tachometer-alt"></i>
+                Dashboard
             </a>
         </li>
+        <li class="mobile-menu-item">
+            <a href="{{ route('profile') }}" class="mobile-menu-link">
+                <i class="fas fa-user"></i>
+                Profil
+            </a>
+        </li>
+        <li class="mobile-menu-item">
+            <form method="POST" action="{{ route('logout') }}" style="margin: 0;">
+                @csrf
+                <button type="submit" class="mobile-menu-link" style="width: 100%; border: none; background: rgba(239, 68, 68, 0.1); color: #ef4444; text-align: left; cursor: pointer;">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Déconnexion
+                </button>
+            </form>
+        </li>
+        @else
+        <li class="mobile-menu-item">
+            <a href="{{ route('login') }}" class="mobile-menu-link" style="background: linear-gradient(135deg, #06b6d4, #14b8a6); color: #000; font-weight: 700;">
+                <i class="fas fa-sign-in-alt"></i>
+                {{ trans('app.nav.login') ?? 'Connexion' }}
+            </a>
+        </li>
+        @endauth
     </ul>
 </div>
 
@@ -1501,6 +1606,38 @@
         }
     });
     
+    // User Dropdown Toggle
+    function toggleUserDropdown() {
+        const dropdown = document.getElementById('userDropdown');
+        const menu = document.getElementById('userDropdownMenu');
+        if (dropdown && menu) {
+            const isActive = dropdown.classList.contains('active');
+            if (isActive) {
+                dropdown.classList.remove('active');
+                menu.style.opacity = '0';
+                menu.style.visibility = 'hidden';
+                menu.style.transform = 'translateY(-15px) scale(0.95)';
+            } else {
+                dropdown.classList.add('active');
+                menu.style.opacity = '1';
+                menu.style.visibility = 'visible';
+                menu.style.transform = 'translateY(0) scale(1)';
+            }
+        }
+    }
+    
+    // Close user dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        const userDropdown = document.getElementById('userDropdown');
+        const userDropdownMenu = document.getElementById('userDropdownMenu');
+        if (userDropdown && userDropdownMenu && !userDropdown.contains(e.target)) {
+            userDropdown.classList.remove('active');
+            userDropdownMenu.style.opacity = '0';
+            userDropdownMenu.style.visibility = 'hidden';
+            userDropdownMenu.style.transform = 'translateY(-15px) scale(0.95)';
+        }
+    });
+    
     // Close on escape key
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
@@ -1510,6 +1647,14 @@
             const searchForm = document.getElementById('searchForm');
             if (searchForm && searchForm.classList.contains('active')) {
                 closeSearchForm();
+            }
+            const userDropdown = document.getElementById('userDropdown');
+            const userDropdownMenu = document.getElementById('userDropdownMenu');
+            if (userDropdown && userDropdownMenu && userDropdown.classList.contains('active')) {
+                userDropdown.classList.remove('active');
+                userDropdownMenu.style.opacity = '0';
+                userDropdownMenu.style.visibility = 'hidden';
+                userDropdownMenu.style.transform = 'translateY(-15px) scale(0.95)';
             }
         }
     });
