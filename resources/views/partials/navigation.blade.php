@@ -917,7 +917,7 @@
     }
 </style>
 
-<nav class="navbar-modern" id="navbar">
+<nav class="navbar-modern" id="navigation" role="navigation" aria-label="Navigation principale">
     <div class="navbar-container">
         <!-- Logo -->
         <a href="{{ route('home') }}" class="navbar-logo">

@@ -1,0 +1,475 @@
+/**
+ * Styles pour les améliorations UX/UI
+ * - Animations de chargement
+ * - Feedback visuel
+ * - Accessibilité
+ * - PWA
+ */
+
+/* ============================================
+   1. LOADERS AMÉLIORÉS
+   ============================================ */
+
+/* Loader global amélioré */
+.page-loader {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
+
+.page-loader-spinner {
+    width: 60px;
+    height: 60px;
+    border: 5px solid rgba(6, 182, 212, 0.2);
+    border-top-color: #06b6d4;
+    border-right-color: #14b8a6;
+    border-radius: 50%;
+    animation: spin 1s linear infinite, pulse 2s ease-in-out infinite;
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.5);
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.1); }
+}
+
+.loader-text {
+    animation: fadeInOut 2s ease-in-out infinite;
+}
+
+@keyframes fadeInOut {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+/* Loader pour les actions */
+.action-loader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.95);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    border-radius: 8px;
+    backdrop-filter: blur(5px);
+    transition: opacity 0.3s ease;
+}
+
+body.dark-mode .action-loader {
+    background: rgba(15, 23, 42, 0.95);
+}
+
+.action-loader-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid rgba(6, 182, 212, 0.2);
+    border-top-color: #06b6d4;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-bottom: 10px;
+}
+
+.action-loader-text {
+    color: #06b6d4;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+body.dark-mode .action-loader-text {
+    color: #06b6d4;
+}
+
+/* ============================================
+   2. NOTIFICATIONS PERSONNALISÉES
+   ============================================ */
+
+.custom-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    min-width: 300px;
+    max-width: 500px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    z-index: 10000;
+    transform: translateX(400px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.custom-notification.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+body.dark-mode .custom-notification {
+    background: #1e293b;
+    border: 1px solid rgba(6, 182, 212, 0.3);
+}
+
+.custom-notification-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+}
+
+.custom-notification i {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.custom-notification-success {
+    border-left: 4px solid #10b981;
+}
+
+.custom-notification-success i {
+    color: #10b981;
+}
+
+.custom-notification-error {
+    border-left: 4px solid #ef4444;
+}
+
+.custom-notification-error i {
+    color: #ef4444;
+}
+
+.custom-notification-info {
+    border-left: 4px solid #06b6d4;
+}
+
+.custom-notification-info i {
+    color: #06b6d4;
+}
+
+.custom-notification-warning {
+    border-left: 4px solid #f59e0b;
+}
+
+.custom-notification-warning i {
+    color: #f59e0b;
+}
+
+.custom-notification span {
+    flex: 1;
+    color: #1e293b;
+    font-size: 0.9rem;
+}
+
+body.dark-mode .custom-notification span {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.custom-notification-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+}
+
+.custom-notification-close:hover {
+    background: rgba(0, 0, 0, 0.1);
+    color: rgba(0, 0, 0, 0.8);
+}
+
+body.dark-mode .custom-notification-close {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+body.dark-mode .custom-notification-close:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* Amélioration Toastr */
+.toast {
+    border-radius: 12px !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2) !important;
+    backdrop-filter: blur(10px);
+}
+
+body.dark-mode .toast {
+    background: rgba(30, 41, 59, 0.95) !important;
+    border: 1px solid rgba(6, 182, 212, 0.3) !important;
+}
+
+/* ============================================
+   3. ACCESSIBILITÉ
+   ============================================ */
+
+/* Liens de saut */
+.skip-links {
+    position: absolute;
+    top: -100px;
+    left: 0;
+    z-index: 100000;
+}
+
+.skip-link {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: #06b6d4;
+    color: white;
+    padding: 12px 20px;
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: 0 0 8px 0;
+    transform: translateY(-100%);
+    transition: transform 0.3s ease;
+}
+
+.skip-link:focus {
+    transform: translateY(0);
+    z-index: 100001;
+}
+
+/* Focus visible amélioré */
+*:focus-visible {
+    outline: 3px solid #06b6d4;
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* Amélioration du contraste pour les éléments interactifs */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+    outline: 3px solid #06b6d4;
+    outline-offset: 2px;
+}
+
+/* Screen reader only */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+/* Indicateurs de focus pour la navigation clavier */
+.keyboard-navigation *:focus {
+    outline: 3px solid #06b6d4;
+    outline-offset: 2px;
+}
+
+/* ============================================
+   4. PWA
+   ============================================ */
+
+/* Bouton d'installation PWA */
+.pwa-install-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #06b6d4, #14b8a6);
+    color: white;
+    border: none;
+    padding: 14px 24px;
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    box-shadow: 0 8px 25px rgba(6, 182, 212, 0.4);
+    z-index: 9999;
+    display: none;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+}
+
+.pwa-install-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 35px rgba(6, 182, 212, 0.5);
+}
+
+.pwa-install-button:active {
+    transform: translateY(0);
+}
+
+/* Notification de mise à jour PWA */
+.pwa-update-notification {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    right: 20px;
+    max-width: 500px;
+    margin: 0 auto;
+    background: linear-gradient(135deg, #06b6d4, #14b8a6);
+    color: white;
+    border-radius: 12px;
+    padding: 16px 20px;
+    box-shadow: 0 10px 40px rgba(6, 182, 212, 0.4);
+    z-index: 10000;
+    transform: translateY(150px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.pwa-update-notification.show {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.pwa-update-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.pwa-update-content i {
+    font-size: 1.2rem;
+    animation: spin 2s linear infinite;
+}
+
+.pwa-update-content span {
+    flex: 1;
+    font-weight: 500;
+}
+
+.pwa-update-btn {
+    background: white;
+    color: #06b6d4;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.pwa-update-btn:hover {
+    background: rgba(255, 255, 255, 0.9);
+    transform: scale(1.05);
+}
+
+/* Indicateur de statut hors ligne */
+.offline-indicator {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #f59e0b;
+    color: white;
+    text-align: center;
+    padding: 8px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    z-index: 10001;
+    transform: translateY(-100%);
+    transition: transform 0.3s ease;
+}
+
+.offline-indicator.show {
+    transform: translateY(0);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+    .custom-notification {
+        right: 10px;
+        left: 10px;
+        min-width: auto;
+        max-width: none;
+    }
+
+    .pwa-install-button {
+        bottom: 10px;
+        right: 10px;
+        padding: 12px 20px;
+        font-size: 0.85rem;
+    }
+
+    .pwa-update-notification {
+        left: 10px;
+        right: 10px;
+    }
+}
+
+/* ============================================
+   ANIMATIONS FLUIDES
+   ============================================ */
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+/* Transitions fluides pour tous les éléments interactifs */
+button, a, input, select, textarea {
+    transition: all 0.2s ease;
+}
+
+/* Amélioration des états hover/focus */
+button:hover, a:hover {
+    transform: translateY(-1px);
+}
+
+button:active, a:active {
+    transform: translateY(0);
+}
+

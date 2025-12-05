@@ -635,6 +635,9 @@
     <!-- Toastr CSS - Chargé de manière synchrone -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     
+    <!-- UX Improvements CSS -->
+    <link rel="stylesheet" href="{{ asset('css/ux-improvements.css') }}">
+    
     @php
         $adsenseSettings = \Illuminate\Support\Facades\Cache::remember('adsense_settings', 3600, function () {
             return \App\Models\AdSenseSetting::first();
@@ -1310,11 +1313,20 @@
         <div class="page-loader-spinner"></div>
     </div>
     
+    <!-- Skip Links pour l'accessibilité -->
+    <div class="skip-links">
+        <a href="#main-content" class="skip-link">Aller au contenu principal</a>
+        <a href="#navigation" class="skip-link">Aller à la navigation</a>
+        <a href="#footer" class="skip-link">Aller au pied de page</a>
+    </div>
+    
     @include('partials.navigation')
     
     @include('partials.schema-org')
     
-    @yield('content')
+    <main id="main-content" role="main">
+        @yield('content')
+    </main>
     
     @include('partials.footer')
     
@@ -1585,5 +1597,8 @@
     
     <!-- CSS non critique chargé en bas de page pour ne pas bloquer le rendu -->
     @stack('styles')
+    
+    <!-- UX Improvements JS -->
+    <script src="{{ asset('js/ux-improvements.js') }}" defer></script>
 </body>
 </html>

@@ -1,5 +1,5 @@
 // Service Worker pour NiangProgrammeur - PWA Mode Hors Ligne Complet
-const CACHE_VERSION = 'v2.0.0';
+const CACHE_VERSION = 'v3.0.0';
 const STATIC_CACHE = `niangprogrammeur-static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `niangprogrammeur-dynamic-${CACHE_VERSION}`;
 const CONTENT_CACHE = `niangprogrammeur-content-${CACHE_VERSION}`;
@@ -9,9 +9,11 @@ const STATIC_ASSETS = [
     '/',
     '/offline.html',
     '/css/app.css',
+    '/css/ux-improvements.css',
     '/js/app.js',
     '/js/main.js',
     '/js/pwa.js',
+    '/js/ux-improvements.js',
     '/images/logo.png',
     '/manifest.json',
 ];

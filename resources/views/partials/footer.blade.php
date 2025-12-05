@@ -305,7 +305,7 @@
 @endphp
 
 <!-- Footer Ultra Moderne -->
-<footer class="footer-modern py-16">
+<footer class="footer-modern py-16" id="footer" role="contentinfo" aria-label="Pied de page">
     <div class="container mx-auto px-6">
         <!-- Grid principale -->
         <div class="footer-grid">
