@@ -782,13 +782,13 @@
             </a>
             
             <!-- Dropdown Configuration -->
-            <div class="sidebar-dropdown {{ request()->routeIs('admin.adsense*') || request()->routeIs('admin.backups*') || request()->routeIs('admin.logs.*') || request()->routeIs('admin.bing*') || request()->routeIs('admin.settings') ? 'active' : '' }}">
+            <div class="sidebar-dropdown {{ request()->routeIs('admin.adsense*') || request()->routeIs('admin.backups*') || request()->routeIs('admin.logs.*') || request()->routeIs('admin.bing*') || request()->routeIs('admin.settings') || request()->routeIs('admin.security-audit.*') ? 'active' : '' }}">
                 <button class="sidebar-item sidebar-dropdown-toggle" onclick="toggleSidebarDropdown('config')">
                     <i class="fas fa-cog text-xl"></i>
                     <span>Configuration</span>
                     <i class="fas fa-chevron-down dropdown-icon ml-auto" id="config-icon"></i>
                 </button>
-                <div class="sidebar-dropdown-menu" id="config-dropdown" style="display: {{ request()->routeIs('admin.adsense*') || request()->routeIs('admin.backups*') || request()->routeIs('admin.logs.*') || request()->routeIs('admin.bing*') || request()->routeIs('admin.settings') ? 'block' : 'none' }};">
+                <div class="sidebar-dropdown-menu" id="config-dropdown" style="display: {{ request()->routeIs('admin.adsense*') || request()->routeIs('admin.backups*') || request()->routeIs('admin.logs.*') || request()->routeIs('admin.bing*') || request()->routeIs('admin.settings') || request()->routeIs('admin.security-audit.*') ? 'block' : 'none' }};">
                     <a href="{{ route('admin.adsense') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.adsense*') ? 'active' : '' }}">
                         <i class="fab fa-google"></i>
                         <span>Google AdSense</span>
@@ -800,6 +800,10 @@
                     <a href="{{ route('admin.logs.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.logs.*') ? 'active' : '' }}">
                         <i class="fas fa-history"></i>
                         <span>Logs</span>
+                    </a>
+                    <a href="{{ route('admin.security-audit.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.security-audit.*') ? 'active' : '' }}">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Audit de Sécurité</span>
                     </a>
                     <a href="{{ route('admin.bing.submission') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.bing*') ? 'active' : '' }}">
                         <i class="fas fa-paper-plane"></i>

@@ -14,15 +14,17 @@ return Application::configure(basePath: dirname(__DIR__))
         // Middleware pour forcer www en production
         $middleware->web(prepend: [
             \App\Http\Middleware\ForceWwwRedirect::class,
+            \App\Http\Middleware\EnhancedCsrfProtection::class,
         ]);
         
         $middleware->web(append: [
             \App\Http\Middleware\TrackVisit::class,
         ]);
         
-        // Alias pour le middleware admin
+        // Alias pour les middlewares
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminAuth::class,
+            'rate.limit' => \App\Http\Middleware\AdvancedRateLimiting::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -186,6 +186,13 @@ Route::middleware(['admin'])->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\LogController::class, 'index'])->name('index');
     });
 
+    // Routes Audit de Sécurité Admin
+    Route::prefix('admin/security-audit')->name('admin.security-audit.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\SecurityAuditController::class, 'index'])->name('index');
+        Route::get('/{audit}', [\App\Http\Controllers\Admin\SecurityAuditController::class, 'show'])->name('show');
+        Route::get('/export/csv', [\App\Http\Controllers\Admin\SecurityAuditController::class, 'export'])->name('export');
+    });
+
     // Newsletter Admin
     Route::get('/admin/newsletter', [\App\Http\Controllers\Admin\NewsletterController::class, 'index'])->name('admin.newsletter.index');
     Route::get('/admin/newsletter/export', [\App\Http\Controllers\Admin\NewsletterController::class, 'export'])->name('admin.newsletter.export');
