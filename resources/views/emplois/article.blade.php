@@ -517,6 +517,16 @@
                 <span><i class="fas fa-eye"></i> {{ $article->views }} vues</span>
                 <span><i class="fas fa-user"></i> NiangProgrammeur</span>
             </div>
+            <div style="margin-top: 25px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                <button data-favorite 
+                        data-favorite-type="article" 
+                        data-favorite-slug="{{ $article->slug }}" 
+                        data-favorite-name="{{ $article->title }}"
+                        style="background: rgba(255, 255, 255, 0.2); border: 2px solid rgba(255, 255, 255, 0.4); color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s ease; backdrop-filter: blur(10px);">
+                    <i class="far fa-heart"></i>
+                    <span>Favoris</span>
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -564,6 +574,50 @@
             
             <div class="article-content">
                 {!! markdown_to_html($article->content) !!}
+            </div>
+            
+            <!-- Partage Social -->
+            <div style="margin-top: 40px; padding-top: 30px; border-top: 2px solid rgba(6, 182, 212, 0.2);">
+                <h3 style="font-size: 1.2rem; font-weight: 700; color: #06b6d4; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
+                    <i class="fas fa-share-alt"></i>
+                    Partager cet article
+                </h3>
+                <div class="social-share-buttons">
+                    <button data-share="facebook" 
+                            data-share-url="{{ $articleUrl }}" 
+                            data-share-title="{{ $article->title }}"
+                            data-share-text="{{ $article->excerpt ?? '' }}">
+                        <i class="fab fa-facebook"></i> Facebook
+                    </button>
+                    <button data-share="twitter" 
+                            data-share-url="{{ $articleUrl }}" 
+                            data-share-title="{{ $article->title }}"
+                            data-share-text="{{ $article->excerpt ?? '' }}">
+                        <i class="fab fa-twitter"></i> Twitter
+                    </button>
+                    <button data-share="linkedin" 
+                            data-share-url="{{ $articleUrl }}" 
+                            data-share-title="{{ $article->title }}"
+                            data-share-text="{{ $article->excerpt ?? '' }}">
+                        <i class="fab fa-linkedin"></i> LinkedIn
+                    </button>
+                    <button data-share="whatsapp" 
+                            data-share-url="{{ $articleUrl }}" 
+                            data-share-title="{{ $article->title }}"
+                            data-share-text="{{ $article->excerpt ?? '' }}">
+                        <i class="fab fa-whatsapp"></i> WhatsApp
+                    </button>
+                    <button data-share="email" 
+                            data-share-url="{{ $articleUrl }}" 
+                            data-share-title="{{ $article->title }}"
+                            data-share-text="{{ $article->excerpt ?? '' }}">
+                        <i class="fas fa-envelope"></i> Email
+                    </button>
+                    <button data-share="copy" 
+                            data-share-url="{{ $articleUrl }}">
+                        <i class="fas fa-link"></i> Copier le lien
+                    </button>
+                </div>
             </div>
             
             <style>

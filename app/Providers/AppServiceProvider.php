@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Schema;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +20,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // Configuration pour éviter l'erreur "La clé est trop longue" avec MySQL/MariaDB
+        Schema::defaultStringLength(191);
+        
         // Partager les catégories d'emplois avec la navigation
         view()->composer('partials.navigation', \App\View\Composers\NavigationComposer::class);
         

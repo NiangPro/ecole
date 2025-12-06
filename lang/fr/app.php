@@ -2859,6 +2859,8 @@ return [
             'profile' => 'Profil',
             'badges' => 'Badges',
             'certificates' => 'Certificats',
+            'favorites' => 'Favoris',
+            'notifications' => 'Notifications',
             'logout' => 'Déconnexion',
             'open_menu' => 'Ouvrir le menu',
             'close_menu' => 'Fermer le menu',
@@ -3024,6 +3026,14 @@ return [
                 'view' => 'Voir',
                 'no_certificates' => 'Aucun certificat disponible',
                 'no_certificates_desc' => 'Complétez des formations pour obtenir des certificats',
+            ],
+            'favorites' => [
+                'title' => 'Mes Favoris',
+                'description' => 'Retrouvez vos formations et articles favoris',
+            ],
+            'notifications' => [
+                'title' => 'Mes Notifications',
+                'description' => 'Consultez toutes vos notifications',
             ],
             'statistics' => [
                 'title' => 'Statistiques',

@@ -29,7 +29,15 @@
                 @foreach($badges as $badge)
                     @php
                         $isEarned = in_array($badge->id, $earnedBadgeIds);
-                        $userBadge = $earnedBadges->firstWhere('id', $badge->id);
+                        $earnedBadge = $earnedBadges->firstWhere('id', $badge->id);
+                        $earnedAt = null;
+                        if ($earnedBadge && $earnedBadge->pivot) {
+                            $earnedAtValue = $earnedBadge->pivot->earned_at ?? $earnedBadge->pivot->created_at ?? null;
+                            if ($earnedAtValue) {
+                                // Convertir en Carbon si c'est une chaîne
+                                $earnedAt = is_string($earnedAtValue) ? \Carbon\Carbon::parse($earnedAtValue) : $earnedAtValue;
+                            }
+                        }
                     @endphp
                     <div class="badge-card" style="
                         padding: 1.5rem;
@@ -61,10 +69,13 @@
                         <p class="dashboard-text-secondary" style="font-size: 0.85rem; margin-bottom: 0.75rem;">
                             {{ $badge->description }}
                         </p>
-                        @if($isEarned && $userBadge)
+                        @if($isEarned && $earnedBadge)
                             <div style="font-size: 0.75rem; color: {{ $badge->color }}; font-weight: 600;">
                                 <i class="fas fa-check-circle"></i>
-                                {{ trans('app.profile.dashboard.badges.earned_on') ?? 'Obtenu le' }} {{ $userBadge->earned_at->format('d/m/Y') }}
+                                {{ trans('app.profile.dashboard.badges.earned_on') ?? 'Obtenu le' }}
+                                @if($earnedAt)
+                                    {{ $earnedAt->format('d/m/Y') }}
+                                @endif
                             </div>
                         @else
                             <div style="font-size: 0.75rem; color: #64748b; font-weight: 500;">

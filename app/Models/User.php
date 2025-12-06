@@ -113,6 +113,21 @@ class User extends Authenticatable
         return $this->hasMany(Certificate::class);
     }
 
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class);
+    }
+
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class)->orderBy('created_at', 'desc');
+    }
+
+    public function unreadNotifications()
+    {
+        return $this->notifications()->where('is_read', false);
+    }
+
     /**
      * Vérifier si l'utilisateur a un badge spécifique
      */

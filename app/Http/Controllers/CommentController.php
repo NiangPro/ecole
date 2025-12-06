@@ -92,6 +92,23 @@ class CommentController extends Controller
             'ip_address' => $request->ip(),
         ]);
 
+        // Créer une notification si c'est une réponse à un commentaire
+        if ($request->parent_id) {
+            $parentComment = Comment::find($request->parent_id);
+            if ($parentComment && $parentComment->user_id) {
+                // Notifier l'auteur du commentaire parent
+                \App\Models\Notification::createNotification(
+                    $parentComment->user_id,
+                    'reply',
+                    'Nouvelle réponse à votre commentaire',
+                    $request->name . ' a répondu à votre commentaire sur "' . ($commentable->title ?? 'cet article') . '"',
+                    $commentableType === 'App\\Models\\JobArticle' 
+                        ? route('emplois.article', $commentable->slug) . '#comment-' . $comment->id
+                        : null
+                );
+            }
+        }
+
         // Invalider le cache
         if ($commentableType === 'App\\Models\\JobArticle') {
             \Illuminate\Support\Facades\Cache::forget("job_article_{$commentable->slug}");

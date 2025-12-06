@@ -1,0 +1,444 @@
+/**
+ * Styles pour les fonctionnalités sociales
+ * - Favoris
+ * - Notifications
+ * - Partage social
+ */
+
+/* ============================================
+   1. BOUTONS FAVORIS
+   ============================================ */
+
+[data-favorite] {
+    background: rgba(6, 182, 212, 0.1);
+    border: 2px solid rgba(6, 182, 212, 0.3);
+    color: #06b6d4;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+[data-favorite]:hover {
+    background: rgba(6, 182, 212, 0.2);
+    border-color: #06b6d4;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+}
+
+[data-favorite].favorite-active {
+    background: linear-gradient(135deg, #06b6d4, #14b8a6);
+    border-color: #06b6d4;
+    color: white;
+}
+
+[data-favorite].favorite-active:hover {
+    background: linear-gradient(135deg, #14b8a6, #06b6d4);
+    box-shadow: 0 6px 20px rgba(6, 182, 212, 0.4);
+}
+
+body.dark-mode [data-favorite] {
+    background: rgba(6, 182, 212, 0.15);
+    border-color: rgba(6, 182, 212, 0.4);
+}
+
+body.dark-mode [data-favorite]:hover {
+    background: rgba(6, 182, 212, 0.25);
+}
+
+/* ============================================
+   2. WIDGET DE NOTIFICATIONS
+   ============================================ */
+
+/* Widget dans la navbar (prioritaire) */
+#notification-widget-container {
+    position: relative;
+}
+
+/* Widget en bas à droite - DÉSACTIVÉ (plus utilisé) */
+#notification-widget {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    position: fixed !important;
+    bottom: -9999px !important;
+    right: -9999px !important;
+}
+
+.notification-bell {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #06b6d4, #14b8a6);
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 25px rgba(6, 182, 212, 0.4);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.notification-bell:hover {
+    transform: scale(1.1);
+    box-shadow: 0 12px 35px rgba(6, 182, 212, 0.5);
+}
+
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #ef4444;
+    color: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border: 2px solid white;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.notification-dropdown {
+    position: absolute;
+    bottom: 80px;
+    right: 0;
+    width: 380px;
+    max-height: 500px;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+    transform: translateY(20px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    z-index: 10000;
+}
+
+/* Dropdown dans la navbar */
+.navbar-notification-dropdown {
+    bottom: auto;
+    top: calc(100% + 15px);
+}
+
+body.dark-mode .notification-dropdown {
+    background: #1e293b;
+    border: 1px solid rgba(6, 182, 212, 0.3);
+}
+
+.notification-dropdown.active,
+.navbar-notification-dropdown.active {
+    display: flex !important;
+    transform: translateY(0) !important;
+    opacity: 1 !important;
+}
+
+.notification-dropdown.active {
+    display: flex;
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.notification-header {
+    padding: 20px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+body.dark-mode .notification-header {
+    border-bottom-color: rgba(255, 255, 255, 0.1);
+}
+
+.notification-header h4 {
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+body.dark-mode .notification-header h4 {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.mark-all-read {
+    background: none;
+    border: none;
+    color: #06b6d4;
+    font-size: 0.85rem;
+    cursor: pointer;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.mark-all-read:hover {
+    background: rgba(6, 182, 212, 0.1);
+}
+
+.notification-list {
+    flex: 1;
+    overflow-y: auto;
+    max-height: 400px;
+}
+
+.notification-item {
+    padding: 16px 20px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    display: flex;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+body.dark-mode .notification-item {
+    border-bottom-color: rgba(255, 255, 255, 0.05);
+}
+
+.notification-item:hover {
+    background: rgba(6, 182, 212, 0.05);
+}
+
+.notification-empty,
+.notification-error {
+    padding: 40px 20px;
+    text-align: center;
+    color: #64748b;
+    font-size: 0.9rem;
+}
+
+body.dark-mode .notification-empty,
+body.dark-mode .notification-error {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+body.dark-mode .notification-item:hover {
+    background: rgba(6, 182, 212, 0.1);
+}
+
+.notification-item.unread {
+    background: rgba(6, 182, 212, 0.05);
+    border-left: 3px solid #06b6d4;
+}
+
+body.dark-mode .notification-item.unread {
+    background: rgba(6, 182, 212, 0.1);
+}
+
+.notification-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(6, 182, 212, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #06b6d4;
+    flex-shrink: 0;
+}
+
+.notification-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.notification-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #1e293b;
+    margin-bottom: 4px;
+}
+
+body.dark-mode .notification-title {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.notification-message {
+    font-size: 0.85rem;
+    color: rgba(30, 41, 59, 0.7);
+    margin-bottom: 4px;
+    line-height: 1.4;
+}
+
+body.dark-mode .notification-message {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.notification-time {
+    font-size: 0.75rem;
+    color: rgba(30, 41, 59, 0.5);
+}
+
+body.dark-mode .notification-time {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.notification-link {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+}
+
+.notification-footer {
+    padding: 16px 20px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+body.dark-mode .notification-footer {
+    border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+.notification-footer a {
+    color: #06b6d4;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.notification-footer a:hover {
+    text-decoration: underline;
+}
+
+.notification-loading,
+.notification-empty {
+    padding: 40px 20px;
+    text-align: center;
+    color: rgba(30, 41, 59, 0.6);
+}
+
+body.dark-mode .notification-loading,
+body.dark-mode .notification-empty {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* ============================================
+   3. BOUTONS DE PARTAGE SOCIAL
+   ============================================ */
+
+.social-share-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+[data-share] {
+    padding: 10px 16px;
+    border-radius: 8px;
+    border: 2px solid;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+[data-share="facebook"] {
+    background: #1877f2;
+    border-color: #1877f2;
+    color: white;
+}
+
+[data-share="twitter"] {
+    background: #1da1f2;
+    border-color: #1da1f2;
+    color: white;
+}
+
+[data-share="linkedin"] {
+    background: #0077b5;
+    border-color: #0077b5;
+    color: white;
+}
+
+[data-share="whatsapp"] {
+    background: #25d366;
+    border-color: #25d366;
+    color: white;
+}
+
+[data-share="email"] {
+    background: rgba(6, 182, 212, 0.1);
+    border-color: #06b6d4;
+    color: #06b6d4;
+}
+
+[data-share="copy"] {
+    background: rgba(30, 41, 59, 0.1);
+    border-color: rgba(30, 41, 59, 0.3);
+    color: #1e293b;
+}
+
+body.dark-mode [data-share="email"] {
+    background: rgba(6, 182, 212, 0.15);
+    color: #06b6d4;
+}
+
+body.dark-mode [data-share="copy"] {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+[data-share]:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+
+@media (max-width: 768px) {
+    .notification-dropdown {
+        width: calc(100vw - 40px);
+        right: -20px;
+    }
+
+    #notification-widget {
+        bottom: 10px;
+        right: 10px;
+    }
+
+    .notification-bell {
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
+    }
+
+    .social-share-buttons {
+        flex-direction: column;
+    }
+
+    [data-share] {
+        width: 100%;
+        justify-content: center;
+    }
+}
+

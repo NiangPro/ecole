@@ -1,30 +1,98 @@
 // Fonction pour le défilement fluide vers les ancres
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
+function initSmoothScroll() {
+    // Fonction pour gérer le scroll
+    function handleAnchorClick(e) {
+        const link = e.target.closest('a');
+        if (!link) return;
+        
+        const href = link.getAttribute('href');
+        if (!href || !href.startsWith('#') || href === '#') return;
+        
         try {
             e.preventDefault();
             
-            const targetId = this.getAttribute('href');
-            if (targetId === '#') return;
-            
-            const targetElement = document.querySelector(targetId);
-            if (targetElement) {
+            // Fonction pour faire le scroll
+            const scrollToElement = (targetElement, href) => {
+                const navbar = document.querySelector('.navbar-modern') || document.querySelector('.navbar') || document.querySelector('nav');
+                const navbarHeight = navbar ? navbar.offsetHeight : 80;
+                
+                const targetPosition = targetElement.offsetTop - navbarHeight;
+                
                 window.scrollTo({
-                    top: targetElement.offsetTop - 80,
+                    top: Math.max(0, targetPosition),
                     behavior: 'smooth'
                 });
+                
+                // Mettre à jour l'URL
+                if (history.pushState) {
+                    history.pushState(null, null, href);
+                } else {
+                    window.location.hash = href;
+                }
                 
                 // Fermer le menu mobile si ouvert
                 const mobileMenu = document.getElementById('mobile-menu');
                 if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
                     mobileMenu.classList.add('hidden');
                 }
+            };
+            
+            // Chercher l'élément cible
+            let targetElement = document.querySelector(href);
+            
+            // Si non trouvé, réessayer après un court délai (au cas où le DOM n'est pas complètement chargé)
+            if (!targetElement) {
+                setTimeout(() => {
+                    targetElement = document.querySelector(href);
+                    if (targetElement) {
+                        scrollToElement(targetElement, href);
+                    } else {
+                        console.warn('Section non trouvée:', href);
+                    }
+                }, 50);
+                return;
             }
+            
+            scrollToElement(targetElement, href);
         } catch (error) {
             console.error('Erreur lors du défilement:', error);
         }
-    });
-});
+    }
+    
+    // Attacher les écouteurs aux liens existants
+    function attachListeners() {
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            // Vérifier si l'écouteur n'existe pas déjà
+            if (!anchor.dataset.smoothScrollAdded) {
+                anchor.addEventListener('click', handleAnchorClick);
+                anchor.dataset.smoothScrollAdded = 'true';
+            }
+        });
+    }
+    
+    // Initialiser
+    attachListeners();
+    
+    // Utiliser la délégation d'événements pour TOUS les liens d'ancrage (phase de capture - PRIORITÉ MAXIMALE)
+    // Cette approche garantit que TOUS les clics sur les liens d'ancrage sont interceptés, même ceux ajoutés dynamiquement
+    document.addEventListener('click', function(e) {
+        const link = e.target.closest('a[href^="#"]');
+        if (link) {
+            const href = link.getAttribute('href');
+            if (href && href !== '#') {
+                // Gérer directement le scroll (pas besoin d'attacher un écouteur séparé)
+                handleAnchorClick(e);
+            }
+        }
+    }, true); // Phase de capture - PRIORITÉ MAXIMALE pour intercepter avant ux-improvements.js
+}
+
+// Initialiser immédiatement (pas besoin d'attendre DOMContentLoaded)
+initSmoothScroll();
+
+// Réessayer après un court délai pour les éléments chargés après
+setTimeout(initSmoothScroll, 100);
+setTimeout(initSmoothScroll, 500);
 
 // Bouton de retour en haut
 const backToTopButton = document.getElementById('backToTop');

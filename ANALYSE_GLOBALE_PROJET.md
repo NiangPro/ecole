@@ -53,12 +53,12 @@
 - [ ] Compression des assets (CSS/JS)
 - [ ] CDN pour les assets statiques
 
-### 2. Fonctionnalités à Ajouter (Priorité Moyenne)
-- [ ] Système de commentaires sur les articles
-- [ ] Notifications en temps réel
-- [ ] Système de favoris pour les formations
-- [ ] Partage social des articles
-- [ ] Recherche avancée avec filtres
+### 2. Fonctionnalités à Ajouter (Priorité Moyenne) ✅
+- [x] Système de commentaires sur les articles
+- [x] Notifications en temps réel
+- [x] Système de favoris pour les formations
+- [x] Partage social des articles
+- [x] Recherche avancée avec filtres
 
 ### 3. Améliorations UX/UI (Priorité Moyenne) ✅
 - [x] Animations de chargement

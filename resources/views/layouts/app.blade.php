@@ -348,6 +348,17 @@
             pointer-events: none;
         }
         
+        /* Protection contre l'affichage du loader pour les liens d'ancrage */
+        body:has(a[href^="#"]:active) #page-loader,
+        body:has(a[data-no-loader]:active) #page-loader,
+        #page-loader[data-anchor-active="true"] {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
+            z-index: -1 !important;
+        }
+        
         .page-loader-spinner {
             width: 50px;
             height: 50px;
@@ -637,6 +648,9 @@
     
     <!-- UX Improvements CSS -->
     <link rel="stylesheet" href="{{ asset('css/ux-improvements.css') }}">
+    
+    <!-- Social Features CSS -->
+    <link rel="stylesheet" href="{{ asset('css/social-features.css') }}">
     
     @php
         $adsenseSettings = \Illuminate\Support\Facades\Cache::remember('adsense_settings', 3600, function () {
@@ -1599,6 +1613,17 @@
     @stack('styles')
     
     <!-- UX Improvements JS -->
-    <script src="{{ asset('js/ux-improvements.js') }}" defer></script>
+    <script src="{{ asset('js/ux-improvements.js') }}?v=2.1" defer></script>
+    
+    <!-- Social Features JS -->
+    <script src="{{ asset('js/social-features.js') }}?v=2.0" defer></script>
+    
+    <script>
+        // Définir si l'utilisateur est authentifié
+        document.body.dataset.authenticated = {{ Auth::check() ? 'true' : 'false' }};
+        @if(Auth::check())
+        document.body.dataset.userId = {{ Auth::id() }};
+        @endif
+    </script>
 </body>
 </html>

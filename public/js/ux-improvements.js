@@ -16,6 +16,7 @@
     class LoadingManager {
         constructor() {
             this.loaders = new Map();
+            this.anchorLinkClicked = false;
             this.init();
         }
 
@@ -28,6 +29,74 @@
             
             // Intercepter les liens pour afficher un loader
             this.interceptLinks();
+            
+            // Protection supplémentaire pour les liens d'ancrage
+            this.protectAnchorLinks();
+        }
+        
+        protectAnchorLinks() {
+            // Empêcher complètement l'affichage du loader pour les liens d'ancrage
+            const pageLoader = document.getElementById('page-loader');
+            if (!pageLoader) return;
+            
+            // Fonction pour forcer le loader à rester caché
+            const forceHide = () => {
+                pageLoader.setAttribute('data-anchor-active', 'true');
+                pageLoader.style.cssText = 'display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; z-index: -1 !important; position: fixed !important;';
+                pageLoader.classList.add('hidden');
+            };
+            
+            // Intercepter TOUS les clics sur les liens d'ancrage AVANT tout autre script
+            document.addEventListener('click', (e) => {
+                const link = e.target.closest('a');
+                if (link) {
+                    const href = link.getAttribute('href');
+                    if (href && (href.startsWith('#') || link.dataset.noLoader === 'true')) {
+                        this.anchorLinkClicked = true;
+                        forceHide();
+                        // Réinitialiser après un court délai
+                        setTimeout(() => {
+                            this.anchorLinkClicked = false;
+                        }, 2000);
+                    }
+                }
+            }, true); // Phase de capture - PRIORITÉ MAXIMALE
+            
+            // Surveiller les changements de hash
+            let lastHash = window.location.hash;
+            const checkHash = () => {
+                const currentHash = window.location.hash;
+                if (currentHash !== lastHash && currentHash) {
+                    forceHide();
+                }
+                lastHash = currentHash;
+            };
+            
+            window.addEventListener('hashchange', () => {
+                forceHide();
+                setTimeout(checkHash, 10);
+            });
+            
+            // Vérification continue toutes les 25ms pour être ultra-réactif
+            setInterval(() => {
+                if (window.location.hash) {
+                    forceHide();
+                }
+            }, 25);
+            
+            // Observer les changements du loader pour empêcher son affichage
+            const observer = new MutationObserver(() => {
+                if (window.location.hash && !pageLoader.classList.contains('hidden')) {
+                    forceHide();
+                }
+            });
+            
+            observer.observe(pageLoader, {
+                attributes: true,
+                attributeFilter: ['class', 'style'],
+                childList: false,
+                subtree: false
+            });
         }
 
         enhanceGlobalLoader() {
@@ -50,6 +119,48 @@
                         }, 500);
                     }, 300);
                 });
+                
+                // Empêcher le loader de s'afficher pour les liens d'ancrage
+                // En surveillant les changements de hash dans l'URL
+                let lastHash = window.location.hash;
+                const hideLoaderForAnchor = () => {
+                    if (loader && !loader.classList.contains('hidden')) {
+                        loader.classList.add('hidden');
+                        loader.style.display = 'none';
+                        loader.style.opacity = '0';
+                        loader.style.visibility = 'hidden';
+                        loader.style.pointerEvents = 'none';
+                    }
+                };
+                
+                const checkHashChange = () => {
+                    const currentHash = window.location.hash;
+                    if (currentHash !== lastHash) {
+                        // Si le hash change, c'est probablement un lien d'ancrage
+                        hideLoaderForAnchor();
+                    }
+                    lastHash = currentHash;
+                };
+                
+                // Vérifier périodiquement les changements de hash
+                setInterval(checkHashChange, 50);
+                
+                // Écouter les événements de hashchange
+                window.addEventListener('hashchange', hideLoaderForAnchor);
+                
+                // Surveiller les tentatives d'affichage du loader
+                const observer = new MutationObserver(() => {
+                    if (loader.dataset.anchorLink === 'true') {
+                        hideLoaderForAnchor();
+                    }
+                });
+                
+                observer.observe(loader, {
+                    attributes: true,
+                    attributeFilter: ['class', 'style'],
+                    childList: false,
+                    subtree: false
+                });
             }
         }
 
@@ -70,6 +181,15 @@
                     loaderData.loader.remove();
                     this.loaders.delete(loaderId);
                 }, 300);
+            }
+        }
+
+        // Méthode pour cacher le loader de page global
+        hidePageLoader() {
+            const pageLoader = document.getElementById('page-loader');
+            if (pageLoader) {
+                pageLoader.classList.add('hidden');
+                pageLoader.style.cssText = 'display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; z-index: -1 !important; position: fixed !important;';
             }
         }
 
@@ -107,16 +227,107 @@
         }
 
         interceptLinks() {
+            // Intercepter les clics sur les liens
             document.addEventListener('click', (e) => {
                 const link = e.target.closest('a');
-                if (link && link.href && !link.href.startsWith('#') && !link.href.startsWith('javascript:')) {
-                    // Vérifier si c'est un lien interne
-                    if (link.hostname === window.location.hostname || !link.hostname) {
-                        const loaderId = this.showLoader(document.body, 'Chargement de la page...');
-                        // Le loader sera caché quand la nouvelle page se charge
-                    }
+                if (!link || !link.href) {
+                    return;
+                }
+                
+                const hrefAttr = link.getAttribute('href');
+                
+                // SOLUTION SIMPLE : Si le lien a data-no-loader OU commence par #, NE RIEN FAIRE
+                // Laisser le comportement par défaut du navigateur (scroll vers l'ancre)
+                if (link.dataset.noLoader === 'true' || (hrefAttr && hrefAttr.trim().startsWith('#'))) {
+                    // Cacher tous les loaders qui pourraient être affichés
+                    this.loaders.forEach((loaderData, loaderId) => {
+                        this.hideLoader(loaderId);
+                    });
+                    document.querySelectorAll('.action-loader').forEach(loader => {
+                        loader.remove();
+                    });
+                    // Ne rien faire d'autre - laisser le comportement par défaut
+                    return;
+                }
+                
+                // Ignorer les liens javascript:
+                if (hrefAttr && hrefAttr.startsWith('javascript:')) {
+                    return;
+                }
+                
+                // Ignorer les liens avec target="_blank" (nouvelle fenêtre)
+                if (link.target === '_blank' || link.getAttribute('target') === '_blank') {
+                    return;
+                }
+                
+                // Pour les autres liens internes, afficher le loader
+                const isInternalLink = !link.hostname || link.hostname === window.location.hostname;
+                if (isInternalLink) {
+                    const loaderId = this.showLoader(document.body, 'Chargement de la page...');
+                    // Le loader sera caché quand la nouvelle page se charge
                 }
             });
+            
+            // Surveiller et empêcher l'affichage du loader pour les liens d'ancrage
+            const pageLoader = document.getElementById('page-loader');
+            if (pageLoader) {
+                // Utiliser la méthode de classe pour cacher le loader
+                const hidePageLoaderFn = () => {
+                    this.hidePageLoader();
+                };
+                
+                // Ajouter des écouteurs sur tous les liens d'ancrage existants et futurs
+                const setupAnchorLinks = () => {
+                    const anchorLinks = document.querySelectorAll('a[href^="#"]');
+                    anchorLinks.forEach(anchorLink => {
+                        // Vérifier si l'écouteur n'existe pas déjà
+                        if (!anchorLink.dataset.loaderListenerAdded) {
+                            anchorLink.addEventListener('click', () => {
+                                hidePageLoaderFn();
+                            }, true); // Phase de capture
+                            anchorLink.dataset.loaderListenerAdded = 'true';
+                        }
+                    });
+                };
+                
+                // Initialiser pour les liens existants
+                setupAnchorLinks();
+                
+                // Observer les changements pour les nouveaux liens
+                const observer = new MutationObserver(() => {
+                    setupAnchorLinks();
+                });
+                
+                observer.observe(document.body, {
+                    childList: true,
+                    subtree: true
+                });
+                
+                // Écouter les événements hashchange pour cacher le loader
+                window.addEventListener('hashchange', () => {
+                    hidePageLoaderFn();
+                });
+                
+                // Surveiller les changements de style du loader
+                const loaderObserver = new MutationObserver(() => {
+                    // Si le loader devient visible et qu'on a un hash dans l'URL, le cacher
+                    if (window.location.hash && !pageLoader.classList.contains('hidden')) {
+                        hidePageLoaderFn();
+                    }
+                });
+                
+                loaderObserver.observe(pageLoader, {
+                    attributes: true,
+                    attributeFilter: ['class', 'style']
+                });
+                
+                // Vérification périodique pour s'assurer que le loader reste caché pour les ancres
+                setInterval(() => {
+                    if (window.location.hash && !pageLoader.classList.contains('hidden')) {
+                        hidePageLoaderFn();
+                    }
+                }, 50); // Vérification toutes les 50ms pour être plus réactif
+            }
         }
     }
 
@@ -431,7 +642,6 @@
         init() {
             this.registerServiceWorker();
             this.addInstallPrompt();
-            this.addUpdateNotification();
             this.addOfflineSupport();
         }
 

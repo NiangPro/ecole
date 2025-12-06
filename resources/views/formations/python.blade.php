@@ -716,6 +716,16 @@
             {{ trans('app.formations.python.title') }}
     </h1>
         <p>{{ trans('app.formations.python.subtitle') }}</p>
+        <div style="margin-top: 30px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+            <button data-favorite 
+                    data-favorite-type="formation" 
+                    data-favorite-slug="python" 
+                    data-favorite-name="{{ trans('app.formations.python.title') }}"
+                    style="background: rgba(255, 255, 255, 0.2); border: 2px solid rgba(255, 255, 255, 0.4); color: white; padding: 12px 24px; border-radius: 10px; cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s ease; backdrop-filter: blur(10px);">
+                <i class="far fa-heart"></i>
+                <span>Ajouter aux favoris</span>
+            </button>
+        </div>
     </div>
 </div>
 

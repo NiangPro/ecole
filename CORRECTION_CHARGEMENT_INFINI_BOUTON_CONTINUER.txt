@@ -1,0 +1,89 @@
+CORRECTION CHARGEMENT INFINI - Bouton "Continuer" Formations
+============================================================
+
+Date: 2025-01-XX
+Problème: Le bouton "Continuer" sur les pages de formations affiche "Chargement de la page..." de manière infinie
+
+CAUSE:
+------
+Le bouton "Continuer" utilise un lien d'ancrage `<a href="#intro">` pour faire défiler la page vers la section d'introduction.
+
+Le LoadingManager dans `ux-improvements.js` intercepte tous les clics sur les liens pour afficher un loader. 
+Cependant, la vérification `!link.href.startsWith('#')` ne fonctionnait pas correctement car :
+- `link.href` contient l'URL complète (ex: `http://127.0.0.1:8000/formations/html5#intro`)
+- La condition vérifiait seulement si l'URL complète commençait par `#`, ce qui n'est jamais le cas
+
+RÉSULTAT:
+---------
+Le loader s'affichait pour les liens d'ancrage, mais comme la page ne se rechargeait pas, 
+le loader restait affiché indéfiniment.
+
+SOLUTION APPLIQUÉE:
+-------------------
+Modification de la méthode `interceptLinks()` dans `public/js/ux-improvements.js` :
+
+1. Vérification de l'attribut `href` directement avec `link.getAttribute('href')`
+   pour détecter les liens d'ancrage qui commencent par `#`
+
+2. Vérification supplémentaire pour les liens d'ancrage sur la même page :
+   - Si le lien a un hash (#section)
+   - ET que le pathname et search sont identiques à la page actuelle
+   - Alors c'est un lien d'ancrage sur la même page → ne pas afficher le loader
+
+3. Ignorer aussi les liens avec `target="_blank"` et les liens `javascript:`
+
+FICHIERS MODIFIÉS:
+------------------
+- public/js/ux-improvements.js (méthode interceptLinks)
+
+CORRECTIONS SUPPLÉMENTAIRES:
+-----------------------------
+1. Utilisation de la phase de capture (`true` comme 3ème paramètre) pour vérifier 
+   AVANT les autres handlers JavaScript
+   
+2. Vérification renforcée des liens d'ancrage :
+   - Vérification de l'attribut `href` directement avec `trim()` pour éviter les espaces
+   - Vérification avec `URL` pour détecter les liens d'ancrage sur la même page
+   - Vérification avec les propriétés du lien (`link.hash`, `link.pathname`, etc.)
+   
+3. Cacher le loader global (`page-loader`) si un lien d'ancrage est détecté
+
+CORRECTIONS FINALES (Solution complète):
+-----------------------------------------
+1. Ajout de l'attribut `data-no-loader="true"` sur le bouton "Continuer" dans html5.blade.php
+   - Cela permet d'exclure explicitement ce lien de l'interception du loader
+
+2. Vérification de l'attribut `data-no-loader` en PRIORITÉ dans le JavaScript
+   - Avant même de vérifier si c'est un lien d'ancrage
+   - Cacher immédiatement le loader si cet attribut est présent
+
+3. Amélioration de la détection des liens d'ancrage :
+   - Fonction `isAnchorLink()` extraite et réutilisable
+   - Vérification multiple : attribut href, URL complète, propriétés du lien
+
+4. Ajout d'écouteurs sur TOUS les liens d'ancrage :
+   - Détection automatique des liens existants et futurs
+   - Chaque lien d'ancrage cache le loader au clic (phase de capture)
+
+5. Surveillance renforcée :
+   - MutationObserver pour détecter les nouveaux liens
+   - Écoute des événements `hashchange`
+   - Vérification périodique toutes les 50ms (au lieu de 100ms)
+
+6. Fonction `hidePageLoader()` robuste :
+   - Cache le loader avec plusieurs propriétés CSS
+   - Définit `zIndex` à -1 pour être sûr qu'il ne s'affiche pas
+
+FICHIERS MODIFIÉS:
+------------------
+- public/js/ux-improvements.js (méthode interceptLinks complètement refactorisée)
+- resources/views/formations/html5.blade.php (ajout de data-no-loader="true")
+
+RÉSULTAT:
+---------
+✅ Les liens d'ancrage (comme `#intro`) ne déclenchent plus le loader
+✅ Le bouton "Continuer" fonctionne correctement et fait défiler la page
+✅ Le loader s'affiche uniquement pour les vraies navigations de page
+✅ Le loader global est caché si un lien d'ancrage est détecté
+✅ Protection multi-niveaux : attribut data-no-loader + détection automatique + surveillance continue
+

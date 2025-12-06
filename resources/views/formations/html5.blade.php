@@ -683,6 +683,16 @@
             {{ trans('app.formations.html5.title') }}
         </h1>
         <p>{{ trans('app.formations.html5.subtitle') }}</p>
+        <div style="margin-top: 30px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+            <button data-favorite 
+                    data-favorite-type="formation" 
+                    data-favorite-slug="html5" 
+                    data-favorite-name="{{ trans('app.formations.html5.title') }}"
+                    style="background: rgba(255, 255, 255, 0.2); border: 2px solid rgba(255, 255, 255, 0.4); color: white; padding: 12px 24px; border-radius: 10px; cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s ease; backdrop-filter: blur(10px);">
+                <i class="far fa-heart"></i>
+                <span>Ajouter aux favoris</span>
+            </button>
+        </div>
     </div>
 </div>
 
@@ -723,7 +733,24 @@
                         {{ trans('app.formations.progress.view_dashboard') }}
                     </a>
                     @if($progress->progress_percentage < 100)
-                    <a href="#intro" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: white; color: #04AA6D; border: 2px solid #04AA6D; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: all 0.3s ease;">
+                    @php
+                        // Déterminer la section de reprise : utiliser section_id si disponible, sinon la première section non complétée, sinon #intro
+                        $continueSection = '#intro';
+                        if ($progress->section_id) {
+                            $continueSection = '#' . $progress->section_id;
+                        } else {
+                            // Trouver la première section non complétée
+                            $completedSections = $progress->completed_sections ?? [];
+                            $allSections = ['intro', 'editors', 'basic', 'elements', 'attributes', 'headings', 'paragraphs', 'styles', 'formatting', 'quotations', 'comments', 'colors', 'links', 'images', 'tables', 'lists', 'forms', 'media', 'canvas', 'svg', 'apis', 'semantic'];
+                            foreach ($allSections as $section) {
+                                if (!in_array($section, $completedSections)) {
+                                    $continueSection = '#' . $section;
+                                    break;
+                                }
+                            }
+                        }
+                    @endphp
+                    <a href="{{ $continueSection }}" data-no-loader="true" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: white; color: #04AA6D; border: 2px solid #04AA6D; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: all 0.3s ease;">
                         <i class="fas fa-arrow-down"></i>
                         {{ trans('app.formations.progress.continue') }}
                     </a>

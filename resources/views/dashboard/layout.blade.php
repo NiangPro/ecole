@@ -494,11 +494,11 @@
             <div class="sidebar-header">
                 <div class="sidebar-user-card">
                     <div class="sidebar-avatar">
-                        {{ strtoupper(substr($user->name, 0, 1)) }}
+                        {{ strtoupper(substr(Auth::user()->name ?? 'U', 0, 1)) }}
                     </div>
                     <div class="sidebar-user-info">
-                        <h3>{{ $user->name }}</h3>
-                        <p>{{ $user->email }}</p>
+                        <h3>{{ Auth::user()->name ?? 'Utilisateur' }}</h3>
+                        <p>{{ Auth::user()->email ?? '' }}</p>
                     </div>
                 </div>
                 <button class="sidebar-close-btn" id="sidebarClose" style="display: none; background: none; border: none; color: #04AA6D; font-size: 24px; cursor: pointer; padding: 5px; width: 35px; height: 35px; border-radius: 50%; transition: all 0.3s ease;" aria-label="{{ trans('app.profile.sidebar.close_menu') }}">
@@ -510,27 +510,27 @@
                 <div class="nav-section">
                     <p class="nav-section-title">{{ trans('app.profile.sidebar.navigation') }}</p>
                     
-                    <a href="{{ route('dashboard.overview') }}" class="nav-item {{ request()->routeIs('dashboard.overview') || request()->routeIs('dashboard.index') ? 'active' : '' }}">
+                    <a href="{{ route('dashboard.overview') }}" class="nav-item {{ request()->routeIs('dashboard.overview') || request()->routeIs('dashboard.index') ? 'active' : '' }}" data-no-loader="true">
                         <i class="fas fa-home"></i>
                         <span>{{ trans('app.profile.sidebar.overview') }}</span>
                     </a>
                     
-                    <a href="{{ route('dashboard.formations') }}" class="nav-item {{ request()->routeIs('dashboard.formations') ? 'active' : '' }}">
+                    <a href="{{ route('dashboard.formations') }}" class="nav-item {{ request()->routeIs('dashboard.formations') ? 'active' : '' }}" data-no-loader="true">
                         <i class="fas fa-book"></i>
                         <span>{{ trans('app.profile.sidebar.formations') }}</span>
                     </a>
                     
-                    <a href="{{ route('dashboard.exercices') }}" class="nav-item {{ request()->routeIs('dashboard.exercices') ? 'active' : '' }}">
+                    <a href="{{ route('dashboard.exercices') }}" class="nav-item {{ request()->routeIs('dashboard.exercices') ? 'active' : '' }}" data-no-loader="true">
                         <i class="fas fa-code"></i>
                         <span>{{ trans('app.profile.sidebar.exercises') }}</span>
                     </a>
                     
-                    <a href="{{ route('dashboard.quiz') }}" class="nav-item {{ request()->routeIs('dashboard.quiz') ? 'active' : '' }}">
+                    <a href="{{ route('dashboard.quiz') }}" class="nav-item {{ request()->routeIs('dashboard.quiz') ? 'active' : '' }}" data-no-loader="true">
                         <i class="fas fa-question-circle"></i>
                         <span>{{ trans('app.profile.sidebar.quiz') }}</span>
                     </a>
                     
-                    <a href="{{ route('dashboard.goals') }}" class="nav-item {{ request()->routeIs('dashboard.goals') ? 'active' : '' }}">
+                    <a href="{{ route('dashboard.goals') }}" class="nav-item {{ request()->routeIs('dashboard.goals') ? 'active' : '' }}" data-no-loader="true">
                         <i class="fas fa-bullseye"></i>
                         <span>{{ trans('app.profile.sidebar.goals') }}</span>
                         @if(isset($goals) && $goals->where('completed', false)->count() > 0)
@@ -538,31 +538,59 @@
                         @endif
                     </a>
                     
-                    <a href="{{ route('dashboard.activities') }}" class="nav-item {{ request()->routeIs('dashboard.activities') ? 'active' : '' }}">
+                    <a href="{{ route('dashboard.activities') }}" class="nav-item {{ request()->routeIs('dashboard.activities') ? 'active' : '' }}" data-no-loader="true">
                         <i class="fas fa-history"></i>
                         <span>{{ trans('app.profile.sidebar.activity') }}</span>
                     </a>
                     
-                    <a href="{{ route('dashboard.statistics') }}" class="nav-item {{ request()->routeIs('dashboard.statistics') ? 'active' : '' }}">
+                    <a href="{{ route('dashboard.statistics') }}" class="nav-item {{ request()->routeIs('dashboard.statistics') ? 'active' : '' }}" data-no-loader="true">
                         <i class="fas fa-chart-line"></i>
                         <span>{{ trans('app.profile.dashboard.statistics.title') }}</span>
                     </a>
                     
-                    <a href="{{ route('dashboard.badges') }}" class="nav-item {{ request()->routeIs('dashboard.badges') ? 'active' : '' }}">
+                    <a href="{{ route('dashboard.badges') }}" class="nav-item {{ request()->routeIs('dashboard.badges') ? 'active' : '' }}" data-no-loader="true">
                         <i class="fas fa-trophy"></i>
                         <span>{{ trans('app.profile.sidebar.badges') ?? 'Badges' }}</span>
                     </a>
                     
-                    <a href="{{ route('dashboard.certificates') }}" class="nav-item {{ request()->routeIs('dashboard.certificates') ? 'active' : '' }}">
+                    <a href="{{ route('dashboard.certificates') }}" class="nav-item {{ request()->routeIs('dashboard.certificates') ? 'active' : '' }}" data-no-loader="true">
                         <i class="fas fa-certificate"></i>
                         <span>{{ trans('app.profile.sidebar.certificates') ?? 'Certificats' }}</span>
+                    </a>
+                    
+                    <a href="{{ route('dashboard.favorites') }}" class="nav-item {{ request()->routeIs('dashboard.favorites') ? 'active' : '' }}" data-no-loader="true">
+                        <i class="fas fa-heart"></i>
+                        <span>{{ trans('app.profile.sidebar.favorites') ?? 'Favoris' }}</span>
+                    </a>
+                    
+                    <a href="{{ route('dashboard.notifications') }}" class="nav-item {{ request()->routeIs('dashboard.notifications') ? 'active' : '' }}" data-no-loader="true">
+                        <i class="fas fa-bell"></i>
+                        <span>{{ trans('app.profile.sidebar.notifications') ?? 'Notifications' }}</span>
+                        @php
+                            $unreadCount = Auth::check() ? \App\Models\Notification::countUnread(Auth::id()) : 0;
+                        @endphp
+                        @if($unreadCount > 0)
+                        <span class="notification-count-badge" style="
+                            background: #ef4444;
+                            color: white;
+                            border-radius: 50%;
+                            width: 20px;
+                            height: 20px;
+                            display: inline-flex;
+                            align-items: center;
+                            justify-content: center;
+                            font-size: 0.7rem;
+                            font-weight: 700;
+                            margin-left: auto;
+                        ">{{ $unreadCount > 99 ? '99+' : $unreadCount }}</span>
+                        @endif
                     </a>
                 </div>
                 
                 <div class="nav-section">
                     <p class="nav-section-title">{{ trans('app.profile.sidebar.account') }}</p>
                     
-                    <a href="{{ route('dashboard.profile') }}" class="nav-item {{ request()->routeIs('dashboard.profile') ? 'active' : '' }}">
+                    <a href="{{ route('dashboard.profile') }}" class="nav-item {{ request()->routeIs('dashboard.profile') ? 'active' : '' }}" data-no-loader="true">
                         <i class="fas fa-user"></i>
                         <span>{{ trans('app.profile.sidebar.profile') }}</span>
                     </a>

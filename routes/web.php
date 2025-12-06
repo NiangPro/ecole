@@ -74,6 +74,15 @@ Route::get('/emplois/article/{slug}', [PageController::class, 'showArticle'])
 Route::post('/comments', [\App\Http\Controllers\CommentController::class, 'store'])->middleware('throttle:5,15')->name('comments.store');
 Route::post('/comments/{id}/like', [\App\Http\Controllers\CommentController::class, 'like'])->middleware('throttle:10,1')->name('comments.like');
 
+// Favoris (API)
+Route::middleware('auth')->prefix('api')->name('api.')->group(function () {
+    Route::post('/favorites/toggle', [\App\Http\Controllers\FavoriteController::class, 'toggle'])->name('favorites.toggle');
+    Route::get('/favorites/check', [\App\Http\Controllers\FavoriteController::class, 'check'])->name('favorites.check');
+    Route::get('/notifications/unread', [\App\Http\Controllers\NotificationController::class, 'unread'])->name('notifications.unread');
+    Route::post('/notifications/{id}/read', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::post('/notifications/read-all', [\App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
+});
+
 // Routes d'authentification utilisateur
 Route::get('/login', [\App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [\App\Http\Controllers\Auth\LoginController::class, 'login'])->name('login.post');
@@ -105,6 +114,12 @@ Route::middleware('auth')->prefix('dashboard')->name('dashboard.')->group(functi
     Route::get('/settings', [\App\Http\Controllers\ProfileController::class, 'settings'])->name('settings');
     Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'profile'])->name('profile');
     Route::post('/profile', [\App\Http\Controllers\ProfileController::class, 'updateProfile'])->name('profile.update');
+    
+    // Favoris
+    Route::get('/favorites', [\App\Http\Controllers\FavoriteController::class, 'index'])->name('favorites');
+    
+    // Notifications
+    Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'index'])->name('notifications');
     
     // Routes pour les objectifs (API)
     Route::post('/goals', [\App\Http\Controllers\UserGoalController::class, 'store'])->name('goals.store');
