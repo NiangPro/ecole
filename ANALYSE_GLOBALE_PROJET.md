@@ -73,10 +73,10 @@
 - [x] Backup automatique quotidien
 
 ### 5. Tests et Qualité (Priorité Moyenne)
-- [ ] Tests unitaires (PHPUnit)
-- [ ] Tests d'intégration
-- [ ] Tests E2E (Laravel Dusk)
-- [ ] Code coverage > 80%
+- [x] Tests unitaires (PHPUnit)
+- [x] Tests d'intégration
+- [x] Tests E2E (Laravel Dusk)
+- [x] Code coverage > 80%
 
 ### 6. Documentation (Priorité Basse)
 - [ ] README.md complet
