@@ -1586,7 +1586,7 @@
             function loadScripts() {
                 const scripts = [
                     '{{ asset("js/main.js") }}',
-                    '{{ asset("js/pwa.js") }}'
+                    '{{ asset("js/ux-improvements.js") }}?v=2.2'
                 ];
                 
                 scripts.forEach(function(src) {
