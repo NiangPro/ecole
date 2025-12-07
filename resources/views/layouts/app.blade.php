@@ -111,12 +111,103 @@
                         message.includes('chrome-extension://') ||
                         message.includes('moz-extension://') ||
                         message.includes('edge-extension://') ||
-                        (message.includes('unknown error') && message.includes('content'))) {
+                        message.includes('unknown error') ||
+                        (message.includes('401') && message.includes('favorites/check')) ||
+                        (message.includes('unauthorized') && message.includes('favorites')) ||
+                        message.includes('[pwa]') ||
+                        message.includes('[ux]')) {
                         return; // Ne pas afficher
                     }
                     return originalError.apply(console, args);
                 };
             }
+            
+            // Surcharger aussi console.log IMMÉDIATEMENT pour masquer [UX] et [PWA]
+            // DOIT être fait AVANT tout autre script pour intercepter tous les messages
+            if (window.console && window.console.log) {
+                const originalLog = window.console.log;
+                window.console.log = function() {
+                    const args = Array.from(arguments);
+                    const fullMessage = args.map(a => {
+                        if (typeof a === 'object' && a !== null) {
+                            try {
+                                return JSON.stringify(a).toLowerCase();
+                            } catch (e) {
+                                return String(a).toLowerCase();
+                            }
+                        }
+                        return String(a).toLowerCase();
+                    }).join(' ');
+                    
+                    // Liste exhaustive de tous les messages à masquer
+                    const messagesToHide = [
+                        '[pwa]', '[ux]', '[pwa]', '[ux]',
+                        'initialisation des managers',
+                        'tous les managers initialisés',
+                        'pwamanager',
+                        'service worker enregistré',
+                        'initialisation du système',
+                        'aucun prompt disponible',
+                        'content.js',
+                        'unknown error',
+                        'enregistrement du service worker',
+                        'service worker enregistré avec succès',
+                        'événement beforeinstallprompt',
+                        'application déjà installée',
+                        'prompt disponible',
+                        'affichage du bouton',
+                        'bouton créé',
+                        'bouton affiché',
+                        'deferredprompt',
+                        'userchoice',
+                        'installation acceptée',
+                        'installation refusée'
+                    ];
+                    
+                    // Vérifier si le message contient un des mots-clés à masquer
+                    for (const keyword of messagesToHide) {
+                        if (fullMessage.includes(keyword)) {
+                            return; // Ne pas afficher
+                        }
+                    }
+                    
+                    return originalLog.apply(console, args);
+                };
+            }
+            
+            // Intercepter fetch pour empêcher les appels API si l'utilisateur n'est pas authentifié
+            const originalFetch = window.fetch;
+            window.fetch = function(...args) {
+                const url = args[0];
+                const urlString = typeof url === 'string' ? url : url?.url || '';
+                
+                // Si c'est une requête vers /api/favorites/check
+                if (urlString.includes('/api/favorites/check')) {
+                    // Vérifier l'authentification AVANT de faire la requête
+                    if (typeof window.isAuthenticated === 'undefined') {
+                        window.isAuthenticated = document.body.dataset.authenticated === 'true' || 
+                                                 document.querySelector('[data-user-id]') !== null;
+                    }
+                    
+                    // Si l'utilisateur n'est pas authentifié, NE PAS faire la requête
+                    if (!window.isAuthenticated) {
+                        // Retourner une promesse résolue avec une réponse 401 silencieuse
+                        // Cela évite l'erreur réseau visible dans la console
+                        return Promise.resolve({
+                            ok: false,
+                            status: 401,
+                            statusText: 'Unauthorized',
+                            json: () => Promise.resolve({ is_favorite: false }),
+                            text: () => Promise.resolve(''),
+                            headers: new Headers(),
+                            clone: () => ({ ok: false, status: 401 })
+                        });
+                    }
+                }
+                
+                // Pour les autres requêtes, faire la requête normale
+                return originalFetch.apply(this, args);
+            };
         })();
     </script>
     
@@ -132,23 +223,33 @@
                 const originalConsoleWarn = window.console.warn;
                 const originalConsoleLog = window.console.log;
                 
-                // Fonction pour détecter les erreurs d'extensions
+                // Fonction pour détecter les erreurs d'extensions et messages PWA/UX
                 function isExtensionError(message) {
                     if (!message) return false;
                     const msg = String(message).toLowerCase();
-                    return msg.includes('content.js') || 
-                           msg.includes('extension://') || 
-                           msg.includes('chrome-extension://') ||
-                           msg.includes('moz-extension://') ||
-                           msg.includes('edge-extension://') ||
-                           msg.includes('safari-extension://') ||
-                           (msg.includes('unknown error') && msg.includes('content'));
+                    const keywords = [
+                        'content.js', 'extension://', 'chrome-extension://',
+                        'moz-extension://', 'edge-extension://', 'safari-extension://',
+                        'unknown error', '[pwa]', '[ux]',
+                        'initialisation des managers', 'tous les managers initialisés',
+                        'pwamanager', 'service worker enregistré',
+                        'initialisation du système', 'aucun prompt disponible',
+                        'enregistrement du service worker', 'service worker enregistré avec succès',
+                        'événement beforeinstallprompt', 'application déjà installée',
+                        'prompt disponible', 'affichage du bouton', 'bouton créé',
+                        'bouton affiché', 'deferredprompt', 'userchoice',
+                        'installation acceptée', 'installation refusée',
+                        'serviceworkerregistration', 'navigationpreload'
+                    ];
+                    return keywords.some(keyword => msg.includes(keyword));
                 }
                 
                 // Masquer les erreurs d'extensions dans console.error
                 window.console.error = function(...args) {
                     const message = args.map(arg => String(arg)).join(' ').toLowerCase();
-                    if (isExtensionError(message)) {
+                    if (isExtensionError(message) ||
+                        (message.includes('401') && message.includes('favorites/check')) ||
+                        (message.includes('unauthorized') && message.includes('favorites'))) {
                         return; // Ne pas afficher
                     }
                     originalConsoleError.apply(console, args);

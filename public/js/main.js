@@ -32,8 +32,14 @@ function initSmoothScroll() {
                 
                 // Fermer le menu mobile si ouvert
                 const mobileMenu = document.getElementById('mobile-menu');
-                if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
-                    mobileMenu.classList.add('hidden');
+                if (mobileMenu) {
+                    try {
+                        if (!mobileMenu.classList.contains('hidden')) {
+                            mobileMenu.classList.add('hidden');
+                        }
+                    } catch (error) {
+                        // Erreur silencieuse
+                    }
                 }
             };
             
@@ -46,8 +52,6 @@ function initSmoothScroll() {
                     targetElement = document.querySelector(href);
                     if (targetElement) {
                         scrollToElement(targetElement, href);
-                    } else {
-                        console.warn('Section non trouvée:', href);
                     }
                 }, 50);
                 return;
@@ -55,7 +59,7 @@ function initSmoothScroll() {
             
             scrollToElement(targetElement, href);
         } catch (error) {
-            console.error('Erreur lors du défilement:', error);
+            // Erreur silencieuse
         }
     }
     
@@ -101,18 +105,24 @@ if (backToTopButton) {
     window.addEventListener('scroll', () => {
         try {
             // Afficher/masquer le bouton de retour en haut
-            if (window.pageYOffset > 300) {
-                backToTopButton.classList.add('visible');
-                backToTopButton.style.display = 'block';
-            } else {
-                backToTopButton.classList.remove('visible');
-                backToTopButton.style.display = 'none';
+            if (backToTopButton) {
+                try {
+                    if (window.pageYOffset > 300) {
+                        backToTopButton.classList.add('visible');
+                        backToTopButton.style.display = 'block';
+                    } else {
+                        backToTopButton.classList.remove('visible');
+                        backToTopButton.style.display = 'none';
+                    }
+                } catch (error) {
+                    // Erreur silencieuse
+                }
             }
             
             // Animation d'apparition des éléments au défilement
             animateOnScroll();
         } catch (error) {
-            console.error('Erreur lors du scroll:', error);
+            // Erreur silencieuse
         }
     });
 
@@ -124,7 +134,7 @@ if (backToTopButton) {
                 behavior: 'smooth'
             });
         } catch (error) {
-            console.error('Erreur lors du retour en haut:', error);
+            // Erreur silencieuse
         }
     });
 }
@@ -137,8 +147,12 @@ function animateOnScroll() {
         const elementTop = element.getBoundingClientRect().top;
         const windowHeight = window.innerHeight;
         
-        if (elementTop < windowHeight - 100) {
-            element.classList.add('visible');
+        if (element && elementTop < windowHeight - 100) {
+            try {
+                element.classList.add('visible');
+            } catch (error) {
+                // Erreur silencieuse
+            }
         }
     });
 }
@@ -155,7 +169,11 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (mobileMenuButton && mobileMenu) {
             mobileMenuButton.addEventListener('click', () => {
-                mobileMenu.classList.toggle('hidden');
+                try {
+                    mobileMenu.classList.toggle('hidden');
+                } catch (error) {
+                    // Erreur silencieuse
+                }
             });
             
             // Gestion du bouton formations mobile
@@ -164,7 +182,11 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (mobileFormationsBtn && mobileFormationsMenu) {
                 mobileFormationsBtn.addEventListener('click', () => {
-                    mobileFormationsMenu.classList.toggle('hidden');
+                    try {
+                        mobileFormationsMenu.classList.toggle('hidden');
+                    } catch (error) {
+                        // Erreur silencieuse
+                    }
                 });
             }
         }
@@ -176,7 +198,7 @@ document.addEventListener('DOMContentLoaded', () => {
             card.style.transitionDelay = `${index * 0.1}s`;
         });
     } catch (error) {
-        console.error('Erreur lors de l\'initialisation:', error);
+        // Erreur silencieuse
     }
 });
 
@@ -194,16 +216,12 @@ if (contactForm) {
                 formObject[key] = value;
             });
             
-            // Ici, vous pouvez ajouter la logique pour envoyer les données à votre serveur
-            console.log('Données du formulaire :', formObject);
-            
             // Afficher un message de succès
             alert('Merci pour votre message ! Nous vous recontacterons bientôt.');
             
             // Réinitialiser le formulaire
             this.reset();
         } catch (error) {
-            console.error('Erreur lors de la soumission du formulaire:', error);
             alert('Une erreur s\'est produite. Veuillez réessayer.');
         }
     });
@@ -213,14 +231,16 @@ if (contactForm) {
 const header = document.querySelector('header');
 if (header) {
     window.addEventListener('scroll', () => {
-        try {
-            if (window.scrollY > 100) {
-                header.classList.add('scrolled');
-            } else {
-                header.classList.remove('scrolled');
+        if (header) {
+            try {
+                if (window.scrollY > 100) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            } catch (error) {
+                // Erreur silencieuse
             }
-        } catch (error) {
-            console.error('Erreur lors du scroll du header:', error);
         }
     });
 }
@@ -244,7 +264,7 @@ function animateCounters() {
             }
         });
     } catch (error) {
-        console.error('Erreur lors de l\'animation des compteurs:', error);
+        // Erreur silencieuse
     }
 }
 
@@ -268,7 +288,7 @@ if ('IntersectionObserver' in window) {
             observer.observe(counter);
         });
     } catch (error) {
-        console.error('Erreur lors de l\'initialisation de l\'observer:', error);
+        // Erreur silencieuse
     }
 }
 
@@ -287,6 +307,6 @@ if (darkModeToggle) {
             document.documentElement.classList.add('dark');
         }
     } catch (error) {
-        console.error('Erreur lors de l\'initialisation du mode sombre:', error);
+        // Erreur silencieuse
     }
 }

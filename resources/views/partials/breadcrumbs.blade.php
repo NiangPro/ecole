@@ -4,14 +4,25 @@ if (!isset($breadcrumbs)) {
     $breadcrumbs = [];
     $currentRoute = request()->route()->getName();
     
-    // Ajouter l'accueil
-    $breadcrumbs[] = [
-        'name' => trans('app.nav.home', [], 'Accueil'),
-        'url' => url('/')
+    // Routes où on ne veut PAS afficher de breadcrumb
+    $routesWithoutBreadcrumb = [
+        'formations.html5',
+        'emplois.article',
+        'emplois.offres'
     ];
     
-    // Ajouter selon la route
-    if (str_contains($currentRoute, 'formations.')) {
+    // Si la route est dans la liste d'exclusion, ne pas générer de breadcrumb
+    if (in_array($currentRoute, $routesWithoutBreadcrumb)) {
+        $breadcrumbs = [];
+    } else {
+        // Ajouter l'accueil
+        $breadcrumbs[] = [
+            'name' => trans('app.nav.home', [], 'Accueil'),
+            'url' => url('/')
+        ];
+        
+        // Ajouter selon la route
+        if (str_contains($currentRoute, 'formations.')) {
         $breadcrumbs[] = [
             'name' => trans('app.formations.title'),
             'url' => route('formations.all')
@@ -34,8 +45,17 @@ if (!isset($breadcrumbs)) {
             ];
         }
     } elseif (str_contains($currentRoute, 'emplois.')) {
+        // Essayer plusieurs clés de traduction possibles pour "Emplois"
+        $emploisTitle = trans('app.nav.jobs', [], null);
+        if ($emploisTitle === 'app.nav.jobs') {
+            $emploisTitle = trans('app.nav.dropdown.jobs.all', [], null);
+            if ($emploisTitle === 'app.nav.dropdown.jobs.all') {
+                $emploisTitle = 'Emplois'; // Fallback
+            }
+        }
+        
         $breadcrumbs[] = [
-            'name' => trans('app.emplois.title', [], 'Emplois'),
+            'name' => $emploisTitle,
             'url' => route('emplois')
         ];
         if ($currentRoute === 'emplois.article' && isset($article)) {
@@ -55,6 +75,7 @@ if (!isset($breadcrumbs)) {
             'url' => route('quiz')
         ];
     }
+    } // Fermeture du else
 }
 @endphp
 
@@ -69,7 +90,8 @@ if (!isset($breadcrumbs)) {
 
 /* Positionnement après la section hero - chevauchement partiel pour effet visuel */
 .tutorial-header + .breadcrumb-nav,
-.hero-section + .breadcrumb-nav {
+.hero-section + .breadcrumb-nav,
+.article-hero + .breadcrumb-nav {
     position: relative;
     margin-top: -80px;
     margin-bottom: 2rem;
@@ -79,7 +101,8 @@ if (!isset($breadcrumbs)) {
 
 /* Si le breadcrumb est dans un conteneur après la section hero */
 .tutorial-header ~ .breadcrumb-nav,
-.hero-section ~ .breadcrumb-nav {
+.hero-section ~ .breadcrumb-nav,
+.article-hero ~ .breadcrumb-nav {
     position: relative;
     margin-top: -80px;
     margin-bottom: 2rem;
@@ -89,17 +112,16 @@ if (!isset($breadcrumbs)) {
 
 /* Si le breadcrumb est avant la section hero dans le DOM, utiliser position absolue pour le placer après visuellement */
 main:has(.tutorial-header) .breadcrumb-nav:not(.tutorial-header ~ .breadcrumb-nav):not(.tutorial-header + .breadcrumb-nav),
-main:has(.hero-section) .breadcrumb-nav:not(.hero-section ~ .breadcrumb-nav):not(.hero-section + .breadcrumb-nav) {
+main:has(.hero-section) .breadcrumb-nav:not(.hero-section ~ .breadcrumb-nav):not(.hero-section + .breadcrumb-nav),
+main:has(.article-hero) .breadcrumb-nav:not(.article-hero ~ .breadcrumb-nav):not(.article-hero + .breadcrumb-nav) {
     position: absolute;
     top: auto;
     bottom: auto;
     margin-top: 0;
 }
 
-/* Utiliser JavaScript pour déplacer le breadcrumb après la section hero si nécessaire */
-
 /* Si pas de section hero, position relative normale */
-main:not(:has(.tutorial-header)):not(:has(.hero-section)) .breadcrumb-nav {
+main:not(:has(.tutorial-header)):not(:has(.hero-section)):not(:has(.article-hero)) .breadcrumb-nav {
     position: relative;
     padding: 1rem 2rem;
     margin-bottom: 1rem;
@@ -127,8 +149,10 @@ main:not(:has(.tutorial-header)):not(:has(.hero-section)) .breadcrumb-nav {
 /* Styles pour breadcrumb après section hero (fond sombre) */
 .tutorial-header ~ .breadcrumb-nav .breadcrumb-item a,
 .hero-section ~ .breadcrumb-nav .breadcrumb-item a,
+.article-hero ~ .breadcrumb-nav .breadcrumb-item a,
 .tutorial-header + .breadcrumb-nav .breadcrumb-item a,
-.hero-section + .breadcrumb-nav .breadcrumb-item a {
+.hero-section + .breadcrumb-nav .breadcrumb-item a,
+.article-hero + .breadcrumb-nav .breadcrumb-item a {
     color: rgba(255, 255, 255, 0.9);
     text-decoration: none;
     transition: all 0.3s ease;
@@ -144,8 +168,10 @@ main:not(:has(.tutorial-header)):not(:has(.hero-section)) .breadcrumb-nav {
 
 .tutorial-header ~ .breadcrumb-nav .breadcrumb-item a:hover,
 .hero-section ~ .breadcrumb-nav .breadcrumb-item a:hover,
+.article-hero ~ .breadcrumb-nav .breadcrumb-item a:hover,
 .tutorial-header + .breadcrumb-nav .breadcrumb-item a:hover,
-.hero-section + .breadcrumb-nav .breadcrumb-item a:hover {
+.hero-section + .breadcrumb-nav .breadcrumb-item a:hover,
+.article-hero + .breadcrumb-nav .breadcrumb-item a:hover {
     background: rgba(255, 255, 255, 0.2);
     color: rgba(255, 255, 255, 1);
     transform: translateY(-2px);
@@ -153,8 +179,10 @@ main:not(:has(.tutorial-header)):not(:has(.hero-section)) .breadcrumb-nav {
 
 .tutorial-header ~ .breadcrumb-nav .breadcrumb-separator,
 .hero-section ~ .breadcrumb-nav .breadcrumb-separator,
+.article-hero ~ .breadcrumb-nav .breadcrumb-separator,
 .tutorial-header + .breadcrumb-nav .breadcrumb-separator,
-.hero-section + .breadcrumb-nav .breadcrumb-separator {
+.hero-section + .breadcrumb-nav .breadcrumb-separator,
+.article-hero + .breadcrumb-nav .breadcrumb-separator {
     margin: 0 0.5rem;
     color: rgba(255, 255, 255, 0.7);
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
@@ -162,8 +190,10 @@ main:not(:has(.tutorial-header)):not(:has(.hero-section)) .breadcrumb-nav {
 
 .tutorial-header ~ .breadcrumb-nav .breadcrumb-current,
 .hero-section ~ .breadcrumb-nav .breadcrumb-current,
+.article-hero ~ .breadcrumb-nav .breadcrumb-current,
 .tutorial-header + .breadcrumb-nav .breadcrumb-current,
-.hero-section + .breadcrumb-nav .breadcrumb-current {
+.hero-section + .breadcrumb-nav .breadcrumb-current,
+.article-hero + .breadcrumb-nav .breadcrumb-current {
     color: rgba(255, 255, 255, 1);
     font-weight: 600;
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
@@ -216,8 +246,10 @@ main:not(:has(.tutorial-header)):not(:has(.hero-section)) .breadcrumb-nav {
     
     .tutorial-header + .breadcrumb-nav,
     .hero-section + .breadcrumb-nav,
+    .article-hero + .breadcrumb-nav,
     .tutorial-header ~ .breadcrumb-nav,
-    .hero-section ~ .breadcrumb-nav {
+    .hero-section ~ .breadcrumb-nav,
+    .article-hero ~ .breadcrumb-nav {
         margin-top: -40px;
         margin-bottom: 1.5rem;
     }
@@ -259,8 +291,11 @@ main:not(:has(.tutorial-header)):not(:has(.hero-section)) .breadcrumb-nav {
         const breadcrumbNav = document.querySelector('.breadcrumb-nav');
         if (!breadcrumbNav) return;
         
-        // Chercher la section hero
-        const heroSection = document.querySelector('.tutorial-header') || document.querySelector('.hero-section');
+        // Chercher la section hero (formations, exercices, quiz, ou articles)
+        const heroSection = document.querySelector('.tutorial-header') || 
+                           document.querySelector('.hero-section') || 
+                           document.querySelector('.article-hero') ||
+                           document.querySelector('.article-hero-fallback');
         
         if (heroSection) {
             // Vérifier si le breadcrumb est déjà après la section hero

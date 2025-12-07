@@ -11,22 +11,28 @@ Route::get('/sitemap-pages.xml', [\App\Http\Controllers\SitemapController::class
 Route::get('/sitemap-articles.xml', [\App\Http\Controllers\SitemapController::class, 'articles'])->name('sitemap.articles');
 
 Route::get('/', [PageController::class, 'index'])->name('home');
-Route::get('/search', [PageController::class, 'search'])->middleware('throttle:30,1')->name('search');
+// Route Recherche - Utiliser SearchController
+use App\Http\Controllers\SearchController;
+Route::get('/search', [SearchController::class, 'index'])->middleware('throttle:30,1')->name('search');
 Route::post('/contact', [PageController::class, 'sendContact'])->middleware('throttle:5,1')->name('contact.send');
 Route::post('/newsletter/subscribe', [PageController::class, 'newsletterSubscribe'])->middleware('throttle:10,1')->name('newsletter.subscribe');
 Route::get('/about', [PageController::class, 'about'])->name('about');
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 Route::post('/contact', [PageController::class, 'sendContact'])->name('contact.send');
 Route::get('/faq', [PageController::class, 'faq'])->name('faq');
-Route::get('/exercices', [PageController::class, 'exercices'])->name('exercices');
-Route::get('/exercices/{language}', [PageController::class, 'exercicesLanguage'])->name('exercices.language');
-Route::get('/exercices/{language}/{id}', [PageController::class, 'exerciceDetail'])->name('exercices.detail');
-Route::post('/exercices/{language}/{id}/submit', [PageController::class, 'exerciceSubmit'])->name('exercices.submit');
-Route::post('/exercices/{language}/run', [PageController::class, 'runCode'])->middleware('throttle:30,1')->name('exercices.run');
-Route::get('/quiz', [PageController::class, 'quiz'])->name('quiz');
-Route::get('/quiz/{language}', [PageController::class, 'quizLanguage'])->name('quiz.language');
-Route::post('/quiz/{language}/submit', [PageController::class, 'quizSubmit'])->name('quiz.submit');
-Route::get('/quiz/{language}/result', [PageController::class, 'quizResult'])->name('quiz.result');
+// Routes Exercices - Utiliser ExerciceController
+use App\Http\Controllers\ExerciceController;
+Route::get('/exercices', [ExerciceController::class, 'index'])->name('exercices');
+Route::get('/exercices/{language}', [ExerciceController::class, 'language'])->name('exercices.language');
+Route::get('/exercices/{language}/{id}', [ExerciceController::class, 'detail'])->name('exercices.detail');
+Route::post('/exercices/{language}/{id}/submit', [ExerciceController::class, 'submit'])->name('exercices.submit');
+Route::post('/exercices/{language}/run', [ExerciceController::class, 'runCode'])->middleware('throttle:30,1')->name('exercices.run');
+// Routes Quiz - Utiliser QuizController
+use App\Http\Controllers\QuizController;
+Route::get('/quiz', [QuizController::class, 'index'])->name('quiz');
+Route::get('/quiz/{language}', [QuizController::class, 'language'])->name('quiz.language');
+Route::post('/quiz/{language}/submit', [QuizController::class, 'submit'])->name('quiz.submit');
+Route::get('/quiz/{language}/result', [QuizController::class, 'result'])->name('quiz.result');
 Route::get('/all-links', [PageController::class, 'allLinks'])->name('all.links');
 Route::get('/legal', [PageController::class, 'legal'])->name('legal');
 Route::get('/privacy-policy', [PageController::class, 'privacyPolicy'])->name('privacy-policy');
@@ -37,36 +43,38 @@ Route::get('/newsletter/unsubscribe/{token}', [PageController::class, 'newslette
 // Route pour changer la langue
 Route::get('/language/{locale}', [PageController::class, 'setLanguage'])->name('language.set');
 
-// Routes Formations
-Route::get('/formations', [PageController::class, 'allFormations'])->name('formations.all');
-Route::get('/formations/html5', [PageController::class, 'html5'])->name('formations.html5');
-Route::get('/formations/css3', [PageController::class, 'css3'])->name('formations.css3');
-Route::get('/formations/javascript', [PageController::class, 'javascript'])->name('formations.javascript');
-Route::get('/formations/php', [PageController::class, 'php'])->name('formations.php');
-Route::get('/formations/bootstrap', [PageController::class, 'bootstrap'])->name('formations.bootstrap');
-Route::get('/formations/java', [PageController::class, 'java'])->name('formations.java');
-Route::get('/formations/sql', [PageController::class, 'sql'])->name('formations.sql');
-Route::get('/formations/c', [PageController::class, 'c'])->name('formations.c');
-Route::get('/formations/git', [PageController::class, 'git'])->name('formations.git');
-Route::get('/formations/wordpress', [PageController::class, 'wordpress'])->name('formations.wordpress');
-Route::get('/formations/ia', [PageController::class, 'ia'])->name('formations.ia');
-Route::get('/formations/python', [PageController::class, 'python'])->name('formations.python');
-Route::get('/formations/cpp', [PageController::class, 'cpp'])->name('formations.cpp');
-Route::get('/formations/csharp', [PageController::class, 'csharp'])->name('formations.csharp');
-Route::get('/formations/dart', [PageController::class, 'dart'])->name('formations.dart');
+// Routes Formations - Utiliser FormationController
+use App\Http\Controllers\FormationController;
+Route::get('/formations', [FormationController::class, 'index'])->name('formations.all');
+Route::get('/formations/html5', [FormationController::class, 'html5'])->name('formations.html5');
+Route::get('/formations/css3', [FormationController::class, 'css3'])->name('formations.css3');
+Route::get('/formations/javascript', [FormationController::class, 'javascript'])->name('formations.javascript');
+Route::get('/formations/php', [FormationController::class, 'php'])->name('formations.php');
+Route::get('/formations/bootstrap', [FormationController::class, 'bootstrap'])->name('formations.bootstrap');
+Route::get('/formations/java', [FormationController::class, 'java'])->name('formations.java');
+Route::get('/formations/sql', [FormationController::class, 'sql'])->name('formations.sql');
+Route::get('/formations/c', [FormationController::class, 'c'])->name('formations.c');
+Route::get('/formations/git', [FormationController::class, 'git'])->name('formations.git');
+Route::get('/formations/wordpress', [FormationController::class, 'wordpress'])->name('formations.wordpress');
+Route::get('/formations/ia', [FormationController::class, 'ia'])->name('formations.ia');
+Route::get('/formations/python', [FormationController::class, 'python'])->name('formations.python');
+Route::get('/formations/cpp', [FormationController::class, 'cpp'])->name('formations.cpp');
+Route::get('/formations/csharp', [FormationController::class, 'csharp'])->name('formations.csharp');
+Route::get('/formations/dart', [FormationController::class, 'dart'])->name('formations.dart');
 
-// Routes Emplois
-Route::get('/emplois', [PageController::class, 'emplois'])->name('emplois');
-Route::get('/emplois/offres', [PageController::class, 'offresEmploi'])->name('emplois.offres');
-Route::get('/emplois/bourses', [PageController::class, 'bourses'])->name('emplois.bourses');
-Route::get('/emplois/candidature-spontanee', [PageController::class, 'candidatureSpontanee'])->name('emplois.candidature');
-Route::get('/emplois/opportunites', [PageController::class, 'opportunites'])->name('emplois.opportunites');
-Route::get('/emplois/concours', [PageController::class, 'concours'])->name('emplois.concours');
-Route::get('/emplois/categorie/{slug}', [PageController::class, 'categoryArticles'])->name('emplois.category');
+// Routes Emplois - Utiliser EmploiController
+use App\Http\Controllers\EmploiController;
+Route::get('/emplois', [EmploiController::class, 'index'])->name('emplois');
+Route::get('/emplois/offres', [EmploiController::class, 'offres'])->name('emplois.offres');
+Route::get('/emplois/bourses', [EmploiController::class, 'bourses'])->name('emplois.bourses');
+Route::get('/emplois/candidature-spontanee', [EmploiController::class, 'candidatureSpontanee'])->name('emplois.candidature');
+Route::get('/emplois/opportunites', [EmploiController::class, 'opportunites'])->name('emplois.opportunites');
+Route::get('/emplois/concours', [EmploiController::class, 'concours'])->name('emplois.concours');
+Route::get('/emplois/categorie/{slug}', [EmploiController::class, 'category'])->name('emplois.category');
 // Route spécifique avant la route avec paramètre pour éviter les conflits
-Route::get('/emplois/articles-recents', [PageController::class, 'recentArticles'])->name('emplois.recent-articles');
+Route::get('/emplois/articles-recents', [EmploiController::class, 'recent'])->name('emplois.recent-articles');
 // Route avec paramètre - exclut "articles-recents" pour éviter les conflits
-Route::get('/emplois/article/{slug}', [PageController::class, 'showArticle'])
+Route::get('/emplois/article/{slug}', [EmploiController::class, 'show'])
     ->where('slug', '^(?!articles-recents$).+')
     ->name('emplois.article');
 

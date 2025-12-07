@@ -141,8 +141,8 @@
         bottom: 0;
         background: linear-gradient(to bottom, transparent 0%, rgba(51, 65, 85, 0.85) 100%);
         display: flex;
-        align-items: flex-end;
-        padding: 60px 20px 40px;
+        align-items: flex-start;
+        padding: 40px 20px 40px;
     }
     
     body:not(.dark-mode) .article-hero-overlay {
@@ -155,6 +155,7 @@
         margin: 0 auto;
         position: relative;
         z-index: 1;
+        padding-top: 20px;
     }
     
     .article-hero-category {
@@ -495,9 +496,19 @@
             height: 300px;
         }
         
+        .article-hero-overlay {
+            padding: 20px 15px 30px;
+        }
+        
+        .article-hero-content {
+            padding-top: 10px;
+        }
+        
         .related-grid {
             grid-template-columns: 1fr;
         }
+        
+        /* Bouton favori responsive - déjà centré, pas besoin de modification */
     }
 </style>
 @endsection
@@ -508,6 +519,17 @@
 <div class="article-hero" style="background-image: url('{{ $article->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($article->cover_image) : $article->cover_image }}');">
     <div class="article-hero-overlay">
         <div class="article-hero-content">
+            <!-- Bouton favori centré en haut -->
+            <div style="display: flex; justify-content: center; margin-bottom: 20px; z-index: 10;">
+                <button data-favorite 
+                        data-favorite-type="article" 
+                        data-favorite-slug="{{ $article->slug }}" 
+                        data-favorite-name="{{ $article->title }}"
+                        style="background: rgba(255, 255, 255, 0.2); border: 2px solid rgba(255, 255, 255, 0.4); color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s ease; backdrop-filter: blur(10px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);">
+                    <i class="far fa-heart"></i>
+                    <span>Favoris</span>
+                </button>
+            </div>
             <span class="article-hero-category">
                 <i class="fas fa-folder mr-2"></i>{{ $article->category->name }}
             </span>
@@ -517,21 +539,22 @@
                 <span><i class="fas fa-eye"></i> {{ $article->views }} vues</span>
                 <span><i class="fas fa-user"></i> NiangProgrammeur</span>
             </div>
-            <div style="margin-top: 25px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
-                <button data-favorite 
-                        data-favorite-type="article" 
-                        data-favorite-slug="{{ $article->slug }}" 
-                        data-favorite-name="{{ $article->title }}"
-                        style="background: rgba(255, 255, 255, 0.2); border: 2px solid rgba(255, 255, 255, 0.4); color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s ease; backdrop-filter: blur(10px);">
-                    <i class="far fa-heart"></i>
-                    <span>Favoris</span>
-                </button>
-            </div>
         </div>
     </div>
 </div>
 @else
-<div class="article-hero-fallback" style="background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); padding: 100px 20px 60px; text-align: center;">
+<div class="article-hero-fallback" style="position: relative; background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); padding: 100px 20px 60px; text-align: center;">
+    <!-- Bouton favori centré en haut -->
+    <div style="display: flex; justify-content: center; margin-bottom: 20px; z-index: 10;">
+        <button data-favorite 
+                data-favorite-type="article" 
+                data-favorite-slug="{{ $article->slug }}" 
+                data-favorite-name="{{ $article->title }}"
+                style="background: rgba(255, 255, 255, 0.2); border: 2px solid rgba(255, 255, 255, 0.4); color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s ease; backdrop-filter: blur(10px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);">
+            <i class="far fa-heart"></i>
+            <span>Favoris</span>
+        </button>
+    </div>
     <span class="article-hero-category" style="display: inline-block; margin-bottom: 20px;">
         <i class="fas fa-folder mr-2"></i>{{ $article->category->name }}
     </span>
@@ -542,6 +565,8 @@
     </div>
 </div>
 @endif
+
+{{-- Breadcrumbs supprimés --}}
 
 <!-- Article Container -->
 <div class="article-container">
@@ -587,35 +612,35 @@
                             data-share-url="{{ $articleUrl }}" 
                             data-share-title="{{ $article->title }}"
                             data-share-text="{{ $article->excerpt ?? '' }}">
-                        <i class="fab fa-facebook"></i> Facebook
+                        <i class="fab fa-facebook"></i>
                     </button>
                     <button data-share="twitter" 
                             data-share-url="{{ $articleUrl }}" 
                             data-share-title="{{ $article->title }}"
                             data-share-text="{{ $article->excerpt ?? '' }}">
-                        <i class="fab fa-twitter"></i> Twitter
+                        <i class="fab fa-twitter"></i>
                     </button>
                     <button data-share="linkedin" 
                             data-share-url="{{ $articleUrl }}" 
                             data-share-title="{{ $article->title }}"
                             data-share-text="{{ $article->excerpt ?? '' }}">
-                        <i class="fab fa-linkedin"></i> LinkedIn
+                        <i class="fab fa-linkedin"></i>
                     </button>
                     <button data-share="whatsapp" 
                             data-share-url="{{ $articleUrl }}" 
                             data-share-title="{{ $article->title }}"
                             data-share-text="{{ $article->excerpt ?? '' }}">
-                        <i class="fab fa-whatsapp"></i> WhatsApp
+                        <i class="fab fa-whatsapp"></i>
                     </button>
                     <button data-share="email" 
                             data-share-url="{{ $articleUrl }}" 
                             data-share-title="{{ $article->title }}"
                             data-share-text="{{ $article->excerpt ?? '' }}">
-                        <i class="fas fa-envelope"></i> Email
+                        <i class="fas fa-envelope"></i>
                     </button>
                     <button data-share="copy" 
                             data-share-url="{{ $articleUrl }}">
-                        <i class="fas fa-link"></i> Copier le lien
+                        <i class="fas fa-link"></i>
                     </button>
                 </div>
             </div>
@@ -633,7 +658,7 @@
                 }
             </style>
             
-            @include('partials.share-buttons', ['article' => $article])
+            <!-- @include('partials.share-buttons', ['article' => $article]) -->
         </div>
         
         <!-- Sidebar Publicités Moderne -->

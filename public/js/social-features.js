@@ -18,9 +18,24 @@
         }
 
         init() {
+            // Vérifier si l'utilisateur est authentifié AVANT d'initialiser
+            if (typeof window.isAuthenticated === 'undefined') {
+                window.isAuthenticated = document.body.dataset.authenticated === 'true' || 
+                                         document.querySelector('[data-user-id]') !== null;
+            }
+            
             // Initialiser les boutons favoris existants
             document.querySelectorAll('[data-favorite]').forEach(btn => {
-                this.checkFavoriteStatus(btn);
+                // Ne vérifier le statut que si l'utilisateur est connecté
+                // Utiliser setTimeout pour s'assurer que window.isAuthenticated est bien défini
+                if (window.isAuthenticated) {
+                    // Délai pour s'assurer que l'authentification est bien vérifiée
+                    setTimeout(() => {
+                        if (window.isAuthenticated) {
+                            this.checkFavoriteStatus(btn);
+                        }
+                    }, 100);
+                }
                 btn.addEventListener('click', (e) => this.toggleFavorite(e, btn));
             });
         }
@@ -31,20 +46,31 @@
 
             if (!type || !slug) return;
 
+            // Ne pas vérifier si l'utilisateur n'est pas connecté
+            if (!window.isAuthenticated) {
+                return;
+            }
+
             try {
                 const response = await fetch(`/api/favorites/check?type=${type}&slug=${encodeURIComponent(slug)}`, {
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest',
-                        'Accept': 'application/json'
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
                     }
                 });
+
+                // Ne pas afficher d'erreur si 401 (utilisateur non connecté)
+                if (response.status === 401) {
+                    return;
+                }
 
                 if (response.ok) {
                     const data = await response.json();
                     this.updateButtonState(button, data.is_favorite);
                 }
             } catch (error) {
-                console.error('Erreur vérification favori:', error);
+                // Erreur silencieuse pour les utilisateurs non connectés
             }
         }
 
@@ -96,7 +122,6 @@
                     }
                 }
             } catch (error) {
-                console.error('Erreur toggle favori:', error);
                 if (window.feedbackManager) {
                     window.feedbackManager.showError('Une erreur est survenue');
                 }
@@ -104,16 +129,22 @@
         }
 
         updateButtonState(button, isFavorite) {
+            if (!button) return;
+            
             const icon = button.querySelector('i');
             if (icon) {
-                if (isFavorite) {
-                    icon.classList.remove('far', 'fa-heart');
-                    icon.classList.add('fas', 'fa-heart');
-                    button.classList.add('favorite-active');
-                } else {
-                    icon.classList.remove('fas', 'fa-heart');
-                    icon.classList.add('far', 'fa-heart');
-                    button.classList.remove('favorite-active');
+                try {
+                    if (isFavorite) {
+                        icon.classList.remove('far', 'fa-heart');
+                        icon.classList.add('fas', 'fa-heart');
+                        button.classList.add('favorite-active');
+                    } else {
+                        icon.classList.remove('fas', 'fa-heart');
+                        icon.classList.add('far', 'fa-heart');
+                        button.classList.remove('favorite-active');
+                    }
+                } catch (error) {
+                    // Erreur silencieuse
                 }
             }
         }
@@ -232,7 +263,7 @@
                     this.updateNotifications(data.notifications, data.count);
                 }
             } catch (error) {
-                console.error('Erreur chargement notifications:', error);
+                // Erreur silencieuse
             }
         }
 
@@ -328,7 +359,7 @@
                     this.loadNotifications();
                 }
             } catch (error) {
-                console.error('Erreur marquer comme lu:', error);
+                // Erreur silencieuse
             }
         }
 
@@ -347,13 +378,15 @@
                     this.loadNotifications();
                 }
             } catch (error) {
-                console.error('Erreur marquer tout comme lu:', error);
+                // Erreur silencieuse
             }
         }
 
         toggleDropdown() {
             const dropdown = document.getElementById('notificationDropdown');
-            if (dropdown) {
+            if (!dropdown) return;
+            
+            try {
                 const isActive = dropdown.classList.contains('active');
                 if (isActive) {
                     dropdown.classList.remove('active');
@@ -365,13 +398,19 @@
                         this.loadNotifications();
                     }
                 }
+            } catch (error) {
+                // Erreur silencieuse
             }
         }
 
         closeDropdown() {
             const dropdown = document.getElementById('notificationDropdown');
-            if (dropdown) {
+            if (!dropdown) return;
+            
+            try {
                 dropdown.classList.remove('active');
+            } catch (error) {
+                // Erreur silencieuse
             }
         }
         
@@ -486,7 +525,6 @@
                     button.style.color = '';
                 }, 2000);
             } catch (error) {
-                console.error('Erreur copie:', error);
                 if (window.feedbackManager) {
                     window.feedbackManager.showError('Impossible de copier le lien');
                 }
@@ -502,8 +540,9 @@
                         url: url
                     });
                 } catch (error) {
+                    // Ignorer les erreurs d'annulation utilisateur
                     if (error.name !== 'AbortError') {
-                        console.error('Erreur partage natif:', error);
+                        // Erreur silencieuse
                     }
                 }
             } else {
@@ -543,4 +582,3 @@
     }
 
 })();
-

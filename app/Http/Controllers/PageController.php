@@ -7,58 +7,30 @@ use App\Models\ContactMessage;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Auth;
-use App\Models\ExerciseProgress;
-use App\Models\QuizResult;
-use App\Models\UserActivity;
+use App\Http\Controllers\Concerns\LocaleTrait;
+use App\Services\RecaptchaService;
 
 class PageController extends Controller
 {
-    /**
-     * Détermine la locale à utiliser (français ou anglais)
-     */
-    private function ensureLocale()
-    {
-        // Récupérer la langue depuis la session ou le paramètre de requête
-        $locale = Session::get('language', 'fr');
-        
-        // Vérifier si un paramètre de langue est passé dans l'URL
-        if (request()->has('lang')) {
-            $locale = request()->get('lang');
-            Session::put('language', $locale);
-        }
-        
-        // Valider que la locale est supportée
-        if (!in_array($locale, ['fr', 'en'])) {
-            $locale = 'fr';
-        }
-        
-        // Définir la locale
-        App::setLocale($locale);
-        \Illuminate\Support\Facades\Lang::setLocale($locale);
-        config(['app.locale' => $locale]);
-        config(['app.fallback_locale' => 'fr']);
-        
-        return $locale;
-    }
+    use LocaleTrait;
     
     public function index()
     {
         // Forcer la locale AVANT tout traitement pour la traduction
         $locale = $this->ensureLocale();
         
-        // Cache les 9 derniers articles publiés (15 minutes) - Triés par date de création (plus récent au plus ancien)
+        // Cache les 9 derniers articles publiés (15 minutes) - Optimisé avec eager loading
         $latestJobs = \Illuminate\Support\Facades\Cache::remember('latest_jobs', 900, function () {
             return \App\Models\JobArticle::where('status', 'published')
                 ->where('is_sponsored', false)
-                ->with('category:id,name,slug')
+                ->with(['category:id,name,slug']) // Eager loading optimisé
                 ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'created_at', 'views')
                 ->orderBy('created_at', 'desc')
                 ->take(9)
                 ->get();
         });
         
-        // Cache les catégories actives (15 minutes)
+        // Cache les catégories actives (15 minutes) - Optimisé avec eager loading
         $categories = \Illuminate\Support\Facades\Cache::remember('active_categories_homepage', 900, function () {
             return \App\Models\Category::where('is_active', true)
                 ->withCount(['publishedArticles' => function ($query) {
@@ -69,11 +41,11 @@ class PageController extends Controller
                 ->get();
         });
         
-        // Cache les articles sponsorisés (15 minutes) - Limité à 2 articles
+        // Cache les articles sponsorisés (15 minutes) - Optimisé avec eager loading
         $sponsoredArticles = \Illuminate\Support\Facades\Cache::remember('sponsored_articles', 900, function () {
             return \App\Models\JobArticle::where('status', 'published')
                 ->where('is_sponsored', true)
-                ->with('category:id,name,slug')
+                ->with(['category:id,name,slug']) // Eager loading optimisé
                 ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')
                 ->orderBy('published_at', 'desc')
                 ->take(2)

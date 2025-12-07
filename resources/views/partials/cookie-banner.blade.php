@@ -180,20 +180,27 @@
     // Gestion globale des erreurs non capturées dans les promesses
     // Ignorer les erreurs provenant d'extensions de navigateur (content.js)
     window.addEventListener('unhandledrejection', function(event) {
-        if (event.reason && typeof event.reason === 'object') {
-            const errorSource = event.reason.stack || event.reason.toString() || '';
+        try {
+            if (!event || !event.reason) {
+                event?.preventDefault?.();
+                return;
+            }
             
-            // Si l'erreur provient de content.js (extension de navigateur), l'ignorer
+            const errorSource = String(event.reason.stack || event.reason.toString() || '').toLowerCase();
+            const errorMessage = String(event.reason.message || event.reason.toString() || '').toLowerCase();
+            
+            // Si l'erreur provient de content.js (extension de navigateur) ou est "unknown error", l'ignorer
             if (errorSource.includes('content.js') || 
                 errorSource.includes('extension://') || 
                 errorSource.includes('chrome-extension://') ||
-                errorSource.includes('moz-extension://')) {
+                errorSource.includes('moz-extension://') ||
+                errorMessage.includes('unknown error')) {
                 event.preventDefault(); // Empêcher l'affichage dans la console
+                event.stopPropagation?.();
                 return;
             }
+        } catch (e) {
+            // Ignorer silencieusement
         }
-        
-        // Ne pas logger les erreurs d'extensions pour éviter le bruit dans la console
-        // Les erreurs de notre code sont déjà gérées avec try/catch
-    });
+    }, { capture: true, passive: false });
 </script>

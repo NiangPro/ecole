@@ -41,9 +41,11 @@
             
             // Fonction pour forcer le loader à rester caché
             const forceHide = () => {
-                pageLoader.setAttribute('data-anchor-active', 'true');
-                pageLoader.style.cssText = 'display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; z-index: -1 !important; position: fixed !important;';
-                pageLoader.classList.add('hidden');
+                if (pageLoader) {
+                    pageLoader.setAttribute('data-anchor-active', 'true');
+                    pageLoader.style.cssText = 'display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; z-index: -1 !important; position: fixed !important;';
+                    pageLoader.classList.add('hidden');
+                }
             };
             
             // Intercepter TOUS les clics sur les liens d'ancrage AVANT tout autre script
@@ -86,7 +88,7 @@
             
             // Observer les changements du loader pour empêcher son affichage
             const observer = new MutationObserver(() => {
-                if (window.location.hash && !pageLoader.classList.contains('hidden')) {
+                if (pageLoader && window.location.hash && !pageLoader.classList.contains('hidden')) {
                     forceHide();
                 }
             });
@@ -112,11 +114,15 @@
                 // Animation de fade out améliorée
                 window.addEventListener('load', () => {
                     setTimeout(() => {
-                        loader.style.transition = 'opacity 0.5s ease-out, visibility 0.5s ease-out';
-                        loader.classList.add('hidden');
-                        setTimeout(() => {
-                            loader.style.display = 'none';
-                        }, 500);
+                        if (loader) {
+                            loader.style.transition = 'opacity 0.5s ease-out, visibility 0.5s ease-out';
+                            loader.classList.add('hidden');
+                            setTimeout(() => {
+                                if (loader) {
+                                    loader.style.display = 'none';
+                                }
+                            }, 500);
+                        }
                     }, 300);
                 });
                 
@@ -124,12 +130,18 @@
                 // En surveillant les changements de hash dans l'URL
                 let lastHash = window.location.hash;
                 const hideLoaderForAnchor = () => {
-                    if (loader && !loader.classList.contains('hidden')) {
-                        loader.classList.add('hidden');
-                        loader.style.display = 'none';
-                        loader.style.opacity = '0';
-                        loader.style.visibility = 'hidden';
-                        loader.style.pointerEvents = 'none';
+                    if (loader) {
+                        try {
+                            if (!loader.classList.contains('hidden')) {
+                                loader.classList.add('hidden');
+                                loader.style.display = 'none';
+                                loader.style.opacity = '0';
+                                loader.style.visibility = 'hidden';
+                                loader.style.pointerEvents = 'none';
+                            }
+                        } catch (error) {
+                            // Erreur silencieuse
+                        }
                     }
                 };
                 
@@ -311,7 +323,7 @@
                 // Surveiller les changements de style du loader
                 const loaderObserver = new MutationObserver(() => {
                     // Si le loader devient visible et qu'on a un hash dans l'URL, le cacher
-                    if (window.location.hash && !pageLoader.classList.contains('hidden')) {
+                    if (pageLoader && window.location.hash && !pageLoader.classList.contains('hidden')) {
                         hidePageLoaderFn();
                     }
                 });
@@ -323,7 +335,7 @@
                 
                 // Vérification périodique pour s'assurer que le loader reste caché pour les ancres
                 setInterval(() => {
-                    if (window.location.hash && !pageLoader.classList.contains('hidden')) {
+                    if (pageLoader && window.location.hash && !pageLoader.classList.contains('hidden')) {
                         hidePageLoaderFn();
                     }
                 }, 50); // Vérification toutes les 50ms pour être plus réactif
@@ -416,10 +428,16 @@
             document.body.appendChild(notification);
             
             // Animation d'entrée
-            setTimeout(() => notification.classList.add('show'), 10);
+            if (notification) {
+                setTimeout(() => {
+                    if (notification) {
+                        notification.classList.add('show');
+                    }
+                }, 10);
+            }
             
             // Fermeture
-            const closeBtn = notification.querySelector('.custom-notification-close');
+            const closeBtn = notification?.querySelector('.custom-notification-close');
             closeBtn.addEventListener('click', () => this.closeNotification(notification));
             
             // Auto-fermeture après 5 secondes
@@ -437,8 +455,18 @@
         }
 
         closeNotification(notification) {
-            notification.classList.remove('show');
-            setTimeout(() => notification.remove(), 300);
+            if (!notification) return;
+            
+            try {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    if (notification && notification.parentNode) {
+                        notification.remove();
+                    }
+                }, 300);
+            } catch (error) {
+                // Erreur silencieuse
+            }
         }
 
         addSuccessFeedback() {
@@ -647,43 +675,32 @@
 
         async registerServiceWorker() {
             if ('serviceWorker' in navigator) {
-                console.log('[PWA] Enregistrement du Service Worker...');
                 try {
                     const registration = await navigator.serviceWorker.register('/sw.js');
-                    console.log('[PWA] ✅ Service Worker enregistré avec succès:', registration);
 
                     // Vérifier les mises à jour
                     registration.addEventListener('updatefound', () => {
-                        console.log('[PWA] Nouvelle version du Service Worker détectée');
                         const newWorker = registration.installing;
                         newWorker.addEventListener('statechange', () => {
                             if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                console.log('[PWA] Nouveau Service Worker installé');
                                 this.showUpdateNotification();
                             }
                         });
                     });
                 } catch (error) {
-                    console.error('[PWA] ❌ Erreur lors de l\'enregistrement du Service Worker:', error);
-                    console.error('[PWA] Détails:', error.message);
+                    // Erreur silencieuse
                 }
-            } else {
-                console.warn('[PWA] ⚠️ Service Worker non supporté par ce navigateur');
             }
         }
 
         addInstallPrompt() {
-            console.log('[PWA] Initialisation du système d\'installation...');
-            
             // Vérifier si l'app est déjà installée
             if (window.matchMedia('(display-mode: standalone)').matches) {
-                console.log('[PWA] Application déjà installée');
                 return;
             }
 
             // Intercepter l'événement beforeinstallprompt
             window.addEventListener('beforeinstallprompt', (e) => {
-                console.log('[PWA] Événement beforeinstallprompt détecté');
                 e.preventDefault();
                 this.deferredPrompt = e;
                 this.showInstallButton();
@@ -693,82 +710,52 @@
             document.addEventListener('click', (e) => {
                 const target = e.target.closest('#pwa-install-btn') || e.target.closest('.pwa-install-button');
                 if (target) {
-                    console.log('[PWA] Clic sur le bouton détecté via délégation');
                     e.preventDefault();
                     e.stopPropagation();
                     this.installPWA();
                 }
             }, true); // Capture phase pour priorité
-
-            // Vérifier périodiquement si le prompt est disponible (pour le débogage)
-            setTimeout(() => {
-                if (this.deferredPrompt) {
-                    console.log('[PWA] Prompt disponible, bouton devrait être visible');
-                } else {
-                    console.log('[PWA] Aucun prompt disponible. Vérifiez : HTTPS, manifest.json, Service Worker');
-                }
-            }, 2000);
         }
 
         showInstallButton() {
-            console.log('[PWA] Affichage du bouton d\'installation...');
             let installBtn = document.getElementById('pwa-install-btn');
             if (!installBtn) {
-                console.log('[PWA] Création du bouton d\'installation');
                 installBtn = document.createElement('button');
                 installBtn.id = 'pwa-install-btn';
                 installBtn.className = 'pwa-install-button';
                 installBtn.innerHTML = '<i class="fas fa-download"></i> Installer l\'app';
                 installBtn.setAttribute('aria-label', 'Installer l\'application');
                 installBtn.setAttribute('title', 'Installer l\'application sur votre appareil');
-                installBtn.type = 'button'; // Important pour éviter la soumission de formulaire
+                installBtn.type = 'button';
                 
-                // Créer une référence stable à this pour l'événement
                 const self = this;
                 
-                // Fonction de gestion du clic
                 const handleClick = function(e) {
-                    console.log('[PWA] ✅✅✅ CLIC DÉTECTÉ SUR LE BOUTON ✅✅✅');
                     e.preventDefault();
                     e.stopPropagation();
                     e.stopImmediatePropagation();
-                    
-                    // Appeler directement installPWA
-                    console.log('[PWA] Appel de installPWA()...');
                     self.installPWA();
-                    
                     return false;
                 };
                 
-                // Ajouter l'événement click DIRECT sur le bouton (priorité maximale)
-                installBtn.addEventListener('click', handleClick, true); // Capture phase
-                installBtn.addEventListener('click', handleClick, false); // Bubble phase aussi
-                
-                // Ajouter aussi onclick pour compatibilité maximale
+                installBtn.addEventListener('click', handleClick, true);
+                installBtn.addEventListener('click', handleClick, false);
                 installBtn.onclick = handleClick;
                 
-                // Ajouter mousedown aussi (au cas où)
                 installBtn.addEventListener('mousedown', function(e) {
-                    console.log('[PWA] mousedown détecté');
                     e.preventDefault();
                     handleClick(e);
                 });
                 
-                // Ajouter touchstart pour mobile
                 installBtn.addEventListener('touchstart', function(e) {
-                    console.log('[PWA] touchstart détecté');
                     e.preventDefault();
                     handleClick(e);
                 });
                 
                 document.body.appendChild(installBtn);
-                console.log('[PWA] Bouton créé et ajouté au DOM');
             } else {
-                console.log('[PWA] Bouton existe déjà, réattacher les événements');
-                // Réattacher les événements au cas où
                 const self = this;
                 const handleClick = function(e) {
-                    console.log('[PWA] ✅ Clic sur bouton existant');
                     e.preventDefault();
                     e.stopPropagation();
                     self.installPWA();
@@ -780,23 +767,10 @@
             installBtn.style.display = 'flex';
             installBtn.style.pointerEvents = 'auto';
             installBtn.style.cursor = 'pointer';
-            console.log('[PWA] Bouton affiché et prêt');
         }
 
         async installPWA() {
-            console.log('[PWA] ========== installPWA() appelée ==========');
-            console.log('[PWA] deferredPrompt:', this.deferredPrompt);
-            console.log('[PWA] Type:', typeof this.deferredPrompt);
-            
             if (!this.deferredPrompt) {
-                console.warn('[PWA] ❌ Aucune invite d\'installation disponible');
-                console.warn('[PWA] Vérifiez que :');
-                console.warn('  - Le site est en HTTPS (ou localhost)');
-                console.warn('  - Le manifest.json est valide');
-                console.warn('  - Le Service Worker est enregistré');
-                console.warn('  - L\'app n\'est pas déjà installée');
-                
-                // Afficher un message à l'utilisateur
                 if (typeof window.feedbackManager !== 'undefined') {
                     window.feedbackManager.showInfo('L\'installation n\'est pas disponible pour le moment. Vérifiez que vous êtes en HTTPS et que le Service Worker est actif.');
                 }
@@ -804,71 +778,30 @@
             }
 
             try {
-                console.log('[PWA] ✅ deferredPrompt disponible, affichage du prompt...');
-                console.log('[PWA] Méthodes disponibles:', Object.keys(this.deferredPrompt));
-                
-                // Vérifier que prompt() existe
                 if (typeof this.deferredPrompt.prompt !== 'function') {
-                    console.error('[PWA] ❌ deferredPrompt.prompt n\'est pas une fonction');
-                    console.error('[PWA] Type de prompt:', typeof this.deferredPrompt.prompt);
-                    console.error('[PWA] deferredPrompt complet:', this.deferredPrompt);
-                    
-                    // Essayer d'appeler prompt() quand même (certains navigateurs)
-                    try {
-                        console.log('[PWA] Tentative d\'appel direct de prompt()...');
-                        const result = this.deferredPrompt.prompt();
-                        console.log('[PWA] Résultat prompt():', result);
-                    } catch (promptError) {
-                        console.error('[PWA] Erreur lors de l\'appel de prompt():', promptError);
-                    }
                     return;
                 }
                 
-                // Afficher l'invite d'installation
-                console.log('[PWA] Appel de deferredPrompt.prompt()...');
                 const promptResult = this.deferredPrompt.prompt();
-                console.log('[PWA] prompt() appelé, résultat:', promptResult);
                 
-                // Si prompt() retourne une Promise, l'attendre
                 if (promptResult && typeof promptResult.then === 'function') {
-                    console.log('[PWA] prompt() retourne une Promise, attente...');
                     await promptResult;
                 }
                 
-                console.log('[PWA] Prompt affiché, attente de la réponse utilisateur...');
-                
-                // Attendre la réponse de l'utilisateur
                 if (this.deferredPrompt.userChoice && typeof this.deferredPrompt.userChoice.then === 'function') {
                     const userChoice = await this.deferredPrompt.userChoice;
-                    console.log('[PWA] userChoice reçu:', userChoice);
-                    
                     const outcome = userChoice.outcome;
-                    console.log('[PWA] Résultat installation:', outcome);
                     
                     if (outcome === 'accepted') {
-                        console.log('[PWA] ✅ Installation acceptée par l\'utilisateur');
-                        // Masquer le bouton après installation
                         const installBtn = document.getElementById('pwa-install-btn');
                         if (installBtn) {
                             installBtn.style.display = 'none';
                         }
-                    } else {
-                        console.log('[PWA] ❌ Installation refusée par l\'utilisateur');
                     }
-                } else {
-                    console.log('[PWA] ⚠️ userChoice n\'est pas une Promise, prompt() devrait avoir fonctionné');
                 }
                 
-                // Réinitialiser la variable
                 this.deferredPrompt = null;
-                console.log('[PWA] deferredPrompt réinitialisé');
             } catch (error) {
-                console.error('[PWA] ❌ Erreur lors de l\'installation:', error);
-                console.error('[PWA] Type d\'erreur:', error.name);
-                console.error('[PWA] Message:', error.message);
-                console.error('[PWA] Stack:', error.stack);
-                
-                // Afficher un message à l'utilisateur
                 if (typeof window.feedbackManager !== 'undefined') {
                     window.feedbackManager.showError('Erreur lors de l\'installation: ' + error.message);
                 } else {
@@ -920,14 +853,11 @@
     // ============================================
     
     document.addEventListener('DOMContentLoaded', () => {
-        console.log('[UX] Initialisation des managers...');
         // Initialiser les managers
         window.loadingManager = new LoadingManager();
         window.feedbackManager = new FeedbackManager();
         window.accessibilityManager = new AccessibilityManager();
         window.pwaManager = new PWAManager();
-        console.log('[UX] ✅ Tous les managers initialisés');
-        console.log('[UX] PWAManager:', window.pwaManager);
 
         // Ajouter l'ID main-content si absent
         const mainContent = document.querySelector('main, .main-content, #content');
