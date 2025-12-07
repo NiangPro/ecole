@@ -249,4 +249,38 @@ try {
 {!! $reviewJson !!}
 </script>
 @php } @endphp
+@php
+// Breadcrumb Schema (si breadcrumbs définis)
+$breadcrumbJson = null;
+if (isset($breadcrumbs) && is_array($breadcrumbs) && count($breadcrumbs) > 0) {
+    try {
+        $breadcrumbItems = [];
+        $position = 1;
+        foreach ($breadcrumbs as $breadcrumb) {
+            $breadcrumbItems[] = [
+                '@type' => 'ListItem',
+                'position' => $position++,
+                'name' => $breadcrumb['name'] ?? '',
+                'item' => $breadcrumb['url'] ?? ''
+            ];
+        }
+        
+        if (count($breadcrumbItems) > 0) {
+            $breadcrumbSchema = [
+                '@context' => 'https://schema.org',
+                '@type' => 'BreadcrumbList',
+                'itemListElement' => $breadcrumbItems
+            ];
+            $breadcrumbJson = json_encode($breadcrumbSchema, JSON_UNESCAPED_SLASHES | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_PRETTY_PRINT);
+        }
+    } catch (\Exception $e) {
+        $breadcrumbJson = null;
+    }
+}
+@endphp
+@php if (!empty($breadcrumbJson)) { @endphp
+<script type="application/ld+json">
+{!! $breadcrumbJson !!}
+</script>
+@php } @endphp
 

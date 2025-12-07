@@ -13,21 +13,27 @@
     
     <!-- Favicon - Logo du site (placé tôt pour un chargement prioritaire) -->
     @php
-        $faviconUrl = asset('images/logo.png');
+        $faviconPng = asset('images/logo.png');
+        $faviconIco = url('/favicon.ico');
     @endphp
-    <link rel="preload" as="image" href="{{ $faviconUrl }}" fetchpriority="high">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ $faviconUrl }}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ $faviconUrl }}">
-    <link rel="shortcut icon" type="image/png" href="{{ $faviconUrl }}">
-    <link rel="apple-touch-icon" sizes="180x180" href="{{ $faviconUrl }}">
-    <link rel="apple-touch-icon" sizes="152x152" href="{{ $faviconUrl }}">
-    <link rel="apple-touch-icon" sizes="144x144" href="{{ $faviconUrl }}">
-    <link rel="apple-touch-icon" sizes="120x120" href="{{ $faviconUrl }}">
-    <link rel="apple-touch-icon" sizes="114x114" href="{{ $faviconUrl }}">
-    <link rel="apple-touch-icon" sizes="76x76" href="{{ $faviconUrl }}">
-    <link rel="apple-touch-icon" sizes="72x72" href="{{ $faviconUrl }}">
-    <link rel="apple-touch-icon" sizes="60x60" href="{{ $faviconUrl }}">
-    <link rel="apple-touch-icon" sizes="57x57" href="{{ $faviconUrl }}">
+    <!-- Favicon ICO (priorité pour compatibilité navigateurs) -->
+    <link rel="icon" type="image/x-icon" href="{{ $faviconIco }}">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ $faviconIco }}">
+    <!-- Favicon PNG (meilleure qualité) -->
+    <link rel="preload" as="image" href="{{ $faviconPng }}" fetchpriority="high">
+    <link rel="icon" type="image/png" href="{{ $faviconPng }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ $faviconPng }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ $faviconPng }}">
+    <!-- Apple Touch Icons -->
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ $faviconPng }}">
+    <link rel="apple-touch-icon" sizes="152x152" href="{{ $faviconPng }}">
+    <link rel="apple-touch-icon" sizes="144x144" href="{{ $faviconPng }}">
+    <link rel="apple-touch-icon" sizes="120x120" href="{{ $faviconPng }}">
+    <link rel="apple-touch-icon" sizes="114x114" href="{{ $faviconPng }}">
+    <link rel="apple-touch-icon" sizes="76x76" href="{{ $faviconPng }}">
+    <link rel="apple-touch-icon" sizes="72x72" href="{{ $faviconPng }}">
+    <link rel="apple-touch-icon" sizes="60x60" href="{{ $faviconPng }}">
+    <link rel="apple-touch-icon" sizes="57x57" href="{{ $faviconPng }}">
     
     <!-- Canonical URL -->
     @hasSection('canonical')
@@ -35,6 +41,18 @@
     @else
         <link rel="canonical" href="{{ url()->current() }}">
     @endif
+    
+    <!-- Hreflang pour support multilingue -->
+    @php
+        $currentUrl = url()->current();
+        $currentLocale = app()->getLocale();
+        $alternateLocale = $currentLocale === 'fr' ? 'en' : 'fr';
+        // Générer l'URL alternative en changeant la langue
+        $alternateUrl = route('language.set', ['locale' => $alternateLocale]) . '?redirect=' . urlencode($currentUrl);
+    @endphp
+    <link rel="alternate" hreflang="{{ $currentLocale }}" href="{{ $currentUrl }}">
+    <link rel="alternate" hreflang="{{ $alternateLocale }}" href="{{ $alternateUrl }}">
+    <link rel="alternate" hreflang="x-default" href="{{ url('/') }}">
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
@@ -1339,6 +1357,9 @@
     @include('partials.schema-org')
     
     <main id="main-content" role="main">
+        <!-- Breadcrumbs -->
+        @include('partials.breadcrumbs')
+        
         @yield('content')
     </main>
     

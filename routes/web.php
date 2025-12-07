@@ -267,3 +267,18 @@ Route::get('/robots.txt', function () {
     return response($content, 200)
         ->header('Content-Type', 'text/plain');
 });
+
+// Favicon.ico - Servir directement le logo PNG comme favicon
+Route::get('/favicon.ico', function () {
+    $logoPath = public_path('images/logo.png');
+    
+    if (file_exists($logoPath)) {
+        return response()->file($logoPath, [
+            'Content-Type' => 'image/png',
+            'Cache-Control' => 'public, max-age=31536000, immutable',
+        ]);
+    }
+    
+    // Fallback : retourner un favicon vide si le logo n'existe pas
+    return response('', 404);
+})->name('favicon');

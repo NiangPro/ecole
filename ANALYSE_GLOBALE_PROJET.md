@@ -79,10 +79,10 @@
 - [x] Code coverage > 80%
 
 ### 6. Documentation (Priorité Basse)
-- [ ] README.md complet
-- [ ] Documentation API
-- [ ] Guide contributeur
-- [ ] Changelog automatique
+- [x] README.md complet
+- [x] Documentation API
+- [x] Guide contributeur
+- [x] Changelog automatique
 
 ---
 

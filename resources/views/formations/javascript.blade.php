@@ -29,7 +29,7 @@
         text-align: center;
         width: 100%;
         margin: 0;
-        overflow: hidden;
+        overflow: visible;
         min-height: 50vh;
         display: flex;
         align-items: center;
