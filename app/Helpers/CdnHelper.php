@@ -20,17 +20,25 @@ class CdnHelper
     }
 
     /**
-     * Obtenir l'URL CDN pour une image externe
+     * Obtenir l'URL CDN pour une image externe ou locale
      * 
      * @param string $url URL de l'image
+     * @param bool $webp Utiliser la version WebP si disponible
      * @return string URL avec CDN si configuré, sinon URL originale
      */
-    public static function image($url)
+    public static function image($url, $webp = false)
     {
         self::init();
 
         // Si pas de CDN configuré, retourner l'URL originale
         if (empty(self::$cdnUrl)) {
+            // Si WebP est demandé, essayer de trouver la version WebP
+            if ($webp) {
+                $webpPath = preg_replace('/\.(jpg|jpeg|png)$/i', '.webp', $url);
+                if (file_exists(public_path($webpPath))) {
+                    return asset($webpPath);
+                }
+            }
             return $url;
         }
 
@@ -47,7 +55,18 @@ class CdnHelper
             }
         }
 
-        return $url;
+        // Pour les images locales, utiliser asset() avec CDN
+        $path = ltrim(parse_url($url, PHP_URL_PATH) ?? $url, '/');
+        
+        // Si WebP est demandé, essayer de trouver la version WebP
+        if ($webp) {
+            $webpPath = preg_replace('/\.(jpg|jpeg|png)$/i', '.webp', $path);
+            if (file_exists(public_path($webpPath))) {
+                return self::asset($webpPath);
+            }
+        }
+        
+        return self::asset($path);
     }
 
     /**
@@ -67,8 +86,37 @@ class CdnHelper
         // Enlever le slash initial si présent
         $path = ltrim($path, '/');
         
+        // Ajouter un hash de version pour le cache busting si en production
+        if (app()->environment('production') && file_exists(public_path($path))) {
+            $version = substr(md5_file(public_path($path)), 0, 8);
+            $path = $path . '?v=' . $version;
+        }
+        
         return rtrim(self::$cdnUrl, '/') . '/' . $path;
     }
+    
+    /**
+     * Obtenir l'URL CDN pour un fichier CSS
+     * 
+     * @param string $path Chemin du fichier CSS
+     * @return string URL avec CDN
+     */
+    public static function css($path)
+    {
+        return self::asset($path);
+    }
+    
+    /**
+     * Obtenir l'URL CDN pour un fichier JS
+     * 
+     * @param string $path Chemin du fichier JS
+     * @return string URL avec CDN
+     */
+    public static function js($path)
+    {
+        return self::asset($path);
+    }
+    
 
     /**
      * Vérifier si le CDN est activé

@@ -48,10 +48,10 @@
 ## 🚀 Prochaines Étapes Recommandées
 
 ### 1. Optimisations Performance (Priorité Haute)
-- [ ] Optimisation des images (WebP, lazy loading)
-- [ ] Mise en cache avancée (Redis)
-- [ ] Compression des assets (CSS/JS)
-- [ ] CDN pour les assets statiques
+- [x] Optimisation des images (WebP, lazy loading)
+- [x] Mise en cache avancée (Redis)
+- [x] Compression des assets (CSS/JS)
+- [x] CDN pour les assets statiques
 
 ### 2. Fonctionnalités à Ajouter (Priorité Moyenne) ✅
 - [x] Système de commentaires sur les articles

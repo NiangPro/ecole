@@ -22,6 +22,19 @@ class ImageOptimizer
             $src = asset($src);
         }
         
+        // Support WebP : générer une version WebP si disponible (seulement si GD/Imagick disponible)
+        if (function_exists('imagecreatefromjpeg') || function_exists('imagecreatefrompng')) {
+            try {
+                $webpSrc = self::getWebpVersion($src);
+                if ($webpSrc && !isset($options['no_webp'])) {
+                    $attributes[] = 'srcset="' . htmlspecialchars($webpSrc, ENT_QUOTES, 'UTF-8') . '"';
+                    $attributes[] = 'type="image/webp"';
+                }
+            } catch (\Exception $e) {
+                // Ignorer les erreurs de conversion WebP et continuer avec l'image originale
+            }
+        }
+        
         // Source de l'image
         $attributes[] = 'src="' . htmlspecialchars($src, ENT_QUOTES, 'UTF-8') . '"';
         
@@ -104,6 +117,12 @@ class ImageOptimizer
     {
         $html = '<picture>';
         
+        // Ajouter la source WebP en premier si disponible
+        $webpSrc = self::getWebpVersion($src);
+        if ($webpSrc && !isset($options['no_webp'])) {
+            $html .= '<source srcset="' . htmlspecialchars($webpSrc, ENT_QUOTES, 'UTF-8') . '" type="image/webp">';
+        }
+        
         // Sources responsives
         foreach ($sources as $source) {
             $html .= '<source';
@@ -122,7 +141,7 @@ class ImageOptimizer
         }
         
         // Image par défaut
-        $html .= '<img ' . self::attributes($src, $alt, $options) . '>';
+        $html .= '<img ' . self::attributes($src, $alt, array_merge($options, ['no_webp' => true])) . '>';
         $html .= '</picture>';
         
         return $html;
@@ -159,6 +178,106 @@ class ImageOptimizer
         }
         
         return implode(', ', $processed);
+    }
+    
+    /**
+     * Génère une version WebP d'une image si elle existe
+     * 
+     * @param string $src URL de l'image originale
+     * @return string|null URL de la version WebP ou null si non disponible
+     */
+    private static function getWebpVersion($src)
+    {
+        // Ne pas convertir les images externes
+        if (preg_match('/^(https?:\/\/|\/\/)/', $src)) {
+            return null;
+        }
+        
+        // Extraire le chemin de l'image
+        $path = parse_url($src, PHP_URL_PATH);
+        if (!$path) {
+            return null;
+        }
+        
+        // Enlever le slash initial
+        $path = ltrim($path, '/');
+        
+        // Vérifier si c'est un chemin public
+        $publicPath = public_path($path);
+        if (!file_exists($publicPath)) {
+            return null;
+        }
+        
+        // Générer le chemin WebP
+        $webpPath = preg_replace('/\.(jpg|jpeg|png)$/i', '.webp', $path);
+        $webpPublicPath = public_path($webpPath);
+        
+        // Si le fichier WebP existe, retourner son URL
+        if (file_exists($webpPublicPath)) {
+            return asset($webpPath);
+        }
+        
+        // Sinon, essayer de créer le WebP à la volée (nécessite GD ou Imagick)
+        if (function_exists('imagecreatefromjpeg') || function_exists('imagecreatefrompng')) {
+            return self::convertToWebp($publicPath, $webpPublicPath) ? asset($webpPath) : null;
+        }
+        
+        return null;
+    }
+    
+    /**
+     * Convertit une image en WebP
+     * 
+     * @param string $sourcePath Chemin source
+     * @param string $destinationPath Chemin destination
+     * @return bool Succès de la conversion
+     */
+    private static function convertToWebp($sourcePath, $destinationPath)
+    {
+        // Créer le répertoire de destination si nécessaire
+        $destinationDir = dirname($destinationPath);
+        if (!is_dir($destinationDir)) {
+            mkdir($destinationDir, 0755, true);
+        }
+        
+        // Détecter le type d'image
+        $imageInfo = getimagesize($sourcePath);
+        if (!$imageInfo) {
+            return false;
+        }
+        
+        $mimeType = $imageInfo['mime'];
+        
+        // Charger l'image selon son type
+        switch ($mimeType) {
+            case 'image/jpeg':
+                if (!function_exists('imagecreatefromjpeg')) {
+                    return false;
+                }
+                $image = imagecreatefromjpeg($sourcePath);
+                break;
+            case 'image/png':
+                if (!function_exists('imagecreatefrompng')) {
+                    return false;
+                }
+                $image = imagecreatefrompng($sourcePath);
+                // Préserver la transparence
+                imagealphablending($image, false);
+                imagesavealpha($image, true);
+                break;
+            default:
+                return false;
+        }
+        
+        if (!$image) {
+            return false;
+        }
+        
+        // Convertir en WebP avec qualité 85 (bon compromis taille/qualité)
+        $result = imagewebp($image, $destinationPath, 85);
+        imagedestroy($image);
+        
+        return $result;
     }
 }
 
