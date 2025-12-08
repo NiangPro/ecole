@@ -369,9 +369,6 @@
                 <a href="{{ route('contact') }}" class="footer-link">
                     <i class="fas fa-envelope mr-2"></i> {{ trans('app.footer.contact') }}
                 </a>
-                <a href="{{ route('faq') }}" class="footer-link">
-                    <i class="fas fa-question-circle mr-2"></i> {{ trans('app.footer.faq') }}
-                </a>
             </div>
             
             <!-- Section Newsletter -->
@@ -410,6 +407,14 @@
                 <a href="{{ route('privacy-policy') }}#cookies" class="legal-link">
                     <i class="fas fa-cookie-bite mr-1"></i>{{ trans('app.footer.cookie_policy') }}
                 </a>
+                <span class="text-gray-700">•</span>
+                <a href="{{ route('faq') }}" class="legal-link">
+                    <i class="fas fa-question-circle mr-1"></i>{{ trans('app.footer.faq') }}
+                </a>
+                <span class="text-gray-700">•</span>
+                <a href="{{ route('monetization.donations') }}" class="legal-link" style="color: rgba(239, 68, 68, 0.9);">
+                    <i class="fas fa-heart mr-1" style="color: #ef4444;"></i> Faire un don
+                </a>
             </div>
             
             <!-- Copyright -->
@@ -441,9 +446,8 @@
         const message = document.getElementById('newsletterMessage');
         const csrfToken = document.querySelector('input[name="_token"]').value;
         
-        // Désactiver le bouton
+        // Désactiver le bouton (sans spinner)
         btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>{{ trans('app.footer.newsletter_sending') }}';
         
         try {
             const response = await fetch('{{ route("newsletter.subscribe") }}', {

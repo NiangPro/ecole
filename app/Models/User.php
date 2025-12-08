@@ -24,6 +24,9 @@ class User extends Authenticatable
         'role',
         'phone',
         'is_active',
+        'is_premium',
+        'premium_until',
+        'current_subscription_id',
     ];
 
     /**
@@ -47,6 +50,8 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_active' => 'boolean',
+            'is_premium' => 'boolean',
+            'premium_until' => 'datetime',
         ];
     }
 
@@ -142,5 +147,67 @@ class User extends Authenticatable
     public function getBadge(string $badgeCode): ?Badge
     {
         return $this->badges()->where('code', $badgeCode)->first();
+    }
+
+    // Relations de monétisation
+    public function subscriptions()
+    {
+        return $this->hasMany(Subscription::class);
+    }
+
+    public function currentSubscription()
+    {
+        return $this->belongsTo(Subscription::class, 'current_subscription_id');
+    }
+
+    public function coursePurchases()
+    {
+        return $this->hasMany(CoursePurchase::class);
+    }
+
+    public function donations()
+    {
+        return $this->hasMany(Donation::class);
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    public function affiliate()
+    {
+        return $this->hasOne(Affiliate::class);
+    }
+
+    /**
+     * Vérifier si l'utilisateur a un abonnement premium actif
+     */
+    public function hasActivePremium(): bool
+    {
+        if (!$this->is_premium) {
+            return false;
+        }
+
+        if ($this->premium_until && $this->premium_until->isPast()) {
+            return false;
+        }
+
+        if ($this->currentSubscription) {
+            return $this->currentSubscription->isActive();
+        }
+
+        return true;
+    }
+
+    /**
+     * Vérifier si l'utilisateur a acheté un cours
+     */
+    public function hasPurchasedCourse(int $courseId): bool
+    {
+        return $this->coursePurchases()
+            ->where('paid_course_id', $courseId)
+            ->where('status', 'completed')
+            ->exists();
     }
 }

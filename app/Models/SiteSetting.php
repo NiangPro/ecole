@@ -30,6 +30,18 @@ class SiteSetting extends Model
         'mail_encryption',
         'mail_from_address',
         'mail_from_name',
+        // Configuration des moyens de paiement
+        'wave_merchant_id',
+        'wave_country_code',
+        'wave_enabled',
+        'paypal_client_id',
+        'paypal_client_secret',
+        'paypal_mode',
+        'paypal_enabled',
+        'stripe_public_key',
+        'stripe_secret_key',
+        'stripe_webhook_secret',
+        'stripe_enabled',
     ];
 
     public static function get($key, $default = null)

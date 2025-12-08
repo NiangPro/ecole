@@ -497,10 +497,10 @@
                     <i class="fas fa-key mr-2"></i>Mot de passe SMTP
                 </label>
                 <input type="password" name="mail_password" value="{{ old('mail_password', '') }}" 
-                       class="input-admin" placeholder="{{ $settings->mail_password ? '•••••••• (Laisser vide pour conserver le mot de passe actuel)' : 'Votre mot de passe SMTP' }}">
+                       class="input-admin" placeholder="{{ ($settings->mail_password ?? null) ? '•••••••• (Laisser vide pour conserver le mot de passe actuel)' : 'Votre mot de passe SMTP' }}">
                 <p class="text-gray-500 text-sm mt-2">
                     <i class="fas fa-shield-alt mr-1"></i>
-                    @if($settings->mail_password)
+                    @if($settings->mail_password ?? null)
                         Un mot de passe est déjà configuré. Laissez vide pour le conserver.
                     @else
                         Le mot de passe sera stocké de manière sécurisée.

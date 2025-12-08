@@ -1,0 +1,110 @@
+================================================================================
+CONFIGURATION DES MOYENS DE PAIEMENT - ADMIN
+================================================================================
+Date: 2025-12-07
+Projet: Formation Laravel - NiangProgrammeur
+
+DESCRIPTION:
+------------
+Ajout d'une section dans le dropdown "Configuration" de la sidebar admin pour 
+gérer les configurations des moyens de paiement (Wave, PayPal, Stripe).
+
+FONCTIONNALITÉS IMPLÉMENTÉES:
+------------------------------
+
+1. Migration de base de données
+   - Ajout des champs de configuration pour Wave, PayPal et Stripe dans la table site_settings
+   - Champs Wave: wave_merchant_id, wave_country_code, wave_enabled
+   - Champs PayPal: paypal_client_id, paypal_client_secret, paypal_mode, paypal_enabled
+   - Champs Stripe: stripe_public_key, stripe_secret_key, stripe_webhook_secret, stripe_enabled
+
+2. Modèle SiteSetting
+   - Ajout des nouveaux champs dans $fillable pour permettre la mise à jour
+
+3. Contrôleur PaymentGatewayController
+   - Méthode index(): Affiche la page de configuration
+   - Méthode update(): Met à jour les configurations avec validation
+   - Protection par vérification isAdmin()
+   - Gestion des secrets (ne pas écraser si vide)
+
+4. Vue payment-gateways.blade.php
+   - Interface moderne et responsive
+   - Adaptation dark mode / light mode
+   - Sections dédiées pour chaque moyen de paiement (Wave, PayPal, Stripe)
+   - Checkboxes pour activer/désactiver chaque moyen de paiement
+   - Champs sécurisés pour les secrets (type password)
+   - Messages d'information pour chaque configuration
+   - Validation et affichage des erreurs
+
+5. Sidebar Admin
+   - Ajout du lien "Moyens de Paiement" dans le dropdown Configuration
+   - Icône: fa-credit-card
+   - Route: admin.payment-gateways.index
+   - Mise à jour de la condition d'affichage du dropdown
+
+6. Routes
+   - GET /admin/payment-gateways -> PaymentGatewayController@index
+   - PUT /admin/payment-gateways -> PaymentGatewayController@update
+
+7. Service WavePaymentService
+   - Mise à jour pour utiliser les configurations depuis la base de données
+   - Méthodes getMerchantId() et getCountryCode() pour récupérer les valeurs configurées
+   - Fallback sur les valeurs par défaut si non configurées
+
+FICHIERS MODIFIÉS/CRÉÉS:
+-------------------------
+- database/migrations/2025_12_07_195730_add_payment_gateways_config_to_site_settings_table.php (CRÉÉ)
+- app/Models/SiteSetting.php (MODIFIÉ)
+- app/Http/Controllers/Admin/PaymentGatewayController.php (CRÉÉ)
+- resources/views/admin/payment-gateways.blade.php (CRÉÉ)
+- resources/views/admin/layout.blade.php (MODIFIÉ)
+- routes/web.php (MODIFIÉ)
+- app/Services/WavePaymentService.php (MODIFIÉ)
+
+DÉTAILS TECHNIQUES:
+-------------------
+
+Configuration Wave:
+- ID Marchand: Format M_sn_XXXXXXXXX
+- Code Pays: SN (Sénégal), CI (Côte d'Ivoire), ML (Mali), BF (Burkina Faso), NE (Niger)
+- Activé par défaut: true
+
+Configuration PayPal:
+- Client ID: Identifiant public PayPal
+- Client Secret: Secret stocké de manière sécurisée (ne s'affiche pas)
+- Mode: sandbox (test) ou live (production)
+- Activé par défaut: false
+
+Configuration Stripe:
+- Clé Publique: Publishable Key (pk_test_... ou pk_live_...)
+- Clé Secrète: Secret Key (sk_test_... ou sk_live_...)
+- Webhook Secret: Secret pour vérifier les webhooks (whsec_...)
+- Activé par défaut: false
+
+SÉCURITÉ:
+---------
+- Vérification isAdmin() dans le contrôleur
+- Secrets stockés en type password (non affichés)
+- Conservation des secrets existants si champ vide lors de la mise à jour
+- Validation des données d'entrée
+
+INTERFACE UTILISATEUR:
+----------------------
+- Design moderne avec cartes pour chaque moyen de paiement
+- Adaptation automatique dark/light mode
+- Messages d'information contextuels
+- Validation en temps réel
+- Boutons d'action (Annuler / Enregistrer)
+
+PROCHAINES ÉTAPES POSSIBLES:
+----------------------------
+1. Intégration réelle de PayPal SDK
+2. Intégration réelle de Stripe SDK
+3. Test des webhooks Stripe
+4. Historique des modifications de configuration
+5. Export/Import des configurations
+
+================================================================================
+
+
+

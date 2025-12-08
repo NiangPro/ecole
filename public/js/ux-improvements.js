@@ -216,26 +216,26 @@
         }
 
         interceptForms() {
-            document.addEventListener('submit', (e) => {
-                const form = e.target;
-                if (form.tagName === 'FORM' && !form.dataset.noLoader) {
-                    const submitBtn = form.querySelector('button[type="submit"], input[type="submit"]');
-                    if (submitBtn) {
-                        submitBtn.disabled = true;
-                        const loaderId = this.showLoader(submitBtn, 'Envoi en cours...');
-                        
-                        // Si le formulaire échoue, réactiver le bouton
-                        form.addEventListener('submit', () => {
-                            setTimeout(() => {
-                                if (submitBtn.disabled) {
-                                    this.hideLoader(loaderId);
-                                    submitBtn.disabled = false;
-                                }
-                            }, 5000);
-                        }, { once: true });
-                    }
-                }
-            });
+            // Désactivé : pas de chargement sur les boutons
+            // document.addEventListener('submit', (e) => {
+            //     const form = e.target;
+            //     if (form.tagName === 'FORM' && !form.dataset.noLoader) {
+            //         const submitBtn = form.querySelector('button[type="submit"], input[type="submit"]');
+            //         if (submitBtn) {
+            //             submitBtn.disabled = true;
+            //             const loaderId = this.showLoader(submitBtn, 'Envoi en cours...');
+            //             
+            //             // Si le formulaire échoue, réactiver le bouton
+            //             form.addEventListener('submit', () => {
+            //                 setTimeout(() => {
+            //                     if (submitBtn.disabled) {
+            //                         this.hideLoader(loaderId);
+            //                         submitBtn.disabled = false;
+            //                     }
+            //                 }, 5000);
+            //             }, { once: true });
+            //     }
+            // });
         }
 
         interceptLinks() {

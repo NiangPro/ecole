@@ -781,14 +781,49 @@
                 <span>Réalisations</span>
             </a>
             
+            <!-- Dropdown Monétisation -->
+            <div class="sidebar-dropdown {{ request()->routeIs('admin.monetization.*') ? 'active' : '' }}">
+                <button class="sidebar-item sidebar-dropdown-toggle" onclick="toggleSidebarDropdown('monetization')">
+                    <i class="fas fa-dollar-sign text-xl"></i>
+                    <span>Monétisation</span>
+                    <i class="fas fa-chevron-down dropdown-icon ml-auto" id="monetization-icon"></i>
+                </button>
+                <div class="sidebar-dropdown-menu" id="monetization-dropdown" style="display: {{ request()->routeIs('admin.monetization.*') ? 'block' : 'none' }};">
+                    <a href="{{ route('admin.monetization.dashboard') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.monetization.dashboard') ? 'active' : '' }}">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="{{ route('admin.monetization.subscriptions') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.monetization.subscriptions') ? 'active' : '' }}">
+                        <i class="fas fa-crown"></i>
+                        <span>Abonnements</span>
+                    </a>
+                    <a href="{{ route('admin.monetization.courses') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.monetization.courses') ? 'active' : '' }}">
+                        <i class="fas fa-graduation-cap"></i>
+                        <span>Cours Payants</span>
+                    </a>
+                    <a href="{{ route('admin.monetization.donations.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.monetization.donations.*') ? 'active' : '' }}">
+                        <i class="fas fa-heart"></i>
+                        <span>Donations</span>
+                    </a>
+                    <a href="{{ route('admin.monetization.affiliates') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.monetization.affiliates') ? 'active' : '' }}">
+                        <i class="fas fa-users"></i>
+                        <span>Affiliés</span>
+                    </a>
+                    <a href="{{ route('admin.monetization.payments') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.monetization.payments') ? 'active' : '' }}">
+                        <i class="fas fa-credit-card"></i>
+                        <span>Paiements</span>
+                    </a>
+                </div>
+            </div>
+            
             <!-- Dropdown Configuration -->
-            <div class="sidebar-dropdown {{ request()->routeIs('admin.adsense*') || request()->routeIs('admin.backups*') || request()->routeIs('admin.logs.*') || request()->routeIs('admin.bing*') || request()->routeIs('admin.settings') || request()->routeIs('admin.security-audit.*') ? 'active' : '' }}">
+            <div class="sidebar-dropdown {{ request()->routeIs('admin.adsense*') || request()->routeIs('admin.backups*') || request()->routeIs('admin.logs.*') || request()->routeIs('admin.bing*') || request()->routeIs('admin.settings') || request()->routeIs('admin.security-audit.*') || request()->routeIs('admin.payment-gateways.*') ? 'active' : '' }}">
                 <button class="sidebar-item sidebar-dropdown-toggle" onclick="toggleSidebarDropdown('config')">
                     <i class="fas fa-cog text-xl"></i>
                     <span>Configuration</span>
                     <i class="fas fa-chevron-down dropdown-icon ml-auto" id="config-icon"></i>
                 </button>
-                <div class="sidebar-dropdown-menu" id="config-dropdown" style="display: {{ request()->routeIs('admin.adsense*') || request()->routeIs('admin.backups*') || request()->routeIs('admin.logs.*') || request()->routeIs('admin.bing*') || request()->routeIs('admin.settings') || request()->routeIs('admin.security-audit.*') ? 'block' : 'none' }};">
+                <div class="sidebar-dropdown-menu" id="config-dropdown" style="display: {{ request()->routeIs('admin.adsense*') || request()->routeIs('admin.backups*') || request()->routeIs('admin.logs.*') || request()->routeIs('admin.bing*') || request()->routeIs('admin.settings') || request()->routeIs('admin.security-audit.*') || request()->routeIs('admin.payment-gateways.*') ? 'block' : 'none' }};">
                     <a href="{{ route('admin.adsense') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.adsense*') ? 'active' : '' }}">
                         <i class="fab fa-google"></i>
                         <span>Google AdSense</span>
@@ -808,6 +843,10 @@
                     <a href="{{ route('admin.bing.submission') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.bing*') ? 'active' : '' }}">
                         <i class="fas fa-paper-plane"></i>
                         <span>Bing Submission</span>
+                    </a>
+                    <a href="{{ route('admin.payment-gateways.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.payment-gateways.*') ? 'active' : '' }}">
+                        <i class="fas fa-credit-card"></i>
+                        <span>Moyens de Paiement</span>
                     </a>
                     <a href="{{ route('admin.settings') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.settings') ? 'active' : '' }}">
                         <i class="fas fa-cog"></i>

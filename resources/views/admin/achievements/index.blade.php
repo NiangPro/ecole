@@ -108,7 +108,7 @@
                     
                     isSubmitting = true;
                     btn.disabled = true;
-                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Chargement...</span>';
+                    // Pas de spinner de chargement
                     
                     // Le formulaire va se soumettre normalement et la page va se recharger
                     // Si après 10 secondes la page n'a pas rechargé, réactiver le bouton

@@ -1202,6 +1202,9 @@
                 'quiz',
                 'quiz.language',
                 'quiz.result',
+                'monetization.donations',
+                'monetization.donations.alias',
+                'payment.wave',
                 'dashboard.*'
             ]);
         @endphp
@@ -1568,6 +1571,9 @@
                 'quiz',
                 'quiz.language',
                 'quiz.result',
+                'monetization.donations',
+                'monetization.donations.alias',
+                'payment.wave',
                 'dashboard.*'
             ]);
         @endphp
@@ -2038,8 +2044,21 @@
         }
     };
     
-    // Attacher le listener au bouton de notification au chargement
+    // Charger les notifications au chargement de la page
     document.addEventListener('DOMContentLoaded', function() {
+        // Charger les notifications immédiatement si l'utilisateur est connecté
+        if (window.isAuthenticated) {
+            // Attendre un peu pour que le NotificationManager soit initialisé
+            setTimeout(function() {
+                if (window.notificationManager && typeof window.notificationManager.loadNotifications === 'function') {
+                    window.notificationManager.loadNotifications();
+                } else {
+                    // Si le manager n'est pas encore prêt, charger directement
+                    loadNotificationsDirectly();
+                }
+            }, 500);
+        }
+        
         const notificationBell = document.getElementById('notificationBell');
         if (notificationBell) {
             // Supprimer les anciens listeners

@@ -591,13 +591,11 @@
 </div>
 
 <script>
-    // Animation du formulaire
+    // Animation du formulaire (sans spinner)
     document.getElementById('seederForm').addEventListener('submit', function(e) {
         const btn = this.querySelector('.btn-seed-ultra');
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Génération en cours...</span>';
+        // Pas de spinner de chargement
         btn.disabled = true;
-        btn.style.opacity = '0.7';
     });
 </script>
 @endsection

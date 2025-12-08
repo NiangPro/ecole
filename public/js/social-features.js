@@ -156,7 +156,7 @@
     
     class NotificationManager {
         constructor() {
-            this.pollInterval = 30000; // 30 secondes
+            this.pollInterval = 10000; // 10 secondes (réduit de 30s pour un chargement plus rapide)
             this.intervalId = null;
             this.init();
         }
@@ -191,11 +191,13 @@
             // Créer/attacher le widget de notifications
             this.createNotificationWidget();
 
-            // Charger les notifications initiales
+            // Charger les notifications initiales immédiatement
             this.loadNotifications();
 
-            // Démarrer le polling
-            this.startPolling();
+            // Démarrer le polling après un court délai
+            setTimeout(() => {
+                this.startPolling();
+            }, 2000);
         }
 
         createNotificationWidget() {
@@ -248,22 +250,30 @@
         }
 
         async loadNotifications() {
-            if (!window.isAuthenticated) return;
+            if (!window.isAuthenticated) {
+                console.log('NotificationManager: Utilisateur non authentifié');
+                return;
+            }
 
             try {
                 const response = await fetch('/api/notifications/unread', {
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest',
-                        'Accept': 'application/json'
-                    }
+                        'Accept': 'application/json',
+                        'Cache-Control': 'no-cache'
+                    },
+                    cache: 'no-store'
                 });
 
                 if (response.ok) {
                     const data = await response.json();
-                    this.updateNotifications(data.notifications, data.count);
+                    console.log('NotificationManager: Notifications chargées', data);
+                    this.updateNotifications(data.notifications || [], data.count || 0);
+                } else {
+                    console.error('NotificationManager: Erreur HTTP', response.status);
                 }
             } catch (error) {
-                // Erreur silencieuse
+                console.error('NotificationManager: Erreur lors du chargement', error);
             }
         }
 

@@ -9,7 +9,7 @@ use App\Models\Notification;
 class NotificationController extends Controller
 {
     /**
-     * Obtenir les notifications non lues
+     * Obtenir les notifications non lues (optimisé)
      */
     public function unread()
     {
@@ -17,8 +17,31 @@ class NotificationController extends Controller
             return response()->json(['notifications' => [], 'count' => 0]);
         }
 
-        $notifications = Notification::getUnread(Auth::id(), 10);
-        $count = Notification::countUnread(Auth::id());
+        $userId = Auth::id();
+        
+        // Base query réutilisable
+        $baseQuery = Notification::where('user_id', $userId)
+            ->where('is_read', false);
+        
+        // Récupérer les notifications
+        $notifications = (clone $baseQuery)
+            ->orderBy('created_at', 'desc')
+            ->limit(10)
+            ->get()
+            ->map(function($notification) {
+                return [
+                    'id' => $notification->id,
+                    'type' => $notification->type,
+                    'title' => $notification->title,
+                    'message' => $notification->message,
+                    'link' => $notification->link,
+                    'is_read' => $notification->is_read,
+                    'created_at' => $notification->created_at->toISOString(),
+                ];
+            });
+        
+        // Compter le total (requête séparée mais optimisée avec index)
+        $count = $baseQuery->count();
 
         return response()->json([
             'notifications' => $notifications,

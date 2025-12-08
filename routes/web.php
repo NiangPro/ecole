@@ -43,6 +43,29 @@ Route::get('/newsletter/unsubscribe/{token}', [PageController::class, 'newslette
 // Route pour changer la langue
 Route::get('/language/{locale}', [PageController::class, 'setLanguage'])->name('language.set');
 
+// Routes Monétisation
+use App\Http\Controllers\MonetizationController;
+use App\Http\Controllers\PaymentController;
+Route::get('/monetization', [MonetizationController::class, 'index'])->name('monetization.index');
+Route::get('/donations', [MonetizationController::class, 'donations'])->name('monetization.donations');
+Route::get('/faire-un-don', [MonetizationController::class, 'donations'])->name('monetization.donations.alias');
+Route::get('/courses', [MonetizationController::class, 'courses'])->name('monetization.courses');
+Route::get('/courses/{slug}', [MonetizationController::class, 'showCourse'])->name('monetization.course.show');
+Route::post('/payment/subscription', [PaymentController::class, 'processSubscription'])->middleware('auth')->name('payment.subscription');
+Route::post('/payment/course/{courseId}', [PaymentController::class, 'processCoursePurchase'])->middleware('auth')->name('payment.course');
+Route::get('/payment/donation', function () {
+    return redirect()->route('monetization.donations');
+})->name('payment.donation.get');
+Route::post('/payment/donation', [PaymentController::class, 'processDonation'])->name('payment.donation');
+Route::get('/payment/confirm/{paymentId}', [PaymentController::class, 'confirm'])->name('payment.confirm');
+Route::get('/payment/wave/{paymentId}', [PaymentController::class, 'waveRedirect'])->name('payment.wave');
+Route::get('/payment/paypal/return', [PaymentController::class, 'paypalReturn'])->name('payment.paypal.return');
+Route::get('/payment/paypal/cancel', [PaymentController::class, 'paypalCancel'])->name('payment.paypal.cancel');
+Route::get('/payment/stripe/success', [PaymentController::class, 'stripeSuccess'])->name('payment.stripe.success');
+Route::get('/payment/stripe/cancel', [PaymentController::class, 'stripeCancel'])->name('payment.stripe.cancel');
+Route::get('/payment/success/{paymentId}', [PaymentController::class, 'paymentSuccess'])->name('payment.success');
+Route::post('/payment/webhook', [PaymentController::class, 'webhook'])->name('payment.webhook');
+
 // Routes Formations - Utiliser FormationController
 use App\Http\Controllers\FormationController;
 Route::get('/formations', [FormationController::class, 'index'])->name('formations.all');
@@ -175,6 +198,10 @@ Route::middleware(['admin'])->group(function () {
     Route::delete('/admin/messages/{id}', [App\Http\Controllers\AdminController::class, 'deleteMessage'])->name('admin.messages.delete');
     Route::get('/admin/settings', [App\Http\Controllers\AdminController::class, 'settings'])->name('admin.settings');
     Route::post('/admin/settings', [App\Http\Controllers\AdminController::class, 'updateSettings'])->name('admin.settings.update');
+    
+    // Configuration des moyens de paiement
+    Route::get('/admin/payment-gateways', [App\Http\Controllers\Admin\PaymentGatewayController::class, 'index'])->name('admin.payment-gateways.index');
+    Route::put('/admin/payment-gateways', [App\Http\Controllers\Admin\PaymentGatewayController::class, 'update'])->name('admin.payment-gateways.update');
     Route::get('/admin/bing-submission', [App\Http\Controllers\AdminController::class, 'bingSubmission'])->name('admin.bing.submission');
     Route::post('/admin/bing-submission/submit', [App\Http\Controllers\AdminController::class, 'submitToBing'])->name('admin.bing.submit');
     Route::get('/admin/logout', [App\Http\Controllers\AdminController::class, 'logout'])->name('admin.logout');
@@ -199,6 +226,31 @@ Route::middleware(['admin'])->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\SecurityAuditController::class, 'index'])->name('index');
         Route::get('/{audit}', [\App\Http\Controllers\Admin\SecurityAuditController::class, 'show'])->name('show');
         Route::get('/export/csv', [\App\Http\Controllers\Admin\SecurityAuditController::class, 'export'])->name('export');
+    });
+
+    // Routes Monétisation Admin
+    Route::prefix('admin/monetization')->name('admin.monetization.')->group(function () {
+        Route::get('/dashboard', [\App\Http\Controllers\Admin\MonetizationController::class, 'dashboard'])->name('dashboard');
+        Route::get('/subscriptions', [\App\Http\Controllers\Admin\MonetizationController::class, 'subscriptions'])->name('subscriptions');
+        Route::get('/courses', [\App\Http\Controllers\Admin\MonetizationController::class, 'courses'])->name('courses');
+        
+        // Routes Donations (CRUD complet)
+        Route::prefix('donations')->name('donations.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\DonationController::class, 'index'])->name('index');
+            Route::get('/create', [\App\Http\Controllers\Admin\DonationController::class, 'create'])->name('create');
+            Route::post('/', [\App\Http\Controllers\Admin\DonationController::class, 'store'])->name('store');
+            Route::get('/{id}', [\App\Http\Controllers\Admin\DonationController::class, 'show'])->name('show');
+            Route::get('/{id}/edit', [\App\Http\Controllers\Admin\DonationController::class, 'edit'])->name('edit');
+            Route::put('/{id}', [\App\Http\Controllers\Admin\DonationController::class, 'update'])->name('update');
+            Route::delete('/{id}', [\App\Http\Controllers\Admin\DonationController::class, 'destroy'])->name('destroy');
+            Route::post('/{id}/complete', [\App\Http\Controllers\Admin\DonationController::class, 'markCompleted'])->name('complete');
+            Route::post('/{id}/fail', [\App\Http\Controllers\Admin\DonationController::class, 'markFailed'])->name('fail');
+            Route::get('/export/csv', [\App\Http\Controllers\Admin\DonationController::class, 'export'])->name('export');
+            Route::get('/statistics', [\App\Http\Controllers\Admin\DonationController::class, 'statistics'])->name('statistics');
+        });
+        
+        Route::get('/affiliates', [\App\Http\Controllers\Admin\MonetizationController::class, 'affiliates'])->name('affiliates');
+        Route::get('/payments', [\App\Http\Controllers\Admin\MonetizationController::class, 'payments'])->name('payments');
     });
 
     // Newsletter Admin

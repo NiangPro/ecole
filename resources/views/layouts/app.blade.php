@@ -1501,7 +1501,10 @@
             'exercices.run',
             'quiz',
             'quiz.language',
-            'quiz.result'
+            'quiz.result',
+            'monetization.donations',
+            'monetization.donations.alias',
+            'payment.wave'
         ]);
     @endphp
     

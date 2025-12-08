@@ -487,7 +487,13 @@ class AdminController extends Controller
     }
     
     public function settings()
-    {$settings = SiteSetting::first();
+    {
+        $settings = SiteSetting::first();
+        
+        // Si aucun paramètre n'existe, créer un objet vide pour éviter les erreurs
+        if (!$settings) {
+            $settings = new SiteSetting();
+        }
         
         return view('admin.settings', compact('settings'));
     }
