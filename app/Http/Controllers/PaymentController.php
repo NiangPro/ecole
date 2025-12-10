@@ -83,41 +83,75 @@ class PaymentController extends Controller
         $course = \App\Models\PaidCourse::findOrFail($courseId);
         $user = Auth::user();
 
-        // Vérifier si l'utilisateur a déjà acheté ce cours
+        // Vérifier si l'utilisateur a déjà acheté ce cours (complété)
         if ($user->hasPurchasedCourse($course->id)) {
             return redirect()->route('monetization.course.show', $course->slug)
                 ->with('info', 'Vous avez déjà acheté ce cours.');
         }
 
         $request->validate([
-            'payment_method' => 'required|in:mobile_money,bank_transfer,stripe,paypal',
+            'payment_method' => 'required|in:mobile_money,bank_transfer,wave,stripe,paypal',
         ]);
 
         $price = $course->current_price;
 
-        // Créer l'achat
-        $purchase = CoursePurchase::create([
-            'user_id' => $user->id,
-            'paid_course_id' => $course->id,
-            'amount_paid' => $price,
-            'currency' => 'XOF',
-            'status' => 'pending',
-            'payment_method' => $request->payment_method,
-        ]);
+        // Vérifier s'il existe déjà un achat en attente pour ce cours
+        $existingPurchase = CoursePurchase::where('user_id', $user->id)
+            ->where('paid_course_id', $course->id)
+            ->first();
 
-        // Créer le paiement
-        $payment = Payment::create([
-            'user_id' => $user->id,
-            'paymentable_type' => CoursePurchase::class,
-            'paymentable_id' => $purchase->id,
-            'amount' => $price,
-            'currency' => 'XOF',
-            'status' => 'pending',
-            'payment_method' => $request->payment_method,
-            'payment_gateway' => $request->payment_method,
-            'transaction_id' => 'COURSE-' . Str::upper(Str::random(12)),
-            'payment_reference' => 'REF-' . Str::upper(Str::random(10)),
-        ]);
+        if ($existingPurchase) {
+            // Mettre à jour l'achat existant
+            $existingPurchase->update([
+                'amount_paid' => $price,
+                'currency' => 'XOF',
+                'status' => 'pending',
+                'payment_method' => $request->payment_method,
+            ]);
+            $purchase = $existingPurchase;
+        } else {
+            // Créer un nouvel achat
+            $purchase = CoursePurchase::create([
+                'user_id' => $user->id,
+                'paid_course_id' => $course->id,
+                'amount_paid' => $price,
+                'currency' => 'XOF',
+                'status' => 'pending',
+                'payment_method' => $request->payment_method,
+            ]);
+        }
+
+        // Vérifier s'il existe déjà un paiement pour cet achat
+        $existingPayment = Payment::where('paymentable_type', CoursePurchase::class)
+            ->where('paymentable_id', $purchase->id)
+            ->where('status', 'pending')
+            ->first();
+
+        if ($existingPayment) {
+            // Mettre à jour le paiement existant
+            $existingPayment->update([
+                'amount' => $price,
+                'currency' => 'XOF',
+                'status' => 'pending',
+                'payment_method' => $request->payment_method,
+                'payment_gateway' => $request->payment_method,
+            ]);
+            $payment = $existingPayment;
+        } else {
+            // Créer un nouveau paiement
+            $payment = Payment::create([
+                'user_id' => $user->id,
+                'paymentable_type' => CoursePurchase::class,
+                'paymentable_id' => $purchase->id,
+                'amount' => $price,
+                'currency' => 'XOF',
+                'status' => 'pending',
+                'payment_method' => $request->payment_method,
+                'payment_gateway' => $request->payment_method,
+                'transaction_id' => 'COURSE-' . Str::upper(Str::random(12)),
+                'payment_reference' => 'REF-' . Str::upper(Str::random(10)),
+            ]);
+        }
 
         // Gérer l'affiliation
         if ($request->has('ref_code')) {
@@ -434,13 +468,39 @@ class PaymentController extends Controller
 
         if (!$waveLink) {
             // Régénérer le lien si nécessaire
-            $donation = $payment->paymentable;
-            if ($donation instanceof Donation) {
+            $paymentable = $payment->paymentable;
+            $description = 'Paiement NiangProgrammeur';
+            
+            if ($paymentable instanceof Donation) {
                 $waveLink = WavePaymentService::generateDonationLink(
-                    (float) $donation->amount,
-                    $donation->donor_name,
-                    $donation->message
+                    (float) $paymentable->amount,
+                    $paymentable->donor_name,
+                    $paymentable->message
                 );
+            } elseif ($paymentable instanceof CoursePurchase) {
+                $description = 'Achat de cours: ' . $paymentable->course->title;
+                $waveLink = WavePaymentService::generatePaymentLink(
+                    (float) $payment->amount,
+                    $payment->payment_reference,
+                    $description
+                );
+            } elseif ($paymentable instanceof Subscription) {
+                $description = 'Abonnement ' . ucfirst($paymentable->plan_type);
+                $waveLink = WavePaymentService::generatePaymentLink(
+                    (float) $payment->amount,
+                    $payment->payment_reference,
+                    $description
+                );
+            }
+            
+            // Sauvegarder le lien si généré
+            if ($waveLink) {
+                $payment->update([
+                    'payment_details' => array_merge(
+                        $payment->payment_details ?? [],
+                        ['wave_link' => $waveLink]
+                    )
+                ]);
             }
         }
 
@@ -460,6 +520,169 @@ class PaymentController extends Controller
         }
 
         return view('monetization.payment-confirm', compact('payment'));
+    }
+
+    /**
+     * Mettre à jour la méthode de paiement
+     */
+    public function updatePaymentMethod(Request $request, $paymentId)
+    {
+        $payment = Payment::findOrFail($paymentId);
+
+        // Vérifier que le paiement appartient à l'utilisateur connecté
+        if (Auth::check() && $payment->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        // Vérifier que le paiement est en attente
+        if ($payment->status !== 'pending') {
+            return redirect()->route('payment.confirm', $payment->id)
+                ->with('error', 'Ce paiement ne peut plus être modifié.');
+        }
+
+        $request->validate([
+            'payment_method' => 'required|in:mobile_money,bank_transfer,wave,stripe,paypal',
+        ]);
+
+        // Mettre à jour la méthode de paiement
+        $payment->update([
+            'payment_method' => $request->payment_method,
+            'payment_gateway' => $request->payment_method,
+        ]);
+
+        // Mettre à jour le paymentable si c'est un CoursePurchase
+        if ($payment->paymentable_type === CoursePurchase::class) {
+            $payment->paymentable->update([
+                'payment_method' => $request->payment_method,
+            ]);
+        }
+
+        // Si c'est PayPal ou Stripe, traiter directement
+        if ($request->payment_method === 'paypal') {
+            return $this->processPayPalPayment($payment);
+        } elseif ($request->payment_method === 'stripe') {
+            return $this->processStripePayment($payment);
+        } elseif ($request->payment_method === 'wave') {
+            return $this->processWavePayment($payment);
+        }
+
+        return redirect()->route('payment.confirm', $payment->id)
+            ->with('success', 'Méthode de paiement mise à jour.');
+    }
+
+    /**
+     * Traiter un paiement PayPal
+     */
+    private function processPayPalPayment(Payment $payment)
+    {
+        try {
+            $paymentable = $payment->paymentable;
+            $description = 'Paiement NiangProgrammeur';
+            
+            if ($paymentable instanceof CoursePurchase) {
+                $description = 'Achat de cours: ' . $paymentable->course->title;
+            } elseif ($paymentable instanceof Subscription) {
+                $description = 'Abonnement ' . ucfirst($paymentable->plan_type);
+            } elseif ($paymentable instanceof Donation) {
+                $description = 'Donation NiangProgrammeur - ' . $paymentable->donor_name;
+            }
+
+            // Créer la commande PayPal
+            $order = PayPalPaymentService::createOrder(
+                $payment->amount,
+                $payment->currency,
+                $description
+            );
+
+            // Sauvegarder l'ID de commande
+            $payment->update([
+                'payment_details' => [
+                    'paypal_order_id' => $order['id'],
+                ]
+            ]);
+
+            // Rediriger vers PayPal
+            $approvalUrl = collect($order['links'])->firstWhere('rel', 'approve')['href'];
+            return redirect($approvalUrl);
+        } catch (\Exception $e) {
+            return redirect()->route('payment.confirm', $payment->id)
+                ->with('error', 'Erreur lors de la création du paiement PayPal : ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Traiter un paiement Stripe
+     */
+    private function processStripePayment(Payment $payment)
+    {
+        try {
+            $paymentable = $payment->paymentable;
+            $description = 'Paiement NiangProgrammeur';
+            
+            if ($paymentable instanceof CoursePurchase) {
+                $description = 'Achat de cours: ' . $paymentable->course->title;
+            } elseif ($paymentable instanceof Subscription) {
+                $description = 'Abonnement ' . ucfirst($paymentable->plan_type);
+            } elseif ($paymentable instanceof Donation) {
+                $description = 'Donation NiangProgrammeur - ' . $paymentable->donor_name;
+            }
+
+            // Créer la session Stripe
+            $session = StripePaymentService::createCheckoutSession(
+                $payment->amount,
+                $payment->currency,
+                $description,
+                [
+                    'payment_id' => $payment->id,
+                ]
+            );
+
+            // Sauvegarder l'ID de session
+            $payment->update([
+                'payment_details' => [
+                    'stripe_session_id' => $session['id'],
+                ]
+            ]);
+
+            // Rediriger vers Stripe
+            return redirect($session['url']);
+        } catch (\Exception $e) {
+            return redirect()->route('payment.confirm', $payment->id)
+                ->with('error', 'Erreur lors de la création du paiement Stripe : ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Traiter un paiement Wave
+     */
+    private function processWavePayment(Payment $payment)
+    {
+        $paymentable = $payment->paymentable;
+        $description = 'Paiement NiangProgrammeur';
+        
+        if ($paymentable instanceof CoursePurchase) {
+            $description = 'Achat de cours: ' . $paymentable->course->title;
+        } elseif ($paymentable instanceof Subscription) {
+            $description = 'Abonnement ' . ucfirst($paymentable->plan_type);
+        } elseif ($paymentable instanceof Donation) {
+            $description = 'Donation NiangProgrammeur';
+        }
+
+        // Générer le lien Wave
+        $waveLink = WavePaymentService::generatePaymentLink(
+            $payment->amount,
+            $payment->payment_reference,
+            $description
+        );
+
+        // Sauvegarder le lien
+        $payment->update([
+            'payment_details' => [
+                'wave_link' => $waveLink,
+            ]
+        ]);
+
+        return redirect()->route('payment.wave', $payment->id);
     }
 
     /**

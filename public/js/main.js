@@ -231,18 +231,19 @@ if (contactForm) {
 const header = document.querySelector('header');
 if (header) {
     window.addEventListener('scroll', () => {
-        if (header) {
-            try {
+        try {
+            const headerElement = document.querySelector('header');
+            if (headerElement && headerElement.classList) {
                 if (window.scrollY > 100) {
-                    header.classList.add('scrolled');
+                    headerElement.classList.add('scrolled');
                 } else {
-                    header.classList.remove('scrolled');
+                    headerElement.classList.remove('scrolled');
                 }
-            } catch (error) {
-                // Erreur silencieuse
             }
+        } catch (error) {
+            // Erreur silencieuse
         }
-    });
+    }, { passive: true });
 }
 
 // Animation des compteurs de statistiques

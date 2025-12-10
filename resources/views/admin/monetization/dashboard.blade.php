@@ -175,7 +175,7 @@
             <i class="fas fa-crown" style="font-size: 2rem; color: #06b6d4; margin-bottom: 10px;"></i>
             <div style="color: white; font-weight: 600; font-size: 1.1rem;">Abonnements</div>
         </a>
-        <a href="{{ route('admin.monetization.courses') }}" style="display: block; padding: 20px; background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 12px; text-decoration: none; transition: all 0.3s ease;">
+        <a href="{{ route('admin.monetization.courses.index') }}" style="display: block; padding: 20px; background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 12px; text-decoration: none; transition: all 0.3s ease;">
             <i class="fas fa-graduation-cap" style="font-size: 2rem; color: #06b6d4; margin-bottom: 10px;"></i>
             <div style="color: white; font-weight: 600; font-size: 1.1rem;">Cours Payants</div>
         </a>

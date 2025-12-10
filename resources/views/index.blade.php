@@ -2389,6 +2389,123 @@
     </div>
 </section>
 
+<!-- Cours Payants Section -->
+@if(isset($paidCourses) && $paidCourses->count() > 0)
+<section class="paid-courses-section">
+    <div class="paid-courses-container">
+        <div class="paid-courses-header">
+            <div class="paid-courses-title-wrapper">
+                <div class="paid-courses-title-line"></div>
+                <h2 class="paid-courses-title">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>{{ app()->getLocale() === 'fr' ? 'Formations Premium' : 'Premium Courses' }}</span>
+                </h2>
+                <div class="paid-courses-title-line"></div>
+            </div>
+            <p class="paid-courses-subtitle">
+                {{ app()->getLocale() === 'fr' ? 'Développez vos compétences avec nos formations premium approfondies' : 'Develop your skills with our in-depth premium courses' }}
+            </p>
+        </div>
+
+        <div class="paid-courses-grid">
+            @foreach($paidCourses as $course)
+            <a href="{{ route('monetization.course.show', $course->slug) }}" class="paid-course-card">
+                <div class="paid-course-card-inner">
+                    <!-- Badge de réduction -->
+                    @if($course->hasDiscount())
+                    <div class="paid-course-discount-badge">
+                        <i class="fas fa-tag"></i>
+                        <span>-{{ $course->discount_percentage }}%</span>
+                    </div>
+                    @endif
+
+                    <!-- Image du cours -->
+                    <div class="paid-course-image-wrapper">
+                        @if($course->cover_image)
+                            @if(($course->cover_type ?? 'internal') === 'internal')
+                                <img src="{{ asset('storage/' . $course->cover_image) }}" alt="{{ $course->title }}" class="paid-course-image" loading="lazy">
+                            @else
+                                <img src="{{ $course->cover_image }}" alt="{{ $course->title }}" class="paid-course-image" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="paid-course-image-placeholder" style="display: none;">
+                                    <i class="fas fa-graduation-cap"></i>
+                                </div>
+                            @endif
+                        @else
+                        <div class="paid-course-image-placeholder">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        @endif
+                        <div class="paid-course-image-overlay">
+                            <div class="paid-course-overlay-content">
+                                <span class="paid-course-cta-text">{{ app()->getLocale() === 'fr' ? 'Découvrir' : 'Discover' }}</span>
+                                <i class="fas fa-arrow-right"></i>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Contenu de la card -->
+                    <div class="paid-course-content">
+                        <h3 class="paid-course-title">{{ $course->title }}</h3>
+                        
+                        @if($course->description)
+                        <p class="paid-course-description">{{ \Illuminate\Support\Str::limit($course->description, 100) }}</p>
+                        @endif
+
+                        <!-- Métadonnées -->
+                        <div class="paid-course-meta">
+                            @if($course->duration_hours)
+                            <div class="paid-course-meta-item">
+                                <i class="fas fa-clock"></i>
+                                <span>{{ $course->duration_hours }}h</span>
+                            </div>
+                            @endif
+                            @if($course->students_count > 0)
+                            <div class="paid-course-meta-item">
+                                <i class="fas fa-users"></i>
+                                <span>{{ $course->students_count }}</span>
+                            </div>
+                            @endif
+                            @if($course->rating > 0)
+                            <div class="paid-course-meta-item paid-course-rating">
+                                <i class="fas fa-star"></i>
+                                <span>{{ number_format($course->rating, 1) }}</span>
+                            </div>
+                            @endif
+                        </div>
+                        
+                        <!-- Prix -->
+                        <div class="paid-course-price-wrapper">
+                            @if($course->hasDiscount())
+                            <div class="paid-course-price-discounted">
+                                <span class="paid-course-price-current">{{ number_format($course->discount_price, 0, ',', ' ') }} {{ $course->currency }}</span>
+                                <span class="paid-course-price-old">{{ number_format($course->price, 0, ',', ' ') }} {{ $course->currency }}</span>
+                            </div>
+                            @else
+                            <div class="paid-course-price-normal">
+                                <span class="paid-course-price-current">{{ number_format($course->price, 0, ',', ' ') }} {{ $course->currency }}</span>
+                            </div>
+                            @endif
+                        </div>
+                    </div>
+
+                    <!-- Effet de brillance au survol -->
+                    <div class="paid-course-shine"></div>
+                </div>
+            </a>
+            @endforeach
+        </div>
+
+        <!-- Bouton Voir Toutes les Formations -->
+        <div class="paid-courses-footer">
+            <a href="{{ route('monetization.courses') }}" class="paid-courses-view-all-btn">
+                <span>{{ app()->getLocale() === 'fr' ? 'Voir toutes les formations payantes' : 'View all paid courses' }}</span>
+                <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </div>
+</section>
+@endif
+
 <!-- Latest Jobs Section -->
 @if(isset($latestJobs) && $latestJobs->count() > 0)
 <section class="latest-jobs-section">
@@ -3388,6 +3505,557 @@
     
     .latest-jobs-grid > a:hover img {
         transform: scale(1.1);
+    }
+    
+    /* ============================================
+       SECTION COURS PAYANTS - DESIGN ULTRA MODERNE
+       ============================================ */
+    
+    .paid-courses-section {
+        position: relative;
+        padding: 80px 20px;
+        overflow: hidden;
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95));
+        z-index: 2;
+    }
+    
+    .paid-courses-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: 
+            radial-gradient(circle at 20% 30%, rgba(6, 182, 212, 0.15), transparent 50%),
+            radial-gradient(circle at 80% 70%, rgba(20, 184, 166, 0.15), transparent 50%),
+            radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.1), transparent 60%);
+        pointer-events: none;
+        z-index: 0;
+        animation: gradientShift 15s ease infinite;
+    }
+    
+    @keyframes gradientShift {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.8; }
+    }
+    
+    .paid-courses-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .paid-courses-header {
+        text-align: center;
+        margin-bottom: 60px;
+    }
+    
+    .paid-courses-title-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .paid-courses-title-line {
+        flex: 1;
+        max-width: 150px;
+        height: 3px;
+        background: linear-gradient(90deg, transparent, #06b6d4, transparent);
+        border-radius: 2px;
+    }
+    
+    .paid-courses-title {
+        font-size: 2.8rem;
+        font-weight: 900;
+        color: white;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin: 0;
+        text-shadow: 0 4px 20px rgba(6, 182, 212, 0.3);
+        letter-spacing: -1px;
+    }
+    
+    .paid-courses-title i {
+        color: #06b6d4;
+        font-size: 2.5rem;
+        filter: drop-shadow(0 4px 12px rgba(6, 182, 212, 0.5));
+    }
+    
+    .paid-courses-subtitle {
+        font-size: 1.2rem;
+        color: rgba(255, 255, 255, 0.75);
+        max-width: 700px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+    
+    .paid-courses-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 30px;
+        margin-bottom: 50px;
+    }
+    
+    .paid-course-card {
+        text-decoration: none;
+        display: block;
+        height: 100%;
+    }
+    
+    .paid-course-card-inner {
+        background: white;
+        border: 2px solid rgba(6, 182, 212, 0.2);
+        border-radius: 24px;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    }
+    
+    .paid-course-card:hover .paid-course-card-inner {
+        transform: translateY(-12px) scale(1.02);
+        border-color: rgba(6, 182, 212, 0.6);
+        box-shadow: 0 25px 80px rgba(6, 182, 212, 0.4);
+    }
+    
+    .paid-course-card:hover .paid-course-shine {
+        opacity: 1;
+        animation: shineSweep 1.5s ease-in-out;
+    }
+    
+    .paid-course-shine {
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+        transform: rotate(45deg);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+        z-index: 2;
+    }
+    
+    @keyframes shineSweep {
+        0% {
+            transform: translateX(-100%) translateY(-100%) rotate(45deg);
+        }
+        100% {
+            transform: translateX(100%) translateY(100%) rotate(45deg);
+        }
+    }
+    
+    .paid-course-discount-badge {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        color: white;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-weight: 800;
+        font-size: 0.9rem;
+        z-index: 10;
+        box-shadow: 0 4px 15px rgba(239, 68, 68, 0.5);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        backdrop-filter: blur(10px);
+    }
+    
+    .paid-course-discount-badge i {
+        font-size: 0.85rem;
+    }
+    
+    .paid-course-image-wrapper {
+        width: 100%;
+        height: 220px;
+        position: relative;
+        overflow: hidden;
+        background: linear-gradient(135deg, #06b6d4, #14b8a6);
+    }
+    
+    .paid-course-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    
+    .paid-course-card:hover .paid-course-image {
+        transform: scale(1.15);
+    }
+    
+    .paid-course-image-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #06b6d4, #14b8a6);
+    }
+    
+    .paid-course-image-placeholder i {
+        font-size: 5rem;
+        color: white;
+        opacity: 0.4;
+    }
+    
+    .paid-course-image-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to bottom, transparent, rgba(15, 23, 42, 0.9));
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        padding: 20px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    
+    .paid-course-card:hover .paid-course-image-overlay {
+        opacity: 1;
+    }
+    
+    .paid-course-overlay-content {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: white;
+        font-weight: 700;
+        font-size: 1.1rem;
+        transform: translateY(10px);
+        transition: transform 0.3s ease;
+    }
+    
+    .paid-course-card:hover .paid-course-overlay-content {
+        transform: translateY(0);
+    }
+    
+    .paid-course-content {
+        padding: 28px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .paid-course-title {
+        font-size: 1.4rem;
+        font-weight: 800;
+        color: rgba(30, 41, 59, 0.95);
+        margin-bottom: 12px;
+        line-height: 1.3;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    .paid-course-description {
+        color: rgba(30, 41, 59, 0.7);
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin-bottom: 20px;
+        flex: 1;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    .paid-course-meta {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 20px;
+        padding-top: 18px;
+        border-top: 1px solid rgba(6, 182, 212, 0.2);
+        flex-wrap: wrap;
+    }
+    
+    .paid-course-meta-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: rgba(30, 41, 59, 0.7);
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+    
+    .paid-course-meta-item i {
+        color: #06b6d4;
+        font-size: 0.85rem;
+    }
+    
+    .paid-course-meta-item.paid-course-rating {
+        color: #fbbf24;
+    }
+    
+    .paid-course-meta-item.paid-course-rating i {
+        color: #fbbf24;
+    }
+    
+    .paid-course-price-wrapper {
+        margin-top: auto;
+    }
+    
+    .paid-course-price-discounted {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+    
+    .paid-course-price-current {
+        font-size: 2rem;
+        font-weight: 900;
+        color: #06b6d4;
+        line-height: 1;
+        text-shadow: 0 2px 10px rgba(6, 182, 212, 0.3);
+    }
+    
+    .paid-course-price-old {
+        font-size: 1.1rem;
+        color: rgba(30, 41, 59, 0.4);
+        text-decoration: line-through;
+    }
+    
+    .paid-course-price-normal .paid-course-price-current {
+        font-size: 2rem;
+        font-weight: 900;
+        color: #06b6d4;
+        line-height: 1;
+    }
+    
+    .paid-courses-footer {
+        text-align: center;
+        margin-top: 50px;
+    }
+    
+    .paid-courses-view-all-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        padding: 18px 40px;
+        background: linear-gradient(135deg, #06b6d4, #14b8a6);
+        color: white;
+        border-radius: 16px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 1.1rem;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        box-shadow: 0 8px 25px rgba(6, 182, 212, 0.4);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .paid-courses-view-all-btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+        transition: left 0.6s ease;
+    }
+    
+    .paid-courses-view-all-btn:hover::before {
+        left: 100%;
+    }
+    
+    .paid-courses-view-all-btn:hover {
+        transform: translateY(-4px) scale(1.05);
+        box-shadow: 0 15px 40px rgba(6, 182, 212, 0.6);
+    }
+    
+    .paid-courses-view-all-btn i {
+        transition: transform 0.3s ease;
+    }
+    
+    .paid-courses-view-all-btn:hover i {
+        transform: translateX(6px);
+    }
+    
+    /* ============================================
+       DARK MODE ADAPTATIONS
+       ============================================ */
+    
+    body.dark-mode .paid-courses-section {
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95));
+    }
+    
+    body.dark-mode .paid-courses-title {
+        color: white !important;
+    }
+    
+    body.dark-mode .paid-courses-subtitle {
+        color: rgba(255, 255, 255, 0.75) !important;
+    }
+    
+    body.dark-mode .paid-course-card-inner {
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(51, 65, 85, 0.9));
+        border-color: rgba(6, 182, 212, 0.2);
+    }
+    
+    body.dark-mode .paid-course-card:hover .paid-course-card-inner {
+        border-color: rgba(6, 182, 212, 0.6);
+        box-shadow: 0 25px 80px rgba(6, 182, 212, 0.4);
+    }
+    
+    body.dark-mode .paid-course-title {
+        color: white !important;
+    }
+    
+    body.dark-mode .paid-course-description {
+        color: rgba(255, 255, 255, 0.7) !important;
+    }
+    
+    body.dark-mode .paid-course-meta-item {
+        color: rgba(255, 255, 255, 0.7) !important;
+    }
+    
+    body.dark-mode .paid-course-meta {
+        border-top-color: rgba(6, 182, 212, 0.2) !important;
+    }
+    
+    body.dark-mode .paid-course-price-old {
+        color: rgba(255, 255, 255, 0.4) !important;
+    }
+    
+    body.dark-mode .paid-course-image-overlay {
+        background: linear-gradient(to bottom, transparent, rgba(15, 23, 42, 0.9)) !important;
+    }
+    
+    body.dark-mode .paid-course-shine {
+        background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
+    }
+    
+    body.dark-mode .paid-course-discount-badge {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        box-shadow: 0 4px 15px rgba(239, 68, 68, 0.5);
+    }
+    
+    body.dark-mode .paid-courses-view-all-btn {
+        background: linear-gradient(135deg, #06b6d4, #14b8a6);
+        color: white;
+    }
+    
+    body.dark-mode .paid-courses-view-all-btn:hover {
+        box-shadow: 0 15px 40px rgba(6, 182, 212, 0.6);
+    }
+    
+    /* ============================================
+       LIGHT MODE ADAPTATIONS
+       ============================================ */
+    
+    body.light-mode .paid-courses-section {
+        background: white;
+    }
+    
+    body.light-mode .paid-courses-section::before {
+        opacity: 0.3;
+    }
+    
+    body.light-mode .paid-courses-title {
+        color: rgba(30, 41, 59, 0.95) !important;
+    }
+    
+    body.light-mode .paid-courses-subtitle {
+        color: rgba(30, 41, 59, 0.7) !important;
+    }
+    
+    body.light-mode .paid-course-card-inner {
+        background: white;
+        border-color: rgba(6, 182, 212, 0.3);
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    }
+    
+    body.light-mode .paid-course-card:hover .paid-course-card-inner {
+        border-color: rgba(6, 182, 212, 0.6);
+        box-shadow: 0 25px 80px rgba(6, 182, 212, 0.3);
+    }
+    
+    body.light-mode .paid-course-title {
+        color: rgba(30, 41, 59, 0.95) !important;
+    }
+    
+    body.light-mode .paid-course-description {
+        color: rgba(30, 41, 59, 0.7) !important;
+    }
+    
+    body.light-mode .paid-course-meta-item {
+        color: rgba(30, 41, 59, 0.7) !important;
+    }
+    
+    body.light-mode .paid-course-price-old {
+        color: rgba(30, 41, 59, 0.4) !important;
+    }
+    
+    body.light-mode .paid-course-image-overlay {
+        background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.9));
+    }
+    
+    body.light-mode .paid-courses-view-all-btn {
+        background: linear-gradient(135deg, #06b6d4, #14b8a6);
+        color: white;
+    }
+    
+    body.light-mode .paid-courses-view-all-btn:hover {
+        box-shadow: 0 15px 40px rgba(6, 182, 212, 0.4);
+    }
+    
+    /* ============================================
+       RESPONSIVE
+       ============================================ */
+    
+    @media (max-width: 1200px) {
+        .paid-courses-grid {
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .paid-courses-section {
+            padding: 50px 15px;
+        }
+        
+        .paid-courses-title {
+            font-size: 2rem;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .paid-courses-title i {
+            font-size: 2rem;
+        }
+        
+        .paid-courses-title-line {
+            max-width: 80px;
+        }
+        
+        .paid-courses-subtitle {
+            font-size: 1rem;
+        }
+        
+        .paid-courses-grid {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        
+        .paid-courses-view-all-btn {
+            padding: 16px 32px;
+            font-size: 1rem;
+        }
     }
     
     /* Styles pour la section Catégories et Articles Sponsorisés */

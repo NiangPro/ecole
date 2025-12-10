@@ -37,9 +37,11 @@
             currentActiveId = sectionId;
             
             navLinks.forEach(link => {
-                link.classList.remove('active');
+                if (link.classList) {
+                    link.classList.remove('active');
+                }
                 const linkHref = link.getAttribute('href');
-                if (linkHref === '#' + sectionId) {
+                if (linkHref === '#' + sectionId && link.classList) {
                     link.classList.add('active');
                 }
             });

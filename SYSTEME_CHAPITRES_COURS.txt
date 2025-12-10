@@ -1,0 +1,100 @@
+SYSTÈME DE GESTION DES CHAPITRES POUR LES COURS PAYANTS
+================================================================
+
+Date de création : 09 Décembre 2025
+
+DESCRIPTION
+-----------
+Système complet permettant d'ajouter, modifier et supprimer des chapitres pour chaque cours payant.
+Ces chapitres constituent le programme du cours affiché sur la page publique.
+
+FONCTIONNALITÉS IMPLÉMENTÉES
+----------------------------
+1. Base de données
+   - Table : course_chapters
+   - Champs : id, paid_course_id, title, description, content, order, duration_minutes, timestamps
+   - Relation : Un cours peut avoir plusieurs chapitres (hasMany)
+
+2. Modèle CourseChapter
+   - Relation avec PaidCourse (belongsTo)
+   - Champs fillable : paid_course_id, title, description, content, order, duration_minutes
+   - Casts : order et duration_minutes en integer
+
+3. Modèle PaidCourse
+   - Relation avec CourseChapter (hasMany)
+   - Tri automatique par ordre (orderBy('order'))
+
+4. Interface d'administration
+   - Section "Programme du Cours (Chapitres)" dans la page d'édition
+   - Ajout dynamique de chapitres
+   - Modification des chapitres existants
+   - Suppression de chapitres
+   - Champs : Titre (requis), Description (optionnel), Contenu (optionnel), Durée en minutes (optionnel)
+
+5. Affichage public
+   - Section "Programme du cours" affiche les chapitres au lieu du programme généré
+   - Affichage du numéro, titre, description et durée de chaque chapitre
+   - Système d'accordéon pour afficher/masquer le contenu détaillé de chaque chapitre
+   - Design moderne avec animations et dark mode
+
+FICHIERS MODIFIÉS/CRÉÉS
+-----------------------
+1. Migration : database/migrations/2025_12_09_162055_create_course_chapters_table.php
+2. Migration : database/migrations/2025_12_09_163425_add_content_to_course_chapters_table.php
+3. Modèle : app/Models/CourseChapter.php
+4. Modèle : app/Models/PaidCourse.php (ajout relation chapters)
+5. Contrôleur : app/Http/Controllers/Admin/PaidCourseController.php
+   - Méthode edit() : charge les chapitres avec le cours
+   - Méthode update() : gère la création, modification et suppression des chapitres (incluant le contenu)
+6. Contrôleur : app/Http/Controllers/MonetizationController.php
+   - Méthode showCourse() : charge les chapitres avec le cours
+7. Vue : resources/views/admin/monetization/courses/edit.blade.php
+   - Section complète pour gérer les chapitres
+   - Champ textarea pour le contenu de chaque chapitre
+   - JavaScript pour ajouter/supprimer des chapitres dynamiquement
+8. Vue : resources/views/monetization/course-show.blade.php
+   - Affichage des chapitres dans la section "Programme du cours"
+   - Système d'accordéon pour afficher/masquer le contenu
+   - Styles CSS pour la description et le contenu des chapitres
+   - JavaScript pour gérer l'accordéon
+
+UTILISATION
+-----------
+1. Accéder à la page d'édition d'un cours : /admin/monetization/courses/{id}/edit
+2. Scroller jusqu'à la section "Programme du Cours (Chapitres)"
+3. Remplir les champs pour chaque chapitre :
+   - Titre (obligatoire)
+   - Description (optionnel)
+   - Contenu (optionnel) - Contenu détaillé du chapitre
+   - Durée en minutes (optionnel)
+4. Cliquer sur "Ajouter un Chapitre" pour ajouter d'autres chapitres
+5. Cliquer sur "Supprimer" pour retirer un chapitre
+6. Enregistrer les modifications
+
+AFFICHAGE PUBLIC
+----------------
+- Sur la page publique du cours, chaque chapitre affiche :
+  - Le numéro du chapitre
+  - Le titre
+  - La description (si disponible)
+  - La durée (si disponible)
+  - Un bouton "Voir le contenu" pour afficher le contenu détaillé
+- Le contenu s'affiche dans un accordéon avec animation
+- Le bouton change en "Masquer le contenu" quand le contenu est visible
+
+NOTES TECHNIQUES
+----------------
+- Les chapitres sont automatiquement triés par ordre (order)
+- L'ordre est généré automatiquement lors de la sauvegarde (index + 1)
+- Les chapitres sans titre sont ignorés lors de la sauvegarde
+- La suppression d'un chapitre se fait en cascade si le cours est supprimé
+- Les chapitres sont affichés dans l'ordre défini sur la page publique
+
+AMÉLIORATIONS FUTURES POSSIBLES
+--------------------------------
+- Ajout de leçons/sous-sections dans chaque chapitre
+- Upload de fichiers/vidéos pour chaque chapitre
+- Système de progression pour les étudiants
+- Statistiques de visualisation par chapitre
+- Export/Import du programme en format JSON
+

@@ -520,6 +520,11 @@
                         <span>{{ trans('app.profile.sidebar.formations') }}</span>
                     </a>
                     
+                    <a href="{{ route('dashboard.paid-courses') }}" class="nav-item {{ request()->routeIs('dashboard.paid-courses.*') ? 'active' : '' }}" data-no-loader="true">
+                        <i class="fas fa-graduation-cap"></i>
+                        <span>Cours Payants</span>
+                    </a>
+                    
                     <a href="{{ route('dashboard.exercices') }}" class="nav-item {{ request()->routeIs('dashboard.exercices') ? 'active' : '' }}" data-no-loader="true">
                         <i class="fas fa-code"></i>
                         <span>{{ trans('app.profile.sidebar.exercises') }}</span>
@@ -604,6 +609,8 @@
                     </form>
                 </div>
             </nav>
+            
+            @stack('sidebar-extra')
         </aside>
         
         <!-- Main Content -->
@@ -748,19 +755,27 @@
     
     // Script pour le toggle du sidebar en mobile
     function toggleSidebar() {
-        const sidebar = document.getElementById('dashboardSidebar');
-        const overlay = document.getElementById('sidebarOverlay');
-        const closeBtn = document.getElementById('sidebarClose');
-        
-        sidebar.classList.toggle('active');
-        overlay.classList.toggle('active');
-        
-        if (window.innerWidth <= 992) {
-            if (sidebar.classList.contains('active')) {
-                closeBtn.style.display = 'flex';
-            } else {
-                closeBtn.style.display = 'none';
+        try {
+            const sidebar = document.getElementById('dashboardSidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const closeBtn = document.getElementById('sidebarClose');
+            
+            if (!sidebar || !sidebar.classList) return;
+            
+            sidebar.classList.toggle('active');
+            if (overlay && overlay.classList) {
+                overlay.classList.toggle('active');
             }
+            
+            if (window.innerWidth <= 992 && closeBtn) {
+                if (sidebar.classList.contains('active')) {
+                    closeBtn.style.display = 'flex';
+                } else {
+                    closeBtn.style.display = 'none';
+                }
+            }
+        } catch (error) {
+            // Ignorer silencieusement
         }
     }
     

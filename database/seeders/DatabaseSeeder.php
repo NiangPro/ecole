@@ -34,5 +34,8 @@ class DatabaseSeeder extends Seeder
         
         // Seeder pour les badges
         $this->call(BadgeSeeder::class);
+        
+        // Seeder pour les cours payants
+        $this->call(PaidCourseSeeder::class);
     }
 }

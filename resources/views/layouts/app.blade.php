@@ -19,11 +19,15 @@
     <!-- Favicon ICO (priorité pour compatibilité navigateurs) -->
     <link rel="icon" type="image/x-icon" href="{{ $faviconIco }}">
     <link rel="shortcut icon" type="image/x-icon" href="{{ $faviconIco }}">
-    <!-- Favicon PNG (meilleure qualité) -->
+    <!-- Favicon PNG (meilleure qualité) - Plusieurs formats pour compatibilité maximale -->
     <link rel="preload" as="image" href="{{ $faviconPng }}" fetchpriority="high">
     <link rel="icon" type="image/png" href="{{ $faviconPng }}">
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ $faviconPng }}">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ $faviconPng }}">
     <link rel="icon" type="image/png" sizes="16x16" href="{{ $faviconPng }}">
+    <!-- Fallback supplémentaire pour tous les navigateurs -->
+    <link rel="icon" href="{{ $faviconPng }}" type="image/png">
+    <link rel="icon" href="{{ $faviconIco }}" type="image/x-icon">
     <!-- Apple Touch Icons -->
     <link rel="apple-touch-icon" sizes="180x180" href="{{ $faviconPng }}">
     <link rel="apple-touch-icon" sizes="152x152" href="{{ $faviconPng }}">
@@ -120,6 +124,64 @@
                     }
                     return originalError.apply(console, args);
                 };
+            }
+            
+            // PROTECTION GLOBALE : Wrapper pour sécuriser tous les accès à classList
+            // DOIT être fait AVANT tout autre script
+            try {
+                // Wrapper pour classList.add
+                if (DOMTokenList && DOMTokenList.prototype) {
+                    const originalAdd = DOMTokenList.prototype.add;
+                    DOMTokenList.prototype.add = function(...tokens) {
+                        try {
+                            if (this && this.length !== undefined) {
+                                return originalAdd.apply(this, tokens);
+                            }
+                        } catch (e) {
+                            // Ignorer silencieusement
+                        }
+                    };
+                    
+                    // Wrapper pour classList.remove
+                    const originalRemove = DOMTokenList.prototype.remove;
+                    DOMTokenList.prototype.remove = function(...tokens) {
+                        try {
+                            if (this && this.length !== undefined) {
+                                return originalRemove.apply(this, tokens);
+                            }
+                        } catch (e) {
+                            // Ignorer silencieusement
+                        }
+                    };
+                    
+                    // Wrapper pour classList.toggle
+                    const originalToggle = DOMTokenList.prototype.toggle;
+                    DOMTokenList.prototype.toggle = function(token, force) {
+                        try {
+                            if (this && this.length !== undefined) {
+                                return originalToggle.apply(this, [token, force]);
+                            }
+                        } catch (e) {
+                            // Ignorer silencieusement
+                        }
+                        return false;
+                    };
+                    
+                    // Wrapper pour classList.contains
+                    const originalContains = DOMTokenList.prototype.contains;
+                    DOMTokenList.prototype.contains = function(token) {
+                        try {
+                            if (this && this.length !== undefined) {
+                                return originalContains.apply(this, [token]);
+                            }
+                        } catch (e) {
+                            // Ignorer silencieusement
+                        }
+                        return false;
+                    };
+                }
+            } catch (e) {
+                // Ignorer si DOMTokenList n'est pas disponible
             }
             
             // Surcharger aussi console.log IMMÉDIATEMENT pour masquer [UX] et [PWA]
@@ -446,50 +508,6 @@
             line-height: 1.6;
         }
         
-        /* Loader minimal */
-        .page-loader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #0f172a;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 99999;
-            transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
-        }
-        
-        .page-loader.hidden {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
-        
-        /* Protection contre l'affichage du loader pour les liens d'ancrage */
-        body:has(a[href^="#"]:active) #page-loader,
-        body:has(a[data-no-loader]:active) #page-loader,
-        #page-loader[data-anchor-active="true"] {
-            display: none !important;
-            visibility: hidden !important;
-            opacity: 0 !important;
-            pointer-events: none !important;
-            z-index: -1 !important;
-        }
-        
-        .page-loader-spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid rgba(6, 182, 212, 0.2);
-            border-top-color: #06b6d4;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
         
         @media (max-width: 768px) {
             .hero-section {
@@ -660,34 +678,6 @@
     
     <!-- Tailwind CSS - Chargé de manière SYNCHRONE pour éviter le FOUC -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Script pour masquer le loader une fois que la page est chargée -->
-    <script>
-        (function() {
-            // Masquer le loader une fois que la page est chargée
-            function hideLoader() {
-                const loader = document.getElementById('page-loader');
-                if (loader) {
-                    loader.classList.add('hidden');
-                    setTimeout(function() {
-                        if (loader.parentNode) {
-                            loader.parentNode.removeChild(loader);
-                        }
-                    }, 300);
-                }
-            }
-            
-            // Masquer le loader dès que le DOM est prêt
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', hideLoader);
-            } else {
-                hideLoader();
-            }
-            
-            // Fallback : masquer après 500ms maximum
-            setTimeout(hideLoader, 500);
-        })();
-    </script>
     
     <!-- reCAPTCHA v3 (invisible) -->
     @php
@@ -1423,9 +1413,6 @@
             opacity: 1 !important;
             visibility: visible !important;
         }
-        .page-loader {
-            display: none !important;
-        }
     </style>
     <script>
         // Marquer comme chargé une fois que les CSS critiques sont prêts
@@ -1441,11 +1428,6 @@
     </script>
 </head>
 <body class="bg-white text-gray-900" lang="{{ app()->getLocale() }}">
-    <!-- Loader pendant le chargement -->
-    <div id="page-loader" class="page-loader">
-        <div class="page-loader-spinner"></div>
-    </div>
-    
     <!-- Skip Links pour l'accessibilité -->
     <div class="skip-links">
         <a href="#main-content" class="skip-link">Aller au contenu principal</a>

@@ -85,7 +85,16 @@ class PageController extends Controller
             return collect();
         });
         
-        return view('index', compact('latestJobs', 'categories', 'sponsoredArticles', 'sidebarAds', 'homepageAds', 'careerAdviceArticles'));
+        // Cache les cours payants publiés (15 minutes) - Optimisé avec eager loading
+        $paidCourses = \Illuminate\Support\Facades\Cache::remember('homepage_paid_courses', 900, function () {
+            return \App\Models\PaidCourse::where('status', 'published')
+                ->select('id', 'title', 'slug', 'description', 'cover_image', 'cover_type', 'price', 'currency', 'discount_price', 'discount_start', 'discount_end', 'duration_hours', 'students_count', 'rating', 'reviews_count', 'created_at')
+                ->orderBy('created_at', 'desc')
+                ->take(4)
+                ->get();
+        });
+        
+        return view('index', compact('latestJobs', 'categories', 'sponsoredArticles', 'sidebarAds', 'homepageAds', 'careerAdviceArticles', 'paidCourses'));
     }
 
     public function about()

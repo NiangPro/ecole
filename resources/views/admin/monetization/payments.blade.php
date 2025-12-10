@@ -20,6 +20,20 @@
         </a>
     </div>
 
+    @if(session('success'))
+    <div style="background: rgba(16, 185, 129, 0.2); border: 2px solid #10b981; border-radius: 12px; padding: 15px 20px; margin-bottom: 20px; color: #10b981; display: flex; align-items: center; gap: 10px;">
+        <i class="fas fa-check-circle"></i>
+        <span>{{ session('success') }}</span>
+    </div>
+    @endif
+
+    @if(session('error'))
+    <div style="background: rgba(239, 68, 68, 0.2); border: 2px solid #ef4444; border-radius: 12px; padding: 15px 20px; margin-bottom: 20px; color: #ef4444; display: flex; align-items: center; gap: 10px;">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>{{ session('error') }}</span>
+    </div>
+    @endif
+
     @if($payments->count() > 0)
     <div style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 16px; padding: 30px;">
         <div style="overflow-x: auto;">
@@ -34,6 +48,7 @@
                         <th style="padding: 15px; text-align: left; color: rgba(255, 255, 255, 0.9); font-weight: 600;">Statut</th>
                         <th style="padding: 15px; text-align: left; color: rgba(255, 255, 255, 0.9); font-weight: 600;">Référence</th>
                         <th style="padding: 15px; text-align: left; color: rgba(255, 255, 255, 0.9); font-weight: 600;">Date</th>
+                        <th style="padding: 15px; text-align: left; color: rgba(255, 255, 255, 0.9); font-weight: 600;">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -92,10 +107,36 @@
                             </div>
                             @endif
                         </td>
+                        <td style="padding: 15px;">
+                            @if(class_basename($payment->paymentable_type) === 'CoursePurchase')
+                                @if($payment->status === 'pending')
+                                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                        <a href="{{ route('admin.monetization.payments.course.show', $payment->id) }}" style="padding: 6px 12px; background: rgba(6, 182, 212, 0.2); color: #06b6d4; border: 1px solid #06b6d4; border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: 600; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(6, 182, 212, 0.3)'" onmouseout="this.style.background='rgba(6, 182, 212, 0.2)'">
+                                            <i class="fas fa-eye"></i> Voir
+                                        </a>
+                                        <form action="{{ route('admin.monetization.payments.course.accept', $payment->id) }}" method="POST" style="display: inline;" onsubmit="return confirm('Êtes-vous sûr de vouloir accepter cette inscription ?');">
+                                            @csrf
+                                            <button type="submit" style="padding: 6px 12px; background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid #10b981; border-radius: 6px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(16, 185, 129, 0.3)'" onmouseout="this.style.background='rgba(16, 185, 129, 0.2)'">
+                                                <i class="fas fa-check"></i> Accepter
+                                            </button>
+                                        </form>
+                                        <button type="button" onclick="showRejectModal({{ $payment->id }})" style="padding: 6px 12px; background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid #ef4444; border-radius: 6px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(239, 68, 68, 0.3)'" onmouseout="this.style.background='rgba(239, 68, 68, 0.2)'">
+                                            <i class="fas fa-times"></i> Refuser
+                                        </button>
+                                    </div>
+                                @else
+                                    <a href="{{ route('admin.monetization.payments.course.show', $payment->id) }}" style="padding: 6px 12px; background: rgba(6, 182, 212, 0.2); color: #06b6d4; border: 1px solid #06b6d4; border-radius: 6px; text-decoration: none; font-size: 0.85rem; font-weight: 600; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(6, 182, 212, 0.3)'" onmouseout="this.style.background='rgba(6, 182, 212, 0.2)'">
+                                        <i class="fas fa-eye"></i> Voir
+                                    </a>
+                                @endif
+                            @else
+                                <span style="color: rgba(255, 255, 255, 0.5); font-size: 0.85rem;">-</span>
+                            @endif
+                        </td>
                     </tr>
                     @if($payment->failure_reason)
                     <tr>
-                        <td colspan="8" style="padding: 10px 15px; color: #ef4444; font-size: 0.9rem; border-bottom: 1px solid rgba(6, 182, 212, 0.1);">
+                        <td colspan="9" style="padding: 10px 15px; color: #ef4444; font-size: 0.9rem; border-bottom: 1px solid rgba(6, 182, 212, 0.1);">
                             <i class="fas fa-exclamation-triangle" style="margin-right: 8px;"></i>
                             <strong>Raison:</strong> {{ $payment->failure_reason }}
                         </td>
@@ -123,6 +164,54 @@
     </div>
     @endif
 </div>
+
+<!-- Modal pour refuser un paiement -->
+<div id="rejectModal" style="display: none; position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7); z-index: 1000; align-items: center; justify-content: center;">
+    <div style="background: rgba(30, 41, 59, 0.95); border: 2px solid rgba(6, 182, 212, 0.3); border-radius: 16px; padding: 30px; max-width: 500px; width: 90%;">
+        <h3 style="color: white; font-size: 1.5rem; font-weight: 700; margin-bottom: 20px;">
+            <i class="fas fa-times-circle" style="color: #ef4444; margin-right: 10px;"></i>
+            Refuser l'inscription
+        </h3>
+        <form id="rejectForm" method="POST" action="">
+            @csrf
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; color: rgba(255, 255, 255, 0.9); font-weight: 600; margin-bottom: 8px;">
+                    Raison du refus (optionnel)
+                </label>
+                <textarea name="reason" rows="4" style="width: 100%; padding: 12px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 8px; color: white; font-size: 0.95rem; resize: vertical;" placeholder="Expliquez la raison du refus..."></textarea>
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                <button type="button" onclick="closeRejectModal()" style="padding: 10px 20px; background: rgba(107, 114, 128, 0.2); color: #9ca3af; border: 1px solid #6b7280; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">
+                    Annuler
+                </button>
+                <button type="submit" style="padding: 10px 20px; background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid #ef4444; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(239, 68, 68, 0.3)'" onmouseout="this.style.background='rgba(239, 68, 68, 0.2)'">
+                    Confirmer le refus
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function showRejectModal(paymentId) {
+    const modal = document.getElementById('rejectModal');
+    const form = document.getElementById('rejectForm');
+    form.action = '{{ route("admin.monetization.payments.course.reject", ":id") }}'.replace(':id', paymentId);
+    modal.style.display = 'flex';
+}
+
+function closeRejectModal() {
+    document.getElementById('rejectModal').style.display = 'none';
+    document.getElementById('rejectForm').reset();
+}
+
+// Fermer le modal en cliquant en dehors
+document.getElementById('rejectModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeRejectModal();
+    }
+});
+</script>
 
 <style>
     @media (max-width: 768px) {

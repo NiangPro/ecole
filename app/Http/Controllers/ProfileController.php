@@ -12,6 +12,8 @@ use App\Models\ExerciseProgress;
 use App\Models\QuizResult;
 use App\Models\UserActivity;
 use App\Models\UserGoal;
+use App\Models\CoursePurchase;
+use App\Models\PaidCourse;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
@@ -798,5 +800,154 @@ class ProfileController extends Controller
         });
         
         return array_slice($recommendations, 0, 5); // Limiter à 5 recommandations
+    }
+
+    /**
+     * Afficher les cours payants de l'utilisateur
+     */
+    public function paidCourses()
+    {
+        $this->ensureLocale();
+        $user = Auth::user();
+        
+        // Récupérer les cours achetés
+        $purchases = CoursePurchase::where('user_id', $user->id)
+            ->where('status', 'completed')
+            ->with(['course' => function($query) {
+                $query->with('chapters');
+            }])
+            ->orderBy('purchased_at', 'desc')
+            ->get();
+
+        // Si l'utilisateur a un abonnement premium, ajouter tous les cours publiés
+        if ($user->hasActivePremium()) {
+            $premiumCourses = PaidCourse::where('status', 'published')
+                ->with('chapters')
+                ->whereNotIn('id', $purchases->pluck('paid_course_id'))
+                ->get();
+            
+            // Créer des "purchases" virtuelles pour les cours premium
+            foreach ($premiumCourses as $course) {
+                $purchases->push((object)[
+                    'id' => null,
+                    'paid_course_id' => $course->id,
+                    'status' => 'completed',
+                    'purchased_at' => null,
+                    'course' => $course,
+                ]);
+            }
+        }
+
+        // Pagination manuelle
+        $perPage = 12;
+        $currentPage = request()->get('page', 1);
+        $items = $purchases->slice(($currentPage - 1) * $perPage, $perPage)->values();
+        $purchases = new \Illuminate\Pagination\LengthAwarePaginator(
+            $items,
+            $purchases->count(),
+            $perPage,
+            $currentPage,
+            ['path' => request()->url(), 'query' => request()->query()]
+        );
+
+        $pageTitle = 'Mes Cours Payants';
+        $pageDescription = 'Accédez à tous vos cours payants achetés';
+
+        return view('dashboard.paid-courses', compact('purchases', 'pageTitle', 'pageDescription'))
+            ->with('layout', 'dashboard.layout');
+    }
+
+    /**
+     * Traiter le contenu markdown et convertir les blocs de code en HTML
+     */
+    private function processMarkdownContent($content)
+    {
+        if (empty($content)) {
+            return $content;
+        }
+
+        // Détecter les blocs markdown ```langue\ncode\n```
+        // Pattern amélioré pour gérer les cas avec ou sans saut de ligne après le langage
+        $pattern = '/```(\w+)?\s*\n?([\s\S]*?)```/';
+        
+        return preg_replace_callback($pattern, function($matches) {
+            $language = !empty($matches[1]) ? trim($matches[1]) : 'text';
+            
+            // Mapper les alias de langages vers les noms Prism.js
+            $languageMap = [
+                'js' => 'javascript',
+                'py' => 'python',
+                'rb' => 'ruby',
+                'sh' => 'bash',
+                'yml' => 'yaml',
+                'md' => 'markdown',
+            ];
+            
+            $language = strtolower($language);
+            if (isset($languageMap[$language])) {
+                $language = $languageMap[$language];
+            }
+            
+            $code = trim($matches[2]);
+            $codeId = 'code-' . uniqid();
+            
+            // Échapper le code pour l'HTML (mais garder les sauts de ligne)
+            $escapedCode = htmlspecialchars($code, ENT_QUOTES, 'UTF-8');
+            
+            // Générer le HTML du bloc de code (même structure que les autres formations)
+            // IMPORTANT: Prism.js nécessite <pre><code class="language-xxx"> pour fonctionner
+            return sprintf(
+                '<div class="code-box" data-language="%s" style="position: relative;">
+                    <button class="copy-code-btn" onclick="copyCodeToClipboard(this, document.getElementById(\'%s\'))" title="Copier le code" style="position: absolute; top: 10px; right: 80px; background: #04AA6D; color: white; border: none; padding: 2px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; z-index: 10; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); white-space: nowrap; height: auto; line-height: 1.4;">
+                        <i class="fas fa-copy" style="margin-right: 5px; font-size: 12px;"></i>
+                        <span>Copier</span>
+                    </button>
+                    <pre class="language-%s" style="margin: 0; padding: 0; background: transparent !important;"><code id="%s" class="language-%s">%s</code></pre>
+                </div>',
+                htmlspecialchars($language, ENT_QUOTES, 'UTF-8'),
+                $codeId,
+                htmlspecialchars($language, ENT_QUOTES, 'UTF-8'),
+                $codeId,
+                htmlspecialchars($language, ENT_QUOTES, 'UTF-8'),
+                $escapedCode
+            );
+        }, $content);
+    }
+
+    /**
+     * Afficher un cours payant avec ses chapitres
+     */
+    public function showPaidCourse($courseId)
+    {
+        $this->ensureLocale();
+        $user = Auth::user();
+        
+        // Vérifier que l'utilisateur a acheté ce cours ou a un abonnement premium
+        $purchase = CoursePurchase::where('user_id', $user->id)
+            ->where('paid_course_id', $courseId)
+            ->where('status', 'completed')
+            ->first();
+
+        // Si pas d'achat, vérifier l'abonnement premium
+        if (!$purchase && !$user->hasActivePremium()) {
+            abort(403, 'Vous devez acheter ce cours ou avoir un abonnement premium pour y accéder.');
+        }
+
+        $course = PaidCourse::with(['chapters' => function($query) {
+            $query->orderBy('order');
+        }])->findOrFail($courseId);
+
+        // Traiter le contenu de chaque chapitre pour convertir les blocs markdown
+        foreach ($course->chapters as $chapter) {
+            if (!empty($chapter->content)) {
+                $chapter->content = $this->processMarkdownContent($chapter->content);
+            }
+        }
+
+        $pageTitle = $course->title;
+        $pageDescription = 'Suivez votre progression dans ce cours';
+
+        return view('dashboard.paid-course-show', compact('course', 'purchase', 'pageTitle', 'pageDescription'))
+            ->with('layout', 'dashboard.layout');
     }
 }

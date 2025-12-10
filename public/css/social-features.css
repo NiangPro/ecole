@@ -322,14 +322,12 @@ body.dark-mode .notification-footer {
     text-decoration: underline;
 }
 
-.notification-loading,
 .notification-empty {
     padding: 40px 20px;
     text-align: center;
     color: rgba(30, 41, 59, 0.6);
 }
 
-body.dark-mode .notification-loading,
 body.dark-mode .notification-empty {
     color: rgba(255, 255, 255, 0.6);
 }

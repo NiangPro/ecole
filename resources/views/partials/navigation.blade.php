@@ -966,6 +966,32 @@
                     <i class="fas fa-chevron-down dropdown-icon"></i>
                 </a>
                 <div class="dropdown-menu">
+                    @php
+                        // Vérifier s'il existe des formations payantes publiées
+                        $hasPaidCourses = \App\Models\PaidCourse::where('status', 'published')->exists();
+                    @endphp
+                    
+                    @if($hasPaidCourses)
+                        <!-- Formations Payantes -->
+                        <a href="{{ route('monetization.courses') }}" class="dropdown-item" data-parent-active="formations">
+                            <div class="dropdown-item-icon" style="background: rgba(251, 191, 36, 0.15); border: 1px solid rgba(251, 191, 36, 0.3);">
+                                <i class="fas fa-crown" style="color: #fbbf24;"></i>
+                            </div>
+                            <div class="dropdown-item-content">
+                                <div class="dropdown-item-title">
+                                    Formations Payantes
+                                    <span style="font-size: 0.7rem; color: #fbbf24; margin-left: 5px;">
+                                        <i class="fas fa-star"></i> Premium
+                                    </span>
+                                </div>
+                                <div class="dropdown-item-desc">Découvrez nos formations premium</div>
+                            </div>
+                        </a>
+                        
+                        <!-- Séparateur visuel -->
+                        <div style="height: 1px; background: rgba(6, 182, 212, 0.2); margin: 8px 0;"></div>
+                    @endif
+                    
                     <a href="{{ route('formations.all') }}" class="dropdown-item" data-parent-active="formations">
                         <div class="dropdown-item-icon" style="background: rgba(6, 182, 212, 0.1);">
                             <i class="fas fa-graduation-cap" style="color: #06b6d4;"></i>
@@ -1353,7 +1379,7 @@
                     <button type="button" class="mark-all-read" id="markAllRead" onclick="markAllNotificationsAsRead(event);">Tout marquer comme lu</button>
                 </div>
                 <div class="notification-list" id="notificationList">
-                    <div class="notification-loading">Chargement...</div>
+                    <div class="notification-empty">Aucune notification</div>
                 </div>
                 <div class="notification-footer">
                     <a href="/dashboard/notifications">Voir toutes les notifications</a>
@@ -1447,6 +1473,21 @@
                 <i class="fas fa-chevron-down dropdown-icon" id="formations-icon"></i>
             </button>
             <div class="mobile-dropdown-content" id="formations-dropdown">
+                @php
+                    // Vérifier s'il existe des formations payantes publiées pour mobile
+                    $hasPaidCoursesMobile = \App\Models\PaidCourse::where('status', 'published')->exists();
+                @endphp
+                
+                @if($hasPaidCoursesMobile)
+                    <!-- Formations Payantes Mobile -->
+                    <a href="{{ route('monetization.courses') }}" class="mobile-dropdown-item">
+                        <i class="fas fa-crown" style="color: #fbbf24;"></i> Formations Payantes <span style="font-size: 0.7rem; color: #fbbf24;">Premium</span>
+                    </a>
+                    
+                    <!-- Séparateur -->
+                    <div style="height: 1px; background: rgba(6, 182, 212, 0.2); margin: 8px 0;"></div>
+                @endif
+                
                 <a href="{{ route('formations.all') }}" class="mobile-dropdown-item">
                     <i class="fas fa-graduation-cap" style="color: #06b6d4;"></i> {{ trans('app.nav.dropdown.formations.all') }}
                 </a>
@@ -1663,13 +1704,19 @@
 <script>
     // Navbar scroll effect
     window.addEventListener('scroll', () => {
-        const navbar = document.getElementById('navbar');
-        if (window.scrollY > 50) {
-            navbar.classList.add('scrolled');
-        } else {
-            navbar.classList.remove('scrolled');
+        try {
+            const navbar = document.getElementById('navbar');
+            if (navbar && navbar.classList) {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            }
+        } catch (error) {
+            // Ignorer silencieusement
         }
-    });
+    }, { passive: true });
     
     // Mobile menu toggle
     const mobileToggle = document.getElementById('mobileToggle');

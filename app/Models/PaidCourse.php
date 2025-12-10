@@ -13,7 +13,8 @@ class PaidCourse extends Model
         'slug',
         'description',
         'content',
-        'image',
+        'cover_image',
+        'cover_type',
         'price',
         'currency',
         'discount_price',
@@ -54,6 +55,11 @@ class PaidCourse extends Model
         return $this->hasMany(CoursePurchase::class);
     }
 
+    public function chapters(): HasMany
+    {
+        return $this->hasMany(CourseChapter::class)->orderBy('order');
+    }
+
     public function getCurrentPriceAttribute(): float
     {
         if ($this->hasDiscount()) {
@@ -75,6 +81,11 @@ class PaidCourse extends Model
     public function getDiscountPercentageAttribute(): int
     {
         if (!$this->hasDiscount()) {
+            return 0;
+        }
+        
+        // Éviter la division par zéro
+        if ($this->price <= 0) {
             return 0;
         }
         

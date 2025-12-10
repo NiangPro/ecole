@@ -100,5 +100,93 @@ class MonetizationController extends Controller
 
         return view('admin.monetization.payments', compact('payments'));
     }
+
+    /**
+     * Voir les détails d'un paiement de cours
+     */
+    public function showCoursePayment($paymentId)
+    {
+        $payment = Payment::with(['user', 'paymentable'])
+            ->findOrFail($paymentId);
+
+        if (class_basename($payment->paymentable_type) !== 'CoursePurchase') {
+            return redirect()->route('admin.monetization.payments')
+                ->with('error', 'Ce paiement n\'est pas lié à un cours.');
+        }
+
+        $purchase = CoursePurchase::with('course')->findOrFail($payment->paymentable_id);
+        $course = $purchase->course;
+
+        return view('admin.monetization.payment-course-details', compact('payment', 'purchase', 'course'));
+    }
+
+    /**
+     * Accepter un paiement de cours (confirmer l'inscription)
+     */
+    public function acceptCoursePayment(Request $request, $paymentId)
+    {
+        $payment = Payment::with('paymentable')->findOrFail($paymentId);
+
+        if (class_basename($payment->paymentable_type) !== 'CoursePurchase') {
+            return redirect()->route('admin.monetization.payments')
+                ->with('error', 'Ce paiement n\'est pas lié à un cours.');
+        }
+
+        DB::transaction(function () use ($payment) {
+            // Mettre à jour le paiement
+            $payment->update([
+                'status' => 'completed',
+                'paid_at' => now(),
+            ]);
+
+            // Mettre à jour l'achat
+            $purchase = $payment->paymentable;
+            $purchase->update([
+                'status' => 'completed',
+                'purchased_at' => now(),
+            ]);
+
+            // Mettre à jour le nombre d'étudiants du cours
+            $course = $purchase->course;
+            $course->increment('students_count');
+        });
+
+        return redirect()->route('admin.monetization.payments')
+            ->with('success', 'L\'inscription au cours a été acceptée avec succès.');
+    }
+
+    /**
+     * Refuser un paiement de cours
+     */
+    public function rejectCoursePayment(Request $request, $paymentId)
+    {
+        $request->validate([
+            'reason' => 'nullable|string|max:500',
+        ]);
+
+        $payment = Payment::with('paymentable')->findOrFail($paymentId);
+
+        if (class_basename($payment->paymentable_type) !== 'CoursePurchase') {
+            return redirect()->route('admin.monetization.payments')
+                ->with('error', 'Ce paiement n\'est pas lié à un cours.');
+        }
+
+        DB::transaction(function () use ($payment, $request) {
+            // Mettre à jour le paiement
+            $payment->update([
+                'status' => 'failed',
+                'failure_reason' => $request->reason ?? 'Paiement refusé par l\'administrateur',
+            ]);
+
+            // Mettre à jour l'achat
+            $purchase = $payment->paymentable;
+            $purchase->update([
+                'status' => 'failed',
+            ]);
+        });
+
+        return redirect()->route('admin.monetization.payments')
+            ->with('success', 'Le paiement a été refusé.');
+    }
 }
 

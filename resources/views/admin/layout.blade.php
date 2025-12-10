@@ -797,7 +797,7 @@
                         <i class="fas fa-crown"></i>
                         <span>Abonnements</span>
                     </a>
-                    <a href="{{ route('admin.monetization.courses') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.monetization.courses') ? 'active' : '' }}">
+                    <a href="{{ route('admin.monetization.courses.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.monetization.courses.*') ? 'active' : '' }}">
                         <i class="fas fa-graduation-cap"></i>
                         <span>Cours Payants</span>
                     </a>

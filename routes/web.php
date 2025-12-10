@@ -5,6 +5,30 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Admin\NewsletterController;
 
+// Favicon.ico - DOIT être défini EN PREMIER pour être prioritaire
+Route::get('/favicon.ico', function () {
+    $logoPath = public_path('images/logo.png');
+    
+    if (file_exists($logoPath)) {
+        return response()->file($logoPath, [
+            'Content-Type' => 'image/png',
+            'Cache-Control' => 'public, max-age=31536000, immutable',
+        ]);
+    }
+    
+    // Si le logo n'existe pas, vérifier s'il y a un favicon.ico dans public/
+    $faviconPath = public_path('favicon.ico');
+    if (file_exists($faviconPath)) {
+        return response()->file($faviconPath, [
+            'Content-Type' => 'image/x-icon',
+            'Cache-Control' => 'public, max-age=31536000, immutable',
+        ]);
+    }
+    
+    // Fallback : retourner un favicon vide si rien n'existe
+    return response('', 404);
+})->name('favicon');
+
 // Sitemaps SEO
 Route::get('/sitemap.xml', [\App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap.index');
 Route::get('/sitemap-pages.xml', [\App\Http\Controllers\SitemapController::class, 'pages'])->name('sitemap.pages');
@@ -52,12 +76,18 @@ Route::get('/faire-un-don', [MonetizationController::class, 'donations'])->name(
 Route::get('/courses', [MonetizationController::class, 'courses'])->name('monetization.courses');
 Route::get('/courses/{slug}', [MonetizationController::class, 'showCourse'])->name('monetization.course.show');
 Route::post('/payment/subscription', [PaymentController::class, 'processSubscription'])->middleware('auth')->name('payment.subscription');
+Route::get('/payment/course/{courseId}', function($courseId) {
+    $course = \App\Models\PaidCourse::findOrFail($courseId);
+    return redirect()->route('monetization.course.show', $course->slug)
+        ->with('error', 'Veuillez utiliser le formulaire d\'achat pour procéder au paiement.');
+})->name('payment.course.get');
 Route::post('/payment/course/{courseId}', [PaymentController::class, 'processCoursePurchase'])->middleware('auth')->name('payment.course');
 Route::get('/payment/donation', function () {
     return redirect()->route('monetization.donations');
 })->name('payment.donation.get');
 Route::post('/payment/donation', [PaymentController::class, 'processDonation'])->name('payment.donation');
 Route::get('/payment/confirm/{paymentId}', [PaymentController::class, 'confirm'])->name('payment.confirm');
+Route::put('/payment/{paymentId}/update-method', [PaymentController::class, 'updatePaymentMethod'])->middleware('auth')->name('payment.update-method');
 Route::get('/payment/wave/{paymentId}', [PaymentController::class, 'waveRedirect'])->name('payment.wave');
 Route::get('/payment/paypal/return', [PaymentController::class, 'paypalReturn'])->name('payment.paypal.return');
 Route::get('/payment/paypal/cancel', [PaymentController::class, 'paypalCancel'])->name('payment.paypal.cancel');
@@ -152,6 +182,10 @@ Route::middleware('auth')->prefix('dashboard')->name('dashboard.')->group(functi
     // Notifications
     Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'index'])->name('notifications');
     
+    // Cours Payants
+    Route::get('/paid-courses', [\App\Http\Controllers\ProfileController::class, 'paidCourses'])->name('paid-courses');
+    Route::get('/paid-courses/{courseId}', [\App\Http\Controllers\ProfileController::class, 'showPaidCourse'])->name('paid-courses.show');
+    
     // Routes pour les objectifs (API)
     Route::post('/goals', [\App\Http\Controllers\UserGoalController::class, 'store'])->name('goals.store');
     Route::put('/goals/{id}', [\App\Http\Controllers\UserGoalController::class, 'update'])->name('goals.update');
@@ -232,7 +266,26 @@ Route::middleware(['admin'])->group(function () {
     Route::prefix('admin/monetization')->name('admin.monetization.')->group(function () {
         Route::get('/dashboard', [\App\Http\Controllers\Admin\MonetizationController::class, 'dashboard'])->name('dashboard');
         Route::get('/subscriptions', [\App\Http\Controllers\Admin\MonetizationController::class, 'subscriptions'])->name('subscriptions');
-        Route::get('/courses', [\App\Http\Controllers\Admin\MonetizationController::class, 'courses'])->name('courses');
+        
+        // Route de compatibilité pour les cours payants (redirige vers l'index)
+        Route::get('/courses', function() {
+            return redirect()->route('admin.monetization.courses.index');
+        })->name('courses');
+        
+        // Routes Cours Payants (CRUD complet)
+        Route::prefix('courses')->name('courses.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\PaidCourseController::class, 'index'])->name('index');
+            Route::get('/create', [\App\Http\Controllers\Admin\PaidCourseController::class, 'create'])->name('create');
+            Route::post('/', [\App\Http\Controllers\Admin\PaidCourseController::class, 'store'])->name('store');
+            Route::get('/{id}', [\App\Http\Controllers\Admin\PaidCourseController::class, 'show'])->name('show');
+            Route::get('/{id}/edit', [\App\Http\Controllers\Admin\PaidCourseController::class, 'edit'])->name('edit');
+            Route::put('/{id}', [\App\Http\Controllers\Admin\PaidCourseController::class, 'update'])->name('update');
+            Route::delete('/{id}', [\App\Http\Controllers\Admin\PaidCourseController::class, 'destroy'])->name('destroy');
+            Route::post('/bulk-action', [\App\Http\Controllers\Admin\PaidCourseController::class, 'bulkAction'])->name('bulk-action');
+            Route::get('/export/csv', [\App\Http\Controllers\Admin\PaidCourseController::class, 'export'])->name('export');
+            Route::post('/{id}/duplicate', [\App\Http\Controllers\Admin\PaidCourseController::class, 'duplicate'])->name('duplicate');
+            Route::post('/{id}/toggle-status', [\App\Http\Controllers\Admin\PaidCourseController::class, 'toggleStatus'])->name('toggle-status');
+        });
         
         // Routes Donations (CRUD complet)
         Route::prefix('donations')->name('donations.')->group(function () {
@@ -251,6 +304,9 @@ Route::middleware(['admin'])->group(function () {
         
         Route::get('/affiliates', [\App\Http\Controllers\Admin\MonetizationController::class, 'affiliates'])->name('affiliates');
         Route::get('/payments', [\App\Http\Controllers\Admin\MonetizationController::class, 'payments'])->name('payments');
+        Route::get('/payments/course/{paymentId}', [\App\Http\Controllers\Admin\MonetizationController::class, 'showCoursePayment'])->name('payments.course.show');
+        Route::post('/payments/course/{paymentId}/accept', [\App\Http\Controllers\Admin\MonetizationController::class, 'acceptCoursePayment'])->name('payments.course.accept');
+        Route::post('/payments/course/{paymentId}/reject', [\App\Http\Controllers\Admin\MonetizationController::class, 'rejectCoursePayment'])->name('payments.course.reject');
     });
 
     // Newsletter Admin
@@ -328,17 +384,3 @@ Route::get('/robots.txt', function () {
         ->header('Content-Type', 'text/plain');
 });
 
-// Favicon.ico - Servir directement le logo PNG comme favicon
-Route::get('/favicon.ico', function () {
-    $logoPath = public_path('images/logo.png');
-    
-    if (file_exists($logoPath)) {
-        return response()->file($logoPath, [
-            'Content-Type' => 'image/png',
-            'Cache-Control' => 'public, max-age=31536000, immutable',
-        ]);
-    }
-    
-    // Fallback : retourner un favicon vide si le logo n'existe pas
-    return response('', 404);
-})->name('favicon');
