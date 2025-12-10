@@ -675,6 +675,13 @@
 @endsection
 
 @section('content')
+<!-- Annonces Header -->
+@if(isset($headerAds) && $headerAds->count() > 0)
+<div style="max-width: 1400px; margin: 20px auto; padding: 0 20px;">
+    @include('components.formation-adsense', ['ads' => $headerAds, 'position' => 'header'])
+</div>
+@endif
+
 <!-- Hero Section -->
 <div class="tutorial-header">
     <div class="tutorial-header-content">

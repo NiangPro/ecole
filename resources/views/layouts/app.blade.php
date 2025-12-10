@@ -765,17 +765,26 @@
         $adsenseSettings = \Illuminate\Support\Facades\Cache::remember('adsense_settings', 3600, function () {
             return \App\Models\AdSenseSetting::first();
         });
+        
+        // Extraire l'ID client du code AdSense
+        $adsenseClientId = null;
+        if ($adsenseSettings && $adsenseSettings->adsense_code) {
+            // Chercher ca-pub-XXXXXXXXXXXXXXX dans le code
+            if (preg_match('/ca-pub-([0-9]+)/', $adsenseSettings->adsense_code, $matches)) {
+                $adsenseClientId = 'ca-pub-' . $matches[1];
+            }
+            // Si le code contient déjà le script complet, l'utiliser tel quel
+            $adsenseCode = $adsenseSettings->adsense_code;
+        }
     @endphp
     
-    @if($adsenseSettings && $adsenseSettings->adsense_code)
-        <!-- AdSense chargé de manière différée -->
-        <script>
-            window.addEventListener('load', function() {
-                const adsenseDiv = document.createElement('div');
-                adsenseDiv.innerHTML = {!! json_encode($adsenseSettings->adsense_code) !!};
-                document.body.appendChild(adsenseDiv);
-            });
-        </script>
+    @if($adsenseSettings && $adsenseClientId)
+        <!-- AdSense Auto Ads - Chargé de manière différée -->
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ $adsenseClientId }}"
+             crossorigin="anonymous"></script>
+    @elseif($adsenseSettings && $adsenseSettings->adsense_code && strpos($adsenseSettings->adsense_code, '<script') !== false)
+        <!-- AdSense - Code complet fourni -->
+        {!! $adsenseSettings->adsense_code !!}
     @endif
     
     <!-- Google Analytics -->

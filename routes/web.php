@@ -217,6 +217,24 @@ Route::middleware(['admin'])->group(function () {
     Route::get('/admin/adsense', [App\Http\Controllers\AdminController::class, 'adsense'])->name('admin.adsense');
     Route::post('/admin/adsense', [App\Http\Controllers\AdminController::class, 'updateAdsense'])->name('admin.adsense.update');
     Route::get('/admin/adsense/check', [App\Http\Controllers\AdminController::class, 'adsenseCheck'])->name('admin.adsense.check');
+    
+    // Routes pour la gestion des unités AdSense
+    Route::resource('admin/adsense-units', \App\Http\Controllers\Admin\AdSenseUnitController::class)->names([
+        'index' => 'admin.adsense-units.index',
+        'create' => 'admin.adsense-units.create',
+        'store' => 'admin.adsense-units.store',
+        'show' => 'admin.adsense-units.show',
+        'edit' => 'admin.adsense-units.edit',
+        'update' => 'admin.adsense-units.update',
+        'destroy' => 'admin.adsense-units.destroy',
+    ]);
+    
+    // Routes pour la gestion des annonces AdSense par formation
+    Route::get('/admin/formation-adsense', [\App\Http\Controllers\Admin\FormationAdSenseController::class, 'index'])->name('admin.formation-adsense.index');
+    Route::get('/admin/formation-adsense/{slug}', [\App\Http\Controllers\Admin\FormationAdSenseController::class, 'show'])->name('admin.formation-adsense.show');
+    Route::post('/admin/formation-adsense', [\App\Http\Controllers\Admin\FormationAdSenseController::class, 'store'])->name('admin.formation-adsense.store');
+    Route::put('/admin/formation-adsense/{id}', [\App\Http\Controllers\Admin\FormationAdSenseController::class, 'update'])->name('admin.formation-adsense.update');
+    Route::delete('/admin/formation-adsense/{id}', [\App\Http\Controllers\Admin\FormationAdSenseController::class, 'destroy'])->name('admin.formation-adsense.destroy');
     Route::get('/admin/backups', [App\Http\Controllers\AdminController::class, 'backups'])->name('admin.backups');
     Route::post('/admin/backups/create', [App\Http\Controllers\AdminController::class, 'createBackup'])->name('admin.backups.create');
     Route::get('/admin/backups/download/{filename}', [App\Http\Controllers\AdminController::class, 'downloadBackup'])->name('admin.backups.download');

@@ -111,9 +111,14 @@
 <div class="adsense-page">
 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
     <h3 class="text-3xl font-bold">Configuration Google AdSense</h3>
-    <a href="{{ route('admin.adsense.check') }}" class="btn-primary">
-        <i class="fas fa-check-circle mr-2"></i>Vérifier l'éligibilité
-    </a>
+    <div class="flex gap-3">
+        <a href="{{ route('admin.adsense-units.index') }}" class="px-6 py-3 bg-cyan-600 hover:bg-cyan-700 rounded-lg font-semibold transition">
+            <i class="fas fa-ad mr-2"></i>Gérer les Unités
+        </a>
+        <a href="{{ route('admin.adsense.check') }}" class="btn-primary">
+            <i class="fas fa-check-circle mr-2"></i>Vérifier l'éligibilité
+        </a>
+    </div>
 </div>
 
 @if(session('success'))

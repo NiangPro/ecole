@@ -154,7 +154,14 @@ class FormationController extends Controller
             $progress = Auth::user()->getProgressForFormation($slug);
         }
         
-        return view($view, compact('progress'));
+        // Récupérer les annonces AdSense pour cette formation
+        $formationAds = \App\Models\FormationAdSenseUnit::getAdsForFormation($slug);
+        $headerAds = \App\Models\FormationAdSenseUnit::getAdsForFormation($slug, 'header');
+        $contentAds = \App\Models\FormationAdSenseUnit::getAdsForFormation($slug, 'content');
+        $sidebarAds = \App\Models\FormationAdSenseUnit::getAdsForFormation($slug, 'sidebar');
+        $footerAds = \App\Models\FormationAdSenseUnit::getAdsForFormation($slug, 'footer');
+        
+        return view($view, compact('progress', 'formationAds', 'headerAds', 'contentAds', 'sidebarAds', 'footerAds'));
     }
 
     public function html5()
