@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Cache;
 
 class FormationAdSenseUnit extends Model
 {
+    protected $table = 'formation_adsense_units';
+    
     protected $fillable = [
         'formation_slug',
         'adsense_unit_id',

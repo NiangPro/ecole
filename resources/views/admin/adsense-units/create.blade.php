@@ -42,8 +42,29 @@
         <h3 class="text-3xl font-bold">Créer une Unité AdSense</h3>
     </div>
 
+    @if($errors->any())
+        <div class="bg-red-500/10 border border-red-500/30 text-red-400 px-6 py-4 rounded-lg mb-6">
+            <div class="flex items-center gap-3 mb-3">
+                <i class="fas fa-exclamation-circle text-xl"></i>
+                <strong>Erreurs de validation</strong>
+            </div>
+            <ul class="list-disc list-inside space-y-1 text-sm">
+                @foreach($errors->all() as $error)
+                <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="bg-red-500/10 border border-red-500/30 text-red-400 px-6 py-4 rounded-lg mb-6 flex items-center gap-3">
+            <i class="fas fa-exclamation-circle text-xl"></i>
+            <span>{{ session('error') }}</span>
+        </div>
+    @endif
+
     <div class="content-section">
-        <form action="{{ route('admin.adsense-units.store') }}" method="POST">
+        <form action="{{ route('admin.adsense-units.store') }}" method="POST" id="adsense-unit-form">
             @csrf
 
             <div class="grid md:grid-cols-2 gap-6 mb-6">
@@ -226,7 +247,7 @@
             </div>
 
             <div class="flex gap-4">
-                <button type="submit" class="btn-primary">
+                <button type="submit" class="btn-primary" id="submit-btn">
                     <i class="fas fa-save mr-2"></i>Créer l'unité
                 </button>
                 <a href="{{ route('admin.adsense-units.index') }}" class="px-6 py-3 bg-gray-600 hover:bg-gray-700 rounded-lg font-semibold transition">
@@ -236,5 +257,41 @@
         </form>
     </div>
 </div>
+@endsection
+
+@section('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('adsense-unit-form');
+        const submitBtn = document.getElementById('submit-btn');
+        
+        if (form && submitBtn) {
+            // Validation côté client avant soumission
+            form.addEventListener('submit', function(e) {
+                // Vérifier que les champs requis sont remplis
+                const name = form.querySelector('input[name="name"]').value.trim();
+                const adSlot = form.querySelector('input[name="ad_slot"]').value.trim();
+                const position = form.querySelector('select[name="position"]').value;
+                const adFormat = form.querySelector('select[name="ad_format"]').value;
+                const status = form.querySelector('select[name="status"]').value;
+                
+                if (!name || !adSlot || !position || !adFormat || !status) {
+                    e.preventDefault();
+                    alert('Veuillez remplir tous les champs obligatoires.');
+                    return false;
+                }
+                
+                // Désactiver le bouton pour éviter les doubles soumissions
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Création en cours...';
+                submitBtn.style.opacity = '0.75';
+                submitBtn.style.cursor = 'not-allowed';
+                
+                // Le formulaire se soumet normalement
+                return true;
+            });
+        }
+    });
+</script>
 @endsection
 

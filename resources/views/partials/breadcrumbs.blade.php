@@ -6,6 +6,7 @@ if (!isset($breadcrumbs)) {
     
     // Routes où on ne veut PAS afficher de breadcrumb
     $routesWithoutBreadcrumb = [
+        'formations.all',
         'formations.html5',
         'formations.css3',
         'formations.javascript',

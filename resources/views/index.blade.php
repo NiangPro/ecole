@@ -1063,8 +1063,8 @@
         }
         
         .tech-desc-carousel {
-            font-size: 1.75rem;
-            line-height: 1.8;
+            font-size: 1.8rem;
+            line-height: 1.5;
         }
         
         .tech-link-carousel {

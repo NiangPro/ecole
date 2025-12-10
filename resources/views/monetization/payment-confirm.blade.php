@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="payment-confirm-page">
-    @if($payment->status === 'pending')
+            @if($payment->status === 'pending')
     <!-- Paiement en Attente -->
     <div class="payment-container">
         <!-- Header -->
@@ -14,27 +14,27 @@
             </div>
             <h1 class="payment-title">Paiement en Attente</h1>
             <p class="payment-subtitle">Choisissez votre moyen de paiement pour finaliser votre transaction</p>
-        </div>
+            </div>
 
         <!-- Détails du Paiement -->
         <div class="payment-details-card">
             <h3 class="details-title">
                 <i class="fas fa-receipt"></i>
                 Détails de la transaction
-            </h3>
+                </h3>
             <div class="details-grid">
                 <div class="detail-item">
                     <span class="detail-label">Type</span>
                     <span class="detail-value">
-                        @if($payment->paymentable_type === 'App\Models\Subscription')
+                            @if($payment->paymentable_type === 'App\Models\Subscription')
                             <i class="fas fa-crown"></i> Abonnement
-                        @elseif($payment->paymentable_type === 'App\Models\CoursePurchase')
+                            @elseif($payment->paymentable_type === 'App\Models\CoursePurchase')
                             <i class="fas fa-graduation-cap"></i> Cours payant
-                        @elseif($payment->paymentable_type === 'App\Models\Donation')
+                            @elseif($payment->paymentable_type === 'App\Models\Donation')
                             <i class="fas fa-heart"></i> Don
-                        @endif
-                    </span>
-                </div>
+                            @endif
+                        </span>
+                    </div>
                 <div class="detail-item">
                     <span class="detail-label">Montant</span>
                     <span class="detail-value amount">{{ number_format($payment->amount, 0, ',', ' ') }} {{ $payment->currency }}</span>
@@ -48,8 +48,8 @@
                     <span class="detail-value status-badge pending">En attente</span>
                 </div>
             </div>
-        </div>
-
+                    </div>
+                    
         <!-- Méthodes de Paiement -->
         <div class="payment-methods-section">
             <h3 class="methods-title">
@@ -112,7 +112,7 @@
                         </div>
                     </div>
                 </label>
-                @endif
+                            @endif
 
                 <!-- PayPal -->
                 @if(\App\Models\SiteSetting::get('paypal_enabled', false))
@@ -168,10 +168,10 @@
                                 <i class="fas fa-check"></i>
                                 Confirmer le paiement
                             </button>
-                        </div>
                     </div>
                 </div>
-                @elseif($payment->payment_method === 'bank_transfer')
+            </div>
+                            @elseif($payment->payment_method === 'bank_transfer')
                 <div class="instructions-content">
                     <div class="instructions-icon">
                         <i class="fas fa-university"></i>
@@ -237,8 +237,8 @@
                                 <i class="fab fa-stripe"></i>
                                 Payer avec Stripe
                             </button>
-                        </div>
                     </div>
+                </div>
                 </div>
                 @endif
             </div>
@@ -257,9 +257,9 @@
                 @endauth
             </div>
         </div>
-    </div>
+            </div>
 
-    @elseif($payment->status === 'completed')
+            @elseif($payment->status === 'completed')
     <!-- Paiement Confirmé -->
     <div class="payment-container">
         <div class="payment-header">
@@ -268,7 +268,7 @@
             </div>
             <h1 class="payment-title">Paiement Confirmé !</h1>
             <p class="payment-subtitle">Votre paiement a été confirmé avec succès</p>
-        </div>
+            </div>
 
         <div class="payment-success-card">
             <div class="success-details">
@@ -299,9 +299,9 @@
                 </a>
             </div>
         </div>
-    </div>
+            </div>
 
-    @else
+            @else
     <!-- Paiement Échoué -->
     <div class="payment-container">
         <div class="payment-header">
@@ -310,9 +310,9 @@
             </div>
             <h1 class="payment-title">Paiement Échoué</h1>
             <p class="payment-subtitle">Votre paiement n'a pas pu être traité</p>
-        </div>
+            </div>
 
-        @if($payment->failure_reason)
+            @if($payment->failure_reason)
         <div class="payment-error-card">
             <div class="error-content">
                 <i class="fas fa-exclamation-triangle"></i>
@@ -321,22 +321,22 @@
                     <p>{{ $payment->failure_reason }}</p>
                 </div>
             </div>
-        </div>
-        @endif
+            </div>
+            @endif
 
         <div class="payment-actions">
             <a href="{{ route('monetization.index') }}" class="action-btn primary">
                 <i class="fas fa-redo"></i>
-                Réessayer
-            </a>
+                    Réessayer
+                </a>
             <a href="{{ route('contact') }}" class="action-btn secondary">
                 <i class="fas fa-headset"></i>
-                Contacter le support
-            </a>
+                    Contacter le support
+                </a>
         </div>
-    </div>
-    @endif
-</div>
+            </div>
+            @endif
+        </div>
 
 <!-- Styles -->
 <style>

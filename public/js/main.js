@@ -231,7 +231,7 @@ if (contactForm) {
 const header = document.querySelector('header');
 if (header) {
     window.addEventListener('scroll', () => {
-        try {
+            try {
             const headerElement = document.querySelector('header');
             if (headerElement && headerElement.classList) {
                 if (window.scrollY > 100) {
