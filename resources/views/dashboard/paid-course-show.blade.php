@@ -815,146 +815,282 @@ body.dark-mode .chapter-sidebar-duration {
 @endpush
 
 @push('scripts')
-<!-- Prism.js pour la coloration syntaxique - Configuration complète -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+<!-- Highlight.js pour la coloration syntaxique - Alternative plus fiable -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/php.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/html.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/css.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/sql.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/bash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/json.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/xml.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/java.min.js"></script>
+
 <style>
-/* S'assurer que le code est visible même si Prism.js ne fonctionne pas */
-.code-box pre code[class*="language-"] {
-    color: #e2e8f0;
+/* Styles pour Highlight.js */
+.code-box pre {
+    background: transparent !important;
+    padding: 0 !important;
+    margin: 0 !important;
 }
 
-/* FORCER la coloration même si Prism.js ne s'applique pas - Fallback manuel */
-.code-box pre code[class*="language-html"] {
+.code-box pre code {
+    display: block;
+    padding: 15px;
+    background: #1e293b;
+    border-radius: 8px;
+    overflow-x: auto;
     color: #e2e8f0;
+    font-family: 'Courier New', 'Consolas', 'Monaco', monospace;
+    font-size: 0.95rem;
+    line-height: 1.6;
 }
 
-/* Styles de fallback pour HTML si Prism.js ne fonctionne pas */
-.code-box pre code[class*="language-html"]:not(:has(.token)) {
-    /* Si pas de tokens, appliquer une coloration basique via regex JS */
+/* S'assurer que Highlight.js peut appliquer ses styles */
+.code-box pre code.hljs {
+    background: #1e293b !important;
+    color: #e2e8f0 !important;
+}
+
+/* Styles pour les tokens Highlight.js */
+.code-box pre code .hljs-keyword,
+.code-box pre code .hljs-selector-tag,
+.code-box pre code .hljs-literal,
+.code-box pre code .hljs-title,
+.code-box pre code .hljs-section,
+.code-box pre code .hljs-doctag,
+.code-box pre code .hljs-type,
+.code-box pre code .hljs-name,
+.code-box pre code .hljs-strong {
+    color: #c792ea !important;
+    font-weight: 600 !important;
+}
+
+.code-box pre code .hljs-comment,
+.code-box pre code .hljs-quote {
+    color: #5c6370 !important;
+    font-style: italic !important;
+}
+
+.code-box pre code .hljs-string,
+.code-box pre code .hljs-attr,
+.code-box pre code .hljs-template-variable,
+.code-box pre code .hljs-attribute {
+    color: #c3e88d !important;
+}
+
+.code-box pre code .hljs-number,
+.code-box pre code .hljs-literal {
+    color: #f78c6c !important;
+}
+
+.code-box pre code .hljs-function,
+.code-box pre code .hljs-title.function_ {
+    color: #82aaff !important;
+}
+
+.code-box pre code .hljs-variable,
+.code-box pre code .hljs-template-variable {
+    color: #eeffff !important;
+}
+
+.code-box pre code .hljs-tag,
+.code-box pre code .hljs-name {
+    color: #f07178 !important;
+}
+
+.code-box pre code .hljs-attr {
+    color: #ffcb6b !important;
+}
+
+.code-box pre code .hljs-built_in,
+.code-box pre code .hljs-builtin-name {
+    color: #ffcb6b !important;
 }
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-php.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-javascript.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-html.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-css.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-xml.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
 
 <script>
-// SOLUTION COMPLÈTE POUR LA COLORATION SYNTAXIQUE
+// SOLUTION DÉFINITIVE - Highlight.js avec décodage HTML correct
 (function() {
     'use strict';
     
-    let prismLoaded = false;
-    let highlightAttempts = 0;
-    const maxAttempts = 10;
+    // Fonction pour décoder les entités HTML
+    function decodeHtmlEntities(text) {
+        const textarea = document.createElement('textarea');
+        textarea.innerHTML = text;
+        return textarea.value;
+    }
     
-    // Fonction principale pour appliquer Prism.js
-    function highlightCode() {
-        highlightAttempts++;
+    // Fonction pour obtenir le texte brut du code (décodé)
+    function getRawCodeText(codeElement) {
+        // Essayer d'abord textContent (décode automatiquement)
+        let text = codeElement.textContent || codeElement.innerText || '';
         
-        if (typeof Prism === 'undefined') {
-            if (highlightAttempts < maxAttempts) {
-                console.log('Prism.js pas encore chargé, tentative', highlightAttempts);
-                return false;
-            } else {
-                console.error('Prism.js non disponible après', maxAttempts, 'tentatives');
-                applyFallbackColoration();
-                return false;
-            }
+        // Si le texte contient encore des entités HTML, les décoder
+        if (text.includes('&lt;') || text.includes('&gt;') || text.includes('&amp;') || text.includes('&quot;')) {
+            text = decodeHtmlEntities(text);
         }
         
-        prismLoaded = true;
+        return text;
+    }
+    
+    function highlightAllCode() {
+        if (typeof hljs === 'undefined') {
+            console.warn('Highlight.js non chargé, nouvelle tentative...');
+            setTimeout(highlightAllCode, 200);
+            return;
+        }
         
         try {
-            // Sélectionner tous les blocs de code
-            const codeElements = document.querySelectorAll('code[class*="language-"]');
-            console.log('Blocs de code trouvés:', codeElements.length);
+            // Sélectionner TOUS les blocs de code possibles
+            const codeBlocks = document.querySelectorAll('.code-box pre code[class*="language-"], pre code[class*="language-"], code[class*="language-"]');
+            console.log('Blocs de code trouvés:', codeBlocks.length);
             
-            if (codeElements.length === 0) {
+            if (codeBlocks.length === 0) {
                 console.warn('Aucun bloc de code trouvé');
-                return false;
+                return;
             }
             
             let successCount = 0;
             
-            codeElements.forEach(function(code, index) {
+            codeBlocks.forEach(function(code, index) {
                 try {
-                    // Retirer l'attribut pour forcer le re-traitement
-                    code.removeAttribute('data-prism-processed');
+                    // Ignorer si déjà traité
+                    if (code.classList.contains('hljs') && code.innerHTML !== code.textContent) {
+                        return;
+                    }
                     
-                    // Appliquer Prism.js
-                    Prism.highlightElement(code);
+                    // Extraire le langage de la classe
+                    const langMatch = code.className.match(/language-(\w+)/);
+                    const lang = langMatch ? langMatch[1] : null;
                     
-                    // Vérifier si des tokens ont été créés
-                    const tokens = code.querySelectorAll('.token');
-                    if (tokens.length > 0) {
+                    if (!lang) {
+                        console.warn('Bloc', index + 1, 'sans langage détecté');
+                        return;
+                    }
+                    
+                    // Mapper les langages si nécessaire
+                    const langMap = {
+                        'js': 'javascript',
+                        'py': 'python',
+                        'rb': 'ruby',
+                        'sh': 'bash',
+                        'yml': 'yaml',
+                        'md': 'markdown',
+                    };
+                    
+                    const highlightLang = langMap[lang.toLowerCase()] || lang.toLowerCase();
+                    
+                    // Obtenir le texte brut décodé
+                    const rawCode = getRawCodeText(code);
+                    
+                    if (!rawCode || rawCode.trim().length === 0) {
+                        console.warn('Bloc', index + 1, 'vide');
+                        return;
+                    }
+                    
+                    // Vérifier si le langage est supporté
+                    if (hljs.getLanguage(highlightLang)) {
+                        // Appliquer Highlight.js avec le texte brut décodé
+                        const result = hljs.highlight(rawCode, { language: highlightLang });
+                        code.innerHTML = result.value;
+                        code.classList.add('hljs');
                         successCount++;
-                        console.log('Bloc', index + 1, 'coloré avec', tokens.length, 'tokens');
+                        console.log('✓ Bloc', index + 1, 'coloré (lang:', highlightLang + ')');
                     } else {
-                        console.warn('Bloc', index + 1, 'traité mais aucun token créé');
+                        // Langage non supporté, essayer auto-détection
+                        code.textContent = rawCode; // Réinitialiser avec le texte brut
+                        hljs.highlightElement(code);
+                        code.classList.add('hljs');
+                        successCount++;
+                        console.log('✓ Bloc', index + 1, 'coloré avec auto-détection');
                     }
                 } catch (e) {
-                    console.error('Erreur Prism sur le bloc', index + 1, ':', e);
+                    console.error('✗ Erreur sur le bloc', index + 1, ':', e);
+                    // En cas d'erreur, au moins s'assurer que le code est visible
+                    const codeElement = code;
+                    if (codeElement.textContent) {
+                        codeElement.style.color = '#e2e8f0';
+                    }
                 }
             });
             
-            // Aussi appeler highlightAll
-            Prism.highlightAll();
+            console.log('✅ Highlight.js appliqué:', successCount, '/', codeBlocks.length, 'blocs');
             
-            console.log('Prism.js appliqué:', successCount, '/', codeElements.length, 'blocs colorés');
-            
-            // Si certains blocs n'ont pas de tokens, appliquer le fallback
-            if (successCount < codeElements.length) {
-                setTimeout(applyFallbackColoration, 500);
+            // Si certains blocs n'ont pas été colorés, réessayer
+            if (successCount < codeBlocks.length) {
+                console.log('Réessai pour les blocs non colorés...');
+                setTimeout(highlightAllCode, 500);
             }
-            
-            return successCount > 0;
         } catch (error) {
-            console.error('Erreur lors de l\'application de Prism.js:', error);
-            applyFallbackColoration();
-            return false;
+            console.error('✗ Erreur lors de l\'application de Highlight.js:', error);
         }
     }
     
-    // Fonction de fallback pour colorer manuellement si Prism.js échoue
-    function applyFallbackColoration() {
-        console.log('Application de la coloration de fallback...');
-        const codeElements = document.querySelectorAll('code[class*="language-"]');
-        
-        codeElements.forEach(function(code) {
-            // Vérifier si des tokens existent déjà
-            const hasTokens = code.querySelector('.token') !== null;
-            if (hasTokens) {
-                return; // Déjà coloré par Prism.js
-            }
-            
-            const language = code.className.match(/language-(\w+)/);
-            if (!language) return;
-            
-            const lang = language[1];
-            const originalContent = code.innerHTML;
-            let content = originalContent;
-            
-            // Coloration basique selon le langage
-            if (lang === 'html' || lang === 'xml') {
-                // Coloration HTML basique avec regex
-                content = content
-                    .replace(/(&lt;!--[\s\S]*?--&gt;)/g, '<span class="token comment">$1</span>')
-                    .replace(/(&lt;\/?)([\w-]+)(\s+[^&]*?)?(&gt;)/g, 
-                        '<span class="token tag">$1</span><span class="token tag">$2</span><span class="token attr-name">$3</span><span class="token tag">$4</span>')
-                    .replace(/(&quot;[^&]*?&quot;)/g, '<span class="token string">$1</span>');
-                
-                if (content !== originalContent) {
-                    code.innerHTML = content;
+    // Fonction d'initialisation avec multiples tentatives
+    function initHighlighting() {
+        highlightAllCode();
+        setTimeout(highlightAllCode, 200);
+        setTimeout(highlightAllCode, 500);
+        setTimeout(highlightAllCode, 1000);
+        setTimeout(highlightAllCode, 2000);
+    }
+    
+    // Appliquer dès que possible
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initHighlighting);
+    } else {
+        initHighlighting();
+    }
+    
+    // Réappliquer après le chargement complet
+    window.addEventListener('load', function() {
+        console.log('🔄 Window load - Réapplication de Highlight.js');
+        setTimeout(highlightAllCode, 300);
+        setTimeout(highlightAllCode, 1000);
+    });
+    
+    // Observer les changements dans le DOM
+    if (window.MutationObserver) {
+        const observer = new MutationObserver(function(mutations) {
+            let shouldHighlight = false;
+            mutations.forEach(function(mutation) {
+                if (mutation.addedNodes.length > 0) {
+                    const hasCodeBlocks = Array.from(mutation.addedNodes).some(function(node) {
+                        if (node.nodeType !== 1) return false;
+                        return (
+                            (node.querySelector && node.querySelector('code[class*="language-"]')) ||
+                            (node.matches && node.matches('code[class*="language-"]')) ||
+                            (node.classList && node.classList.contains('code-box'))
+                        );
+                    });
+                    if (hasCodeBlocks) shouldHighlight = true;
                 }
-            } else if (lang === 'php') {
+            });
+            if (shouldHighlight) {
+                console.log('🔄 Nouveaux blocs détectés, réapplication...');
+                setTimeout(highlightAllCode, 200);
+            }
+        });
+        
+        observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    }
+    
+    // Tentative finale après 3 secondes
+    setTimeout(function() {
+        console.log('🔄 Tentative finale de coloration');
+        highlightAllCode();
+    }, 3000);
+})();
+
+// Fonction pour copier le code (conservée)
+window.copyCodeToClipboard = function(button, codeElement) {
                 // Coloration PHP basique
                 content = content
                     .replace(/(\/\/.*$|\/\*[\s\S]*?\*\/)/gm, '<span class="token comment">$1</span>')

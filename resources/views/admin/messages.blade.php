@@ -2,849 +2,1046 @@
 
 @section('title', 'Messages de contact | Admin')
 
-@section('styles')
-<style>
-    /* Styles pour la page Messages */
-    .messages-page h3 {
-        color: #fff;
-        transition: color 0.3s ease;
-    }
-    
-    body.light-mode .messages-page h3 {
-        color: #1e293b;
-    }
-    
-    .messages-page .text-gray-400 {
-        color: rgba(156, 163, 175, 1);
-        transition: color 0.3s ease;
-    }
-    
-    body.light-mode .messages-page .text-gray-400 {
-        color: rgba(100, 116, 139, 1);
-    }
-    
-    .messages-page .text-gray-300 {
-        color: rgba(209, 213, 219, 1);
-        transition: color 0.3s ease;
-    }
-    
-    body.light-mode .messages-page .text-gray-300 {
-        color: rgba(30, 41, 59, 0.8);
-    }
-    
-    body.light-mode .messages-page .text-white {
-        color: #1e293b;
-    }
-    
-    /* Table design */
-    .messages-table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-    
-    .messages-table thead {
-        background: rgba(6, 182, 212, 0.1);
-        border-bottom: 2px solid rgba(6, 182, 212, 0.3);
-    }
-    
-    body.light-mode .messages-table thead {
-        background: rgba(6, 182, 212, 0.05);
-        border-bottom-color: rgba(6, 182, 212, 0.2);
-    }
-    
-    .messages-table th {
-        padding: 12px 8px;
-        text-align: left;
-        font-weight: 600;
-        font-size: 0.875rem;
-        color: #06b6d4;
-        white-space: nowrap;
-    }
-    
-    body.light-mode .messages-table th {
-        color: #0891b2;
-    }
-    
-    .messages-table td {
-        padding: 10px 8px;
-        border-bottom: 1px solid rgba(55, 65, 81, 0.3);
-        vertical-align: middle;
-    }
-    
-    body.light-mode .messages-table td {
-        border-bottom-color: rgba(226, 232, 240, 0.5);
-    }
-    
-    .messages-table tbody tr {
-        transition: background 0.2s ease;
-    }
-    
-    .messages-table tbody tr:hover {
-        background: rgba(6, 182, 212, 0.05);
-    }
-    
-    body.light-mode .messages-table tbody tr:hover {
-        background: rgba(6, 182, 212, 0.02);
-    }
-    
-    /* Avatar compact */
-    .message-avatar {
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.75rem;
-        font-weight: bold;
-        flex-shrink: 0;
-    }
-    
-    /* Status badge compact */
-    .status-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-        padding: 4px 8px;
-        border-radius: 12px;
-        font-size: 0.75rem;
-        font-weight: 600;
-        white-space: nowrap;
-    }
-    
-    .status-unread {
-        background: rgba(251, 146, 60, 0.15);
-        color: #fb923c;
-    }
-    
-    .status-read {
-        background: rgba(34, 197, 94, 0.15);
-        color: #22c55e;
-    }
-    
-    /* Subject preview */
-    .subject-preview {
-        max-width: 250px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        font-size: 0.875rem;
-        color: rgba(209, 213, 219, 1);
-    }
-    
-    body.light-mode .subject-preview {
-        color: rgba(30, 41, 59, 0.8);
-    }
-    
-    /* Action buttons compact */
-    .action-btn {
-        padding: 6px 10px;
-        border-radius: 6px;
-        font-size: 0.75rem;
-        transition: all 0.2s ease;
-        border: none;
-        cursor: pointer;
-        display: inline-flex;
-        align-items: center;
-        gap: 4px;
-    }
-    
-    .action-btn:hover {
-        transform: translateY(-1px);
-    }
-    
-    .btn-mark-read {
-        background: rgba(34, 197, 94, 0.15);
-        color: #22c55e;
-    }
-    
-    .btn-mark-read:hover {
-        background: rgba(34, 197, 94, 0.25);
-    }
-    
-    .btn-delete {
-        background: rgba(239, 68, 68, 0.15);
-        color: #ef4444;
-    }
-    
-    .btn-delete:hover {
-        background: rgba(239, 68, 68, 0.25);
-    }
-    
-    .btn-contact {
-        background: rgba(6, 182, 212, 0.15);
-        color: #06b6d4;
-    }
-    
-    .btn-contact:hover {
-        background: rgba(6, 182, 212, 0.25);
-    }
-    
-    /* Modal ultra moderne */
-    .modal-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.85);
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
-        z-index: 1000;
-        align-items: center;
-        justify-content: center;
-        animation: fadeIn 0.3s ease;
-    }
-    
-    body.light-mode .modal-overlay {
-        background: rgba(0, 0, 0, 0.6);
-    }
-    
-    .modal-overlay.active {
-        display: flex;
-    }
-    
-    @keyframes fadeIn {
-        from { opacity: 0; }
-        to { opacity: 1; }
-    }
-    
-    @keyframes slideUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px) scale(0.95);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-    }
-    
-    .modal-content {
-        background: linear-gradient(145deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.95));
-        backdrop-filter: blur(20px) saturate(180%);
-        -webkit-backdrop-filter: blur(20px) saturate(180%);
-        border: 1px solid rgba(6, 182, 212, 0.2);
-        border-radius: 24px;
-        padding: 0;
-        max-width: 850px;
-        width: 90%;
-        max-height: 90vh;
-        overflow: hidden;
-        box-shadow: 
-            0 25px 50px -12px rgba(0, 0, 0, 0.5),
-            0 0 0 1px rgba(6, 182, 212, 0.1),
-            inset 0 1px 0 rgba(255, 255, 255, 0.05);
-        animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        position: relative;
-    }
-    
-    .modal-content::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 1px;
-        background: linear-gradient(90deg, 
-            transparent, 
-            rgba(6, 182, 212, 0.5), 
-            rgba(20, 184, 166, 0.5), 
-            transparent
-        );
-    }
-    
-    body.light-mode .modal-content {
-        background: linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.98));
-        border-color: rgba(6, 182, 212, 0.3);
-        box-shadow: 
-            0 25px 50px -12px rgba(0, 0, 0, 0.15),
-            0 0 0 1px rgba(6, 182, 212, 0.1),
-            inset 0 1px 0 rgba(255, 255, 255, 0.8);
-    }
-    
-    body.light-mode .modal-content::before {
-        background: linear-gradient(90deg, 
-            transparent, 
-            rgba(6, 182, 212, 0.3), 
-            rgba(20, 184, 166, 0.3), 
-            transparent
-        );
-    }
-    
-    .modal-header {
-        background: linear-gradient(135deg, 
-            rgba(6, 182, 212, 0.08), 
-            rgba(20, 184, 166, 0.08),
-            rgba(6, 182, 212, 0.05)
-        );
-        border-bottom: 1px solid rgba(6, 182, 212, 0.15);
-        padding: 24px 28px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        position: relative;
-    }
-    
-    .modal-header::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 1px;
-        background: linear-gradient(90deg, 
-            transparent, 
-            rgba(6, 182, 212, 0.3), 
-            transparent
-        );
-    }
-    
-    body.light-mode .modal-header {
-        background: linear-gradient(135deg, 
-            rgba(6, 182, 212, 0.04), 
-            rgba(20, 184, 166, 0.04),
-            rgba(6, 182, 212, 0.02)
-        );
-        border-bottom-color: rgba(6, 182, 212, 0.12);
-    }
-    
-    .modal-body {
-        padding: 28px;
-        overflow-y: auto;
-        max-height: calc(90vh - 100px);
-        scrollbar-width: thin;
-        scrollbar-color: rgba(6, 182, 212, 0.3) transparent;
-    }
-    
-    .modal-body::-webkit-scrollbar {
-        width: 6px;
-    }
-    
-    .modal-body::-webkit-scrollbar-track {
-        background: transparent;
-    }
-    
-    .modal-body::-webkit-scrollbar-thumb {
-        background: rgba(6, 182, 212, 0.3);
-        border-radius: 3px;
-    }
-    
-    .modal-body::-webkit-scrollbar-thumb:hover {
-        background: rgba(6, 182, 212, 0.5);
-    }
-    
-    .modal-info-item {
-        margin-bottom: 24px;
-        padding: 20px;
-        background: linear-gradient(135deg, 
-            rgba(6, 182, 212, 0.05), 
-            rgba(20, 184, 166, 0.03)
-        );
-        border: 1px solid rgba(6, 182, 212, 0.15);
-        border-radius: 16px;
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .modal-info-item::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 3px;
-        height: 100%;
-        background: linear-gradient(180deg, #06b6d4, #14b8a6);
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-    
-    .modal-info-item:hover {
-        transform: translateX(4px);
-        border-color: rgba(6, 182, 212, 0.3);
-        box-shadow: 0 4px 12px rgba(6, 182, 212, 0.1);
-    }
-    
-    .modal-info-item:hover::before {
-        opacity: 1;
-    }
-    
-    body.light-mode .modal-info-item {
-        background: linear-gradient(135deg, 
-            rgba(6, 182, 212, 0.03), 
-            rgba(20, 184, 166, 0.02)
-        );
-        border-color: rgba(6, 182, 212, 0.12);
-    }
-    
-    body.light-mode .modal-info-item:hover {
-        border-color: rgba(6, 182, 212, 0.25);
-        box-shadow: 0 4px 12px rgba(6, 182, 212, 0.08);
-    }
-    
-    .modal-info-item:last-child {
-        margin-bottom: 0;
-    }
-    
-    .modal-info-label {
-        font-size: 0.7rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 1.2px;
-        color: #06b6d4;
-        margin-bottom: 12px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        position: relative;
-    }
-    
-    .modal-info-label i {
-        font-size: 0.85rem;
-        width: 20px;
-        text-align: center;
-        background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2));
-        padding: 6px;
-        border-radius: 8px;
-        border: 1px solid rgba(6, 182, 212, 0.2);
-    }
-    
-    body.light-mode .modal-info-label {
-        color: #0891b2;
-    }
-    
-    body.light-mode .modal-info-label i {
-        background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(20, 184, 166, 0.15));
-        border-color: rgba(6, 182, 212, 0.2);
-    }
-    
-    .modal-info-value {
-        font-size: 1rem;
-        color: rgba(209, 213, 219, 1);
-        word-break: break-word;
-        line-height: 1.6;
-    }
-    
-    body.light-mode .modal-info-value {
-        color: rgba(30, 41, 59, 0.9);
-    }
-    
-    .modal-message-box {
-        background: linear-gradient(135deg, 
-            rgba(0, 0, 0, 0.4), 
-            rgba(15, 23, 42, 0.4)
-        );
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        border: 1px solid rgba(6, 182, 212, 0.2);
-        border-radius: 16px;
-        padding: 24px;
-        margin-top: 12px;
-        position: relative;
-        box-shadow: 
-            inset 0 1px 0 rgba(255, 255, 255, 0.05),
-            0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-    
-    .modal-message-box::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 2px;
-        background: linear-gradient(90deg, 
-            transparent, 
-            rgba(6, 182, 212, 0.5), 
-            rgba(20, 184, 166, 0.5), 
-            transparent
-        );
-        border-radius: 16px 16px 0 0;
-    }
-    
-    body.light-mode .modal-message-box {
-        background: linear-gradient(135deg, 
-            rgba(248, 250, 252, 0.9), 
-            rgba(241, 245, 249, 0.9)
-        );
-        border-color: rgba(6, 182, 212, 0.25);
-        box-shadow: 
-            inset 0 1px 0 rgba(255, 255, 255, 0.8),
-            0 4px 12px rgba(0, 0, 0, 0.05);
-    }
-    
-    .modal-close-btn {
-        width: 40px;
-        height: 40px;
-        border-radius: 12px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: linear-gradient(135deg, 
-            rgba(239, 68, 68, 0.1), 
-            rgba(220, 38, 38, 0.1)
-        );
-        color: #ef4444;
-        border: 1px solid rgba(239, 68, 68, 0.2);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        cursor: pointer;
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .modal-close-btn::before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 0;
-        height: 0;
-        border-radius: 50%;
-        background: rgba(239, 68, 68, 0.2);
-        transform: translate(-50%, -50%);
-        transition: width 0.3s ease, height 0.3s ease;
-    }
-    
-    .modal-close-btn:hover {
-        background: linear-gradient(135deg, 
-            rgba(239, 68, 68, 0.2), 
-            rgba(220, 38, 38, 0.2)
-        );
-        transform: rotate(90deg) scale(1.1);
-        border-color: rgba(239, 68, 68, 0.4);
-        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
-    }
-    
-    .modal-close-btn:hover::before {
-        width: 100%;
-        height: 100%;
-    }
-    
-    .modal-close-btn i {
-        position: relative;
-        z-index: 1;
-    }
-    
-    .modal-title {
-        font-size: 1.75rem;
-        font-weight: 800;
-        background: linear-gradient(135deg, #06b6d4, #14b8a6, #06b6d4);
-        background-size: 200% 200%;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        animation: gradientShift 3s ease infinite;
-        letter-spacing: -0.5px;
-    }
-    
-    @keyframes gradientShift {
-        0%, 100% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-    }
-    
-    body.light-mode .modal-title {
-        background: linear-gradient(135deg, #0891b2, #0d9488, #0891b2);
-        background-size: 200% 200%;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-    
-    .modal-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 20px;
-    }
-    
-    @media (max-width: 640px) {
-        .modal-grid {
-            grid-template-columns: 1fr;
-        }
-    }
-    
-    /* Responsive */
-    @media (max-width: 1024px) {
-        .messages-table {
-            font-size: 0.8rem;
-        }
-        
-        .messages-table th,
-        .messages-table td {
-            padding: 8px 6px;
-        }
-        
-        .subject-preview {
-            max-width: 150px;
-        }
-    }
-    
-    @media (max-width: 768px) {
-        .messages-table {
-            display: block;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-        
-        .messages-table thead,
-        .messages-table tbody,
-        .messages-table tr,
-        .messages-table td,
-        .messages-table th {
-            display: block;
-        }
-        
-        .messages-table thead {
-            display: none;
-        }
-        
-        .messages-table tr {
-            margin-bottom: 12px;
-            border: 1px solid rgba(55, 65, 81, 0.3);
-            border-radius: 8px;
-            padding: 12px;
-            background: rgba(0, 0, 0, 0.2);
-        }
-        
-        body.light-mode .messages-table tr {
-            background: rgba(255, 255, 255, 0.5);
-            border-color: rgba(226, 232, 240, 0.5);
-        }
-        
-        .messages-table td {
-            border: none;
-            padding: 6px 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .messages-table td:before {
-            content: attr(data-label);
-            font-weight: 600;
-            color: #06b6d4;
-            margin-right: 12px;
-        }
-        
-        .subject-preview {
-            max-width: 100%;
-            white-space: normal;
-        }
-    }
-    
-    /* Bulk actions */
-    .bulk-actions {
-        display: flex;
-        gap: 8px;
-        align-items: center;
-        margin-bottom: 16px;
-        padding: 12px;
-        background: rgba(6, 182, 212, 0.1);
-        border-radius: 8px;
-    }
-    
-    body.light-mode .bulk-actions {
-        background: rgba(6, 182, 212, 0.05);
-    }
-</style>
-@endsection
-
 @section('content')
-<div class="messages-page">
-<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-    <div>
-        <h3 class="text-3xl font-bold mb-2">Messages de contact</h3>
-        <p class="text-gray-400">Gérez les messages reçus depuis le formulaire de contact</p>
-    </div>
-    
-    <div class="flex gap-3">
-        <a href="{{ route('admin.messages', ['filter' => 'all']) }}" 
-           class="px-4 py-2 rounded-lg font-semibold transition {{ $filter == 'all' ? 'bg-cyan-500 text-black' : 'bg-gray-700 text-gray-300 hover:bg-gray-600' }}">
-            <i class="fas fa-inbox mr-2"></i>Tous
-        </a>
-        <a href="{{ route('admin.messages', ['filter' => 'unread']) }}" 
-           class="px-4 py-2 rounded-lg font-semibold transition {{ $filter == 'unread' ? 'bg-cyan-500 text-black' : 'bg-gray-700 text-gray-300 hover:bg-gray-600' }}">
-            <i class="fas fa-envelope mr-2"></i>Non lus
-        </a>
-        <a href="{{ route('admin.messages', ['filter' => 'read']) }}" 
-           class="px-4 py-2 rounded-lg font-semibold transition {{ $filter == 'read' ? 'bg-cyan-500 text-black' : 'bg-gray-700 text-gray-300 hover:bg-gray-600' }}">
-            <i class="fas fa-envelope-open mr-2"></i>Lus
-        </a>
-    </div>
-</div>
-
-<!-- Statistiques -->
-<div class="grid md:grid-cols-3 gap-6 mb-8">
-    <div class="stat-card">
-        <div class="flex items-center justify-between mb-4">
-            <i class="fas fa-inbox text-4xl text-cyan-400"></i>
-        </div>
-        <div class="stat-number">{{ \App\Models\ContactMessage::count() }}</div>
-        <p class="text-gray-400 mt-2">Total messages</p>
-    </div>
-    
-    <div class="stat-card">
-        <div class="flex items-center justify-between mb-4">
-            <i class="fas fa-envelope text-4xl text-orange-400"></i>
-        </div>
-        <div class="stat-number">{{ \App\Models\ContactMessage::unread()->count() }}</div>
-        <p class="text-gray-400 mt-2">Non lus</p>
-    </div>
-    
-    <div class="stat-card">
-        <div class="flex items-center justify-between mb-4">
-            <i class="fas fa-envelope-open text-4xl text-green-400"></i>
-        </div>
-        <div class="stat-number">{{ \App\Models\ContactMessage::read()->count() }}</div>
-        <p class="text-gray-400 mt-2">Lus</p>
-    </div>
-</div>
-
-<!-- Liste des messages en tableau -->
-<div class="content-section">
-    @if($messages->count() > 0)
-    <div class="overflow-x-auto">
-        <table class="messages-table">
-            <thead>
-                <tr>
-                    <th style="width: 40px;">
-                        <input type="checkbox" id="selectAll" onchange="toggleSelectAll()">
-                    </th>
-                    <th style="width: 60px;">Avatar</th>
-                    <th style="min-width: 150px;">Nom</th>
-                    <th style="min-width: 120px;">Téléphone</th>
-                    <th style="width: 100px;">Statut</th>
-                    <th style="width: 100px;">Date</th>
-                    <th style="width: 200px;">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($messages as $message)
-                <tr data-message-id="{{ $message->id }}" class="{{ !$message->is_read ? 'bg-orange-500/5' : '' }}">
-                    <td>
-                        <input type="checkbox" class="message-checkbox" value="{{ $message->id }}">
-                    </td>
-                    <td>
-                        <div class="message-avatar bg-gradient-to-br from-cyan-500 to-teal-500 text-white">
-                        {{ strtoupper(substr($message->name, 0, 1)) }}
-                        </div>
-                    </td>
-                    <td data-label="Nom">
-                        <div class="font-semibold text-white">{{ $message->name }}</div>
-                    </td>
-                    <td data-label="Téléphone">
-                        @if($message->phone)
-                        <a href="tel:{{ $message->phone }}" class="text-cyan-400 hover:text-cyan-300 text-sm">
-                            {{ $message->phone }}
-                        </a>
-                        @else
-                        <span class="text-gray-500">-</span>
-                        @endif
-                    </td>
-                    <td data-label="Statut">
-                        @if(!$message->is_read)
-                        <span class="status-badge status-unread">
-                            <i class="fas fa-circle text-xs"></i> Non lu
-                            </span>
-                        @else
-                        <span class="status-badge status-read">
-                            <i class="fas fa-check-circle"></i> Lu
-                            </span>
-                            @endif
-                    </td>
-                    <td data-label="Date">
-                        <div class="text-xs text-gray-400">
-                            {{ $message->created_at->format('d/m/Y') }}
-                            <br>
-                            {{ $message->created_at->format('H:i') }}
-                        </div>
-                    </td>
-                    <td data-label="Actions">
-                        <div class="flex flex-wrap gap-1">
-                    @if(!$message->is_read)
-                            <form action="{{ route('admin.messages.mark-read', $message->id) }}" method="POST" class="inline">
-                        @csrf
-                                <button type="submit" class="action-btn btn-mark-read" title="Marquer comme lu">
-                            <i class="fas fa-check"></i>
-                        </button>
-                    </form>
-                    @endif
-                            
-                            @if($message->phone)
-                            <button onclick="openWhatsApp({{ $message->id }})" class="action-btn btn-contact" title="Contacter par WhatsApp">
-                                <i class="fab fa-whatsapp"></i>
-                            </button>
-                            @else
-                            <button class="action-btn btn-contact" style="opacity: 0.4; cursor: not-allowed;" title="Pas de numéro de téléphone" disabled>
-                                <i class="fab fa-whatsapp"></i>
-                            </button>
-                            @endif
-                            
-                            <button onclick="openEmail({{ $message->id }})" class="action-btn btn-contact" title="Contacter par Email">
-                                <i class="fas fa-envelope"></i>
-                            </button>
-                            
-                            <button onclick="showMessageDetails({{ $message->id }})" class="action-btn btn-contact" title="Voir les détails">
-                                <i class="fas fa-eye"></i>
-                            </button>
-                    
-                    <form action="{{ route('admin.messages.delete', $message->id) }}" method="POST" 
-                                  onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce message ?')" class="inline">
-                        @csrf
-                        @method('DELETE')
-                                <button type="submit" class="action-btn btn-delete" title="Supprimer">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </form>
-                </div>
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
+<div class="messages-admin">
+    <!-- Header Section -->
+    <div class="messages-header">
+        <div class="messages-header-content">
+            <div class="messages-header-text">
+                <h1 class="messages-title">
+                    <span class="messages-icon-wrapper">
+                        <i class="fas fa-envelope messages-icon"></i>
+                    </span>
+                    Messages de contact
+                </h1>
+                <p class="messages-subtitle">
+                    Gérez les messages reçus depuis le formulaire de contact
+                </p>
             </div>
-            
-    <!-- Actions en masse -->
-    <div class="bulk-actions" id="bulkActions" style="display: none;">
-        <span class="text-white font-semibold" id="selectedCount">0 sélectionné</span>
-        <button onclick="bulkMarkRead()" class="action-btn btn-mark-read">
-            <i class="fas fa-check"></i> Marquer comme lu
-        </button>
-        <button onclick="bulkDelete()" class="action-btn btn-delete">
-            <i class="fas fa-trash"></i> Supprimer
-        </button>
-        <button onclick="clearSelection()" class="action-btn btn-contact">
-            <i class="fas fa-times"></i> Annuler
-        </button>
+            <div class="messages-filters-tabs">
+                <a href="{{ route('admin.messages', ['filter' => 'all']) }}" 
+                   class="filter-tab {{ $filter == 'all' ? 'filter-tab-active' : '' }}">
+                    <i class="fas fa-inbox"></i>
+                    <span>Tous</span>
+                </a>
+                <a href="{{ route('admin.messages', ['filter' => 'unread']) }}" 
+                   class="filter-tab {{ $filter == 'unread' ? 'filter-tab-active' : '' }}">
+                    <i class="fas fa-envelope"></i>
+                    <span>Non lus</span>
+                </a>
+                <a href="{{ route('admin.messages', ['filter' => 'read']) }}" 
+                   class="filter-tab {{ $filter == 'read' ? 'filter-tab-active' : '' }}">
+                    <i class="fas fa-envelope-open"></i>
+                    <span>Lus</span>
+                </a>
+            </div>
+        </div>
     </div>
-    
+
+    <!-- Stats Cards -->
+    <div class="messages-stats">
+        <div class="stat-card stat-total">
+            <div class="stat-icon-wrapper">
+                <div class="stat-icon">
+                    <i class="fas fa-inbox"></i>
+                </div>
+            </div>
+            <div class="stat-content">
+                <div class="stat-value">{{ \App\Models\ContactMessage::count() }}</div>
+                <div class="stat-label">Total</div>
+            </div>
+        </div>
+        <div class="stat-card stat-unread">
+            <div class="stat-icon-wrapper">
+                <div class="stat-icon">
+                    <i class="fas fa-envelope"></i>
+                </div>
+            </div>
+            <div class="stat-content">
+                <div class="stat-value">{{ \App\Models\ContactMessage::unread()->count() }}</div>
+                <div class="stat-label">Non lus</div>
+            </div>
+        </div>
+        <div class="stat-card stat-read">
+            <div class="stat-icon-wrapper">
+                <div class="stat-icon">
+                    <i class="fas fa-envelope-open"></i>
+                </div>
+            </div>
+            <div class="stat-content">
+                <div class="stat-value">{{ \App\Models\ContactMessage::read()->count() }}</div>
+                <div class="stat-label">Lus</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Messages List -->
+    @if($messages->count() > 0)
+    <div class="messages-list">
+        @foreach($messages as $message)
+        <div class="message-card {{ !$message->is_read ? 'message-unread' : 'message-read' }}">
+            <!-- Card Header -->
+            <div class="message-card-header">
+                <div class="message-header-left">
+                    <div class="message-avatar">
+                        {{ strtoupper(substr($message->name, 0, 1)) }}
+                    </div>
+                    <div class="message-author-info">
+                        <h3 class="message-author-name">{{ $message->name }}</h3>
+                        <p class="message-subject">{{ $message->subject }}</p>
+                    </div>
+                </div>
+                <div class="message-status-badge status-{{ $message->is_read ? 'read' : 'unread' }}">
+                    @if(!$message->is_read)
+                        <i class="fas fa-circle"></i>
+                        <span>Non lu</span>
+                    @else
+                        <i class="fas fa-check-circle"></i>
+                        <span>Lu</span>
+                    @endif
+                </div>
+            </div>
+
+            <!-- Card Body -->
+            <div class="message-card-body">
+                <div class="message-content">
+                    <p>{{ Str::limit($message->message, 200) }}</p>
+                </div>
+                
+                <div class="message-details-grid">
+                    <div class="message-detail-item">
+                        <div class="detail-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="detail-content">
+                            <div class="detail-label">Email</div>
+                            <div class="detail-value">
+                                <a href="mailto:{{ $message->email }}" class="detail-link">{{ $message->email }}</a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    @if($message->phone)
+                    <div class="message-detail-item">
+                        <div class="detail-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="detail-content">
+                            <div class="detail-label">Téléphone</div>
+                            <div class="detail-value">
+                                <a href="tel:{{ $message->phone }}" class="detail-link">{{ $message->phone }}</a>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+                    
+                    <div class="message-detail-item">
+                        <div class="detail-icon">
+                            <i class="fas fa-calendar"></i>
+                        </div>
+                        <div class="detail-content">
+                            <div class="detail-label">Date</div>
+                            <div class="detail-value">
+                                {{ $message->created_at->format('d/m/Y H:i') }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card Actions -->
+            <div class="message-card-actions">
+                <button onclick="showMessageDetails({{ $message->id }})" class="action-btn action-view">
+                    <i class="fas fa-eye"></i>
+                    <span>Détails</span>
+                </button>
+                
+                @if(!$message->is_read)
+                <form action="{{ route('admin.messages.mark-read', $message->id) }}" method="POST" class="action-form">
+                    @csrf
+                    <button type="submit" class="action-btn action-mark-read">
+                        <i class="fas fa-check"></i>
+                        <span>Marquer lu</span>
+                    </button>
+                </form>
+                @endif
+                
+                @if($message->phone)
+                <button onclick="openWhatsApp({{ $message->id }})" class="action-btn action-contact">
+                    <i class="fab fa-whatsapp"></i>
+                    <span>WhatsApp</span>
+                </button>
+                @endif
+                
+                <button onclick="openEmail({{ $message->id }})" class="action-btn action-contact">
+                    <i class="fas fa-envelope"></i>
+                    <span>Email</span>
+                </button>
+                
+                <form action="{{ route('admin.messages.delete', $message->id) }}" method="POST" class="action-form" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce message ?');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="action-btn action-delete">
+                        <i class="fas fa-trash-alt"></i>
+                        <span>Supprimer</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+        @endforeach
+    </div>
+
     <!-- Pagination -->
-    @if($messages->hasPages())
-    <div class="mt-6">
+    <div class="pagination-wrapper">
         {{ $messages->links() }}
     </div>
-    @endif
     @else
-    <div class="text-center py-12 text-gray-400">
-        <i class="fas fa-inbox text-5xl mb-4 opacity-50"></i>
-        <p>Aucun message trouvé</p>
+    <!-- Empty State -->
+    <div class="empty-state">
+        <div class="empty-state-icon">
+            <i class="fas fa-inbox"></i>
+        </div>
+        <h3 class="empty-state-title">Aucun message trouvé</h3>
+        <p class="empty-state-text">
+            @if($filter != 'all')
+                Aucun message {{ $filter == 'unread' ? 'non lu' : 'lu' }} pour le moment.
+            @else
+                Aucun message n'a été reçu pour le moment.
+            @endif
+        </p>
     </div>
     @endif
 </div>
 
 <!-- Modal pour les détails du message -->
-<div class="modal-overlay" id="messageModal" onclick="closeModal(event)">
-    <div class="modal-content" onclick="event.stopPropagation()">
-        <div class="modal-header">
-            <h4 class="modal-title">Détails du message</h4>
-            <button onclick="closeModal()" class="modal-close-btn">
+<div id="messageModal" class="message-modal">
+    <div class="message-modal-content">
+        <div class="message-modal-header">
+            <div class="message-modal-icon">
+                <i class="fas fa-envelope-open-text"></i>
+            </div>
+            <h3 class="message-modal-title">Détails du message</h3>
+            <button onclick="closeMessageModal()" class="message-modal-close">
                 <i class="fas fa-times"></i>
             </button>
         </div>
-        <div class="modal-body" id="messageDetails"></div>
+        <div class="message-modal-body" id="messageDetails"></div>
     </div>
 </div>
+
+<style>
+.messages-admin {
+    padding: 2rem;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+/* Header */
+.messages-header {
+    margin-bottom: 2rem;
+}
+
+.messages-header-content {
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(20, 184, 166, 0.1) 100%);
+    border: 2px solid rgba(6, 182, 212, 0.3);
+    border-radius: 24px;
+    padding: 2.5rem;
+    position: relative;
+    overflow: hidden;
+}
+
+body.light-mode .messages-header-content {
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.08) 0%, rgba(20, 184, 166, 0.08) 100%);
+    border-color: rgba(6, 182, 212, 0.4);
+}
+
+.messages-header-content::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(6, 182, 212, 0.1) 0%, transparent 70%);
+    animation: rotate 20s linear infinite;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.messages-header-text {
+    position: relative;
+    z-index: 1;
+    margin-bottom: 1.5rem;
+}
+
+.messages-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, #06b6d4 0%, #14b8a6 50%, #06b6d4 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 3s linear infinite;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+@keyframes shimmer {
+    to { background-position: 200% center; }
+}
+
+.messages-icon-wrapper {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2));
+    border-radius: 16px;
+    border: 2px solid rgba(6, 182, 212, 0.3);
+}
+
+.messages-icon {
+    font-size: 1.8rem;
+    color: #06b6d4;
+}
+
+.messages-subtitle {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0;
+}
+
+body.light-mode .messages-subtitle {
+    color: #64748b;
+}
+
+.messages-filters-tabs {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.filter-tab {
+        display: inline-flex;
+        align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: rgba(107, 114, 128, 0.2);
+    border: 1px solid rgba(107, 114, 128, 0.4);
+        border-radius: 12px;
+    color: white;
+    text-decoration: none;
+        font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+body.light-mode .filter-tab {
+    background: rgba(107, 114, 128, 0.1);
+    color: #475569;
+}
+
+.filter-tab:hover {
+    background: rgba(107, 114, 128, 0.3);
+    transform: translateY(-2px);
+}
+
+.filter-tab-active {
+    background: linear-gradient(135deg, #06b6d4, #14b8a6);
+    border-color: rgba(6, 182, 212, 0.5);
+    color: white;
+    box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+}
+
+.filter-tab-active:hover {
+    box-shadow: 0 6px 20px rgba(6, 182, 212, 0.4);
+}
+
+/* Stats */
+.messages-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(51, 65, 85, 0.8));
+    border: 1px solid rgba(6, 182, 212, 0.3);
+    border-radius: 20px;
+    padding: 1.5rem;
+    display: flex;
+        align-items: center;
+    gap: 1rem;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+body.light-mode .stat-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.95));
+    border-color: rgba(6, 182, 212, 0.3);
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    transition: width 0.3s;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(6, 182, 212, 0.3);
+}
+
+.stat-card:hover::before {
+    width: 100%;
+    opacity: 0.1;
+}
+
+.stat-total::before {
+    background: linear-gradient(180deg, #06b6d4, #14b8a6);
+}
+
+.stat-unread::before {
+    background: linear-gradient(180deg, #fb923c, #f97316);
+}
+
+.stat-read::before {
+    background: linear-gradient(180deg, #10b981, #059669);
+}
+
+.stat-icon-wrapper {
+    position: relative;
+    z-index: 1;
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    display: flex;
+        align-items: center;
+        justify-content: center;
+    font-size: 1.5rem;
+}
+
+.stat-total .stat-icon {
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2));
+    color: #06b6d4;
+}
+
+.stat-unread .stat-icon {
+    background: linear-gradient(135deg, rgba(251, 146, 60, 0.2), rgba(249, 115, 22, 0.2));
+    color: #fb923c;
+}
+
+.stat-read .stat-icon {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.2));
+    color: #10b981;
+}
+
+.stat-content {
+    flex: 1;
+    position: relative;
+    z-index: 1;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: white;
+    line-height: 1;
+    margin-bottom: 0.25rem;
+}
+
+body.light-mode .stat-value {
+    color: #1e293b;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+body.light-mode .stat-label {
+    color: #64748b;
+}
+
+/* Messages List */
+.messages-list {
+    display: grid;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+/* Message Card */
+.message-card {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(51, 65, 85, 0.8));
+    border: 2px solid rgba(6, 182, 212, 0.3);
+        border-radius: 24px;
+    padding: 2rem;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+    overflow: hidden;
+}
+
+body.light-mode .message-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.95));
+    border-color: rgba(6, 182, 212, 0.3);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.message-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #06b6d4, #14b8a6);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.message-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(6, 182, 212, 0.4);
+    border-color: rgba(6, 182, 212, 0.6);
+}
+
+.message-card:hover::before {
+    opacity: 1;
+}
+
+.message-unread {
+    border-color: rgba(251, 146, 60, 0.5);
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(51, 65, 85, 0.9));
+}
+
+body.light-mode .message-unread {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(254, 252, 232, 0.98));
+}
+
+.message-unread::before {
+    background: linear-gradient(90deg, #fb923c, #f97316);
+}
+
+.message-read {
+    border-color: rgba(16, 185, 129, 0.3);
+}
+
+.message-read::before {
+    background: linear-gradient(90deg, #10b981, #059669);
+}
+
+.message-card-header {
+        display: flex;
+        justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+}
+
+.message-header-left {
+    display: flex;
+        align-items: center;
+    gap: 1rem;
+    flex: 1;
+}
+
+.message-avatar {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2));
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #06b6d4;
+    border: 2px solid rgba(6, 182, 212, 0.3);
+}
+
+.message-author-info {
+    flex: 1;
+}
+
+.message-author-name {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: white;
+    margin: 0 0 0.25rem 0;
+}
+
+body.light-mode .message-author-name {
+    color: #1e293b;
+}
+
+.message-subject {
+    font-size: 0.95rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0;
+    font-weight: 600;
+}
+
+body.light-mode .message-subject {
+    color: #64748b;
+}
+
+.message-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.status-unread {
+    background: rgba(251, 146, 60, 0.2);
+    border: 1px solid rgba(251, 146, 60, 0.4);
+    color: #fb923c;
+}
+
+.status-read {
+    background: rgba(16, 185, 129, 0.2);
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    color: #10b981;
+}
+
+.message-card-body {
+    margin-bottom: 1.5rem;
+}
+
+.message-content {
+    background: rgba(6, 182, 212, 0.05);
+    border-left: 3px solid rgba(6, 182, 212, 0.3);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+body.light-mode .message-content {
+    background: rgba(6, 182, 212, 0.03);
+}
+
+.message-content p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.6;
+}
+
+body.light-mode .message-content p {
+    color: #334155;
+}
+
+.message-details-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.message-detail-item {
+        display: flex;
+        align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: rgba(6, 182, 212, 0.05);
+    border-radius: 12px;
+}
+
+body.light-mode .message-detail-item {
+    background: rgba(6, 182, 212, 0.03);
+}
+
+.detail-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(6, 182, 212, 0.1);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #06b6d4;
+    font-size: 1rem;
+}
+
+.detail-content {
+    flex: 1;
+}
+
+.detail-label {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 0.25rem;
+}
+
+body.light-mode .detail-label {
+    color: #94a3b8;
+}
+
+.detail-value {
+        font-size: 1rem;
+    font-weight: 700;
+    color: white;
+}
+
+body.light-mode .detail-value {
+    color: #1e293b;
+}
+
+.detail-link {
+    color: #06b6d4;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.detail-link:hover {
+    color: #14b8a6;
+}
+
+.message-card-actions {
+    display: flex;
+    gap: 0.75rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(6, 182, 212, 0.2);
+    flex-wrap: wrap;
+}
+
+.action-form {
+    flex: 1;
+    min-width: 120px;
+}
+
+.action-btn {
+    flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.9rem;
+        cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    min-width: 120px;
+}
+
+.action-view {
+    background: rgba(59, 130, 246, 0.15);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    color: #3b82f6;
+}
+
+.action-view:hover {
+    background: rgba(59, 130, 246, 0.25);
+    transform: translateY(-2px);
+}
+
+.action-mark-read {
+    background: rgba(16, 185, 129, 0.15);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    color: #10b981;
+}
+
+.action-mark-read:hover {
+    background: rgba(16, 185, 129, 0.25);
+    transform: translateY(-2px);
+}
+
+.action-contact {
+    background: rgba(6, 182, 212, 0.15);
+    border: 1px solid rgba(6, 182, 212, 0.3);
+    color: #06b6d4;
+}
+
+.action-contact:hover {
+    background: rgba(6, 182, 212, 0.25);
+    transform: translateY(-2px);
+}
+
+.action-delete {
+    background: rgba(239, 68, 68, 0.15);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+}
+
+.action-delete:hover {
+    background: rgba(239, 68, 68, 0.25);
+    transform: translateY(-2px);
+}
+
+/* Pagination */
+.pagination-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.6), rgba(51, 65, 85, 0.6));
+    border: 2px dashed rgba(6, 182, 212, 0.3);
+    border-radius: 24px;
+}
+
+body.light-mode .empty-state {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(248, 250, 252, 0.8));
+    border-color: rgba(6, 182, 212, 0.4);
+}
+
+.empty-state-icon {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto 2rem;
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(20, 184, 166, 0.1));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 4rem;
+    color: rgba(6, 182, 212, 0.5);
+    border: 3px dashed rgba(6, 182, 212, 0.3);
+}
+
+.empty-state-title {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: white;
+    margin-bottom: 1rem;
+}
+
+body.light-mode .empty-state-title {
+    color: #1e293b;
+}
+
+.empty-state-text {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 2rem;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+body.light-mode .empty-state-text {
+    color: #64748b;
+}
+
+/* Message Modal */
+.message-modal {
+            display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.message-modal-content {
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.95), rgba(51, 65, 85, 0.95));
+    border: 2px solid rgba(6, 182, 212, 0.3);
+    border-radius: 24px;
+    padding: 2rem;
+    max-width: 700px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+body.light-mode .message-modal-content {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.98));
+    border-color: rgba(6, 182, 212, 0.4);
+}
+
+.message-modal-header {
+            display: flex;
+            align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(6, 182, 212, 0.2);
+}
+
+.message-modal-icon {
+    width: 50px;
+    height: 50px;
+    background: rgba(6, 182, 212, 0.2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+            color: #06b6d4;
+}
+
+.message-modal-title {
+    flex: 1;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: white;
+    margin: 0;
+}
+
+body.light-mode .message-modal-title {
+    color: #1e293b;
+}
+
+.message-modal-close {
+    width: 40px;
+    height: 40px;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 10px;
+    color: #ef4444;
+    cursor: pointer;
+        display: flex;
+        align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.message-modal-close:hover {
+    background: rgba(239, 68, 68, 0.2);
+    transform: rotate(90deg);
+}
+
+.message-modal-body {
+    display: grid;
+    gap: 1rem;
+}
+
+.message-modal-detail {
+    padding: 1rem;
+        background: rgba(6, 182, 212, 0.05);
+    border-radius: 12px;
+}
+
+body.light-mode .message-modal-detail {
+    background: rgba(6, 182, 212, 0.03);
+}
+
+.message-modal-detail-label {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+body.light-mode .message-modal-detail-label {
+    color: #94a3b8;
+}
+
+.message-modal-detail-value {
+    font-size: 1rem;
+    color: white;
+    word-break: break-word;
+}
+
+body.light-mode .message-modal-detail-value {
+    color: #1e293b;
+}
+
+.message-modal-content-box {
+    background: rgba(15, 23, 42, 0.5);
+    border: 1px solid rgba(6, 182, 212, 0.2);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-top: 0.5rem;
+    white-space: pre-wrap;
+    line-height: 1.6;
+}
+
+body.light-mode .message-modal-content-box {
+    background: rgba(6, 182, 212, 0.05);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .messages-title {
+        font-size: 1.75rem;
+    }
+    
+    .messages-icon-wrapper {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .messages-icon {
+        font-size: 1.5rem;
+    }
+    
+    .messages-filters-tabs {
+        flex-direction: column;
+    }
+    
+    .filter-tab {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .message-card-header {
+        flex-direction: column;
+    }
+    
+    .message-details-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .message-card-actions {
+        flex-direction: column;
+    }
+    
+    .action-btn {
+        width: 100%;
+    }
+}
+</style>
 
 <script>
 const messagesData = {
@@ -870,154 +1067,79 @@ function showMessageDetails(messageId) {
     const details = document.getElementById('messageDetails');
     
     details.innerHTML = `
-        <div class="modal-info-item">
-            <div class="modal-info-label">
-                <i class="fas fa-user"></i> Nom
-            </div>
-            <div class="modal-info-value font-semibold">${message.name}</div>
+        <div class="message-modal-detail">
+            <div class="message-modal-detail-label">Nom</div>
+            <div class="message-modal-detail-value font-semibold">${message.name}</div>
         </div>
         
-        <div class="modal-info-item">
-            <div class="modal-info-label">
-                <i class="fas fa-envelope"></i> Email
-            </div>
-            <div class="modal-info-value">
-                <a href="mailto:${message.email}" class="text-cyan-400 hover:text-cyan-300 transition">${message.email}</a>
+        <div class="message-modal-detail">
+            <div class="message-modal-detail-label">Email</div>
+            <div class="message-modal-detail-value">
+                <a href="mailto:${message.email}" style="color: #06b6d4; text-decoration: none;">${message.email}</a>
             </div>
         </div>
         
         ${message.phone ? `
-        <div class="modal-info-item">
-            <div class="modal-info-label">
-                <i class="fas fa-phone"></i> Téléphone
-            </div>
-            <div class="modal-info-value">
-                <a href="tel:${message.phone}" class="text-cyan-400 hover:text-cyan-300 transition">${message.phone}</a>
+        <div class="message-modal-detail">
+            <div class="message-modal-detail-label">Téléphone</div>
+            <div class="message-modal-detail-value">
+                <a href="tel:${message.phone}" style="color: #06b6d4; text-decoration: none;">${message.phone}</a>
             </div>
         </div>
         ` : ''}
         
-        <div class="modal-info-item">
-            <div class="modal-info-label">
-                <i class="fas fa-tag"></i> Sujet
+        <div class="message-modal-detail">
+            <div class="message-modal-detail-label">Sujet</div>
+            <div class="message-modal-detail-value font-semibold">${message.subject}</div>
             </div>
-            <div class="modal-info-value font-semibold">${message.subject}</div>
+        
+        <div class="message-modal-detail">
+            <div class="message-modal-detail-label">Message</div>
+            <div class="message-modal-content-box">${message.message}</div>
         </div>
         
-        <div class="modal-info-item">
-            <div class="modal-info-label">
-                <i class="fas fa-comment-alt"></i> Message
-            </div>
-            <div class="modal-message-box">
-                <p class="modal-info-value whitespace-pre-wrap leading-relaxed">${message.message}</p>
-            </div>
+        <div class="message-modal-detail">
+            <div class="message-modal-detail-label">Date</div>
+            <div class="message-modal-detail-value">${message.created_at}</div>
         </div>
         
-        <div class="modal-grid">
-            <div class="modal-info-item">
-                <div class="modal-info-label">
-                    <i class="fas fa-calendar"></i> Date
-                </div>
-                <div class="modal-info-value">${message.created_at}</div>
-            </div>
-            <div class="modal-info-item">
-                <div class="modal-info-label">
-                    <i class="fas fa-info-circle"></i> Statut
-                </div>
-                <div class="modal-info-value">
-                    ${message.is_read ? '<span class="status-badge status-read"><i class="fas fa-check-circle"></i> Lu</span>' : '<span class="status-badge status-unread"><i class="fas fa-circle text-xs"></i> Non lu</span>'}
-                </div>
+        <div class="message-modal-detail">
+            <div class="message-modal-detail-label">Statut</div>
+            <div class="message-modal-detail-value">
+                ${message.is_read ? '<span class="status-badge status-read"><i class="fas fa-check-circle"></i> Lu</span>' : '<span class="status-badge status-unread"><i class="fas fa-circle"></i> Non lu</span>'}
             </div>
         </div>
     `;
     
-    modal.classList.add('active');
+    modal.style.display = 'flex';
 }
 
-function closeModal(event) {
-    if (event && event.target !== event.currentTarget) return;
-    document.getElementById('messageModal').classList.remove('active');
+function closeMessageModal() {
+    document.getElementById('messageModal').style.display = 'none';
 }
 
-function toggleSelectAll() {
-    const selectAll = document.getElementById('selectAll');
-    const checkboxes = document.querySelectorAll('.message-checkbox');
-    checkboxes.forEach(cb => cb.checked = selectAll.checked);
-    updateBulkActions();
-}
-
-function updateBulkActions() {
-    const selected = document.querySelectorAll('.message-checkbox:checked');
-    const bulkActions = document.getElementById('bulkActions');
-    const selectedCount = document.getElementById('selectedCount');
-    
-    if (selected.length > 0) {
-        bulkActions.style.display = 'flex';
-        selectedCount.textContent = `${selected.length} sélectionné${selected.length > 1 ? 's' : ''}`;
-    } else {
-        bulkActions.style.display = 'none';
+// Fermer la modal en cliquant en dehors
+document.getElementById('messageModal')?.addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeMessageModal();
     }
-}
+});
 
-function clearSelection() {
-    document.querySelectorAll('.message-checkbox').forEach(cb => cb.checked = false);
-    document.getElementById('selectAll').checked = false;
-    updateBulkActions();
-}
-
-function bulkMarkRead() {
-    const selected = Array.from(document.querySelectorAll('.message-checkbox:checked')).map(cb => cb.value);
-    if (selected.length === 0) return;
-    
-    if (!confirm(`Marquer ${selected.length} message(s) comme lu(s) ?`)) return;
-    
-    selected.forEach(id => {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = `/admin/messages/${id}/mark-read`;
-        form.innerHTML = '<input type="hidden" name="_token" value="{{ csrf_token() }}">';
-        document.body.appendChild(form);
-        form.submit();
-    });
-}
-
-function bulkDelete() {
-    const selected = Array.from(document.querySelectorAll('.message-checkbox:checked')).map(cb => cb.value);
-    if (selected.length === 0) return;
-    
-    if (!confirm(`Supprimer ${selected.length} message(s) ? Cette action est irréversible.`)) return;
-    
-    selected.forEach(id => {
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = `/admin/messages/${id}`;
-        form.innerHTML = `
-            <input type="hidden" name="_token" value="{{ csrf_token() }}">
-            <input type="hidden" name="_method" value="DELETE">
-        `;
-        document.body.appendChild(form);
-        form.submit();
-    });
-}
-
-// Écouter les changements de checkbox
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('.message-checkbox').forEach(cb => {
-        cb.addEventListener('change', updateBulkActions);
-    });
+// Fermer avec Escape
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeMessageModal();
+    }
 });
 
 function openWhatsApp(messageId) {
     const message = messagesData[messageId];
     if (!message || !message.phone) {
-        toastr.warning('Aucun numéro de téléphone disponible pour ce message', 'Information');
+        alert('Aucun numéro de téléphone disponible pour ce message');
         return;
     }
     
-    // Nettoyer le numéro de téléphone (enlever les espaces, tirets, etc.)
     const phone = message.phone.replace(/\s+/g, '').replace(/-/g, '').replace(/\./g, '');
-    
-    // Créer le lien WhatsApp
     const messageText = encodeURIComponent(`Bonjour ${message.name},\n\nMerci pour votre message concernant "${message.subject}".`);
     const whatsappUrl = `https://wa.me/${phone}?text=${messageText}`;
     
@@ -1027,11 +1149,10 @@ function openWhatsApp(messageId) {
 function openEmail(messageId) {
     const message = messagesData[messageId];
     if (!message || !message.email) {
-        toastr.warning('Aucune adresse email disponible pour ce message', 'Information');
+        alert('Aucune adresse email disponible pour ce message');
         return;
     }
     
-    // Créer le lien email avec sujet et corps pré-remplis
     const subject = encodeURIComponent(`Re: ${message.subject}`);
     const body = encodeURIComponent(`Bonjour ${message.name},\n\nMerci pour votre message.\n\nCordialement,`);
     const emailUrl = `mailto:${message.email}?subject=${subject}&body=${body}`;
@@ -1039,5 +1160,4 @@ function openEmail(messageId) {
     window.location.href = emailUrl;
 }
 </script>
-</div>
 @endsection

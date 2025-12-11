@@ -170,6 +170,7 @@ Route::middleware('auth')->prefix('dashboard')->name('dashboard.')->group(functi
     Route::get('/exercices', [\App\Http\Controllers\ProfileController::class, 'exercices'])->name('exercices');
     Route::get('/quiz', [\App\Http\Controllers\ProfileController::class, 'quiz'])->name('quiz');
     Route::get('/goals', [\App\Http\Controllers\ProfileController::class, 'goals'])->name('goals');
+    Route::get('/subscriptions', [\App\Http\Controllers\ProfileController::class, 'subscriptions'])->name('subscriptions');
     Route::get('/activities', [\App\Http\Controllers\ProfileController::class, 'activities'])->name('activities');
     Route::get('/statistics', [\App\Http\Controllers\ProfileController::class, 'statistics'])->name('statistics');
     Route::get('/settings', [\App\Http\Controllers\ProfileController::class, 'settings'])->name('settings');
@@ -284,6 +285,21 @@ Route::middleware(['admin'])->group(function () {
     Route::prefix('admin/monetization')->name('admin.monetization.')->group(function () {
         Route::get('/dashboard', [\App\Http\Controllers\Admin\MonetizationController::class, 'dashboard'])->name('dashboard');
         Route::get('/subscriptions', [\App\Http\Controllers\Admin\MonetizationController::class, 'subscriptions'])->name('subscriptions');
+        Route::get('/subscriptions/{id}', [\App\Http\Controllers\Admin\MonetizationController::class, 'showSubscription'])->name('subscriptions.show');
+        Route::post('/subscriptions/{id}/activate', [\App\Http\Controllers\Admin\MonetizationController::class, 'activateSubscription'])->name('subscriptions.activate');
+        Route::post('/subscriptions/{id}/deactivate', [\App\Http\Controllers\Admin\MonetizationController::class, 'deactivateSubscription'])->name('subscriptions.deactivate');
+        Route::put('/subscriptions/{id}', [\App\Http\Controllers\Admin\MonetizationController::class, 'updateSubscription'])->name('subscriptions.update');
+        
+        // Routes Plans d'Abonnement (CRUD complet)
+        Route::resource('subscription-plans', \App\Http\Controllers\Admin\SubscriptionPlanController::class)->names([
+            'index' => 'subscription-plans.index',
+            'create' => 'subscription-plans.create',
+            'store' => 'subscription-plans.store',
+            'show' => 'subscription-plans.show',
+            'edit' => 'subscription-plans.edit',
+            'update' => 'subscription-plans.update',
+            'destroy' => 'subscription-plans.destroy',
+        ]);
         
         // Route de compatibilité pour les cours payants (redirige vers l'index)
         Route::get('/courses', function() {

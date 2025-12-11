@@ -25,29 +25,27 @@ class PaymentController extends Controller
     public function processSubscription(Request $request)
     {
         $request->validate([
-            'plan_type' => 'required|in:premium,pro,enterprise',
-            'payment_method' => 'required|in:mobile_money,bank_transfer,stripe,paypal',
+            'plan_type' => 'required|string',
+            'payment_method' => 'required|in:mobile_money,bank_transfer,stripe,paypal,wave',
         ]);
 
-        $plans = [
-            'premium' => ['price' => 5000, 'duration' => 30],
-            'pro' => ['price' => 10000, 'duration' => 30],
-            'enterprise' => ['price' => 25000, 'duration' => 30],
-        ];
+        // Récupérer le plan depuis la base de données
+        $subscriptionPlan = \App\Models\SubscriptionPlan::where('slug', $request->plan_type)
+            ->where('is_active', true)
+            ->firstOrFail();
 
-        $plan = $plans[$request->plan_type];
         $user = Auth::user();
 
         // Créer l'abonnement
         $subscription = Subscription::create([
             'user_id' => $user->id,
-            'plan_type' => $request->plan_type,
-            'amount' => $plan['price'],
-            'currency' => 'XOF',
+            'plan_type' => $subscriptionPlan->slug,
+            'amount' => $subscriptionPlan->price,
+            'currency' => $subscriptionPlan->currency,
             'status' => 'pending',
             'start_date' => now(),
-            'end_date' => now()->addDays($plan['duration']),
-            'next_billing_date' => now()->addDays($plan['duration']),
+            'end_date' => now()->addDays($subscriptionPlan->duration_days),
+            'next_billing_date' => now()->addDays($subscriptionPlan->duration_days),
             'payment_method' => $request->payment_method,
         ]);
 
@@ -56,8 +54,8 @@ class PaymentController extends Controller
             'user_id' => $user->id,
             'paymentable_type' => Subscription::class,
             'paymentable_id' => $subscription->id,
-            'amount' => $plan['price'],
-            'currency' => 'XOF',
+            'amount' => $subscriptionPlan->price,
+            'currency' => $subscriptionPlan->currency,
             'status' => 'pending',
             'payment_method' => $request->payment_method,
             'payment_gateway' => $request->payment_method,
@@ -67,7 +65,7 @@ class PaymentController extends Controller
 
         // Gérer l'affiliation si un code de référence existe
         if ($request->has('ref_code')) {
-            $this->handleAffiliateReferral($request->ref_code, $subscription, $plan['price']);
+            $this->handleAffiliateReferral($request->ref_code, $subscription, $subscriptionPlan->price);
         }
 
         // Rediriger vers la page de confirmation de paiement

@@ -37,5 +37,8 @@ class DatabaseSeeder extends Seeder
         
         // Seeder pour les cours payants
         $this->call(PaidCourseSeeder::class);
+        
+        // Seeder pour les plans d'abonnement
+        $this->call(SubscriptionPlanSeeder::class);
     }
 }

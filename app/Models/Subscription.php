@@ -38,6 +38,14 @@ class Subscription extends Model
         return $this->morphOne(Payment::class, 'paymentable');
     }
 
+    /**
+     * Relation avec le plan d'abonnement
+     */
+    public function plan()
+    {
+        return $this->belongsTo(SubscriptionPlan::class, 'plan_type', 'slug');
+    }
+
     public function isActive(): bool
     {
         return $this->status === 'active' 

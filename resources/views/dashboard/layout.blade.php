@@ -525,6 +525,11 @@
                         <span>Cours Payants</span>
                     </a>
                     
+                    <a href="{{ route('dashboard.subscriptions') }}" class="nav-item {{ request()->routeIs('dashboard.subscriptions') ? 'active' : '' }}" data-no-loader="true">
+                        <i class="fas fa-crown"></i>
+                        <span>Mes Abonnements</span>
+                    </a>
+                    
                     <a href="{{ route('dashboard.exercices') }}" class="nav-item {{ request()->routeIs('dashboard.exercices') ? 'active' : '' }}" data-no-loader="true">
                         <i class="fas fa-code"></i>
                         <span>{{ trans('app.profile.sidebar.exercises') }}</span>

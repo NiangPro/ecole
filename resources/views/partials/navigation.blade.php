@@ -1170,17 +1170,31 @@
             
             <!-- Dropdown À propos / Contact -->
             <li class="navbar-item dropdown">
-                <a href="#" class="navbar-link dropdown-toggle {{ request()->routeIs(['about', 'contact']) ? 'active' : '' }}">
+                <a href="#" class="navbar-link dropdown-toggle {{ request()->routeIs(['about', 'contact', 'monetization.index']) ? 'active' : '' }}">
                     {{ trans('app.nav.about') }}
                     <i class="fas fa-chevron-down dropdown-icon"></i>
                 </a>
                 <div class="dropdown-menu">
+                    @php
+                        $hasActiveSubscriptionPlans = \App\Models\SubscriptionPlan::active()->exists();
+                    @endphp
+                    @if($hasActiveSubscriptionPlans)
+                    <a href="{{ route('monetization.index') }}" class="dropdown-item" data-parent-active="monetization">
+                        <div class="dropdown-item-icon" style="background: rgba(6, 182, 212, 0.1);">
+                            <i class="fas fa-crown" style="color: #06b6d4;"></i>
+                        </div>
+                        <div class="dropdown-item-content">
+                            <div class="dropdown-item-title">Abonnement</div>
+                            <div class="dropdown-item-desc">Abonnez-vous à nos services</div>
+                        </div>
+                    </a>
+                    @endif
                     <a href="{{ route('about') }}" class="dropdown-item" data-parent-active="about">
                         <div class="dropdown-item-icon" style="background: rgba(6, 182, 212, 0.1);">
                             <i class="fas fa-info-circle" style="color: #06b6d4;"></i>
                         </div>
                         <div class="dropdown-item-content">
-                            <div class="dropdown-item-title">{{ trans('app.nav.about') }}</div>
+                            <div class="dropdown-item-title">Apropos</div>
                             <div class="dropdown-item-desc">En savoir plus sur NiangProgrammeur</div>
                         </div>
                     </a>
@@ -1705,13 +1719,13 @@
     // Navbar scroll effect
     window.addEventListener('scroll', () => {
         try {
-            const navbar = document.getElementById('navbar');
+        const navbar = document.getElementById('navbar');
             if (navbar && navbar.classList) {
-                if (window.scrollY > 50) {
-                    navbar.classList.add('scrolled');
-                } else {
-                    navbar.classList.remove('scrolled');
-                }
+        if (window.scrollY > 50) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
             }
         } catch (error) {
             // Ignorer silencieusement

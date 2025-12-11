@@ -180,6 +180,30 @@ class Statistic extends Model
                      ->get();
     }
 
+    // Statistiques par appareil
+    public static function getByDevice($period = 'month', $year = null, $month = null)
+    {
+        $query = self::select('device')
+                     ->selectRaw('COUNT(*) as visits');
+
+        if ($period == 'day') {
+            $query->whereDate('visit_date', Carbon::today());
+        } elseif ($period == 'month') {
+            $year = $year ?? Carbon::now()->year;
+            $month = $month ?? Carbon::now()->month;
+            $query->whereYear('visit_date', $year)
+                  ->whereMonth('visit_date', $month);
+        } elseif ($period == 'year') {
+            $year = $year ?? Carbon::now()->year;
+            $query->whereYear('visit_date', $year);
+        }
+
+        return $query->whereNotNull('device')
+                     ->groupBy('device')
+                     ->orderByDesc('visits')
+                     ->get();
+    }
+
     // Obtenir les années disponibles
     public static function getAvailableYears()
     {

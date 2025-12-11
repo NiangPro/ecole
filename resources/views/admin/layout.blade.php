@@ -237,7 +237,7 @@
         .main-content {
             margin-left: 240px;
             padding: 2rem;
-            padding-top: calc(2rem + 80px);
+            padding-top: calc(2rem + 70px);
             min-height: 100vh;
             overflow-x: hidden;
         }
@@ -444,13 +444,32 @@
             background: rgba(10, 10, 26, 0.98);
             backdrop-filter: blur(20px);
             border-bottom: 1px solid rgba(6, 182, 212, 0.2);
-            padding: 1rem 2rem;
+            padding: 0.75rem 1.5rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             z-index: 99;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
             transition: background 0.3s ease, border-color 0.3s ease;
+            min-height: 70px;
+            max-height: 70px;
+        }
+        
+        .header-admin .header-title {
+            flex: 1;
+        }
+        
+        .header-admin .header-title h2 {
+            font-size: 1.25rem !important;
+            font-weight: 700 !important;
+            margin: 0 !important;
+            line-height: 1.4 !important;
+        }
+        
+        .header-admin .header-title p {
+            font-size: 0.875rem !important;
+            margin: 0.25rem 0 0 0 !important;
+            line-height: 1.4 !important;
         }
         
         body.light-mode .header-admin {
@@ -459,12 +478,12 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
         }
         
-        body.light-mode .header-title h2 {
-            color: #1e293b;
+        body.light-mode .header-admin .header-title h2 {
+            color: #1e293b !important;
         }
         
-        body.light-mode .header-title p {
-            color: #64748b;
+        body.light-mode .header-admin .header-title p {
+            color: #64748b !important;
         }
         
         body.light-mode .user-btn {
@@ -516,6 +535,18 @@
             padding: 0.5rem 1rem;
             cursor: pointer;
             transition: all 0.3s ease;
+            font-size: 0.875rem;
+        }
+        
+        .user-btn .user-avatar {
+            width: 36px !important;
+            height: 36px !important;
+            font-size: 1rem !important;
+        }
+        
+        .user-btn p {
+            font-size: 0.875rem !important;
+            margin: 0 !important;
         }
         
         .user-btn:hover {
@@ -610,7 +641,7 @@
             }
             
             .main-content {
-                padding-top: calc(1rem + 100px);
+                padding-top: calc(1rem + 70px);
             }
         }
         
@@ -661,7 +692,7 @@
             }
             
             .main-content {
-                padding-top: calc(1rem + 80px);
+                padding-top: calc(1rem + 70px);
             }
         }
     </style>

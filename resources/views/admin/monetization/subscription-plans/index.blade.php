@@ -1,26 +1,26 @@
 @extends('admin.layout')
 
-@section('title', 'Catégories Emplois')
+@section('title', 'Gestion des Plans d\'Abonnement - Admin')
 
 @section('content')
-<div class="categories-admin">
+<div class="subscription-plans-admin">
     <!-- Header Section -->
-    <div class="categories-header">
-        <div class="categories-header-content">
-            <div class="categories-header-text">
-                <h1 class="categories-title">
-                    <span class="categories-icon-wrapper">
-                        <i class="fas fa-folder categories-icon"></i>
+    <div class="plans-header">
+        <div class="plans-header-content">
+            <div class="plans-header-text">
+                <h1 class="plans-title">
+                    <span class="plans-icon-wrapper">
+                        <i class="fas fa-crown plans-icon"></i>
                     </span>
-                    Catégories Emplois
+                    Plans d'Abonnement
                 </h1>
-                <p class="categories-subtitle">
-                    Gérez les catégories d'articles d'emplois
+                <p class="plans-subtitle">
+                    Gérez et configurez les plans d'abonnement premium de votre plateforme
                 </p>
             </div>
-            <a href="{{ route('admin.jobs.categories.create') }}" class="create-category-btn">
+            <a href="{{ route('admin.monetization.subscription-plans.create') }}" class="create-plan-btn">
                 <i class="fas fa-plus-circle"></i>
-                <span>Nouvelle catégorie</span>
+                <span>Créer un Plan</span>
             </a>
         </div>
     </div>
@@ -57,142 +57,150 @@
     @endif
 
     <!-- Stats Cards -->
-    <div class="categories-stats">
-        <div class="stat-card stat-total">
-            <div class="stat-icon-wrapper">
-                <div class="stat-icon">
-                    <i class="fas fa-folder"></i>
-                </div>
+    @if($plans->count() > 0)
+    <div class="plans-stats">
+        <div class="stat-card">
+            <div class="stat-icon stat-total">
+                <i class="fas fa-list"></i>
             </div>
             <div class="stat-content">
-                <div class="stat-value">{{ $categories->count() }}</div>
-                <div class="stat-label">Total</div>
+                <div class="stat-value">{{ $plans->count() }}</div>
+                <div class="stat-label">Plans Total</div>
             </div>
         </div>
-        <div class="stat-card stat-active">
-            <div class="stat-icon-wrapper">
-                <div class="stat-icon">
-                    <i class="fas fa-check-circle"></i>
-                </div>
+        <div class="stat-card">
+            <div class="stat-icon stat-active">
+                <i class="fas fa-check-circle"></i>
             </div>
             <div class="stat-content">
-                <div class="stat-value">{{ $categories->where('is_active', true)->count() }}</div>
-                <div class="stat-label">Actives</div>
+                <div class="stat-value">{{ $plans->where('is_active', true)->count() }}</div>
+                <div class="stat-label">Plans Actifs</div>
             </div>
         </div>
-        <div class="stat-card stat-inactive">
-            <div class="stat-icon-wrapper">
-                <div class="stat-icon">
-                    <i class="fas fa-pause-circle"></i>
-                </div>
+        <div class="stat-card">
+            <div class="stat-icon stat-featured">
+                <i class="fas fa-star"></i>
             </div>
             <div class="stat-content">
-                <div class="stat-value">{{ $categories->where('is_active', false)->count() }}</div>
-                <div class="stat-label">Inactives</div>
-            </div>
-        </div>
-        <div class="stat-card stat-articles">
-            <div class="stat-icon-wrapper">
-                <div class="stat-icon">
-                    <i class="fas fa-file-alt"></i>
-                </div>
-            </div>
-            <div class="stat-content">
-                <div class="stat-value">{{ $categories->sum(function($cat) { return $cat->articles()->count(); }) }}</div>
-                <div class="stat-label">Articles</div>
+                <div class="stat-value">{{ $plans->where('is_featured', true)->count() }}</div>
+                <div class="stat-label">Plans Mis en Avant</div>
             </div>
         </div>
     </div>
+    @endif
 
-    <!-- Categories List -->
-    @if($categories->count() > 0)
-    <div class="categories-list">
-        @foreach($categories as $category)
-        <div class="category-card {{ $category->is_active ? 'category-active' : 'category-inactive' }}">
+    <!-- Plans Grid -->
+    @if($plans->count() > 0)
+    <div class="plans-grid">
+        @foreach($plans as $plan)
+        <div class="plan-card {{ $plan->is_featured ? 'plan-featured' : '' }} {{ !$plan->is_active ? 'plan-inactive' : '' }}">
             <!-- Card Header -->
-            <div class="category-card-header">
-                <div class="category-header-left">
-                    @if($category->image)
-                    <div class="category-image-wrapper">
-                        <img src="{{ $category->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($category->image) : $category->image }}" 
-                             alt="{{ $category->name }}" 
-                             class="category-image"
-                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                        <div class="category-image-placeholder" style="display: none;">
-                            <i class="{{ $category->icon ?? 'fas fa-folder' }}"></i>
-                        </div>
+            <div class="plan-card-header">
+                <div class="plan-header-left">
+                    <div class="plan-icon-circle">
+                        <i class="fas fa-crown"></i>
                     </div>
-                    @elseif($category->icon)
-                    <div class="category-icon-circle">
-                        <i class="{{ $category->icon }}"></i>
-                    </div>
-                    @else
-                    <div class="category-icon-circle">
-                        <i class="fas fa-folder"></i>
-                    </div>
-                    @endif
-                    <div class="category-title-section">
-                        <h3 class="category-name">{{ $category->name }}</h3>
-                        @if($category->description)
-                        <p class="category-description">{{ Str::limit($category->description, 80) }}</p>
-                        @endif
+                    <div class="plan-title-section">
+                        <h3 class="plan-name">{{ $plan->name }}</h3>
+                        <p class="plan-slug">{{ $plan->slug }}</p>
                     </div>
                 </div>
-                <div class="category-status-badge status-{{ $category->is_active ? 'active' : 'inactive' }}">
-                    @if($category->is_active)
+                <div class="plan-badges">
+                    @if($plan->is_featured)
+                    <span class="badge badge-featured">
+                        <i class="fas fa-star"></i>
+                        <span>Mis en avant</span>
+                    </span>
+                    @endif
+                    @if($plan->is_active)
+                    <span class="badge badge-active">
                         <i class="fas fa-check-circle"></i>
-                        <span>Active</span>
+                        <span>Actif</span>
+                    </span>
                     @else
+                    <span class="badge badge-inactive">
                         <i class="fas fa-pause-circle"></i>
-                        <span>Inactive</span>
+                        <span>Inactif</span>
+                    </span>
+                    @endif
+                    @if($plan->badge)
+                    <span class="badge badge-custom">
+                        {{ $plan->badge }}
+                    </span>
                     @endif
                 </div>
             </div>
 
-            <!-- Card Body -->
-            <div class="category-card-body">
-                <div class="category-details-grid">
-                    <div class="category-detail-item">
-                        <div class="detail-icon">
-                            <i class="fas fa-link"></i>
-                        </div>
-                        <div class="detail-content">
-                            <div class="detail-label">Slug</div>
-                            <div class="detail-value">{{ $category->slug }}</div>
-                        </div>
+            <!-- Price Section -->
+            <div class="plan-price-section">
+                <div class="plan-price-main">
+                    <span class="plan-price-amount">{{ number_format($plan->price, 0, ',', ' ') }}</span>
+                    <span class="plan-price-currency">{{ $plan->currency }}</span>
+                </div>
+                <div class="plan-price-period">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>{{ $plan->billing_period === 'yearly' ? 'par an' : 'par mois' }}</span>
+                </div>
+            </div>
+
+            <!-- Description -->
+            @if($plan->description)
+            <div class="plan-description">
+                <p>{{ $plan->description }}</p>
+            </div>
+            @endif
+
+            <!-- Features -->
+            @if(!empty($plan->features))
+            <div class="plan-features">
+                <div class="plan-features-header">
+                    <i class="fas fa-list-check"></i>
+                    <span>Fonctionnalités ({{ count($plan->features) }})</span>
+                </div>
+                <ul class="plan-features-list">
+                    @foreach($plan->features as $feature)
+                    <li class="plan-feature-item">
+                        <i class="fas fa-check feature-check"></i>
+                        <span>{{ $feature }}</span>
+                    </li>
+                    @endforeach
+                </ul>
+            </div>
+            @endif
+
+            <!-- Plan Details Grid -->
+            <div class="plan-details-grid">
+                <div class="plan-detail-item">
+                    <div class="detail-icon">
+                        <i class="fas fa-clock"></i>
                     </div>
-                    
-                    <div class="category-detail-item">
-                        <div class="detail-icon">
-                            <i class="fas fa-file-alt"></i>
-                        </div>
-                        <div class="detail-content">
-                            <div class="detail-label">Articles</div>
-                            <div class="detail-value articles-value">{{ $category->articles()->count() }}</div>
-                        </div>
+                    <div class="detail-content">
+                        <div class="detail-label">Durée</div>
+                        <div class="detail-value">{{ $plan->duration_days }} jours</div>
                     </div>
-                    
-                    <div class="category-detail-item">
-                        <div class="detail-icon">
-                            <i class="fas fa-sort-numeric-up"></i>
-                        </div>
-                        <div class="detail-content">
-                            <div class="detail-label">Ordre</div>
-                            <div class="detail-value">#{{ $category->order }}</div>
-                        </div>
+                </div>
+                <div class="plan-detail-item">
+                    <div class="detail-icon">
+                        <i class="fas fa-sort-numeric-up"></i>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-label">Ordre</div>
+                        <div class="detail-value">#{{ $plan->order }}</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Card Actions -->
-            <div class="category-card-actions">
-                <a href="{{ route('admin.jobs.categories.edit', $category->id) }}" class="action-btn action-edit">
+            <!-- Actions -->
+            <div class="plan-actions">
+                <a href="{{ route('admin.monetization.subscription-plans.show', $plan->id) }}" class="action-btn action-view">
+                    <i class="fas fa-eye"></i>
+                    <span>Voir</span>
+                </a>
+                <a href="{{ route('admin.monetization.subscription-plans.edit', $plan->id) }}" class="action-btn action-edit">
                     <i class="fas fa-edit"></i>
                     <span>Modifier</span>
                 </a>
-                @auth
-                @if(Auth::user()->isAdmin())
-                <form action="{{ route('admin.jobs.categories.destroy', $category->id) }}" method="POST" class="action-form" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette catégorie ?');">
+                <form action="{{ route('admin.monetization.subscription-plans.destroy', $plan->id) }}" method="POST" class="action-form" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce plan ?');">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="action-btn action-delete">
@@ -200,8 +208,6 @@
                         <span>Supprimer</span>
                     </button>
                 </form>
-                @endif
-                @endauth
             </div>
         </div>
         @endforeach
@@ -210,33 +216,33 @@
     <!-- Empty State -->
     <div class="empty-state">
         <div class="empty-state-icon">
-            <i class="fas fa-folder-open"></i>
+            <i class="fas fa-crown"></i>
         </div>
-        <h3 class="empty-state-title">Aucune catégorie</h3>
+        <h3 class="empty-state-title">Aucun plan d'abonnement</h3>
         <p class="empty-state-text">
-            Créez votre première catégorie pour organiser vos articles d'emplois.
+            Créez votre premier plan d'abonnement pour commencer à monétiser votre plateforme.
         </p>
-        <a href="{{ route('admin.jobs.categories.create') }}" class="empty-state-btn">
+        <a href="{{ route('admin.monetization.subscription-plans.create') }}" class="empty-state-btn">
             <i class="fas fa-plus-circle"></i>
-            <span>Créer une Catégorie</span>
+            <span>Créer un Plan</span>
         </a>
     </div>
     @endif
 </div>
 
 <style>
-.categories-admin {
+.subscription-plans-admin {
     padding: 2rem;
     max-width: 1600px;
     margin: 0 auto;
 }
 
 /* Header */
-.categories-header {
+.plans-header {
     margin-bottom: 2rem;
 }
 
-.categories-header-content {
+.plans-header-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -250,12 +256,12 @@
     overflow: hidden;
 }
 
-body.light-mode .categories-header-content {
+body.light-mode .plans-header-content {
     background: linear-gradient(135deg, rgba(6, 182, 212, 0.08) 0%, rgba(20, 184, 166, 0.08) 100%);
     border-color: rgba(6, 182, 212, 0.4);
 }
 
-.categories-header-content::before {
+.plans-header-content::before {
     content: '';
     position: absolute;
     top: -50%;
@@ -271,12 +277,12 @@ body.light-mode .categories-header-content {
     to { transform: rotate(360deg); }
 }
 
-.categories-header-text {
+.plans-header-text {
     position: relative;
     z-index: 1;
 }
 
-.categories-title {
+.plans-title {
     font-family: 'Poppins', sans-serif;
     font-size: 2.5rem;
     font-weight: 900;
@@ -296,7 +302,7 @@ body.light-mode .categories-header-content {
     to { background-position: 200% center; }
 }
 
-.categories-icon-wrapper {
+.plans-icon-wrapper {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -307,22 +313,22 @@ body.light-mode .categories-header-content {
     border: 2px solid rgba(6, 182, 212, 0.3);
 }
 
-.categories-icon {
+.plans-icon {
     font-size: 1.8rem;
     color: #06b6d4;
 }
 
-.categories-subtitle {
+.plans-subtitle {
     font-size: 1.1rem;
     color: rgba(255, 255, 255, 0.7);
     margin: 0;
 }
 
-body.light-mode .categories-subtitle {
+body.light-mode .plans-subtitle {
     color: #64748b;
 }
 
-.create-category-btn {
+.create-plan-btn {
     position: relative;
     z-index: 1;
     display: inline-flex;
@@ -340,12 +346,12 @@ body.light-mode .categories-subtitle {
     box-shadow: 0 4px 20px rgba(6, 182, 212, 0.4);
 }
 
-.create-category-btn:hover {
+.create-plan-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 8px 30px rgba(6, 182, 212, 0.6);
 }
 
-.create-category-btn i {
+.create-plan-btn i {
     font-size: 1.2rem;
 }
 
@@ -418,9 +424,9 @@ body.light-mode .categories-subtitle {
 }
 
 /* Stats */
-.categories-stats {
+.plans-stats {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 1.5rem;
     margin-bottom: 2rem;
 }
@@ -434,8 +440,6 @@ body.light-mode .categories-subtitle {
     align-items: center;
     gap: 1rem;
     transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
 }
 
 body.light-mode .stat-card {
@@ -443,45 +447,9 @@ body.light-mode .stat-card {
     border-color: rgba(6, 182, 212, 0.3);
 }
 
-.stat-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 4px;
-    height: 100%;
-    transition: width 0.3s;
-}
-
 .stat-card:hover {
     transform: translateY(-4px);
     box-shadow: 0 8px 25px rgba(6, 182, 212, 0.3);
-}
-
-.stat-card:hover::before {
-    width: 100%;
-    opacity: 0.1;
-}
-
-.stat-total::before {
-    background: linear-gradient(180deg, #06b6d4, #14b8a6);
-}
-
-.stat-active::before {
-    background: linear-gradient(180deg, #10b981, #059669);
-}
-
-.stat-inactive::before {
-    background: linear-gradient(180deg, #6b7280, #4b5563);
-}
-
-.stat-articles::before {
-    background: linear-gradient(180deg, #8b5cf6, #7c3aed);
-}
-
-.stat-icon-wrapper {
-    position: relative;
-    z-index: 1;
 }
 
 .stat-icon {
@@ -494,30 +462,23 @@ body.light-mode .stat-card {
     font-size: 1.5rem;
 }
 
-.stat-total .stat-icon {
+.stat-total {
     background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2));
     color: #06b6d4;
 }
 
-.stat-active .stat-icon {
+.stat-active {
     background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.2));
     color: #10b981;
 }
 
-.stat-inactive .stat-icon {
-    background: linear-gradient(135deg, rgba(107, 114, 128, 0.2), rgba(75, 85, 99, 0.2));
-    color: #6b7280;
-}
-
-.stat-articles .stat-icon {
-    background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(124, 58, 237, 0.2));
-    color: #8b5cf6;
+.stat-featured {
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(245, 158, 11, 0.2));
+    color: #fbbf24;
 }
 
 .stat-content {
     flex: 1;
-    position: relative;
-    z-index: 1;
 }
 
 .stat-value {
@@ -541,15 +502,21 @@ body.light-mode .stat-label {
     color: #64748b;
 }
 
-/* Categories List */
-.categories-list {
+/* Plans Grid */
+.plans-grid {
     display: grid;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 2rem;
 }
 
-/* Category Card */
-.category-card {
+@media (max-width: 768px) {
+    .plans-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Plan Card */
+.plan-card {
     background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(51, 65, 85, 0.8));
     border: 2px solid rgba(6, 182, 212, 0.3);
     border-radius: 24px;
@@ -559,13 +526,13 @@ body.light-mode .stat-label {
     overflow: hidden;
 }
 
-body.light-mode .category-card {
+body.light-mode .plan-card {
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.95));
     border-color: rgba(6, 182, 212, 0.3);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
-.category-card::before {
+.plan-card::before {
     content: '';
     position: absolute;
     top: 0;
@@ -577,34 +544,34 @@ body.light-mode .category-card {
     transition: opacity 0.3s;
 }
 
-.category-card:hover {
+.plan-card:hover {
     transform: translateY(-8px);
     box-shadow: 0 12px 40px rgba(6, 182, 212, 0.4);
     border-color: rgba(6, 182, 212, 0.6);
 }
 
-.category-card:hover::before {
+.plan-card:hover::before {
     opacity: 1;
 }
 
-.category-active {
-    border-color: rgba(16, 185, 129, 0.5);
+.plan-featured {
+    border-color: rgba(251, 191, 36, 0.5);
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(51, 65, 85, 0.9));
 }
 
-.category-active::before {
-    background: linear-gradient(90deg, #10b981, #059669);
+body.light-mode .plan-featured {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(252, 248, 240, 0.98));
 }
 
-.category-inactive {
-    border-color: rgba(107, 114, 128, 0.5);
-    opacity: 0.8;
+.plan-featured::before {
+    background: linear-gradient(90deg, #fbbf24, #f59e0b);
 }
 
-.category-inactive::before {
-    background: linear-gradient(90deg, #6b7280, #4b5563);
+.plan-inactive {
+    opacity: 0.7;
 }
 
-.category-card-header {
+.plan-card-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
@@ -612,123 +579,233 @@ body.light-mode .category-card {
     gap: 1rem;
 }
 
-.category-header-left {
+.plan-header-left {
     display: flex;
     align-items: center;
     gap: 1rem;
     flex: 1;
 }
 
-.category-image-wrapper {
-    width: 80px;
-    height: 80px;
-    border-radius: 16px;
-    overflow: hidden;
-    background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2));
-    border: 2px solid rgba(6, 182, 212, 0.3);
-    flex-shrink: 0;
-    position: relative;
-}
-
-.category-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.category-image-placeholder {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2rem;
-    color: #06b6d4;
-}
-
-.category-icon-circle {
-    width: 80px;
-    height: 80px;
+.plan-icon-circle {
+    width: 60px;
+    height: 60px;
     background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2));
     border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 2rem;
+    font-size: 1.5rem;
     color: #06b6d4;
     border: 2px solid rgba(6, 182, 212, 0.3);
-    flex-shrink: 0;
 }
 
-.category-title-section {
+.plan-title-section {
     flex: 1;
 }
 
-.category-name {
+.plan-name {
     font-size: 1.5rem;
     font-weight: 800;
     color: white;
-    margin: 0 0 0.5rem 0;
+    margin: 0 0 0.25rem 0;
 }
 
-body.light-mode .category-name {
+body.light-mode .plan-name {
     color: #1e293b;
 }
 
-.category-description {
-    font-size: 0.95rem;
-    color: rgba(255, 255, 255, 0.7);
+.plan-slug {
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.5);
     margin: 0;
-    line-height: 1.5;
 }
 
-body.light-mode .category-description {
-    color: #64748b;
+body.light-mode .plan-slug {
+    color: #94a3b8;
 }
 
-.category-status-badge {
+.plan-badges {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: flex-end;
+}
+
+.badge {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.5rem 1rem;
+    padding: 0.4rem 0.75rem;
     border-radius: 12px;
-    font-size: 0.85rem;
+    font-size: 0.75rem;
     font-weight: 700;
+    white-space: nowrap;
 }
 
-.status-active {
+.badge-featured {
+    background: rgba(251, 191, 36, 0.2);
+    border: 1px solid rgba(251, 191, 36, 0.4);
+    color: #fbbf24;
+}
+
+.badge-active {
     background: rgba(16, 185, 129, 0.2);
     border: 1px solid rgba(16, 185, 129, 0.4);
     color: #10b981;
 }
 
-.status-inactive {
+.badge-inactive {
     background: rgba(107, 114, 128, 0.2);
     border: 1px solid rgba(107, 114, 128, 0.4);
     color: #6b7280;
 }
 
-.category-card-body {
+.badge-custom {
+    background: rgba(6, 182, 212, 0.2);
+    border: 1px solid rgba(6, 182, 212, 0.4);
+    color: #06b6d4;
+}
+
+/* Price Section */
+.plan-price-section {
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(20, 184, 166, 0.1));
+    border: 1px solid rgba(6, 182, 212, 0.2);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+body.light-mode .plan-price-section {
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.08), rgba(20, 184, 166, 0.08));
+    border-color: rgba(6, 182, 212, 0.3);
+}
+
+.plan-price-main {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.plan-price-amount {
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: #06b6d4;
+    line-height: 1;
+}
+
+.plan-price-currency {
+    font-size: 1.25rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 600;
+}
+
+body.light-mode .plan-price-currency {
+    color: #64748b;
+}
+
+.plan-price-period {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+}
+
+body.light-mode .plan-price-period {
+    color: #94a3b8;
+}
+
+/* Description */
+.plan-description {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: rgba(6, 182, 212, 0.05);
+    border-left: 3px solid rgba(6, 182, 212, 0.3);
+    border-radius: 8px;
+}
+
+body.light-mode .plan-description {
+    background: rgba(6, 182, 212, 0.05);
+}
+
+.plan-description p {
+    margin: 0;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.6;
+}
+
+body.light-mode .plan-description p {
+    color: #475569;
+}
+
+/* Features */
+.plan-features {
     margin-bottom: 1.5rem;
 }
 
-.category-details-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
+.plan-features-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 600;
+    font-size: 0.9rem;
 }
 
-.category-detail-item {
+body.light-mode .plan-features-header {
+    color: #64748b;
+}
+
+.plan-features-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.75rem;
+}
+
+.plan-feature-item {
     display: flex;
     align-items: center;
     gap: 0.75rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.9rem;
+}
+
+body.light-mode .plan-feature-item {
+    color: #334155;
+}
+
+.feature-check {
+    color: #10b981;
+    font-size: 0.85rem;
+}
+
+/* Details Grid */
+.plan-details-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
     padding: 1rem;
     background: rgba(6, 182, 212, 0.05);
     border-radius: 12px;
 }
 
-body.light-mode .category-detail-item {
+body.light-mode .plan-details-grid {
     background: rgba(6, 182, 212, 0.03);
+}
+
+.plan-detail-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
 }
 
 .detail-icon {
@@ -767,22 +844,16 @@ body.light-mode .detail-value {
     color: #1e293b;
 }
 
-.articles-value {
-    color: #8b5cf6;
-    font-size: 1.1rem;
-}
-
-.category-card-actions {
+/* Actions */
+.plan-actions {
     display: flex;
     gap: 0.75rem;
     padding-top: 1.5rem;
     border-top: 1px solid rgba(6, 182, 212, 0.2);
-    flex-wrap: wrap;
 }
 
 .action-form {
     flex: 1;
-    min-width: 120px;
 }
 
 .action-btn {
@@ -799,7 +870,17 @@ body.light-mode .detail-value {
     cursor: pointer;
     transition: all 0.3s ease;
     text-decoration: none;
-    min-width: 120px;
+}
+
+.action-view {
+    background: rgba(59, 130, 246, 0.15);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    color: #3b82f6;
+}
+
+.action-view:hover {
+    background: rgba(59, 130, 246, 0.25);
+    transform: translateY(-2px);
 }
 
 .action-edit {
@@ -817,6 +898,7 @@ body.light-mode .detail-value {
     background: rgba(239, 68, 68, 0.15);
     border: 1px solid rgba(239, 68, 68, 0.3);
     color: #ef4444;
+    width: 100%;
 }
 
 .action-delete:hover {
@@ -899,33 +981,35 @@ body.light-mode .empty-state-text {
 
 /* Responsive */
 @media (max-width: 768px) {
-    .categories-title {
+    .plans-title {
         font-size: 1.75rem;
     }
     
-    .categories-icon-wrapper {
+    .plans-icon-wrapper {
         width: 50px;
         height: 50px;
     }
     
-    .categories-icon {
+    .plans-icon {
         font-size: 1.5rem;
     }
     
-    .create-category-btn {
+    .create-plan-btn {
         width: 100%;
         justify-content: center;
     }
     
-    .category-card-header {
+    .plan-card-header {
         flex-direction: column;
     }
     
-    .category-details-grid {
-        grid-template-columns: 1fr;
+    .plan-badges {
+        flex-direction: row;
+        align-items: flex-start;
+        flex-wrap: wrap;
     }
     
-    .category-card-actions {
+    .plan-actions {
         flex-direction: column;
     }
     

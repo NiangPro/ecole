@@ -894,19 +894,18 @@ class ProfileController extends Controller
             // Échapper le code pour l'HTML (mais garder les sauts de ligne)
             $escapedCode = htmlspecialchars($code, ENT_QUOTES, 'UTF-8');
             
-            // Générer le HTML du bloc de code (même structure que les autres formations)
-            // IMPORTANT: Prism.js nécessite <pre><code class="language-xxx"> pour fonctionner
+            // Générer le HTML du bloc de code
+            // IMPORTANT: Highlight.js nécessite <pre><code class="language-xxx"> pour fonctionner
             return sprintf(
                 '<div class="code-box" data-language="%s" style="position: relative;">
                     <button class="copy-code-btn" onclick="copyCodeToClipboard(this, document.getElementById(\'%s\'))" title="Copier le code" style="position: absolute; top: 10px; right: 80px; background: #04AA6D; color: white; border: none; padding: 2px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; z-index: 10; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); white-space: nowrap; height: auto; line-height: 1.4;">
                         <i class="fas fa-copy" style="margin-right: 5px; font-size: 12px;"></i>
                         <span>Copier</span>
                     </button>
-                    <pre class="language-%s" style="margin: 0; padding: 0; background: transparent !important;"><code id="%s" class="language-%s">%s</code></pre>
+                    <pre style="margin: 0; padding: 0; background: transparent !important;"><code id="%s" class="language-%s">%s</code></pre>
                 </div>',
                 htmlspecialchars($language, ENT_QUOTES, 'UTF-8'),
                 $codeId,
-                htmlspecialchars($language, ENT_QUOTES, 'UTF-8'),
                 $codeId,
                 htmlspecialchars($language, ENT_QUOTES, 'UTF-8'),
                 $escapedCode
@@ -949,5 +948,32 @@ class ProfileController extends Controller
 
         return view('dashboard.paid-course-show', compact('course', 'purchase', 'pageTitle', 'pageDescription'))
             ->with('layout', 'dashboard.layout');
+    }
+    
+    /**
+     * Afficher les abonnements de l'utilisateur
+     */
+    public function subscriptions()
+    {
+        $this->ensureLocale();
+        $user = Auth::user();
+        
+        $subscriptions = $user->subscriptions()
+            ->with('payment')
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+        
+        $activeSubscription = $user->subscriptions()
+            ->where('status', 'active')
+            ->where(function($query) {
+                $query->whereNull('end_date')
+                      ->orWhere('end_date', '>=', now());
+            })
+            ->first();
+        
+        $pageTitle = 'Mes Abonnements';
+        $pageDescription = 'Gérez vos abonnements premium';
+        
+        return view('dashboard.subscriptions', compact('subscriptions', 'activeSubscription', 'pageTitle', 'pageDescription'));
     }
 }

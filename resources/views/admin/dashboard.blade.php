@@ -222,42 +222,23 @@
     /* Stats Cards Modernes */
     .stats-grid-modern {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 18px;
-        margin-bottom: 40px;
-    }
-    
-    @media (max-width: 1400px) {
-        .stats-grid-modern {
-            grid-template-columns: repeat(3, 1fr);
-        }
-    }
-    
-    @media (max-width: 1024px) {
-        .stats-grid-modern {
-            grid-template-columns: repeat(2, 1fr);
-        }
-    }
-    
-    @media (max-width: 640px) {
-        .stats-grid-modern {
-            grid-template-columns: 1fr;
-        }
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
     }
     
     .stat-card-modern {
-        background: rgba(15, 23, 42, 0.7);
-        backdrop-filter: blur(20px);
-        border: 2px solid rgba(6, 182, 212, 0.2);
-        border-radius: 16px;
-        padding: 20px;
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(51, 65, 85, 0.8));
+        border: 1px solid rgba(6, 182, 212, 0.3);
+        border-radius: 20px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
         position: relative;
         overflow: hidden;
     }
     
     body.light-mode .stat-card-modern {
-        background: rgba(255, 255, 255, 0.8);
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.95));
         border-color: rgba(6, 182, 212, 0.3);
     }
     
@@ -265,21 +246,21 @@
         content: '';
         position: absolute;
         top: 0;
-        left: -100%;
-        width: 100%;
+        left: 0;
+        width: 4px;
         height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(6, 182, 212, 0.1), transparent);
-        transition: left 0.6s;
-    }
-    
-    .stat-card-modern:hover::before {
-        left: 100%;
+        background: linear-gradient(180deg, #06b6d4, #14b8a6);
+        transition: width 0.3s;
     }
     
     .stat-card-modern:hover {
-        transform: translateY(-8px);
-        border-color: rgba(6, 182, 212, 0.5);
-        box-shadow: 0 20px 50px rgba(6, 182, 212, 0.3);
+        transform: translateY(-4px);
+        box-shadow: 0 8px 25px rgba(6, 182, 212, 0.3);
+    }
+    
+    .stat-card-modern:hover::before {
+        width: 100%;
+        opacity: 0.1;
     }
     
     .stat-card-header {
@@ -289,75 +270,88 @@
         margin-bottom: 12px;
     }
     
+    .stat-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+    }
+    
     .stat-card-icon {
-        width: 45px;
-        height: 45px;
-        border-radius: 12px;
+        width: 60px;
+        height: 60px;
+        border-radius: 16px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.3rem;
+        font-size: 1.5rem;
         background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2));
         border: 1px solid rgba(6, 182, 212, 0.3);
+        position: relative;
+        z-index: 1;
     }
     
     .stat-card-number {
         font-family: 'Poppins', sans-serif;
-        font-size: 1.9rem;
-        font-weight: 900;
-        background: linear-gradient(135deg, #06b6d4, #14b8a6);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        line-height: 1.2;
-        margin-bottom: 6px;
+        font-size: 2rem;
+        font-weight: 800;
+        color: white;
+        line-height: 1;
+        margin-bottom: 0.5rem;
+        position: relative;
+        z-index: 1;
+    }
+    
+    body.light-mode .stat-card-number {
+        color: #1e293b;
     }
     
     .stat-card-label {
-        color: rgba(255, 255, 255, 0.8);
-        font-weight: 600;
-        font-size: 0.9rem;
-        margin-bottom: 4px;
+        color: rgba(255, 255, 255, 0.9);
+        font-weight: 700;
+        font-size: 1rem;
+        margin-bottom: 0.25rem;
         transition: color 0.3s ease;
+        position: relative;
+        z-index: 1;
     }
     
     body.light-mode .stat-card-label {
-        color: rgba(30, 41, 59, 0.9);
+        color: #334155;
     }
     
     .stat-card-subtext {
-        color: rgba(255, 255, 255, 0.5);
-        font-size: 0.75rem;
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.85rem;
         line-height: 1.3;
         transition: color 0.3s ease;
+        position: relative;
+        z-index: 1;
     }
     
     body.light-mode .stat-card-subtext {
-        color: rgba(30, 41, 59, 0.6);
+        color: #64748b;
     }
     
     /* Content Sections Modernes */
     .content-section-modern {
-        background: rgba(15, 23, 42, 0.7);
-        backdrop-filter: blur(20px);
-        border: 2px solid rgba(6, 182, 212, 0.2);
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(51, 65, 85, 0.8));
+        border: 1px solid rgba(6, 182, 212, 0.3);
         border-radius: 24px;
-        padding: 35px;
-        transition: background 0.3s ease, border-color 0.3s ease;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        transition: all 0.3s ease;
     }
     
     body.light-mode .content-section-modern {
-        background: rgba(255, 255, 255, 0.8);
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.95));
         border-color: rgba(6, 182, 212, 0.3);
-    }
-        transition: all 0.3s ease;
-        width: 100%;
-        box-sizing: border-box;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     }
     
     .content-section-modern:hover {
-        border-color: rgba(6, 182, 212, 0.4);
-        box-shadow: 0 15px 40px rgba(6, 182, 212, 0.2);
+        border-color: rgba(6, 182, 212, 0.5);
+        box-shadow: 0 8px 30px rgba(6, 182, 212, 0.3);
     }
     
     .section-title-modern {
@@ -365,10 +359,10 @@
         font-size: 1.5rem;
         font-weight: 800;
         color: #06b6d4;
-        margin-bottom: 25px;
+        margin-bottom: 1.5rem;
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 0.75rem;
     }
     
     .section-title-modern i {
@@ -737,17 +731,6 @@
 <div class="stats-grid-modern">
     <div class="stat-card-modern">
         <div class="stat-card-header">
-            <div class="stat-card-icon" style="color: #06b6d4;">
-                <i class="fas fa-graduation-cap"></i>
-            </div>
-        </div>
-        <div class="stat-card-number">8</div>
-        <div class="stat-card-label">Formations</div>
-        <div class="stat-card-subtext">Disponibles</div>
-    </div>
-    
-    <div class="stat-card-modern">
-        <div class="stat-card-header">
             <div class="stat-card-icon" style="color: #14b8a6;">
                 <i class="fas fa-eye"></i>
             </div>
@@ -837,6 +820,17 @@
         <div class="stat-card-number">{{ number_format($stats['totalCategories']) }}</div>
         <div class="stat-card-label">Catégories actives</div>
         <div class="stat-card-subtext">Catégories disponibles</div>
+    </div>
+    
+    <div class="stat-card-modern">
+        <div class="stat-card-header">
+            <div class="stat-card-icon" style="color: #8b5cf6;">
+                <i class="fas fa-book"></i>
+            </div>
+        </div>
+        <div class="stat-card-number">{{ number_format($stats['totalPaidCourses'] ?? 0) }}</div>
+        <div class="stat-card-label">Cours payants</div>
+        <div class="stat-card-subtext">{{ number_format($stats['publishedPaidCourses'] ?? 0) }} publiés</div>
     </div>
     
     @if($stats['unreadMessages'] > 0)

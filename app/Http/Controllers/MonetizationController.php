@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Subscription;
+use App\Models\SubscriptionPlan;
 use App\Models\PaidCourse;
 use App\Models\CoursePurchase;
 use App\Models\Donation;
@@ -24,68 +25,34 @@ class MonetizationController extends Controller
     {
         $this->ensureLocale();
         
-        $subscriptionPlans = [
-            'premium' => [
-                'name' => 'Premium',
-                'price' => 5000, // 5000 FCFA
-                'currency' => 'XOF',
-                'duration' => 30, // jours
-                'features' => [
-                    'Accès à tous les cours premium',
-                    'Certificats téléchargeables',
-                    'Support prioritaire',
-                    'Sans publicités',
-                    'Contenu exclusif'
-                ]
-            ],
-            'pro' => [
-                'name' => 'Pro',
-                'price' => 10000, // 10000 FCFA
-                'currency' => 'XOF',
-                'duration' => 30,
-                'features' => [
-                    'Tout Premium inclus',
-                    'Coaching personnalisé',
-                    'Projets pratiques',
-                    'Accès communauté VIP',
-                    'Webinaires exclusifs'
-                ]
-            ],
-            'enterprise' => [
-                'name' => 'Enterprise',
-                'price' => 25000, // 25000 FCFA
-                'currency' => 'XOF',
-                'duration' => 30,
-                'features' => [
-                    'Tout Pro inclus',
-                    'Formation sur mesure',
-                    'Support dédié',
-                    'Licence multi-utilisateurs',
-                    'API personnalisée'
-                ]
-            ]
-        ];
+        // Récupérer les plans d'abonnement depuis la base de données
+        $subscriptionPlans = SubscriptionPlan::active()
+            ->ordered()
+            ->get()
+            ->mapWithKeys(function($plan) {
+                return [$plan->slug => [
+                    'id' => $plan->id,
+                    'name' => $plan->name,
+                    'slug' => $plan->slug,
+                    'price' => $plan->price,
+                    'currency' => $plan->currency,
+                    'duration' => $plan->duration_days,
+                    'billing_period' => $plan->billing_period,
+                    'features' => $plan->features ?? [],
+                    'description' => $plan->description,
+                    'badge' => $plan->badge,
+                    'is_featured' => $plan->is_featured,
+                ]];
+            });
 
         $paidCourses = PaidCourse::where('status', 'published')
             ->orderBy('created_at', 'desc')
-            ->take(6)
+            ->take(4)
             ->get();
-
-        $recentDonations = Donation::where('status', 'completed')
-            ->where('show_on_wall', true)
-            ->orderBy('completed_at', 'desc')
-            ->take(10)
-            ->get();
-
-        $totalDonations = Donation::where('status', 'completed')->sum('amount');
-        $donationsCount = Donation::where('status', 'completed')->count();
 
         return view('monetization.index', compact(
             'subscriptionPlans',
-            'paidCourses',
-            'recentDonations',
-            'totalDonations',
-            'donationsCount'
+            'paidCourses'
         ));
     }
 

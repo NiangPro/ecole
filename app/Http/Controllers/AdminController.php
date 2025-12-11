@@ -138,6 +138,10 @@ class AdminController extends Controller
                 'unreadMessages' => ContactMessage::where('is_read', false)->count(),
                 'recentArticles' => \App\Models\JobArticle::orderBy('created_at', 'desc')->take(5)->get(),
                 'topArticles' => \App\Models\JobArticle::where('status', 'published')->orderBy('views', 'desc')->take(5)->get(),
+                'totalPaidCourses' => \App\Models\PaidCourse::count(),
+                'publishedPaidCourses' => \App\Models\PaidCourse::where('status', 'published')->count(),
+                'totalCourseSales' => \App\Models\CoursePurchase::where('status', 'completed')->count(),
+                'totalCourseRevenue' => \App\Models\CoursePurchase::where('status', 'completed')->sum('amount_paid'),
             ];
         });
         
@@ -286,6 +290,19 @@ class AdminController extends Controller
         $totalPages = $stats['totalPages'];
         $avgPerDay = $stats['avgPerDay'];
         
+        // Calculer les moyennes par mois et par an
+        $currentYear = Carbon::now()->year;
+        $currentMonth = Carbon::now()->month;
+        
+        // Moyenne par mois : total de l'année en cours / nombre de mois écoulés
+        $yearTotalVisits = Cache::remember("year_total_visits_{$currentYear}", 300, function () use ($currentYear) {
+            return Statistic::whereYear('visit_date', $currentYear)->count();
+        });
+        $avgPerMonth = $currentMonth > 0 ? round($yearTotalVisits / $currentMonth) : 0;
+        
+        // Moyenne par an : total de l'année en cours
+        $avgPerYear = $yearTotalVisits;
+        
         // Pages les plus visitées - Cache 5 minutes
         $topPagesCacheKey = "top_pages_{$filter}";
         $topPages = Cache::remember($topPagesCacheKey, 300, function () use ($filter) {
@@ -318,6 +335,11 @@ class AdminController extends Controller
             return Statistic::getBySource($filter, $year, $month);
         });
         
+        $devicesStatsCacheKey = "devices_stats_{$filter}_{$year}_{$month}";
+        $devicesStats = Cache::remember($devicesStatsCacheKey, 300, function () use ($filter, $year, $month) {
+            return Statistic::getByDevice($filter, $year, $month);
+        });
+        
         // Statistiques hebdomadaires du mois actuel - Cache 5 minutes
         $weeklyStats = Cache::remember('weekly_stats_current_month', 300, function () {
             return Statistic::getWeeklyStatsForCurrentMonth();
@@ -332,11 +354,14 @@ class AdminController extends Controller
             'uniqueVisitors',
             'totalPages',
             'avgPerDay',
+            'avgPerMonth',
+            'avgPerYear',
             'topPages',
             'dailyStats',
             'countriesStats',
             'browsersStats',
             'sourcesStats',
+            'devicesStats',
             'weeklyStats'
         ));
     }
@@ -589,8 +614,15 @@ class AdminController extends Controller
         // Calculer les statistiques dynamiques
         $totalUrls = count($urls);
         
-        // Formations/Exercices/Quiz : 1 (formations) + 15 (langages) + 1 (exercices) + 15 (langages) + 1 (quiz) + 15 (langages) = 48
-        $formationsExercicesQuiz = 48;
+        // Calculer séparément formations, exercices et quiz
+        $baseUrl = str_contains(config('app.url'), 'niangprogrammeur.com') 
+            ? 'https://www.niangprogrammeur.com' 
+            : config('app.url');
+        
+        $formationsCount = 16; // 1 page principale + 15 langages
+        $exercicesCount = 16; // 1 page principale + 15 langages
+        $quizCount = 16; // 1 page principale + 15 langages
+        $formationsExercicesQuiz = $formationsCount + $exercicesCount + $quizCount; // 48
         
         // Pages statiques : 10 pages à conserver
         $pagesStatiques = 10;
@@ -605,7 +637,7 @@ class AdminController extends Controller
         // Articles nécessaires = 100 - 58 = 42
         $articlesIncluded = min($articlesCount, max(0, 100 - ($formationsExercicesQuiz + $pagesStatiques)));
         
-        return view('admin.bing-submission', compact('urls', 'isConfigured', 'totalUrls', 'formationsExercicesQuiz', 'pagesStatiques', 'articlesIncluded', 'articlesCount'));
+        return view('admin.bing-submission', compact('urls', 'isConfigured', 'totalUrls', 'formationsExercicesQuiz', 'formationsCount', 'exercicesCount', 'quizCount', 'pagesStatiques', 'articlesIncluded', 'articlesCount'));
     }
 
     public function submitToBing(Request $request)

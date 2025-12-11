@@ -8,7 +8,7 @@ return [
         'exercices' => 'Exercices',
         'quiz' => 'Quiz',
         'contact' => 'Contact',
-        'about' => 'À propos',
+        'about' => 'Autres',
         'login' => 'Connexion',
         'profile' => 'Mon Profil',
         'practice' => 'Pratique',
