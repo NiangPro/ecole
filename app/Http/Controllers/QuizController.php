@@ -38,6 +38,9 @@ class QuizController extends Controller
             ['name' => trans('app.formations.languages.go'), 'slug' => 'go', 'icon' => 'fab fa-golang', 'color' => 'blue', 'questions' => 20],
             ['name' => trans('app.formations.languages.rust'), 'slug' => 'rust', 'icon' => 'fab fa-rust', 'color' => 'black', 'questions' => 20],
             ['name' => trans('app.formations.languages.ruby'), 'slug' => 'ruby', 'icon' => 'fas fa-gem', 'color' => 'red', 'questions' => 20],
+            ['name' => trans('app.formations.languages.cybersecurite'), 'slug' => 'cybersecurite', 'icon' => 'fas fa-shield-alt', 'color' => 'orange', 'questions' => 20],
+            ['name' => trans('app.formations.languages.data-science'), 'slug' => 'data-science', 'icon' => 'fas fa-chart-line', 'color' => 'blue', 'questions' => 20],
+            ['name' => trans('app.formations.languages.big-data'), 'slug' => 'big-data', 'icon' => 'fas fa-database', 'color' => 'purple', 'questions' => 20],
         ];
         
         return view('quiz', compact('languages'));

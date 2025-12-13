@@ -622,10 +622,10 @@ class AdminController extends Controller
             ? 'https://www.niangprogrammeur.com' 
             : config('app.url');
         
-        $formationsCount = 19; // 1 page principale + 18 langages
-        $exercicesCount = 19; // 1 page principale + 18 langages
-        $quizCount = 19; // 1 page principale + 18 langages
-        $formationsExercicesQuiz = $formationsCount + $exercicesCount + $quizCount; // 57
+        $formationsCount = 22; // 1 page principale + 21 langages/formations
+        $exercicesCount = 22; // 1 page principale + 21 langages/formations
+        $quizCount = 22; // 1 page principale + 21 langages/formations
+        $formationsExercicesQuiz = $formationsCount + $exercicesCount + $quizCount; // 66
         
         // Pages statiques : 10 pages à conserver
         $pagesStatiques = 10;
@@ -636,8 +636,8 @@ class AdminController extends Controller
             ->count();
         
         // Calculer le nombre d'articles inclus (pour atteindre 100 URLs au total)
-        // Total fixe = 57 (formations/exercices/quiz) + 10 (pages statiques) = 67
-        // Articles nécessaires = 100 - 67 = 33
+        // Total fixe = 66 (formations/exercices/quiz) + 10 (pages statiques) = 76
+        // Articles nécessaires = 100 - 76 = 24
         $articlesIncluded = min($articlesCount, max(0, 100 - ($formationsExercicesQuiz + $pagesStatiques)));
         
         return view('admin.bing-submission', compact('urls', 'isConfigured', 'totalUrls', 'formationsExercicesQuiz', 'formationsCount', 'exercicesCount', 'quizCount', 'pagesStatiques', 'articlesIncluded', 'articlesCount'));

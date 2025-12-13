@@ -8103,6 +8103,1030 @@ end',
                     'hint' => $getTranslated('hint', 'Utilisez for i in 1..10 pour itérer de 1 à 10.')
                 ],
             ],
+            'cybersecurite' => [
+                1 => [
+                    'title' => $getTranslated('title', 'Introduction à la Cybersécurité'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 10,
+                    'instruction' => $getTranslated('instruction', 'Expliquez les concepts fondamentaux de la cybersécurité et identifiez les principales menaces informatiques.'),
+                    'description' => $getTranslated('description', 'La cybersécurité est la pratique de protéger les systèmes, réseaux et programmes contre les attaques numériques. Elle vise à réduire les risques et à protéger contre l\'exploitation non autorisée des systèmes, réseaux et technologies.'),
+                    'startCode' => '# Exercice : Introduction à la Cybersécurité
+# 
+# 1. Définissez ce qu\'est la cybersécurité
+# 2. Listez 3 types de menaces courantes
+# 3. Expliquez pourquoi la cybersécurité est importante
+',
+                    'solution' => '# Solution :
+# 1. La cybersécurité est la protection des systèmes informatiques contre les accès non autorisés
+# 2. Types de menaces : Malware, Phishing, DDoS
+# 3. Elle protège les données sensibles et maintient la continuité des activités',
+                    'hint' => $getTranslated('hint', 'Pensez aux différents types d\'attaques : virus, ransomware, hameçonnage, etc.')
+                ],
+                2 => [
+                    'title' => $getTranslated('title', 'Principes de Sécurité (CIA)'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 12,
+                    'instruction' => $getTranslated('instruction', 'Expliquez la triade CIA (Confidentialité, Intégrité, Disponibilité) et donnez un exemple pour chaque principe.'),
+                    'description' => $getTranslated('description', 'La triade CIA est le modèle fondamental de la sécurité de l\'information. Elle représente les trois objectifs principaux de la sécurité : Confidentialité (protection des données), Intégrité (exactitude des données), et Disponibilité (accès aux données).'),
+                    'startCode' => '# Exercice : Triade CIA
+# 
+# Expliquez chaque principe avec un exemple concret :
+# - Confidentialité :
+# - Intégrité :
+# - Disponibilité :
+',
+                    'solution' => '# Solution :
+# - Confidentialité : Chiffrement des mots de passe (ex: bcrypt)
+# - Intégrité : Hachage SHA-256 pour vérifier l\'intégrité des fichiers
+# - Disponibilité : Redondance des serveurs pour éviter les pannes',
+                    'hint' => $getTranslated('hint', 'Confidentialité = secret, Intégrité = non modifié, Disponibilité = accessible')
+                ],
+                3 => [
+                    'title' => $getTranslated('title', 'Identification des Menaces'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 12,
+                    'instruction' => $getTranslated('instruction', 'Identifiez et classez différents types de menaces de cybersécurité (malware, phishing, DDoS, etc.).'),
+                    'description' => $getTranslated('description', 'L\'identification des menaces est cruciale pour la sécurité. Les menaces peuvent être classées par type (malware, attaques réseau, ingénierie sociale) et par niveau de risque.'),
+                    'startCode' => '# Exercice : Identification des Menaces
+# 
+# Classez ces menaces par catégorie :
+# - Virus, Ransomware, Trojan
+# - Phishing, Spear Phishing
+# - DDoS, Man-in-the-Middle
+# - SQL Injection, XSS
+',
+                    'solution' => '# Solution :
+# Malware : Virus, Ransomware, Trojan
+# Ingénierie sociale : Phishing, Spear Phishing
+# Attaques réseau : DDoS, Man-in-the-Middle
+# Vulnérabilités web : SQL Injection, XSS',
+                    'hint' => $getTranslated('hint', 'Pensez aux différentes catégories : logiciels malveillants, attaques réseau, vulnérabilités applicatives')
+                ],
+                4 => [
+                    'title' => $getTranslated('title', 'Cryptographie de Base'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 18,
+                    'instruction' => $getTranslated('instruction', 'Expliquez les concepts de base de la cryptographie : chiffrement symétrique vs asymétrique, hachage.'),
+                    'description' => $getTranslated('description', 'La cryptographie est la science du chiffrement des données. Le chiffrement symétrique utilise une seule clé, tandis que le chiffrement asymétrique utilise une paire de clés (publique/privée). Le hachage transforme les données en une empreinte unique.'),
+                    'startCode' => '# Exercice : Cryptographie
+# 
+# Comparez :
+# 1. Chiffrement symétrique (AES) :
+# 2. Chiffrement asymétrique (RSA) :
+# 3. Hachage (SHA-256) :
+',
+                    'solution' => '# Solution :
+# 1. AES : Une seule clé pour chiffrer/déchiffrer (rapide, pour gros volumes)
+# 2. RSA : Paire clé publique/privée (sécurisé, pour échange de clés)
+# 3. SHA-256 : Fonction à sens unique (vérification d\'intégrité, mots de passe)',
+                    'hint' => $getTranslated('hint', 'Symétrique = même clé, Asymétrique = deux clés, Hachage = irréversible')
+                ],
+                5 => [
+                    'title' => $getTranslated('title', 'Sécurité des Réseaux'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 20,
+                    'instruction' => $getTranslated('instruction', 'Expliquez les mécanismes de sécurité réseau : firewall, VPN, IDS/IPS.'),
+                    'description' => $getTranslated('description', 'La sécurité réseau implique la protection de l\'infrastructure réseau contre les accès non autorisés, les attaques et les intrusions. Les firewalls filtrent le trafic, les VPN créent des tunnels sécurisés, et les IDS/IPS détectent et préviennent les intrusions.'),
+                    'startCode' => '# Exercice : Sécurité Réseau
+# 
+# Expliquez le rôle de chaque outil :
+# - Firewall :
+# - VPN :
+# - IDS/IPS :
+',
+                    'solution' => '# Solution :
+# - Firewall : Filtre le trafic entrant/sortant selon des règles (port, IP, protocole)
+# - VPN : Tunnel chiffré pour connexion sécurisée à distance
+# - IDS/IPS : Détection (IDS) et prévention (IPS) d\'intrusions en temps réel',
+                    'hint' => $getTranslated('hint', 'Firewall = filtre, VPN = tunnel sécurisé, IDS/IPS = détection/prévention')
+                ],
+                6 => [
+                    'title' => $getTranslated('title', 'Sécurité des Applications'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 20,
+                    'instruction' => $getTranslated('instruction', 'Expliquez les bonnes pratiques de sécurité applicative : validation des entrées, gestion des erreurs, authentification.'),
+                    'description' => $getTranslated('description', 'La sécurité applicative protège les applications contre les vulnérabilités. Les bonnes pratiques incluent la validation des entrées utilisateur, la gestion sécurisée des erreurs, l\'authentification robuste et la protection contre les injections.'),
+                    'startCode' => '# Exercice : Sécurité Applicative
+# 
+# Listez 5 bonnes pratiques :
+# 1.
+# 2.
+# 3.
+# 4.
+# 5.
+',
+                    'solution' => '# Solution :
+# 1. Validation et sanitisation des entrées utilisateur
+# 2. Authentification forte (2FA, mots de passe complexes)
+# 3. Gestion sécurisée des sessions
+# 4. Protection contre les injections (SQL, XSS)
+# 5. Gestion d\'erreurs sans exposer d\'informations sensibles',
+                    'hint' => $getTranslated('hint', 'Pensez aux vulnérabilités OWASP Top 10')
+                ],
+                7 => [
+                    'title' => $getTranslated('title', 'Gestion des Incidents'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 22,
+                    'instruction' => $getTranslated('instruction', 'Décrivez le processus de gestion d\'incident de sécurité : détection, réponse, récupération.'),
+                    'description' => $getTranslated('description', 'La gestion des incidents suit un cycle : préparation, détection, analyse, confinement, éradication, récupération et leçons apprises. Une réponse rapide minimise les dommages.'),
+                    'startCode' => '# Exercice : Gestion d\'Incidents
+# 
+# Étapes du processus :
+# 1. Détection :
+# 2. Analyse :
+# 3. Confinement :
+# 4. Récupération :
+',
+                    'solution' => '# Solution :
+# 1. Détection : Identification de l\'incident (logs, alertes, monitoring)
+# 2. Analyse : Évaluation de la portée et de l\'impact
+# 3. Confinement : Isolation des systèmes affectés
+# 4. Récupération : Restauration des systèmes et vérification',
+                    'hint' => $getTranslated('hint', 'Pensez au cycle complet de réponse à incident')
+                ],
+                8 => [
+                    'title' => $getTranslated('title', 'Législation et Conformité'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 18,
+                    'instruction' => $getTranslated('instruction', 'Expliquez les principales réglementations : RGPD, PCI-DSS, ISO 27001.'),
+                    'description' => $getTranslated('description', 'La conformité réglementaire est essentielle. Le RGPD protège les données personnelles en UE, PCI-DSS sécurise les transactions de cartes, et ISO 27001 définit un système de management de la sécurité.'),
+                    'startCode' => '# Exercice : Conformité
+# 
+# Associez chaque réglementation à son domaine :
+# - RGPD :
+# - PCI-DSS :
+# - ISO 27001 :
+',
+                    'solution' => '# Solution :
+# - RGPD : Protection des données personnelles (UE)
+# - PCI-DSS : Sécurité des transactions par carte bancaire
+# - ISO 27001 : Système de management de la sécurité de l\'information',
+                    'hint' => $getTranslated('hint', 'RGPD = données personnelles, PCI-DSS = paiements, ISO 27001 = SMSI')
+                ],
+                9 => [
+                    'title' => $getTranslated('title', 'Analyse de Vulnérabilités'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 28,
+                    'instruction' => $getTranslated('instruction', 'Expliquez les méthodes d\'analyse de vulnérabilités : scanning, pentesting, code review.'),
+                    'description' => $getTranslated('description', 'L\'analyse de vulnérabilités identifie les faiblesses avant exploitation. Les méthodes incluent le scanning automatisé, les tests de pénétration manuels, et la revue de code pour détecter les failles.'),
+                    'startCode' => '# Exercice : Analyse Vulnérabilités
+# 
+# Comparez les méthodes :
+# - Scanning automatisé :
+# - Pentesting :
+# - Code review :
+',
+                    'solution' => '# Solution :
+# - Scanning : Outils automatisés (Nessus, OpenVAS) pour détecter vulnérabilités connues
+# - Pentesting : Tests manuels simulant des attaques réelles
+# - Code review : Analyse statique du code source pour détecter failles',
+                    'hint' => $getTranslated('hint', 'Scanning = automatique, Pentesting = manuel, Code review = analyse statique')
+                ],
+                10 => [
+                    'title' => $getTranslated('title', 'Hacking Éthique'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 30,
+                    'instruction' => $getTranslated('instruction', 'Expliquez les principes du hacking éthique et les phases d\'un test de pénétration.'),
+                    'description' => $getTranslated('description', 'Le hacking éthique utilise les techniques des attaquants à des fins défensives. Les phases incluent la reconnaissance, le scanning, l\'accès, le maintien et l\'effacement des traces, toujours avec autorisation.'),
+                    'startCode' => '# Exercice : Hacking Éthique
+# 
+# Phases d\'un pentest :
+# 1. Reconnaissance :
+# 2. Scanning :
+# 3. Accès :
+# 4. Maintien :
+',
+                    'solution' => '# Solution :
+# 1. Reconnaissance : Collecte d\'informations (OSINT, réseaux sociaux)
+# 2. Scanning : Identification des ports ouverts, services, vulnérabilités
+# 3. Accès : Exploitation des vulnérabilités pour obtenir accès
+# 4. Maintien : Installation de backdoors, escalade de privilèges',
+                    'hint' => $getTranslated('hint', 'Pensez au cycle d\'attaque : reconnaissance → exploitation → post-exploitation')
+                ],
+                11 => [
+                    'title' => $getTranslated('title', 'Forensique Numérique'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 30,
+                    'instruction' => $getTranslated('instruction', 'Expliquez les étapes de l\'investigation forensique : collecte, préservation, analyse des preuves numériques.'),
+                    'description' => $getTranslated('description', 'La forensique numérique collecte et analyse les preuves numériques de manière légale. Les étapes incluent la collecte sécurisée, la préservation de l\'intégrité, l\'analyse approfondie et la documentation pour les procédures judiciaires.'),
+                    'startCode' => '# Exercice : Forensique
+# 
+# Étapes de l\'investigation :
+# 1. Collecte :
+# 2. Préservation :
+# 3. Analyse :
+# 4. Documentation :
+',
+                    'solution' => '# Solution :
+# 1. Collecte : Acquisition sécurisée des preuves (images disque, logs)
+# 2. Préservation : Maintien de l\'intégrité (hash MD5/SHA, chaîne de traçabilité)
+# 3. Analyse : Examen approfondi avec outils forensiques
+# 4. Documentation : Rapport détaillé pour procédures judiciaires',
+                    'hint' => $getTranslated('hint', 'Pensez à la chaîne de traçabilité et à l\'intégrité des preuves')
+                ],
+                12 => [
+                    'title' => $getTranslated('title', 'Sécurité Cloud'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 28,
+                    'instruction' => $getTranslated('instruction', 'Expliquez les défis de sécurité cloud : responsabilité partagée, configuration, accès.'),
+                    'description' => $getTranslated('description', 'La sécurité cloud implique un modèle de responsabilité partagée. Le fournisseur sécurise l\'infrastructure, tandis que le client sécurise les données, configurations et accès. Les erreurs de configuration sont une cause majeure de violations.'),
+                    'startCode' => '# Exercice : Sécurité Cloud
+# 
+# Modèle de responsabilité partagée :
+# - Fournisseur (AWS/Azure/GCP) :
+# - Client :
+',
+                    'solution' => '# Solution :
+# - Fournisseur : Infrastructure, virtualisation, matériel, centres de données
+# - Client : Données, configurations, identités, accès, applications, système d\'exploitation',
+                    'hint' => $getTranslated('hint', 'Fournisseur = infrastructure, Client = données et configurations')
+                ],
+                13 => [
+                    'title' => $getTranslated('title', 'DevSecOps'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 30,
+                    'instruction' => $getTranslated('instruction', 'Expliquez l\'intégration de la sécurité dans DevOps : sécurité shift-left, CI/CD sécurisé.'),
+                    'description' => $getTranslated('description', 'DevSecOps intègre la sécurité tout au long du cycle de développement. Le "shift-left" signifie intégrer la sécurité dès le début. Les pipelines CI/CD incluent des scans de sécurité automatisés.'),
+                    'startCode' => '# Exercice : DevSecOps
+# 
+# Pratiques DevSecOps :
+# 1. Shift-left :
+# 2. CI/CD sécurisé :
+# 3. Infrastructure as Code sécurisée :
+',
+                    'solution' => '# Solution :
+# 1. Shift-left : Intégration de la sécurité dès la conception et le développement
+# 2. CI/CD sécurisé : Scans automatisés (SAST, DAST) dans le pipeline
+# 3. Infrastructure as Code : Validation et scans de sécurité pour Terraform/CloudFormation',
+                    'hint' => $getTranslated('hint', 'Shift-left = sécurité tôt, CI/CD = automatisation, IaC = infrastructure sécurisée')
+                ],
+                14 => [
+                    'title' => $getTranslated('title', 'Gouvernance et GRC'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 28,
+                    'instruction' => $getTranslated('instruction', 'Expliquez la gouvernance de la sécurité : politiques, procédures, gestion des risques (GRC).'),
+                    'description' => $getTranslated('description', 'La gouvernance définit les politiques et procédures de sécurité. La GRC (Gouvernance, Risque, Conformité) aligne la sécurité avec les objectifs métier, identifie et gère les risques, et assure la conformité réglementaire.'),
+                    'startCode' => '# Exercice : Gouvernance et GRC
+# 
+# Composants de la GRC :
+# - Gouvernance :
+# - Risque :
+# - Conformité :
+',
+                    'solution' => '# Solution :
+# - Gouvernance : Définition des politiques, procédures, rôles et responsabilités
+# - Risque : Identification, évaluation, traitement et monitoring des risques
+# - Conformité : Vérification de l\'adéquation aux réglementations et standards',
+                    'hint' => $getTranslated('hint', 'Gouvernance = politiques, Risque = gestion, Conformité = vérification')
+                ],
+            ],
+            'data-science' => [
+                1 => [
+                    'title' => $getTranslated('title', 'Introduction à la Data Science'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 10,
+                    'instruction' => $getTranslated('instruction', 'Expliquez ce qu\'est la Data Science et son processus (collecte, nettoyage, analyse, visualisation).'),
+                    'description' => $getTranslated('description', 'La Data Science combine statistiques, programmation et expertise métier pour extraire des insights des données. Le processus inclut la collecte, le nettoyage, l\'exploration, l\'analyse et la visualisation des données.'),
+                    'startCode' => '# Exercice : Introduction Data Science
+# 
+# Décrivez les étapes du processus Data Science :
+# 1. Collecte :
+# 2. Nettoyage :
+# 3. Analyse :
+# 4. Visualisation :
+',
+                    'solution' => '# Solution :
+# 1. Collecte : Récupération des données depuis diverses sources
+# 2. Nettoyage : Suppression des doublons, gestion des valeurs manquantes
+# 3. Analyse : Application de techniques statistiques et ML
+# 4. Visualisation : Représentation graphique des résultats',
+                    'hint' => $getTranslated('hint', 'Pensez au cycle complet : de la collecte à la présentation des résultats')
+                ],
+                2 => [
+                    'title' => $getTranslated('title', 'Statistiques Descriptives'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 12,
+                    'instruction' => $getTranslated('instruction', 'Calculez les statistiques descriptives de base : moyenne, médiane, écart-type pour un ensemble de données.'),
+                    'description' => $getTranslated('description', 'Les statistiques descriptives résument et décrivent les caractéristiques principales d\'un dataset. La moyenne mesure la tendance centrale, la médiane est la valeur médiane, et l\'écart-type mesure la dispersion.'),
+                    'startCode' => 'import pandas as pd
+import numpy as np
+
+# Données : [10, 15, 20, 25, 30, 35, 40]
+data = [10, 15, 20, 25, 30, 35, 40]
+
+# Calculez :
+# - Moyenne :
+# - Médiane :
+# - Écart-type :
+',
+                    'solution' => 'import pandas as pd
+import numpy as np
+
+data = [10, 15, 20, 25, 30, 35, 40]
+
+# Moyenne
+moyenne = np.mean(data)  # 25.0
+
+# Médiane
+mediane = np.median(data)  # 25.0
+
+# Écart-type
+ecart_type = np.std(data)  # ~10.8',
+                    'hint' => $getTranslated('hint', 'Utilisez np.mean(), np.median(), np.std() de NumPy')
+                ],
+                3 => [
+                    'title' => $getTranslated('title', 'Manipulation avec Pandas'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 12,
+                    'instruction' => $getTranslated('instruction', 'Créez un DataFrame Pandas, filtrez les données et effectuez des opérations de base.'),
+                    'description' => $getTranslated('description', 'Pandas est la bibliothèque Python principale pour la manipulation de données. Les DataFrames permettent de stocker et manipuler des données tabulaires avec des opérations comme le filtrage, le groupement et l\'agrégation.'),
+                    'startCode' => 'import pandas as pd
+
+# Créez un DataFrame avec colonnes : nom, age, ville
+# Filtrez les personnes de plus de 25 ans
+# Affichez la moyenne d\'âge
+',
+                    'solution' => 'import pandas as pd
+
+# Création du DataFrame
+df = pd.DataFrame({
+    \'nom\': [\'Alice\', \'Bob\', \'Charlie\'],
+    \'age\': [25, 30, 22],
+    \'ville\': [\'Paris\', \'Lyon\', \'Marseille\']
+})
+
+# Filtrage
+df_filtre = df[df[\'age\'] > 25]
+
+# Moyenne
+moyenne_age = df[\'age\'].mean()',
+                    'hint' => $getTranslated('hint', 'Utilisez pd.DataFrame() pour créer, df[condition] pour filtrer, df[\'col\'].mean() pour la moyenne')
+                ],
+                4 => [
+                    'title' => $getTranslated('title', 'Analyse Exploratoire (EDA)'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 18,
+                    'instruction' => $getTranslated('instruction', 'Effectuez une analyse exploratoire des données : identification des patterns, valeurs aberrantes, corrélations.'),
+                    'description' => $getTranslated('description', 'L\'EDA (Exploratory Data Analysis) est l\'étape cruciale pour comprendre les données avant la modélisation. Elle inclut la visualisation, l\'identification des patterns, la détection des valeurs aberrantes et l\'analyse des corrélations.'),
+                    'startCode' => 'import pandas as pd
+import matplotlib.pyplot as plt
+
+# Chargez un dataset et effectuez une EDA :
+# 1. Affichez les infos de base (head, info, describe)
+# 2. Identifiez les valeurs manquantes
+# 3. Visualisez la distribution d\'une variable
+',
+                    'solution' => 'import pandas as pd
+import matplotlib.pyplot as plt
+
+df = pd.read_csv(\'data.csv\')
+
+# 1. Infos de base
+print(df.head())
+print(df.info())
+print(df.describe())
+
+# 2. Valeurs manquantes
+print(df.isnull().sum())
+
+# 3. Visualisation
+df[\'colonne\'].hist()
+plt.show()',
+                    'hint' => $getTranslated('hint', 'Utilisez df.head(), df.info(), df.describe(), df.isnull().sum(), et matplotlib pour visualiser')
+                ],
+                5 => [
+                    'title' => $getTranslated('title', 'Visualisation de Données'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 20,
+                    'instruction' => $getTranslated('instruction', 'Créez différents types de visualisations : histogrammes, scatter plots, box plots avec Matplotlib/Seaborn.'),
+                    'description' => $getTranslated('description', 'La visualisation est essentielle pour communiquer les insights. Matplotlib et Seaborn offrent de nombreux types de graphiques : histogrammes pour les distributions, scatter plots pour les relations, box plots pour les comparaisons.'),
+                    'startCode' => 'import matplotlib.pyplot as plt
+import seaborn as sns
+import pandas as pd
+
+# Créez :
+# 1. Un histogramme
+# 2. Un scatter plot
+# 3. Un box plot
+',
+                    'solution' => 'import matplotlib.pyplot as plt
+import seaborn as sns
+import pandas as pd
+
+df = pd.read_csv(\'data.csv\')
+
+# 1. Histogramme
+plt.hist(df[\'colonne\'])
+plt.show()
+
+# 2. Scatter plot
+plt.scatter(df[\'x\'], df[\'y\'])
+plt.show()
+
+# 3. Box plot
+sns.boxplot(data=df, x=\'categorie\', y=\'valeur\')
+plt.show()',
+                    'hint' => $getTranslated('hint', 'Utilisez plt.hist(), plt.scatter(), sns.boxplot()')
+                ],
+                6 => [
+                    'title' => $getTranslated('title', 'Machine Learning - Classification'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 22,
+                    'instruction' => $getTranslated('instruction', 'Créez un modèle de classification avec scikit-learn (ex: Random Forest) sur un dataset.'),
+                    'description' => $getTranslated('description', 'La classification prédit des catégories. Scikit-learn offre plusieurs algorithmes : Random Forest, SVM, KNN. Le processus inclut la préparation des données, l\'entraînement, l\'évaluation avec des métriques (accuracy, precision, recall).'),
+                    'startCode' => 'from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+
+# Chargez les données et créez un modèle de classification
+',
+                    'solution' => 'from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+
+# Chargement et préparation
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+
+# Modèle
+model = RandomForestClassifier()
+model.fit(X_train, y_train)
+
+# Prédiction et évaluation
+y_pred = model.predict(X_test)
+accuracy = accuracy_score(y_test, y_pred)',
+                    'hint' => $getTranslated('hint', 'Utilisez train_test_split(), fit(), predict(), accuracy_score()')
+                ],
+                7 => [
+                    'title' => $getTranslated('title', 'Machine Learning - Régression'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 22,
+                    'instruction' => $getTranslated('instruction', 'Créez un modèle de régression linéaire pour prédire des valeurs continues.'),
+                    'description' => $getTranslated('description', 'La régression prédit des valeurs continues. La régression linéaire trouve la meilleure ligne pour prédire la variable cible. Les métriques incluent R², MAE, RMSE.'),
+                    'startCode' => 'from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+
+# Créez un modèle de régression linéaire
+',
+                    'solution' => 'from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
+
+# Modèle
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# Prédiction
+y_pred = model.predict(X_test)
+
+# Évaluation
+mse = mean_squared_error(y_test, y_pred)
+r2 = r2_score(y_test, y_pred)',
+                    'hint' => $getTranslated('hint', 'Utilisez LinearRegression(), fit(), predict(), mean_squared_error(), r2_score()')
+                ],
+                8 => [
+                    'title' => $getTranslated('title', 'Clustering (K-Means)'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 20,
+                    'instruction' => $getTranslated('instruction', 'Appliquez l\'algorithme K-Means pour regrouper des données similaires.'),
+                    'description' => $getTranslated('description', 'Le clustering regroupe des données similaires sans étiquettes. K-Means partitionne les données en k clusters en minimisant la distance intra-cluster. Le choix de k est crucial (méthode du coude).'),
+                    'startCode' => 'from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
+
+# Appliquez K-Means avec k=3
+',
+                    'solution' => 'from sklearn.cluster import KMeans
+import matplotlib.pyplot as plt
+
+# K-Means
+kmeans = KMeans(n_clusters=3, random_state=42)
+kmeans.fit(X)
+labels = kmeans.labels_
+
+# Visualisation
+plt.scatter(X[:, 0], X[:, 1], c=labels)
+plt.show()',
+                    'hint' => $getTranslated('hint', 'Utilisez KMeans(n_clusters=k), fit(), labels_ pour les clusters')
+                ],
+                9 => [
+                    'title' => $getTranslated('title', 'Évaluation des Modèles'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 28,
+                    'instruction' => $getTranslated('instruction', 'Évaluez un modèle avec validation croisée et différentes métriques (confusion matrix, ROC curve).'),
+                    'description' => $getTranslated('description', 'L\'évaluation valide la performance. La validation croisée (k-fold) réduit le surapprentissage. La matrice de confusion montre les vrais/faux positifs/négatifs. La courbe ROC mesure la capacité de discrimination.'),
+                    'startCode' => 'from sklearn.model_selection import cross_val_score
+from sklearn.metrics import confusion_matrix, roc_auc_score
+
+# Évaluez avec validation croisée
+',
+                    'solution' => 'from sklearn.model_selection import cross_val_score
+from sklearn.metrics import confusion_matrix, roc_auc_score
+
+# Validation croisée
+scores = cross_val_score(model, X, y, cv=5)
+
+# Matrice de confusion
+cm = confusion_matrix(y_test, y_pred)
+
+# ROC-AUC
+roc_auc = roc_auc_score(y_test, y_pred_proba)',
+                    'hint' => $getTranslated('hint', 'Utilisez cross_val_score(), confusion_matrix(), roc_auc_score()')
+                ],
+                10 => [
+                    'title' => $getTranslated('title', 'Feature Engineering'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 30,
+                    'instruction' => $getTranslated('instruction', 'Créez de nouvelles features : encodage, normalisation, sélection de features.'),
+                    'description' => $getTranslated('description', 'Le feature engineering améliore les performances. L\'encodage transforme les catégories (one-hot, label encoding). La normalisation standardise les valeurs. La sélection choisit les features les plus importantes.'),
+                    'startCode' => 'from sklearn.preprocessing import StandardScaler, LabelEncoder
+from sklearn.feature_selection import SelectKBest
+
+# Préparez les features
+',
+                    'solution' => 'from sklearn.preprocessing import StandardScaler, LabelEncoder
+from sklearn.feature_selection import SelectKBest
+
+# Encodage
+le = LabelEncoder()
+X_encoded = le.fit_transform(X_categorical)
+
+# Normalisation
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# Sélection
+selector = SelectKBest(k=10)
+X_selected = selector.fit_transform(X, y)',
+                    'hint' => $getTranslated('hint', 'Utilisez LabelEncoder(), StandardScaler(), SelectKBest()')
+                ],
+                11 => [
+                    'title' => $getTranslated('title', 'Deep Learning avec TensorFlow'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 30,
+                    'instruction' => $getTranslated('instruction', 'Créez un réseau de neurones simple avec TensorFlow/Keras.'),
+                    'description' => $getTranslated('description', 'Le deep learning utilise des réseaux de neurones multicouches. TensorFlow/Keras simplifie la création. Un réseau inclut des couches denses, des fonctions d\'activation, et un optimiseur.'),
+                    'startCode' => 'import tensorflow as tf
+from tensorflow import keras
+
+# Créez un modèle séquentiel
+',
+                    'solution' => 'import tensorflow as tf
+from tensorflow import keras
+
+# Modèle
+model = keras.Sequential([
+    keras.layers.Dense(128, activation=\'relu\', input_shape=(784,)),
+    keras.layers.Dense(64, activation=\'relu\'),
+    keras.layers.Dense(10, activation=\'softmax\')
+])
+
+# Compilation
+model.compile(optimizer=\'adam\', loss=\'sparse_categorical_crossentropy\', metrics=[\'accuracy\'])
+
+# Entraînement
+model.fit(X_train, y_train, epochs=10)',
+                    'hint' => $getTranslated('hint', 'Utilisez keras.Sequential(), Dense(), compile(), fit()')
+                ],
+                12 => [
+                    'title' => $getTranslated('title', 'NLP - Analyse de Sentiments'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 28,
+                    'instruction' => $getTranslated('instruction', 'Analysez le sentiment de textes avec des techniques NLP (TF-IDF, word embeddings).'),
+                    'description' => $getTranslated('description', 'Le NLP traite le langage naturel. L\'analyse de sentiments classe les textes (positif/négatif). TF-IDF pondère les mots. Les word embeddings (Word2Vec, GloVe) capturent la sémantique.'),
+                    'startCode' => 'from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.naive_bayes import MultinomialNB
+
+# Analysez le sentiment
+',
+                    'solution' => 'from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.naive_bayes import MultinomialNB
+
+# Vectorisation
+vectorizer = TfidfVectorizer()
+X_vectorized = vectorizer.fit_transform(texts)
+
+# Modèle
+model = MultinomialNB()
+model.fit(X_vectorized, labels)',
+                    'hint' => $getTranslated('hint', 'Utilisez TfidfVectorizer(), MultinomialNB() pour classification de texte')
+                ],
+                13 => [
+                    'title' => $getTranslated('title', 'Time Series Analysis'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 30,
+                    'instruction' => $getTranslated('instruction', 'Analysez une série temporelle : décomposition, prévision avec ARIMA ou LSTM.'),
+                    'description' => $getTranslated('description', 'Les séries temporelles ont une dimension temporelle. La décomposition sépare tendance, saisonnalité et résidu. ARIMA modélise les séries stationnaires. LSTM capture les dépendances longues.'),
+                    'startCode' => 'import pandas as pd
+from statsmodels.tsa.arima.model import ARIMA
+
+# Analysez une série temporelle
+',
+                    'solution' => 'import pandas as pd
+from statsmodels.tsa.arima.model import ARIMA
+
+# Modèle ARIMA
+model = ARIMA(series, order=(1, 1, 1))
+model_fit = model.fit()
+
+# Prévision
+forecast = model_fit.forecast(steps=10)',
+                    'hint' => $getTranslated('hint', 'Utilisez ARIMA(order=(p,d,q)), fit(), forecast()')
+                ],
+                14 => [
+                    'title' => $getTranslated('title', 'Déploiement de Modèles'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 28,
+                    'instruction' => $getTranslated('instruction', 'Déployez un modèle ML en production : sérialisation, API REST, monitoring.'),
+                    'description' => $getTranslated('description', 'Le déploiement met le modèle en production. La sérialisation (pickle, joblib) sauvegarde le modèle. Une API REST expose les prédictions. Le monitoring suit la performance et la dérive des données.'),
+                    'startCode' => 'import pickle
+from flask import Flask, request, jsonify
+
+# Créez une API pour servir le modèle
+',
+                    'solution' => 'import pickle
+from flask import Flask, request, jsonify
+
+# Chargement du modèle
+with open(\'model.pkl\', \'rb\') as f:
+    model = pickle.load(f)
+
+# API
+app = Flask(__name__)
+
+@app.route(\'/predict\', methods=[\'POST\'])
+def predict():
+    data = request.json
+    prediction = model.predict([data[\'features\']])
+    return jsonify({\'prediction\': prediction.tolist()})',
+                    'hint' => $getTranslated('hint', 'Utilisez pickle pour sauvegarder/charger, Flask pour l\'API')
+                ],
+                15 => [
+                    'title' => $getTranslated('title', 'Projet Data Science Complet'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 30,
+                    'instruction' => $getTranslated('instruction', 'Réalisez un projet complet : de la collecte à la visualisation, en passant par l\'analyse et la modélisation.'),
+                    'description' => $getTranslated('description', 'Un projet complet suit toutes les étapes : définition du problème, collecte, nettoyage, EDA, feature engineering, modélisation, évaluation, déploiement et communication des résultats.'),
+                    'startCode' => '# Projet complet Data Science
+# 
+# Étapes :
+# 1. Définition du problème
+# 2. Collecte des données
+# 3. Nettoyage et préparation
+# 4. EDA
+# 5. Modélisation
+# 6. Évaluation
+# 7. Déploiement
+',
+                    'solution' => '# Solution : Projet complet
+# 1. Problème : Prédire X en fonction de Y
+# 2. Collecte : APIs, bases de données, fichiers CSV
+# 3. Nettoyage : pandas, gestion valeurs manquantes
+# 4. EDA : visualisations, statistiques descriptives
+# 5. Modélisation : scikit-learn, sélection d\'algorithme
+# 6. Évaluation : métriques, validation croisée
+# 7. Déploiement : API Flask/FastAPI, dashboard',
+                    'hint' => $getTranslated('hint', 'Suivez le cycle complet de la Data Science')
+                ],
+            ],
+            'big-data' => [
+                1 => [
+                    'title' => $getTranslated('title', 'Introduction au Big Data'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 10,
+                    'instruction' => $getTranslated('instruction', 'Expliquez ce qu\'est le Big Data et les 5 V (Volume, Vélocité, Variété, Véracité, Valeur).'),
+                    'description' => $getTranslated('description', 'Le Big Data fait référence à des ensembles de données si volumineux et complexes que les outils traditionnels ne peuvent pas les traiter efficacement. Les 5 V décrivent les caractéristiques : Volume (taille), Vélocité (vitesse), Variété (formats), Véracité (qualité), Valeur (utilité).'),
+                    'startCode' => '# Exercice : Introduction Big Data
+# 
+# Expliquez chaque V :
+# - Volume :
+# - Vélocité :
+# - Variété :
+# - Véracité :
+# - Valeur :
+',
+                    'solution' => '# Solution :
+# - Volume : Quantité massive de données (pétaoctets, exaoctets)
+# - Vélocité : Vitesse de génération et traitement des données
+# - Variété : Diversité des formats (structuré, non structuré, semi-structuré)
+# - Véracité : Fiabilité et qualité des données
+# - Valeur : Utilité et insights extraits des données',
+                    'hint' => $getTranslated('hint', 'Pensez aux caractéristiques qui rendent les données "big"')
+                ],
+                2 => [
+                    'title' => $getTranslated('title', 'Les 5 V du Big Data'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 12,
+                    'instruction' => $getTranslated('instruction', 'Donnez des exemples concrets pour chaque V du Big Data dans différents domaines.'),
+                    'description' => $getTranslated('description', 'Les 5 V sont des dimensions qui caractérisent le Big Data. Chaque V présente des défis et opportunités spécifiques. Comprendre ces dimensions est crucial pour concevoir des solutions Big Data adaptées.'),
+                    'startCode' => '# Exercice : 5 V - Exemples
+# 
+# Donnez un exemple pour chaque V :
+# Volume (exemple) :
+# Vélocité (exemple) :
+# Variété (exemple) :
+',
+                    'solution' => '# Solution :
+# Volume : Données des réseaux sociaux (milliards de posts/jour)
+# Vélocité : Transactions financières en temps réel
+# Variété : Textes, images, vidéos, logs, capteurs IoT
+# Véracité : Nettoyage des données de capteurs IoT
+# Valeur : Prédiction de tendances pour le marketing',
+                    'hint' => $getTranslated('hint', 'Pensez à des exemples réels : réseaux sociaux, IoT, e-commerce')
+                ],
+                3 => [
+                    'title' => $getTranslated('title', 'HDFS - Stockage Distribué'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 18,
+                    'instruction' => $getTranslated('instruction', 'Expliquez l\'architecture HDFS (NameNode, DataNode) et comment les données sont répliquées.'),
+                    'description' => $getTranslated('description', 'HDFS (Hadoop Distributed File System) est le système de fichiers distribué de Hadoop. Il divise les fichiers en blocs répliqués sur plusieurs DataNodes. Le NameNode gère les métadonnées, tandis que les DataNodes stockent les données.'),
+                    'startCode' => '# Exercice : HDFS
+# 
+# Expliquez :
+# 1. Rôle du NameNode :
+# 2. Rôle du DataNode :
+# 3. Réplication (par défaut) :
+',
+                    'solution' => '# Solution :
+# 1. NameNode : Gère les métadonnées (structure, permissions, emplacement des blocs)
+# 2. DataNode : Stocke les blocs de données et répond aux demandes de lecture/écriture
+# 3. Réplication : 3 copies par défaut (1 locale, 2 sur d\'autres racks)',
+                    'hint' => $getTranslated('hint', 'NameNode = métadonnées, DataNode = stockage, Réplication = tolérance aux pannes')
+                ],
+                4 => [
+                    'title' => $getTranslated('title', 'MapReduce - Concepts'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 20,
+                    'instruction' => $getTranslated('instruction', 'Expliquez le modèle MapReduce : phases Map, Shuffle, Reduce avec un exemple concret.'),
+                    'description' => $getTranslated('description', 'MapReduce est un modèle de programmation pour le traitement distribué de grandes quantités de données. La phase Map traite les données en parallèle, Shuffle redistribue les résultats, et Reduce agrège les résultats finaux.'),
+                    'startCode' => '# Exercice : MapReduce
+# 
+# Pour compter les mots dans un texte :
+# 1. Phase Map :
+# 2. Phase Shuffle :
+# 3. Phase Reduce :
+',
+                    'solution' => '# Solution :
+# 1. Map : Chaque nœud traite une partie du texte et émet (mot, 1)
+# 2. Shuffle : Regroupe les paires (mot, 1) par clé (mot)
+# 3. Reduce : Agrège les valeurs pour chaque mot (somme des 1)',
+                    'hint' => $getTranslated('hint', 'Map = transformation parallèle, Shuffle = regroupement, Reduce = agrégation')
+                ],
+                5 => [
+                    'title' => $getTranslated('title', 'Apache Spark - RDDs'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 22,
+                    'instruction' => $getTranslated('instruction', 'Créez un RDD Spark et effectuez des transformations (map, filter) et actions (collect, count).'),
+                    'description' => $getTranslated('description', 'Les RDDs (Resilient Distributed Datasets) sont la structure de données fondamentale de Spark. Ils sont immutables et distribués. Les transformations (map, filter) sont lazy, tandis que les actions (collect, count) déclenchent l\'exécution.'),
+                    'startCode' => 'from pyspark import SparkContext
+
+sc = SparkContext("local", "RDD Example")
+
+# Créez un RDD à partir d\'une liste
+# Filtrez les nombres pairs
+# Multipliez par 2
+# Comptez les éléments
+',
+                    'solution' => 'from pyspark import SparkContext
+
+sc = SparkContext("local", "RDD Example")
+
+# Création
+rdd = sc.parallelize([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+
+# Filtrage
+rdd_pairs = rdd.filter(lambda x: x % 2 == 0)
+
+# Transformation
+rdd_double = rdd_pairs.map(lambda x: x * 2)
+
+# Action
+count = rdd_double.count()  # 5',
+                    'hint' => $getTranslated('hint', 'Utilisez sc.parallelize(), rdd.filter(), rdd.map(), rdd.count()')
+                ],
+                6 => [
+                    'title' => $getTranslated('title', 'Spark SQL et DataFrames'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 22,
+                    'instruction' => $getTranslated('instruction', 'Utilisez Spark SQL et DataFrames pour manipuler des données structurées.'),
+                    'description' => $getTranslated('description', 'Spark SQL permet d\'utiliser SQL sur les données distribuées. Les DataFrames offrent une API optimisée similaire à Pandas mais distribuée. Ils sont plus performants que les RDDs pour les données structurées.'),
+                    'startCode' => 'from pyspark.sql import SparkSession
+
+spark = SparkSession.builder.appName("DataFrames").getOrCreate()
+
+# Créez un DataFrame et effectuez des requêtes SQL
+',
+                    'solution' => 'from pyspark.sql import SparkSession
+
+spark = SparkSession.builder.appName("DataFrames").getOrCreate()
+
+# Création
+df = spark.read.csv("data.csv", header=True, inferSchema=True)
+
+# Requête SQL
+df.createOrReplaceTempView("table")
+result = spark.sql("SELECT * FROM table WHERE age > 25")',
+                    'hint' => $getTranslated('hint', 'Utilisez spark.read.csv(), createOrReplaceTempView(), spark.sql()')
+                ],
+                7 => [
+                    'title' => $getTranslated('title', 'NoSQL - MongoDB'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 20,
+                    'instruction' => $getTranslated('instruction', 'Manipulez des données dans MongoDB : insertion, requêtes, agrégations.'),
+                    'description' => $getTranslated('description', 'MongoDB est une base NoSQL document. Les documents sont en JSON/BSON. Les opérations incluent insert, find, update, delete. Les agrégations permettent des requêtes complexes.'),
+                    'startCode' => 'from pymongo import MongoClient
+
+client = MongoClient("mongodb://localhost:27017/")
+db = client["mydb"]
+collection = db["users"]
+
+# Insérez et interrogez des documents
+',
+                    'solution' => 'from pymongo import MongoClient
+
+client = MongoClient("mongodb://localhost:27017/")
+db = client["mydb"]
+collection = db["users"]
+
+# Insertion
+collection.insert_one({"name": "Alice", "age": 30})
+
+# Requête
+result = collection.find({"age": {"$gt": 25}})',
+                    'hint' => $getTranslated('hint', 'Utilisez insert_one(), find(), update_one(), delete_one()')
+                ],
+                8 => [
+                    'title' => $getTranslated('title', 'NoSQL - Cassandra'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 20,
+                    'instruction' => $getTranslated('instruction', 'Expliquez l\'architecture Cassandra : keyspace, tables, partition key, clustering key.'),
+                    'description' => $getTranslated('description', 'Cassandra est une base NoSQL orientée colonnes, distribuée et haute disponibilité. Les keyspaces contiennent les tables. La partition key détermine la distribution, la clustering key l\'ordre.'),
+                    'startCode' => '# Exercice : Cassandra
+# 
+# Expliquez :
+# - Keyspace :
+# - Partition key :
+# - Clustering key :
+',
+                    'solution' => '# Solution :
+# - Keyspace : Conteneur logique (équivalent d\'une base de données)
+# - Partition key : Détermine sur quel nœud les données sont stockées
+# - Clustering key : Détermine l\'ordre des données dans une partition',
+                    'hint' => $getTranslated('hint', 'Partition key = distribution, Clustering key = ordre')
+                ],
+                9 => [
+                    'title' => $getTranslated('title', 'Traitement de Flux - Kafka'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 28,
+                    'instruction' => $getTranslated('instruction', 'Expliquez l\'architecture Kafka : topics, partitions, producers, consumers.'),
+                    'description' => $getTranslated('description', 'Kafka est une plateforme de streaming distribuée. Les topics organisent les messages. Les partitions permettent la parallélisation. Les producers publient, les consumers consomment. Le consumer group distribue le traitement.'),
+                    'startCode' => '# Exercice : Kafka
+# 
+# Expliquez :
+# - Topic :
+# - Partition :
+# - Consumer Group :
+',
+                    'solution' => '# Solution :
+# - Topic : Catégorie de messages (ex: "user-events")
+# - Partition : Division d\'un topic pour parallélisation et scalabilité
+# - Consumer Group : Groupe de consumers partageant le traitement des messages',
+                    'hint' => $getTranslated('hint', 'Topic = catégorie, Partition = division, Consumer Group = distribution')
+                ],
+                10 => [
+                    'title' => $getTranslated('title', 'Spark Streaming'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 30,
+                    'instruction' => $getTranslated('instruction', 'Créez un pipeline Spark Streaming pour traiter des données en temps réel.'),
+                    'description' => $getTranslated('description', 'Spark Streaming traite les données en flux. Il divise le flux en micro-batches (DStreams). Les opérations sont similaires aux RDDs mais sur des fenêtres temporelles. L\'intégration avec Kafka est courante.'),
+                    'startCode' => 'from pyspark.streaming import StreamingContext
+
+ssc = StreamingContext(sc, 1)  # batch interval 1 seconde
+
+# Créez un DStream et traitez les données
+',
+                    'solution' => 'from pyspark.streaming import StreamingContext
+
+ssc = StreamingContext(sc, 1)
+
+# DStream depuis Kafka
+dstream = ssc.socketTextStream("localhost", 9999)
+
+# Traitement
+words = dstream.flatMap(lambda line: line.split(" "))
+word_counts = words.map(lambda word: (word, 1)).reduceByKey(lambda a, b: a + b)
+
+# Démarrage
+ssc.start()
+ssc.awaitTermination()',
+                    'hint' => $getTranslated('hint', 'Utilisez StreamingContext(), socketTextStream(), flatMap(), reduceByKey()')
+                ],
+                11 => [
+                    'title' => $getTranslated('title', 'Data Warehousing'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 28,
+                    'instruction' => $getTranslated('instruction', 'Expliquez l\'architecture d\'un data warehouse : ETL, schéma en étoile, OLAP.'),
+                    'description' => $getTranslated('description', 'Un data warehouse centralise les données pour l\'analyse. L\'ETL (Extract, Transform, Load) prépare les données. Le schéma en étoile organise les faits et dimensions. OLAP permet l\'analyse multidimensionnelle.'),
+                    'startCode' => '# Exercice : Data Warehouse
+# 
+# Expliquez :
+# - ETL :
+# - Schéma en étoile :
+# - OLAP :
+',
+                    'solution' => '# Solution :
+# - ETL : Extract (extraction), Transform (transformation), Load (chargement)
+# - Schéma en étoile : Table de faits centrale entourée de tables de dimensions
+# - OLAP : Analyse multidimensionnelle (drill-down, roll-up, slice, dice)',
+                    'hint' => $getTranslated('hint', 'ETL = processus, Schéma étoile = structure, OLAP = analyse')
+                ],
+                12 => [
+                    'title' => $getTranslated('title', 'Data Lakes'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 28,
+                    'instruction' => $getTranslated('instruction', 'Comparez Data Warehouse et Data Lake : structure, cas d\'usage, technologies.'),
+                    'description' => $getTranslated('description', 'Un Data Lake stocke les données brutes dans leur format natif. Contrairement au Data Warehouse structuré, il accepte tous types de données. Les technologies incluent S3, Azure Data Lake, HDFS.'),
+                    'startCode' => '# Exercice : Data Lake vs Data Warehouse
+# 
+# Comparez :
+# - Structure :
+# - Données :
+# - Cas d\'usage :
+',
+                    'solution' => '# Solution :
+# - Structure : Data Lake = schéma-on-read, Data Warehouse = schéma-on-write
+# - Données : Data Lake = brutes/tous formats, Data Warehouse = structurées
+# - Cas d\'usage : Data Lake = exploration, ML, Data Warehouse = reporting, BI',
+                    'hint' => $getTranslated('hint', 'Data Lake = flexible/brut, Data Warehouse = structuré/optimisé')
+                ],
+                13 => [
+                    'title' => $getTranslated('title', 'Machine Learning sur Big Data'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 30,
+                    'instruction' => $getTranslated('instruction', 'Utilisez MLlib de Spark pour entraîner des modèles ML sur de grandes quantités de données.'),
+                    'description' => $getTranslated('description', 'MLlib est la bibliothèque ML de Spark. Elle distribue l\'entraînement sur plusieurs nœuds. Les algorithmes incluent la classification, la régression, le clustering. Les pipelines MLlib automatisent le workflow.'),
+                    'startCode' => 'from pyspark.ml.classification import RandomForestClassifier
+from pyspark.ml import Pipeline
+
+# Créez un pipeline ML avec Spark
+',
+                    'solution' => 'from pyspark.ml.classification import RandomForestClassifier
+from pyspark.ml import Pipeline
+from pyspark.ml.feature import VectorAssembler
+
+# Assemblage des features
+assembler = VectorAssembler(inputCols=["feature1", "feature2"], outputCol="features")
+
+# Modèle
+rf = RandomForestClassifier(labelCol="label", featuresCol="features")
+
+# Pipeline
+pipeline = Pipeline(stages=[assembler, rf])
+model = pipeline.fit(train_df)',
+                    'hint' => $getTranslated('hint', 'Utilisez VectorAssembler(), RandomForestClassifier(), Pipeline()')
+                ],
+                14 => [
+                    'title' => $getTranslated('title', 'Sécurité et Gouvernance'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 28,
+                    'instruction' => $getTranslated('instruction', 'Expliquez les défis de sécurité et gouvernance dans le Big Data : accès, audit, conformité.'),
+                    'description' => $getTranslated('description', 'La sécurité Big Data implique le contrôle d\'accès (RBAC), le chiffrement (at-rest, in-transit), l\'audit des accès, et la conformité (RGPD). La gouvernance définit les politiques de données.'),
+                    'startCode' => '# Exercice : Sécurité Big Data
+# 
+# Défis principaux :
+# - Contrôle d\'accès :
+# - Chiffrement :
+# - Audit :
+# - Conformité :
+',
+                    'solution' => '# Solution :
+# - Contrôle d\'accès : RBAC, ACLs, authentification (Kerberos)
+# - Chiffrement : Données au repos (AES) et en transit (TLS)
+# - Audit : Logs d\'accès, traçabilité des opérations
+# - Conformité : RGPD, anonymisation, droit à l\'oubli',
+                    'hint' => $getTranslated('hint', 'Pensez aux 4 piliers : accès, chiffrement, audit, conformité')
+                ],
+                15 => [
+                    'title' => $getTranslated('title', 'Architecture Big Data Complète'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 30,
+                    'instruction' => $getTranslated('instruction', 'Concevez une architecture Big Data complète : ingestion, stockage, traitement, analyse.'),
+                    'description' => $getTranslated('description', 'Une architecture complète intègre l\'ingestion (Kafka, Flume), le stockage (HDFS, S3), le traitement (Spark, Hadoop), l\'analyse (Hive, Presto), et la visualisation (Tableau, Power BI).'),
+                    'startCode' => '# Exercice : Architecture Big Data
+# 
+# Composants :
+# - Ingestion :
+# - Stockage :
+# - Traitement :
+# - Analyse :
+# - Visualisation :
+',
+                    'solution' => '# Solution :
+# - Ingestion : Kafka, Flume, NiFi (collecte de données en temps réel)
+# - Stockage : HDFS, S3, Data Lake (stockage distribué)
+# - Traitement : Spark, Hadoop MapReduce (transformation)
+# - Analyse : Hive, Presto, Spark SQL (requêtes SQL)
+# - Visualisation : Tableau, Power BI, Grafana (dashboards)',
+                    'hint' => $getTranslated('hint', 'Pensez au pipeline complet : de l\'ingestion à la visualisation')
+                ],
+            ],
         ];
 
         return $allExercises[$language][$id] ?? null;
@@ -8452,6 +9476,57 @@ end',
                 ['title' => $getTitle(14, 'Ruby on Rails - Models'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
                 ['title' => $getTitle(15, 'RubyGems'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 25],
             ],
+            'cybersecurite' => [
+                ['title' => $getTitle(1, 'Introduction à la Cybersécurité'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(2, 'Principes de Sécurité (CIA)'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 12],
+                ['title' => $getTitle(3, 'Identification des Menaces'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 12],
+                ['title' => $getTitle(4, 'Cryptographie de Base'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 18],
+                ['title' => $getTitle(5, 'Sécurité des Réseaux'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
+                ['title' => $getTitle(6, 'Sécurité des Applications'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
+                ['title' => $getTitle(7, 'Gestion des Incidents'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 22],
+                ['title' => $getTitle(8, 'Législation et Conformité'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 18],
+                ['title' => $getTitle(9, 'Analyse de Vulnérabilités'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(10, 'Hacking Éthique'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+                ['title' => $getTitle(11, 'Forensique Numérique'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+                ['title' => $getTitle(12, 'Sécurité Cloud'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(13, 'DevSecOps'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+                ['title' => $getTitle(14, 'Gouvernance et GRC'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(15, 'Cas Pratiques de Sécurité'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+            ],
+            'data-science' => [
+                ['title' => $getTitle(1, 'Introduction à la Data Science'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(2, 'Statistiques Descriptives'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 12],
+                ['title' => $getTitle(3, 'Manipulation avec Pandas'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 12],
+                ['title' => $getTitle(4, 'Analyse Exploratoire (EDA)'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 18],
+                ['title' => $getTitle(5, 'Visualisation de Données'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
+                ['title' => $getTitle(6, 'Machine Learning - Classification'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 22],
+                ['title' => $getTitle(7, 'Machine Learning - Régression'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 22],
+                ['title' => $getTitle(8, 'Clustering (K-Means)'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
+                ['title' => $getTitle(9, 'Évaluation des Modèles'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(10, 'Feature Engineering'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+                ['title' => $getTitle(11, 'Deep Learning avec TensorFlow'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+                ['title' => $getTitle(12, 'NLP - Analyse de Sentiments'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(13, 'Time Series Analysis'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+                ['title' => $getTitle(14, 'Déploiement de Modèles'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(15, 'Projet Data Science Complet'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+            ],
+            'big-data' => [
+                ['title' => $getTitle(1, 'Introduction au Big Data'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(2, 'Les 5 V du Big Data'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 12],
+                ['title' => $getTitle(3, 'HDFS - Stockage Distribué'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 18],
+                ['title' => $getTitle(4, 'MapReduce - Concepts'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
+                ['title' => $getTitle(5, 'Apache Spark - RDDs'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 22],
+                ['title' => $getTitle(6, 'Spark SQL et DataFrames'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 22],
+                ['title' => $getTitle(7, 'NoSQL - MongoDB'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
+                ['title' => $getTitle(8, 'NoSQL - Cassandra'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
+                ['title' => $getTitle(9, 'Traitement de Flux - Kafka'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(10, 'Spark Streaming'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+                ['title' => $getTitle(11, 'Data Warehousing'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(12, 'Data Lakes'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(13, 'Machine Learning sur Big Data'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+                ['title' => $getTitle(14, 'Sécurité et Gouvernance'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(15, 'Architecture Big Data Complète'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+            ],
         ];
 
         return $allExercises[$language] ?? [];
@@ -8478,6 +9553,12 @@ end',
             ['name' => trans('app.formations.languages.cpp'), 'slug' => 'cpp', 'icon' => 'fab fa-cuttlefish', 'color' => 'blue', 'questions' => 20],
             ['name' => trans('app.formations.languages.csharp'), 'slug' => 'csharp', 'icon' => 'fab fa-microsoft', 'color' => 'green', 'questions' => 20],
             ['name' => trans('app.formations.languages.dart'), 'slug' => 'dart', 'icon' => 'fas fa-feather-alt', 'color' => 'blue', 'questions' => 20],
+            ['name' => trans('app.formations.languages.go'), 'slug' => 'go', 'icon' => 'fab fa-golang', 'color' => 'blue', 'questions' => 20],
+            ['name' => trans('app.formations.languages.rust'), 'slug' => 'rust', 'icon' => 'fab fa-rust', 'color' => 'black', 'questions' => 20],
+            ['name' => trans('app.formations.languages.ruby'), 'slug' => 'ruby', 'icon' => 'fas fa-gem', 'color' => 'red', 'questions' => 20],
+            ['name' => trans('app.formations.languages.cybersecurite'), 'slug' => 'cybersecurite', 'icon' => 'fas fa-shield-alt', 'color' => 'orange', 'questions' => 20],
+            ['name' => trans('app.formations.languages.data-science'), 'slug' => 'data-science', 'icon' => 'fas fa-chart-line', 'color' => 'blue', 'questions' => 20],
+            ['name' => trans('app.formations.languages.big-data'), 'slug' => 'big-data', 'icon' => 'fas fa-database', 'color' => 'purple', 'questions' => 20],
         ];
         
         return view('quiz', compact('languages'));
@@ -9026,6 +10107,72 @@ end',
                 ['question' => 'Qu\'est-ce qu\'une gem ?', 'options' => ['Une bibliothèque Ruby', 'Un package', 'Un module', 'Les deux A et B'], 'correct' => 3],
                 ['question' => 'Comment utiliser une gem ?', 'options' => ['gem install nom', 'require "nom"', 'Les deux A et B', 'import nom'], 'correct' => 2],
                 ['question' => 'Comment utiliser symbol ?', 'options' => [':sym', 'sym:', ':symbol', 'symbol:'], 'correct' => 0],
+            ],
+            'cybersecurite' => [
+                ['question' => 'Que signifie la triade CIA en cybersécurité ?', 'options' => ['Confidentialité, Intégrité, Disponibilité', 'Central Intelligence Agency', 'Computer Information Access', 'Cybersecurity Information Analysis'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce qu\'un malware ?', 'options' => ['Un logiciel malveillant', 'Un antivirus', 'Un pare-feu', 'Un protocole de sécurité'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce que le phishing ?', 'options' => ['Une attaque d\'ingénierie sociale', 'Un type de virus', 'Un protocole réseau', 'Un algorithme de chiffrement'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce qu\'un firewall ?', 'options' => ['Un système de filtrage du trafic réseau', 'Un antivirus', 'Un système de détection d\'intrusion', 'Un protocole de chiffrement'], 'correct' => 0],
+                ['question' => 'Que signifie VPN ?', 'options' => ['Virtual Private Network', 'Very Private Network', 'Virtual Public Network', 'Verified Private Network'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce que le chiffrement ?', 'options' => ['La transformation de données en format illisible', 'La suppression de données', 'La copie de données', 'La compression de données'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce qu\'une vulnérabilité Zero-Day ?', 'options' => ['Une vulnérabilité inconnue et non corrigée', 'Une vulnérabilité corrigée', 'Un type de malware', 'Un protocole de sécurité'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce que l\'authentification à deux facteurs (2FA) ?', 'options' => ['Une méthode de vérification en deux étapes', 'Un type de chiffrement', 'Un protocole réseau', 'Un système de détection'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce qu\'une attaque DDoS ?', 'options' => ['Déni de service distribué', 'Data Distribution Service', 'Digital Defense System', 'Dynamic Data Storage'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce que le RGPD ?', 'options' => ['Règlement Général sur la Protection des Données', 'Réseau Général de Protection des Données', 'Règlement Général de Prévention des Données', 'Réseau Général de Prévention des Données'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce qu\'un IDS ?', 'options' => ['Intrusion Detection System', 'Internet Defense System', 'Internal Data Security', 'Information Defense System'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce que le hacking éthique ?', 'options' => ['Le piratage autorisé pour tester la sécurité', 'Le piratage illégal', 'Un type de malware', 'Un protocole de sécurité'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce que la cryptographie asymétrique ?', 'options' => ['Un système utilisant une paire de clés (publique/privée)', 'Un système utilisant une seule clé', 'Un type de malware', 'Un protocole réseau'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce qu\'un certificat SSL/TLS ?', 'options' => ['Un certificat numérique pour sécuriser les communications', 'Un type de malware', 'Un protocole réseau', 'Un système de détection'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce que la gestion des incidents de sécurité ?', 'options' => ['Le processus de réponse aux incidents', 'La prévention des incidents', 'Le chiffrement des données', 'La sauvegarde des données'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce que DevSecOps ?', 'options' => ['L\'intégration de la sécurité dans DevOps', 'Un type de malware', 'Un protocole réseau', 'Un système de détection'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce que la forensique numérique ?', 'options' => ['L\'investigation d\'incidents de sécurité', 'La prévention des attaques', 'Le chiffrement des données', 'La sauvegarde des données'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce qu\'un honeypot ?', 'options' => ['Un système piège pour attirer les attaquants', 'Un type de malware', 'Un protocole réseau', 'Un système de détection'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce que la sécurité du cloud ?', 'options' => ['La sécurisation des données et services cloud', 'Un type de malware', 'Un protocole réseau', 'Un système de détection'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce que la gouvernance de la sécurité ?', 'options' => ['La gestion stratégique de la sécurité', 'La prévention des attaques', 'Le chiffrement des données', 'La sauvegarde des données'], 'correct' => 0],
+            ],
+            'data-science' => [
+                ['question' => 'Que signifie EDA en Data Science ?', 'options' => ['Exploratory Data Analysis', 'External Data Access', 'Extended Data Analysis', 'Exact Data Analysis'], 'correct' => 0],
+                ['question' => 'Quelle bibliothèque Python est utilisée pour la manipulation de données ?', 'options' => ['Pandas', 'NumPy', 'Matplotlib', 'Scikit-learn'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce que le Machine Learning supervisé ?', 'options' => ['L\'apprentissage avec des données étiquetées', 'L\'apprentissage sans données étiquetées', 'L\'apprentissage par renforcement', 'L\'apprentissage automatique'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce que le clustering ?', 'options' => ['Le regroupement de données similaires', 'La classification de données', 'La régression', 'La visualisation'], 'correct' => 0],
+                ['question' => 'Quelle bibliothèque Python est utilisée pour le Machine Learning ?', 'options' => ['Scikit-learn', 'Pandas', 'NumPy', 'Matplotlib'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce qu\'un DataFrame ?', 'options' => ['Une structure de données tabulaire en Pandas', 'Un type de graphique', 'Un algorithme', 'Un modèle'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce que la validation croisée ?', 'options' => ['Une technique d\'évaluation de modèle', 'Un type de clustering', 'Une méthode de visualisation', 'Un algorithme de régression'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce que l\'overfitting ?', 'options' => ['Le surapprentissage d\'un modèle', 'Le sous-apprentissage', 'L\'apprentissage optimal', 'L\'apprentissage rapide'], 'correct' => 0],
+                ['question' => 'Quelle bibliothèque Python est utilisée pour la visualisation ?', 'options' => ['Matplotlib et Seaborn', 'Pandas', 'NumPy', 'Scikit-learn'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce que la régression linéaire ?', 'options' => ['Un modèle prédictif pour les valeurs continues', 'Un modèle de classification', 'Un algorithme de clustering', 'Une méthode de visualisation'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce que le NLP ?', 'options' => ['Natural Language Processing', 'Neural Learning Process', 'Network Layer Protocol', 'New Learning Pattern'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce qu\'un feature en Machine Learning ?', 'options' => ['Une variable d\'entrée', 'Un résultat', 'Un modèle', 'Un algorithme'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce que le Deep Learning ?', 'options' => ['L\'apprentissage avec des réseaux neuronaux profonds', 'L\'apprentissage superficiel', 'L\'apprentissage par renforcement', 'L\'apprentissage automatique'], 'correct' => 0],
+                ['question' => 'Quelle bibliothèque est utilisée pour le Deep Learning ?', 'options' => ['TensorFlow et PyTorch', 'Pandas', 'NumPy', 'Scikit-learn'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce que la normalisation des données ?', 'options' => ['La mise à l\'échelle des données', 'La suppression des données', 'La copie des données', 'La compression des données'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce qu\'un modèle de classification ?', 'options' => ['Un modèle qui prédit des catégories', 'Un modèle qui prédit des valeurs continues', 'Un algorithme de clustering', 'Une méthode de visualisation'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce que la corrélation ?', 'options' => ['La relation entre deux variables', 'La différence entre deux variables', 'La somme de deux variables', 'Le produit de deux variables'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce que le feature engineering ?', 'options' => ['La création de nouvelles variables pertinentes', 'La suppression de variables', 'La copie de variables', 'La compression de variables'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce qu\'un pipeline de données ?', 'options' => ['Un flux de traitement automatisé des données', 'Un type de graphique', 'Un algorithme', 'Un modèle'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce que l\'A/B testing ?', 'options' => ['L\'expérimentation pour comparer deux versions', 'Un type de clustering', 'Une méthode de visualisation', 'Un algorithme de régression'], 'correct' => 0],
+            ],
+            'big-data' => [
+                ['question' => 'Que signifie HDFS ?', 'options' => ['Hadoop Distributed File System', 'High Data File System', 'Huge Data File System', 'Hybrid Data File System'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce que MapReduce ?', 'options' => ['Un modèle de programmation pour le traitement distribué', 'Un système de fichiers', 'Un protocole réseau', 'Un algorithme de clustering'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce qu\'Apache Spark ?', 'options' => ['Un moteur d\'analyse unifié pour le Big Data', 'Un système de fichiers', 'Un protocole réseau', 'Un algorithme de clustering'], 'correct' => 0],
+                ['question' => 'Quels sont les 5 V du Big Data ?', 'options' => ['Volume, Vitesse, Variété, Véracité, Valeur', 'Volume, Vitesse, Variété, Validation, Valeur', 'Volume, Vitesse, Variété, Véracité, Validation', 'Volume, Vitesse, Variété, Véracité, Vérification'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce qu\'un Data Lake ?', 'options' => ['Un dépôt de données brutes non structurées', 'Un entrepôt de données structurées', 'Un système de fichiers', 'Un protocole réseau'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce qu\'un Data Warehouse ?', 'options' => ['Un entrepôt de données structurées et organisées', 'Un dépôt de données brutes', 'Un système de fichiers', 'Un protocole réseau'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce qu\'Apache Kafka ?', 'options' => ['Une plateforme de streaming distribué', 'Un système de fichiers', 'Un protocole réseau', 'Un algorithme de clustering'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce que NoSQL ?', 'options' => ['Des bases de données non relationnelles', 'Des bases de données relationnelles', 'Un système de fichiers', 'Un protocole réseau'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce qu\'un RDD dans Spark ?', 'options' => ['Resilient Distributed Dataset', 'Real-time Data Distribution', 'Reliable Data Distribution', 'Rapid Data Distribution'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce que le streaming de données ?', 'options' => ['Le traitement de données en temps réel', 'Le stockage de données', 'La copie de données', 'La compression de données'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce qu\'un NameNode dans HDFS ?', 'options' => ['Le nœud maître qui gère les métadonnées', 'Un nœud de données', 'Un protocole réseau', 'Un algorithme'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce qu\'un DataNode dans HDFS ?', 'options' => ['Un nœud qui stocke les données', 'Le nœud maître', 'Un protocole réseau', 'Un algorithme'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce que la réplication dans HDFS ?', 'options' => ['La copie de données sur plusieurs nœuds', 'La suppression de données', 'La compression de données', 'Le chiffrement de données'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce qu\'un DataFrame dans Spark ?', 'options' => ['Une structure de données distribuée', 'Un système de fichiers', 'Un protocole réseau', 'Un algorithme'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce que le batch processing ?', 'options' => ['Le traitement par lots', 'Le traitement en temps réel', 'Le stockage de données', 'La copie de données'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce que MongoDB ?', 'options' => ['Une base de données NoSQL orientée documents', 'Une base de données relationnelle', 'Un système de fichiers', 'Un protocole réseau'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce que Cassandra ?', 'options' => ['Une base de données NoSQL orientée colonnes', 'Une base de données relationnelle', 'Un système de fichiers', 'Un protocole réseau'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce que la scalabilité horizontale ?', 'options' => ['L\'ajout de nœuds pour augmenter la capacité', 'L\'amélioration des nœuds existants', 'La suppression de nœuds', 'Le remplacement de nœuds'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce que Spark Streaming ?', 'options' => ['Le traitement de flux de données en temps réel avec Spark', 'Le stockage de données', 'La copie de données', 'La compression de données'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce que la gouvernance des données Big Data ?', 'options' => ['La gestion et le contrôle des données', 'Le stockage de données', 'La copie de données', 'La compression de données'], 'correct' => 0],
             ],
         ];
 

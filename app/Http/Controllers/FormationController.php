@@ -23,7 +23,8 @@ class FormationController extends Controller
                 'icon' => 'fab fa-html5',
                 'color' => '#e34c26',
                 'description' => trans('app.formations.html5.description'),
-                'route' => route('formations.html5')
+                'route' => route('formations.html5'),
+                'category' => 'frontend'
             ],
             [
                 'name' => trans('app.formations.languages.css3'),
@@ -31,7 +32,8 @@ class FormationController extends Controller
                 'icon' => 'fab fa-css3-alt',
                 'color' => '#264de4',
                 'description' => trans('app.formations.css3.description'),
-                'route' => route('formations.css3')
+                'route' => route('formations.css3'),
+                'category' => 'frontend'
             ],
             [
                 'name' => trans('app.formations.languages.javascript'),
@@ -39,7 +41,8 @@ class FormationController extends Controller
                 'icon' => 'fab fa-js',
                 'color' => '#f7df1e',
                 'description' => trans('app.formations.javascript.description'),
-                'route' => route('formations.javascript')
+                'route' => route('formations.javascript'),
+                'category' => 'frontend'
             ],
             [
                 'name' => trans('app.formations.languages.php'),
@@ -47,7 +50,8 @@ class FormationController extends Controller
                 'icon' => 'fab fa-php',
                 'color' => '#777bb4',
                 'description' => trans('app.formations.php.description'),
-                'route' => route('formations.php')
+                'route' => route('formations.php'),
+                'category' => 'backend'
             ],
             [
                 'name' => trans('app.formations.languages.python'),
@@ -55,7 +59,8 @@ class FormationController extends Controller
                 'icon' => 'fab fa-python',
                 'color' => '#3776ab',
                 'description' => trans('app.formations.python.description'),
-                'route' => route('formations.python')
+                'route' => route('formations.python'),
+                'category' => 'backend'
             ],
             [
                 'name' => trans('app.formations.languages.java'),
@@ -63,7 +68,8 @@ class FormationController extends Controller
                 'icon' => 'fab fa-java',
                 'color' => '#ed8b00',
                 'description' => trans('app.formations.java.description'),
-                'route' => route('formations.java')
+                'route' => route('formations.java'),
+                'category' => 'backend'
             ],
             [
                 'name' => trans('app.formations.languages.sql'),
@@ -71,7 +77,8 @@ class FormationController extends Controller
                 'icon' => 'fas fa-database',
                 'color' => '#336791',
                 'description' => trans('app.formations.sql.description'),
-                'route' => route('formations.sql')
+                'route' => route('formations.sql'),
+                'category' => 'database'
             ],
             [
                 'name' => trans('app.formations.languages.c'),
@@ -79,7 +86,8 @@ class FormationController extends Controller
                 'icon' => 'fab fa-c',
                 'color' => '#a8b9cc',
                 'description' => trans('app.formations.c.description'),
-                'route' => route('formations.c')
+                'route' => route('formations.c'),
+                'category' => 'backend'
             ],
             [
                 'name' => trans('app.formations.languages.bootstrap'),
@@ -87,7 +95,8 @@ class FormationController extends Controller
                 'icon' => 'fab fa-bootstrap',
                 'color' => '#7952b3',
                 'description' => trans('app.formations.bootstrap.description'),
-                'route' => route('formations.bootstrap')
+                'route' => route('formations.bootstrap'),
+                'category' => 'frontend'
             ],
             [
                 'name' => trans('app.formations.languages.git'),
@@ -95,7 +104,8 @@ class FormationController extends Controller
                 'icon' => 'fab fa-git-alt',
                 'color' => '#f05032',
                 'description' => trans('app.formations.git.description'),
-                'route' => route('formations.git')
+                'route' => route('formations.git'),
+                'category' => 'tools'
             ],
             [
                 'name' => trans('app.formations.languages.wordpress'),
@@ -103,7 +113,8 @@ class FormationController extends Controller
                 'icon' => 'fab fa-wordpress',
                 'color' => '#21759b',
                 'description' => trans('app.formations.wordpress.description'),
-                'route' => route('formations.wordpress')
+                'route' => route('formations.wordpress'),
+                'category' => 'tools'
             ],
             [
                 'name' => trans('app.formations.languages.ia'),
@@ -111,7 +122,8 @@ class FormationController extends Controller
                 'icon' => 'fas fa-robot',
                 'color' => '#00d9ff',
                 'description' => trans('app.formations.ia.description'),
-                'route' => route('formations.ia')
+                'route' => route('formations.ia'),
+                'category' => 'ai'
             ],
             [
                 'name' => trans('app.formations.languages.cpp'),
@@ -119,7 +131,8 @@ class FormationController extends Controller
                 'icon' => 'fab fa-cuttlefish',
                 'color' => '#00599c',
                 'description' => trans('app.formations.cpp.description'),
-                'route' => route('formations.cpp')
+                'route' => route('formations.cpp'),
+                'category' => 'backend'
             ],
             [
                 'name' => trans('app.formations.languages.csharp'),
@@ -127,7 +140,8 @@ class FormationController extends Controller
                 'icon' => 'fab fa-microsoft',
                 'color' => '#239120',
                 'description' => trans('app.formations.csharp.description'),
-                'route' => route('formations.csharp')
+                'route' => route('formations.csharp'),
+                'category' => 'backend'
             ],
             [
                 'name' => trans('app.formations.languages.dart'),
@@ -135,7 +149,8 @@ class FormationController extends Controller
                 'icon' => 'fas fa-feather-alt',
                 'color' => '#0175c2',
                 'description' => trans('app.formations.dart.description'),
-                'route' => route('formations.dart')
+                'route' => route('formations.dart'),
+                'category' => 'backend'
             ],
             [
                 'name' => trans('app.formations.languages.go'),
@@ -143,7 +158,8 @@ class FormationController extends Controller
                 'icon' => 'fab fa-golang',
                 'color' => '#00add8',
                 'description' => trans('app.formations.go.description'),
-                'route' => route('formations.go')
+                'route' => route('formations.go'),
+                'category' => 'backend'
             ],
             [
                 'name' => trans('app.formations.languages.rust'),
@@ -151,7 +167,8 @@ class FormationController extends Controller
                 'icon' => 'fab fa-rust',
                 'color' => '#000000',
                 'description' => trans('app.formations.rust.description'),
-                'route' => route('formations.rust')
+                'route' => route('formations.rust'),
+                'category' => 'backend'
             ],
             [
                 'name' => trans('app.formations.languages.ruby'),
@@ -159,7 +176,35 @@ class FormationController extends Controller
                 'icon' => 'fas fa-gem',
                 'color' => '#cc342d',
                 'description' => trans('app.formations.ruby.description'),
-                'route' => route('formations.ruby')
+                'route' => route('formations.ruby'),
+                'category' => 'backend'
+            ],
+            [
+                'name' => trans('app.formations.languages.cybersecurite'),
+                'slug' => 'cybersecurite',
+                'icon' => 'fas fa-shield-alt',
+                'color' => '#ff6b35',
+                'description' => trans('app.formations.cybersecurite.description'),
+                'route' => route('formations.cybersecurite'),
+                'category' => 'security'
+            ],
+            [
+                'name' => trans('app.formations.languages.data-science'),
+                'slug' => 'data-science',
+                'icon' => 'fas fa-chart-line',
+                'color' => '#00a8ff',
+                'description' => trans('app.formations.data-science.description'),
+                'route' => route('formations.data-science'),
+                'category' => 'data'
+            ],
+            [
+                'name' => trans('app.formations.languages.big-data'),
+                'slug' => 'big-data',
+                'icon' => 'fas fa-database',
+                'color' => '#6c5ce7',
+                'description' => trans('app.formations.big-data.description'),
+                'route' => route('formations.big-data'),
+                'category' => 'data'
             ],
         ];
         
@@ -278,6 +323,21 @@ class FormationController extends Controller
     public function ruby()
     {
         return $this->showFormation('ruby', 'formations.ruby');
+    }
+
+    public function cybersecurite()
+    {
+        return $this->showFormation('cybersecurite', 'formations.cybersecurite');
+    }
+
+    public function dataScience()
+    {
+        return $this->showFormation('data-science', 'formations.data-science');
+    }
+
+    public function bigData()
+    {
+        return $this->showFormation('big-data', 'formations.big-data');
     }
 }
 

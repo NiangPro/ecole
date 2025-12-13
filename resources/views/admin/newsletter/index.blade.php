@@ -192,82 +192,86 @@
         </div>
     </form>
 
-    <!-- Subscribers List -->
+    <!-- Subscribers Table -->
     @if($subscribers->count() > 0)
-    <div class="subscribers-list">
-        @foreach($subscribers as $subscriber)
-        <div class="subscriber-card {{ $subscriber->is_active ? 'subscriber-active' : 'subscriber-inactive' }}">
-            <!-- Card Header -->
-            <div class="subscriber-card-header">
-                <div class="subscriber-header-left">
-                    <input type="checkbox" name="ids[]" value="{{ $subscriber->id }}" class="row-checkbox bulk-checkbox" form="bulk-action-form">
-                    <div class="subscriber-avatar">
-                        <i class="fas fa-envelope"></i>
-                    </div>
-                    <div class="subscriber-email-info">
-                        <h3 class="subscriber-email">{{ $subscriber->email }}</h3>
-                    </div>
-                </div>
-                <div class="subscriber-status-badge status-{{ $subscriber->is_active ? 'active' : 'inactive' }}">
-                    @if($subscriber->is_active)
-                        <i class="fas fa-check-circle"></i>
-                        <span>Actif</span>
-                    @else
-                        <i class="fas fa-times-circle"></i>
-                        <span>Inactif</span>
-                    @endif
-                </div>
-            </div>
-
-            <!-- Card Body -->
-            <div class="subscriber-card-body">
-                <div class="subscriber-details-grid">
-                    <div class="subscriber-detail-item">
-                        <div class="detail-icon">
+    <div class="newsletter-table-wrapper">
+        <table class="newsletter-table">
+            <thead>
+                <tr>
+                    <th class="table-col-checkbox">
+                        <input type="checkbox" id="select-all" class="bulk-checkbox" onchange="toggleSelectAll()">
+                    </th>
+                    <th class="table-col-email">Email</th>
+                    <th class="table-col-created">Date d'inscription</th>
+                    <th class="table-col-subscribed">Date d'abonnement</th>
+                    <th class="table-col-status">Statut</th>
+                    <th class="table-col-actions">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($subscribers as $subscriber)
+                <tr class="table-row table-row-{{ $subscriber->is_active ? 'active' : 'inactive' }}">
+                    <td class="table-cell table-cell-checkbox">
+                        <input type="checkbox" name="ids[]" value="{{ $subscriber->id }}" class="row-checkbox bulk-checkbox" form="bulk-action-form" onchange="updateSelectedCount()">
+                    </td>
+                    <td class="table-cell table-cell-email">
+                        <div class="cell-email-wrapper">
+                            <div class="cell-avatar cell-avatar-{{ $subscriber->is_active ? 'active' : 'inactive' }}">
+                                <i class="fas fa-envelope"></i>
+                            </div>
+                            <div class="cell-email-text">{{ $subscriber->email }}</div>
+                        </div>
+                    </td>
+                    <td class="table-cell table-cell-created">
+                        <div class="cell-date-text">
                             <i class="fas fa-calendar-plus"></i>
+                            {{ $subscriber->created_at->format('d/m/Y') }}
+                            <span class="cell-time">{{ $subscriber->created_at->format('H:i') }}</span>
                         </div>
-                        <div class="detail-content">
-                            <div class="detail-label">Date d'inscription</div>
-                            <div class="detail-value">
-                                {{ $subscriber->created_at->format('d/m/Y H:i') }}
-                            </div>
+                    </td>
+                    <td class="table-cell table-cell-subscribed">
+                        <div class="cell-date-text">
+                            @if($subscriber->subscribed_at)
+                                <i class="fas fa-calendar-check"></i>
+                                {{ $subscriber->subscribed_at->format('d/m/Y') }}
+                                <span class="cell-time">{{ $subscriber->subscribed_at->format('H:i') }}</span>
+                            @else
+                                <span class="cell-no-data">N/A</span>
+                            @endif
                         </div>
-                    </div>
-                    
-                    <div class="subscriber-detail-item">
-                        <div class="detail-icon">
-                            <i class="fas fa-calendar-check"></i>
+                    </td>
+                    <td class="table-cell table-cell-status">
+                        <span class="cell-status-badge cell-status-{{ $subscriber->is_active ? 'active' : 'inactive' }}">
+                            @if($subscriber->is_active)
+                                <i class="fas fa-check-circle"></i>
+                                <span>Actif</span>
+                            @else
+                                <i class="fas fa-times-circle"></i>
+                                <span>Inactif</span>
+                            @endif
+                        </span>
+                    </td>
+                    <td class="table-cell table-cell-actions">
+                        <div class="cell-actions-wrapper">
+                            <form action="{{ route('admin.newsletter.toggle', $subscriber->id) }}" method="POST" class="action-form-inline">
+                                @csrf
+                                <button type="submit" class="action-btn-icon action-toggle" title="{{ $subscriber->is_active ? 'Désactiver' : 'Activer' }}">
+                                    <i class="fas fa-sync-alt"></i>
+                                </button>
+                            </form>
+                            <form action="{{ route('admin.newsletter.destroy', $subscriber->id) }}" method="POST" class="action-form-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet abonné ?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="action-btn-icon action-delete" title="Supprimer">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
                         </div>
-                        <div class="detail-content">
-                            <div class="detail-label">Date d'abonnement</div>
-                            <div class="detail-value">
-                                {{ $subscriber->subscribed_at ? $subscriber->subscribed_at->format('d/m/Y H:i') : 'N/A' }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card Actions -->
-            <div class="subscriber-card-actions">
-                <form action="{{ route('admin.newsletter.toggle', $subscriber->id) }}" method="POST" class="action-form">
-                    @csrf
-                    <button type="submit" class="action-btn action-toggle" title="{{ $subscriber->is_active ? 'Désactiver' : 'Activer' }}">
-                        <i class="fas fa-sync-alt"></i>
-                        <span>{{ $subscriber->is_active ? 'Désactiver' : 'Activer' }}</span>
-                    </button>
-                </form>
-                <form action="{{ route('admin.newsletter.destroy', $subscriber->id) }}" method="POST" class="action-form" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cet abonné ?');">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="action-btn action-delete">
-                        <i class="fas fa-trash-alt"></i>
-                        <span>Supprimer</span>
-                    </button>
-                </form>
-            </div>
-        </div>
-        @endforeach
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
     </div>
 
     <!-- Pagination -->
@@ -844,244 +848,333 @@ body.light-mode .bulk-action-select {
     box-shadow: 0 6px 20px rgba(6, 182, 212, 0.4);
 }
 
-/* Subscribers List */
-.subscribers-list {
-    display: grid;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-}
-
-/* Subscriber Card */
-.subscriber-card {
+/* Newsletter Table */
+.newsletter-table-wrapper {
     background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(51, 65, 85, 0.8));
-    border: 2px solid rgba(6, 182, 212, 0.3);
-    border-radius: 24px;
-    padding: 2rem;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(6, 182, 212, 0.3);
+    border-radius: 20px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    overflow-x: auto;
+    overflow-y: hidden;
     position: relative;
-    overflow: hidden;
+    /* Scrollbar moderne pour Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(6, 182, 212, 0.6) rgba(6, 182, 212, 0.1);
 }
 
-body.light-mode .subscriber-card {
+body.light-mode .newsletter-table-wrapper {
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.95));
     border-color: rgba(6, 182, 212, 0.3);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    scrollbar-color: rgba(6, 182, 212, 0.5) rgba(6, 182, 212, 0.1);
 }
 
-.subscriber-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
+/* Scrollbar moderne pour WebKit (Chrome, Safari, Edge) */
+.newsletter-table-wrapper::-webkit-scrollbar {
+    height: 14px;
+}
+
+.newsletter-table-wrapper::-webkit-scrollbar-track {
+    background: rgba(6, 182, 212, 0.1);
+    border-radius: 10px;
+    margin: 0 1rem;
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+}
+
+body.light-mode .newsletter-table-wrapper::-webkit-scrollbar-track {
+    background: rgba(6, 182, 212, 0.08);
+}
+
+.newsletter-table-wrapper::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg, rgba(6, 182, 212, 0.6), rgba(20, 184, 166, 0.6));
+    border-radius: 10px;
+    border: 3px solid transparent;
+    background-clip: padding-box;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.newsletter-table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(90deg, rgba(6, 182, 212, 0.8), rgba(20, 184, 166, 0.8));
+    background-clip: padding-box;
+    transform: scale(1.02);
+    box-shadow: 0 0 10px rgba(6, 182, 212, 0.4);
+}
+
+.newsletter-table-wrapper::-webkit-scrollbar-thumb:active {
     background: linear-gradient(90deg, #06b6d4, #14b8a6);
-    opacity: 0;
-    transition: opacity 0.3s;
+    background-clip: padding-box;
+    box-shadow: 0 0 15px rgba(6, 182, 212, 0.6);
 }
 
-.subscriber-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 12px 40px rgba(6, 182, 212, 0.4);
-    border-color: rgba(6, 182, 212, 0.6);
+body.light-mode .newsletter-table-wrapper::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg, rgba(6, 182, 212, 0.5), rgba(20, 184, 166, 0.5));
 }
 
-.subscriber-card:hover::before {
-    opacity: 1;
+body.light-mode .newsletter-table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(90deg, rgba(6, 182, 212, 0.7), rgba(20, 184, 166, 0.7));
 }
 
-.subscriber-active {
-    border-color: rgba(16, 185, 129, 0.5);
+body.light-mode .newsletter-table-wrapper::-webkit-scrollbar-thumb:active {
+    background: linear-gradient(90deg, #06b6d4, #14b8a6);
 }
 
-.subscriber-active::before {
-    background: linear-gradient(90deg, #10b981, #059669);
+.newsletter-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    min-width: 900px;
 }
 
-.subscriber-inactive {
-    border-color: rgba(239, 68, 68, 0.5);
-    opacity: 0.8;
+.newsletter-table thead {
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(20, 184, 166, 0.15));
 }
 
-.subscriber-inactive::before {
-    background: linear-gradient(90deg, #ef4444, #dc2626);
+body.light-mode .newsletter-table thead {
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(20, 184, 166, 0.1));
 }
 
-.subscriber-card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 1.5rem;
-    gap: 1rem;
+.newsletter-table th {
+    padding: 1.25rem 1rem;
+    text-align: left;
+    font-weight: 800;
+    font-size: 0.9rem;
+    color: #06b6d4;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid rgba(6, 182, 212, 0.3);
+    white-space: nowrap;
 }
 
-.subscriber-header-left {
+body.light-mode .newsletter-table th {
+    color: #06b6d4;
+}
+
+.newsletter-table tbody tr {
+    transition: all 0.3s ease;
+    border-bottom: 1px solid rgba(6, 182, 212, 0.1);
+}
+
+.newsletter-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.newsletter-table tbody tr:hover {
+    background: rgba(6, 182, 212, 0.05);
+}
+
+body.light-mode .newsletter-table tbody tr:hover {
+    background: rgba(6, 182, 212, 0.03);
+}
+
+/* Lignes colorées selon le statut */
+.table-row-active {
+    background: rgba(16, 185, 129, 0.08);
+    border-left: 4px solid #10b981;
+}
+
+body.light-mode .table-row-active {
+    background: rgba(16, 185, 129, 0.05);
+}
+
+.table-row-active:hover {
+    background: rgba(16, 185, 129, 0.15);
+}
+
+body.light-mode .table-row-active:hover {
+    background: rgba(16, 185, 129, 0.1);
+}
+
+.table-row-inactive {
+    background: rgba(239, 68, 68, 0.08);
+    border-left: 4px solid #ef4444;
+}
+
+body.light-mode .table-row-inactive {
+    background: rgba(239, 68, 68, 0.05);
+}
+
+.table-row-inactive:hover {
+    background: rgba(239, 68, 68, 0.15);
+}
+
+body.light-mode .table-row-inactive:hover {
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.newsletter-table td {
+    padding: 1.25rem 1rem;
+    vertical-align: middle;
+}
+
+/* Colonnes */
+.table-col-checkbox { width: 50px; }
+.table-col-email { width: 300px; }
+.table-col-created { width: 180px; }
+.table-col-subscribed { width: 180px; }
+.table-col-status { width: 140px; }
+.table-col-actions { width: 120px; }
+
+/* Cellules */
+.table-cell {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+body.light-mode .table-cell {
+    color: #334155;
+}
+
+.table-cell-checkbox {
+    text-align: center;
+}
+
+.cell-email-wrapper {
     display: flex;
     align-items: center;
-    gap: 1rem;
-    flex: 1;
+    gap: 0.75rem;
 }
 
-.subscriber-avatar {
-    width: 60px;
-    height: 60px;
-    background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2));
-    border-radius: 16px;
+.cell-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
-    color: #06b6d4;
-    border: 2px solid rgba(6, 182, 212, 0.3);
+    font-size: 1rem;
+    border: 2px solid;
+    flex-shrink: 0;
 }
 
-.subscriber-email-info {
-    flex: 1;
+.cell-avatar-active {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.2));
+    border-color: rgba(16, 185, 129, 0.4);
+    color: #10b981;
 }
 
-.subscriber-email {
-    font-size: 1.25rem;
-    font-weight: 800;
+.cell-avatar-inactive {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.2));
+    border-color: rgba(239, 68, 68, 0.4);
+    color: #ef4444;
+}
+
+.cell-email-text {
+    font-weight: 700;
+    font-size: 0.95rem;
     color: white;
-    margin: 0;
     word-break: break-all;
 }
 
-body.light-mode .subscriber-email {
+body.light-mode .cell-email-text {
     color: #1e293b;
 }
 
-.subscriber-status-badge {
+.cell-date-text {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+body.light-mode .cell-date-text {
+    color: #475569;
+}
+
+.cell-date-text i {
+    color: #06b6d4;
+}
+
+.cell-time {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
+    display: block;
+    margin-top: 0.25rem;
+}
+
+body.light-mode .cell-time {
+    color: #94a3b8;
+}
+
+.cell-no-data {
+    color: rgba(255, 255, 255, 0.5);
+    font-style: italic;
+}
+
+body.light-mode .cell-no-data {
+    color: #94a3b8;
+}
+
+.cell-status-badge {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    border-radius: 12px;
-    font-size: 0.85rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 10px;
+    font-size: 0.8rem;
     font-weight: 700;
+    white-space: nowrap;
 }
 
-.status-active {
+.cell-status-active {
     background: rgba(16, 185, 129, 0.2);
     border: 1px solid rgba(16, 185, 129, 0.4);
     color: #10b981;
 }
 
-.status-inactive {
+.cell-status-inactive {
     background: rgba(239, 68, 68, 0.2);
     border: 1px solid rgba(239, 68, 68, 0.4);
     color: #ef4444;
 }
 
-.subscriber-card-body {
-    margin-bottom: 1.5rem;
-}
-
-.subscriber-details-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-}
-
-.subscriber-detail-item {
+.cell-actions-wrapper {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    padding: 1rem;
-    background: rgba(6, 182, 212, 0.05);
-    border-radius: 12px;
-}
-
-body.light-mode .subscriber-detail-item {
-    background: rgba(6, 182, 212, 0.03);
-}
-
-.detail-icon {
-    width: 40px;
-    height: 40px;
-    background: rgba(6, 182, 212, 0.1);
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #06b6d4;
-    font-size: 1rem;
-}
-
-.detail-content {
-    flex: 1;
-}
-
-.detail-label {
-    font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.6);
-    margin-bottom: 0.25rem;
-}
-
-body.light-mode .detail-label {
-    color: #94a3b8;
-}
-
-.detail-value {
-    font-size: 1rem;
-    font-weight: 700;
-    color: white;
-}
-
-body.light-mode .detail-value {
-    color: #1e293b;
-}
-
-.subscriber-card-actions {
-    display: flex;
-    gap: 0.75rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid rgba(6, 182, 212, 0.2);
-    flex-wrap: wrap;
-}
-
-.action-form {
-    flex: 1;
-    min-width: 120px;
-}
-
-.action-btn {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     gap: 0.5rem;
-    padding: 0.75rem 1rem;
+}
+
+.action-form-inline {
+    display: inline;
+    margin: 0;
+}
+
+.action-btn-icon {
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     border: none;
-    border-radius: 12px;
-    font-weight: 600;
+    border-radius: 8px;
     font-size: 0.9rem;
     cursor: pointer;
     transition: all 0.3s ease;
-    text-decoration: none;
-    min-width: 120px;
+    background: transparent;
 }
 
 .action-toggle {
+    color: #3b82f6;
     background: rgba(59, 130, 246, 0.15);
     border: 1px solid rgba(59, 130, 246, 0.3);
-    color: #3b82f6;
 }
 
 .action-toggle:hover {
     background: rgba(59, 130, 246, 0.25);
     transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .action-delete {
+    color: #ef4444;
     background: rgba(239, 68, 68, 0.15);
     border: 1px solid rgba(239, 68, 68, 0.3);
-    color: #ef4444;
 }
 
 .action-delete:hover {
     background: rgba(239, 68, 68, 0.25);
     transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
 
 /* Pagination */
@@ -1211,20 +1304,28 @@ body.light-mode .empty-state-text {
         width: 100%;
     }
     
-    .subscriber-card-header {
+    .newsletter-table-wrapper {
+        padding: 1rem;
+    }
+    
+    .newsletter-table {
+        min-width: 800px;
+    }
+    
+    .newsletter-table th,
+    .newsletter-table td {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.85rem;
+    }
+    
+    .cell-actions-wrapper {
         flex-direction: column;
+        gap: 0.25rem;
     }
     
-    .subscriber-details-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .subscriber-card-actions {
-        flex-direction: column;
-    }
-    
-    .action-btn {
-        width: 100%;
+    .action-btn-icon {
+        width: 32px;
+        height: 32px;
     }
 }
 </style>
@@ -1282,7 +1383,10 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.row-checkbox').forEach(checkbox => {
         checkbox.addEventListener('change', function() {
             const allChecked = document.querySelectorAll('.row-checkbox:checked').length === document.querySelectorAll('.row-checkbox').length;
-            document.getElementById('select-all').checked = allChecked;
+            const selectAllCheckbox = document.getElementById('select-all');
+            if (selectAllCheckbox) {
+                selectAllCheckbox.checked = allChecked;
+            }
             updateSelectedCount();
         });
     });

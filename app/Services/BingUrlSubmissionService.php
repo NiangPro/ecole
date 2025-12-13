@@ -136,17 +136,18 @@ class BingUrlSubmissionService
         // ÉTAPE 1 : Tous les liens des formations, exercices et quiz
         // ============================================
         
-        // Tous les 18 langages disponibles
+        // Tous les 21 langages/formations disponibles
         $languages = [
             'html5', 'css3', 'javascript', 'php', 'bootstrap', 
             'python', 'java', 'sql', 'c', 'git', 'wordpress', 
-            'ia', 'cpp', 'csharp', 'dart', 'go', 'rust', 'ruby'
+            'ia', 'cpp', 'csharp', 'dart', 'go', 'rust', 'ruby',
+            'cybersecurite', 'data-science', 'big-data'
         ];
 
         // Page principale formations
         $urls[] = $baseUrl . '/formations';
         
-        // Formations par langage (18 langages)
+        // Formations par langage (21 langages/formations)
         foreach ($languages as $lang) {
             $urls[] = $baseUrl . '/formations/' . $lang;
         }
@@ -154,7 +155,7 @@ class BingUrlSubmissionService
         // Page principale exercices
         $urls[] = $baseUrl . '/exercices';
         
-        // Exercices par langage (18 langages)
+        // Exercices par langage (21 langages/formations)
         foreach ($languages as $lang) {
             $urls[] = $baseUrl . '/exercices/' . $lang;
         }
@@ -162,12 +163,12 @@ class BingUrlSubmissionService
         // Page principale quiz
         $urls[] = $baseUrl . '/quiz';
         
-        // Quiz par langage (18 langages)
+        // Quiz par langage (21 langages/formations)
         foreach ($languages as $lang) {
             $urls[] = $baseUrl . '/quiz/' . $lang;
         }
-        
-        // Total formations/exercices/quiz : 1 + 18 + 1 + 18 + 1 + 18 = 57 URLs
+
+        // Total formations/exercices/quiz : 1 + 21 + 1 + 21 + 1 + 21 = 66 URLs
         
         // ============================================
         // ÉTAPE 2 : Les 10 liens des pages statiques à conserver
@@ -191,11 +192,11 @@ class BingUrlSubmissionService
         // ============================================
         
         // Calculer le nombre d'URLs déjà ajoutées
-        $fixedUrlsCount = count($urls); // 57 (formations/exercices/quiz) + 10 (pages statiques) = 67
+        $fixedUrlsCount = count($urls); // 66 (formations/exercices/quiz) + 10 (pages statiques) = 76
         
         // Objectif : 100 URLs au total
         $targetTotal = 100;
-        $articlesNeeded = max(0, $targetTotal - $fixedUrlsCount); // 100 - 67 = 33 articles
+        $articlesNeeded = max(0, $targetTotal - $fixedUrlsCount); // 100 - 76 = 24 articles
         
         // Récupérer tous les articles publiés disponibles
         $totalPublishedArticles = \App\Models\JobArticle::where('status', 'published')

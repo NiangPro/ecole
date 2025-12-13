@@ -80,10 +80,14 @@ if (!isset($breadcrumbs)) {
             ];
         }
     } elseif (str_contains($currentRoute, 'exercices.')) {
-        $breadcrumbs[] = [
-            'name' => trans('app.exercices.title', [], 'Exercices'),
-            'url' => route('exercices')
-        ];
+        // Ne pas afficher le breadcrumb pour cybersecurite
+        $language = request()->route('language') ?? request()->segment(2);
+        if ($language && $language !== 'cybersecurite') {
+            $breadcrumbs[] = [
+                'name' => trans('app.exercices.title', [], 'Exercices'),
+                'url' => route('exercices')
+            ];
+        }
     } elseif (str_contains($currentRoute, 'quiz.')) {
         $breadcrumbs[] = [
             'name' => trans('app.quiz.title', [], 'Quiz'),

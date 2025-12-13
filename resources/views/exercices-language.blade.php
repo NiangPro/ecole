@@ -183,11 +183,13 @@
 <section class="py-20 relative overflow-hidden pt-8">
     <div class="w-full px-6">
         <!-- Breadcrumb -->
+        @if($language !== 'cybersecurite')
         <div class="mb-8">
             <a href="{{ route('exercices') }}" class="text-cyan-400 hover:text-cyan-300 transition">
                 <i class="fas fa-arrow-left mr-2"></i>{{ trans('app.exercices.back_to_exercices') }}
             </a>
         </div>
+        @endif
 
         <!-- Header -->
         <div class="mb-12">

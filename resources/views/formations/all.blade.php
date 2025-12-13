@@ -306,12 +306,12 @@
     }
     
     .filter-btn {
-        padding: 10px 20px;
+        padding: 6px 14px;
         border: 2px solid rgba(6, 182, 212, 0.2);
-        border-radius: 12px;
+        border-radius: 10px;
         background: rgba(255, 255, 255, 0.8);
         color: var(--text-primary);
-        font-size: 0.9rem;
+        font-size: 0.8rem;
         font-weight: 500;
         cursor: pointer;
         transition: all 0.3s ease;
@@ -762,6 +762,12 @@
                 <button class="filter-btn" data-filter="ai">
                     {{ trans('app.formations.filter_ai') }}
                 </button>
+                <button class="filter-btn" data-filter="security">
+                    {{ trans('app.formations.filter_security') }}
+                </button>
+                <button class="filter-btn" data-filter="data">
+                    {{ trans('app.formations.filter_data') }}
+                </button>
             </div>
             <button class="clear-filters" id="clearFilters">
                 <i class="fas fa-times"></i> {{ trans('app.formations.clear_filters') }}
@@ -840,10 +846,19 @@
             'python': 'backend',
             'java': 'backend',
             'c': 'backend',
+            'cpp': 'backend',
+            'csharp': 'backend',
+            'dart': 'backend',
+            'go': 'backend',
+            'rust': 'backend',
+            'ruby': 'backend',
             'sql': 'database',
             'git': 'tools',
             'wordpress': 'tools',
-            'ia': 'ai'
+            'ia': 'ai',
+            'cybersecurite': 'security',
+            'data-science': 'data',
+            'big-data': 'data'
         };
         
         // Add category data to cards

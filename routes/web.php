@@ -120,6 +120,9 @@ Route::get('/formations/dart', [FormationController::class, 'dart'])->name('form
 Route::get('/formations/go', [FormationController::class, 'go'])->name('formations.go');
 Route::get('/formations/rust', [FormationController::class, 'rust'])->name('formations.rust');
 Route::get('/formations/ruby', [FormationController::class, 'ruby'])->name('formations.ruby');
+Route::get('/formations/cybersecurite', [FormationController::class, 'cybersecurite'])->name('formations.cybersecurite');
+Route::get('/formations/data-science', [FormationController::class, 'dataScience'])->name('formations.data-science');
+Route::get('/formations/big-data', [FormationController::class, 'bigData'])->name('formations.big-data');
 
 // Routes Emplois - Utiliser EmploiController
 use App\Http\Controllers\EmploiController;

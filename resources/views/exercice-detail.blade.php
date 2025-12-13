@@ -529,6 +529,7 @@
     <div class="w-full px-6">
         <!-- Breadcrumb & Navigation -->
         <div class="flex items-center justify-between mb-3 flex-wrap gap-4">
+            @if($language !== 'cybersecurite')
             <div>
                 <a href="{{ route('exercices') }}" class="text-cyan-400 hover:text-cyan-300 transition">
                     <i class="fas fa-arrow-left mr-2"></i>{{ trans('app.exercices.all_exercices') }}
@@ -540,6 +541,7 @@
                 <span class="text-gray-500 mx-2">/</span>
                 <span class="text-gray-400">{{ trans('app.exercices.exercise') }} {{ $id }}</span>
             </div>
+            @endif
             <div class="flex gap-2">
                 @if($id > 1)
                 <a href="{{ route('exercices.detail', [$language, $id - 1]) }}" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition">
