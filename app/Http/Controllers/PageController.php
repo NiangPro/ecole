@@ -7820,6 +7820,289 @@ void main() {
                     'hint' => $getTranslated('hint', 'Créez class Personne { String nom; Personne(this.nom); void afficher() { ... } }')
                 ],
             ],
+            'go' => [
+                1 => [
+                    'title' => $getTranslated('title', 'Premier programme Go'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 10,
+                    'instruction' => $getTranslated('instruction', 'Créez un programme Go qui affiche "Bonjour Go !" dans la console.'),
+                    'description' => $getTranslated('description', 'En Go, on utilise fmt.Println() pour afficher du texte. Chaque programme Go a une fonction main() dans le package main.'),
+                    'startCode' => 'package main
+
+import "fmt"
+
+func main() {
+    // Affichez "Bonjour Go !"
+}',
+                    'solution' => 'package main
+
+import "fmt"
+
+func main() {
+    fmt.Println("Bonjour Go !")
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez fmt.Println("Bonjour Go !") dans la fonction main().')
+                ],
+                2 => [
+                    'title' => $getTranslated('title', 'Variables et types'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 10,
+                    'instruction' => $getTranslated('instruction', 'Déclarez une variable age de type int avec la valeur 25 et affichez-la.'),
+                    'description' => $getTranslated('description', 'En Go, les variables peuvent être déclarées avec var ou := (déclaration courte).'),
+                    'startCode' => 'package main
+
+import "fmt"
+
+func main() {
+    // Déclarez une variable age de type int avec la valeur 25
+    // Affichez-la
+}',
+                    'solution' => 'package main
+
+import "fmt"
+
+func main() {
+    var age int = 25
+    fmt.Println("Age :", age)
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez var age int = 25; puis fmt.Println("Age :", age)')
+                ],
+                3 => [
+                    'title' => $getTranslated('title', 'Opérateurs arithmétiques'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 10,
+                    'instruction' => $getTranslated('instruction', 'Calculez la somme de deux nombres (10 et 5) et affichez le résultat.'),
+                    'description' => $getTranslated('description', 'En Go, utilisez les opérateurs arithmétiques +, -, *, / pour effectuer des calculs.'),
+                    'startCode' => 'package main
+
+import "fmt"
+
+func main() {
+    a := 10
+    b := 5
+    // Calculez et affichez la somme de a et b
+}',
+                    'solution' => 'package main
+
+import "fmt"
+
+func main() {
+    a := 10
+    b := 5
+    somme := a + b
+    fmt.Println("Somme :", somme)
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez somme := a + b; puis fmt.Println("Somme :", somme)')
+                ],
+                4 => [
+                    'title' => $getTranslated('title', 'Conditions if/else'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 12,
+                    'instruction' => $getTranslated('instruction', 'Vérifiez si un nombre est pair ou impair et affichez le résultat.'),
+                    'description' => $getTranslated('description', 'Utilisez l\'opérateur modulo % pour vérifier si un nombre est divisible par 2.'),
+                    'startCode' => 'package main
+
+import "fmt"
+
+func main() {
+    nombre := 7
+    // Vérifiez si nombre est pair ou impair
+}',
+                    'solution' => 'package main
+
+import "fmt"
+
+func main() {
+    nombre := 7
+    if nombre%2 == 0 {
+        fmt.Println(nombre, "est pair")
+    } else {
+        fmt.Println(nombre, "est impair")
+    }
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez if nombre%2 == 0 pour vérifier si le nombre est pair.')
+                ],
+                5 => [
+                    'title' => $getTranslated('title', 'Boucles for'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 12,
+                    'instruction' => $getTranslated('instruction', 'Affichez les nombres de 1 à 10 en utilisant une boucle for.'),
+                    'description' => $getTranslated('description', 'En Go, la boucle for est la seule boucle disponible, mais elle peut être utilisée de différentes façons.'),
+                    'startCode' => 'package main
+
+import "fmt"
+
+func main() {
+    // Utilisez une boucle for pour afficher les nombres de 1 à 10
+}',
+                    'solution' => 'package main
+
+import "fmt"
+
+func main() {
+    for i := 1; i <= 10; i++ {
+        fmt.Println(i)
+    }
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez for i := 1; i <= 10; i++ pour itérer de 1 à 10.')
+                ],
+            ],
+            'rust' => [
+                1 => [
+                    'title' => $getTranslated('title', 'Premier programme Rust'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 10,
+                    'instruction' => $getTranslated('instruction', 'Créez un programme Rust qui affiche "Bonjour Rust !" dans la console.'),
+                    'description' => $getTranslated('description', 'En Rust, on utilise println!() pour afficher du texte. Chaque programme Rust a une fonction main().'),
+                    'startCode' => 'fn main() {
+    // Affichez "Bonjour Rust !"
+}',
+                    'solution' => 'fn main() {
+    println!("Bonjour Rust !");
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez println!("Bonjour Rust !"); dans la fonction main().')
+                ],
+                2 => [
+                    'title' => $getTranslated('title', 'Variables et mutabilité'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 10,
+                    'instruction' => $getTranslated('instruction', 'Déclarez une variable age de type i32 avec la valeur 25 et affichez-la.'),
+                    'description' => $getTranslated('description', 'En Rust, les variables sont immuables par défaut. Utilisez mut pour rendre une variable mutable.'),
+                    'startCode' => 'fn main() {
+    // Déclarez une variable age de type i32 avec la valeur 25
+    // Affichez-la
+}',
+                    'solution' => 'fn main() {
+    let age: i32 = 25;
+    println!("Age : {}", age);
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez let age: i32 = 25; puis println!("Age : {}", age)')
+                ],
+                3 => [
+                    'title' => $getTranslated('title', 'Types de données'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 10,
+                    'instruction' => $getTranslated('instruction', 'Déclarez une variable nom de type String avec la valeur "Rust" et affichez-la.'),
+                    'description' => $getTranslated('description', 'En Rust, String est un type de chaîne de caractères possédée, tandis que &str est une référence.'),
+                    'startCode' => 'fn main() {
+    // Déclarez une variable nom de type String avec la valeur "Rust"
+    // Affichez-la
+}',
+                    'solution' => 'fn main() {
+    let nom = String::from("Rust");
+    println!("Nom : {}", nom);
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez let nom = String::from("Rust"); puis println!("Nom : {}", nom)')
+                ],
+                4 => [
+                    'title' => $getTranslated('title', 'Conditions if/else'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 12,
+                    'instruction' => $getTranslated('instruction', 'Vérifiez si un nombre est pair ou impair et affichez le résultat.'),
+                    'description' => $getTranslated('description', 'Utilisez l\'opérateur modulo % pour vérifier si un nombre est divisible par 2.'),
+                    'startCode' => 'fn main() {
+    let nombre = 7;
+    // Vérifiez si nombre est pair ou impair
+}',
+                    'solution' => 'fn main() {
+    let nombre = 7;
+    if nombre % 2 == 0 {
+        println!("{} est pair", nombre);
+    } else {
+        println!("{} est impair", nombre);
+    }
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez if nombre % 2 == 0 pour vérifier si le nombre est pair.')
+                ],
+                5 => [
+                    'title' => $getTranslated('title', 'Boucles loop/while/for'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 12,
+                    'instruction' => $getTranslated('instruction', 'Affichez les nombres de 1 à 10 en utilisant une boucle for.'),
+                    'description' => $getTranslated('description', 'En Rust, on peut utiliser loop, while, ou for pour créer des boucles.'),
+                    'startCode' => 'fn main() {
+    // Utilisez une boucle for pour afficher les nombres de 1 à 10
+}',
+                    'solution' => 'fn main() {
+    for i in 1..=10 {
+        println!("{}", i);
+    }
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez for i in 1..=10 pour itérer de 1 à 10 inclus.')
+                ],
+            ],
+            'ruby' => [
+                1 => [
+                    'title' => $getTranslated('title', 'Premier programme Ruby'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 10,
+                    'instruction' => $getTranslated('instruction', 'Créez un programme Ruby qui affiche "Bonjour Ruby !" dans la console.'),
+                    'description' => $getTranslated('description', 'En Ruby, on utilise puts ou print pour afficher du texte. Pas besoin de fonction main().'),
+                    'startCode' => '# Affichez "Bonjour Ruby !"
+',
+                    'solution' => 'puts "Bonjour Ruby !"',
+                    'hint' => $getTranslated('hint', 'Utilisez puts "Bonjour Ruby !" pour afficher le message.')
+                ],
+                2 => [
+                    'title' => $getTranslated('title', 'Variables et types'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 10,
+                    'instruction' => $getTranslated('instruction', 'Créez une variable age avec la valeur 25 et affichez-la.'),
+                    'description' => $getTranslated('description', 'En Ruby, les variables sont créées simplement en leur assignant une valeur. Pas besoin de déclarer le type.'),
+                    'startCode' => '# Créez une variable age avec la valeur 25
+# Affichez-la
+',
+                    'solution' => 'age = 25
+puts "Age : #{age}"',
+                    'hint' => $getTranslated('hint', 'Utilisez age = 25; puis puts "Age : #{age}" (interpolation de chaîne)')
+                ],
+                3 => [
+                    'title' => $getTranslated('title', 'Opérateurs arithmétiques'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 10,
+                    'instruction' => $getTranslated('instruction', 'Calculez la somme de deux nombres (10 et 5) et affichez le résultat.'),
+                    'description' => $getTranslated('description', 'En Ruby, utilisez les opérateurs arithmétiques +, -, *, / pour effectuer des calculs.'),
+                    'startCode' => 'a = 10
+b = 5
+# Calculez et affichez la somme de a et b
+',
+                    'solution' => 'a = 10
+b = 5
+somme = a + b
+puts "Somme : #{somme}"',
+                    'hint' => $getTranslated('hint', 'Utilisez somme = a + b; puis puts "Somme : #{somme}"')
+                ],
+                4 => [
+                    'title' => $getTranslated('title', 'Conditions if/elsif/else'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 12,
+                    'instruction' => $getTranslated('instruction', 'Vérifiez si un nombre est pair ou impair et affichez le résultat.'),
+                    'description' => $getTranslated('description', 'Utilisez l\'opérateur modulo % pour vérifier si un nombre est divisible par 2.'),
+                    'startCode' => 'nombre = 7
+# Vérifiez si nombre est pair ou impair
+',
+                    'solution' => 'nombre = 7
+if nombre % 2 == 0
+  puts "#{nombre} est pair"
+else
+  puts "#{nombre} est impair"
+end',
+                    'hint' => $getTranslated('hint', 'Utilisez if nombre % 2 == 0 pour vérifier si le nombre est pair.')
+                ],
+                5 => [
+                    'title' => $getTranslated('title', 'Boucles while/for/each'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 12,
+                    'instruction' => $getTranslated('instruction', 'Affichez les nombres de 1 à 10 en utilisant une boucle for.'),
+                    'description' => $getTranslated('description', 'En Ruby, on peut utiliser while, for, ou each pour créer des boucles.'),
+                    'startCode' => '# Utilisez une boucle for pour afficher les nombres de 1 à 10
+',
+                    'solution' => 'for i in 1..10
+  puts i
+end',
+                    'hint' => $getTranslated('hint', 'Utilisez for i in 1..10 pour itérer de 1 à 10.')
+                ],
+            ],
         ];
 
         return $allExercises[$language][$id] ?? null;
@@ -8117,6 +8400,57 @@ void main() {
                 ['title' => $getTitle(13, 'Flutter - State Management'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
                 ['title' => $getTitle(14, 'Flutter - Navigation'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
                 ['title' => $getTitle(15, 'Flutter - API et HTTP'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+            ],
+            'go' => [
+                ['title' => $getTitle(1, 'Premier programme Go'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(2, 'Variables et types'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(3, 'Opérateurs arithmétiques'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(4, 'Conditions if/else'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 12],
+                ['title' => $getTitle(5, 'Boucles for'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 12],
+                ['title' => $getTitle(6, 'Fonctions Go'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 18],
+                ['title' => $getTitle(7, 'Structs'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
+                ['title' => $getTitle(8, 'Interfaces'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 22],
+                ['title' => $getTitle(9, 'Slices et Maps'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
+                ['title' => $getTitle(10, 'Packages'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 18],
+                ['title' => $getTitle(11, 'Goroutines'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+                ['title' => $getTitle(12, 'Channels'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+                ['title' => $getTitle(13, 'Gestion d\'erreurs'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 25],
+                ['title' => $getTitle(14, 'Manipulation de fichiers'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(15, 'HTTP Server'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+            ],
+            'rust' => [
+                ['title' => $getTitle(1, 'Premier programme Rust'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(2, 'Variables et mutabilité'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(3, 'Types de données'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(4, 'Conditions if/else'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 12],
+                ['title' => $getTitle(5, 'Boucles loop/while/for'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 12],
+                ['title' => $getTitle(6, 'Fonctions Rust'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 18],
+                ['title' => $getTitle(7, 'Ownership'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 25],
+                ['title' => $getTitle(8, 'Borrowing'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 25],
+                ['title' => $getTitle(9, 'Structs'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
+                ['title' => $getTitle(10, 'Enums et Pattern Matching'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 22],
+                ['title' => $getTitle(11, 'Traits'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(12, 'Gestion d\'erreurs (Result)'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(13, 'Génériques'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+                ['title' => $getTitle(14, 'Lifetimes'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+                ['title' => $getTitle(15, 'Concurrence'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+            ],
+            'ruby' => [
+                ['title' => $getTitle(1, 'Premier programme Ruby'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(2, 'Variables et types'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(3, 'Opérateurs arithmétiques'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(4, 'Conditions if/elsif/else'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 12],
+                ['title' => $getTitle(5, 'Boucles while/for/each'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 12],
+                ['title' => $getTitle(6, 'Méthodes Ruby'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 18],
+                ['title' => $getTitle(7, 'Classes et objets'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
+                ['title' => $getTitle(8, 'Modules et Mixins'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 22],
+                ['title' => $getTitle(9, 'Blocs, Procs et Lambdas'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 25],
+                ['title' => $getTitle(10, 'Arrays et Hashes'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
+                ['title' => $getTitle(11, 'Gestion d\'erreurs'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 25],
+                ['title' => $getTitle(12, 'Ruby on Rails - Routes'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(13, 'Ruby on Rails - Controllers'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(14, 'Ruby on Rails - Models'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+                ['title' => $getTitle(15, 'RubyGems'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 25],
             ],
         ];
 
@@ -8626,6 +8960,72 @@ void main() {
                 ['question' => 'Comment utiliser where sur une liste ?', 'options' => ['list.where((x) => x > 5)', 'list.filter((x) => x > 5)', 'list.select((x) => x > 5)', 'list.find((x) => x > 5)'], 'correct' => 0],
                 ['question' => 'Comment utiliser map sur une liste ?', 'options' => ['list.map((x) => x * 2)', 'list.transform((x) => x * 2)', 'list.apply((x) => x * 2)', 'list.change((x) => x * 2)'], 'correct' => 0],
                 ['question' => 'Qu\'est-ce qu\'un const en Dart ?', 'options' => ['Une constante calculée à la compilation', 'Une constante calculée à l\'exécution', 'Une variable', 'Une fonction'], 'correct' => 0],
+            ],
+            'go' => [
+                ['question' => 'Qui a créé Go ?', 'options' => ['Google', 'Microsoft', 'Oracle', 'Facebook'], 'correct' => 0],
+                ['question' => 'En quelle année Go a-t-il été créé ?', 'options' => ['2007', '2009', '2012', '2015'], 'correct' => 1],
+                ['question' => 'Comment afficher du texte en Go ?', 'options' => ['fmt.Println()', 'print()', 'printf()', 'echo'], 'correct' => 0],
+                ['question' => 'Comment déclarer une variable en Go ?', 'options' => ['var x int = 5', 'x := 5', 'Les deux A et B', 'int x = 5'], 'correct' => 2],
+                ['question' => 'Comment créer une fonction ?', 'options' => ['func maFonction() {}', 'function maFonction()', 'def maFonction()', 'create maFonction()'], 'correct' => 0],
+                ['question' => 'Comment créer une struct ?', 'options' => ['type MaStruct struct {}', 'struct MaStruct {}', 'create struct MaStruct', 'define struct MaStruct'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce qu\'une goroutine ?', 'options' => ['Un thread léger', 'Une fonction', 'Une classe', 'Un package'], 'correct' => 0],
+                ['question' => 'Comment créer une goroutine ?', 'options' => ['go maFonction()', 'goroutine maFonction()', 'async maFonction()', 'thread maFonction()'], 'correct' => 0],
+                ['question' => 'Comment créer un channel ?', 'options' => ['ch := make(chan int)', 'ch = new channel(int)', 'ch = channel(int)', 'ch := channel(int)'], 'correct' => 0],
+                ['question' => 'Comment créer une slice ?', 'options' => ['s := []int{}', 's = []', 'int[] s', 'array s'], 'correct' => 0],
+                ['question' => 'Comment créer un map ?', 'options' => ['m := make(map[string]int)', 'm = {}', 'map m = {}', 'dict m = {}'], 'correct' => 0],
+                ['question' => 'Comment gérer les erreurs en Go ?', 'options' => ['if err != nil', 'try/catch', 'throw/catch', 'error handling'], 'correct' => 0],
+                ['question' => 'Comment utiliser defer ?', 'options' => ['defer f()', 'finally f()', 'defer { f() }', 'end f()'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce qu\'un package en Go ?', 'options' => ['Un moyen d\'organiser le code', 'Une bibliothèque', 'Un module', 'Les deux A et B'], 'correct' => 3],
+                ['question' => 'Comment importer un package ?', 'options' => ['import "fmt"', 'import fmt', 'include "fmt"', 'require "fmt"'], 'correct' => 0],
+                ['question' => 'Comment utiliser range ?', 'options' => ['for i, v := range slice', 'for i in slice', 'for (i : slice)', 'foreach i in slice'], 'correct' => 0],
+                ['question' => 'Comment utiliser interface ?', 'options' => ['type MaInterface interface {}', 'interface MaInterface {}', 'create interface MaInterface', 'define interface MaInterface'], 'correct' => 0],
+                ['question' => 'Comment utiliser switch ?', 'options' => ['switch x { case 1: }', 'switch (x) { case 1: }', 'switch x case 1', 'switch x then 1'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce qu\'un pointer en Go ?', 'options' => ['Une référence à une variable', 'Une variable', 'Une fonction', 'Un type'], 'correct' => 0],
+                ['question' => 'Comment créer un pointer ?', 'options' => ['p := &x', 'p = *x', 'p = pointer(x)', 'p := new(x)'], 'correct' => 0],
+            ],
+            'rust' => [
+                ['question' => 'Qui a créé Rust ?', 'options' => ['Mozilla', 'Google', 'Microsoft', 'Facebook'], 'correct' => 0],
+                ['question' => 'En quelle année Rust a-t-il été créé ?', 'options' => ['2006', '2010', '2012', '2015'], 'correct' => 1],
+                ['question' => 'Comment afficher du texte en Rust ?', 'options' => ['println!()', 'print()', 'printf()', 'echo'], 'correct' => 0],
+                ['question' => 'Comment déclarer une variable en Rust ?', 'options' => ['let x = 5', 'let mut x = 5', 'Les deux A et B', 'int x = 5'], 'correct' => 2],
+                ['question' => 'Qu\'est-ce que l\'ownership ?', 'options' => ['Un système de propriété de la mémoire', 'Une fonction', 'Une classe', 'Un type'], 'correct' => 0],
+                ['question' => 'Comment utiliser borrow ?', 'options' => ['&x', '*x', 'borrow x', 'ref x'], 'correct' => 0],
+                ['question' => 'Comment créer une struct ?', 'options' => ['struct MaStruct {}', 'type MaStruct struct {}', 'create struct MaStruct', 'define struct MaStruct'], 'correct' => 0],
+                ['question' => 'Comment créer un enum ?', 'options' => ['enum MonEnum {}', 'type MonEnum enum {}', 'create enum MonEnum', 'define enum MonEnum'], 'correct' => 0],
+                ['question' => 'Comment utiliser match ?', 'options' => ['match x { case => }', 'match x { pattern => }', 'switch x { case }', 'match x then'], 'correct' => 1],
+                ['question' => 'Comment gérer les erreurs en Rust ?', 'options' => ['Result<T, E>', 'Option<T>', 'Les deux A et B', 'try/catch'], 'correct' => 2],
+                ['question' => 'Comment utiliser Option ?', 'options' => ['Option<T>', 'Optional<T>', 'Maybe<T>', 'Nullable<T>'], 'correct' => 0],
+                ['question' => 'Comment utiliser Result ?', 'options' => ['Result<T, E>', 'Result<T>', 'Error<T>', 'Try<T>'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce qu\'un trait ?', 'options' => ['Un contrat que les types doivent implémenter', 'Une classe', 'Une interface', 'Les deux A et C'], 'correct' => 3],
+                ['question' => 'Comment utiliser impl ?', 'options' => ['impl Trait for Type', 'impl Type for Trait', 'implement Trait Type', 'impl Type Trait'], 'correct' => 0],
+                ['question' => 'Comment utiliser Vec ?', 'options' => ['Vec<T>', 'vec<T>', 'vector<T>', 'array<T>'], 'correct' => 0],
+                ['question' => 'Comment utiliser HashMap ?', 'options' => ['HashMap<K, V>', 'hash_map<K, V>', 'map<K, V>', 'dict<K, V>'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce qu\'un lifetime ?', 'options' => ['La durée de vie d\'une référence', 'Une fonction', 'Une variable', 'Un type'], 'correct' => 0],
+                ['question' => 'Comment utiliser \'a ?', 'options' => ['fn f<\'a>(x: &\'a str)', 'fn f(x: \'a str)', 'fn f(x: str<\'a>)', 'fn<\'a> f(x: str)'], 'correct' => 0],
+                ['question' => 'Comment utiliser String et &str ?', 'options' => ['String est possédé, &str est une référence', 'Les deux sont identiques', 'String est une référence', '&str est possédé'], 'correct' => 0],
+                ['question' => 'Comment utiliser unwrap ?', 'options' => ['x.unwrap()', 'unwrap(x)', 'x.unwrap_or()', 'Les deux A et C'], 'correct' => 3],
+            ],
+            'ruby' => [
+                ['question' => 'Qui a créé Ruby ?', 'options' => ['Yukihiro Matsumoto', 'Guido van Rossum', 'James Gosling', 'Bjarne Stroustrup'], 'correct' => 0],
+                ['question' => 'En quelle année Ruby a-t-il été créé ?', 'options' => ['1993', '1995', '2000', '2005'], 'correct' => 1],
+                ['question' => 'Comment afficher du texte en Ruby ?', 'options' => ['puts', 'print', 'Les deux A et B', 'echo'], 'correct' => 2],
+                ['question' => 'Comment déclarer une variable en Ruby ?', 'options' => ['x = 5', 'var x = 5', 'int x = 5', 'x := 5'], 'correct' => 0],
+                ['question' => 'Comment créer une méthode ?', 'options' => ['def maMethode', 'function maMethode', 'method maMethode', 'create maMethode'], 'correct' => 0],
+                ['question' => 'Comment créer une classe ?', 'options' => ['class MaClasse', 'class MaClasse {}', 'create class MaClasse', 'define class MaClasse'], 'correct' => 0],
+                ['question' => 'Comment créer un objet ?', 'options' => ['obj = MaClasse.new', 'obj = new MaClasse()', 'obj = MaClasse()', 'obj = create MaClasse'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce qu\'un module ?', 'options' => ['Un moyen de regrouper des méthodes', 'Une classe', 'Une interface', 'Les deux A et B'], 'correct' => 3],
+                ['question' => 'Comment utiliser include ?', 'options' => ['include MonModule', 'import MonModule', 'require MonModule', 'use MonModule'], 'correct' => 0],
+                ['question' => 'Comment créer un array ?', 'options' => ['arr = []', 'arr = Array.new', 'Les deux A et B', 'array arr'], 'correct' => 2],
+                ['question' => 'Comment créer un hash ?', 'options' => ['h = {}', 'h = Hash.new', 'Les deux A et B', 'dict h'], 'correct' => 2],
+                ['question' => 'Comment utiliser each ?', 'options' => ['arr.each { |x| }', 'for x in arr', 'foreach x in arr', 'Les deux A et B'], 'correct' => 3],
+                ['question' => 'Comment utiliser map ?', 'options' => ['arr.map { |x| x * 2 }', 'arr.collect { |x| x * 2 }', 'Les deux A et B', 'arr.transform { |x| }'], 'correct' => 2],
+                ['question' => 'Comment utiliser select ?', 'options' => ['arr.select { |x| x > 5 }', 'arr.filter { |x| x > 5 }', 'arr.where { |x| }', 'Les deux A et B'], 'correct' => 3],
+                ['question' => 'Qu\'est-ce que Ruby on Rails ?', 'options' => ['Un framework web', 'Un langage', 'Une bibliothèque', 'Les deux A et C'], 'correct' => 3],
+                ['question' => 'Comment créer un contrôleur Rails ?', 'options' => ['rails generate controller Nom', 'rails create controller Nom', 'rails new controller Nom', 'rails make controller Nom'], 'correct' => 0],
+                ['question' => 'Comment créer un modèle Rails ?', 'options' => ['rails generate model Nom', 'rails create model Nom', 'rails new model Nom', 'rails make model Nom'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce qu\'une gem ?', 'options' => ['Une bibliothèque Ruby', 'Un package', 'Un module', 'Les deux A et B'], 'correct' => 3],
+                ['question' => 'Comment utiliser une gem ?', 'options' => ['gem install nom', 'require "nom"', 'Les deux A et B', 'import nom'], 'correct' => 2],
+                ['question' => 'Comment utiliser symbol ?', 'options' => [':sym', 'sym:', ':symbol', 'symbol:'], 'correct' => 0],
             ],
         ];
 

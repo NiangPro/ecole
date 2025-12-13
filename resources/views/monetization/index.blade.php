@@ -578,7 +578,7 @@ body.dark-mode .subscription-btn:hover {
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+    @media (max-width: 768px) {
     .monetization-title { 
         font-size: 2rem !important; 
     }
@@ -595,7 +595,7 @@ body.dark-mode .subscription-btn:hover {
     .courses-header .section-title {
         text-align: center;
         width: 100%;
-    }
-}
+            }
+        }
 </style>
 @endsection

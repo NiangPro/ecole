@@ -29,6 +29,9 @@ Route::get('/favicon.ico', function () {
     return response('', 404);
 })->name('favicon');
 
+// Fichier ads.txt - Généré dynamiquement depuis la base de données
+Route::get('/ads.txt', [\App\Http\Controllers\AdsTxtController::class, 'index'])->name('ads.txt');
+
 // Sitemaps SEO
 Route::get('/sitemap.xml', [\App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap.index');
 Route::get('/sitemap-pages.xml', [\App\Http\Controllers\SitemapController::class, 'pages'])->name('sitemap.pages');
@@ -114,6 +117,9 @@ Route::get('/formations/python', [FormationController::class, 'python'])->name('
 Route::get('/formations/cpp', [FormationController::class, 'cpp'])->name('formations.cpp');
 Route::get('/formations/csharp', [FormationController::class, 'csharp'])->name('formations.csharp');
 Route::get('/formations/dart', [FormationController::class, 'dart'])->name('formations.dart');
+Route::get('/formations/go', [FormationController::class, 'go'])->name('formations.go');
+Route::get('/formations/rust', [FormationController::class, 'rust'])->name('formations.rust');
+Route::get('/formations/ruby', [FormationController::class, 'ruby'])->name('formations.ruby');
 
 // Routes Emplois - Utiliser EmploiController
 use App\Http\Controllers\EmploiController;
@@ -234,6 +240,26 @@ Route::middleware(['admin'])->group(function () {
     Route::get('/admin/formation-adsense', [\App\Http\Controllers\Admin\FormationAdSenseController::class, 'index'])->name('admin.formation-adsense.index');
     Route::get('/admin/formation-adsense/{slug}', [\App\Http\Controllers\Admin\FormationAdSenseController::class, 'show'])->name('admin.formation-adsense.show');
     Route::post('/admin/formation-adsense', [\App\Http\Controllers\Admin\FormationAdSenseController::class, 'store'])->name('admin.formation-adsense.store');
+    
+    // Routes pour la gestion d'Ezoic
+    Route::get('/admin/ezoic', [\App\Http\Controllers\Admin\EzoicController::class, 'index'])->name('admin.ezoic.index');
+    Route::post('/admin/ezoic', [\App\Http\Controllers\Admin\EzoicController::class, 'update'])->name('admin.ezoic.update');
+    
+    // Routes pour la gestion des unités Ezoic
+    Route::resource('admin/ezoic-units', \App\Http\Controllers\Admin\EzoicUnitController::class)->names([
+        'index' => 'admin.ezoic-units.index',
+        'create' => 'admin.ezoic-units.create',
+        'store' => 'admin.ezoic-units.store',
+        'show' => 'admin.ezoic-units.show',
+        'edit' => 'admin.ezoic-units.edit',
+        'update' => 'admin.ezoic-units.update',
+        'destroy' => 'admin.ezoic-units.destroy',
+    ]);
+    
+    // Routes pour la gestion des annonces Ezoic par formation
+    Route::get('/admin/formation-ezoic', [\App\Http\Controllers\Admin\FormationEzoicController::class, 'index'])->name('admin.formation-ezoic.index');
+    Route::get('/admin/formation-ezoic/{slug}', [\App\Http\Controllers\Admin\FormationEzoicController::class, 'show'])->name('admin.formation-ezoic.show');
+    Route::post('/admin/formation-ezoic', [\App\Http\Controllers\Admin\FormationEzoicController::class, 'store'])->name('admin.formation-ezoic.store');
     Route::put('/admin/formation-adsense/{id}', [\App\Http\Controllers\Admin\FormationAdSenseController::class, 'update'])->name('admin.formation-adsense.update');
     Route::delete('/admin/formation-adsense/{id}', [\App\Http\Controllers\Admin\FormationAdSenseController::class, 'destroy'])->name('admin.formation-adsense.destroy');
     Route::get('/admin/backups', [App\Http\Controllers\AdminController::class, 'backups'])->name('admin.backups');

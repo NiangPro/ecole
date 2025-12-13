@@ -229,6 +229,9 @@ class AdminController extends Controller
         // Invalider le cache
         \App\Models\AdSenseSetting::clearCache();
         
+        // Mettre à jour automatiquement le fichier ads.txt
+        \App\Http\Controllers\AdsTxtController::updateFile();
+        
         return redirect()->route('admin.adsense')->with('success', 'Configuration AdSense mise à jour avec succès!');
     }
     
@@ -619,10 +622,10 @@ class AdminController extends Controller
             ? 'https://www.niangprogrammeur.com' 
             : config('app.url');
         
-        $formationsCount = 16; // 1 page principale + 15 langages
-        $exercicesCount = 16; // 1 page principale + 15 langages
-        $quizCount = 16; // 1 page principale + 15 langages
-        $formationsExercicesQuiz = $formationsCount + $exercicesCount + $quizCount; // 48
+        $formationsCount = 19; // 1 page principale + 18 langages
+        $exercicesCount = 19; // 1 page principale + 18 langages
+        $quizCount = 19; // 1 page principale + 18 langages
+        $formationsExercicesQuiz = $formationsCount + $exercicesCount + $quizCount; // 57
         
         // Pages statiques : 10 pages à conserver
         $pagesStatiques = 10;
@@ -633,8 +636,8 @@ class AdminController extends Controller
             ->count();
         
         // Calculer le nombre d'articles inclus (pour atteindre 100 URLs au total)
-        // Total fixe = 48 (formations/exercices/quiz) + 10 (pages statiques) = 58
-        // Articles nécessaires = 100 - 58 = 42
+        // Total fixe = 57 (formations/exercices/quiz) + 10 (pages statiques) = 67
+        // Articles nécessaires = 100 - 67 = 33
         $articlesIncluded = min($articlesCount, max(0, 100 - ($formationsExercicesQuiz + $pagesStatiques)));
         
         return view('admin.bing-submission', compact('urls', 'isConfigured', 'totalUrls', 'formationsExercicesQuiz', 'formationsCount', 'exercicesCount', 'quizCount', 'pagesStatiques', 'articlesIncluded', 'articlesCount'));

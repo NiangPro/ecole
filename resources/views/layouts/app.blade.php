@@ -781,10 +781,29 @@
     @if($adsenseSettings && $adsenseClientId)
         <!-- AdSense Auto Ads - Chargé de manière différée -->
         <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ $adsenseClientId }}"
-             crossorigin="anonymous"></script>
+                crossorigin="anonymous"></script>
     @elseif($adsenseSettings && $adsenseSettings->adsense_code && strpos($adsenseSettings->adsense_code, '<script') !== false)
         <!-- AdSense - Code complet fourni -->
         {!! $adsenseSettings->adsense_code !!}
+    @endif
+    
+    @php
+        // Configuration Ezoic
+        $ezoicSettings = \Illuminate\Support\Facades\Cache::remember('ezoic_settings', 3600, function () {
+            return \App\Models\EzoicSetting::first();
+        });
+    @endphp
+    
+    @if($ezoicSettings)
+        @if($ezoicSettings->privacy_scripts)
+            <!-- Ezoic Privacy Scripts (DOIT être chargé en premier) -->
+            {!! $ezoicSettings->privacy_scripts !!}
+        @endif
+        
+        @if($ezoicSettings->ezoic_code)
+            <!-- Ezoic Header Script (chargé APRÈS les Privacy Scripts) -->
+            {!! $ezoicSettings->ezoic_code !!}
+        @endif
     @endif
     
     <!-- Google Analytics -->
@@ -1437,6 +1456,11 @@
     </script>
 </head>
 <body class="bg-white text-gray-900" lang="{{ app()->getLocale() }}">
+    @if($ezoicSettings && $ezoicSettings->ezoic_body_code)
+        <!-- Ezoic Code (Body - début) -->
+        {!! $ezoicSettings->ezoic_body_code !!}
+    @endif
+    
     <!-- Skip Links pour l'accessibilité -->
     <div class="skip-links">
         <a href="#main-content" class="skip-link">Aller au contenu principal</a>
@@ -1486,6 +1510,9 @@
             'formations.wordpress',
             'formations.ia',
             'formations.python',
+            'formations.go',
+            'formations.rust',
+            'formations.ruby',
             'exercices',
             'exercices.language',
             'exercices.detail',
@@ -1741,5 +1768,10 @@
         document.body.dataset.userId = {{ Auth::id() }};
         @endif
     </script>
+    
+    @if($ezoicSettings && $ezoicSettings->ezoic_footer_code)
+        <!-- Ezoic Code (Footer) -->
+        {!! $ezoicSettings->ezoic_footer_code !!}
+    @endif
 </body>
 </html>

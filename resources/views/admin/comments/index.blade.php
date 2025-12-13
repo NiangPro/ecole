@@ -132,171 +132,153 @@
         </form>
     </div>
 
-    <!-- Comments List -->
+    <!-- Comments Table -->
     @if($comments->count() > 0)
-    <div class="comments-list">
-        @foreach($comments as $comment)
-        <div class="comment-card {{ $comment->status === 'approved' ? 'comment-approved' : '' }} {{ $comment->status === 'pending' ? 'comment-pending' : '' }} {{ $comment->status === 'rejected' ? 'comment-rejected' : '' }}">
-            <!-- Card Header -->
-            <div class="comment-card-header">
-                <div class="comment-header-left">
-                    <div class="comment-avatar">
-                        {{ strtoupper(substr($comment->author_name, 0, 1)) }}
-                    </div>
-                    <div class="comment-author-info">
-                        <h3 class="comment-author-name">{{ $comment->author_name }}</h3>
-                        @if($comment->parent)
-                        <p class="comment-reply-info">
-                            <i class="fas fa-reply"></i>
-                            Réponse à {{ $comment->parent->author_name }}
-                        </p>
-                        @endif
-                    </div>
-                </div>
-                <div class="comment-status-badge status-{{ $comment->status }}">
-                    @if($comment->status === 'pending')
-                        <i class="fas fa-clock"></i>
-                        <span>En attente</span>
-                    @elseif($comment->status === 'approved')
-                        <i class="fas fa-check-circle"></i>
-                        <span>Approuvé</span>
-                    @else
-                        <i class="fas fa-times-circle"></i>
-                        <span>Rejeté</span>
-                    @endif
-                </div>
-            </div>
-
-            <!-- Card Body -->
-            <div class="comment-card-body">
-                <div class="comment-content">
-                    <p>{{ Str::limit($comment->content, 200) }}</p>
-                </div>
-                
-                <div class="comment-details-grid">
-                    @if($comment->phone)
-                    <div class="comment-detail-item">
-                        <div class="detail-icon">
-                            <i class="fas fa-phone"></i>
-                        </div>
-                        <div class="detail-content">
-                            <div class="detail-label">Téléphone</div>
-                            <div class="detail-value">
-                                <a href="tel:{{ $comment->phone }}" class="detail-link">{{ $comment->phone }}</a>
+    <div class="comments-table-wrapper">
+        <table class="comments-table">
+            <thead>
+                <tr>
+                    <th class="table-col-avatar">Auteur</th>
+                    <th class="table-col-content">Contenu</th>
+                    <th class="table-col-contact">Contact</th>
+                    <th class="table-col-article">Article</th>
+                    <th class="table-col-date">Date</th>
+                    <th class="table-col-status">Statut</th>
+                    <th class="table-col-actions">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($comments as $comment)
+                <tr class="table-row table-row-{{ $comment->status }}">
+                    <td class="table-cell table-cell-author">
+                        <div class="cell-author-wrapper">
+                            <div class="cell-avatar cell-avatar-{{ $comment->status }}">
+                                {{ strtoupper(substr($comment->author_name, 0, 1)) }}
+                            </div>
+                            <div class="cell-author-info">
+                                <div class="cell-author-name">{{ $comment->author_name }}</div>
+                                @if($comment->parent)
+                                <div class="cell-reply-info">
+                                    <i class="fas fa-reply"></i>
+                                    {{ $comment->parent->author_name }}
+                                </div>
+                                @endif
                             </div>
                         </div>
-                    </div>
-                    @endif
-                    
-                    <div class="comment-detail-item">
-                        <div class="detail-icon">
-                            <i class="fas fa-envelope"></i>
-                        </div>
-                        <div class="detail-content">
-                            <div class="detail-label">Email</div>
-                            <div class="detail-value">
-                                <a href="mailto:{{ $comment->author_email }}" class="detail-link">{{ $comment->author_email }}</a>
+                    </td>
+                    <td class="table-cell table-cell-content">
+                        <div class="cell-content-text">{{ Str::limit($comment->content, 100) }}</div>
+                    </td>
+                    <td class="table-cell table-cell-contact">
+                        <div class="cell-contact-info">
+                            @if($comment->phone)
+                            <div class="cell-contact-item">
+                                <i class="fas fa-phone"></i>
+                                <a href="tel:{{ $comment->phone }}" class="cell-link">{{ $comment->phone }}</a>
+                            </div>
+                            @endif
+                            <div class="cell-contact-item">
+                                <i class="fas fa-envelope"></i>
+                                <a href="mailto:{{ $comment->author_email }}" class="cell-link">{{ Str::limit($comment->author_email, 20) }}</a>
                             </div>
                         </div>
-                    </div>
-                    
-                    <div class="comment-detail-item">
-                        <div class="detail-icon">
+                    </td>
+                    <td class="table-cell table-cell-article">
+                        <div class="cell-article-text">
+                            @if($comment->commentable)
+                                <i class="fas fa-file-alt"></i>
+                                {{ Str::limit($comment->commentable->title ?? 'N/A', 30) }}
+                            @else
+                                <span class="cell-no-data">N/A</span>
+                            @endif
+                        </div>
+                    </td>
+                    <td class="table-cell table-cell-date">
+                        <div class="cell-date-text">
                             <i class="fas fa-calendar"></i>
+                            {{ $comment->created_at->format('d/m/Y') }}
+                            <br>
+                            <span class="cell-time">{{ $comment->created_at->format('H:i') }}</span>
                         </div>
-                        <div class="detail-content">
-                            <div class="detail-label">Date</div>
-                            <div class="detail-value">
-                                {{ $comment->created_at->format('d/m/Y H:i') }}
-                            </div>
+                    </td>
+                    <td class="table-cell table-cell-status">
+                        <span class="cell-status-badge cell-status-{{ $comment->status }}">
+                            @if($comment->status === 'pending')
+                                <i class="fas fa-clock"></i>
+                                <span>En attente</span>
+                            @elseif($comment->status === 'approved')
+                                <i class="fas fa-check-circle"></i>
+                                <span>Approuvé</span>
+                            @else
+                                <i class="fas fa-times-circle"></i>
+                                <span>Rejeté</span>
+                            @endif
+                        </span>
+                    </td>
+                    <td class="table-cell table-cell-actions">
+                        <div class="cell-actions-wrapper">
+                            <button onclick="showCommentDetails({{ $comment->id }})" class="cell-action-btn cell-action-view" title="Détails">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            
+                            @if($comment->status === 'pending')
+                            <form action="{{ route('admin.comments.approve', $comment->id) }}" method="POST" class="cell-action-form">
+                                @csrf
+                                <button type="submit" class="cell-action-btn cell-action-approve" title="Approuver">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            </form>
+                            <form action="{{ route('admin.comments.reject', $comment->id) }}" method="POST" class="cell-action-form">
+                                @csrf
+                                <button type="submit" class="cell-action-btn cell-action-reject" title="Rejeter">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </form>
+                            @elseif($comment->status === 'rejected')
+                            <form action="{{ route('admin.comments.approve', $comment->id) }}" method="POST" class="cell-action-form">
+                                @csrf
+                                <button type="submit" class="cell-action-btn cell-action-approve" title="Approuver">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            </form>
+                            @else
+                            <form action="{{ route('admin.comments.reject', $comment->id) }}" method="POST" class="cell-action-form">
+                                @csrf
+                                <button type="submit" class="cell-action-btn cell-action-reject" title="Rejeter">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </form>
+                            @endif
+                            
+                            @if($comment->phone)
+                            <button onclick="openWhatsApp({{ $comment->id }})" class="cell-action-btn cell-action-contact" title="WhatsApp">
+                                <i class="fab fa-whatsapp"></i>
+                            </button>
+                            @endif
+                            
+                            <button onclick="openEmail({{ $comment->id }})" class="cell-action-btn cell-action-contact" title="Email">
+                                <i class="fas fa-envelope"></i>
+                            </button>
+                            
+                            @if($comment->status !== 'approved')
+                            @auth
+                            @if(Auth::user()->isAdmin())
+                            <form action="{{ route('admin.comments.delete', $comment->id) }}" method="POST" class="cell-action-form" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="cell-action-btn cell-action-delete" title="Supprimer">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                            @endif
+                            @endauth
+                            @endif
                         </div>
-                    </div>
-                    
-                    @if($comment->commentable)
-                    <div class="comment-detail-item">
-                        <div class="detail-icon">
-                            <i class="fas fa-file-alt"></i>
-                        </div>
-                        <div class="detail-content">
-                            <div class="detail-label">Article</div>
-                            <div class="detail-value">
-                                {{ $comment->commentable->title ?? 'N/A' }}
-                            </div>
-                        </div>
-                    </div>
-                    @endif
-                </div>
-            </div>
-
-            <!-- Card Actions -->
-            <div class="comment-card-actions">
-                <button onclick="showCommentDetails({{ $comment->id }})" class="action-btn action-view">
-                    <i class="fas fa-eye"></i>
-                    <span>Détails</span>
-                </button>
-                
-                @if($comment->status === 'pending')
-                <form action="{{ route('admin.comments.approve', $comment->id) }}" method="POST" class="action-form">
-                    @csrf
-                    <button type="submit" class="action-btn action-approve">
-                        <i class="fas fa-check"></i>
-                        <span>Approuver</span>
-                    </button>
-                </form>
-                <form action="{{ route('admin.comments.reject', $comment->id) }}" method="POST" class="action-form">
-                    @csrf
-                    <button type="submit" class="action-btn action-reject">
-                        <i class="fas fa-times"></i>
-                        <span>Rejeter</span>
-                    </button>
-                </form>
-                @elseif($comment->status === 'rejected')
-                <form action="{{ route('admin.comments.approve', $comment->id) }}" method="POST" class="action-form">
-                    @csrf
-                    <button type="submit" class="action-btn action-approve">
-                        <i class="fas fa-check"></i>
-                        <span>Approuver</span>
-                    </button>
-                </form>
-                @else
-                <form action="{{ route('admin.comments.reject', $comment->id) }}" method="POST" class="action-form">
-                    @csrf
-                    <button type="submit" class="action-btn action-reject">
-                        <i class="fas fa-times"></i>
-                        <span>Rejeter</span>
-                    </button>
-                </form>
-                @endif
-                
-                @if($comment->phone)
-                <button onclick="openWhatsApp({{ $comment->id }})" class="action-btn action-contact">
-                    <i class="fab fa-whatsapp"></i>
-                    <span>WhatsApp</span>
-                </button>
-                @endif
-                
-                <button onclick="openEmail({{ $comment->id }})" class="action-btn action-contact">
-                    <i class="fas fa-envelope"></i>
-                    <span>Email</span>
-                </button>
-                
-                @if($comment->status !== 'approved')
-                @auth
-                @if(Auth::user()->isAdmin())
-                <form action="{{ route('admin.comments.delete', $comment->id) }}" method="POST" class="action-form" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce commentaire ?');">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="action-btn action-delete">
-                        <i class="fas fa-trash-alt"></i>
-                        <span>Supprimer</span>
-                    </button>
-                </form>
-                @endif
-                @endauth
-                @endif
-            </div>
-        </div>
-        @endforeach
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
     </div>
 
     <!-- Pagination -->
@@ -694,333 +676,463 @@ body.light-mode .filter-btn-secondary {
     background: rgba(107, 114, 128, 0.3);
 }
 
-/* Comments List */
-.comments-list {
-    display: grid;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-}
-
-/* Comment Card */
-.comment-card {
+/* Comments Table */
+.comments-table-wrapper {
     background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(51, 65, 85, 0.8));
-    border: 2px solid rgba(6, 182, 212, 0.3);
-    border-radius: 24px;
-    padding: 2rem;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(6, 182, 212, 0.3);
+    border-radius: 20px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    overflow-x: auto;
+    overflow-y: hidden;
     position: relative;
-    overflow: hidden;
+    /* Scrollbar moderne pour Firefox */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(6, 182, 212, 0.6) rgba(6, 182, 212, 0.1);
 }
 
-body.light-mode .comment-card {
+body.light-mode .comments-table-wrapper {
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.95));
     border-color: rgba(6, 182, 212, 0.3);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    scrollbar-color: rgba(6, 182, 212, 0.5) rgba(6, 182, 212, 0.1);
 }
 
-.comment-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
+/* Scrollbar moderne pour WebKit (Chrome, Safari, Edge) */
+.comments-table-wrapper::-webkit-scrollbar {
+    height: 14px;
+}
+
+.comments-table-wrapper::-webkit-scrollbar-track {
+    background: rgba(6, 182, 212, 0.1);
+    border-radius: 10px;
+    margin: 0 1rem;
+    border: 1px solid rgba(6, 182, 212, 0.1);
+}
+
+body.light-mode .comments-table-wrapper::-webkit-scrollbar-track {
+    background: rgba(6, 182, 212, 0.08);
+    border-color: rgba(6, 182, 212, 0.15);
+}
+
+.comments-table-wrapper::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg, rgba(6, 182, 212, 0.6), rgba(20, 184, 166, 0.6));
+    border-radius: 10px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: inset 0 0 6px rgba(6, 182, 212, 0.3);
+}
+
+.comments-table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(90deg, rgba(6, 182, 212, 0.85), rgba(20, 184, 166, 0.85));
+    background-clip: padding-box;
+    box-shadow: inset 0 0 8px rgba(6, 182, 212, 0.5), 0 2px 4px rgba(6, 182, 212, 0.2);
+    transform: scaleY(1.1);
+}
+
+.comments-table-wrapper::-webkit-scrollbar-thumb:active {
     background: linear-gradient(90deg, #06b6d4, #14b8a6);
-    opacity: 0;
-    transition: opacity 0.3s;
+    background-clip: padding-box;
+    box-shadow: inset 0 0 10px rgba(6, 182, 212, 0.6);
 }
 
-.comment-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 12px 40px rgba(6, 182, 212, 0.4);
-    border-color: rgba(6, 182, 212, 0.6);
+body.light-mode .comments-table-wrapper::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg, rgba(6, 182, 212, 0.5), rgba(20, 184, 166, 0.5));
+    box-shadow: inset 0 0 6px rgba(6, 182, 212, 0.2);
 }
 
-.comment-card:hover::before {
-    opacity: 1;
+body.light-mode .comments-table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(90deg, rgba(6, 182, 212, 0.75), rgba(20, 184, 166, 0.75));
+    box-shadow: inset 0 0 8px rgba(6, 182, 212, 0.4), 0 2px 4px rgba(6, 182, 212, 0.15);
 }
 
-.comment-approved {
-    border-color: rgba(16, 185, 129, 0.5);
+body.light-mode .comments-table-wrapper::-webkit-scrollbar-thumb:active {
+    background: linear-gradient(90deg, #06b6d4, #14b8a6);
+    box-shadow: inset 0 0 10px rgba(6, 182, 212, 0.5);
 }
 
-.comment-approved::before {
-    background: linear-gradient(90deg, #10b981, #059669);
+.comments-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    min-width: 1200px;
 }
 
-.comment-pending {
-    border-color: rgba(251, 191, 36, 0.5);
+.comments-table thead {
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(20, 184, 166, 0.15));
 }
 
-.comment-pending::before {
-    background: linear-gradient(90deg, #fbbf24, #f59e0b);
+body.light-mode .comments-table thead {
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(20, 184, 166, 0.1));
 }
 
-.comment-rejected {
-    border-color: rgba(239, 68, 68, 0.5);
-}
-
-.comment-rejected::before {
-    background: linear-gradient(90deg, #ef4444, #dc2626);
-}
-
-.comment-card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 1.5rem;
-    gap: 1rem;
-}
-
-.comment-header-left {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    flex: 1;
-}
-
-.comment-avatar {
-    width: 60px;
-    height: 60px;
-    background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2));
-    border-radius: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.5rem;
+.comments-table th {
+    padding: 1.25rem 1rem;
+    text-align: left;
     font-weight: 800;
+    font-size: 0.9rem;
     color: #06b6d4;
-    border: 2px solid rgba(6, 182, 212, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid rgba(6, 182, 212, 0.3);
+    white-space: nowrap;
 }
 
-.comment-author-info {
-    flex: 1;
+body.light-mode .comments-table th {
+    color: #06b6d4;
 }
 
-.comment-author-name {
-    font-size: 1.25rem;
-    font-weight: 800;
-    color: white;
-    margin: 0 0 0.25rem 0;
+.comments-table tbody tr {
+    transition: all 0.3s ease;
+    border-bottom: 1px solid rgba(6, 182, 212, 0.1);
 }
 
-body.light-mode .comment-author-name {
-    color: #1e293b;
+.comments-table tbody tr:last-child {
+    border-bottom: none;
 }
 
-.comment-reply-info {
-    font-size: 0.85rem;
-    color: rgba(255, 255, 255, 0.6);
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-body.light-mode .comment-reply-info {
-    color: #64748b;
-}
-
-.comment-status-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    border-radius: 12px;
-    font-size: 0.85rem;
-    font-weight: 700;
-}
-
-.status-pending {
-    background: rgba(251, 191, 36, 0.2);
-    border: 1px solid rgba(251, 191, 36, 0.4);
-    color: #fbbf24;
-}
-
-.status-approved {
-    background: rgba(16, 185, 129, 0.2);
-    border: 1px solid rgba(16, 185, 129, 0.4);
-    color: #10b981;
-}
-
-.status-rejected {
-    background: rgba(239, 68, 68, 0.2);
-    border: 1px solid rgba(239, 68, 68, 0.4);
-    color: #ef4444;
-}
-
-.comment-card-body {
-    margin-bottom: 1.5rem;
-}
-
-.comment-content {
+.comments-table tbody tr:hover {
     background: rgba(6, 182, 212, 0.05);
-    border-left: 3px solid rgba(6, 182, 212, 0.3);
-    border-radius: 8px;
-    padding: 1rem;
-    margin-bottom: 1.5rem;
 }
 
-body.light-mode .comment-content {
+body.light-mode .comments-table tbody tr:hover {
     background: rgba(6, 182, 212, 0.03);
 }
 
-.comment-content p {
-    margin: 0;
-    color: rgba(255, 255, 255, 0.9);
-    line-height: 1.6;
+/* Lignes colorées selon le statut */
+.table-row-pending {
+    background: rgba(251, 191, 36, 0.08);
+    border-left: 4px solid #fbbf24;
 }
 
-body.light-mode .comment-content p {
+body.light-mode .table-row-pending {
+    background: rgba(251, 191, 36, 0.05);
+}
+
+.table-row-pending:hover {
+    background: rgba(251, 191, 36, 0.15);
+}
+
+body.light-mode .table-row-pending:hover {
+    background: rgba(251, 191, 36, 0.1);
+}
+
+.table-row-approved {
+    background: rgba(16, 185, 129, 0.08);
+    border-left: 4px solid #10b981;
+}
+
+body.light-mode .table-row-approved {
+    background: rgba(16, 185, 129, 0.05);
+}
+
+.table-row-approved:hover {
+    background: rgba(16, 185, 129, 0.15);
+}
+
+body.light-mode .table-row-approved:hover {
+    background: rgba(16, 185, 129, 0.1);
+}
+
+.table-row-rejected {
+    background: rgba(239, 68, 68, 0.08);
+    border-left: 4px solid #ef4444;
+}
+
+body.light-mode .table-row-rejected {
+    background: rgba(239, 68, 68, 0.05);
+}
+
+.table-row-rejected:hover {
+    background: rgba(239, 68, 68, 0.15);
+}
+
+body.light-mode .table-row-rejected:hover {
+    background: rgba(239, 68, 68, 0.1);
+}
+
+.comments-table td {
+    padding: 1.25rem 1rem;
+    vertical-align: middle;
+}
+
+/* Colonnes */
+.table-col-avatar { width: 180px; }
+.table-col-content { width: 250px; }
+.table-col-contact { width: 180px; }
+.table-col-article { width: 200px; }
+.table-col-date { width: 120px; }
+.table-col-status { width: 140px; }
+.table-col-actions { width: 200px; }
+
+/* Cellules */
+.table-cell {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+body.light-mode .table-cell {
     color: #334155;
 }
 
-.comment-details-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-}
-
-.comment-detail-item {
+.cell-author-wrapper {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 1rem;
-    background: rgba(6, 182, 212, 0.05);
+}
+
+.cell-avatar {
+    width: 45px;
+    height: 45px;
     border-radius: 12px;
-}
-
-body.light-mode .comment-detail-item {
-    background: rgba(6, 182, 212, 0.03);
-}
-
-.detail-icon {
-    width: 40px;
-    height: 40px;
-    background: rgba(6, 182, 212, 0.1);
-    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #06b6d4;
-    font-size: 1rem;
+    font-size: 1.1rem;
+    font-weight: 800;
+    border: 2px solid;
+    flex-shrink: 0;
 }
 
-.detail-content {
+.cell-avatar-pending {
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(245, 158, 11, 0.2));
+    border-color: rgba(251, 191, 36, 0.4);
+    color: #fbbf24;
+}
+
+.cell-avatar-approved {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.2));
+    border-color: rgba(16, 185, 129, 0.4);
+    color: #10b981;
+}
+
+.cell-avatar-rejected {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.2));
+    border-color: rgba(239, 68, 68, 0.4);
+    color: #ef4444;
+}
+
+.cell-author-info {
     flex: 1;
+    min-width: 0;
 }
 
-.detail-label {
-    font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.6);
+.cell-author-name {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: white;
     margin-bottom: 0.25rem;
 }
 
-body.light-mode .detail-label {
-    color: #94a3b8;
-}
-
-.detail-value {
-    font-size: 1rem;
-    font-weight: 700;
-    color: white;
-}
-
-body.light-mode .detail-value {
+body.light-mode .cell-author-name {
     color: #1e293b;
 }
 
-.detail-link {
+.cell-reply-info {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+body.light-mode .cell-reply-info {
+    color: #64748b;
+}
+
+.cell-content-text {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.85);
+}
+
+body.light-mode .cell-content-text {
+    color: #475569;
+}
+
+.cell-contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.cell-contact-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+}
+
+.cell-contact-item i {
+    color: #06b6d4;
+    width: 16px;
+}
+
+.cell-link {
     color: #06b6d4;
     text-decoration: none;
     transition: color 0.2s;
 }
 
-.detail-link:hover {
+.cell-link:hover {
     color: #14b8a6;
+    text-decoration: underline;
 }
 
-.comment-card-actions {
+.cell-article-text {
+    font-size: 0.85rem;
     display: flex;
-    gap: 0.75rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid rgba(6, 182, 212, 0.2);
+    align-items: center;
+    gap: 0.5rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+body.light-mode .cell-article-text {
+    color: #475569;
+}
+
+.cell-article-text i {
+    color: #06b6d4;
+}
+
+.cell-no-data {
+    color: rgba(255, 255, 255, 0.5);
+    font-style: italic;
+}
+
+body.light-mode .cell-no-data {
+    color: #94a3b8;
+}
+
+.cell-date-text {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+body.light-mode .cell-date-text {
+    color: #475569;
+}
+
+.cell-date-text i {
+    color: #06b6d4;
+    margin-right: 0.5rem;
+}
+
+.cell-time {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
+    display: block;
+    margin-top: 0.25rem;
+}
+
+body.light-mode .cell-time {
+    color: #94a3b8;
+}
+
+.cell-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.cell-status-pending {
+    background: rgba(251, 191, 36, 0.2);
+    border: 1px solid rgba(251, 191, 36, 0.4);
+    color: #fbbf24;
+}
+
+.cell-status-approved {
+    background: rgba(16, 185, 129, 0.2);
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    color: #10b981;
+}
+
+.cell-status-rejected {
+    background: rgba(239, 68, 68, 0.2);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    color: #ef4444;
+}
+
+.cell-actions-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     flex-wrap: wrap;
 }
 
-.action-form {
-    flex: 1;
-    min-width: 120px;
+.cell-action-form {
+    display: inline-block;
 }
 
-.action-btn {
-    flex: 1;
-    display: flex;
+.cell-action-btn {
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 8px;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1rem;
-    border: none;
-    border-radius: 12px;
-    font-weight: 600;
-    font-size: 0.9rem;
     cursor: pointer;
     transition: all 0.3s ease;
-    text-decoration: none;
-    min-width: 120px;
+    font-size: 0.9rem;
 }
 
-.action-view {
+.cell-action-view {
     background: rgba(59, 130, 246, 0.15);
     border: 1px solid rgba(59, 130, 246, 0.3);
     color: #3b82f6;
 }
 
-.action-view:hover {
+.cell-action-view:hover {
     background: rgba(59, 130, 246, 0.25);
     transform: translateY(-2px);
 }
 
-.action-approve {
+.cell-action-approve {
     background: rgba(16, 185, 129, 0.15);
     border: 1px solid rgba(16, 185, 129, 0.3);
     color: #10b981;
 }
 
-.action-approve:hover {
+.cell-action-approve:hover {
     background: rgba(16, 185, 129, 0.25);
     transform: translateY(-2px);
 }
 
-.action-reject {
+.cell-action-reject {
     background: rgba(239, 68, 68, 0.15);
     border: 1px solid rgba(239, 68, 68, 0.3);
     color: #ef4444;
 }
 
-.action-reject:hover {
+.cell-action-reject:hover {
     background: rgba(239, 68, 68, 0.25);
     transform: translateY(-2px);
 }
 
-.action-contact {
+.cell-action-contact {
     background: rgba(6, 182, 212, 0.15);
     border: 1px solid rgba(6, 182, 212, 0.3);
     color: #06b6d4;
 }
 
-.action-contact:hover {
+.cell-action-contact:hover {
     background: rgba(6, 182, 212, 0.25);
     transform: translateY(-2px);
 }
 
-.action-delete {
+.cell-action-delete {
     background: rgba(239, 68, 68, 0.15);
     border: 1px solid rgba(239, 68, 68, 0.3);
     color: #ef4444;
 }
 
-.action-delete:hover {
+.cell-action-delete:hover {
     background: rgba(239, 68, 68, 0.25);
     transform: translateY(-2px);
 }
@@ -1257,6 +1369,16 @@ body.light-mode .comment-modal-content-box {
 }
 
 /* Responsive */
+@media (max-width: 1200px) {
+    .comments-table-wrapper {
+        overflow-x: auto;
+    }
+    
+    .comments-table {
+        min-width: 1000px;
+    }
+}
+
 @media (max-width: 768px) {
     .comments-title {
         font-size: 1.75rem;
@@ -1284,20 +1406,26 @@ body.light-mode .comment-modal-content-box {
         justify-content: center;
     }
     
-    .comment-card-header {
-        flex-direction: column;
+    .comments-table {
+        min-width: 800px;
+        font-size: 0.85rem;
     }
     
-    .comment-details-grid {
-        grid-template-columns: 1fr;
+    .comments-table th,
+    .comments-table td {
+        padding: 0.75rem 0.5rem;
     }
     
-    .comment-card-actions {
-        flex-direction: column;
+    .cell-avatar {
+        width: 35px;
+        height: 35px;
+        font-size: 0.9rem;
     }
     
-    .action-btn {
-        width: 100%;
+    .cell-action-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 0.8rem;
     }
 }
 </style>

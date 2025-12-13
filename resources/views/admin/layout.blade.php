@@ -848,16 +848,20 @@
             </div>
             
             <!-- Dropdown Configuration -->
-            <div class="sidebar-dropdown {{ request()->routeIs('admin.adsense*') || request()->routeIs('admin.backups*') || request()->routeIs('admin.logs.*') || request()->routeIs('admin.bing*') || request()->routeIs('admin.settings') || request()->routeIs('admin.security-audit.*') || request()->routeIs('admin.payment-gateways.*') ? 'active' : '' }}">
+            <div class="sidebar-dropdown {{ request()->routeIs('admin.adsense*') || request()->routeIs('admin.ezoic*') || request()->routeIs('admin.backups*') || request()->routeIs('admin.logs.*') || request()->routeIs('admin.bing*') || request()->routeIs('admin.settings') || request()->routeIs('admin.security-audit.*') || request()->routeIs('admin.payment-gateways.*') ? 'active' : '' }}">
                 <button class="sidebar-item sidebar-dropdown-toggle" onclick="toggleSidebarDropdown('config')">
                     <i class="fas fa-cog text-xl"></i>
                     <span>Configuration</span>
                     <i class="fas fa-chevron-down dropdown-icon ml-auto" id="config-icon"></i>
                 </button>
-                <div class="sidebar-dropdown-menu" id="config-dropdown" style="display: {{ request()->routeIs('admin.adsense*') || request()->routeIs('admin.backups*') || request()->routeIs('admin.logs.*') || request()->routeIs('admin.bing*') || request()->routeIs('admin.settings') || request()->routeIs('admin.security-audit.*') || request()->routeIs('admin.payment-gateways.*') ? 'block' : 'none' }};">
+                <div class="sidebar-dropdown-menu" id="config-dropdown" style="display: {{ request()->routeIs('admin.adsense*') || request()->routeIs('admin.ezoic*') || request()->routeIs('admin.backups*') || request()->routeIs('admin.logs.*') || request()->routeIs('admin.bing*') || request()->routeIs('admin.settings') || request()->routeIs('admin.security-audit.*') || request()->routeIs('admin.payment-gateways.*') ? 'block' : 'none' }};">
                     <a href="{{ route('admin.adsense') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.adsense*') ? 'active' : '' }}">
                         <i class="fab fa-google"></i>
                         <span>Google AdSense</span>
+                    </a>
+                    <a href="{{ route('admin.ezoic.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.ezoic*') ? 'active' : '' }}">
+                        <i class="fas fa-ad"></i>
+                        <span>Ezoic</span>
                     </a>
                     <a href="{{ route('admin.backups') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.backups*') ? 'active' : '' }}">
                         <i class="fas fa-database"></i>

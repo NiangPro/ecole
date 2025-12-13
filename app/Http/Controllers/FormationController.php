@@ -137,6 +137,30 @@ class FormationController extends Controller
                 'description' => trans('app.formations.dart.description'),
                 'route' => route('formations.dart')
             ],
+            [
+                'name' => trans('app.formations.languages.go'),
+                'slug' => 'go',
+                'icon' => 'fab fa-golang',
+                'color' => '#00add8',
+                'description' => trans('app.formations.go.description'),
+                'route' => route('formations.go')
+            ],
+            [
+                'name' => trans('app.formations.languages.rust'),
+                'slug' => 'rust',
+                'icon' => 'fab fa-rust',
+                'color' => '#000000',
+                'description' => trans('app.formations.rust.description'),
+                'route' => route('formations.rust')
+            ],
+            [
+                'name' => trans('app.formations.languages.ruby'),
+                'slug' => 'ruby',
+                'icon' => 'fas fa-gem',
+                'color' => '#cc342d',
+                'description' => trans('app.formations.ruby.description'),
+                'route' => route('formations.ruby')
+            ],
         ];
         
         return view('formations.all', compact('formations'));
@@ -239,6 +263,21 @@ class FormationController extends Controller
     public function dart()
     {
         return $this->showFormation('dart', 'formations.dart');
+    }
+
+    public function go()
+    {
+        return $this->showFormation('go', 'formations.go');
+    }
+
+    public function rust()
+    {
+        return $this->showFormation('rust', 'formations.rust');
+    }
+
+    public function ruby()
+    {
+        return $this->showFormation('ruby', 'formations.ruby');
     }
 }
 

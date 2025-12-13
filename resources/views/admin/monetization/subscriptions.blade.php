@@ -12,12 +12,12 @@
                     <span class="subscriptions-icon-wrapper">
                         <i class="fas fa-crown subscriptions-icon"></i>
                     </span>
-                    Gestion des Abonnements
-                </h1>
+                Gestion des Abonnements
+            </h1>
                 <p class="subscriptions-subtitle">
                     Gérez et surveillez tous les abonnements premium de votre plateforme
-                </p>
-            </div>
+            </p>
+        </div>
             <a href="{{ route('admin.monetization.subscription-plans.index') }}" class="manage-plans-btn">
                 <i class="fas fa-cog"></i>
                 <span>Gérer les Plans</span>
@@ -173,7 +173,7 @@
     <!-- Subscriptions List -->
     @if($subscriptions->count() > 0)
     <div class="subscriptions-list">
-        @foreach($subscriptions as $subscription)
+                    @foreach($subscriptions as $subscription)
         <div class="subscription-card {{ $subscription->status === 'active' ? 'subscription-active' : '' }} {{ $subscription->status === 'pending' ? 'subscription-pending' : '' }} {{ $subscription->status === 'cancelled' ? 'subscription-cancelled' : '' }} {{ $subscription->status === 'expired' ? 'subscription-expired' : '' }}">
             <!-- Card Header -->
             <div class="subscription-card-header">
@@ -189,26 +189,26 @@
                         <h3 class="subscription-user-name">
                             {{ $subscription->user ? $subscription->user->name : 'Utilisateur supprimé' }}
                         </h3>
-                        @if($subscription->user)
+                            @if($subscription->user)
                         <p class="subscription-user-email">{{ $subscription->user->email }}</p>
-                        @endif
+                            @endif
                         <div class="subscription-id">#{{ $subscription->id }}</div>
                     </div>
                 </div>
                 <div class="subscription-status-badge status-{{ $subscription->status }}">
-                    @if($subscription->status === 'active')
+                            @if($subscription->status === 'active')
                         <i class="fas fa-check-circle"></i>
                         <span>Actif</span>
-                    @elseif($subscription->status === 'pending')
+                            @elseif($subscription->status === 'pending')
                         <i class="fas fa-clock"></i>
                         <span>En attente</span>
-                    @elseif($subscription->status === 'cancelled')
+                            @elseif($subscription->status === 'cancelled')
                         <i class="fas fa-times-circle"></i>
                         <span>Annulé</span>
-                    @else
+                            @else
                         <i class="fas fa-hourglass-end"></i>
                         <span>Expiré</span>
-                    @endif
+                            @endif
                 </div>
             </div>
 
@@ -246,7 +246,7 @@
                         <div class="detail-content">
                             <div class="detail-label">Date de début</div>
                             <div class="detail-value">
-                                {{ $subscription->start_date ? $subscription->start_date->format('d/m/Y') : 'N/A' }}
+                            {{ $subscription->start_date ? $subscription->start_date->format('d/m/Y') : 'N/A' }}
                             </div>
                         </div>
                     </div>
@@ -257,7 +257,7 @@
                         <div class="detail-content">
                             <div class="detail-label">Date de fin</div>
                             <div class="detail-value">
-                                {{ $subscription->end_date ? $subscription->end_date->format('d/m/Y') : 'Illimité' }}
+                            {{ $subscription->end_date ? $subscription->end_date->format('d/m/Y') : 'Illimité' }}
                             </div>
                         </div>
                     </div>
@@ -300,25 +300,25 @@
                 @endif
             </div>
         </div>
-        @endforeach
-    </div>
+                    @endforeach
+        </div>
 
-    <!-- Pagination -->
+        <!-- Pagination -->
     <div class="pagination-wrapper">
-        {{ $subscriptions->links() }}
-    </div>
+            {{ $subscriptions->links() }}
+        </div>
     @else
     <!-- Empty State -->
     <div class="empty-state">
         <div class="empty-state-icon">
             <i class="fas fa-crown"></i>
-        </div>
+    </div>
         <h3 class="empty-state-title">Aucun abonnement trouvé</h3>
         <p class="empty-state-text">
             @if(request()->hasAny(['search', 'status', 'plan_type']))
                 Aucun abonnement ne correspond à vos critères de recherche.
-            @else
-                Aucun abonnement n'a été créé pour le moment.
+    @else
+            Aucun abonnement n'a été créé pour le moment.
             @endif
         </p>
         @if(request()->hasAny(['search', 'status', 'plan_type']))
@@ -1393,7 +1393,7 @@ body.light-mode .cancel-modal-btn-secondary {
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+    @media (max-width: 768px) {
     .subscriptions-title {
         font-size: 1.75rem;
     }
@@ -1440,7 +1440,7 @@ body.light-mode .cancel-modal-btn-secondary {
     .action-btn {
         width: 100%;
     }
-}
+    }
 </style>
 
 <script>

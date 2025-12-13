@@ -24,9 +24,9 @@ return new class extends Migration
             DB::statement("ALTER TABLE formation_adsense_units MODIFY position VARCHAR(20) NOT NULL DEFAULT 'content'");
             
             // Créer l'index unique
-            Schema::table('formation_adsense_units', function (Blueprint $table) {
+        Schema::table('formation_adsense_units', function (Blueprint $table) {
                 $table->unique(['formation_slug', 'adsense_unit_id', 'position'], 'formation_ads_unique');
-            });
+        });
         }
     }
 
@@ -39,9 +39,9 @@ return new class extends Migration
         $indexExists = DB::select("SHOW INDEX FROM formation_adsense_units WHERE Key_name = 'formation_ads_unique'");
         
         if (!empty($indexExists)) {
-            Schema::table('formation_adsense_units', function (Blueprint $table) {
+        Schema::table('formation_adsense_units', function (Blueprint $table) {
                 $table->dropUnique('formation_ads_unique');
-            });
+        });
         }
     }
 };

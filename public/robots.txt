@@ -1,0 +1,27 @@
+# robots.txt pour niangprogrammeur.com
+
+# Autoriser tous les robots d'exploration
+User-agent: *
+Allow: /
+
+# Autoriser explicitement le robot d'exploration AdSense
+User-agent: Mediapartners-Google
+Allow: /
+
+User-agent: Google-Display-Ads-Bot
+Allow: /
+
+# Autoriser l'accès au fichier ads.txt
+Allow: /ads.txt
+
+# Autoriser l'accès au sitemap
+Allow: /sitemap.xml
+
+# Désactiver l'indexation des pages d'administration
+Disallow: /admin/
+Disallow: /login
+Disallow: /register
+
+# Sitemap
+Sitemap: https://www.niangprogrammeur.com/sitemap.xml
+

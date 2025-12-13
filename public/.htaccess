@@ -7,7 +7,29 @@
     RewriteEngine On
     RewriteBase /
 
-    # IMPORTANT : Forcer www.niangprogrammeur.com et HTTPS (DOIT être en premier)
+    # Fichiers statiques importants - DOIT être en PREMIER pour servir directement
+    # Ces fichiers doivent être servis AVANT toute redirection ou traitement Laravel
+    # ads.txt - Priorité absolue : servir le fichier physique directement
+    RewriteCond %{REQUEST_URI} ^/ads\.txt$ [NC]
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ads\.txt$ ads.txt [L,T=text/plain]
+    
+    # Si ads.txt n'existe pas physiquement, laisser Laravel gérer via la route
+    RewriteCond %{REQUEST_URI} ^/ads\.txt$ [NC]
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ads\.txt$ - [L]
+    
+    # robots.txt - Servir le fichier physique s'il existe
+    RewriteCond %{REQUEST_URI} ^/robots\.txt$ [NC]
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^robots\.txt$ robots.txt [L]
+    
+    # sitemap.xml - Servir le fichier physique s'il existe
+    RewriteCond %{REQUEST_URI} ^/sitemap\.xml$ [NC]
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^sitemap\.xml$ sitemap.xml [L]
+
+    # IMPORTANT : Forcer www.niangprogrammeur.com et HTTPS
     # Étape 1 : Rediriger niangprogrammeur.com vers www.niangprogrammeur.com
     RewriteCond %{HTTP_HOST} !^www\. [NC]
     RewriteCond %{HTTP_HOST} niangprogrammeur\.com$ [NC]
@@ -106,6 +128,18 @@
 
 # Optimisation des images - Headers pour améliorer le chargement
 <IfModule mod_headers.c>
+    # Fichiers texte importants (ads.txt, robots.txt) - Accessibles publiquement
+    # Exclure ces fichiers du traitement CDN/Ezoic si possible
+    <FilesMatch "^(ads\.txt|robots\.txt)$">
+        Header set Content-Type "text/plain; charset=utf-8"
+        Header set Cache-Control "public, max-age=3600"
+        Header set Access-Control-Allow-Origin "*"
+        Header unset X-Frame-Options
+        # Headers pour indiquer que ce fichier ne doit pas être traité par CDN
+        Header set X-Accel-Buffering "no"
+        Header set X-Cache-Control "no-transform"
+    </FilesMatch>
+    
     # Activer la mise en cache des images
     <FilesMatch "\.(jpg|jpeg|png|gif|webp|avif|svg)$">
         Header set Cache-Control "max-age=31536000, public, immutable"

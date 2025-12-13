@@ -13,7 +13,7 @@ return new class extends Migration
     {
         // Vérifier si la table existe déjà
         if (!Schema::hasTable('formation_adsense_units')) {
-            Schema::create('formation_adsense_units', function (Blueprint $table) {
+        Schema::create('formation_adsense_units', function (Blueprint $table) {
             $table->id();
             $table->string('formation_slug', 50); // Slug de la formation (ex: html5, css3, javascript) - Limité à 50 caractères
             $table->foreignId('adsense_unit_id')->constrained('adsense_units')->onDelete('cascade');
@@ -27,7 +27,7 @@ return new class extends Migration
             $table->index('status');
             // Index unique avec longueurs limitées pour éviter l'erreur "clé trop longue"
             $table->unique(['formation_slug', 'adsense_unit_id', 'position'], 'formation_ads_unique'); // Une unité par position par formation
-            });
+        });
         }
     }
 
