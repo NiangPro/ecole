@@ -14,6 +14,7 @@ use App\Models\UserActivity;
 use App\Models\UserGoal;
 use App\Models\CoursePurchase;
 use App\Models\PaidCourse;
+use App\Models\Affiliate;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
@@ -975,5 +976,49 @@ class ProfileController extends Controller
         $pageDescription = 'Gérez vos abonnements premium';
         
         return view('dashboard.subscriptions', compact('subscriptions', 'activeSubscription', 'pageTitle', 'pageDescription'));
+    }
+    
+    /**
+     * Dashboard d'affiliation pour l'utilisateur
+     */
+    public function affiliates()
+    {
+        $this->ensureLocale();
+        
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'Vous devez être connecté pour accéder à votre dashboard d\'affiliation.');
+        }
+
+        $affiliate = Affiliate::where('user_id', Auth::id())->firstOrFail();
+
+        $referrals = $affiliate->referrals()
+            ->with('user')
+            ->orderBy('created_at', 'desc')
+            ->paginate(15);
+
+        // Statistiques
+        $stats = [
+            'total_referrals' => $affiliate->referrals()->count(),
+            'pending_referrals' => $affiliate->referrals()->where('status', 'pending')->count(),
+            'approved_referrals' => $affiliate->referrals()->where('status', 'approved')->count(),
+            'paid_referrals' => $affiliate->referrals()->where('status', 'paid')->count(),
+            'total_earnings' => $affiliate->total_earnings,
+            'paid_earnings' => $affiliate->paid_earnings,
+            'pending_earnings' => $affiliate->pending_earnings,
+            'commission_rate' => $affiliate->commission_rate,
+        ];
+
+        // Références par mois (derniers 12 mois)
+        $referralsByMonth = $affiliate->referrals()
+            ->selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, COUNT(*) as count, SUM(commission) as total_commission')
+            ->where('created_at', '>=', now()->subMonths(12))
+            ->groupBy('month')
+            ->orderBy('month', 'desc')
+            ->get();
+
+        $pageTitle = 'Dashboard Affilié';
+        $pageDescription = 'Gérez vos références et suivez vos gains';
+
+        return view('dashboard.affiliates', compact('affiliate', 'referrals', 'stats', 'referralsByMonth', 'pageTitle', 'pageDescription'));
     }
 }

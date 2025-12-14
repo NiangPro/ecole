@@ -110,6 +110,12 @@ class PageController extends Controller
         return view('contact');
     }
     
+    public function docs()
+    {
+        $this->ensureLocale();
+        return view('docs');
+    }
+    
     public function sendContact(Request $request)
     {
         // Vérifier le Honeypot

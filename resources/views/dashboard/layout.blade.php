@@ -522,13 +522,23 @@
                     
                     <a href="{{ route('dashboard.paid-courses') }}" class="nav-item {{ request()->routeIs('dashboard.paid-courses.*') ? 'active' : '' }}" data-no-loader="true">
                         <i class="fas fa-graduation-cap"></i>
-                        <span>Cours Payants</span>
+                        <span>{{ trans('app.profile.sidebar.paid_courses') }}</span>
                     </a>
                     
                     <a href="{{ route('dashboard.subscriptions') }}" class="nav-item {{ request()->routeIs('dashboard.subscriptions') ? 'active' : '' }}" data-no-loader="true">
                         <i class="fas fa-crown"></i>
-                        <span>Mes Abonnements</span>
+                        <span>{{ trans('app.profile.sidebar.subscriptions') }}</span>
                     </a>
+                    
+                    @php
+                        $userAffiliate = Auth::check() ? \App\Models\Affiliate::where('user_id', Auth::id())->first() : null;
+                    @endphp
+                    @if($userAffiliate)
+                    <a href="{{ route('dashboard.affiliates') }}" class="nav-item {{ request()->routeIs('dashboard.affiliates') ? 'active' : '' }}" data-no-loader="true">
+                        <i class="fas fa-users"></i>
+                        <span>{{ trans('app.profile.sidebar.affiliates') }}</span>
+                    </a>
+                    @endif
                     
                     <a href="{{ route('dashboard.exercices') }}" class="nav-item {{ request()->routeIs('dashboard.exercices') ? 'active' : '' }}" data-no-loader="true">
                         <i class="fas fa-code"></i>
@@ -555,27 +565,27 @@
                     
                     <a href="{{ route('dashboard.statistics') }}" class="nav-item {{ request()->routeIs('dashboard.statistics') ? 'active' : '' }}" data-no-loader="true">
                         <i class="fas fa-chart-line"></i>
-                        <span>{{ trans('app.profile.dashboard.statistics.title') }}</span>
+                        <span>{{ trans('app.profile.sidebar.statistics') }}</span>
                     </a>
                     
                     <a href="{{ route('dashboard.badges') }}" class="nav-item {{ request()->routeIs('dashboard.badges') ? 'active' : '' }}" data-no-loader="true">
                         <i class="fas fa-trophy"></i>
-                        <span>{{ trans('app.profile.sidebar.badges') ?? 'Badges' }}</span>
+                        <span>{{ trans('app.profile.sidebar.badges') }}</span>
                     </a>
                     
                     <a href="{{ route('dashboard.certificates') }}" class="nav-item {{ request()->routeIs('dashboard.certificates') ? 'active' : '' }}" data-no-loader="true">
                         <i class="fas fa-certificate"></i>
-                        <span>{{ trans('app.profile.sidebar.certificates') ?? 'Certificats' }}</span>
+                        <span>{{ trans('app.profile.sidebar.certificates') }}</span>
                     </a>
                     
                     <a href="{{ route('dashboard.favorites') }}" class="nav-item {{ request()->routeIs('dashboard.favorites') ? 'active' : '' }}" data-no-loader="true">
                         <i class="fas fa-heart"></i>
-                        <span>{{ trans('app.profile.sidebar.favorites') ?? 'Favoris' }}</span>
+                        <span>{{ trans('app.profile.sidebar.favorites') }}</span>
                     </a>
                     
                     <a href="{{ route('dashboard.notifications') }}" class="nav-item {{ request()->routeIs('dashboard.notifications') ? 'active' : '' }}" data-no-loader="true">
                         <i class="fas fa-bell"></i>
-                        <span>{{ trans('app.profile.sidebar.notifications') ?? 'Notifications' }}</span>
+                        <span>{{ trans('app.profile.sidebar.notifications') }}</span>
                         @php
                             $unreadCount = Auth::check() ? \App\Models\Notification::countUnread(Auth::id()) : 0;
                         @endphp

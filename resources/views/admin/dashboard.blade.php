@@ -1039,13 +1039,13 @@
     <div class="content-section-modern">
         <h4 class="section-title-modern">
             <i class="fas fa-globe"></i>
-            Top 5 Pays
+            Top 10 Pays
         </h4>
         <div>
             @php
-                $topCountries = \App\Models\Statistic::getByCountry('month', null, null);
+                $topCountries = \App\Models\Statistic::getByCountry('month', null, null, 10);
             @endphp
-            @foreach($topCountries->take(5) as $country)
+            @foreach($topCountries as $country)
             <div class="top-page-item">
                 <div class="top-page-rank" style="background: linear-gradient(135deg, #06b6d4, #14b8a6);">
                     <span style="font-size: 1.5rem;">{{ \App\Services\GeoIPService::getCountryFlag($country->country) }}</span>

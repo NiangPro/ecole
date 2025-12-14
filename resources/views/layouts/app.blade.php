@@ -1523,9 +1523,14 @@
             'quiz',
             'quiz.language',
             'quiz.result',
+            'monetization.index',
             'monetization.donations',
             'monetization.donations.alias',
-            'payment.wave'
+            'monetization.affiliates',
+            'monetization.courses',
+            'monetization.course.show',
+            'payment.wave',
+            'docs'
         ]);
     @endphp
     

@@ -10,9 +10,15 @@ class PaidCourse extends Model
 {
     protected $fillable = [
         'title',
+        'title_fr',
+        'title_en',
         'slug',
         'description',
+        'description_fr',
+        'description_en',
         'content',
+        'content_fr',
+        'content_en',
         'cover_image',
         'cover_type',
         'price',
@@ -90,6 +96,54 @@ class PaidCourse extends Model
         }
         
         return (int) round((($this->price - $this->discount_price) / $this->price) * 100);
+    }
+
+    /**
+     * Accesseur pour obtenir le titre selon la langue
+     */
+    public function getLocalizedTitleAttribute(): string
+    {
+        $locale = app()->getLocale();
+        $field = 'title_' . $locale;
+        
+        if (in_array($locale, ['fr', 'en']) && $this->$field) {
+            return $this->$field;
+        }
+        
+        // Fallback sur le titre par défaut
+        return $this->title ?? '';
+    }
+
+    /**
+     * Accesseur pour obtenir la description selon la langue
+     */
+    public function getLocalizedDescriptionAttribute(): ?string
+    {
+        $locale = app()->getLocale();
+        $field = 'description_' . $locale;
+        
+        if (in_array($locale, ['fr', 'en']) && $this->$field) {
+            return $this->$field;
+        }
+        
+        // Fallback sur la description par défaut
+        return $this->description;
+    }
+
+    /**
+     * Accesseur pour obtenir le contenu selon la langue
+     */
+    public function getLocalizedContentAttribute(): ?string
+    {
+        $locale = app()->getLocale();
+        $field = 'content_' . $locale;
+        
+        if (in_array($locale, ['fr', 'en']) && $this->$field) {
+            return $this->$field;
+        }
+        
+        // Fallback sur le contenu par défaut
+        return $this->content;
     }
 }
 

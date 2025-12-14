@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Cours Payants - NiangProgrammeur')
+@section('title', trans('app.monetization.courses_page.title'))
+@section('meta_description', trans('app.monetization.courses_page.meta_description'))
 
 @section('content')
 <div class="courses-page">
@@ -9,13 +10,13 @@
         <div class="courses-hero-content">
             <div class="courses-hero-badge">
                 <i class="fas fa-graduation-cap"></i>
-                <span>Formations Premium</span>
+                <span>{{ trans('app.monetization.courses_page.hero_badge') }}</span>
             </div>
             <h1 class="courses-hero-title">
-                Développez vos compétences avec nos <span class="gradient-text">cours payants</span>
+                {!! str_replace(':courses_payants', '<span class="gradient-text">' . trans('app.monetization.courses_page.hero_title_courses') . '</span>', trans('app.monetization.courses_page.hero_title')) !!}
             </h1>
             <p class="courses-hero-subtitle">
-                Accédez à des formations approfondies et développez votre expertise professionnelle
+                {{ trans('app.monetization.courses_page.hero_subtitle') }}
             </p>
             
             <!-- Barre de recherche -->
@@ -26,11 +27,11 @@
                         type="text" 
                         name="search" 
                         value="{{ request('search') }}"
-                        placeholder="Rechercher un cours..." 
+                        placeholder="{{ trans('app.monetization.courses_page.search_placeholder') }}" 
                         class="courses-search-input"
                     >
                     <button type="submit" class="courses-search-btn">
-                        <span>Rechercher</span>
+                        <span>{{ trans('app.monetization.courses_page.search_button') }}</span>
                         <i class="fas fa-arrow-right"></i>
                     </button>
                 </div>
@@ -42,9 +43,9 @@
         <!-- Sidebar Filtres -->
         <aside class="courses-filters-sidebar">
             <div class="filters-header">
-                <h3><i class="fas fa-filter"></i> Filtres</h3>
+                <h3><i class="fas fa-filter"></i> {{ trans('app.monetization.courses_page.filters_title') }}</h3>
                 <button class="filters-reset-btn" onclick="resetFilters()">
-                    <i class="fas fa-redo"></i> Réinitialiser
+                    <i class="fas fa-redo"></i> {{ trans('app.monetization.courses_page.filters_reset') }}
                 </button>
             </div>
 
@@ -56,14 +57,14 @@
                 <!-- Filtre Prix -->
                 <div class="filter-group">
                     <label class="filter-label">
-                        <i class="fas fa-money-bill-wave"></i> Prix (FCFA)
+                        <i class="fas fa-money-bill-wave"></i> {{ trans('app.monetization.courses_page.filter_price') }}
                     </label>
                     <div class="price-range-inputs">
                         <input 
                             type="number" 
                             name="price_min" 
                             value="{{ request('price_min', $stats['min_price']) }}"
-                            placeholder="Prix minimum (FCFA)" 
+                            placeholder="{{ trans('app.monetization.courses_page.filter_price_min') }}" 
                             class="price-input"
                             min="0"
                         >
@@ -71,7 +72,7 @@
                             type="number" 
                             name="price_max" 
                             value="{{ request('price_max', $stats['max_price']) }}"
-                            placeholder="Prix maximum (FCFA)" 
+                            placeholder="{{ trans('app.monetization.courses_page.filter_price_max') }}" 
                             class="price-input"
                             min="0"
                         >
@@ -91,14 +92,14 @@
                 <!-- Filtre Durée -->
                 <div class="filter-group">
                     <label class="filter-label">
-                        <i class="fas fa-clock"></i> Durée (heures)
+                        <i class="fas fa-clock"></i> {{ trans('app.monetization.courses_page.filter_duration') }}
                     </label>
                     <div class="duration-range-inputs">
                         <input 
                             type="number" 
                             name="duration_min" 
                             value="{{ request('duration_min', $stats['min_duration']) }}"
-                            placeholder="Durée minimum (heures)" 
+                            placeholder="{{ trans('app.monetization.courses_page.filter_duration_min') }}" 
                             class="duration-input"
                             min="0"
                         >
@@ -106,7 +107,7 @@
                             type="number" 
                             name="duration_max" 
                             value="{{ request('duration_max', $stats['max_duration']) }}"
-                            placeholder="Durée maximum (heures)" 
+                            placeholder="{{ trans('app.monetization.courses_page.filter_duration_max') }}" 
                             class="duration-input"
                             min="0"
                         >
@@ -116,7 +117,7 @@
                 <!-- Filtre Note -->
                 <div class="filter-group">
                     <label class="filter-label">
-                        <i class="fas fa-star"></i> Note minimum
+                        <i class="fas fa-star"></i> {{ trans('app.monetization.courses_page.filter_rating') }}
                     </label>
                     <div class="rating-filter">
                         <input 
@@ -151,13 +152,13 @@
                         >
                         <span class="filter-checkbox-custom"></span>
                         <span class="filter-checkbox-text">
-                            <i class="fas fa-tag"></i> Promotions uniquement
+                            <i class="fas fa-tag"></i> {{ trans('app.monetization.courses_page.filter_discount_only') }}
                         </span>
                     </label>
                 </div>
 
                 <button type="submit" class="filters-apply-btn">
-                    <i class="fas fa-check"></i> Appliquer les filtres
+                    <i class="fas fa-check"></i> {{ trans('app.monetization.courses_page.filter_apply') }}
                 </button>
             </form>
         </aside>
@@ -168,20 +169,20 @@
             <div class="courses-header">
                 <div class="courses-results">
                     <span class="results-count">{{ $courses->total() }}</span>
-                    <span class="results-text">cours trouvés</span>
+                    <span class="results-text">{{ trans('app.monetization.courses_page.results_count') }}</span>
                 </div>
                 
                 <div class="courses-sort">
                     <label for="sortSelect" class="sort-label">
-                        <i class="fas fa-sort"></i> Trier par :
+                        <i class="fas fa-sort"></i> {{ trans('app.monetization.courses_page.sort_label') }}
                     </label>
                     <select name="sort" id="sortSelect" class="sort-select" onchange="updateSort(this.value)">
-                        <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Plus récents</option>
-                        <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>Prix croissant</option>
-                        <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>Prix décroissant</option>
-                        <option value="rating" {{ request('sort') == 'rating' ? 'selected' : '' }}>Meilleures notes</option>
-                        <option value="students" {{ request('sort') == 'students' ? 'selected' : '' }}>Plus populaires</option>
-                        <option value="duration" {{ request('sort') == 'duration' ? 'selected' : '' }}>Plus longs</option>
+                        <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>{{ trans('app.monetization.courses_page.sort_newest') }}</option>
+                        <option value="price_asc" {{ request('sort') == 'price_asc' ? 'selected' : '' }}>{{ trans('app.monetization.courses_page.sort_price_asc') }}</option>
+                        <option value="price_desc" {{ request('sort') == 'price_desc' ? 'selected' : '' }}>{{ trans('app.monetization.courses_page.sort_price_desc') }}</option>
+                        <option value="rating" {{ request('sort') == 'rating' ? 'selected' : '' }}>{{ trans('app.monetization.courses_page.sort_rating') }}</option>
+                        <option value="students" {{ request('sort') == 'students' ? 'selected' : '' }}>{{ trans('app.monetization.courses_page.sort_students') }}</option>
+                        <option value="duration" {{ request('sort') == 'duration' ? 'selected' : '' }}>{{ trans('app.monetization.courses_page.sort_duration') }}</option>
                     </select>
                 </div>
             </div>
@@ -205,9 +206,9 @@
                             <div class="course-image-wrapper">
                                 @if($course->cover_image)
                                     @if(($course->cover_type ?? 'internal') === 'internal')
-                                        <img src="{{ asset('storage/' . $course->cover_image) }}" alt="{{ $course->title }}" class="course-image">
+                                        <img src="{{ asset('storage/' . $course->cover_image) }}" alt="{{ $course->localized_title }}" class="course-image">
                                     @else
-                                        <img src="{{ $course->cover_image }}" alt="{{ $course->title }}" class="course-image" onerror="this.parentElement.innerHTML='<div class=\'course-image-placeholder\'><i class=\'fas fa-graduation-cap\'></i></div>'">
+                                        <img src="{{ $course->cover_image }}" alt="{{ $course->localized_title }}" class="course-image" onerror="this.parentElement.innerHTML='<div class=\'course-image-placeholder\'><i class=\'fas fa-graduation-cap\'></i></div>'">
                                     @endif
                                 @else
                                     <div class="course-image-placeholder">
@@ -216,7 +217,7 @@
                                 @endif
                                 <div class="course-image-overlay">
                                     <div class="course-overlay-content">
-                                        <span class="course-view-btn">Voir le cours</span>
+                                        <span class="course-view-btn">{{ trans('app.monetization.courses_page.view_course') }}</span>
                                         <i class="fas fa-arrow-right"></i>
                                     </div>
                                 </div>
@@ -224,7 +225,7 @@
 
                             <!-- Contenu du cours -->
                             <div class="course-content">
-                                <h3 class="course-title">{{ $course->title }}</h3>
+                                <h3 class="course-title">{{ $course->localized_title }}</h3>
 
                                 <!-- Métadonnées -->
                                 <div class="course-meta">
@@ -289,12 +290,12 @@
                 <div class="courses-empty-icon">
                     <i class="fas fa-search"></i>
                 </div>
-                <h3 class="courses-empty-title">Aucun cours trouvé</h3>
+                <h3 class="courses-empty-title">{{ trans('app.monetization.courses_page.empty_title') }}</h3>
                 <p class="courses-empty-text">
-                    Essayez de modifier vos critères de recherche ou vos filtres
+                    {{ trans('app.monetization.courses_page.empty_text') }}
                 </p>
                 <a href="{{ route('monetization.courses') }}" class="courses-empty-btn">
-                    <i class="fas fa-redo"></i> Réinitialiser
+                    <i class="fas fa-redo"></i> {{ trans('app.monetization.courses_page.empty_reset') }}
                 </a>
             </div>
             @endif

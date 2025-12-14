@@ -219,4 +219,96 @@ class MonetizationController extends Controller
 
         return view('monetization.course-show', compact('course', 'hasPurchased', 'isPremium', 'relatedCourses'));
     }
+
+    /**
+     * Afficher la page d'affiliation
+     */
+    public function affiliates()
+    {
+        $this->ensureLocale();
+        
+        $userAffiliate = null;
+        if (Auth::check()) {
+            $userAffiliate = Affiliate::where('user_id', Auth::id())->first();
+        }
+
+        return view('monetization.affiliates', compact('userAffiliate'));
+    }
+
+    /**
+     * Devenir affilié
+     */
+    public function becomeAffiliate(Request $request)
+    {
+        $this->ensureLocale();
+        
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'Vous devez être connecté pour devenir affilié.');
+        }
+
+        // Vérifier si l'utilisateur est déjà affilié
+        $existingAffiliate = Affiliate::where('user_id', Auth::id())->first();
+        if ($existingAffiliate) {
+            return redirect()->route('monetization.affiliates.dashboard')
+                ->with('info', 'Vous êtes déjà affilié.');
+        }
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+        ]);
+
+        // Créer l'affilié avec un taux de commission par défaut de 10%
+        $affiliate = Affiliate::create([
+            'user_id' => Auth::id(),
+            'name' => $validated['name'],
+            'email' => $validated['email'],
+            'commission_rate' => 10.00, // Taux par défaut
+            'status' => 'active',
+        ]);
+
+        return redirect()->route('monetization.affiliates.dashboard')
+            ->with('success', 'Félicitations ! Vous êtes maintenant affilié. Commencez à partager votre lien pour gagner des commissions.');
+    }
+
+    /**
+     * Dashboard d'affiliation pour l'utilisateur
+     */
+    public function affiliatesDashboard()
+    {
+        $this->ensureLocale();
+        
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'Vous devez être connecté pour accéder à votre dashboard d\'affiliation.');
+        }
+
+        $affiliate = Affiliate::where('user_id', Auth::id())->firstOrFail();
+
+        $referrals = $affiliate->referrals()
+            ->with('user')
+            ->orderBy('created_at', 'desc')
+            ->paginate(15);
+
+        // Statistiques
+        $stats = [
+            'total_referrals' => $affiliate->referrals()->count(),
+            'pending_referrals' => $affiliate->referrals()->where('status', 'pending')->count(),
+            'approved_referrals' => $affiliate->referrals()->where('status', 'approved')->count(),
+            'paid_referrals' => $affiliate->referrals()->where('status', 'paid')->count(),
+            'total_earnings' => $affiliate->total_earnings,
+            'paid_earnings' => $affiliate->paid_earnings,
+            'pending_earnings' => $affiliate->pending_earnings,
+            'commission_rate' => $affiliate->commission_rate,
+        ];
+
+        // Références par mois (derniers 12 mois)
+        $referralsByMonth = $affiliate->referrals()
+            ->selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, COUNT(*) as count, SUM(commission) as total_commission')
+            ->where('created_at', '>=', now()->subMonths(12))
+            ->groupBy('month')
+            ->orderBy('month', 'desc')
+            ->get();
+
+        return view('monetization.affiliates-dashboard', compact('affiliate', 'referrals', 'stats', 'referralsByMonth'));
+    }
 }

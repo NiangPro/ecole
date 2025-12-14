@@ -45,6 +45,7 @@ Route::post('/contact', [PageController::class, 'sendContact'])->middleware('thr
 Route::post('/newsletter/subscribe', [PageController::class, 'newsletterSubscribe'])->middleware('throttle:10,1')->name('newsletter.subscribe');
 Route::get('/about', [PageController::class, 'about'])->name('about');
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');
+Route::get('/docs', [PageController::class, 'docs'])->name('docs');
 Route::post('/contact', [PageController::class, 'sendContact'])->name('contact.send');
 Route::get('/faq', [PageController::class, 'faq'])->name('faq');
 // Routes Exercices - Utiliser ExerciceController
@@ -78,6 +79,11 @@ Route::get('/donations', [MonetizationController::class, 'donations'])->name('mo
 Route::get('/faire-un-don', [MonetizationController::class, 'donations'])->name('monetization.donations.alias');
 Route::get('/courses', [MonetizationController::class, 'courses'])->name('monetization.courses');
 Route::get('/courses/{slug}', [MonetizationController::class, 'showCourse'])->name('monetization.course.show');
+Route::get('/affiliates', [MonetizationController::class, 'affiliates'])->name('monetization.affiliates');
+Route::post('/affiliates/become', [MonetizationController::class, 'becomeAffiliate'])->middleware('auth')->name('monetization.affiliates.become');
+Route::get('/affiliates/dashboard', function() {
+    return redirect()->route('dashboard.affiliates');
+})->middleware('auth')->name('monetization.affiliates.dashboard');
 Route::post('/payment/subscription', [PaymentController::class, 'processSubscription'])->middleware('auth')->name('payment.subscription');
 Route::get('/payment/course/{courseId}', function($courseId) {
     $course = \App\Models\PaidCourse::findOrFail($courseId);
@@ -180,6 +186,7 @@ Route::middleware('auth')->prefix('dashboard')->name('dashboard.')->group(functi
     Route::get('/quiz', [\App\Http\Controllers\ProfileController::class, 'quiz'])->name('quiz');
     Route::get('/goals', [\App\Http\Controllers\ProfileController::class, 'goals'])->name('goals');
     Route::get('/subscriptions', [\App\Http\Controllers\ProfileController::class, 'subscriptions'])->name('subscriptions');
+    Route::get('/affiliates', [\App\Http\Controllers\ProfileController::class, 'affiliates'])->name('affiliates');
     Route::get('/activities', [\App\Http\Controllers\ProfileController::class, 'activities'])->name('activities');
     Route::get('/statistics', [\App\Http\Controllers\ProfileController::class, 'statistics'])->name('statistics');
     Route::get('/settings', [\App\Http\Controllers\ProfileController::class, 'settings'])->name('settings');
@@ -366,6 +373,15 @@ Route::middleware(['admin'])->group(function () {
         });
         
         Route::get('/affiliates', [\App\Http\Controllers\Admin\MonetizationController::class, 'affiliates'])->name('affiliates');
+        Route::get('/affiliates/create', [\App\Http\Controllers\Admin\MonetizationController::class, 'createAffiliate'])->name('affiliates.create');
+        Route::post('/affiliates', [\App\Http\Controllers\Admin\MonetizationController::class, 'storeAffiliate'])->name('affiliates.store');
+        Route::get('/affiliates/{id}', [\App\Http\Controllers\Admin\MonetizationController::class, 'showAffiliate'])->name('affiliates.show');
+        Route::get('/affiliates/{id}/edit', [\App\Http\Controllers\Admin\MonetizationController::class, 'editAffiliate'])->name('affiliates.edit');
+        Route::put('/affiliates/{id}', [\App\Http\Controllers\Admin\MonetizationController::class, 'updateAffiliate'])->name('affiliates.update');
+        Route::delete('/affiliates/{id}', [\App\Http\Controllers\Admin\MonetizationController::class, 'destroyAffiliate'])->name('affiliates.destroy');
+        Route::post('/affiliates/{affiliateId}/referrals/{referralId}/approve', [\App\Http\Controllers\Admin\MonetizationController::class, 'approveReferral'])->name('affiliates.referrals.approve');
+        Route::post('/affiliates/{affiliateId}/referrals/{referralId}/pay', [\App\Http\Controllers\Admin\MonetizationController::class, 'payReferral'])->name('affiliates.referrals.pay');
+        Route::post('/affiliates/{affiliateId}/referrals/{referralId}/reject', [\App\Http\Controllers\Admin\MonetizationController::class, 'rejectReferral'])->name('affiliates.referrals.reject');
         Route::get('/payments', [\App\Http\Controllers\Admin\MonetizationController::class, 'payments'])->name('payments');
         Route::get('/payments/course/{paymentId}', [\App\Http\Controllers\Admin\MonetizationController::class, 'showCoursePayment'])->name('payments.course.show');
         Route::post('/payments/course/{paymentId}/accept', [\App\Http\Controllers\Admin\MonetizationController::class, 'acceptCoursePayment'])->name('payments.course.accept');

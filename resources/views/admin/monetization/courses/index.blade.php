@@ -122,6 +122,69 @@
         border-color: rgba(239, 68, 68, 0.3) !important;
         color: rgba(220, 38, 38, 0.9) !important;
     }
+
+    /* Toggle Switch Styles */
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 50px;
+        height: 26px;
+        cursor: pointer;
+    }
+
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #6b7280;
+        transition: 0.4s;
+        border-radius: 26px;
+    }
+
+    .toggle-slider-button {
+        position: absolute;
+        height: 20px;
+        width: 20px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: 0.4s;
+        border-radius: 50%;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .toggle-switch input:checked + .toggle-slider {
+        background-color: #10b981;
+    }
+
+    .toggle-switch input:checked + .toggle-slider .toggle-slider-button {
+        transform: translateX(24px);
+    }
+
+    .toggle-switch input:focus + .toggle-slider {
+        box-shadow: 0 0 1px #10b981;
+    }
+
+    .toggle-switch:hover .toggle-slider {
+        opacity: 0.9;
+    }
+
+    body.light-mode .toggle-slider {
+        background-color: #cbd5e1 !important;
+    }
+
+    body.light-mode .toggle-switch input:checked + .toggle-slider {
+        background-color: #10b981 !important;
+    }
 </style>
 @endpush
 
@@ -287,13 +350,29 @@
                             @endif
                         </td>
                         <td class="table-cell" style="padding: 15px;">
-                            @if($course->status === 'published')
-                                <span class="status-badge status-published" style="padding: 4px 10px; background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; border-radius: 6px; color: #10b981; font-size: 0.85rem; font-weight: 600;">Publié</span>
-                            @elseif($course->status === 'draft')
-                                <span class="status-badge status-draft" style="padding: 4px 10px; background: rgba(251, 191, 36, 0.2); border: 1px solid #fbbf24; border-radius: 6px; color: #fbbf24; font-size: 0.85rem; font-weight: 600;">Brouillon</span>
-                            @else
-                                <span class="status-badge status-archived" style="padding: 4px 10px; background: rgba(107, 114, 128, 0.2); border: 1px solid #6b7280; border-radius: 6px; color: #6b7280; font-size: 0.85rem; font-weight: 600;">Archivé</span>
-                            @endif
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                @if($course->status === 'published')
+                                    <span class="status-badge status-published" style="padding: 4px 10px; background: rgba(16, 185, 129, 0.2); border: 1px solid #10b981; border-radius: 6px; color: #10b981; font-size: 0.85rem; font-weight: 600;">Publié</span>
+                                @elseif($course->status === 'draft')
+                                    <span class="status-badge status-draft" style="padding: 4px 10px; background: rgba(251, 191, 36, 0.2); border: 1px solid #fbbf24; border-radius: 6px; color: #fbbf24; font-size: 0.85rem; font-weight: 600;">Brouillon</span>
+                                @else
+                                    <span class="status-badge status-archived" style="padding: 4px 10px; background: rgba(107, 114, 128, 0.2); border: 1px solid #6b7280; border-radius: 6px; color: #6b7280; font-size: 0.85rem; font-weight: 600;">Archivé</span>
+                                @endif
+                                
+                                <!-- Toggle Switch pour activer/désactiver -->
+                                <form method="POST" action="{{ route('admin.monetization.courses.toggle-status', $course->id) }}" style="display: inline;" id="toggleForm{{ $course->id }}">
+                                    @csrf
+                                    <label class="toggle-switch" style="position: relative; display: inline-block; width: 50px; height: 26px; cursor: pointer;">
+                                        <input type="checkbox" 
+                                               {{ $course->status === 'published' ? 'checked' : '' }} 
+                                               onchange="document.getElementById('toggleForm{{ $course->id }}').submit();"
+                                               style="opacity: 0; width: 0; height: 0;">
+                                        <span class="toggle-slider" style="position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: {{ $course->status === 'published' ? '#10b981' : '#6b7280' }}; transition: 0.4s; border-radius: 26px;">
+                                            <span class="toggle-slider-button" style="position: absolute; content: ''; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: white; transition: 0.4s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2);"></span>
+                                        </span>
+                                    </label>
+                                </form>
+                            </div>
                         </td>
                         <td class="table-cell" style="padding: 15px; color: rgba(255, 255, 255, 0.8); font-weight: 600;">
                             {{ $course->purchases_count ?? 0 }}

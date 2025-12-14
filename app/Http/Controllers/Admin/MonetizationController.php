@@ -216,14 +216,253 @@ class MonetizationController extends Controller
     /**
      * Gérer les affiliés
      */
-    public function affiliates()
+    public function affiliates(Request $request)
     {
-        $affiliates = Affiliate::with('user')
+        $query = Affiliate::with('user')
             ->withCount('referrals')
+            ->withCount(['referrals as pending_referrals_count' => function($q) {
+                $q->where('status', 'pending');
+            }])
+            ->withCount(['referrals as approved_referrals_count' => function($q) {
+                $q->where('status', 'approved');
+            }])
+            ->withCount(['referrals as paid_referrals_count' => function($q) {
+                $q->where('status', 'paid');
+            }]);
+
+        // Filtres
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('affiliate_code', 'like', "%{$search}%")
+                  ->orWhereHas('user', function($userQuery) use ($search) {
+                      $userQuery->where('name', 'like', "%{$search}%")
+                                ->orWhere('email', 'like', "%{$search}%");
+                  });
+            });
+        }
+
+        // Tri
+        $sortBy = $request->get('sort', 'created_at');
+        $sortDir = $request->get('dir', 'desc');
+        $query->orderBy($sortBy, $sortDir);
+
+        $affiliates = $query->paginate(20)->withQueryString();
+
+        // Statistiques
+        $stats = [
+            'total' => Affiliate::count(),
+            'active' => Affiliate::where('status', 'active')->count(),
+            'inactive' => Affiliate::where('status', 'inactive')->count(),
+            'suspended' => Affiliate::where('status', 'suspended')->count(),
+            'total_earnings' => Affiliate::sum('total_earnings'),
+            'paid_earnings' => Affiliate::sum('paid_earnings'),
+            'pending_earnings' => Affiliate::sum('pending_earnings'),
+            'total_referrals' => AffiliateReferral::count(),
+        ];
+
+        return view('admin.monetization.affiliates', compact('affiliates', 'stats'));
+    }
+
+    /**
+     * Afficher les détails d'un affilié
+     */
+    public function showAffiliate($id)
+    {
+        $affiliate = Affiliate::with(['user', 'referrals.user'])
+            ->withCount('referrals')
+            ->findOrFail($id);
+
+        $referrals = $affiliate->referrals()
+            ->with('user')
             ->orderBy('created_at', 'desc')
             ->paginate(20);
 
-        return view('admin.monetization.affiliates', compact('affiliates'));
+        // Statistiques de l'affilié
+        $affiliateStats = [
+            'total_referrals' => $affiliate->referrals()->count(),
+            'pending_referrals' => $affiliate->referrals()->where('status', 'pending')->count(),
+            'approved_referrals' => $affiliate->referrals()->where('status', 'approved')->count(),
+            'paid_referrals' => $affiliate->referrals()->where('status', 'paid')->count(),
+            'total_commission' => $affiliate->referrals()->sum('commission'),
+            'pending_commission' => $affiliate->referrals()->where('status', 'pending')->sum('commission'),
+            'paid_commission' => $affiliate->referrals()->where('status', 'paid')->sum('commission'),
+        ];
+
+        return view('admin.monetization.affiliate-show', compact('affiliate', 'referrals', 'affiliateStats'));
+    }
+
+    /**
+     * Créer un nouvel affilié
+     */
+    public function createAffiliate()
+    {
+        $users = \App\Models\User::orderBy('name')->get();
+        return view('admin.monetization.affiliate-create', compact('users'));
+    }
+
+    /**
+     * Enregistrer un nouvel affilié
+     */
+    public function storeAffiliate(Request $request)
+    {
+        $validated = $request->validate([
+            'user_id' => 'nullable|exists:users,id',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'affiliate_code' => 'nullable|string|max:20|unique:affiliates,affiliate_code',
+            'commission_rate' => 'required|numeric|min:0|max:100',
+            'status' => 'required|in:active,inactive,suspended',
+            'notes' => 'nullable|string|max:1000',
+        ]);
+
+        $affiliate = Affiliate::create($validated);
+
+        return redirect()->route('admin.monetization.affiliates.show', $affiliate->id)
+            ->with('success', 'Affilié créé avec succès.');
+    }
+
+    /**
+     * Modifier un affilié
+     */
+    public function editAffiliate($id)
+    {
+        $affiliate = Affiliate::findOrFail($id);
+        $users = \App\Models\User::orderBy('name')->get();
+        return view('admin.monetization.affiliate-edit', compact('affiliate', 'users'));
+    }
+
+    /**
+     * Mettre à jour un affilié
+     */
+    public function updateAffiliate(Request $request, $id)
+    {
+        $affiliate = Affiliate::findOrFail($id);
+
+        $validated = $request->validate([
+            'user_id' => 'nullable|exists:users,id',
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'affiliate_code' => 'nullable|string|max:20|unique:affiliates,affiliate_code,' . $affiliate->id,
+            'commission_rate' => 'required|numeric|min:0|max:100',
+            'status' => 'required|in:active,inactive,suspended',
+            'notes' => 'nullable|string|max:1000',
+        ]);
+
+        $affiliate->update($validated);
+
+        return redirect()->route('admin.monetization.affiliates.show', $affiliate->id)
+            ->with('success', 'Affilié mis à jour avec succès.');
+    }
+
+    /**
+     * Supprimer un affilié
+     */
+    public function destroyAffiliate($id)
+    {
+        $affiliate = Affiliate::findOrFail($id);
+
+        // Vérifier s'il y a des références
+        if ($affiliate->referrals()->count() > 0) {
+            return back()->with('error', 'Impossible de supprimer cet affilié car il a des références associées.');
+        }
+
+        $affiliate->delete();
+
+        return redirect()->route('admin.monetization.affiliates')
+            ->with('success', 'Affilié supprimé avec succès.');
+    }
+
+    /**
+     * Approuver une référence
+     */
+    public function approveReferral($affiliateId, $referralId)
+    {
+        $referral = AffiliateReferral::where('affiliate_id', $affiliateId)
+            ->findOrFail($referralId);
+
+        if ($referral->status !== 'pending') {
+            return back()->with('error', 'Cette référence ne peut pas être approuvée.');
+        }
+
+        DB::transaction(function () use ($referral) {
+            $referral->update([
+                'status' => 'approved',
+                'approved_at' => now(),
+            ]);
+
+            // Mettre à jour les statistiques de l'affilié
+            $affiliate = $referral->affiliate;
+            $affiliate->increment('total_earnings', $referral->commission);
+            $affiliate->decrement('pending_earnings', $referral->commission);
+        });
+
+        return back()->with('success', 'Référence approuvée avec succès.');
+    }
+
+    /**
+     * Marquer une référence comme payée
+     */
+    public function payReferral($affiliateId, $referralId)
+    {
+        $referral = AffiliateReferral::where('affiliate_id', $affiliateId)
+            ->findOrFail($referralId);
+
+        if ($referral->status !== 'approved') {
+            return back()->with('error', 'Cette référence doit être approuvée avant d\'être payée.');
+        }
+
+        DB::transaction(function () use ($referral) {
+            $referral->update([
+                'status' => 'paid',
+                'paid_at' => now(),
+            ]);
+
+            // Mettre à jour les statistiques de l'affilié
+            $affiliate = $referral->affiliate;
+            $affiliate->increment('paid_earnings', $referral->commission);
+            $affiliate->decrement('pending_earnings', $referral->commission);
+        });
+
+        return back()->with('success', 'Référence marquée comme payée avec succès.');
+    }
+
+    /**
+     * Rejeter une référence (retour au statut pending ou suppression)
+     */
+    public function rejectReferral($affiliateId, $referralId, Request $request)
+    {
+        $referral = AffiliateReferral::where('affiliate_id', $affiliateId)
+            ->findOrFail($referralId);
+
+        if ($referral->status === 'paid') {
+            return back()->with('error', 'Impossible de rejeter une référence déjà payée.');
+        }
+
+        DB::transaction(function () use ($referral) {
+            $commission = $referral->commission;
+            $wasApproved = $referral->status === 'approved';
+
+            // Si approuvée, on retire les gains et on remet en pending
+            if ($wasApproved) {
+                $affiliate = $referral->affiliate;
+                $affiliate->decrement('total_earnings', $commission);
+                $affiliate->increment('pending_earnings', $commission);
+            }
+
+            // On remet simplement en pending (ou on peut supprimer si nécessaire)
+            $referral->update([
+                'status' => 'pending',
+            ]);
+        });
+
+        return back()->with('success', 'Référence remise en attente.');
     }
 
     /**

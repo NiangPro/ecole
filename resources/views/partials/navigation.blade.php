@@ -1170,7 +1170,7 @@
             
             <!-- Dropdown À propos / Contact -->
             <li class="navbar-item dropdown">
-                <a href="#" class="navbar-link dropdown-toggle {{ request()->routeIs(['about', 'contact', 'monetization.index']) ? 'active' : '' }}">
+                <a href="#" class="navbar-link dropdown-toggle {{ request()->routeIs(['about', 'contact', 'monetization.index', 'monetization.affiliates', 'monetization.affiliates.dashboard', 'docs']) ? 'active' : '' }}">
                     {{ trans('app.nav.about') }}
                     <i class="fas fa-chevron-down dropdown-icon"></i>
                 </a>
@@ -1205,6 +1205,24 @@
                         <div class="dropdown-item-content">
                             <div class="dropdown-item-title">{{ trans('app.nav.contact') }}</div>
                             <div class="dropdown-item-desc">Contactez-nous</div>
+                        </div>
+                    </a>
+                    <a href="{{ route('monetization.affiliates') }}" class="dropdown-item" data-parent-active="affiliates">
+                        <div class="dropdown-item-icon" style="background: rgba(139, 92, 246, 0.1);">
+                            <i class="fas fa-users" style="color: #8b5cf6;"></i>
+                        </div>
+                        <div class="dropdown-item-content">
+                            <div class="dropdown-item-title">Programme d'Affiliation</div>
+                            <div class="dropdown-item-desc">Gagnez des commissions</div>
+                        </div>
+                    </a>
+                    <a href="{{ route('docs') }}" class="dropdown-item" data-parent-active="docs">
+                        <div class="dropdown-item-icon" style="background: rgba(34, 197, 94, 0.1);">
+                            <i class="fas fa-book" style="color: #22c55e;"></i>
+                        </div>
+                        <div class="dropdown-item-content">
+                            <div class="dropdown-item-title">Documentation</div>
+                            <div class="dropdown-item-desc">Documentation complète du projet</div>
                         </div>
                     </a>
                 </div>
@@ -1248,9 +1266,14 @@
                 'quiz',
                 'quiz.language',
                 'quiz.result',
+                'monetization.index',
                 'monetization.donations',
                 'monetization.donations.alias',
+                'monetization.affiliates',
+                'monetization.courses',
+                'monetization.course.show',
                 'payment.wave',
+                'docs',
                 'dashboard.*'
             ]);
         @endphp
@@ -1603,6 +1626,20 @@
             </a>
         </li>
         
+        <li class="mobile-menu-item">
+            <a href="{{ route('monetization.affiliates') }}" class="mobile-menu-link">
+                <i class="fas fa-users"></i>
+                Programme d'Affiliation
+            </a>
+        </li>
+        
+        <li class="mobile-menu-item">
+            <a href="{{ route('docs') }}" class="mobile-menu-link">
+                <i class="fas fa-book"></i>
+                Documentation
+            </a>
+        </li>
+        
         <!-- Language Toggle dans le menu mobile -->
         @php
             $showLanguageWidget = request()->routeIs([
@@ -1638,9 +1675,14 @@
                 'quiz',
                 'quiz.language',
                 'quiz.result',
+                'monetization.index',
                 'monetization.donations',
                 'monetization.donations.alias',
+                'monetization.affiliates',
+                'monetization.courses',
+                'monetization.course.show',
                 'payment.wave',
+                'docs',
                 'dashboard.*'
             ]);
         @endphp

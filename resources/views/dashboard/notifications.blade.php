@@ -24,7 +24,7 @@
         <button onclick="markAllAsRead()" 
                 class="btn-primary-sm" 
                 style="background: linear-gradient(135deg, #06b6d4, #14b8a6); color: white; padding: 0.6rem 1.2rem; border-radius: 8px; border: none; font-weight: 600; font-size: 0.85rem; cursor: pointer; display: inline-flex; align-items: center; gap: 0.5rem;">
-            <i class="fas fa-check-double"></i> Tout marquer comme lu
+            <i class="fas fa-check-double"></i> {{ trans('app.profile.dashboard.notifications.mark_all_read') }}
         </button>
         @endif
     </div>
@@ -76,7 +76,7 @@
                             </span>
                             @if(!$notification->is_read)
                             <span style="color: #06b6d4; font-weight: 600;">
-                                <i class="fas fa-circle" style="font-size: 0.5rem;"></i> Non lu
+                                <i class="fas fa-circle" style="font-size: 0.5rem;"></i> {{ trans('app.profile.dashboard.notifications.unread') }}
                             </span>
                             @endif
                         </div>
@@ -97,7 +97,7 @@
                                 align-items: center;
                                 justify-content: center;
                             "
-                            title="Marquer comme lu">
+                            title="{{ trans('app.profile.dashboard.notifications.mark_read') }}">
                         <i class="fas fa-check"></i>
                     </button>
                     @endif
@@ -113,8 +113,8 @@
             <div class="dashboard-empty-icon" style="width: 80px; height: 80px; margin: 0 auto 1.25rem; border-radius: 50%; background: rgba(6, 182, 212, 0.2); display: flex; align-items: center; justify-content: center; color: #06b6d4; font-size: 2rem;">
                 <i class="fas fa-bell-slash"></i>
             </div>
-            <h3 class="dashboard-text-primary" style="font-size: 1.5rem; font-weight: 600; margin: 0 0 0.5rem 0;">Aucune notification</h3>
-            <p class="dashboard-text-secondary" style="color: #64748b; margin: 0;">Vous n'avez pas encore de notifications</p>
+            <h3 class="dashboard-text-primary" style="font-size: 1.5rem; font-weight: 600; margin: 0 0 0.5rem 0;">{{ trans('app.profile.dashboard.notifications.no_notifications') }}</h3>
+            <p class="dashboard-text-secondary" style="color: #64748b; margin: 0;">{{ trans('app.profile.dashboard.notifications.no_notifications_text') }}</p>
         </div>
     @endif
 </div>
@@ -150,7 +150,7 @@ async function markAsRead(id) {
 }
 
 async function markAllAsRead() {
-    if (!confirm('Marquer toutes les notifications comme lues ?')) {
+    if (!confirm('{{ trans('app.profile.dashboard.notifications.mark_all_confirm') }}')) {
         return;
     }
 
@@ -166,7 +166,7 @@ async function markAllAsRead() {
 
         if (response.ok) {
             if (window.feedbackManager) {
-                window.feedbackManager.showSuccess('Toutes les notifications ont été marquées comme lues');
+                window.feedbackManager.showSuccess('{{ trans('app.profile.dashboard.notifications.all_marked_read') }}');
             }
             setTimeout(() => {
                 window.location.reload();
@@ -175,7 +175,7 @@ async function markAllAsRead() {
     } catch (error) {
         console.error('Erreur:', error);
         if (window.feedbackManager) {
-            window.feedbackManager.showError('Une erreur est survenue');
+            window.feedbackManager.showError('{{ trans('app.profile.dashboard.notifications.error') }}');
         }
     }
 }

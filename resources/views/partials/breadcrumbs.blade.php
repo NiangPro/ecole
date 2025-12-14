@@ -22,6 +22,12 @@ if (!isset($breadcrumbs)) {
         'formations.wordpress',
         'formations.bootstrap',
         'formations.ia',
+        'formations.go',
+        'formations.rust',
+        'formations.ruby',
+        'formations.cybersecurite',
+        'formations.data-science',
+        'formations.big-data',
         'emplois.article',
         'emplois.offres'
     ];

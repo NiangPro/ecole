@@ -1,0 +1,95 @@
+================================================================================
+FICHIER DE SAUVEGARDE - CRÉATION SEEDER COURS PAYANTS
+Date: 2025-01-14
+================================================================================
+
+DESCRIPTION:
+------------
+Création d'un seeder complet pour les cours payants avec images et chapitres.
+Le seeder crée 7 cours payants avec un total de 47 chapitres.
+
+COURS CRÉÉS:
+------------
+1. Formation Complète Laravel (6 chapitres)
+   - Prix: 50 000 FCFA (Promotion: 35 000 FCFA)
+   - Durée: 40 heures
+   - Image: https://images.unsplash.com/photo-1555066931-4365d14bab8c
+
+2. Formation React Avancée (6 chapitres)
+   - Prix: 45 000 FCFA
+   - Durée: 35 heures
+   - Image: https://images.unsplash.com/photo-1633356122544-f134324a6cee
+
+3. Formation Node.js & Express (6 chapitres)
+   - Prix: 40 000 FCFA (Promotion: 30 000 FCFA)
+   - Durée: 30 heures
+   - Image: https://images.unsplash.com/photo-1555066931-4365d14bab8c
+
+4. Formation Python Django (7 chapitres)
+   - Prix: 48 000 FCFA
+   - Durée: 38 heures
+   - Image: https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5
+
+5. Formation Vue.js 3 (6 chapitres)
+   - Prix: 42 000 FCFA (Promotion: 32 000 FCFA)
+   - Durée: 32 heures
+   - Image: https://images.unsplash.com/photo-1579468118864-1b9ea3c0db4a
+
+6. Formation Full Stack MERN (8 chapitres)
+   - Prix: 60 000 FCFA (Promotion: 45 000 FCFA)
+   - Durée: 50 heures
+   - Image: https://images.unsplash.com/photo-1558494949-ef010cbdcc31
+
+7. Formation Docker & Kubernetes (8 chapitres)
+   - Prix: 55 000 FCFA (Promotion: 40 000 FCFA)
+   - Durée: 42 heures
+   - Image: https://images.unsplash.com/photo-1605745341112-85968b19335b
+
+CARACTÉRISTIQUES:
+----------------
+- Tous les cours ont des champs multilingues (français et anglais)
+- Chaque cours a une image de couverture externe (Unsplash)
+- Chaque cours a plusieurs chapitres avec:
+  * Titre
+  * Description
+  * Contenu détaillé
+  * Durée en minutes
+- Statistiques générées automatiquement:
+  * Nombre d'étudiants (10-500)
+  * Note (3.5-5.0)
+  * Nombre d'avis (5-150)
+- Promotions configurées pour certains cours
+
+FICHIER CRÉÉ:
+-------------
+database/seeders/PaidCourseSeeder.php
+
+COMMANDE D'EXÉCUTION:
+---------------------
+php artisan db:seed --class=PaidCourseSeeder
+
+RÉSULTAT:
+---------
+✅ 7 cours payants créés avec succès
+📚 47 chapitres créés au total
+
+VÉRIFICATION:
+-------------
+php artisan tinker --execute="echo \App\Models\PaidCourse::count() . ' cours avec ' . \App\Models\CourseChapter::count() . ' chapitres';"
+
+RÉSULTAT VÉRIFICATION:
+-----------------------
+7 cours avec 47 chapitres
+
+NOTES:
+------
+- Les slugs sont générés automatiquement et vérifiés pour l'unicité
+- Les statistiques sont générées aléatoirement pour les cours publiés
+- Tous les cours sont en statut "published"
+- Les images sont stockées en externe (type: external)
+- Les chapitres sont ordonnés automatiquement (order: 1, 2, 3...)
+
+================================================================================
+FIN DU FICHIER DE SAUVEGARDE
+================================================================================
+

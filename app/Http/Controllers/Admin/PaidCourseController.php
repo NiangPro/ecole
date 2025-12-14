@@ -84,9 +84,15 @@ class PaidCourseController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
+            'title_fr' => 'nullable|string|max:255',
+            'title_en' => 'nullable|string|max:255',
             'slug' => 'nullable|string|max:255|unique:paid_courses,slug',
             'description' => 'nullable|string|max:1000',
+            'description_fr' => 'nullable|string|max:1000',
+            'description_en' => 'nullable|string|max:1000',
             'content' => 'nullable|string',
+            'content_fr' => 'nullable|string',
+            'content_en' => 'nullable|string',
             'cover_image_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'cover_image_url' => 'nullable|url|max:500',
             'cover_type' => 'required|in:internal,external',
@@ -203,9 +209,15 @@ class PaidCourseController extends Controller
 
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
+            'title_fr' => 'nullable|string|max:255',
+            'title_en' => 'nullable|string|max:255',
             'slug' => 'nullable|string|max:255|unique:paid_courses,slug,' . $id,
             'description' => 'nullable|string|max:1000',
+            'description_fr' => 'nullable|string|max:1000',
+            'description_en' => 'nullable|string|max:1000',
             'content' => 'nullable|string',
+            'content_fr' => 'nullable|string',
+            'content_en' => 'nullable|string',
             'cover_image_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'cover_image_url' => 'nullable|url|max:500',
             'cover_type' => 'required|in:internal,external',
@@ -317,7 +329,7 @@ class PaidCourseController extends Controller
             $existingChapterIds = [];
             
             foreach ($chapters as $index => $chapterData) {
-                if (empty($chapterData['title'])) {
+                if (empty($chapterData['title_fr']) && empty($chapterData['title'])) {
                     continue; // Ignorer les chapitres sans titre
                 }
                 
@@ -331,9 +343,15 @@ class PaidCourseController extends Controller
                     
                     if ($chapter) {
                         $chapter->update([
-                            'title' => $chapterData['title'],
-                            'description' => $chapterData['description'] ?? null,
-                            'content' => $chapterData['content'] ?? null,
+                            'title' => $chapterData['title_fr'] ?? $chapterData['title'] ?? null,
+                            'title_fr' => $chapterData['title_fr'] ?? null,
+                            'title_en' => $chapterData['title_en'] ?? null,
+                            'description' => $chapterData['description_fr'] ?? $chapterData['description'] ?? null,
+                            'description_fr' => $chapterData['description_fr'] ?? null,
+                            'description_en' => $chapterData['description_en'] ?? null,
+                            'content' => $chapterData['content_fr'] ?? $chapterData['content'] ?? null,
+                            'content_fr' => $chapterData['content_fr'] ?? null,
+                            'content_en' => $chapterData['content_en'] ?? null,
                             'order' => $chapterData['order'],
                             'duration_minutes' => isset($chapterData['duration_minutes']) && $chapterData['duration_minutes'] ? (int)$chapterData['duration_minutes'] : null,
                         ]);
@@ -341,14 +359,20 @@ class PaidCourseController extends Controller
                     }
                 } else {
                     // Créer un nouveau chapitre
-                    $chapter = CourseChapter::create([
-                        'paid_course_id' => $course->id,
-                        'title' => $chapterData['title'],
-                        'description' => $chapterData['description'] ?? null,
-                        'content' => $chapterData['content'] ?? null,
-                        'order' => $chapterData['order'],
-                        'duration_minutes' => isset($chapterData['duration_minutes']) && $chapterData['duration_minutes'] ? (int)$chapterData['duration_minutes'] : null,
-                    ]);
+                        $chapter = CourseChapter::create([
+                            'paid_course_id' => $course->id,
+                            'title' => $chapterData['title_fr'] ?? $chapterData['title'] ?? null,
+                            'title_fr' => $chapterData['title_fr'] ?? null,
+                            'title_en' => $chapterData['title_en'] ?? null,
+                            'description' => $chapterData['description_fr'] ?? $chapterData['description'] ?? null,
+                            'description_fr' => $chapterData['description_fr'] ?? null,
+                            'description_en' => $chapterData['description_en'] ?? null,
+                            'content' => $chapterData['content_fr'] ?? $chapterData['content'] ?? null,
+                            'content_fr' => $chapterData['content_fr'] ?? null,
+                            'content_en' => $chapterData['content_en'] ?? null,
+                            'order' => $chapterData['order'],
+                            'duration_minutes' => isset($chapterData['duration_minutes']) && $chapterData['duration_minutes'] ? (int)$chapterData['duration_minutes'] : null,
+                        ]);
                     $existingChapterIds[] = $chapter->id;
                 }
             }

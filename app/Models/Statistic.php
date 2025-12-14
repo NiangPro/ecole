@@ -99,7 +99,7 @@ class Statistic extends Model
     }
 
     // Statistiques par pays
-    public static function getByCountry($period = 'month', $year = null, $month = null)
+    public static function getByCountry($period = 'month', $year = null, $month = null, $limit = null)
     {
         $query = self::select('country')
                      ->selectRaw('COUNT(*) as visits');
@@ -116,11 +116,15 @@ class Statistic extends Model
             $query->whereYear('visit_date', $year);
         }
 
-        return $query->whereNotNull('country')
-                     ->groupBy('country')
-                     ->orderByDesc('visits')
-                     ->limit(10)
-                     ->get();
+        $query->whereNotNull('country')
+              ->groupBy('country')
+              ->orderByDesc('visits');
+        
+        if ($limit !== null) {
+            $query->limit($limit);
+        }
+        
+        return $query->get();
     }
 
     // Statistiques par navigateur

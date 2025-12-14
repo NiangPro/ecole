@@ -79,12 +79,36 @@
                     <div style="display: grid; gap: 20px;">
                         <div>
                             <label style="display: block; color: white; font-weight: 600; margin-bottom: 8px;">
-                                Titre du Cours <span style="color: #ef4444;">*</span>
+                                Titre du Cours (Par défaut) <span style="color: #ef4444;">*</span>
                             </label>
                             <input type="text" name="title" value="{{ old('title') }}" required style="width: 100%; padding: 12px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 8px; color: white; font-size: 1rem;" placeholder="Ex: Formation Complète Laravel">
+                            <p style="color: rgba(255, 255, 255, 0.6); font-size: 0.85rem; margin-top: 5px;">Titre par défaut (utilisé si les traductions ne sont pas disponibles)</p>
                             @error('title')
                             <p style="color: #ef4444; font-size: 0.85rem; margin-top: 5px;">{{ $message }}</p>
                             @enderror
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div>
+                                <label style="display: block; color: white; font-weight: 600; margin-bottom: 8px;">
+                                    <i class="fas fa-flag" style="color: #10b981; margin-right: 5px;"></i>
+                                    Titre (Français)
+                                </label>
+                                <input type="text" name="title_fr" value="{{ old('title_fr') }}" style="width: 100%; padding: 12px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 8px; color: white; font-size: 1rem;" placeholder="Ex: Formation Complète Laravel">
+                                @error('title_fr')
+                                <p style="color: #ef4444; font-size: 0.85rem; margin-top: 5px;">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            <div>
+                                <label style="display: block; color: white; font-weight: 600; margin-bottom: 8px;">
+                                    <i class="fas fa-flag" style="color: #ef4444; margin-right: 5px;"></i>
+                                    Titre (English)
+                                </label>
+                                <input type="text" name="title_en" value="{{ old('title_en') }}" style="width: 100%; padding: 12px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 8px; color: white; font-size: 1rem;" placeholder="Ex: Complete Laravel Course">
+                                @error('title_en')
+                                <p style="color: #ef4444; font-size: 0.85rem; margin-top: 5px;">{{ $message }}</p>
+                                @enderror
+                            </div>
                         </div>
 
                         <div>
@@ -99,22 +123,70 @@
 
                         <div>
                             <label style="display: block; color: white; font-weight: 600; margin-bottom: 8px;">
-                                Description
+                                Description (Par défaut)
                             </label>
                             <textarea name="description" rows="4" style="width: 100%; padding: 12px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 8px; color: white; font-size: 1rem; resize: vertical;" placeholder="Description courte du cours...">{{ old('description') }}</textarea>
+                            <p style="color: rgba(255, 255, 255, 0.6); font-size: 0.85rem; margin-top: 5px;">Description par défaut (utilisée si les traductions ne sont pas disponibles)</p>
                             @error('description')
                             <p style="color: #ef4444; font-size: 0.85rem; margin-top: 5px;">{{ $message }}</p>
                             @enderror
                         </div>
 
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div>
+                                <label style="display: block; color: white; font-weight: 600; margin-bottom: 8px;">
+                                    <i class="fas fa-flag" style="color: #10b981; margin-right: 5px;"></i>
+                                    Description (Français)
+                                </label>
+                                <textarea name="description_fr" rows="4" style="width: 100%; padding: 12px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 8px; color: white; font-size: 1rem; resize: vertical;" placeholder="Description courte du cours...">{{ old('description_fr') }}</textarea>
+                                @error('description_fr')
+                                <p style="color: #ef4444; font-size: 0.85rem; margin-top: 5px;">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            <div>
+                                <label style="display: block; color: white; font-weight: 600; margin-bottom: 8px;">
+                                    <i class="fas fa-flag" style="color: #ef4444; margin-right: 5px;"></i>
+                                    Description (English)
+                                </label>
+                                <textarea name="description_en" rows="4" style="width: 100%; padding: 12px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 8px; color: white; font-size: 1rem; resize: vertical;" placeholder="Short course description...">{{ old('description_en') }}</textarea>
+                                @error('description_en')
+                                <p style="color: #ef4444; font-size: 0.85rem; margin-top: 5px;">{{ $message }}</p>
+                                @enderror
+                            </div>
+                        </div>
+
                         <div>
                             <label style="display: block; color: white; font-weight: 600; margin-bottom: 8px;">
-                                Contenu Complet
+                                Contenu Complet (Par défaut)
                             </label>
                             <textarea name="content" rows="10" style="width: 100%; padding: 12px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 8px; color: white; font-size: 1rem; resize: vertical;" placeholder="Contenu détaillé du cours...">{{ old('content') }}</textarea>
+                            <p style="color: rgba(255, 255, 255, 0.6); font-size: 0.85rem; margin-top: 5px;">Contenu par défaut (utilisé si les traductions ne sont pas disponibles)</p>
                             @error('content')
                             <p style="color: #ef4444; font-size: 0.85rem; margin-top: 5px;">{{ $message }}</p>
                             @enderror
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div>
+                                <label style="display: block; color: white; font-weight: 600; margin-bottom: 8px;">
+                                    <i class="fas fa-flag" style="color: #10b981; margin-right: 5px;"></i>
+                                    Contenu Complet (Français)
+                                </label>
+                                <textarea name="content_fr" rows="10" style="width: 100%; padding: 12px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 8px; color: white; font-size: 1rem; resize: vertical;" placeholder="Contenu détaillé du cours...">{{ old('content_fr') }}</textarea>
+                                @error('content_fr')
+                                <p style="color: #ef4444; font-size: 0.85rem; margin-top: 5px;">{{ $message }}</p>
+                                @enderror
+                            </div>
+                            <div>
+                                <label style="display: block; color: white; font-weight: 600; margin-bottom: 8px;">
+                                    <i class="fas fa-flag" style="color: #ef4444; margin-right: 5px;"></i>
+                                    Contenu Complet (English)
+                                </label>
+                                <textarea name="content_en" rows="10" style="width: 100%; padding: 12px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 8px; color: white; font-size: 1rem; resize: vertical;" placeholder="Detailed course content...">{{ old('content_en') }}</textarea>
+                                @error('content_en')
+                                <p style="color: #ef4444; font-size: 0.85rem; margin-top: 5px;">{{ $message }}</p>
+                                @enderror
+                            </div>
                         </div>
 
                         <div>

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', $course->title . ' - NiangProgrammeur')
+@section('title', $course->localized_title . ' - NiangProgrammeur')
 
 @section('content')
 <div class="course-detail-page">
@@ -9,9 +9,9 @@
         <div class="course-hero-background">
             @if($course->cover_image)
                 @if(($course->cover_type ?? 'internal') === 'internal')
-                    <img src="{{ asset('storage/' . $course->cover_image) }}" alt="{{ $course->title }}" class="course-hero-image">
+                    <img src="{{ asset('storage/' . $course->cover_image) }}" alt="{{ $course->localized_title }}" class="course-hero-image">
                 @else
-                    <img src="{{ $course->cover_image }}" alt="{{ $course->title }}" class="course-hero-image" onerror="this.parentElement.innerHTML='<div class=\'course-hero-placeholder\'></div>'">
+                    <img src="{{ $course->cover_image }}" alt="{{ $course->localized_title }}" class="course-hero-image" onerror="this.parentElement.innerHTML='<div class=\'course-hero-placeholder\'></div>'">
                 @endif
             @else
                 <div class="course-hero-placeholder"></div>
@@ -31,9 +31,9 @@
 
                 <!-- Titre et Description -->
                 <div class="course-hero-text">
-                    <h1 class="course-hero-title">{{ $course->title }}</h1>
-                    @if($course->description)
-                    <p class="course-hero-description">{{ $course->description }}</p>
+                    <h1 class="course-hero-title">{{ $course->localized_title }}</h1>
+                    @if($course->localized_description)
+                    <p class="course-hero-description">{{ $course->localized_description }}</p>
                     @endif
                 </div>
 

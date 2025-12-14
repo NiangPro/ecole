@@ -1,18 +1,26 @@
 @extends('layouts.app')
 
-@section('title', 'Monétisation - NiangProgrammeur')
+@php
+    if (!app()->getLocale()) {
+        app()->setLocale(session('language', 'fr'));
+    }
+@endphp
+
+@section('title', trans('app.monetization.title'))
+@section('meta_description', trans('app.monetization.meta_description'))
+@section('meta_keywords', 'monétisation, abonnement, cours payants, contenu premium, niangprogrammeur')
 
 @section('content')
-<div class="monetization-page">
+<div class="monetization-page" style="background: #ffffff !important;">
     <div class="monetization-container">
         
         <!-- Hero Section -->
         <div class="monetization-hero">
             <h1 class="monetization-title">
-                💰 Accédez au Contenu Premium
+                {{ trans('app.monetization.hero_title') }}
             </h1>
             <p class="monetization-subtitle">
-                Abonnez-vous ou achetez des cours pour accéder à du contenu exclusif de qualité
+                {{ trans('app.monetization.hero_subtitle') }}
             </p>
         </div>
 
@@ -21,7 +29,7 @@
         <section class="monetization-section">
             <h2 class="section-title">
                 <i class="fas fa-crown section-icon"></i>
-                Abonnements Premium
+                {{ trans('app.monetization.subscription_plans.title') }}
             </h2>
             
             <div class="subscription-plans-grid">
@@ -29,7 +37,7 @@
                 <div class="subscription-plan-card {{ $plan['is_featured'] ? 'featured' : '' }}">
                     @if($plan['is_featured'])
                     <div style="position: absolute; top: 20px; right: -30px; background: linear-gradient(135deg, #fbbf24, #f59e0b); color: white; padding: 8px 40px; transform: rotate(45deg); font-weight: 700; font-size: 0.85rem; box-shadow: 0 4px 10px rgba(251, 191, 36, 0.4);">
-                        {{ $plan['badge'] ?? 'POPULAIRE' }}
+                        {{ $plan['badge'] ?? trans('app.monetization.subscription_plans.badge_popular') }}
                     </div>
                     @endif
                     
@@ -44,7 +52,7 @@
                             <span class="plan-currency"> {{ $plan['currency'] }}</span>
                         </div>
                         <p class="plan-period">
-                            {{ $plan['billing_period'] === 'yearly' ? 'par an' : 'par mois' }}
+                            {{ $plan['billing_period'] === 'yearly' ? trans('app.monetization.subscription_plans.per_year') : trans('app.monetization.subscription_plans.per_month') }}
                         </p>
                         @if($plan['description'])
                         <p class="plan-description">
@@ -74,13 +82,13 @@
                         @endif
                         <button type="submit" class="subscription-btn" style="width: 100%; padding: 15px; background: linear-gradient(135deg, #06b6d4, #14b8a6); color: white; border: none; border-radius: 12px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);">
                             <i class="fas fa-credit-card" style="margin-right: 8px;"></i>
-                            S'abonner maintenant
+                            {{ trans('app.monetization.subscription_plans.subscribe_now') }}
                         </button>
                     </form>
                     @else
                     <a href="{{ route('login') }}" class="subscription-btn" style="display: block; width: 100%; padding: 15px; background: linear-gradient(135deg, #06b6d4, #14b8a6); color: white; border: none; border-radius: 12px; font-size: 1.1rem; font-weight: 600; text-align: center; text-decoration: none; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);">
                         <i class="fas fa-sign-in-alt" style="margin-right: 8px;"></i>
-                        Se connecter pour s'abonner
+                        {{ trans('app.monetization.subscription_plans.login_to_subscribe') }}
                     </a>
                     @endauth
                 </div>
@@ -95,10 +103,10 @@
             <div class="courses-header">
                 <h2 class="section-title">
                     <i class="fas fa-graduation-cap section-icon"></i>
-                    Cours Payants
+                    {{ trans('app.monetization.paid_courses.title') }}
                 </h2>
                 <a href="{{ route('monetization.courses') }}" class="view-all-btn">
-                    Voir tous les cours <i class="fas fa-arrow-right"></i>
+                    {{ trans('app.monetization.paid_courses.view_all') }} <i class="fas fa-arrow-right"></i>
                 </a>
             </div>
 
@@ -118,9 +126,9 @@
                         <div style="width: 100%; height: 180px; position: relative; overflow: hidden; background: linear-gradient(135deg, #06b6d4, #14b8a6);">
                             @if($course->cover_image)
                                 @if(($course->cover_type ?? 'internal') === 'internal')
-                                    <img src="{{ asset('storage/' . $course->cover_image) }}" alt="{{ $course->title }}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;" loading="lazy">
+                                    <img src="{{ asset('storage/' . $course->cover_image) }}" alt="{{ $course->localized_title }}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;" loading="lazy">
                                 @else
-                                    <img src="{{ $course->cover_image }}" alt="{{ $course->title }}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <img src="{{ $course->cover_image }}" alt="{{ $course->localized_title }}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                                     <div style="width: 100%; height: 100%; display: none; align-items: center; justify-content: center; background: linear-gradient(135deg, #06b6d4, #14b8a6);">
                                         <i class="fas fa-graduation-cap" style="font-size: 3rem; color: white; opacity: 0.5;"></i>
                                     </div>
@@ -134,11 +142,11 @@
                         
                         <div class="course-card-content">
                             <h3 class="course-card-title">
-                                {{ $course->title }}
+                                {{ $course->localized_title }}
                             </h3>
-                            @if($course->description)
+                            @if($course->localized_description)
                             <p class="course-card-description">
-                                {{ $course->description }}
+                                {{ $course->localized_description }}
                             </p>
                             @endif
                             
@@ -165,11 +173,20 @@
 </div>
 
 <style>
-/* Container */
+/* Forcer le fond blanc en mode clair - Solution robuste */
+body:not(.dark-mode) #main-content {
+    background: #ffffff !important;
+}
+
+body:not(.dark-mode) .monetization-page {
+    background: #ffffff !important;
+}
+
+/* Container - Styles optimisés */
 .monetization-page {
     min-height: 100vh;
     padding: 40px 20px;
-    background: linear-gradient(to bottom right, #f8fafc, #e2e8f0, #f8fafc) !important;
+    background: #ffffff !important;
     transition: background 0.3s ease;
 }
 
@@ -296,7 +313,7 @@ body.dark-mode .view-all-btn:hover {
 }
 
 .subscription-plan-card {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.95));
+    background: #ffffff !important;
     border: 2px solid rgba(6, 182, 212, 0.3);
     border-radius: 20px;
     padding: 40px 30px;
@@ -307,7 +324,7 @@ body.dark-mode .view-all-btn:hover {
 }
 
 body.dark-mode .subscription-plan-card {
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(51, 65, 85, 0.8));
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(51, 65, 85, 0.8)) !important;
     box-shadow: none;
 }
 
@@ -446,7 +463,7 @@ body.dark-mode .plan-feature-item {
 }
 
 .paid-course-card {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.95));
+    background: #ffffff !important;
     border: 1px solid rgba(6, 182, 212, 0.3);
     border-radius: 16px;
     overflow: hidden;
@@ -455,7 +472,7 @@ body.dark-mode .plan-feature-item {
 }
 
 body.dark-mode .paid-course-card {
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(51, 65, 85, 0.8));
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(51, 65, 85, 0.8)) !important;
     box-shadow: none;
 }
 

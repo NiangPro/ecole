@@ -1,0 +1,75 @@
+CORRECTION DES TRADUCTIONS - SYSTÈME DE MONÉTISATION
+=====================================================
+
+Date: {{ date('Y-m-d H:i:s') }}
+
+PROBLÈME IDENTIFIÉ
+------------------
+Sur le site en production (https://www.niangprogrammeur.com/donations), 
+les variables de traduction apparaissaient non résolues, affichant 
+des clés comme "app.donations.hero_title" au lieu du texte traduit.
+
+CAUSE
+-----
+Les traductions françaises pour la section "donations" étaient 
+absentes du fichier lang/fr/app.php, alors qu'elles existaient 
+déjà en anglais dans lang/en/app.php.
+
+CORRECTIONS EFFECTUÉES
+----------------------
+
+1. Ajout des traductions donations dans lang/fr/app.php
+   - Section complète "donations" avec toutes les clés :
+     * title, meta_description
+     * hero_title, hero_description
+     * form_title, form_description
+     * name_label, name_placeholder
+     * email_label, email_placeholder
+     * payment_method_label
+     * amount_label, amount_minimum
+     * message_label, message_placeholder
+     * anonymous_label
+     * submit_button
+     * payment_methods (wave, paypal, stripe)
+     * donor_wall (title, description, empty_message, user_badge, user_badge_thanks)
+     * wave_payment (toutes les clés pour la page de paiement Wave)
+
+2. Vérification des autres pages traduites
+   - Toutes les pages utilisent correctement trans()
+   - Aucune clé utilisée directement sans trans()
+   - Les pages dashboard utilisent bien trans() avec fallback
+
+3. Nettoyage du cache
+   - config:clear
+   - cache:clear
+   - view:clear
+
+FICHIERS MODIFIÉS
+-----------------
+- lang/fr/app.php (ajout de la section donations complète)
+
+VÉRIFICATIONS EFFECTUÉES
+-------------------------
+✓ resources/views/monetization/donations.blade.php
+  - Toutes les traductions utilisent trans()
+  
+✓ resources/views/monetization/payment-wave.blade.php
+  - Toutes les traductions utilisent trans()
+  
+✓ resources/views/partials/footer.blade.php
+  - Toutes les traductions utilisent trans()
+  
+✓ resources/views/dashboard/*.blade.php
+  - Toutes les traductions utilisent trans() avec fallback
+
+RÉSULTAT
+--------
+Toutes les traductions sont maintenant disponibles en français et en anglais.
+Le cache a été vidé pour que les nouvelles traductions soient prises en compte.
+
+PROCHAINES ÉTAPES (si nécessaire)
+----------------------------------
+1. Vérifier sur le site en production que les traductions s'affichent correctement
+2. Tester le changement de langue sur toutes les pages traduites
+3. Vérifier que toutes les clés de traduction sont présentes dans les deux langues
+
