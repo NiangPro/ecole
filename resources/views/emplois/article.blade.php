@@ -114,19 +114,63 @@
         background: #0a0a0f !important;
     }
     
+    /* Hero Section Moderne - Design de dernière génération */
     .article-hero {
         position: relative;
-        height: 500px;
+        min-height: 450px;
+        height: 55vh;
+        max-height: 600px;
         overflow: hidden;
         background-size: cover;
         background-position: center;
         background-repeat: no-repeat;
         background-attachment: fixed;
-        filter: brightness(0.7);
+        display: flex;
+        align-items: flex-end;
+        isolation: isolate;
     }
     
-    body:not(.dark-mode) .article-hero {
-        filter: brightness(0.6) !important;
+    @media (max-width: 768px) {
+        .article-hero {
+            background-attachment: scroll;
+        }
+    }
+    
+    .article-hero::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+            180deg,
+            transparent 0%,
+            rgba(15, 23, 42, 0.3) 40%,
+            rgba(15, 23, 42, 0.85) 80%,
+            rgba(15, 23, 42, 0.95) 100%
+        );
+        z-index: 1;
+    }
+    
+    .article-hero::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+            ellipse at center bottom,
+            rgba(6, 182, 212, 0.15) 0%,
+            transparent 70%
+        );
+        z-index: 2;
+        pointer-events: none;
+    }
+    
+    body:not(.dark-mode) .article-hero::before {
+        background: linear-gradient(
+            180deg,
+            transparent 0%,
+            rgba(30, 41, 59, 0.2) 40%,
+            rgba(30, 41, 59, 0.75) 80%,
+            rgba(30, 41, 59, 0.9) 100%
+        );
     }
     
     .article-hero-image {
@@ -134,19 +178,12 @@
     }
     
     .article-hero-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(to bottom, transparent 0%, rgba(51, 65, 85, 0.85) 100%);
+        position: relative;
+        width: 100%;
+        z-index: 3;
+        padding: 40px 20px 60px;
         display: flex;
-        align-items: flex-start;
-        padding: 40px 20px 40px;
-    }
-    
-    body:not(.dark-mode) .article-hero-overlay {
-        background: linear-gradient(to bottom, transparent 0%, rgba(30, 41, 59, 0.7) 100%) !important;
+        align-items: flex-end;
     }
     
     .article-hero-content {
@@ -154,59 +191,254 @@
         width: 100%;
         margin: 0 auto;
         position: relative;
-        z-index: 1;
-        padding-top: 20px;
+        animation: fadeInUp 0.8s ease-out;
+    }
+    
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
     
     .article-hero-category {
-        display: inline-block;
-        padding: 8px 18px;
-        background: rgba(6, 182, 212, 0.2);
-        color: #06b6d4;
-        border-radius: 25px;
-        font-size: 0.9rem;
+        display: inline-flex !important;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 20px;
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.9) 0%, rgba(6, 182, 212, 0.85) 100%) !important;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        color: #ffffff !important;
+        border-radius: 50px;
+        font-size: 0.875rem;
         font-weight: 700;
-        margin-bottom: 20px;
-        border: 1px solid rgba(6, 182, 212, 0.4);
+        margin-bottom: 24px;
+        border: 2px solid rgba(255, 255, 255, 0.3) !important;
+        box-shadow: 0 4px 20px rgba(6, 182, 212, 0.4), 0 0 0 1px rgba(6, 182, 212, 0.2) inset;
+        transition: all 0.3s ease;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        position: relative;
+        z-index: 5;
+    }
+    
+    .article-hero-category i {
+        color: #ffffff !important;
+        font-size: 0.9rem;
+    }
+    
+    .article-hero-category span {
+        color: #ffffff !important;
+    }
+    
+    .article-hero-category:hover {
+        background: linear-gradient(135deg, rgba(6, 182, 212, 1) 0%, rgba(20, 184, 166, 0.95) 100%) !important;
+        border-color: rgba(255, 255, 255, 0.5) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 30px rgba(6, 182, 212, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.3) inset;
     }
     
     .article-hero-title {
-        font-size: clamp(2rem, 4vw, 3.5rem);
+        font-size: clamp(2.5rem, 5vw + 1rem, 4.5rem);
         font-weight: 900;
-        color: #fff;
-        margin-bottom: 15px;
-        line-height: 1.2;
-        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        color: #ffffff;
+        margin-bottom: 24px;
+        line-height: 1.1;
+        text-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        letter-spacing: -0.02em;
+        animation: fadeInUp 0.8s ease-out 0.2s both;
     }
     
     body:not(.dark-mode) .article-hero-title {
-        color: rgba(255, 255, 255, 0.95) !important;
-        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5) !important;
+        color: #ffffff !important;
+        text-shadow: 0 4px 25px rgba(0, 0, 0, 0.6) !important;
     }
     
     .article-hero-meta {
         display: flex;
         align-items: center;
-        gap: 20px;
+        gap: 32px;
         flex-wrap: wrap;
-        color: rgba(255, 255, 255, 0.8);
+        color: rgba(255, 255, 255, 0.95);
         font-size: 0.95rem;
+        font-weight: 500;
+        animation: fadeInUp 0.8s ease-out 0.4s both;
     }
     
     body:not(.dark-mode) .article-hero-meta {
-        color: rgba(255, 255, 255, 0.9) !important;
-        text-shadow: 0 1px 5px rgba(0, 0, 0, 0.3) !important;
+        color: rgba(255, 255, 255, 0.98) !important;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4) !important;
     }
     
-    .article-hero-meta i {
-        color: #06b6d4;
-        margin-right: 5px;
+    .article-hero-meta-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 50px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: all 0.3s ease;
+    }
+    
+    .article-hero-meta-item:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: translateY(-2px);
+    }
+    
+    .article-hero-meta-item i {
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+    
+    /* Bouton favori moderne */
+    .article-hero-actions {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        z-index: 10;
+    }
+    
+    @media (max-width: 768px) {
+        .article-hero-actions {
+            top: 15px;
+            right: 15px;
+        }
+    }
+    
+    .article-hero-favorite-btn {
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1.5px solid rgba(255, 255, 255, 0.3);
+        color: white;
+        padding: 12px 24px;
+        border-radius: 50px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.9rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    .article-hero-favorite-btn:hover {
+        background: rgba(255, 255, 255, 0.25);
+        border-color: rgba(255, 255, 255, 0.5);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 30px rgba(0, 0, 0, 0.25);
+    }
+    
+    .article-hero-favorite-btn:active {
+        transform: translateY(0);
+    }
+    
+    /* Hero Fallback Moderne */
+    .article-hero-fallback-modern {
+        position: relative;
+        min-height: 450px;
+        height: 55vh;
+        max-height: 600px;
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 30%, #0f172a 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+        overflow: hidden;
+    }
+    
+    .article-hero-fallback-modern::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: 
+            radial-gradient(circle at 20% 50%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(20, 184, 166, 0.1) 0%, transparent 50%);
+        pointer-events: none;
+    }
+    
+    .article-hero-fallback-content {
+        max-width: 1200px;
+        width: 100%;
+        text-align: center;
+        position: relative;
+        z-index: 1;
+        animation: fadeInUp 0.8s ease-out;
+    }
+    
+    body:not(.dark-mode) .article-hero-fallback-modern {
+        background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(51, 65, 85, 0.95) 30%, rgba(30, 41, 59, 0.95) 100%);
+    }
+    
+    /* Responsive Hero */
+    @media (max-width: 768px) {
+        .article-hero {
+            min-height: 400px;
+            height: 50vh;
+        }
+        
+        .article-hero-overlay {
+            padding: 30px 15px 50px;
+        }
+        
+        .article-hero-title {
+            font-size: clamp(2rem, 6vw, 3rem) !important;
+            margin-bottom: 20px;
+        }
+        
+        .article-hero-meta {
+            gap: 12px;
+            font-size: 0.85rem;
+        }
+        
+        .article-hero-meta-item {
+            padding: 6px 12px;
+            font-size: 0.8rem;
+        }
+        
+        .article-hero-favorite-btn {
+            padding: 10px 18px;
+            font-size: 0.85rem;
+        }
+        
+        .article-hero-fallback-modern {
+            min-height: 400px;
+            height: 50vh;
+            padding: 30px 15px;
+        }
+        
+        .article-hero-category {
+            font-size: 0.8rem;
+            padding: 8px 16px;
+        }
     }
     
     .article-container {
         max-width: 1200px;
         margin: 0 auto;
         padding: 60px 20px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    .article-main-grid {
+        width: 100%;
+        box-sizing: border-box;
+    }
+    
+    @media (max-width: 1024px) {
+        .article-main-grid {
+            grid-template-columns: 1fr !important;
+        }
     }
     
     .article-content {
@@ -218,6 +450,18 @@
         line-height: 1.9;
         font-size: 1.1rem;
         color: rgba(255, 255, 255, 0.95);
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        overflow-x: hidden;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+    
+    /* Assurer que tous les éléments enfants sont responsives */
+    .article-content * {
+        max-width: 100%;
+        box-sizing: border-box;
     }
     
     body:not(.dark-mode) .article-content {
@@ -228,8 +472,9 @@
     }
     
     .article-content img {
-        max-width: 100%;
-        height: auto;
+        max-width: 100% !important;
+        width: 100% !important;
+        height: auto !important;
         border-radius: 12px;
         margin: 25px 0;
         display: block;
@@ -239,6 +484,115 @@
     
     body:not(.dark-mode) .article-content img {
         box-shadow: 0 8px 24px rgba(6, 182, 212, 0.15) !important;
+    }
+    
+    /* Wrapper pour tableaux avec scroll horizontal */
+    .article-content > * {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Tableaux responsives */
+    .article-content table {
+        width: 100% !important;
+        max-width: 100% !important;
+        border-collapse: collapse;
+        margin: 25px 0;
+        display: table;
+        table-layout: auto;
+    }
+    
+    @media (max-width: 768px) {
+        .article-content table {
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .article-content table thead,
+        .article-content table tbody,
+        .article-content table tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
+    }
+    
+    .article-content table th,
+    .article-content table td {
+        padding: 12px 15px;
+        text-align: left;
+        border: 1px solid rgba(6, 182, 212, 0.3);
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+    
+    .article-content table th {
+        background: rgba(6, 182, 212, 0.2);
+        font-weight: 700;
+        color: #06b6d4;
+    }
+    
+    body:not(.dark-mode) .article-content table th {
+        background: rgba(6, 182, 212, 0.1) !important;
+        color: #0891b2 !important;
+    }
+    
+    /* Préformatté et code blocks */
+    .article-content pre {
+        max-width: 100% !important;
+        width: 100% !important;
+        overflow-x: auto;
+        padding: 20px;
+        background: rgba(6, 182, 212, 0.1);
+        border-radius: 8px;
+        margin: 25px 0;
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+    
+    body:not(.dark-mode) .article-content pre {
+        background: rgba(6, 182, 212, 0.05) !important;
+    }
+    
+    .article-content pre code {
+        background: transparent;
+        padding: 0;
+        font-size: inherit;
+    }
+    
+    /* Iframes responsives */
+    .article-content iframe,
+    .article-content embed,
+    .article-content object,
+    .article-content video {
+        max-width: 100% !important;
+        width: 100% !important;
+        height: auto !important;
+        border-radius: 12px;
+        margin: 25px 0;
+    }
+    
+    /* Divs et conteneurs */
+    .article-content div {
+        max-width: 100% !important;
+        overflow-x: auto;
+    }
+    
+    /* Listes responsives */
+    .article-content ul,
+    .article-content ol {
+        max-width: 100%;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+    
+    /* Paragraphes responsives */
+    .article-content p {
+        max-width: 100%;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        hyphens: auto;
     }
     
     .article-content h2 {
@@ -479,17 +833,56 @@
         transform: translateX(-5px);
     }
     
-    .article-hero-fallback {
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
-    }
-    
-    body:not(.dark-mode) .article-hero-fallback {
-        background: linear-gradient(135deg, rgba(30, 41, 59, 0.4) 0%, rgba(51, 65, 85, 0.5) 50%, rgba(30, 41, 59, 0.4) 100%) !important;
-    }
     
     @media (max-width: 768px) {
         .article-content {
-            padding: 30px 20px;
+            padding: 20px 15px !important;
+            font-size: 1rem !important;
+            line-height: 1.8 !important;
+        }
+        
+        .article-content h2 {
+            font-size: 1.5rem !important;
+            margin: 30px 0 20px !important;
+        }
+        
+        .article-content h3 {
+            font-size: 1.25rem !important;
+            margin: 25px 0 15px !important;
+        }
+        
+        .article-content p {
+            margin-bottom: 15px !important;
+            text-align: left !important;
+        }
+        
+        .article-content ul,
+        .article-content ol {
+            padding-left: 25px !important;
+            margin: 20px 0 !important;
+        }
+        
+        .article-content li {
+            margin-bottom: 10px !important;
+        }
+        
+        .article-content table {
+            font-size: 0.85rem !important;
+        }
+        
+        .article-content table th,
+        .article-content table td {
+            padding: 8px 10px !important;
+        }
+        
+        .article-content pre {
+            font-size: 0.8rem !important;
+            padding: 15px !important;
+        }
+        
+        .article-content blockquote {
+            padding-left: 15px !important;
+            margin: 20px 0 !important;
         }
         
         .article-hero {
@@ -508,60 +901,95 @@
             grid-template-columns: 1fr;
         }
         
+        .article-container {
+            padding: 30px 15px !important;
+        }
+        
         /* Bouton favori responsive - déjà centré, pas besoin de modification */
     }
 </style>
 @endsection
 
 @section('content')
-<!-- Hero Section -->
+<!-- Hero Section Moderne -->
 @if($article->cover_image)
 <div class="article-hero" style="background-image: url('{{ $article->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($article->cover_image) : $article->cover_image }}');">
     <div class="article-hero-overlay">
         <div class="article-hero-content">
-            <!-- Bouton favori centré en haut -->
-            <div style="display: flex; justify-content: center; margin-bottom: 20px; z-index: 10;">
+            <!-- Bouton favori moderne -->
+            <div class="article-hero-actions">
                 <button data-favorite 
                         data-favorite-type="article" 
                         data-favorite-slug="{{ $article->slug }}" 
                         data-favorite-name="{{ $article->title }}"
-                        style="background: rgba(255, 255, 255, 0.2); border: 2px solid rgba(255, 255, 255, 0.4); color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s ease; backdrop-filter: blur(10px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);">
+                        class="article-hero-favorite-btn">
                     <i class="far fa-heart"></i>
                     <span>Favoris</span>
                 </button>
             </div>
+            
+            <!-- Catégorie -->
             <span class="article-hero-category">
-                <i class="fas fa-folder mr-2"></i>{{ $article->category->name }}
+                <i class="fas fa-folder"></i>
+                <span>{{ $article->category->name }}</span>
             </span>
+            
+            <!-- Titre -->
             <h1 class="article-hero-title">{{ $article->title }}</h1>
+            
+            <!-- Métadonnées -->
             <div class="article-hero-meta">
-                <span><i class="fas fa-calendar"></i> {{ $article->published_at ? $article->published_at->format('d F Y') : '' }}</span>
-                <span><i class="fas fa-eye"></i> {{ $article->views }} vues</span>
-                <span><i class="fas fa-user"></i> NiangProgrammeur</span>
+                <div class="article-hero-meta-item">
+                    <i class="fas fa-calendar"></i>
+                    <span>{{ $article->published_at ? $article->published_at->format('d F Y') : '' }}</span>
+                </div>
+                <div class="article-hero-meta-item">
+                    <i class="fas fa-eye"></i>
+                    <span>{{ number_format($article->views, 0, ',', ' ') }} vues</span>
+                </div>
+                <div class="article-hero-meta-item">
+                    <i class="fas fa-user"></i>
+                    <span>NiangProgrammeur</span>
+                </div>
             </div>
         </div>
     </div>
 </div>
 @else
-<div class="article-hero-fallback" style="position: relative; background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%); padding: 100px 20px 60px; text-align: center;">
-    <!-- Bouton favori centré en haut -->
-    <div style="display: flex; justify-content: center; margin-bottom: 20px; z-index: 10;">
-        <button data-favorite 
-                data-favorite-type="article" 
-                data-favorite-slug="{{ $article->slug }}" 
-                data-favorite-name="{{ $article->title }}"
-                style="background: rgba(255, 255, 255, 0.2); border: 2px solid rgba(255, 255, 255, 0.4); color: white; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: 600; display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s ease; backdrop-filter: blur(10px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);">
-            <i class="far fa-heart"></i>
-            <span>Favoris</span>
-        </button>
-    </div>
-    <span class="article-hero-category" style="display: inline-block; margin-bottom: 20px;">
-        <i class="fas fa-folder mr-2"></i>{{ $article->category->name }}
-    </span>
-    <h1 class="article-hero-title" style="max-width: 1200px; margin: 0 auto;">{{ $article->title }}</h1>
-    <div class="article-hero-meta" style="justify-content: center; margin-top: 20px;">
-        <span><i class="fas fa-calendar"></i> {{ $article->published_at ? $article->published_at->format('d F Y') : '' }}</span>
-        <span><i class="fas fa-eye"></i> {{ $article->views }} vues</span>
+<div class="article-hero-fallback-modern">
+    <div class="article-hero-fallback-content">
+        <!-- Bouton favori moderne -->
+        <div class="article-hero-actions">
+            <button data-favorite 
+                    data-favorite-type="article" 
+                    data-favorite-slug="{{ $article->slug }}" 
+                    data-favorite-name="{{ $article->title }}"
+                    class="article-hero-favorite-btn">
+                <i class="far fa-heart"></i>
+                <span>Favoris</span>
+            </button>
+        </div>
+        
+        <!-- Catégorie -->
+        <span class="article-hero-category">
+            <i class="fas fa-folder"></i>
+            <span>{{ $article->category->name }}</span>
+        </span>
+        
+        <!-- Titre -->
+        <h1 class="article-hero-title">{{ $article->title }}</h1>
+        
+        <!-- Métadonnées -->
+        <div class="article-hero-meta">
+            <div class="article-hero-meta-item">
+                <i class="fas fa-calendar"></i>
+                <span>{{ $article->published_at ? $article->published_at->format('d F Y') : '' }}</span>
+            </div>
+            <div class="article-hero-meta-item">
+                <i class="fas fa-eye"></i>
+                <span>{{ number_format($article->views, 0, ',', ' ') }} vues</span>
+            </div>
+        </div>
     </div>
 </div>
 @endif
@@ -570,8 +998,8 @@
 
 <!-- Article Container -->
 <div class="article-container">
-    <!-- Contenu et Publicité côte à côte -->
-    <div style="display: grid; grid-template-columns: {{ isset($sidebarAds) && $sidebarAds->count() > 0 ? '1fr 350px' : '1fr' }}; gap: 40px; align-items: start; margin-bottom: 60px;">
+    <!-- Contenu et Commentaires côte à côte (toujours en deux colonnes) -->
+    <div class="article-main-grid" style="display: grid; grid-template-columns: 1fr 350px; gap: 40px; align-items: start; margin-bottom: 60px;">
         <div>
             <a href="{{ route('emplois.offres') }}" class="back-button">
                 <i class="fas fa-arrow-left"></i>
@@ -656,6 +1084,101 @@
                 body.dark-mode div[style*="background: linear-gradient"][style*="rgba(239, 68, 68"] p {
                     color: rgba(255, 255, 255, 0.8) !important;
                 }
+                
+                /* Styles pour les boutons de partage social */
+                .social-share-buttons {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 12px;
+                    margin-top: 15px;
+                }
+                
+                .social-share-buttons button {
+                    display: inline-flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 48px;
+                    height: 48px;
+                    border-radius: 12px;
+                    border: none;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    font-size: 20px;
+                    color: #fff;
+                    position: relative;
+                    overflow: hidden;
+                }
+                
+                .social-share-buttons button:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                }
+                
+                .social-share-buttons button[data-share="facebook"] {
+                    background: linear-gradient(135deg, #1877f2, #0d5fcc);
+                }
+                
+                .social-share-buttons button[data-share="facebook"]:hover {
+                    background: linear-gradient(135deg, #0d5fcc, #1877f2);
+                }
+                
+                .social-share-buttons button[data-share="twitter"] {
+                    background: linear-gradient(135deg, #1da1f2, #0d8bd9);
+                }
+                
+                .social-share-buttons button[data-share="twitter"]:hover {
+                    background: linear-gradient(135deg, #0d8bd9, #1da1f2);
+                }
+                
+                .social-share-buttons button[data-share="linkedin"] {
+                    background: linear-gradient(135deg, #0077b5, #005885);
+                }
+                
+                .social-share-buttons button[data-share="linkedin"]:hover {
+                    background: linear-gradient(135deg, #005885, #0077b5);
+                }
+                
+                .social-share-buttons button[data-share="whatsapp"] {
+                    background: linear-gradient(135deg, #25d366, #1da851);
+                }
+                
+                .social-share-buttons button[data-share="whatsapp"]:hover {
+                    background: linear-gradient(135deg, #1da851, #25d366);
+                }
+                
+                .social-share-buttons button[data-share="email"] {
+                    background: linear-gradient(135deg, #06b6d4, #0891b2);
+                }
+                
+                .social-share-buttons button[data-share="email"]:hover {
+                    background: linear-gradient(135deg, #0891b2, #06b6d4);
+                }
+                
+                .social-share-buttons button[data-share="copy"] {
+                    background: linear-gradient(135deg, #6366f1, #4f46e5);
+                }
+                
+                .social-share-buttons button[data-share="copy"]:hover {
+                    background: linear-gradient(135deg, #4f46e5, #6366f1);
+                }
+                
+                /* Mode sombre */
+                body.dark-mode .social-share-buttons button {
+                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+                }
+                
+                body.dark-mode .social-share-buttons button:hover {
+                    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+                }
+                
+                /* Responsive */
+                @media (max-width: 640px) {
+                    .social-share-buttons button {
+                        width: 44px;
+                        height: 44px;
+                        font-size: 18px;
+                    }
+                }
             </style>
             
             <!-- @include('partials.share-buttons', ['article' => $article]) -->
@@ -692,12 +1215,96 @@
             @endphp
             @endforeach
             
+            <!-- Section Articles les plus vus -->
+            @if(isset($topViewedArticles) && $topViewedArticles->count() > 0)
+            <div class="top-viewed-articles-sidebar" style="margin-bottom: 25px;">
+                <h4 style="font-size: 1.1rem; font-weight: 700; color: rgba(255, 255, 255, 0.95); margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-fire" style="color: #f59e0b;"></i>
+                    <span>{{ app()->getLocale() === 'fr' ? 'Les plus lus' : 'Most Read' }}</span>
+                </h4>
+                @foreach($topViewedArticles as $topArticle)
+                <a href="{{ route('emplois.article', $topArticle->slug) }}" class="top-viewed-article-card" style="display: block; background: rgba(51, 65, 85, 0.6); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 12px; padding: 15px; margin-bottom: 15px; text-decoration: none; transition: all 0.3s ease; overflow: hidden;">
+                    @if($topArticle->cover_image)
+                    <div style="width: 100%; height: 120px; border-radius: 8px; overflow: hidden; margin-bottom: 12px; position: relative;">
+                        <img src="{{ $topArticle->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($topArticle->cover_image) : $topArticle->cover_image }}" 
+                             alt="{{ $topArticle->title }}" 
+                             style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;"
+                             loading="lazy"
+                             onerror="this.src='https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=400&h=250&fit=crop'">
+                        <div style="position: absolute; top: 8px; right: 8px; background: rgba(0, 0, 0, 0.7); color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+                            <i class="fas fa-eye"></i>
+                            <span>{{ number_format($topArticle->views, 0, ',', ' ') }}</span>
+                        </div>
+                    </div>
+                    @endif
+                    <h5 style="font-size: 0.95rem; font-weight: 600; color: rgba(255, 255, 255, 0.95); margin: 0 0 8px 0; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                        {{ $topArticle->title }}
+                    </h5>
+                    <div style="display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: rgba(255, 255, 255, 0.6);">
+                        <span style="display: flex; align-items: center; gap: 4px;">
+                            <i class="fas fa-calendar"></i>
+                            {{ $topArticle->published_at ? $topArticle->published_at->format('d/m/Y') : '' }}
+                        </span>
+                        @if($topArticle->category)
+                        <span style="display: flex; align-items: center; gap: 4px; color: #06b6d4;">
+                            <i class="fas fa-folder"></i>
+                            {{ $topArticle->category->name }}
+                        </span>
+                        @endif
+                    </div>
+                </a>
+                @endforeach
+            </div>
+            @endif
+            
             <!-- Section Commentaires (dans la sidebar) -->
             @include('partials.comments', ['commentable' => $article, 'comments' => $comments ?? []])
         </aside>
         @else
-        <!-- Si pas de publicités, afficher les commentaires quand même -->
+        <!-- Si pas de publicités, afficher les articles les plus vus et les commentaires -->
         <aside style="position: sticky; top: 80px; align-self: flex-start;">
+            <!-- Section Articles les plus vus -->
+            @if(isset($topViewedArticles) && $topViewedArticles->count() > 0)
+            <div class="top-viewed-articles-sidebar" style="margin-bottom: 25px;">
+                <h4 style="font-size: 1.1rem; font-weight: 700; color: rgba(255, 255, 255, 0.95); margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-fire" style="color: #f59e0b;"></i>
+                    <span>{{ app()->getLocale() === 'fr' ? 'Les plus lus' : 'Most Read' }}</span>
+                </h4>
+                @foreach($topViewedArticles as $topArticle)
+                <a href="{{ route('emplois.article', $topArticle->slug) }}" class="top-viewed-article-card" style="display: block; background: rgba(51, 65, 85, 0.6); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 12px; padding: 15px; margin-bottom: 15px; text-decoration: none; transition: all 0.3s ease; overflow: hidden;">
+                    @if($topArticle->cover_image)
+                    <div style="width: 100%; height: 120px; border-radius: 8px; overflow: hidden; margin-bottom: 12px; position: relative;">
+                        <img src="{{ $topArticle->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($topArticle->cover_image) : $topArticle->cover_image }}" 
+                             alt="{{ $topArticle->title }}" 
+                             style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;"
+                             loading="lazy"
+                             onerror="this.src='https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=400&h=250&fit=crop'">
+                        <div style="position: absolute; top: 8px; right: 8px; background: rgba(0, 0, 0, 0.7); color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; display: flex; align-items: center; gap: 4px;">
+                            <i class="fas fa-eye"></i>
+                            <span>{{ number_format($topArticle->views, 0, ',', ' ') }}</span>
+                        </div>
+                    </div>
+                    @endif
+                    <h5 style="font-size: 0.95rem; font-weight: 600; color: rgba(255, 255, 255, 0.95); margin: 0 0 8px 0; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                        {{ $topArticle->title }}
+                    </h5>
+                    <div style="display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: rgba(255, 255, 255, 0.6);">
+                        <span style="display: flex; align-items: center; gap: 4px;">
+                            <i class="fas fa-calendar"></i>
+                            {{ $topArticle->published_at ? $topArticle->published_at->format('d/m/Y') : '' }}
+                        </span>
+                        @if($topArticle->category)
+                        <span style="display: flex; align-items: center; gap: 4px; color: #06b6d4;">
+                            <i class="fas fa-folder"></i>
+                            {{ $topArticle->category->name }}
+                        </span>
+                        @endif
+                    </div>
+                </a>
+                @endforeach
+            </div>
+            @endif
+            
             @include('partials.comments', ['commentable' => $article, 'comments' => $comments ?? []])
         </aside>
         @endif
@@ -942,6 +1549,57 @@
         gap: 8px;
     }
     
+    /* Styles pour les articles les plus vus dans la sidebar */
+    .top-viewed-article-card {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .top-viewed-article-card:hover {
+        background: rgba(51, 65, 85, 0.8) !important;
+        border-color: rgba(6, 182, 212, 0.4) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(6, 182, 212, 0.2);
+    }
+    
+    .top-viewed-article-card:hover img {
+        transform: scale(1.05);
+    }
+    
+    .top-viewed-article-card h5 {
+        transition: color 0.3s ease;
+    }
+    
+    .top-viewed-article-card:hover h5 {
+        color: #06b6d4 !important;
+    }
+    
+    body:not(.dark-mode) .top-viewed-articles-sidebar h4 {
+        color: rgba(30, 41, 59, 0.95) !important;
+    }
+    
+    body:not(.dark-mode) .top-viewed-article-card {
+        background: rgba(248, 250, 252, 0.8) !important;
+        border-color: rgba(6, 182, 212, 0.2) !important;
+    }
+    
+    body:not(.dark-mode) .top-viewed-article-card:hover {
+        background: rgba(241, 245, 249, 0.95) !important;
+        border-color: rgba(6, 182, 212, 0.4) !important;
+    }
+    
+    body:not(.dark-mode) .top-viewed-article-card h5 {
+        color: rgba(30, 41, 59, 0.95) !important;
+    }
+    
+    body:not(.dark-mode) .top-viewed-article-card:hover h5 {
+        color: #06b6d4 !important;
+    }
+    
+    body:not(.dark-mode) .top-viewed-article-card > div:last-child {
+        color: rgba(30, 41, 59, 0.7) !important;
+    }
+    
     .related-card-modern-content {
         padding: 20px;
     }
@@ -1143,12 +1801,10 @@
     }
     
     @media (max-width: 1200px) and (min-width: 769px) {
-        .article-container > div[style*="grid-template-columns: 1fr 350px"] {
-            grid-template-columns: 1fr !important;
-        }
-        
-        .article-container > div[style*="grid-template-columns: 1fr 350px"] > aside {
-            display: none !important;
+        /* Garder la disposition en deux colonnes même sur les écrans moyens */
+        .article-main-grid {
+            grid-template-columns: 1fr 300px !important;
+            gap: 30px !important;
         }
         
         .related-grid-full {
@@ -1166,6 +1822,11 @@
         }
         
         /* En mobile, afficher les sections publicité et commentaires sous le contenu */
+        .article-main-grid {
+            grid-template-columns: 1fr !important;
+            gap: 30px !important;
+        }
+        
         .article-container > div[style*="grid-template-columns"] {
             grid-template-columns: 1fr !important;
         }
@@ -1189,6 +1850,27 @@
         .modern-sidebar-ad-image-wrapper {
             min-height: 300px !important;
         }
+        
+        /* Assurer que tous les éléments du contenu sont responsives */
+        .article-content * {
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        
+        /* Tableaux avec scroll horizontal si nécessaire */
+        .article-content table {
+            display: block;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .article-content table thead,
+        .article-content table tbody,
+        .article-content table tr {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
+        }
     }
 </style>
 
@@ -1202,6 +1884,38 @@
             }
         }).catch(err => console.log('Ad click tracking error:', err));
     }
+</script>
+
+<script>
+    // Initialiser les boutons de partage social
+    (function() {
+        function initSocialShare() {
+            // Vérifier si SocialShareManager est disponible
+            if (typeof SocialShareManager !== 'undefined') {
+                // Si le manager n'existe pas encore, le créer
+                if (!window.socialShareManager) {
+                    window.socialShareManager = new SocialShareManager();
+                }
+            } else {
+                // Si le script n'est pas encore chargé, attendre un peu et réessayer
+                setTimeout(initSocialShare, 100);
+            }
+        }
+        
+        // Initialiser immédiatement si le DOM est prêt
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initSocialShare);
+        } else {
+            initSocialShare();
+        }
+        
+        // Fallback: initialiser après le chargement complet de la page
+        window.addEventListener('load', function() {
+            if (typeof SocialShareManager !== 'undefined' && !window.socialShareManager) {
+                window.socialShareManager = new SocialShareManager();
+            }
+        });
+    })();
 </script>
 @endsection
 

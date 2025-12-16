@@ -566,29 +566,41 @@
     // INITIALISATION
     // ============================================
     
-    document.addEventListener('DOMContentLoaded', () => {
+    // Exporter les classes globalement pour qu'elles soient accessibles
+    window.SocialShareManager = SocialShareManager;
+    window.FavoriteManager = FavoriteManager;
+    window.NotificationManager = NotificationManager;
+    
+    function initializeManagers() {
         // Vérifier si l'utilisateur est authentifié
         window.isAuthenticated = document.body.dataset.authenticated === 'true' || 
                                  document.querySelector('[data-user-id]') !== null;
 
         // Initialiser les managers
-        window.favoriteManager = new FavoriteManager();
-        window.notificationManager = new NotificationManager();
-        window.socialShareManager = new SocialShareManager();
-    });
-    
-    // Initialisation immédiate si le DOM est déjà chargé
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', () => {
-            if (window.isAuthenticated && !window.notificationManager) {
-                window.notificationManager = new NotificationManager();
-            }
-        });
-    } else {
-        // DOM déjà chargé
-        if (window.isAuthenticated && !window.notificationManager) {
+        if (!window.favoriteManager) {
+            window.favoriteManager = new FavoriteManager();
+        }
+        if (!window.notificationManager && window.isAuthenticated) {
             window.notificationManager = new NotificationManager();
         }
+        if (!window.socialShareManager) {
+            window.socialShareManager = new SocialShareManager();
+        }
     }
+    
+    // Initialiser selon l'état du DOM
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initializeManagers);
+    } else {
+        // DOM déjà chargé
+        initializeManagers();
+    }
+    
+    // Fallback: réinitialiser après le chargement complet
+    window.addEventListener('load', function() {
+        if (!window.socialShareManager) {
+            window.socialShareManager = new SocialShareManager();
+        }
+    });
 
 })();

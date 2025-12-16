@@ -1,6 +1,53 @@
 @extends('layouts.app')
 
 @section('title', $course->localized_title . ' - NiangProgrammeur')
+@section('meta_description', $course->localized_description ?? 'Découvrez ce cours premium sur NiangProgrammeur')
+
+@push('head')
+<!-- Structured Data Course pour SEO -->
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Course",
+    "name": "{{ addslashes($course->localized_title) }}",
+    "description": "{{ addslashes($course->localized_description ?? '') }}",
+    "provider": {
+        "@type": "Organization",
+        "name": "NiangProgrammeur",
+        "url": "{{ url('/') }}",
+        "logo": "{{ asset('images/logo.png') }}"
+    },
+    "image": "{{ $course->cover_image ? (($course->cover_type ?? 'internal') === 'internal' ? asset('storage/' . $course->cover_image) : $course->cover_image) : asset('images/logo.png') }}",
+    "courseCode": "{{ $course->slug }}",
+    "educationalCredentialAwarded": "Certificate",
+    "hasCourseInstance": {
+        "@type": "CourseInstance",
+        "courseMode": "online",
+        "duration": "PT{{ $course->duration_hours ?? 0 }}H"
+    },
+    @if($course->rating > 0)
+    "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "{{ $course->rating }}",
+        "bestRating": "5",
+        "worstRating": "1",
+        "ratingCount": "{{ $course->reviews_count }}"
+    },
+    @endif
+    "offers": {
+        "@type": "Offer",
+        "price": "{{ $course->current_price }}",
+        "priceCurrency": "{{ $course->currency ?? 'XOF' }}",
+        "availability": "https://schema.org/InStock",
+        "url": "{{ route('monetization.course.show', $course->slug) }}",
+        "seller": {
+            "@type": "Organization",
+            "name": "NiangProgrammeur"
+        }
+    }
+}
+</script>
+@endpush
 
 @section('content')
 <div class="course-detail-page">
@@ -9,9 +56,9 @@
         <div class="course-hero-background">
             @if($course->cover_image)
                 @if(($course->cover_type ?? 'internal') === 'internal')
-                    <img src="{{ asset('storage/' . $course->cover_image) }}" alt="{{ $course->localized_title }}" class="course-hero-image">
+                    <img src="{{ asset('storage/' . $course->cover_image) }}" alt="{{ $course->localized_title }}" class="course-hero-image" width="1200" height="600" loading="eager" fetchpriority="high" decoding="async">
                 @else
-                    <img src="{{ $course->cover_image }}" alt="{{ $course->localized_title }}" class="course-hero-image" onerror="this.parentElement.innerHTML='<div class=\'course-hero-placeholder\'></div>'">
+                    <img src="{{ $course->cover_image }}" alt="{{ $course->localized_title }}" class="course-hero-image" width="1200" height="600" loading="eager" fetchpriority="high" decoding="async" onerror="this.parentElement.innerHTML='<div class=\'course-hero-placeholder\'></div>'">
                 @endif
             @else
                 <div class="course-hero-placeholder"></div>

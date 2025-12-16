@@ -29,8 +29,11 @@ Route::get('/favicon.ico', function () {
     return response('', 404);
 })->name('favicon');
 
-// Fichier ads.txt - Généré dynamiquement depuis la base de données
-Route::get('/ads.txt', [\App\Http\Controllers\AdsTxtController::class, 'index'])->name('ads.txt');
+// Fichier ads.txt - Redirection vers adstxtmanager.com
+Route::get('/ads.txt', function () {
+    return redirect('https://srv.adstxtmanager.com/19390/niangprogrammeur.com', 301)
+        ->header('Content-Type', 'text/plain; charset=utf-8');
+})->name('ads.txt');
 
 // Sitemaps SEO
 Route::get('/sitemap.xml', [\App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap.index');

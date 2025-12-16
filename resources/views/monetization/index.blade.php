@@ -126,9 +126,9 @@
                         <div style="width: 100%; height: 180px; position: relative; overflow: hidden; background: linear-gradient(135deg, #06b6d4, #14b8a6);">
                             @if($course->cover_image)
                                 @if(($course->cover_type ?? 'internal') === 'internal')
-                                    <img src="{{ asset('storage/' . $course->cover_image) }}" alt="{{ $course->localized_title }}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;" loading="lazy">
+                                    <img src="{{ asset('storage/' . $course->cover_image) }}" alt="{{ $course->localized_title }}" width="400" height="180" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;" loading="lazy" decoding="async">
                                 @else
-                                    <img src="{{ $course->cover_image }}" alt="{{ $course->localized_title }}" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                    <img src="{{ $course->cover_image }}" alt="{{ $course->localized_title }}" width="400" height="180" style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease;" loading="lazy" decoding="async" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                                     <div style="width: 100%; height: 100%; display: none; align-items: center; justify-content: center; background: linear-gradient(135deg, #06b6d4, #14b8a6);">
                                         <i class="fas fa-graduation-cap" style="font-size: 3rem; color: white; opacity: 0.5;"></i>
                                     </div>

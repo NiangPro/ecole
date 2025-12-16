@@ -1046,15 +1046,6 @@
                             <div class="dropdown-item-desc">{{ trans('app.nav.dropdown.formations.bootstrap_desc') }}</div>
                         </div>
                     </a>
-                    <a href="{{ route('formations.git') }}" class="dropdown-item" data-parent-active="formations">
-                        <div class="dropdown-item-icon" style="background: rgba(243, 79, 41, 0.1);">
-                            <i class="fab fa-git-alt" style="color: #f34f29;"></i>
-                        </div>
-                        <div class="dropdown-item-content">
-                            <div class="dropdown-item-title">{{ trans('app.nav.dropdown.formations.git') }}</div>
-                            <div class="dropdown-item-desc">{{ trans('app.nav.dropdown.formations.git_desc') }}</div>
-                        </div>
-                    </a>
                     <a href="{{ route('formations.java') }}" class="dropdown-item" data-parent-active="formations">
                         <div class="dropdown-item-icon" style="background: rgba(237, 139, 0, 0.1);">
                             <i class="fab fa-java" style="color: #ed8b00;"></i>
@@ -1249,7 +1240,6 @@
                 'formations.cpp',
                 'formations.csharp',
                 'formations.dart',
-                'formations.git',
                 'formations.wordpress',
                 'formations.ia',
                 'formations.python',
@@ -1549,9 +1539,6 @@
                 <a href="{{ route('formations.bootstrap') }}" class="mobile-dropdown-item">
                     <i class="fab fa-bootstrap" style="color: #7952b3;"></i> Bootstrap
                 </a>
-                <a href="{{ route('formations.git') }}" class="mobile-dropdown-item">
-                    <i class="fab fa-git-alt" style="color: #f34f29;"></i> Git
-                </a>
                 <a href="{{ route('formations.java') }}" class="mobile-dropdown-item">
                     <i class="fab fa-java" style="color: #ed8b00;"></i> Java
                 </a>
@@ -1658,7 +1645,6 @@
                 'formations.cpp',
                 'formations.csharp',
                 'formations.dart',
-                'formations.git',
                 'formations.wordpress',
                 'formations.ia',
                 'formations.python',

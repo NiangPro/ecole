@@ -677,7 +677,7 @@
                     </div>
                     
                     <!-- Article sponsorisé -->
-                    <div class="form-group" style="margin-top: 20px;">
+                    <div class="form-group" style="margin-top: 20px; display: flex; gap: 30px; flex-wrap: wrap;">
                         <label class="form-label">
                             <input type="checkbox" name="is_sponsored" value="1" 
                                    {{ old('is_sponsored', isset($article) && $article->is_sponsored ? true : false) ? 'checked' : '' }}
@@ -686,6 +686,16 @@
                                 <i class="fas fa-star" style="color: #f59e0b; margin-right: 6px;"></i>
                                 Article sponsorisé
                             </span>
+                        </label>
+                        <label class="form-label">
+                            <input type="checkbox" name="is_featured" value="1" 
+                                   {{ old('is_featured', isset($article) && $article->is_featured ? true : false) ? 'checked' : '' }}
+                                   class="form-checkbox" style="width: 20px; height: 20px; margin-right: 10px; cursor: pointer;">
+                            <span style="font-weight: 600; color: rgba(255, 255, 255, 0.9); transition: color 0.3s ease;">
+                                <i class="fas fa-fire" style="color: #ef4444; margin-right: 6px;"></i>
+                                Article vedette
+                            </span>
+                        </label>
                         </label>
                         <div class="form-help" style="margin-top: 8px; padding-left: 30px;">
                             Les articles sponsorisés apparaissent dans la section "Articles Premium" de la page d'accueil.

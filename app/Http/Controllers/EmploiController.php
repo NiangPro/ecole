@@ -162,6 +162,17 @@ class EmploiController extends Controller
                 ->get();
         });
         
+        // Cache les 6 articles les plus vus pour la sidebar (5 minutes - durée réduite pour plus de réactivité)
+        $topViewedArticles = Cache::remember('top_viewed_articles_sidebar', 300, function () use ($article) {
+            return JobArticle::where('status', 'published')
+                ->where('id', '!=', $article->id)
+                ->with(['category:id,name,slug'])
+                ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')
+                ->orderBy('views', 'desc')
+                ->take(6)
+                ->get();
+        });
+        
         // Cache les publicités pour la sidebar des articles (30 minutes)
         $sidebarAds = Cache::remember('sidebar_ads_articles', 1800, function () {
             return Ad::active()
@@ -218,7 +229,7 @@ class EmploiController extends Controller
             return $comments;
         });
         
-        return view('emplois.article', compact('article', 'relatedArticles', 'sidebarAds', 'comments', 'latestComments'));
+        return view('emplois.article', compact('article', 'relatedArticles', 'sidebarAds', 'comments', 'latestComments', 'topViewedArticles'));
     }
 
     /**

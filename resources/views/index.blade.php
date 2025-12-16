@@ -2652,6 +2652,166 @@
     </div>
 </section>
 
+<!-- Featured Articles Section -->
+@if(isset($featuredArticles) && $featuredArticles->count() > 0)
+<section class="featured-articles-section" style="padding: 80px 20px; background: linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, rgba(251, 146, 60, 0.05) 100%); position: relative; overflow: hidden;">
+    <div class="featured-articles-container" style="max-width: 1600px; margin: 0 auto; position: relative; z-index: 1; padding: 0 20px;">
+        <!-- Header -->
+        <div style="text-align: center; margin-bottom: 50px;">
+            <div style="display: inline-flex; align-items: center; gap: 15px; margin-bottom: 16px;">
+                <div style="width: 6px; height: 32px; background: linear-gradient(180deg, #ef4444, #f97316); border-radius: 3px;"></div>
+                <h2 class="featured-section-title" style="font-size: 2.5rem; font-weight: 900; letter-spacing: -1px; margin: 0; background: linear-gradient(135deg, #ef4444, #f97316); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                    <i class="fas fa-fire" style="margin-right: 12px; color: #ef4444;"></i>
+                    {{ app()->getLocale() === 'fr' ? 'Articles Vedettes' : 'Featured Articles' }}
+                </h2>
+                <div style="width: 6px; height: 32px; background: linear-gradient(180deg, #f97316, #ef4444); border-radius: 3px;"></div>
+            </div>
+            <p class="featured-section-subtitle" style="font-size: 1.1rem; color: rgba(30, 41, 59, 0.7); max-width: 600px; margin: 0 auto;">
+                {{ app()->getLocale() === 'fr' ? 'Découvrez nos articles les plus populaires et les plus pertinents' : 'Discover our most popular and relevant articles' }}
+            </p>
+        </div>
+        
+        <!-- Articles Grid -->
+        <div class="featured-articles-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;">
+            @foreach($featuredArticles as $article)
+            <a href="{{ route('emplois.article', $article->slug) }}" class="featured-article-card" style="display: block; text-decoration: none; background: #fff; border-radius: 20px; overflow: hidden; box-shadow: 0 8px 30px rgba(239, 68, 68, 0.15); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); position: relative; border: 2px solid rgba(239, 68, 68, 0.1);">
+                <!-- Featured Badge -->
+                <div style="position: absolute; top: 20px; right: 20px; z-index: 2; background: linear-gradient(135deg, #ef4444, #f97316); color: #fff; padding: 8px 16px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4); display: flex; align-items: center; gap: 6px;">
+                    <i class="fas fa-fire"></i>
+                    <span>{{ app()->getLocale() === 'fr' ? 'Vedette' : 'Featured' }}</span>
+                </div>
+                
+                <!-- Image -->
+                @if($article->cover_image)
+                <div class="featured-article-image-wrapper" style="position: relative; width: 100%; height: 220px; overflow: hidden; background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(251, 146, 60, 0.1));">
+                    @if($article->cover_type === 'external')
+                        <img src="{{ $article->cover_image }}" 
+                             alt="{{ $article->title }}" 
+                             class="featured-article-image"
+                             loading="lazy"
+                             decoding="async"
+                             style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease;"
+                             onerror="this.style.display='none'">
+                    @else
+                        <img src="{{ asset('storage/' . $article->cover_image) }}" 
+                             alt="{{ $article->title }}" 
+                             class="featured-article-image"
+                             loading="lazy"
+                             decoding="async"
+                             style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease;"
+                             onerror="this.style.display='none'">
+                    @endif
+                    <!-- Overlay Gradient -->
+                    <div style="position: absolute; bottom: 0; left: 0; right: 0; height: 60%; background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);"></div>
+                </div>
+                @else
+                <div style="width: 100%; height: 220px; background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(251, 146, 60, 0.2)); display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-image" style="font-size: 3rem; color: rgba(239, 68, 68, 0.3);"></i>
+                </div>
+                @endif
+                
+                <!-- Content -->
+                <div style="padding: 24px;">
+                    <!-- Category -->
+                    @if($article->category)
+                    <div style="display: inline-flex; align-items: center; gap: 6px; background: rgba(239, 68, 68, 0.1); color: #ef4444; padding: 6px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; margin-bottom: 12px;">
+                        <i class="fas fa-tag" style="font-size: 0.7rem;"></i>
+                        <span>{{ $article->category->name }}</span>
+                    </div>
+                    @endif
+                    
+                    <!-- Title -->
+                    <h3 class="featured-article-title" style="font-size: 1.3rem; font-weight: 700; color: rgba(30, 41, 59, 0.9); margin-bottom: 12px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                        {{ $article->title }}
+                    </h3>
+                    
+                    <!-- Excerpt -->
+                    @if($article->excerpt)
+                    <p class="featured-article-excerpt" style="font-size: 0.9rem; color: rgba(30, 41, 59, 0.7); line-height: 1.6; margin-bottom: 16px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+                        {{ $article->excerpt }}
+                    </p>
+                    @endif
+                    
+                    <!-- Meta -->
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding-top: 16px; border-top: 1px solid rgba(239, 68, 68, 0.1);">
+                        <div style="display: flex; align-items: center; gap: 12px; color: rgba(30, 41, 59, 0.6); font-size: 0.85rem;">
+                            <span style="display: flex; align-items: center; gap: 4px;">
+                                <i class="fas fa-eye"></i>
+                                <span>{{ $article->views }} {{ app()->getLocale() === 'fr' ? 'vues' : 'views' }}</span>
+                            </span>
+                        </div>
+                        <span style="color: #ef4444; font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; gap: 6px;">
+                            {{ app()->getLocale() === 'fr' ? 'Lire' : 'Read' }}
+                            <i class="fas fa-arrow-right"></i>
+                        </span>
+                    </div>
+                </div>
+            </a>
+            @endforeach
+        </div>
+    </div>
+    
+    <!-- Background Decoration -->
+    <div style="position: absolute; top: -50%; right: -10%; width: 500px; height: 500px; background: radial-gradient(circle, rgba(239, 68, 68, 0.1) 0%, transparent 70%); border-radius: 50%; z-index: 0;"></div>
+    <div style="position: absolute; bottom: -30%; left: -5%; width: 400px; height: 400px; background: radial-gradient(circle, rgba(251, 146, 60, 0.1) 0%, transparent 70%); border-radius: 50%; z-index: 0;"></div>
+</section>
+
+<style>
+    .featured-article-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 16px 50px rgba(239, 68, 68, 0.25);
+        border-color: rgba(239, 68, 68, 0.3);
+    }
+    
+    .featured-article-card:hover .featured-article-image {
+        transform: scale(1.1);
+    }
+    
+    body.dark-mode .featured-articles-section {
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.08) 0%, rgba(251, 146, 60, 0.08) 100%);
+    }
+    
+    body.dark-mode .featured-article-card {
+        background: rgba(15, 23, 42, 0.8);
+        border-color: rgba(239, 68, 68, 0.2);
+    }
+    
+    body.dark-mode .featured-article-title {
+        color: rgba(255, 255, 255, 0.95);
+    }
+    
+    body.dark-mode .featured-article-excerpt {
+        color: rgba(255, 255, 255, 0.7);
+    }
+    
+    body.dark-mode .featured-section-subtitle {
+        color: rgba(255, 255, 255, 0.7);
+    }
+    
+    @media (max-width: 1200px) {
+        .featured-articles-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+        }
+    }
+    
+    @media (min-width: 1201px) {
+        .featured-articles-grid {
+            grid-template-columns: repeat(4, 1fr) !important;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .featured-articles-grid {
+            grid-template-columns: 1fr !important;
+        }
+        
+        .featured-section-title {
+            font-size: 2rem !important;
+        }
+    }
+</style>
+@endif
+
 <style>
     .latest-jobs-layout {
         display: grid;

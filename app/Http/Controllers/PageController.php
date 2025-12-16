@@ -94,7 +94,19 @@ class PageController extends Controller
                 ->get();
         });
         
-        return view('index', compact('latestJobs', 'categories', 'sponsoredArticles', 'sidebarAds', 'homepageAds', 'careerAdviceArticles', 'paidCourses'));
+        // Cache les articles vedettes (15 minutes) - Optimisé avec eager loading
+        $featuredArticles = \Illuminate\Support\Facades\Cache::remember('featured_articles', 900, function () {
+            return \App\Models\JobArticle::where('status', 'published')
+                ->where('is_featured', true)
+                ->with(['category:id,name,slug'])
+                ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')
+                ->orderBy('published_at', 'desc')
+                ->orderBy('created_at', 'desc')
+                ->take(4)
+                ->get();
+        });
+        
+        return view('index', compact('latestJobs', 'categories', 'sponsoredArticles', 'sidebarAds', 'homepageAds', 'careerAdviceArticles', 'paidCourses', 'featuredArticles'));
     }
 
     public function about()

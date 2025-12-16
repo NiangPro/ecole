@@ -444,6 +444,209 @@
         background: rgba(239, 68, 68, 0.15);
         border-color: rgba(239, 68, 68, 0.4);
     }
+    
+    /* Styles personnalisés pour la pagination - Style moderne comme l'image */
+    .pagination-wrapper {
+        margin-top: 40px;
+    }
+    
+    .pagination-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+    }
+    
+    .pagination-container .pagination {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .pagination-container .pagination li {
+        margin: 0;
+    }
+    
+    .pagination-container .pagination li a,
+    .pagination-container .pagination li span {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 40px;
+        height: 40px;
+        padding: 0 12px;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        color: #374151;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 0.9rem;
+        transition: all 0.2s ease;
+        cursor: pointer;
+    }
+    
+    .pagination-container .pagination li a:hover {
+        background: #f9fafb;
+        border-color: #d1d5db;
+        color: #111827;
+    }
+    
+    /* Page active - Fond bleu solide */
+    .pagination-container .pagination li.active span,
+    .pagination-container .pagination li.active a {
+        background: #3b82f6;
+        border-color: #3b82f6;
+        color: #ffffff;
+        font-weight: 600;
+    }
+    
+    /* Boutons désactivés */
+    .pagination-container .pagination li.disabled span,
+    .pagination-container .pagination li.disabled a {
+        background: #ffffff;
+        border-color: #e5e7eb;
+        color: #9ca3af;
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+    
+    .pagination-container .pagination li.disabled span:hover,
+    .pagination-container .pagination li.disabled a:hover {
+        background: #ffffff;
+        border-color: #e5e7eb;
+        color: #9ca3af;
+    }
+    
+    /* Points de suspension */
+    .pagination-container .pagination li span.dots {
+        background: transparent;
+        border: none;
+        color: #374151;
+        cursor: default;
+        padding: 0 8px;
+    }
+    
+    /* Mode sombre */
+    body:not(.light-mode) .pagination-container .pagination li a,
+    body:not(.light-mode) .pagination-container .pagination li span {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.2);
+        color: rgba(255, 255, 255, 0.8);
+    }
+    
+    body:not(.light-mode) .pagination-container .pagination li a:hover {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: rgba(255, 255, 255, 0.3);
+        color: #ffffff;
+    }
+    
+    body:not(.light-mode) .pagination-container .pagination li.active span,
+    body:not(.light-mode) .pagination-container .pagination li.active a {
+        background: #3b82f6;
+        border-color: #3b82f6;
+        color: #ffffff;
+    }
+    
+    body:not(.light-mode) .pagination-container .pagination li.disabled span,
+    body:not(.light-mode) .pagination-container .pagination li.disabled a {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.4);
+    }
+    
+    body:not(.light-mode) .pagination-container .pagination li span.dots {
+        background: transparent;
+        border: none;
+        color: rgba(255, 255, 255, 0.6);
+    }
+    
+    body:not(.light-mode) .pagination-info {
+        color: rgba(255, 255, 255, 0.8) !important;
+    }
+    
+    body:not(.light-mode) .pagination-wrapper > div {
+        background: rgba(15, 23, 42, 0.6) !important;
+        border-color: rgba(6, 182, 212, 0.3) !important;
+    }
+    
+    /* Mode clair */
+    body.light-mode .pagination-container .pagination li a,
+    body.light-mode .pagination-container .pagination li span {
+        background: #ffffff;
+        border-color: #e5e7eb;
+        color: #374151;
+    }
+    
+    body.light-mode .pagination-container .pagination li a:hover {
+        background: #f9fafb;
+        border-color: #d1d5db;
+        color: #111827;
+    }
+    
+    body.light-mode .pagination-container .pagination li.active span,
+    body.light-mode .pagination-container .pagination li.active a {
+        background: #3b82f6;
+        border-color: #3b82f6;
+        color: #ffffff;
+    }
+    
+    body.light-mode .pagination-container .pagination li.disabled span,
+    body.light-mode .pagination-container .pagination li.disabled a {
+        background: #ffffff;
+        border-color: #e5e7eb;
+        color: #9ca3af;
+    }
+    
+    body.light-mode .pagination-container .pagination li span.dots {
+        background: transparent;
+        border: none;
+        color: #374151;
+    }
+    
+    body.light-mode .pagination-info {
+        color: rgba(30, 41, 59, 0.8) !important;
+    }
+    
+    body.light-mode .pagination-wrapper > div {
+        background: rgba(255, 255, 255, 0.9) !important;
+        border-color: rgba(6, 182, 212, 0.3) !important;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+        .pagination-wrapper > div {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .pagination-info {
+            justify-content: center;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .pagination-container {
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .pagination-container .pagination {
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .pagination-container .pagination li a,
+        .pagination-container .pagination li span {
+            min-width: 38px;
+            height: 38px;
+            padding: 0 10px;
+            font-size: 0.85rem;
+        }
+    }
 </style>
 @endsection
 
@@ -706,8 +909,23 @@
     </div>
     
     @if($articles->hasPages())
-    <div class="mt-6 flex justify-center">
-        {{ $articles->links() }}
+    <div class="pagination-wrapper" style="margin-top: 40px; padding: 30px 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 16px; padding: 25px;">
+            <!-- Informations de pagination -->
+            <div class="pagination-info" style="color: rgba(255, 255, 255, 0.8); font-size: 0.95rem; display: flex; align-items: center; gap: 10px;">
+                <div style="width: 40px; height: 40px; border-radius: 10px; background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2)); display: flex; align-items: center; justify-content: center;">
+                    <i class="fas fa-info-circle" style="color: #06b6d4; font-size: 1.1rem;"></i>
+                </div>
+                <span>
+                    Affichage <strong style="color: #06b6d4; font-weight: 700;">{{ $articles->firstItem() }}</strong> à <strong style="color: #06b6d4; font-weight: 700;">{{ $articles->lastItem() }}</strong> sur <strong style="color: #06b6d4; font-weight: 700;">{{ $articles->total() }}</strong> résultats
+                </span>
+            </div>
+            
+            <!-- Pagination -->
+            <div class="pagination-container">
+                {{ $articles->onEachSide(1)->links() }}
+            </div>
+        </div>
     </div>
     @endif
 </div>

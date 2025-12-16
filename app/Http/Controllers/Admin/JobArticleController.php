@@ -91,11 +91,13 @@ class JobArticleController extends Controller
             'meta_description' => 'nullable|string|max:500',
             'meta_keywords' => 'nullable|string',
             'status' => 'required|in:draft,published,archived',
-            'is_sponsored' => 'nullable|boolean'
+            'is_sponsored' => 'nullable|boolean',
+            'is_featured' => 'nullable|boolean'
         ]);
         
-        // Convertir le checkbox en boolean
+        // Convertir les checkboxes en boolean
         $validated['is_sponsored'] = $request->has('is_sponsored') ? true : false;
+        $validated['is_featured'] = $request->has('is_featured') ? true : false;
 
         if (empty($validated['slug'])) {
             $validated['slug'] = Str::slug($validated['title']);
@@ -206,11 +208,13 @@ class JobArticleController extends Controller
             'meta_keywords' => 'nullable|string',
             'status' => 'required|in:draft,published,archived',
             'published_at' => 'nullable|date',
-            'is_sponsored' => 'nullable|boolean'
+            'is_sponsored' => 'nullable|boolean',
+            'is_featured' => 'nullable|boolean'
         ]);
         
-        // Convertir le checkbox en boolean
+        // Convertir les checkboxes en boolean
         $validated['is_sponsored'] = $request->has('is_sponsored') ? true : false;
+        $validated['is_featured'] = $request->has('is_featured') ? true : false;
 
         if (empty($validated['slug'])) {
             $validated['slug'] = Str::slug($validated['title']);

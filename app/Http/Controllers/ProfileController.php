@@ -938,9 +938,25 @@ class ProfileController extends Controller
         }])->findOrFail($courseId);
 
         // Traiter le contenu de chaque chapitre pour convertir les blocs markdown
+        $locale = App::getLocale();
         foreach ($course->chapters as $chapter) {
-            if (!empty($chapter->content)) {
-                $chapter->content = $this->processMarkdownContent($chapter->content);
+            // Traiter le contenu localisé
+            $contentField = 'content_' . $locale;
+            $fallbackField = 'content_fr';
+            
+            $contentToProcess = null;
+            if (!empty($chapter->$contentField)) {
+                $contentToProcess = $chapter->$contentField;
+            } elseif (!empty($chapter->$fallbackField)) {
+                $contentToProcess = $chapter->$fallbackField;
+            } elseif (!empty($chapter->content)) {
+                $contentToProcess = $chapter->content;
+            }
+            
+            if ($contentToProcess) {
+                $processedContent = $this->processMarkdownContent($contentToProcess);
+                // Stocker le contenu traité dans un attribut temporaire pour la vue
+                $chapter->processed_content = $processedContent;
             }
         }
 

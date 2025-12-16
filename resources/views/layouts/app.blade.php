@@ -11,6 +11,18 @@
     <meta name="bingbot" content="index, follow">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     
+    <!-- SEO amélioré -->
+    <meta name="language" content="{{ app()->getLocale() }}">
+    <meta name="geo.region" content="SN">
+    <meta name="geo.placename" content="Sénégal">
+    <meta name="theme-color" content="#06b6d4">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="NiangProgrammeur">
+    <meta name="application-name" content="NiangProgrammeur">
+    <meta name="msapplication-TileColor" content="#06b6d4">
+    <meta name="msapplication-config" content="{{ asset('browserconfig.xml') }}">
+    
     <!-- Favicon - Logo du site (placé tôt pour un chargement prioritaire) -->
     @php
         $faviconPng = asset('images/logo.png');
@@ -83,11 +95,14 @@
     <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
     <link rel="dns-prefetch" href="//images.unsplash.com">
     <link rel="dns-prefetch" href="//www.google-analytics.com">
+    <link rel="dns-prefetch" href="//www.googletagmanager.com">
+    <link rel="dns-prefetch" href="//pagead2.googlesyndication.com">
     
     <!-- Preconnect pour les ressources critiques (priorité) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
     
     <!-- PWA Manifest -->
     <link rel="manifest" href="{{ asset('manifest.json') }}">
@@ -101,344 +116,9 @@
     @stack('head')
     @stack('preload_images')
     
-    <!-- Surcharger console.error IMMÉDIATEMENT (AVANT tout autre script) -->
-    <script>
-        (function() {
-            'use strict';
-            if (window.console && window.console.error) {
-                const originalError = window.console.error;
-                window.console.error = function() {
-                    const args = Array.from(arguments);
-                    const message = args.map(a => String(a)).join(' ').toLowerCase();
-                    if (message.includes('content.js') || 
-                        message.includes('extension://') || 
-                        message.includes('chrome-extension://') ||
-                        message.includes('moz-extension://') ||
-                        message.includes('edge-extension://') ||
-                        message.includes('unknown error') ||
-                        (message.includes('401') && message.includes('favorites/check')) ||
-                        (message.includes('unauthorized') && message.includes('favorites')) ||
-                        message.includes('[pwa]') ||
-                        message.includes('[ux]')) {
-                        return; // Ne pas afficher
-                    }
-                    return originalError.apply(console, args);
-                };
-            }
-            
-            // PROTECTION GLOBALE : Wrapper pour sécuriser tous les accès à classList
-            // DOIT être fait AVANT tout autre script
-            try {
-                // Wrapper pour classList.add
-                if (DOMTokenList && DOMTokenList.prototype) {
-                    const originalAdd = DOMTokenList.prototype.add;
-                    DOMTokenList.prototype.add = function(...tokens) {
-                        try {
-                            if (this && this.length !== undefined) {
-                                return originalAdd.apply(this, tokens);
-                            }
-                        } catch (e) {
-                            // Ignorer silencieusement
-                        }
-                    };
-                    
-                    // Wrapper pour classList.remove
-                    const originalRemove = DOMTokenList.prototype.remove;
-                    DOMTokenList.prototype.remove = function(...tokens) {
-                        try {
-                            if (this && this.length !== undefined) {
-                                return originalRemove.apply(this, tokens);
-                            }
-                        } catch (e) {
-                            // Ignorer silencieusement
-                        }
-                    };
-                    
-                    // Wrapper pour classList.toggle
-                    const originalToggle = DOMTokenList.prototype.toggle;
-                    DOMTokenList.prototype.toggle = function(token, force) {
-                        try {
-                            if (this && this.length !== undefined) {
-                                return originalToggle.apply(this, [token, force]);
-                            }
-                        } catch (e) {
-                            // Ignorer silencieusement
-                        }
-                        return false;
-                    };
-                    
-                    // Wrapper pour classList.contains
-                    const originalContains = DOMTokenList.prototype.contains;
-                    DOMTokenList.prototype.contains = function(token) {
-                        try {
-                            if (this && this.length !== undefined) {
-                                return originalContains.apply(this, [token]);
-                            }
-                        } catch (e) {
-                            // Ignorer silencieusement
-                        }
-                        return false;
-                    };
-                }
-            } catch (e) {
-                // Ignorer si DOMTokenList n'est pas disponible
-            }
-            
-            // Surcharger aussi console.log IMMÉDIATEMENT pour masquer [UX] et [PWA]
-            // DOIT être fait AVANT tout autre script pour intercepter tous les messages
-            if (window.console && window.console.log) {
-                const originalLog = window.console.log;
-                window.console.log = function() {
-                    const args = Array.from(arguments);
-                    const fullMessage = args.map(a => {
-                        if (typeof a === 'object' && a !== null) {
-                            try {
-                                return JSON.stringify(a).toLowerCase();
-                            } catch (e) {
-                                return String(a).toLowerCase();
-                            }
-                        }
-                        return String(a).toLowerCase();
-                    }).join(' ');
-                    
-                    // Liste exhaustive de tous les messages à masquer
-                    const messagesToHide = [
-                        '[pwa]', '[ux]', '[pwa]', '[ux]',
-                        'initialisation des managers',
-                        'tous les managers initialisés',
-                        'pwamanager',
-                        'service worker enregistré',
-                        'initialisation du système',
-                        'aucun prompt disponible',
-                        'content.js',
-                        'unknown error',
-                        'enregistrement du service worker',
-                        'service worker enregistré avec succès',
-                        'événement beforeinstallprompt',
-                        'application déjà installée',
-                        'prompt disponible',
-                        'affichage du bouton',
-                        'bouton créé',
-                        'bouton affiché',
-                        'deferredprompt',
-                        'userchoice',
-                        'installation acceptée',
-                        'installation refusée'
-                    ];
-                    
-                    // Vérifier si le message contient un des mots-clés à masquer
-                    for (const keyword of messagesToHide) {
-                        if (fullMessage.includes(keyword)) {
-                            return; // Ne pas afficher
-                        }
-                    }
-                    
-                    return originalLog.apply(console, args);
-                };
-            }
-            
-            // Intercepter fetch pour empêcher les appels API si l'utilisateur n'est pas authentifié
-            const originalFetch = window.fetch;
-            window.fetch = function(...args) {
-                const url = args[0];
-                const urlString = typeof url === 'string' ? url : url?.url || '';
-                
-                // Si c'est une requête vers /api/favorites/check
-                if (urlString.includes('/api/favorites/check')) {
-                    // Vérifier l'authentification AVANT de faire la requête
-                    if (typeof window.isAuthenticated === 'undefined') {
-                        window.isAuthenticated = document.body.dataset.authenticated === 'true' || 
-                                                 document.querySelector('[data-user-id]') !== null;
-                    }
-                    
-                    // Si l'utilisateur n'est pas authentifié, NE PAS faire la requête
-                    if (!window.isAuthenticated) {
-                        // Retourner une promesse résolue avec une réponse 401 silencieuse
-                        // Cela évite l'erreur réseau visible dans la console
-                        return Promise.resolve({
-                            ok: false,
-                            status: 401,
-                            statusText: 'Unauthorized',
-                            json: () => Promise.resolve({ is_favorite: false }),
-                            text: () => Promise.resolve(''),
-                            headers: new Headers(),
-                            clone: () => ({ ok: false, status: 401 })
-                        });
-                    }
-                }
-                
-                // Pour les autres requêtes, faire la requête normale
-                return originalFetch.apply(this, args);
-            };
-        })();
-    </script>
-    
-    <!-- Gestionnaire d'erreurs ULTRA-PRIORITAIRE - Doit être le PREMIER script -->
-    <script>
-        (function() {
-            'use strict';
-            
-            // Intercepter TOUTES les erreurs d'extensions AVANT qu'elles n'apparaissent
-            // Surcharger console.error et console.warn IMMÉDIATEMENT
-            if (window.console) {
-                const originalConsoleError = window.console.error;
-                const originalConsoleWarn = window.console.warn;
-                const originalConsoleLog = window.console.log;
-                
-                // Fonction pour détecter les erreurs d'extensions et messages PWA/UX
-                function isExtensionError(message) {
-                    if (!message) return false;
-                    const msg = String(message).toLowerCase();
-                    const keywords = [
-                        'content.js', 'extension://', 'chrome-extension://',
-                        'moz-extension://', 'edge-extension://', 'safari-extension://',
-                        'unknown error', '[pwa]', '[ux]',
-                        'initialisation des managers', 'tous les managers initialisés',
-                        'pwamanager', 'service worker enregistré',
-                        'initialisation du système', 'aucun prompt disponible',
-                        'enregistrement du service worker', 'service worker enregistré avec succès',
-                        'événement beforeinstallprompt', 'application déjà installée',
-                        'prompt disponible', 'affichage du bouton', 'bouton créé',
-                        'bouton affiché', 'deferredprompt', 'userchoice',
-                        'installation acceptée', 'installation refusée',
-                        'serviceworkerregistration', 'navigationpreload'
-                    ];
-                    return keywords.some(keyword => msg.includes(keyword));
-                }
-                
-                // Masquer les erreurs d'extensions dans console.error
-                window.console.error = function(...args) {
-                    const message = args.map(arg => String(arg)).join(' ').toLowerCase();
-                    if (isExtensionError(message) ||
-                        (message.includes('401') && message.includes('favorites/check')) ||
-                        (message.includes('unauthorized') && message.includes('favorites'))) {
-                        return; // Ne pas afficher
-                    }
-                    originalConsoleError.apply(console, args);
-                };
-                
-                // Masquer les avertissements d'extensions dans console.warn
-                window.console.warn = function(...args) {
-                    const message = args.map(arg => String(arg)).join(' ').toLowerCase();
-                    if (isExtensionError(message)) {
-                        return; // Ne pas afficher
-                    }
-                    originalConsoleWarn.apply(console, args);
-                };
-                
-                // Optionnel : masquer aussi les logs d'extensions
-                window.console.log = function(...args) {
-                    const message = args.map(arg => String(arg)).join(' ').toLowerCase();
-                    if (isExtensionError(message)) {
-                        return; // Ne pas afficher
-                    }
-                    originalConsoleLog.apply(console, args);
-                };
-            }
-            
-            // Gestionnaire d'erreurs de promesses - Version ultra-robuste
-            function handleUnhandledRejection(event) {
-                try {
-                    if (!event || !event.reason) return false;
-                    
-                    const errorSource = String(event.reason.stack || event.reason.toString() || '').toLowerCase();
-                    const errorMessage = String(event.reason.message || event.reason.toString() || '').toLowerCase();
-                    const errorFile = String(event.reason.fileName || event.reason.source || event.reason.filename || '').toLowerCase();
-                    
-                    // Détecter toutes les variantes d'extensions
-                    const isExtensionError = 
-                        errorSource.includes('content.js') || 
-                        errorSource.includes('extension://') || 
-                        errorSource.includes('chrome-extension://') ||
-                        errorSource.includes('moz-extension://') ||
-                        errorSource.includes('edge-extension://') ||
-                        errorSource.includes('safari-extension://') ||
-                        errorFile.includes('content.js') ||
-                        errorFile.includes('extension://') ||
-                        (errorMessage.includes('unknown error') && (errorSource.includes('content') || errorFile.includes('content')));
-                    
-                    if (isExtensionError) {
-                        if (event.preventDefault) event.preventDefault();
-                        if (event.stopPropagation) event.stopPropagation();
-                        if (event.stopImmediatePropagation) event.stopImmediatePropagation();
-                        return true;
-                    }
-                } catch (e) {
-                    // Ignorer silencieusement
-                }
-                return false;
-            }
-            
-            // Gestionnaire d'erreurs JavaScript classiques
-            function handleError(event) {
-                try {
-                    if (!event) return false;
-                    const errorSource = String(event.filename || event.source || event.target?.src || event.fileName || '').toLowerCase();
-                    const errorMessage = String(event.message || '').toLowerCase();
-                    
-                    if (errorSource.includes('content.js') || 
-                        errorSource.includes('extension://') || 
-                        errorSource.includes('chrome-extension://') ||
-                        errorSource.includes('moz-extension://') ||
-                        (errorMessage.includes('unknown error') && errorSource.includes('content'))) {
-                        if (event.preventDefault) event.preventDefault();
-                        if (event.stopPropagation) event.stopPropagation();
-                        return true;
-                    }
-                } catch (e) {
-                    // Ignorer
-                }
-                return false;
-            }
-            
-            // Ajouter les gestionnaires IMMÉDIATEMENT avec capture (priorité maximale)
-            if (window.addEventListener) {
-                // Utiliser capture: true pour intercepter AVANT les autres gestionnaires
-                window.addEventListener('unhandledrejection', handleUnhandledRejection, { 
-                    capture: true, 
-                    passive: false,
-                    once: false
-                });
-                window.addEventListener('error', handleError, { 
-                    capture: true, 
-                    passive: false,
-                    once: false
-                });
-            }
-            
-            // Surcharger window.onunhandledrejection si disponible
-            if (typeof window.onunhandledrejection !== 'undefined') {
-                const originalOnUnhandledRejection = window.onunhandledrejection;
-                window.onunhandledrejection = function(event) {
-                    if (!handleUnhandledRejection(event) && originalOnUnhandledRejection) {
-                        return originalOnUnhandledRejection.call(this, event);
-                    }
-                    return false;
-                };
-            }
-            
-            // Surcharger window.onerror si disponible
-            if (typeof window.onerror !== 'undefined') {
-                const originalOnError = window.onerror;
-                window.onerror = function(msg, source, lineno, colno, error) {
-                    const event = { 
-                        filename: source, 
-                        message: msg, 
-                        error: error,
-                        lineno: lineno,
-                        colno: colno
-                    };
-                    if (handleError(event)) {
-                        return true; // Erreur gérée, ne pas afficher
-                    }
-                    if (originalOnError) {
-                        return originalOnError.call(this, msg, source, lineno, colno, error);
-                    }
-                    return false;
-                };
-            }
-        })();
-    </script>
+    <!-- Scripts critiques - Chargés de manière asynchrone pour ne pas bloquer le rendu -->
+    <script src="{{ asset('js/critical-init.js') }}" defer></script>
+    <script src="{{ asset('js/error-handler.js') }}" defer></script>
     
     <title>@yield('title', 'NiangProgrammeur - Formation Gratuite en Développement Web')</title>
     
@@ -451,233 +131,27 @@
         }
     </script>
     
-    <!-- CSS critique minimal pour éviter le FOUC -->
-    <style id="critical-css">
-        /* Styles critiques minimaux - Above the fold */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        html, body {
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background: #ffffff;
-            color: #1e293b;
-            overflow-x: hidden;
-        }
-        
-        
-        /* Hero Section - Critique pour LCP */
-        .hero-section {
-            position: relative;
-            z-index: 2;
-            width: 100%;
-            min-height: 65vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 80px 40px 60px;
-            overflow: hidden;
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.9) 100%),
-                        url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=75') center/cover no-repeat;
-            background-attachment: fixed;
-        }
-        
-        .hero-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            width: 100%;
-            text-align: center;
-        }
-        
-        .main-title {
-            font-size: clamp(2.5rem, 5vw, 4rem);
-            font-weight: 900;
-            line-height: 1.2;
-            margin-bottom: 30px;
-            color: #fff;
-        }
-        
-        .subtitle {
-            font-size: clamp(1rem, 2vw, 1.3rem);
-            color: rgba(255, 255, 255, 0.9);
-            margin-bottom: 40px;
-            line-height: 1.6;
-        }
-        
-        
-        @media (max-width: 768px) {
-            .hero-section {
-                min-height: 55vh;
-                padding: 60px 20px 40px;
-            }
-            
-            .main-title {
-                font-size: clamp(1.8rem, 4vw, 2.2rem);
-                line-height: 1.3;
-                margin-bottom: 20px;
-            }
-        }
-        
-        /* CSS Critique pour la page About - Centrage immédiat */
-        .container {
-            width: 100% !important;
-            margin-left: auto !important;
-            margin-right: auto !important;
-            padding-left: 1rem !important;
-            padding-right: 1rem !important;
-        }
-        
-        @media (min-width: 640px) {
-            .container {
-                padding-left: 1.5rem !important;
-                padding-right: 1.5rem !important;
-            }
-        }
-        
-        /* Centrage du contenu hero immédiatement pour About */
-        section.relative.min-h-screen > div.container {
-            text-align: center !important;
-        }
-        
-        section.relative.min-h-screen > div.container > div {
-            margin-left: auto !important;
-            margin-right: auto !important;
-            text-align: center !important;
-        }
-        
-        /* Centrage du texte dans le hero */
-        section.relative.min-h-screen h1,
-        section.relative.min-h-screen p {
-            text-align: center !important;
-            margin-left: auto !important;
-            margin-right: auto !important;
-        }
-        
-        /* Centrage des conteneurs de largeur maximale */
-        .max-w-5xl {
-            max-width: 64rem !important;
-            margin-left: auto !important;
-            margin-right: auto !important;
-            display: block !important;
-        }
-        
-        .max-w-7xl {
-            max-width: 80rem !important;
-            margin-left: auto !important;
-            margin-right: auto !important;
-            display: block !important;
-        }
-        
-        .max-w-3xl {
-            max-width: 48rem !important;
-            margin-left: auto !important;
-            margin-right: auto !important;
-            display: block !important;
-        }
-        
-        /* Force le centrage du hero content avant le chargement de Tailwind */
-        section.relative.min-h-screen .container > div.max-w-5xl {
-            display: block !important;
-            width: 100% !important;
-            max-width: 64rem !important;
-            margin-left: auto !important;
-            margin-right: auto !important;
-            text-align: center !important;
-        }
-        
-        section.relative.min-h-screen .container > div.max-w-5xl > h1,
-        section.relative.min-h-screen .container > div.max-w-5xl > p {
-            text-align: center !important;
-            margin-left: auto !important;
-            margin-right: auto !important;
-        }
-        
-        section.relative.min-h-screen .container > div.max-w-5xl > p.max-w-3xl {
-            max-width: 48rem !important;
-            margin-left: auto !important;
-            margin-right: auto !important;
-            text-align: center !important;
-        }
+    <!-- CSS critique minimal - Chargé de manière synchrone pour éviter le FOUC -->
+    <link rel="preload" href="{{ asset('css/critical.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="{{ asset('css/critical.css') }}"></noscript>
+    <style>
+        /* Fallback minimal inline pour éviter le FOUC si le CSS externe ne charge pas */
+        html,body{margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#fff;color:#1e293b}
     </style>
     
-    <!-- Script IMMÉDIAT pour appliquer les styles critiques avant le rendu -->
+    
+    <!-- Tailwind CSS - Chargé de manière asynchrone pour ne pas bloquer le rendu -->
+    <link rel="preload" href="https://cdn.tailwindcss.com" as="script">
     <script>
+        // Charger Tailwind CSS de manière asynchrone après le rendu initial
         (function() {
-            'use strict';
-            // Appliquer les styles critiques IMMÉDIATEMENT via JavaScript
-            // Ce script s'exécute AVANT que le DOM ne soit rendu
-            function applyCriticalStyles() {
-                // Créer un style inline pour forcer le centrage
-                const criticalStyle = document.createElement('style');
-                criticalStyle.id = 'about-critical-inline';
-                criticalStyle.textContent = `
-                    /* Force le centrage IMMÉDIAT */
-                    body section.relative.min-h-screen,
-                    body section.relative.min-h-screen > div,
-                    body section.relative.min-h-screen > div > div {
-                        text-align: center !important;
-                    }
-                    body .container {
-                        margin-left: auto !important;
-                        margin-right: auto !important;
-                        text-align: center !important;
-                    }
-                    body .max-w-5xl,
-                    body .max-w-7xl,
-                    body .max-w-3xl {
-                        margin-left: auto !important;
-                        margin-right: auto !important;
-                        display: block !important;
-                        text-align: center !important;
-                    }
-                    body section.relative.min-h-screen h1,
-                    body section.relative.min-h-screen p {
-                        text-align: center !important;
-                        margin-left: auto !important;
-                        margin-right: auto !important;
-                    }
-                `;
-                // Insérer AVANT le premier élément du head
-                if (document.head) {
-                    const firstChild = document.head.firstChild;
-                    if (firstChild) {
-                        document.head.insertBefore(criticalStyle, firstChild);
-                    } else {
-                        document.head.appendChild(criticalStyle);
-                    }
-                } else {
-                    // Si head n'existe pas encore, attendre et réessayer
-                    (function checkHead() {
-                        if (document.head) {
-                            const firstChild = document.head.firstChild;
-                            if (firstChild) {
-                                document.head.insertBefore(criticalStyle, firstChild);
-                            } else {
-                                document.head.appendChild(criticalStyle);
-                            }
-                        } else {
-                            setTimeout(checkHead, 0);
-                        }
-                    })();
-                }
-            }
-            
-            // Appliquer immédiatement
-            if (document.readyState === 'loading' || document.readyState === 'interactive') {
-                applyCriticalStyles();
-            } else {
-                // DOM déjà chargé, appliquer quand même
-                applyCriticalStyles();
-            }
+            const script = document.createElement('script');
+            script.src = 'https://cdn.tailwindcss.com';
+            script.async = true;
+            script.defer = true;
+            document.head.appendChild(script);
         })();
     </script>
-    
-    <!-- Tailwind CSS - Chargé de manière SYNCHRONE pour éviter le FOUC -->
-    <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- reCAPTCHA v3 (invisible) -->
     @php
@@ -729,13 +203,16 @@
         });
     </script>
     @endif
-    <!-- Font Awesome - Chargement synchrone pour éviter le FOUC -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <!-- Font Awesome - Chargement asynchrone avec preload -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"></noscript>
+    
     <!-- Google Fonts optimisé avec preload et font-display: swap -->
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Google Fonts - Chargement synchrone pour éviter le FOUC -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800;900&family=Orbitron:wght@400;700;900&display=swap">
+    <!-- Google Fonts - Chargement asynchrone pour ne pas bloquer le rendu -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800;900&family=Orbitron:wght@400;700;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800;900&family=Orbitron:wght@400;700;900&display=swap"></noscript>
     <!-- Force font-display: swap pour toutes les polices -->
     <style>
         @font-face {
@@ -752,14 +229,17 @@
         }
     </style>
     
-    <!-- Toastr CSS - Chargé de manière synchrone -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <!-- Toastr CSS - Chargement asynchrone -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"></noscript>
     
-    <!-- UX Improvements CSS -->
-    <link rel="stylesheet" href="{{ asset('css/ux-improvements.css') }}">
+    <!-- UX Improvements CSS - Chargement asynchrone -->
+    <link rel="preload" href="{{ asset('css/ux-improvements.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="{{ asset('css/ux-improvements.css') }}"></noscript>
     
-    <!-- Social Features CSS -->
-    <link rel="stylesheet" href="{{ asset('css/social-features.css') }}">
+    <!-- Social Features CSS - Chargement asynchrone -->
+    <link rel="preload" href="{{ asset('css/social-features.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="{{ asset('css/social-features.css') }}"></noscript>
     
     @php
         $adsenseSettings = \Illuminate\Support\Facades\Cache::remember('adsense_settings', 3600, function () {
@@ -1737,7 +1217,8 @@
             function loadScripts() {
                 const scripts = [
                     '{{ asset("js/main.js") }}',
-                    '{{ asset("js/ux-improvements.js") }}?v=2.2'
+                    '{{ asset("js/ux-improvements.js") }}?v=2.2',
+                    '{{ asset("js/social-features.js") }}'
                 ];
                 
                 scripts.forEach(function(src) {
@@ -1763,11 +1244,7 @@
     <!-- CSS non critique chargé en bas de page pour ne pas bloquer le rendu -->
     @stack('styles')
     
-    <!-- UX Improvements JS -->
-    <script src="{{ asset('js/ux-improvements.js') }}?v=2.1" defer></script>
-    
-    <!-- Social Features JS -->
-    <script src="{{ asset('js/social-features.js') }}?v=2.0" defer></script>
+    <!-- Social Features JS - Déjà chargé dans loadScripts() -->
     
     <script>
         // Définir si l'utilisateur est authentifié

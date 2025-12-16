@@ -73,3 +73,4 @@ PROCHAINES ÉTAPES (si nécessaire)
 2. Tester le changement de langue sur toutes les pages traduites
 3. Vérifier que toutes les clés de traduction sont présentes dans les deux langues
 
+

@@ -26,6 +26,7 @@ class JobArticle extends Model
         'readability_score',
         'status',
         'is_sponsored',
+        'is_featured',
         'views',
         'published_at'
     ];
@@ -35,6 +36,7 @@ class JobArticle extends Model
         'seo_score' => 'integer',
         'readability_score' => 'integer',
         'is_sponsored' => 'boolean',
+        'is_featured' => 'boolean',
         'views' => 'integer',
         'published_at' => 'datetime'
     ];
@@ -81,6 +83,9 @@ class JobArticle extends Model
             Cache::forget('recent_job_articles');
             Cache::forget('sponsored_articles');
             Cache::forget('career_advice_articles');
+            Cache::forget('featured_articles');
+            // Invalider le cache des articles les plus vus (sidebar)
+            Cache::forget('top_viewed_articles_sidebar');
             // Invalider le cache du sitemap pour forcer sa régénération
             Cache::forget('sitemap_articles_lastmod');
             Cache::forget('sitemap_index_' . md5('https://niangprogrammeur.com'));
@@ -100,6 +105,9 @@ class JobArticle extends Model
             Cache::forget("related_articles_{$article->id}");
             Cache::forget('sponsored_articles');
             Cache::forget('career_advice_articles');
+            Cache::forget('featured_articles');
+            // Invalider le cache des articles les plus vus (sidebar)
+            Cache::forget('top_viewed_articles_sidebar');
             // Invalider le cache du sitemap pour forcer sa régénération
             Cache::forget('sitemap_articles_lastmod');
             Cache::forget('sitemap_index_' . md5('https://niangprogrammeur.com'));
@@ -120,6 +128,9 @@ class JobArticle extends Model
             Cache::forget("job_article_{$article->slug}");
             Cache::forget("related_articles_{$article->id}");
             Cache::forget('career_advice_articles');
+            Cache::forget('featured_articles');
+            // Invalider le cache des articles les plus vus (sidebar)
+            Cache::forget('top_viewed_articles_sidebar');
             // Invalider le cache du sitemap pour forcer sa régénération
             Cache::forget('sitemap_articles_lastmod');
             Cache::forget('sitemap_index_' . md5('https://niangprogrammeur.com'));

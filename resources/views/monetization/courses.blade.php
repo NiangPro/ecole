@@ -37,7 +37,7 @@
                 </div>
             </form>
         </div>
-    </div>
+        </div>
 
     <div class="courses-container">
         <!-- Sidebar Filtres -->
@@ -188,33 +188,33 @@
             </div>
 
             <!-- Grille de cours (4 par ligne) -->
-            @if($courses->count() > 0)
+        @if($courses->count() > 0)
             <div class="courses-grid">
-                @foreach($courses as $course)
+            @foreach($courses as $course)
                 <article class="course-card">
                     <a href="{{ route('monetization.course.show', $course->slug) }}" class="course-card-link">
                         <div class="course-card-inner">
                             <!-- Badge Promotion -->
-                            @if($course->hasDiscount())
+                    @if($course->hasDiscount())
                             <div class="course-discount-badge">
                                 <span class="discount-percent">-{{ $course->discount_percentage }}%</span>
                                 <span class="discount-label">OFF</span>
-                            </div>
-                            @endif
+                    </div>
+                    @endif
 
                             <!-- Image du cours -->
                             <div class="course-image-wrapper">
                                 @if($course->cover_image)
                                     @if(($course->cover_type ?? 'internal') === 'internal')
-                                        <img src="{{ asset('storage/' . $course->cover_image) }}" alt="{{ $course->localized_title }}" class="course-image">
-                                    @else
-                                        <img src="{{ $course->cover_image }}" alt="{{ $course->localized_title }}" class="course-image" onerror="this.parentElement.innerHTML='<div class=\'course-image-placeholder\'><i class=\'fas fa-graduation-cap\'></i></div>'">
+                                        <img src="{{ asset('storage/' . $course->cover_image) }}" alt="{{ $course->localized_title }}" class="course-image" width="400" height="250" loading="lazy" decoding="async">
+                    @else
+                                        <img src="{{ $course->cover_image }}" alt="{{ $course->localized_title }}" class="course-image" width="400" height="250" loading="lazy" decoding="async" onerror="this.parentElement.innerHTML='<div class=\'course-image-placeholder\'><i class=\'fas fa-graduation-cap\'></i></div>'">
                                     @endif
                                 @else
                                     <div class="course-image-placeholder">
                                         <i class="fas fa-graduation-cap"></i>
-                                    </div>
-                                @endif
+                    </div>
+                    @endif
                                 <div class="course-image-overlay">
                                     <div class="course-overlay-content">
                                         <span class="course-view-btn">{{ trans('app.monetization.courses_page.view_course') }}</span>
@@ -229,62 +229,62 @@
 
                                 <!-- Métadonnées -->
                                 <div class="course-meta">
-                                    @if($course->duration_hours)
+                                @if($course->duration_hours)
                                     <div class="course-meta-item">
                                         <i class="fas fa-clock"></i>
                                         <span>{{ $course->duration_hours }}h</span>
-                                    </div>
-                                    @endif
+                                </div>
+                                @endif
                                     
-                                    @if($course->students_count > 0)
+                                @if($course->students_count > 0)
                                     <div class="course-meta-item">
                                         <i class="fas fa-users"></i>
                                         <span>{{ number_format($course->students_count, 0, ',', ' ') }}</span>
-                                    </div>
-                                    @endif
+                                </div>
+                                @endif
                                     
-                                    @if($course->rating > 0)
+                            @if($course->rating > 0)
                                     <div class="course-meta-item course-rating">
                                         <i class="fas fa-star"></i>
                                         <span>{{ number_format($course->rating, 1) }}</span>
                                         @if($course->reviews_count > 0)
                                         <span class="reviews-count">({{ $course->reviews_count }})</span>
                                         @endif
-                                    </div>
-                                    @endif
-                                </div>
-
+                            </div>
+                            @endif
+                        </div>
+                        
                                 <!-- Prix -->
                                 <div class="course-price-section">
-                                    @if($course->hasDiscount())
+                                @if($course->hasDiscount())
                                     <div class="course-price-discount">
                                         <span class="course-price-current">{{ number_format($course->discount_price, 0, ',', ' ') }} FCFA</span>
                                         <span class="course-price-old">{{ number_format($course->price, 0, ',', ' ') }} FCFA</span>
-                                    </div>
-                                    @else
+                                </div>
+                                @else
                                     <div class="course-price-normal">
                                         <span class="course-price-current">{{ number_format($course->price, 0, ',', ' ') }} FCFA</span>
                                     </div>
-                                    @endif
-                                </div>
+                                @endif
+                            </div>
                             </div>
 
                             <!-- Effet shine -->
                             <div class="course-shine"></div>
-                        </div>
-                    </a>
+                </div>
+            </a>
                 </article>
-                @endforeach
-            </div>
+            @endforeach
+        </div>
 
-            <!-- Pagination -->
+        <!-- Pagination -->
             @if($courses->hasPages())
             <div class="courses-pagination">
-                {{ $courses->links() }}
-            </div>
+            {{ $courses->links() }}
+        </div>
             @endif
 
-            @else
+        @else
             <!-- État vide -->
             <div class="courses-empty">
                 <div class="courses-empty-icon">
@@ -297,8 +297,8 @@
                 <a href="{{ route('monetization.courses') }}" class="courses-empty-btn">
                     <i class="fas fa-redo"></i> {{ trans('app.monetization.courses_page.empty_reset') }}
                 </a>
-            </div>
-            @endif
+        </div>
+        @endif
         </main>
     </div>
 </div>
@@ -1619,4 +1619,52 @@
         });
     });
 </script>
+
+@push('head')
+<!-- Structured Data ItemList pour SEO -->
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "{{ trans('app.monetization.courses_page.title') }}",
+    "description": "{{ trans('app.monetization.courses_page.meta_description') }}",
+    "url": "{{ route('monetization.courses') }}",
+    "numberOfItems": {{ $courses->count() }},
+    "itemListElement": [
+        @foreach($courses as $index => $course)
+        {
+            "@type": "ListItem",
+            "position": {{ $index + 1 }},
+            "item": {
+                "@type": "Course",
+                "name": "{{ addslashes($course->localized_title) }}",
+                "description": "{{ addslashes($course->localized_description ?? '') }}",
+                "url": "{{ route('monetization.course.show', $course->slug) }}",
+                "image": "{{ $course->cover_image ? (($course->cover_type ?? 'internal') === 'internal' ? asset('storage/' . $course->cover_image) : $course->cover_image) : asset('images/logo.png') }}",
+                "provider": {
+                    "@type": "Organization",
+                    "name": "NiangProgrammeur",
+                    "url": "{{ url('/') }}"
+                },
+                @if($course->rating > 0)
+                "aggregateRating": {
+                    "@type": "AggregateRating",
+                    "ratingValue": "{{ $course->rating }}",
+                    "bestRating": "5",
+                    "ratingCount": "{{ $course->reviews_count }}"
+                },
+                @endif
+                "offers": {
+                    "@type": "Offer",
+                    "price": "{{ $course->current_price }}",
+                    "priceCurrency": "{{ $course->currency ?? 'XOF' }}",
+                    "availability": "https://schema.org/InStock"
+                }
+            }
+        }@if(!$loop->last),@endif
+        @endforeach
+    ]
+}
+</script>
+@endpush
 @endsection

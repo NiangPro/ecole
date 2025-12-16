@@ -4100,7 +4100,7 @@ return [
             'title' => 'Cours Payants - NiangProgrammeur',
             'meta_description' => 'Découvrez nos formations premium et développez vos compétences professionnelles',
             'hero_badge' => 'Formations Premium',
-            'hero_title' => 'Développez vos compétences avec nos :cours_payants',
+            'hero_title' => 'Développez vos compétences avec nos :courses_payants',
             'hero_title_courses' => 'cours payants',
             'hero_subtitle' => 'Accédez à des formations approfondies et développez votre expertise professionnelle',
             'search_placeholder' => 'Rechercher un cours...',
