@@ -30,7 +30,7 @@ class PageController extends Controller
                 ->get();
         });
         
-        // Cache les catégories actives (15 minutes) - Optimisé avec eager loading
+        // Cache les catégories actives (15 minutes) - Optimisé avec eager loading - Limité à 9
         $categories = \Illuminate\Support\Facades\Cache::remember('active_categories_homepage', 900, function () {
             return \App\Models\Category::where('is_active', true)
                 ->withCount(['publishedArticles' => function ($query) {
@@ -38,6 +38,7 @@ class PageController extends Controller
                 }])
                 ->orderBy('order', 'asc')
                 ->orderBy('name', 'asc')
+                ->take(9)
                 ->get();
         });
         
@@ -9145,6 +9146,957 @@ model = pipeline.fit(train_df)',
                     'hint' => $getTranslated('hint', 'Pensez au pipeline complet : de l\'ingestion à la visualisation')
                 ],
             ],
+            'swift' => [
+                1 => [
+                    'title' => $getTranslated('title', 'Premier programme Swift'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 10,
+                    'instruction' => $getTranslated('instruction', 'Créez un programme Swift qui affiche "Bonjour Swift !" dans la console.'),
+                    'description' => $getTranslated('description', 'En Swift, on utilise print() pour afficher du texte. Chaque programme Swift peut avoir une fonction main() ou être exécuté directement.'),
+                    'startCode' => '// Affichez "Bonjour Swift !"
+',
+                    'solution' => 'print("Bonjour Swift !")',
+                    'hint' => $getTranslated('hint', 'Utilisez print("Bonjour Swift !") pour afficher le message.')
+                ],
+                2 => [
+                    'title' => $getTranslated('title', 'Variables et Constantes'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 10,
+                    'instruction' => $getTranslated('instruction', 'Déclarez une constante nom avec la valeur "Swift" et une variable age avec la valeur 25, puis affichez-les.'),
+                    'description' => $getTranslated('description', 'En Swift, utilisez let pour les constantes et var pour les variables. Swift utilise l\'inférence de type.'),
+                    'startCode' => '// Déclarez une constante nom et une variable age
+// Affichez-les
+',
+                    'solution' => 'let nom = "Swift"
+var age = 25
+print("Nom: \\(nom), Age: \\(age)")',
+                    'hint' => $getTranslated('hint', 'Utilisez let nom = "Swift" pour une constante et var age = 25 pour une variable.')
+                ],
+                3 => [
+                    'title' => $getTranslated('title', 'Types de données'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 12,
+                    'instruction' => $getTranslated('instruction', 'Déclarez une variable nombre de type Int avec la valeur 42 et une variable texte de type String avec la valeur "Hello".'),
+                    'description' => $getTranslated('description', 'Swift propose plusieurs types : Int, Double, String, Bool, Array, Dictionary, etc.'),
+                    'startCode' => '// Déclarez une variable nombre de type Int
+// Déclarez une variable texte de type String
+',
+                    'solution' => 'var nombre: Int = 42
+var texte: String = "Hello"
+print("Nombre: \\(nombre), Texte: \\(texte)")',
+                    'hint' => $getTranslated('hint', 'Utilisez var nombre: Int = 42 et var texte: String = "Hello"')
+                ],
+                4 => [
+                    'title' => $getTranslated('title', 'Opérateurs Swift'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 10,
+                    'instruction' => $getTranslated('instruction', 'Calculez la somme de 10 et 5, puis affichez le résultat.'),
+                    'description' => $getTranslated('description', 'Swift supporte les opérateurs arithmétiques : +, -, *, /, %.'),
+                    'startCode' => 'let a = 10
+let b = 5
+// Calculez la somme et affichez-la
+',
+                    'solution' => 'let a = 10
+let b = 5
+let somme = a + b
+print("Somme: \\(somme)")',
+                    'hint' => $getTranslated('hint', 'Utilisez let somme = a + b pour calculer la somme.')
+                ],
+                5 => [
+                    'title' => $getTranslated('title', 'Conditions if/else'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 12,
+                    'instruction' => $getTranslated('instruction', 'Vérifiez si un nombre est positif, négatif ou zéro et affichez le résultat.'),
+                    'description' => $getTranslated('description', 'Swift utilise if, else if, et else pour les conditions.'),
+                    'startCode' => 'let nombre = 5
+// Vérifiez si nombre est positif, négatif ou zéro
+',
+                    'solution' => 'let nombre = 5
+if nombre > 0 {
+    print("\\(nombre) est positif")
+} else if nombre < 0 {
+    print("\\(nombre) est négatif")
+} else {
+    print("\\(nombre) est zéro")
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez if nombre > 0, else if nombre < 0, et else.')
+                ],
+                6 => [
+                    'title' => $getTranslated('title', 'Boucles for-in et while'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 18,
+                    'instruction' => $getTranslated('instruction', 'Affichez les nombres de 1 à 10 en utilisant une boucle for-in.'),
+                    'description' => $getTranslated('description', 'Swift propose for-in pour itérer sur des collections, et while/repeat-while pour les boucles conditionnelles.'),
+                    'startCode' => '// Utilisez une boucle for-in pour afficher les nombres de 1 à 10
+',
+                    'solution' => 'for i in 1...10 {
+    print(i)
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez for i in 1...10 pour itérer de 1 à 10 inclus.')
+                ],
+                7 => [
+                    'title' => $getTranslated('title', 'Fonctions Swift'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 20,
+                    'instruction' => $getTranslated('instruction', 'Créez une fonction saluer qui prend un paramètre nom de type String et retourne une String.'),
+                    'description' => $getTranslated('description', 'Les fonctions en Swift sont définies avec func. Vous pouvez spécifier les types des paramètres et de la valeur de retour.'),
+                    'startCode' => '// Créez une fonction saluer
+// Appelez-la avec "Swift"
+',
+                    'solution' => 'func saluer(nom: String) -> String {
+    return "Bonjour, \\(nom)!"
+}
+
+let message = saluer(nom: "Swift")
+print(message)',
+                    'hint' => $getTranslated('hint', 'Utilisez func saluer(nom: String) -> String { return "Bonjour, \\(nom)!" }')
+                ],
+                8 => [
+                    'title' => $getTranslated('title', 'Tableaux et Collections'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 20,
+                    'instruction' => $getTranslated('instruction', 'Créez un tableau de nombres, ajoutez un élément, puis affichez tous les éléments.'),
+                    'description' => $getTranslated('description', 'Les tableaux en Swift sont typés et mutables. Utilisez append() pour ajouter des éléments.'),
+                    'startCode' => 'var nombres = [1, 2, 3]
+// Ajoutez le nombre 4
+// Affichez tous les éléments
+',
+                    'solution' => 'var nombres = [1, 2, 3]
+nombres.append(4)
+for nombre in nombres {
+    print(nombre)
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez nombres.append(4) pour ajouter un élément, puis for-in pour itérer.')
+                ],
+                9 => [
+                    'title' => $getTranslated('title', 'Dictionnaires et Sets'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 18,
+                    'instruction' => $getTranslated('instruction', 'Créez un dictionnaire avec les clés "nom" et "age", puis affichez les valeurs.'),
+                    'description' => $getTranslated('description', 'Les dictionnaires stockent des paires clé-valeur. Les Sets stockent des valeurs uniques non ordonnées.'),
+                    'startCode' => '// Créez un dictionnaire personne
+// Affichez les valeurs
+',
+                    'solution' => 'var personne: [String: Any] = ["nom": "Swift", "age": 25]
+print("Nom: \\(personne["nom"] ?? ""), Age: \\(personne["age"] ?? 0)")',
+                    'hint' => $getTranslated('hint', 'Utilisez var personne: [String: Any] = ["nom": "Swift", "age": 25]')
+                ],
+                10 => [
+                    'title' => $getTranslated('title', 'Optionals'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 20,
+                    'instruction' => $getTranslated('instruction', 'Créez une variable optionnelle String?, puis utilisez optional binding pour l\'afficher.'),
+                    'description' => $getTranslated('description', 'Les optionals représentent des valeurs qui peuvent être nil. Utilisez if let ou guard let pour le déballage sécurisé.'),
+                    'startCode' => 'var nom: String? = "Swift"
+// Utilisez optional binding pour afficher nom
+',
+                    'solution' => 'var nom: String? = "Swift"
+if let nomUnwrapped = nom {
+    print("Nom: \\(nomUnwrapped)")
+} else {
+    print("Nom est nil")
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez if let nomUnwrapped = nom pour déballer l\'optional.')
+                ],
+                11 => [
+                    'title' => $getTranslated('title', 'Classes et Structures'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 28,
+                    'instruction' => $getTranslated('instruction', 'Créez une classe Personne avec les propriétés nom et age, puis créez une instance.'),
+                    'description' => $getTranslated('description', 'Les classes et structures sont similaires, mais les classes sont passées par référence et supportent l\'héritage.'),
+                    'startCode' => '// Créez une classe Personne
+// Créez une instance
+',
+                    'solution' => 'class Personne {
+    var nom: String
+    var age: Int
+    
+    init(nom: String, age: Int) {
+        self.nom = nom
+        self.age = age
+    }
+}
+
+let personne = Personne(nom: "Swift", age: 25)
+print("Nom: \\(personne.nom), Age: \\(personne.age)")',
+                    'hint' => $getTranslated('hint', 'Utilisez class Personne avec init() pour le constructeur.')
+                ],
+                12 => [
+                    'title' => $getTranslated('title', 'Protocoles et Extensions'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 30,
+                    'instruction' => $getTranslated('instruction', 'Créez un protocole Vehicule avec une méthode demarrer(), puis créez une classe Voiture qui l\'implémente.'),
+                    'description' => $getTranslated('description', 'Les protocoles définissent des contrats. Les extensions permettent d\'ajouter des fonctionnalités aux types existants.'),
+                    'startCode' => '// Créez un protocole Vehicule
+// Créez une classe Voiture qui l\'implémente
+',
+                    'solution' => 'protocol Vehicule {
+    func demarrer()
+}
+
+class Voiture: Vehicule {
+    func demarrer() {
+        print("La voiture démarre")
+    }
+}
+
+let voiture = Voiture()
+voiture.demarrer()',
+                    'hint' => $getTranslated('hint', 'Utilisez protocol Vehicule { func demarrer() } puis class Voiture: Vehicule.')
+                ],
+                13 => [
+                    'title' => $getTranslated('title', 'Gestion d\'erreurs (do-catch)'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 28,
+                    'instruction' => $getTranslated('instruction', 'Créez une fonction qui peut lancer une erreur, puis utilisez do-catch pour la gérer.'),
+                    'description' => $getTranslated('description', 'Swift utilise do-catch pour gérer les erreurs. Les fonctions qui lancent des erreurs sont marquées avec throws.'),
+                    'startCode' => 'enum ErreurPersonnalisee: Error {
+    case valeurInvalide
+}
+
+func diviser(_ a: Int, par b: Int) throws -> Int {
+    // Lancez une erreur si b est 0
+    // Sinon retournez a / b
+}
+
+// Utilisez do-catch pour appeler diviser
+',
+                    'solution' => 'enum ErreurPersonnalisee: Error {
+    case valeurInvalide
+}
+
+func diviser(_ a: Int, par b: Int) throws -> Int {
+    guard b != 0 else {
+        throw ErreurPersonnalisee.valeurInvalide
+    }
+    return a / b
+}
+
+do {
+    let resultat = try diviser(10, par: 2)
+    print("Résultat: \\(resultat)")
+} catch {
+    print("Erreur: \\(error)")
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez throws, throw, et do-catch pour gérer les erreurs.')
+                ],
+                14 => [
+                    'title' => $getTranslated('title', 'Closures'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 30,
+                    'instruction' => $getTranslated('instruction', 'Créez une closure qui prend deux Int et retourne leur somme, puis appelez-la.'),
+                    'description' => $getTranslated('description', 'Les closures sont des blocs de code autonomes. Elles peuvent capturer des valeurs de leur contexte.'),
+                    'startCode' => '// Créez une closure addition
+// Appelez-la avec 10 et 5
+',
+                    'solution' => 'let addition = { (a: Int, b: Int) -> Int in
+    return a + b
+}
+
+let resultat = addition(10, 5)
+print("Résultat: \\(resultat)")',
+                    'hint' => $getTranslated('hint', 'Utilisez { (a: Int, b: Int) -> Int in return a + b } pour créer une closure.')
+                ],
+                15 => [
+                    'title' => $getTranslated('title', 'SwiftUI - Composants de base'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 30,
+                    'instruction' => $getTranslated('instruction', 'Créez une vue SwiftUI simple avec un Text et un Button.'),
+                    'description' => $getTranslated('description', 'SwiftUI est un framework déclaratif pour créer des interfaces utilisateur. Utilisez struct qui conforme à View.'),
+                    'startCode' => 'import SwiftUI
+
+// Créez une vue ContentView
+',
+                    'solution' => 'import SwiftUI
+
+struct ContentView: View {
+    var body: some View {
+        VStack {
+            Text("Bonjour SwiftUI!")
+            Button("Cliquez-moi") {
+                print("Bouton cliqué")
+            }
+        }
+    }
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez struct ContentView: View avec var body: some View.')
+                ],
+            ],
+            'perl' => [
+                1 => [
+                    'title' => $getTranslated('title', 'Premier programme Perl'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 10,
+                    'instruction' => $getTranslated('instruction', 'Créez un programme Perl qui affiche "Bonjour Perl !" dans la console.'),
+                    'description' => $getTranslated('description', 'En Perl, on utilise print pour afficher du texte. Les instructions se terminent par un point-virgule.'),
+                    'startCode' => '#!/usr/bin/perl
+use strict;
+use warnings;
+
+# Affichez "Bonjour Perl !"
+',
+                    'solution' => '#!/usr/bin/perl
+use strict;
+use warnings;
+
+print "Bonjour Perl !\\n";',
+                    'hint' => $getTranslated('hint', 'Utilisez print "Bonjour Perl !\\n"; pour afficher le message.')
+                ],
+                2 => [
+                    'title' => $getTranslated('title', 'Variables scalaires ($)'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 10,
+                    'instruction' => $getTranslated('instruction', 'Déclarez une variable scalaire $nom avec la valeur "Perl" et affichez-la.'),
+                    'description' => $getTranslated('description', 'En Perl, les variables scalaires utilisent le sigil $. Utilisez my pour déclarer une variable locale.'),
+                    'startCode' => '#!/usr/bin/perl
+use strict;
+use warnings;
+
+# Déclarez une variable $nom avec la valeur "Perl"
+# Affichez-la
+',
+                    'solution' => '#!/usr/bin/perl
+use strict;
+use warnings;
+
+my $nom = "Perl";
+print "Nom: $nom\\n";',
+                    'hint' => $getTranslated('hint', 'Utilisez my $nom = "Perl"; puis print "Nom: $nom\\n";')
+                ],
+                3 => [
+                    'title' => $getTranslated('title', 'Tableaux (@)'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 12,
+                    'instruction' => $getTranslated('instruction', 'Créez un tableau @nombres contenant 1, 2, 3 et affichez le premier élément.'),
+                    'description' => $getTranslated('description', 'En Perl, les tableaux utilisent le sigil @. Accédez aux éléments avec $tableau[index].'),
+                    'startCode' => '#!/usr/bin/perl
+use strict;
+use warnings;
+
+# Créez un tableau @nombres
+# Affichez le premier élément
+',
+                    'solution' => '#!/usr/bin/perl
+use strict;
+use warnings;
+
+my @nombres = (1, 2, 3);
+print "Premier élément: $nombres[0]\\n";',
+                    'hint' => $getTranslated('hint', 'Utilisez my @nombres = (1, 2, 3); puis $nombres[0] pour le premier élément.')
+                ],
+                4 => [
+                    'title' => $getTranslated('title', 'Hash (%)'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 12,
+                    'instruction' => $getTranslated('instruction', 'Créez un hash %personne avec les clés "nom" et "age", puis affichez les valeurs.'),
+                    'description' => $getTranslated('description', 'En Perl, les hash utilisent le sigil %. Accédez aux valeurs avec $hash{cle}.'),
+                    'startCode' => '#!/usr/bin/perl
+use strict;
+use warnings;
+
+# Créez un hash %personne
+# Affichez les valeurs
+',
+                    'solution' => '#!/usr/bin/perl
+use strict;
+use warnings;
+
+my %personne = ("nom" => "Perl", "age" => 30);
+print "Nom: $personne{nom}, Age: $personne{age}\\n";',
+                    'hint' => $getTranslated('hint', 'Utilisez my %personne = ("nom" => "Perl", "age" => 30); puis $personne{nom}.')
+                ],
+                5 => [
+                    'title' => $getTranslated('title', 'Opérateurs Perl'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 10,
+                    'instruction' => $getTranslated('instruction', 'Calculez la somme de 10 et 5, puis affichez le résultat.'),
+                    'description' => $getTranslated('description', 'Perl supporte les opérateurs arithmétiques : +, -, *, /, %.'),
+                    'startCode' => '#!/usr/bin/perl
+use strict;
+use warnings;
+
+my $a = 10;
+my $b = 5;
+# Calculez la somme et affichez-la
+',
+                    'solution' => '#!/usr/bin/perl
+use strict;
+use warnings;
+
+my $a = 10;
+my $b = 5;
+my $somme = $a + $b;
+print "Somme: $somme\\n";',
+                    'hint' => $getTranslated('hint', 'Utilisez my $somme = $a + $b; pour calculer la somme.')
+                ],
+                6 => [
+                    'title' => $getTranslated('title', 'Conditions if/unless'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 15,
+                    'instruction' => $getTranslated('instruction', 'Vérifiez si un nombre est positif ou négatif en utilisant if/else.'),
+                    'description' => $getTranslated('description', 'Perl utilise if, elsif, else, et unless (inverse de if) pour les conditions.'),
+                    'startCode' => '#!/usr/bin/perl
+use strict;
+use warnings;
+
+my $nombre = 5;
+# Vérifiez si nombre est positif ou négatif
+',
+                    'solution' => '#!/usr/bin/perl
+use strict;
+use warnings;
+
+my $nombre = 5;
+if ($nombre > 0) {
+    print "$nombre est positif\\n";
+} else {
+    print "$nombre est négatif ou zéro\\n";
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez if ($nombre > 0) { } else { }')
+                ],
+                7 => [
+                    'title' => $getTranslated('title', 'Boucles for/foreach/while'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 18,
+                    'instruction' => $getTranslated('instruction', 'Affichez les nombres de 1 à 10 en utilisant une boucle for.'),
+                    'description' => $getTranslated('description', 'Perl propose for, foreach, while, et until pour les boucles. for et foreach sont équivalents.'),
+                    'startCode' => '#!/usr/bin/perl
+use strict;
+use warnings;
+
+# Utilisez une boucle for pour afficher les nombres de 1 à 10
+',
+                    'solution' => '#!/usr/bin/perl
+use strict;
+use warnings;
+
+for my $i (1..10) {
+    print "$i\\n";
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez for my $i (1..10) { print "$i\\n"; }')
+                ],
+                8 => [
+                    'title' => $getTranslated('title', 'Fonctions (sub)'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 20,
+                    'instruction' => $getTranslated('instruction', 'Créez une fonction saluer qui prend un paramètre $nom et affiche un message.'),
+                    'description' => $getTranslated('description', 'Les fonctions en Perl sont définies avec sub. Les paramètres sont accessibles via @_.'),
+                    'startCode' => '#!/usr/bin/perl
+use strict;
+use warnings;
+
+# Créez une fonction saluer
+# Appelez-la avec "Perl"
+',
+                    'solution' => '#!/usr/bin/perl
+use strict;
+use warnings;
+
+sub saluer {
+    my ($nom) = @_;
+    print "Bonjour, $nom!\\n";
+}
+
+saluer("Perl");',
+                    'hint' => $getTranslated('hint', 'Utilisez sub saluer { my ($nom) = @_; print "Bonjour, $nom!\\n"; }')
+                ],
+                9 => [
+                    'title' => $getTranslated('title', 'Expressions régulières'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 22,
+                    'instruction' => $getTranslated('instruction', 'Vérifiez si une chaîne contient le mot "Perl" en utilisant une expression régulière.'),
+                    'description' => $getTranslated('description', 'Perl excelle dans les expressions régulières. Utilisez =~ pour la correspondance et // pour le pattern.'),
+                    'startCode' => '#!/usr/bin/perl
+use strict;
+use warnings;
+
+my $texte = "J\'aime Perl";
+# Vérifiez si texte contient "Perl"
+',
+                    'solution' => '#!/usr/bin/perl
+use strict;
+use warnings;
+
+my $texte = "J\'aime Perl";
+if ($texte =~ /Perl/) {
+    print "Le texte contient Perl\\n";
+} else {
+    print "Le texte ne contient pas Perl\\n";
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez if ($texte =~ /Perl/) { } pour vérifier la correspondance.')
+                ],
+                10 => [
+                    'title' => $getTranslated('title', 'Manipulation de fichiers'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 20,
+                    'instruction' => $getTranslated('instruction', 'Ouvrez un fichier en lecture, lisez son contenu, puis fermez-le.'),
+                    'description' => $getTranslated('description', 'Perl excelle dans la manipulation de fichiers. Utilisez open() avec des filehandles.'),
+                    'startCode' => '#!/usr/bin/perl
+use strict;
+use warnings;
+
+# Ouvrez un fichier "test.txt" en lecture
+# Lisez et affichez son contenu
+',
+                    'solution' => '#!/usr/bin/perl
+use strict;
+use warnings;
+
+open(my $fh, "<", "test.txt") or die "Impossible d\'ouvrir le fichier: $!";
+while (my $ligne = <$fh>) {
+    print $ligne;
+}
+close($fh);',
+                    'hint' => $getTranslated('hint', 'Utilisez open(my $fh, "<", "test.txt") puis while (my $ligne = <$fh>) { }')
+                ],
+                11 => [
+                    'title' => $getTranslated('title', 'Références'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 28,
+                    'instruction' => $getTranslated('instruction', 'Créez une référence à un tableau, puis accédez à ses éléments.'),
+                    'description' => $getTranslated('description', 'Les références permettent de créer des structures de données complexes et de passer des tableaux/hash aux fonctions.'),
+                    'startCode' => '#!/usr/bin/perl
+use strict;
+use warnings;
+
+my @tableau = (1, 2, 3);
+# Créez une référence au tableau
+# Accédez au premier élément via la référence
+',
+                    'solution' => '#!/usr/bin/perl
+use strict;
+use warnings;
+
+my @tableau = (1, 2, 3);
+my $ref_tableau = \\@tableau;
+print "Premier élément: $ref_tableau->[0]\\n";',
+                    'hint' => $getTranslated('hint', 'Utilisez my $ref_tableau = \\@tableau; puis $ref_tableau->[0]')
+                ],
+                12 => [
+                    'title' => $getTranslated('title', 'Modules CPAN'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 28,
+                    'instruction' => $getTranslated('instruction', 'Utilisez le module Data::Dumper pour afficher la structure d\'un hash.'),
+                    'description' => $getTranslated('description', 'CPAN offre des milliers de modules. Utilisez use ModuleName; pour les importer.'),
+                    'startCode' => '#!/usr/bin/perl
+use strict;
+use warnings;
+use Data::Dumper;
+
+my %personne = ("nom" => "Perl", "age" => 30);
+# Affichez la structure du hash avec Dumper
+',
+                    'solution' => '#!/usr/bin/perl
+use strict;
+use warnings;
+use Data::Dumper;
+
+my %personne = ("nom" => "Perl", "age" => 30);
+print Dumper(\\%personne);',
+                    'hint' => $getTranslated('hint', 'Utilisez use Data::Dumper; puis print Dumper(\\%personne);')
+                ],
+                13 => [
+                    'title' => $getTranslated('title', 'POO en Perl'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 30,
+                    'instruction' => $getTranslated('instruction', 'Créez une classe Personne avec un constructeur new() et une méthode afficher().'),
+                    'description' => $getTranslated('description', 'La POO en Perl utilise des packages. Les objets sont des références bénies (blessed references).'),
+                    'startCode' => '#!/usr/bin/perl
+use strict;
+use warnings;
+
+package Personne;
+# Créez un constructeur new()
+# Créez une méthode afficher()
+',
+                    'solution' => '#!/usr/bin/perl
+use strict;
+use warnings;
+
+package Personne;
+
+sub new {
+    my ($class, $nom) = @_;
+    my $self = { nom => $nom };
+    bless $self, $class;
+    return $self;
+}
+
+sub afficher {
+    my ($self) = @_;
+    print "Nom: $self->{nom}\\n";
+}
+
+package main;
+my $personne = Personne->new("Perl");
+$personne->afficher();',
+                    'hint' => $getTranslated('hint', 'Utilisez package Personne; sub new { bless $self, $class; }')
+                ],
+                14 => [
+                    'title' => $getTranslated('title', 'Regex avancées'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 30,
+                    'instruction' => $getTranslated('instruction', 'Extrayez tous les nombres d\'une chaîne en utilisant une expression régulière avec capture.'),
+                    'description' => $getTranslated('description', 'Les regex Perl supportent les captures avec (), les quantificateurs, et les assertions.'),
+                    'startCode' => '#!/usr/bin/perl
+use strict;
+use warnings;
+
+my $texte = "J\'ai 25 ans et 3 enfants";
+# Extrayez tous les nombres
+',
+                    'solution' => '#!/usr/bin/perl
+use strict;
+use warnings;
+
+my $texte = "J\'ai 25 ans et 3 enfants";
+while ($texte =~ /(\\d+)/g) {
+    print "Nombre trouvé: $1\\n";
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez /(\\d+)/g avec while pour trouver tous les nombres.')
+                ],
+                15 => [
+                    'title' => $getTranslated('title', 'Scripts d\'automatisation'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 30,
+                    'instruction' => $getTranslated('instruction', 'Créez un script qui lit un fichier, remplace toutes les occurrences de "old" par "new", et écrit le résultat.'),
+                    'description' => $getTranslated('description', 'Perl est excellent pour l\'automatisation. Combinez regex, manipulation de fichiers, et boucles.'),
+                    'startCode' => '#!/usr/bin/perl
+use strict;
+use warnings;
+
+# Lisez un fichier "input.txt"
+# Remplacez "old" par "new"
+# Écrivez dans "output.txt"
+',
+                    'solution' => '#!/usr/bin/perl
+use strict;
+use warnings;
+
+open(my $in, "<", "input.txt") or die "Erreur: $!";
+open(my $out, ">", "output.txt") or die "Erreur: $!";
+
+while (my $ligne = <$in>) {
+    $ligne =~ s/old/new/g;
+    print $out $ligne;
+}
+
+close($in);
+close($out);',
+                    'hint' => $getTranslated('hint', 'Utilisez open() pour les fichiers, s/old/new/g pour remplacer, et print $out pour écrire.')
+                ],
+            ],
+            'typescript' => [
+                1 => [
+                    'title' => $getTranslated('title', 'Premier programme TypeScript'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 10,
+                    'instruction' => $getTranslated('instruction', 'Créez un programme TypeScript qui affiche "Bonjour TypeScript !" dans la console.'),
+                    'description' => $getTranslated('description', 'TypeScript est compilé en JavaScript. Utilisez console.log() pour afficher du texte.'),
+                    'startCode' => '// Affichez "Bonjour TypeScript !"
+',
+                    'solution' => 'console.log("Bonjour TypeScript !");',
+                    'hint' => $getTranslated('hint', 'Utilisez console.log("Bonjour TypeScript !"); pour afficher le message.')
+                ],
+                2 => [
+                    'title' => $getTranslated('title', 'Types de base'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 10,
+                    'instruction' => $getTranslated('instruction', 'Déclarez une variable nom de type string avec la valeur "TypeScript" et affichez-la.'),
+                    'description' => $getTranslated('description', 'TypeScript ajoute des types à JavaScript : string, number, boolean, array, object, etc.'),
+                    'startCode' => '// Déclarez une variable nom de type string
+// Affichez-la
+',
+                    'solution' => 'let nom: string = "TypeScript";
+console.log("Nom: " + nom);',
+                    'hint' => $getTranslated('hint', 'Utilisez let nom: string = "TypeScript"; pour déclarer une variable typée.')
+                ],
+                3 => [
+                    'title' => $getTranslated('title', 'Variables typées'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 12,
+                    'instruction' => $getTranslated('instruction', 'Déclarez une variable age de type number avec la valeur 25 et affichez-la.'),
+                    'description' => $getTranslated('description', 'En TypeScript, vous pouvez spécifier explicitement le type ou laisser TypeScript l\'inférer.'),
+                    'startCode' => '// Déclarez une variable age de type number
+// Affichez-la
+',
+                    'solution' => 'let age: number = 25;
+console.log("Age: " + age);',
+                    'hint' => $getTranslated('hint', 'Utilisez let age: number = 25; pour déclarer une variable de type number.')
+                ],
+                4 => [
+                    'title' => $getTranslated('title', 'Interfaces'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 12,
+                    'instruction' => $getTranslated('instruction', 'Créez une interface Personne avec les propriétés nom (string) et age (number), puis créez un objet de ce type.'),
+                    'description' => $getTranslated('description', 'Les interfaces définissent la structure des objets et permettent la vérification de type.'),
+                    'startCode' => '// Créez une interface Personne
+// Créez un objet de type Personne
+',
+                    'solution' => 'interface Personne {
+    nom: string;
+    age: number;
+}
+
+let personne: Personne = {
+    nom: "TypeScript",
+    age: 25
+};
+
+console.log("Nom: " + personne.nom + ", Age: " + personne.age);',
+                    'hint' => $getTranslated('hint', 'Utilisez interface Personne { nom: string; age: number; } puis créez un objet.')
+                ],
+                5 => [
+                    'title' => $getTranslated('title', 'Fonctions typées'),
+                    'difficulty' => trans('app.exercices.difficulty.easy'),
+                    'points' => 12,
+                    'instruction' => $getTranslated('instruction', 'Créez une fonction addition qui prend deux paramètres de type number et retourne un number.'),
+                    'description' => $getTranslated('description', 'En TypeScript, vous pouvez typer les paramètres et la valeur de retour des fonctions.'),
+                    'startCode' => '// Créez une fonction addition
+// Appelez-la avec 10 et 5
+',
+                    'solution' => 'function addition(a: number, b: number): number {
+    return a + b;
+}
+
+let resultat = addition(10, 5);
+console.log("Résultat: " + resultat);',
+                    'hint' => $getTranslated('hint', 'Utilisez function addition(a: number, b: number): number { return a + b; }')
+                ],
+                6 => [
+                    'title' => $getTranslated('title', 'Classes TypeScript'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 20,
+                    'instruction' => $getTranslated('instruction', 'Créez une classe Personne avec les propriétés nom et age, puis créez une instance.'),
+                    'description' => $getTranslated('description', 'TypeScript supporte les classes avec types, modificateurs d\'accès (public, private, protected), et constructeurs.'),
+                    'startCode' => '// Créez une classe Personne
+// Créez une instance
+',
+                    'solution' => 'class Personne {
+    nom: string;
+    age: number;
+    
+    constructor(nom: string, age: number) {
+        this.nom = nom;
+        this.age = age;
+    }
+}
+
+let personne = new Personne("TypeScript", 25);
+console.log("Nom: " + personne.nom + ", Age: " + personne.age);',
+                    'hint' => $getTranslated('hint', 'Utilisez class Personne avec constructor() pour initialiser les propriétés.')
+                ],
+                7 => [
+                    'title' => $getTranslated('title', 'Génériques'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 22,
+                    'instruction' => $getTranslated('instruction', 'Créez une fonction générique identite qui retourne son paramètre sans modification.'),
+                    'description' => $getTranslated('description', 'Les génériques permettent de créer des composants réutilisables avec des types variables. Utilisez <T> pour définir un type générique.'),
+                    'startCode' => '// Créez une fonction générique identite
+// Appelez-la avec un string et un number
+',
+                    'solution' => 'function identite<T>(valeur: T): T {
+    return valeur;
+}
+
+let str = identite<string>("TypeScript");
+let num = identite<number>(25);
+console.log("String: " + str + ", Number: " + num);',
+                    'hint' => $getTranslated('hint', 'Utilisez function identite<T>(valeur: T): T { return valeur; }')
+                ],
+                8 => [
+                    'title' => $getTranslated('title', 'Enums'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 18,
+                    'instruction' => $getTranslated('instruction', 'Créez un enum Couleur avec les valeurs ROUGE, VERT, BLEU, puis utilisez-le.'),
+                    'description' => $getTranslated('description', 'Les enums permettent de définir un ensemble de constantes nommées. TypeScript génère des objets JavaScript pour les enums.'),
+                    'startCode' => '// Créez un enum Couleur
+// Créez une variable de type Couleur
+',
+                    'solution' => 'enum Couleur {
+    ROUGE,
+    VERT,
+    BLEU
+}
+
+let couleur: Couleur = Couleur.ROUGE;
+console.log("Couleur: " + Couleur[couleur]);',
+                    'hint' => $getTranslated('hint', 'Utilisez enum Couleur { ROUGE, VERT, BLEU } puis let couleur: Couleur = Couleur.ROUGE;')
+                ],
+                9 => [
+                    'title' => $getTranslated('title', 'Tuples et Unions'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 20,
+                    'instruction' => $getTranslated('instruction', 'Créez un tuple [string, number] et une union type string | number.'),
+                    'description' => $getTranslated('description', 'Les tuples sont des tableaux à taille fixe avec des types spécifiques. Les unions permettent d\'accepter plusieurs types.'),
+                    'startCode' => '// Créez un tuple personne
+// Créez une variable union
+',
+                    'solution' => 'let personne: [string, number] = ["TypeScript", 25];
+console.log("Nom: " + personne[0] + ", Age: " + personne[1]);
+
+let valeur: string | number = "Hello";
+console.log("Valeur: " + valeur);',
+                    'hint' => $getTranslated('hint', 'Utilisez let personne: [string, number] = ["TypeScript", 25]; pour un tuple.')
+                ],
+                10 => [
+                    'title' => $getTranslated('title', 'Modules ES6'),
+                    'difficulty' => trans('app.exercices.difficulty.medium'),
+                    'points' => 20,
+                    'instruction' => $getTranslated('instruction', 'Créez un module avec une fonction exportée, puis importez-la.'),
+                    'description' => $getTranslated('description', 'TypeScript supporte les modules ES6 avec import et export pour organiser le code.'),
+                    'startCode' => '// Dans math.ts: export function addition(a: number, b: number): number
+// Dans main.ts: importez et utilisez addition
+',
+                    'solution' => '// math.ts
+export function addition(a: number, b: number): number {
+    return a + b;
+}
+
+// main.ts
+import { addition } from "./math";
+let resultat = addition(10, 5);
+console.log("Résultat: " + resultat);',
+                    'hint' => $getTranslated('hint', 'Utilisez export function addition() puis import { addition } from "./math";')
+                ],
+                11 => [
+                    'title' => $getTranslated('title', 'Utility Types'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 28,
+                    'instruction' => $getTranslated('instruction', 'Utilisez Partial<T> pour rendre toutes les propriétés d\'une interface optionnelles.'),
+                    'description' => $getTranslated('description', 'TypeScript fournit des utility types : Partial, Required, Pick, Omit, Readonly, etc.'),
+                    'startCode' => 'interface Personne {
+    nom: string;
+    age: number;
+}
+
+// Créez un type PersonnePartielle avec Partial
+',
+                    'solution' => 'interface Personne {
+    nom: string;
+    age: number;
+}
+
+type PersonnePartielle = Partial<Personne>;
+let personne: PersonnePartielle = { nom: "TypeScript" };
+console.log("Personne: " + JSON.stringify(personne));',
+                    'hint' => $getTranslated('hint', 'Utilisez type PersonnePartielle = Partial<Personne>;')
+                ],
+                12 => [
+                    'title' => $getTranslated('title', 'Décorateurs'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 30,
+                    'instruction' => $getTranslated('instruction', 'Créez un décorateur qui mesure le temps d\'exécution d\'une méthode.'),
+                    'description' => $getTranslated('description', 'Les décorateurs permettent d\'ajouter des métadonnées aux classes, méthodes, et propriétés. Activez experimentalDecorators dans tsconfig.json.'),
+                    'startCode' => '// Créez un décorateur mesureTemps
+// Appliquez-le à une méthode
+',
+                    'solution' => 'function mesureTemps(target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+    const originalMethod = descriptor.value;
+    descriptor.value = function(...args: any[]) {
+        const start = Date.now();
+        const result = originalMethod.apply(this, args);
+        const end = Date.now();
+        console.log(`Temps d\'exécution: ${end - start}ms`);
+        return result;
+    };
+}
+
+class MaClasse {
+    @mesureTemps
+    maMethode() {
+        // Code de la méthode
+    }
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez function mesureTemps(target, propertyKey, descriptor) { } puis @mesureTemps avant la méthode.')
+                ],
+                13 => [
+                    'title' => $getTranslated('title', 'Type Guards'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 28,
+                    'instruction' => $getTranslated('instruction', 'Créez une fonction type guard pour vérifier si une valeur est une string.'),
+                    'description' => $getTranslated('description', 'Les type guards permettent de rétrécir le type d\'une variable dans un bloc de code. Utilisez typeof, instanceof, ou des fonctions personnalisées.'),
+                    'startCode' => '// Créez une fonction isString
+// Utilisez-la dans une condition
+',
+                    'solution' => 'function isString(valeur: unknown): valeur is string {
+    return typeof valeur === "string";
+}
+
+function afficher(valeur: string | number) {
+    if (isString(valeur)) {
+        console.log("String: " + valeur.toUpperCase());
+    } else {
+        console.log("Number: " + valeur);
+    }
+}',
+                    'hint' => $getTranslated('hint', 'Utilisez function isString(valeur: unknown): valeur is string { return typeof valeur === "string"; }')
+                ],
+                14 => [
+                    'title' => $getTranslated('title', 'React + TypeScript'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 30,
+                    'instruction' => $getTranslated('instruction', 'Créez un composant React fonctionnel typé avec TypeScript qui affiche un message.'),
+                    'description' => $getTranslated('description', 'TypeScript s\'intègre parfaitement avec React. Utilisez React.FC ou définissez explicitement les types des props.'),
+                    'startCode' => 'import React from "react";
+
+// Créez un composant Message avec des props typées
+',
+                    'solution' => 'import React from "react";
+
+interface MessageProps {
+    texte: string;
+}
+
+const Message: React.FC<MessageProps> = ({ texte }) => {
+    return <div>{texte}</div>;
+};
+
+export default Message;',
+                    'hint' => $getTranslated('hint', 'Utilisez interface MessageProps { texte: string; } puis const Message: React.FC<MessageProps> = ({ texte }) => { }')
+                ],
+                15 => [
+                    'title' => $getTranslated('title', 'Projet TypeScript complet'),
+                    'difficulty' => trans('app.exercices.difficulty.hard'),
+                    'points' => 30,
+                    'instruction' => $getTranslated('instruction', 'Créez une classe GestionnaireUtilisateurs avec des méthodes pour ajouter, supprimer et lister des utilisateurs.'),
+                    'description' => $getTranslated('description', 'Combinez interfaces, classes, génériques, et types pour créer une application TypeScript complète.'),
+                    'startCode' => 'interface Utilisateur {
+    id: number;
+    nom: string;
+    email: string;
+}
+
+// Créez une classe GestionnaireUtilisateurs
+',
+                    'solution' => 'interface Utilisateur {
+    id: number;
+    nom: string;
+    email: string;
+}
+
+class GestionnaireUtilisateurs {
+    private utilisateurs: Utilisateur[] = [];
+    
+    ajouter(utilisateur: Utilisateur): void {
+        this.utilisateurs.push(utilisateur);
+    }
+    
+    supprimer(id: number): void {
+        this.utilisateurs = this.utilisateurs.filter(u => u.id !== id);
+    }
+    
+    lister(): Utilisateur[] {
+        return this.utilisateurs;
+    }
+}
+
+let gestionnaire = new GestionnaireUtilisateurs();
+gestionnaire.ajouter({ id: 1, nom: "TypeScript", email: "ts@example.com" });
+console.log(gestionnaire.lister());',
+                    'hint' => $getTranslated('hint', 'Utilisez class GestionnaireUtilisateurs avec private utilisateurs: Utilisateur[] = [];')
+                ],
+            ],
         ];
 
         return $allExercises[$language][$id] ?? null;
@@ -9545,6 +10497,57 @@ model = pipeline.fit(train_df)',
                 ['title' => $getTitle(14, 'Sécurité et Gouvernance'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
                 ['title' => $getTitle(15, 'Architecture Big Data Complète'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
             ],
+            'swift' => [
+                ['title' => $getTitle(1, 'Premier programme Swift'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(2, 'Variables et Constantes'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(3, 'Types de données'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 12],
+                ['title' => $getTitle(4, 'Opérateurs Swift'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(5, 'Conditions if/else'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 12],
+                ['title' => $getTitle(6, 'Boucles for-in et while'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 18],
+                ['title' => $getTitle(7, 'Fonctions Swift'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
+                ['title' => $getTitle(8, 'Tableaux et Collections'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
+                ['title' => $getTitle(9, 'Dictionnaires et Sets'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 18],
+                ['title' => $getTitle(10, 'Optionals'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
+                ['title' => $getTitle(11, 'Classes et Structures'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(12, 'Protocoles et Extensions'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+                ['title' => $getTitle(13, 'Gestion d\'erreurs (do-catch)'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(14, 'Closures'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+                ['title' => $getTitle(15, 'SwiftUI - Composants de base'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+            ],
+            'perl' => [
+                ['title' => $getTitle(1, 'Premier programme Perl'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(2, 'Variables scalaires ($)'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(3, 'Tableaux (@)'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 12],
+                ['title' => $getTitle(4, 'Hash (%)'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 12],
+                ['title' => $getTitle(5, 'Opérateurs Perl'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(6, 'Conditions if/unless'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 15],
+                ['title' => $getTitle(7, 'Boucles for/foreach/while'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 18],
+                ['title' => $getTitle(8, 'Fonctions (sub)'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
+                ['title' => $getTitle(9, 'Expressions régulières'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 22],
+                ['title' => $getTitle(10, 'Manipulation de fichiers'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
+                ['title' => $getTitle(11, 'Références'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(12, 'Modules CPAN'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(13, 'POO en Perl'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+                ['title' => $getTitle(14, 'Regex avancées'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+                ['title' => $getTitle(15, 'Scripts d\'automatisation'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+            ],
+            'typescript' => [
+                ['title' => $getTitle(1, 'Premier programme TypeScript'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(2, 'Types de base'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 10],
+                ['title' => $getTitle(3, 'Variables typées'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 12],
+                ['title' => $getTitle(4, 'Interfaces'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 12],
+                ['title' => $getTitle(5, 'Fonctions typées'), 'difficulty' => trans('app.exercices.difficulty.easy'), 'points' => 12],
+                ['title' => $getTitle(6, 'Classes TypeScript'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
+                ['title' => $getTitle(7, 'Génériques'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 22],
+                ['title' => $getTitle(8, 'Enums'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 18],
+                ['title' => $getTitle(9, 'Tuples et Unions'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
+                ['title' => $getTitle(10, 'Modules ES6'), 'difficulty' => trans('app.exercices.difficulty.medium'), 'points' => 20],
+                ['title' => $getTitle(11, 'Utility Types'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(12, 'Décorateurs'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+                ['title' => $getTitle(13, 'Type Guards'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 28],
+                ['title' => $getTitle(14, 'React + TypeScript'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+                ['title' => $getTitle(15, 'Projet TypeScript complet'), 'difficulty' => trans('app.exercices.difficulty.hard'), 'points' => 30],
+            ],
         ];
 
         return $allExercises[$language] ?? [];
@@ -9574,6 +10577,9 @@ model = pipeline.fit(train_df)',
             ['name' => trans('app.formations.languages.go'), 'slug' => 'go', 'icon' => 'fab fa-golang', 'color' => 'blue', 'questions' => 20],
             ['name' => trans('app.formations.languages.rust'), 'slug' => 'rust', 'icon' => 'fab fa-rust', 'color' => 'black', 'questions' => 20],
             ['name' => trans('app.formations.languages.ruby'), 'slug' => 'ruby', 'icon' => 'fas fa-gem', 'color' => 'red', 'questions' => 20],
+            ['name' => trans('app.formations.languages.swift'), 'slug' => 'swift', 'icon' => 'fab fa-swift', 'color' => 'orange', 'questions' => 20],
+            ['name' => trans('app.formations.languages.perl'), 'slug' => 'perl', 'icon' => 'fas fa-code', 'color' => 'blue', 'questions' => 20],
+            ['name' => trans('app.formations.languages.typescript'), 'slug' => 'typescript', 'icon' => 'fab fa-js-square', 'color' => 'blue', 'questions' => 20],
             ['name' => trans('app.formations.languages.cybersecurite'), 'slug' => 'cybersecurite', 'icon' => 'fas fa-shield-alt', 'color' => 'orange', 'questions' => 20],
             ['name' => trans('app.formations.languages.data-science'), 'slug' => 'data-science', 'icon' => 'fas fa-chart-line', 'color' => 'blue', 'questions' => 20],
             ['name' => trans('app.formations.languages.big-data'), 'slug' => 'big-data', 'icon' => 'fas fa-database', 'color' => 'purple', 'questions' => 20],
@@ -10191,6 +11197,72 @@ model = pipeline.fit(train_df)',
                 ['question' => 'Qu\'est-ce que la scalabilité horizontale ?', 'options' => ['L\'ajout de nœuds pour augmenter la capacité', 'L\'amélioration des nœuds existants', 'La suppression de nœuds', 'Le remplacement de nœuds'], 'correct' => 0],
                 ['question' => 'Qu\'est-ce que Spark Streaming ?', 'options' => ['Le traitement de flux de données en temps réel avec Spark', 'Le stockage de données', 'La copie de données', 'La compression de données'], 'correct' => 0],
                 ['question' => 'Qu\'est-ce que la gouvernance des données Big Data ?', 'options' => ['La gestion et le contrôle des données', 'Le stockage de données', 'La copie de données', 'La compression de données'], 'correct' => 0],
+            ],
+            'swift' => [
+                ['question' => 'Qui a créé Swift ?', 'options' => ['Apple', 'Google', 'Microsoft', 'Facebook'], 'correct' => 0],
+                ['question' => 'En quelle année Swift a-t-il été créé ?', 'options' => ['2010', '2014', '2016', '2018'], 'correct' => 1],
+                ['question' => 'Comment afficher du texte en Swift ?', 'options' => ['print()', 'console.log()', 'printf()', 'echo'], 'correct' => 0],
+                ['question' => 'Comment déclarer une constante en Swift ?', 'options' => ['let nom = "Swift"', 'const nom = "Swift"', 'var nom = "Swift"', 'constant nom = "Swift"'], 'correct' => 0],
+                ['question' => 'Comment déclarer une variable modifiable en Swift ?', 'options' => ['var nom = "Swift"', 'let nom = "Swift"', 'mutable nom = "Swift"', 'variable nom = "Swift"'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce qu\'un Optional en Swift ?', 'options' => ['Un type qui peut être nil', 'Un type qui ne peut jamais être nil', 'Un tableau', 'Un dictionnaire'], 'correct' => 0],
+                ['question' => 'Comment déballer un Optional avec if let ?', 'options' => ['if let valeur = optional { }', 'if optional != nil { }', 'if optional { }', 'if let optional { }'], 'correct' => 0],
+                ['question' => 'Comment créer un tableau en Swift ?', 'options' => ['var arr = [1, 2, 3]', 'var arr = Array(1, 2, 3)', 'var arr = new Array(1, 2, 3)', 'Les deux A et B'], 'correct' => 3],
+                ['question' => 'Comment créer un dictionnaire en Swift ?', 'options' => ['var dict = ["key": "value"]', 'var dict = Dictionary()', 'var dict = {}', 'Les deux A et B'], 'correct' => 3],
+                ['question' => 'Comment utiliser une boucle for-in ?', 'options' => ['for item in array { }', 'for (item in array) { }', 'for item : array { }', 'foreach item in array { }'], 'correct' => 0],
+                ['question' => 'Comment créer une fonction en Swift ?', 'options' => ['func maFonction() { }', 'function maFonction() { }', 'def maFonction() { }', 'create maFonction() { }'], 'correct' => 0],
+                ['question' => 'Comment créer une classe en Swift ?', 'options' => ['class MaClasse { }', 'class MaClasse {}', 'create class MaClasse', 'define class MaClasse'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce qu\'un protocole en Swift ?', 'options' => ['Un contrat que les types doivent implémenter', 'Une classe', 'Une fonction', 'Un type'], 'correct' => 0],
+                ['question' => 'Comment gérer les erreurs en Swift ?', 'options' => ['do-catch', 'try-catch', 'throw-catch', 'error-handling'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce que SwiftUI ?', 'options' => ['Un framework pour créer des interfaces utilisateur', 'Un langage', 'Une bibliothèque', 'Un IDE'], 'correct' => 0],
+                ['question' => 'Comment utiliser guard let ?', 'options' => ['guard let valeur = optional else { return }', 'guard optional != nil else { return }', 'guard let optional else { return }', 'guard optional else { return }'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce qu\'une closure en Swift ?', 'options' => ['Un bloc de code autonome', 'Une fonction nommée', 'Une classe', 'Un type'], 'correct' => 0],
+                ['question' => 'Comment utiliser switch en Swift ?', 'options' => ['switch valeur { case 1: }', 'switch (valeur) { case 1: }', 'switch valeur case 1', 'switch valeur then 1'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce qu\'une extension en Swift ?', 'options' => ['Un moyen d\'ajouter des fonctionnalités à un type existant', 'Une classe', 'Une fonction', 'Un protocole'], 'correct' => 0],
+                ['question' => 'Comment utiliser string interpolation en Swift ?', 'options' => ['"Hello \\(nom)"', '"Hello " + nom', 'string.format("Hello {0}", nom)', 'Les deux A et B'], 'correct' => 0],
+            ],
+            'perl' => [
+                ['question' => 'Qui a créé Perl ?', 'options' => ['Larry Wall', 'Guido van Rossum', 'James Gosling', 'Bjarne Stroustrup'], 'correct' => 0],
+                ['question' => 'En quelle année Perl a-t-il été créé ?', 'options' => ['1985', '1987', '1990', '1995'], 'correct' => 1],
+                ['question' => 'Comment afficher du texte en Perl ?', 'options' => ['print', 'puts', 'console.log()', 'echo'], 'correct' => 0],
+                ['question' => 'Quel sigil utilise-t-on pour les variables scalaires ?', 'options' => ['$', '@', '%', '&'], 'correct' => 0],
+                ['question' => 'Quel sigil utilise-t-on pour les tableaux ?', 'options' => ['@', '$', '%', '#'], 'correct' => 0],
+                ['question' => 'Quel sigil utilise-t-on pour les hash ?', 'options' => ['%', '$', '@', '&'], 'correct' => 0],
+                ['question' => 'Comment déclarer une variable locale en Perl ?', 'options' => ['my $var', 'var $var', 'local $var', 'let $var'], 'correct' => 0],
+                ['question' => 'Comment créer un tableau en Perl ?', 'options' => ['my @arr = (1, 2, 3)', 'my @arr = [1, 2, 3]', 'my arr = (1, 2, 3)', 'Les deux A et B'], 'correct' => 0],
+                ['question' => 'Comment créer un hash en Perl ?', 'options' => ['my %hash = ("key" => "value")', 'my %hash = {"key": "value"}', 'my hash = {"key": "value"}', 'Les deux A et B'], 'correct' => 0],
+                ['question' => 'Comment utiliser une expression régulière en Perl ?', 'options' => ['$texte =~ /pattern/', '$texte =~ pattern', '$texte ~ /pattern/', '$texte match /pattern/'], 'correct' => 0],
+                ['question' => 'Comment créer une fonction en Perl ?', 'options' => ['sub maFonction { }', 'function maFonction { }', 'def maFonction { }', 'create maFonction { }'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce que CPAN ?', 'options' => ['Comprehensive Perl Archive Network', 'Central Perl Archive Network', 'Common Perl Archive Network', 'Complete Perl Archive Network'], 'correct' => 0],
+                ['question' => 'Comment utiliser use strict en Perl ?', 'options' => ['use strict;', 'require strict;', 'import strict;', 'include strict;'], 'correct' => 0],
+                ['question' => 'Comment utiliser une boucle for en Perl ?', 'options' => ['for my $i (1..10) { }', 'for ($i = 1; $i <= 10; $i++) { }', 'for i in 1..10 { }', 'Les deux A et B'], 'correct' => 3],
+                ['question' => 'Comment accéder au premier élément d\'un tableau ?', 'options' => ['$arr[0]', '$arr[1]', '@arr[0]', 'arr[0]'], 'correct' => 0],
+                ['question' => 'Comment accéder à une valeur dans un hash ?', 'options' => ['$hash{key}', '$hash[key]', '$hash->key', 'hash{key}'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce qu\'une référence en Perl ?', 'options' => ['Une référence à une variable', 'Une variable', 'Une fonction', 'Un type'], 'correct' => 0],
+                ['question' => 'Comment créer une référence à un tableau ?', 'options' => ['my $ref = \\@array', 'my $ref = @array', 'my $ref = *array', 'my $ref = &array'], 'correct' => 0],
+                ['question' => 'Comment utiliser un module Perl ?', 'options' => ['use ModuleName;', 'import ModuleName;', 'require ModuleName;', 'include ModuleName;'], 'correct' => 0],
+                ['question' => 'Quelle est la devise de Perl ?', 'options' => ['There\'s more than one way to do it', 'Simple is better than complex', 'Write once, run anywhere', 'Perfection is achieved'], 'correct' => 0],
+            ],
+            'typescript' => [
+                ['question' => 'Qui a créé TypeScript ?', 'options' => ['Microsoft', 'Google', 'Facebook', 'Apple'], 'correct' => 0],
+                ['question' => 'En quelle année TypeScript a-t-il été créé ?', 'options' => ['2010', '2012', '2014', '2016'], 'correct' => 1],
+                ['question' => 'Qu\'est-ce que TypeScript ?', 'options' => ['Un sur-ensemble typé de JavaScript', 'Un nouveau langage', 'Une bibliothèque JavaScript', 'Un framework'], 'correct' => 0],
+                ['question' => 'Comment déclarer une variable typée en TypeScript ?', 'options' => ['let nom: string = "TypeScript"', 'let nom = "TypeScript"', 'var nom: string = "TypeScript"', 'Les deux A et C'], 'correct' => 3],
+                ['question' => 'Comment créer une interface en TypeScript ?', 'options' => ['interface Personne { }', 'interface Personne {}', 'create interface Personne', 'define interface Personne'], 'correct' => 0],
+                ['question' => 'Comment créer une classe en TypeScript ?', 'options' => ['class MaClasse { }', 'class MaClasse {}', 'create class MaClasse', 'define class MaClasse'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce qu\'un générique en TypeScript ?', 'options' => ['Un type variable', 'Un type fixe', 'Une fonction', 'Une classe'], 'correct' => 0],
+                ['question' => 'Comment utiliser un générique ?', 'options' => ['function f<T>(x: T): T { }', 'function f<T>(x: T) { }', 'function f(x: T): T { }', 'function<T> f(x: T) { }'], 'correct' => 0],
+                ['question' => 'Comment créer un enum en TypeScript ?', 'options' => ['enum MonEnum { }', 'enum MonEnum {}', 'create enum MonEnum', 'define enum MonEnum'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce qu\'un tuple en TypeScript ?', 'options' => ['Un tableau à taille fixe avec types spécifiques', 'Un tableau normal', 'Un objet', 'Une fonction'], 'correct' => 0],
+                ['question' => 'Comment créer un tuple ?', 'options' => ['let t: [string, number] = ["a", 1]', 'let t = ["a", 1]', 'let t: tuple = ["a", 1]', 'let t = tuple("a", 1)'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce qu\'une union type ?', 'options' => ['Un type qui accepte plusieurs types', 'Un type unique', 'Un tableau', 'Un objet'], 'correct' => 0],
+                ['question' => 'Comment utiliser une union type ?', 'options' => ['let x: string | number', 'let x: string or number', 'let x: string || number', 'let x: string & number'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce que Partial<T> ?', 'options' => ['Un utility type qui rend toutes les propriétés optionnelles', 'Un type qui rend toutes les propriétés requises', 'Un type qui sélectionne des propriétés', 'Un type qui exclut des propriétés'], 'correct' => 0],
+                ['question' => 'Comment utiliser import/export en TypeScript ?', 'options' => ['export function f() { } puis import { f } from "./file"', 'export f() puis import f', 'Les deux A et B', 'Aucune des réponses'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce qu\'un type guard ?', 'options' => ['Une fonction qui rétrécit le type', 'Une fonction qui élargit le type', 'Une fonction qui change le type', 'Une fonction qui supprime le type'], 'correct' => 0],
+                ['question' => 'Comment utiliser async/await en TypeScript ?', 'options' => ['async function f() { await ... }', 'async function f() { wait ... }', 'function async f() { await ... }', 'function f() async { await ... }'], 'correct' => 0],
+                ['question' => 'Qu\'est-ce qu\'un décorateur en TypeScript ?', 'options' => ['Un moyen d\'ajouter des métadonnées', 'Une fonction', 'Une classe', 'Un type'], 'correct' => 0],
+                ['question' => 'Comment utiliser React.FC avec TypeScript ?', 'options' => ['const Component: React.FC<Props> = () => { }', 'const Component: React.FC = () => { }', 'function Component: React.FC() { }', 'Les deux A et B'], 'correct' => 0],
+                ['question' => 'Quelle extension de fichier utilise TypeScript ?', 'options' => ['.ts', '.js', '.tsx', 'Les deux A et C'], 'correct' => 3],
             ],
         ];
 

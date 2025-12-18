@@ -11,7 +11,9 @@ class NavigationComposer
     {
         $jobCategories = Category::where('is_active', true)
             ->withCount('publishedArticles')
+            ->orderBy('published_articles_count', 'desc')
             ->orderBy('order')
+            ->take(7)
             ->get();
         
         $view->with('jobCategories', $jobCategories);

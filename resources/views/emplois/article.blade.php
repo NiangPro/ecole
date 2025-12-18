@@ -4,20 +4,29 @@
 @section('meta_description', $article->meta_description ?? $article->excerpt ?? substr(strip_tags($article->content), 0, 160))
 
 @php
-    // Générer l'URL absolue de l'image pour Facebook
-    // Vérifier si l'article a une image (vérifier cover_image ET cover_type)
+    // Générer l'URL absolue de l'image pour les réseaux sociaux
+    // Déterminer l'URL de base
+    $baseUrl = str_contains(config('app.url'), 'niangprogrammeur.com') 
+        ? 'https://www.niangprogrammeur.com' 
+        : config('app.url');
+    
+    // Vérifier si l'article a une image
     $hasCoverImage = !empty($article->cover_image) && trim($article->cover_image) !== '';
     
     if ($hasCoverImage) {
         if ($article->cover_type === 'internal') {
-            // Image interne : utiliser Storage::url() puis url() pour URL absolue
-            $articleImage = url(\Illuminate\Support\Facades\Storage::url($article->cover_image));
+            // Image interne : construire l'URL absolue
+            // Storage::url() retourne '/storage/path/to/image.jpg'
+            $storagePath = \Illuminate\Support\Facades\Storage::url($article->cover_image);
+            // S'assurer que le chemin commence par /storage/
+            if (!str_starts_with($storagePath, '/')) {
+                $storagePath = '/' . $storagePath;
+            }
+            // Construire l'URL absolue
+            $articleImage = rtrim($baseUrl, '/') . $storagePath;
         } else {
             // Image externe : s'assurer que c'est une URL absolue
             $externalImage = trim($article->cover_image);
-            
-            // Nettoyer l'URL (enlever les espaces, etc.)
-            $externalImage = trim($externalImage);
             
             // Si l'URL ne commence pas par http:// ou https://, ajouter https://
             if (!preg_match('/^https?:\/\//i', $externalImage)) {
@@ -28,28 +37,16 @@
         }
     } else {
         // Pas d'image : utiliser le logo du site avec URL absolue
-        $baseUrl = str_contains(config('app.url'), 'niangprogrammeur.com') 
-            ? 'https://www.niangprogrammeur.com' 
-            : config('app.url');
-        $articleImage = $baseUrl . '/images/logo.png';
+        $articleImage = rtrim($baseUrl, '/') . '/images/logo.png';
     }
     
     // S'assurer que l'URL est absolue (commence par http:// ou https://)
     if (!preg_match('/^https?:\/\//i', $articleImage)) {
-        $baseUrl = str_contains(config('app.url'), 'niangprogrammeur.com') 
-            ? 'https://www.niangprogrammeur.com' 
-            : config('app.url');
-        $articleImage = $baseUrl . '/' . ltrim($articleImage, '/');
+        $articleImage = rtrim($baseUrl, '/') . '/' . ltrim($articleImage, '/');
     }
     
-    // Debug : décommenter pour voir les valeurs (à retirer en production)
-    // \Log::info('Article Image Debug', [
-    //     'article_id' => $article->id,
-    //     'cover_image' => $article->cover_image,
-    //     'cover_type' => $article->cover_type,
-    //     'has_cover_image' => $hasCoverImage,
-    //     'final_image_url' => $articleImage
-    // ]);
+    // Nettoyer l'URL (enlever les espaces, etc.)
+    $articleImage = trim($articleImage);
 @endphp
 
 @php
@@ -66,21 +63,23 @@
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="article">
     <meta property="og:url" content="{{ $articleUrl }}">
-    <meta property="og:title" content="{{ $article->meta_title ?? $article->title }}">
-    <meta property="og:description" content="{{ $article->meta_description ?? $article->excerpt ?? substr(strip_tags($article->content), 0, 160) }}">
+    <meta property="og:title" content="{{ htmlspecialchars($article->meta_title ?? $article->title, ENT_QUOTES, 'UTF-8') }}">
+    <meta property="og:description" content="{{ htmlspecialchars($article->meta_description ?? $article->excerpt ?? substr(strip_tags($article->content), 0, 160), ENT_QUOTES, 'UTF-8') }}">
     <meta property="og:image" content="{{ $articleImage }}">
+    <meta property="og:image:secure_url" content="{{ $articleImage }}">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:image:alt" content="{{ htmlspecialchars($article->title, ENT_QUOTES, 'UTF-8') }}">
     <meta property="og:site_name" content="NiangProgrammeur">
     <meta property="og:locale" content="fr_FR">
     
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="{{ $articleUrl }}">
-    <meta name="twitter:title" content="{{ $article->meta_title ?? $article->title }}">
-    <meta name="twitter:description" content="{{ $article->meta_description ?? $article->excerpt ?? substr(strip_tags($article->content), 0, 160) }}">
+    <meta name="twitter:title" content="{{ htmlspecialchars($article->meta_title ?? $article->title, ENT_QUOTES, 'UTF-8') }}">
+    <meta name="twitter:description" content="{{ htmlspecialchars($article->meta_description ?? $article->excerpt ?? substr(strip_tags($article->content), 0, 160), ENT_QUOTES, 'UTF-8') }}">
     <meta name="twitter:image" content="{{ $articleImage }}">
+    <meta name="twitter:image:alt" content="{{ htmlspecialchars($article->title, ENT_QUOTES, 'UTF-8') }}">
     
     <!-- Meta Tags SEO -->
     <meta name="keywords" content="{{ $article->meta_keywords ? implode(', ', is_array($article->meta_keywords) ? $article->meta_keywords : json_decode($article->meta_keywords, true) ?? []) : '' }}">

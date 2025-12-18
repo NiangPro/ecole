@@ -206,6 +206,33 @@ class FormationController extends Controller
                 'route' => route('formations.big-data'),
                 'category' => 'data'
             ],
+            [
+                'name' => trans('app.formations.languages.swift'),
+                'slug' => 'swift',
+                'icon' => 'fab fa-swift',
+                'color' => '#fa7343',
+                'description' => trans('app.formations.swift.description'),
+                'route' => route('formations.swift'),
+                'category' => 'backend'
+            ],
+            [
+                'name' => trans('app.formations.languages.perl'),
+                'slug' => 'perl',
+                'icon' => 'fas fa-code',
+                'color' => '#39457e',
+                'description' => trans('app.formations.perl.description'),
+                'route' => route('formations.perl'),
+                'category' => 'backend'
+            ],
+            [
+                'name' => trans('app.formations.languages.typescript'),
+                'slug' => 'typescript',
+                'icon' => 'fab fa-js-square',
+                'color' => '#3178c6',
+                'description' => trans('app.formations.typescript.description'),
+                'route' => route('formations.typescript'),
+                'category' => 'frontend'
+            ],
         ];
         
         return view('formations.all', compact('formations'));
@@ -338,6 +365,21 @@ class FormationController extends Controller
     public function bigData()
     {
         return $this->showFormation('big-data', 'formations.big-data');
+    }
+
+    public function swift()
+    {
+        return $this->showFormation('swift', 'formations.swift');
+    }
+
+    public function perl()
+    {
+        return $this->showFormation('perl', 'formations.perl');
+    }
+
+    public function typescript()
+    {
+        return $this->showFormation('typescript', 'formations.typescript');
     }
 }
 

@@ -32,6 +32,9 @@ class FormationAdSenseController extends Controller
             'cpp' => 'C++',
             'csharp' => 'C#',
             'dart' => 'Dart',
+            'swift' => 'Swift',
+            'perl' => 'Perl',
+            'typescript' => 'TypeScript',
         ];
 
         // Récupérer toutes les unités AdSense actives

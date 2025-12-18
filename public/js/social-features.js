@@ -496,15 +496,20 @@
         }
 
         shareFacebook(url) {
+            // Facebook utilise automatiquement les meta tags Open Graph
             window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank', 'width=600,height=400');
         }
 
         shareTwitter(url, title, text) {
-            const tweetText = `${title} ${text}`.trim();
+            // Twitter utilise les meta tags Twitter Card, mais on peut aussi ajouter le texte
+            const tweetText = `${title} ${text}`.substring(0, 200).trim();
             window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(tweetText)}`, '_blank', 'width=600,height=400');
         }
 
         shareLinkedIn(url, title, text) {
+            // LinkedIn utilise automatiquement les meta tags Open Graph
+            // On peut aussi utiliser l'ancienne méthode avec les paramètres pour plus de contrôle
+            const summary = text ? text.substring(0, 200) : '';
             window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank', 'width=600,height=400');
         }
 

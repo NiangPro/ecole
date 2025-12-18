@@ -142,6 +142,9 @@ class EmploiController extends Controller
         $article = Cache::remember("job_article_{$slug}", 1800, function () use ($slug) {
             return JobArticle::where('slug', $slug)
                 ->where('status', 'published')
+                ->whereHas('category', function($query) {
+                    $query->where('is_active', true);
+                })
                 ->with(['category:id,name,slug']) // Eager loading optimisé
                 ->select('id', 'title', 'slug', 'excerpt', 'content', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views', 'meta_title', 'meta_description', 'meta_keywords', 'created_at', 'updated_at')
                 ->firstOrFail();
@@ -249,6 +252,29 @@ class EmploiController extends Controller
         });
         
         return view('emplois.recent-articles', compact('recentArticles'));
+    }
+
+    /**
+     * Tous les articles vedettes
+     */
+    public function featured()
+    {
+        $this->ensureLocale();
+        
+        // Cache optimisé avec eager loading et pagination (15 minutes)
+        $cacheKey = 'featured_articles_all_page_' . request()->get('page', 1);
+        
+        $articles = Cache::remember($cacheKey, 900, function () {
+            return JobArticle::where('status', 'published')
+                ->where('is_featured', true)
+                ->with(['category:id,name,slug']) // Eager loading optimisé
+                ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')
+                ->orderBy('published_at', 'desc')
+                ->orderBy('created_at', 'desc')
+                ->paginate(12);
+        });
+        
+        return view('emplois.featured-articles', compact('articles'));
     }
 
     /**

@@ -2749,12 +2749,36 @@
             </a>
             @endforeach
         </div>
+        
+        <!-- View All Button -->
+        <div style="text-align: center; margin-top: 60px;">
+            <a href="{{ route('articles.vedettes') }}" class="view-all-featured-btn" style="display: inline-flex; align-items: center; gap: 12px; padding: 18px 36px; background: linear-gradient(135deg, #ef4444, #f97316); color: #fff; text-decoration: none; border-radius: 50px; font-weight: 700; font-size: 1.1rem; box-shadow: 0 8px 30px rgba(239, 68, 68, 0.3); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden;">
+                <span style="position: relative; z-index: 2;">{{ app()->getLocale() === 'fr' ? 'Voir tous les articles vedettes' : 'View all featured articles' }}</span>
+                <i class="fas fa-arrow-right" style="position: relative; z-index: 2; transition: transform 0.3s ease;"></i>
+                <div style="position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(135deg, #f97316, #ef4444); transition: left 0.4s ease; z-index: 1;"></div>
+            </a>
+        </div>
     </div>
     
     <!-- Background Decoration -->
     <div style="position: absolute; top: -50%; right: -10%; width: 500px; height: 500px; background: radial-gradient(circle, rgba(239, 68, 68, 0.1) 0%, transparent 70%); border-radius: 50%; z-index: 0;"></div>
     <div style="position: absolute; bottom: -30%; left: -5%; width: 400px; height: 400px; background: radial-gradient(circle, rgba(251, 146, 60, 0.1) 0%, transparent 70%); border-radius: 50%; z-index: 0;"></div>
 </section>
+
+<style>
+    .view-all-featured-btn:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 40px rgba(239, 68, 68, 0.4);
+    }
+    
+    .view-all-featured-btn:hover > div {
+        left: 0;
+    }
+    
+    .view-all-featured-btn:hover .fa-arrow-right {
+        transform: translateX(5px);
+    }
+</style>
 
 <style>
     .featured-article-card:hover {

@@ -85,17 +85,18 @@ Route::get('/courses/{slug}', [MonetizationController::class, 'showCourse'])->na
 Route::get('/affiliates', [MonetizationController::class, 'affiliates'])->name('monetization.affiliates');
 Route::post('/affiliates/become', [MonetizationController::class, 'becomeAffiliate'])->middleware('auth')->name('monetization.affiliates.become');
 Route::get('/affiliates/dashboard', function() {
-    return redirect()->route('dashboard.affiliates');
+    return redirect()->route('dashboard.affiliates')->setStatusCode(301);
 })->middleware('auth')->name('monetization.affiliates.dashboard');
 Route::post('/payment/subscription', [PaymentController::class, 'processSubscription'])->middleware('auth')->name('payment.subscription');
 Route::get('/payment/course/{courseId}', function($courseId) {
     $course = \App\Models\PaidCourse::findOrFail($courseId);
     return redirect()->route('monetization.course.show', $course->slug)
+        ->setStatusCode(301)
         ->with('error', 'Veuillez utiliser le formulaire d\'achat pour procéder au paiement.');
 })->name('payment.course.get');
 Route::post('/payment/course/{courseId}', [PaymentController::class, 'processCoursePurchase'])->middleware('auth')->name('payment.course');
 Route::get('/payment/donation', function () {
-    return redirect()->route('monetization.donations');
+    return redirect()->route('monetization.donations')->setStatusCode(301);
 })->name('payment.donation.get');
 Route::post('/payment/donation', [PaymentController::class, 'processDonation'])->name('payment.donation');
 Route::get('/payment/confirm/{paymentId}', [PaymentController::class, 'confirm'])->name('payment.confirm');
@@ -132,6 +133,9 @@ Route::get('/formations/ruby', [FormationController::class, 'ruby'])->name('form
 Route::get('/formations/cybersecurite', [FormationController::class, 'cybersecurite'])->name('formations.cybersecurite');
 Route::get('/formations/data-science', [FormationController::class, 'dataScience'])->name('formations.data-science');
 Route::get('/formations/big-data', [FormationController::class, 'bigData'])->name('formations.big-data');
+Route::get('/formations/swift', [FormationController::class, 'swift'])->name('formations.swift');
+Route::get('/formations/perl', [FormationController::class, 'perl'])->name('formations.perl');
+Route::get('/formations/typescript', [FormationController::class, 'typescript'])->name('formations.typescript');
 
 // Routes Emplois - Utiliser EmploiController
 use App\Http\Controllers\EmploiController;
@@ -144,6 +148,7 @@ Route::get('/emplois/concours', [EmploiController::class, 'concours'])->name('em
 Route::get('/emplois/categorie/{slug}', [EmploiController::class, 'category'])->name('emplois.category');
 // Route spécifique avant la route avec paramètre pour éviter les conflits
 Route::get('/emplois/articles-recents', [EmploiController::class, 'recent'])->name('emplois.recent-articles');
+Route::get('/articles/vedettes', [EmploiController::class, 'featured'])->name('articles.vedettes');
 // Route avec paramètre - exclut "articles-recents" pour éviter les conflits
 Route::get('/emplois/article/{slug}', [EmploiController::class, 'show'])
     ->where('slug', '^(?!articles-recents$).+')

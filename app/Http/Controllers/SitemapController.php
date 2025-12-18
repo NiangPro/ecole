@@ -102,6 +102,15 @@ class SitemapController extends Controller
             '/formations/cpp',
             '/formations/csharp',
             '/formations/dart',
+            '/formations/go',
+            '/formations/rust',
+            '/formations/ruby',
+            '/formations/cybersecurite',
+            '/formations/data-science',
+            '/formations/big-data',
+            '/formations/swift',
+            '/formations/perl',
+            '/formations/typescript',
         ];
         
         foreach ($formations as $formation) {
@@ -109,13 +118,13 @@ class SitemapController extends Controller
         }
         
         // Pages Exercices par langue
-        $exercicesLanguages = ['html5', 'css3', 'javascript', 'php', 'bootstrap', 'python', 'java', 'sql', 'c', 'git', 'wordpress', 'ia', 'cpp', 'csharp', 'dart'];
+        $exercicesLanguages = ['html5', 'css3', 'javascript', 'php', 'bootstrap', 'python', 'java', 'sql', 'c', 'git', 'wordpress', 'ia', 'cpp', 'csharp', 'dart', 'go', 'rust', 'ruby', 'swift', 'perl', 'typescript'];
         foreach ($exercicesLanguages as $lang) {
             $pages[] = ['url' => '/exercices/' . $lang, 'priority' => '0.8', 'changefreq' => 'weekly', 'lastmod' => now()->format('Y-m-d')];
         }
         
         // Pages Quiz par langue
-        $quizLanguages = ['html5', 'css3', 'javascript', 'php', 'bootstrap', 'python', 'java', 'sql', 'c', 'git', 'wordpress', 'ia', 'cpp', 'csharp', 'dart'];
+        $quizLanguages = ['html5', 'css3', 'javascript', 'php', 'bootstrap', 'python', 'java', 'sql', 'c', 'git', 'wordpress', 'ia', 'cpp', 'csharp', 'dart', 'go', 'rust', 'ruby', 'swift', 'perl', 'typescript'];
         foreach ($quizLanguages as $lang) {
             $pages[] = ['url' => '/quiz/' . $lang, 'priority' => '0.8', 'changefreq' => 'weekly', 'lastmod' => now()->format('Y-m-d')];
         }
@@ -127,6 +136,7 @@ class SitemapController extends Controller
         $pages[] = ['url' => '/emplois/candidature-spontanee', 'priority' => '0.8', 'changefreq' => 'daily', 'lastmod' => now()->format('Y-m-d')];
         $pages[] = ['url' => '/emplois/opportunites', 'priority' => '0.8', 'changefreq' => 'daily', 'lastmod' => now()->format('Y-m-d')];
         $pages[] = ['url' => '/emplois/concours', 'priority' => '0.8', 'changefreq' => 'daily', 'lastmod' => now()->format('Y-m-d')];
+        $pages[] = ['url' => '/articles/vedettes', 'priority' => '0.8', 'changefreq' => 'daily', 'lastmod' => now()->format('Y-m-d')];
         
         // Pages catégories d'emplois
         try {
@@ -175,12 +185,20 @@ class SitemapController extends Controller
             try {
             $articles = JobArticle::where('status', 'published')
                 ->whereNotNull('published_at')
-                ->with('category')
+                ->with(['category' => function($query) {
+                    $query->where('is_active', true);
+                }])
+                ->has('category') // S'assurer que l'article a une catégorie active
                 ->orderBy('published_at', 'desc')
                 ->limit(50000) // Limite Google : 50 000 URLs max par sitemap
                 ->get();
             
             foreach ($articles as $article) {
+                // Vérifier que la catégorie existe et est active
+                if (!$article->category || !$article->category->is_active) {
+                    continue; // Ignorer les articles avec catégories inactives ou supprimées
+                }
+                
                 $sitemap .= '  <url>' . PHP_EOL;
                 $url = $baseUrl . '/emplois/article/' . $article->slug;
                 $sitemap .= '    <loc>' . htmlspecialchars($url, ENT_XML1, 'UTF-8') . '</loc>' . PHP_EOL;
