@@ -1087,6 +1087,7 @@
                 /* Styles pour les boutons de partage social */
                 .social-share-buttons {
                     display: flex;
+                    flex-direction: row;
                     flex-wrap: wrap;
                     gap: 12px;
                     margin-top: 15px;
@@ -1172,10 +1173,26 @@
                 
                 /* Responsive */
                 @media (max-width: 640px) {
+                    .social-share-buttons {
+                        display: flex !important;
+                        flex-direction: row !important;
+                        flex-wrap: nowrap !important;
+                        gap: 8px;
+                        overflow-x: auto;
+                        -webkit-overflow-scrolling: touch;
+                        scrollbar-width: none;
+                        -ms-overflow-style: none;
+                    }
+                    
+                    .social-share-buttons::-webkit-scrollbar {
+                        display: none;
+                    }
+                    
                     .social-share-buttons button {
-                        width: 44px;
-                        height: 44px;
+                        width: 42px;
+                        height: 42px;
                         font-size: 18px;
+                        flex-shrink: 0;
                     }
                 }
             </style>

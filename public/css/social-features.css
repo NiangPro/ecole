@@ -431,11 +431,22 @@ body.dark-mode [data-share="copy"] {
     }
 
     .social-share-buttons {
-        flex-direction: column;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+    
+    .social-share-buttons::-webkit-scrollbar {
+        display: none;
     }
 
     [data-share] {
-        width: 100%;
+        flex-shrink: 0;
+        width: auto;
+        min-width: 44px;
         justify-content: center;
     }
 }

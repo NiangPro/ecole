@@ -253,6 +253,46 @@
         display: inline-block;
     }
     
+    /* Chapeau de Noël sur le A - Style VLC avec image PNG */
+    .letter-a-with-hat {
+        position: relative;
+        display: inline-block;
+    }
+    
+    /* Image PNG du chapeau de Noël */
+    .santa-hat-img {
+        position: absolute;
+        top: -0.25em;
+        left: 50%;
+        transform: translateX(-35%);
+        width: 1.6em;
+        height: auto;
+        z-index: 10;
+        pointer-events: none;
+        filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4));
+        animation: hat-bounce 3s ease-in-out infinite;
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: crisp-edges;
+    }
+    
+    /* Animation douce du chapeau */
+    @keyframes hat-bounce {
+        0%, 100% { 
+            transform: translateX(-35%) translateY(0) rotate(0deg); 
+        }
+        50% { 
+            transform: translateX(-35%) translateY(-3px) rotate(-2deg); 
+        }
+    }
+    
+    /* Responsive pour mobile */
+    @media (max-width: 768px) {
+        .santa-hat-img {
+            width: 1.4em;
+            top: -0.25em;
+        }
+    }
+    
     .title-gradient {
         background: linear-gradient(135deg, #06b6d4 0%, #14b8a6 100%);
         -webkit-background-clip: text;
@@ -1098,7 +1138,16 @@
         <h1 class="main-title">
             @if(app()->getLocale() === 'fr')
             <span class="main-title-wrapper">
-                <span>A</span>
+                <span class="letter-a-with-hat">
+                    @php
+                        $now = now();
+                        $isChristmasPeriod = $now->month === 12 && $now->day >= 20 && $now->day <= 31;
+                    @endphp
+                    @if($isChristmasPeriod)
+                        <img src="{{ asset('images/chapeau-noel.png') }}" alt="Chapeau de Noël" class="santa-hat-img">
+                    @endif
+                    A
+                </span>
                 </span>pprenez la <span class="title-gradient">{{ trans('app.home.hero_title_programming') }}</span><br>
                 Gratuitement avec <span class="title-gradient">{{ trans('app.home.hero_title_brand') }}</span>
             @else

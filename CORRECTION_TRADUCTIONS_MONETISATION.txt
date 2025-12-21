@@ -74,3 +74,4 @@ PROCHAINES ÉTAPES (si nécessaire)
 3. Vérifier que toutes les clés de traduction sont présentes dans les deux langues
 
 
+
