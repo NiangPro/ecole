@@ -25,5 +25,8 @@ Schedule::command('sitemap:generate')->dailyAt('03:00')->withoutOverlapping();
 // Crée 5 nouveaux articles par jour
 Schedule::command('articles:seed --count=5 --days=3')->dailyAt('04:00')->withoutOverlapping();
 
+// Planifier la vérification des expirations de téléchargement tous les jours à 6h du matin
+Schedule::command('notifications:check-expirations')->dailyAt('06:00')->withoutOverlapping();
+
 // Optionnel : Créer des articles toutes les 6 heures (4 fois par jour)
 // Schedule::command('articles:seed --count=2 --days=1')->everySixHours()->withoutOverlapping();

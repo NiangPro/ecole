@@ -39,11 +39,38 @@ Route::get('/ads.txt', function () {
 Route::get('/sitemap.xml', [\App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap.index');
 Route::get('/sitemap-pages.xml', [\App\Http\Controllers\SitemapController::class, 'pages'])->name('sitemap.pages');
 Route::get('/sitemap-articles.xml', [\App\Http\Controllers\SitemapController::class, 'articles'])->name('sitemap.articles');
+Route::get('/sitemap-documents.xml', [\App\Http\Controllers\SitemapController::class, 'documents'])->name('sitemap.documents');
 
 Route::get('/', [PageController::class, 'index'])->name('home');
 // Route Recherche - Utiliser SearchController
 use App\Http\Controllers\SearchController;
 Route::get('/search', [SearchController::class, 'index'])->middleware('throttle:30,1')->name('search');
+
+// Routes Forum (publiques)
+use App\Http\Controllers\ForumController;
+Route::prefix('forum')->name('forum.')->group(function () {
+    Route::get('/', [ForumController::class, 'index'])->name('index');
+    Route::get('/search', [ForumController::class, 'search'])->name('search');
+    Route::get('/category/{slug}', [ForumController::class, 'category'])->name('category');
+    Route::get('/{categorySlug}/{topicSlug}', [ForumController::class, 'show'])->name('show');
+    
+    // Routes authentifiées
+    Route::middleware('auth')->group(function () {
+        Route::get('/create', [ForumController::class, 'create'])->name('create');
+        Route::post('/create', [ForumController::class, 'store'])->name('store');
+        Route::post('/{categorySlug}/{topicSlug}/reply', [ForumController::class, 'reply'])->name('reply');
+        Route::post('/reply/{replyId}/vote', [ForumController::class, 'vote'])->name('vote');
+        Route::post('/reply/{replyId}/best-answer', [ForumController::class, 'markBestAnswer'])->name('mark-best-answer');
+        Route::delete('/topic/{topicId}', [ForumController::class, 'deleteTopic'])->name('delete-topic');
+        Route::delete('/reply/{replyId}', [ForumController::class, 'deleteReply'])->name('delete-reply');
+    });
+    
+    // Routes admin
+    Route::middleware(['auth', 'admin'])->group(function () {
+        Route::post('/topic/{topicId}/pin', [ForumController::class, 'togglePin'])->name('toggle-pin');
+        Route::post('/topic/{topicId}/lock', [ForumController::class, 'toggleLock'])->name('toggle-lock');
+    });
+});
 Route::post('/contact', [PageController::class, 'sendContact'])->middleware('throttle:5,1')->name('contact.send');
 Route::post('/newsletter/subscribe', [PageController::class, 'newsletterSubscribe'])->middleware('throttle:10,1')->name('newsletter.subscribe');
 Route::get('/about', [PageController::class, 'about'])->name('about');
@@ -73,6 +100,70 @@ Route::get('/newsletter/unsubscribe/{token}', [PageController::class, 'newslette
 
 // Route pour changer la langue
 Route::get('/language/{locale}', [PageController::class, 'setLanguage'])->name('language.set');
+
+// Routes Documents Frontend
+use App\Http\Controllers\DocumentController;
+use App\Http\Controllers\DocumentCartController;
+
+// Routes spécifiques AVANT les routes avec paramètres pour éviter les conflits
+Route::get('/documents', [DocumentController::class, 'index'])->name('documents.index');
+Route::get('/documents/category/{slug}', [DocumentController::class, 'category'])->name('documents.category');
+Route::get('/documents/download/{token}', [DocumentController::class, 'downloadByToken'])->name('documents.download.token');
+Route::get('/documents/my-documents', [DocumentController::class, 'myDocumentsByEmail'])->name('documents.my-documents-email');
+
+// Routes Panier Documents (doivent être AVANT /documents/{slug})
+Route::get('/documents/cart', [DocumentCartController::class, 'index'])->name('documents.cart');
+Route::get('/documents/cart/total', [DocumentCartController::class, 'getTotal'])->name('documents.cart.total');
+Route::post('/documents/{documentId}/cart/add', [DocumentCartController::class, 'add'])->name('documents.cart.add');
+Route::put('/documents/cart/{cartItemId}/update', [DocumentCartController::class, 'update'])->name('documents.cart.update');
+Route::delete('/documents/cart/{cartItemId}/remove', [DocumentCartController::class, 'remove'])->name('documents.cart.remove');
+Route::post('/documents/cart/clear', [DocumentCartController::class, 'clear'])->name('documents.cart.clear');
+Route::get('/documents/checkout/payment', [DocumentCartController::class, 'checkoutPayment'])->name('documents.checkout.payment');
+Route::post('/documents/checkout/process', [DocumentCartController::class, 'processCheckout'])->name('documents.checkout.process');
+Route::get('/documents/guest-success/{paymentId}', [DocumentCartController::class, 'guestSuccess'])->name('documents.guest-success');
+
+// Route téléchargement gratuit (avant /documents/{slug})
+Route::get('/documents/{id}/download-free', [DocumentController::class, 'downloadFree'])->name('documents.download-free');
+
+// Routes avis/commentaires
+use App\Http\Controllers\DocumentReviewController;
+Route::post('/documents/{documentId}/reviews', [DocumentReviewController::class, 'store'])
+    ->middleware('auth')
+    ->name('documents.reviews.store');
+Route::delete('/documents/reviews/{reviewId}', [DocumentReviewController::class, 'destroy'])
+    ->middleware('auth')
+    ->name('documents.reviews.destroy');
+
+// Routes wishlist
+use App\Http\Controllers\DocumentWishlistController;
+Route::get('/dashboard/wishlist', [DocumentWishlistController::class, 'index'])
+    ->middleware('auth')
+    ->name('wishlist.index');
+Route::post('/documents/{documentId}/wishlist', [DocumentWishlistController::class, 'toggle'])
+    ->middleware('auth')
+    ->name('wishlist.toggle');
+Route::delete('/documents/{documentId}/wishlist', [DocumentWishlistController::class, 'remove'])
+    ->middleware('auth')
+    ->name('wishlist.remove');
+
+// Routes codes promo
+use App\Http\Controllers\DocumentCouponController;
+Route::post('/coupons/validate', [DocumentCouponController::class, 'validate'])
+    ->name('coupons.validate');
+Route::post('/coupons/apply', [DocumentCouponController::class, 'apply'])
+    ->name('coupons.apply');
+Route::post('/coupons/remove', [DocumentCouponController::class, 'remove'])
+    ->name('coupons.remove');
+
+// Routes bundles
+use App\Http\Controllers\DocumentBundleController;
+Route::get('/bundles', [DocumentBundleController::class, 'index'])
+    ->name('bundles.index');
+Route::get('/bundles/{slug}', [DocumentBundleController::class, 'show'])
+    ->name('bundles.show');
+
+// Route avec paramètre en DERNIER pour éviter les conflits
+Route::get('/documents/{slug}', [DocumentController::class, 'show'])->name('documents.show');
 
 // Routes Monétisation
 use App\Http\Controllers\MonetizationController;
@@ -140,6 +231,7 @@ Route::get('/formations/typescript', [FormationController::class, 'typescript'])
 // Routes Emplois - Utiliser EmploiController
 use App\Http\Controllers\EmploiController;
 Route::get('/emplois', [EmploiController::class, 'index'])->name('emplois');
+Route::get('/emplois/tous-les-articles', [EmploiController::class, 'allArticles'])->name('emplois.all-articles');
 Route::get('/emplois/offres', [EmploiController::class, 'offres'])->name('emplois.offres');
 Route::get('/emplois/bourses', [EmploiController::class, 'bourses'])->name('emplois.bourses');
 Route::get('/emplois/candidature-spontanee', [EmploiController::class, 'candidatureSpontanee'])->name('emplois.candidature');
@@ -165,6 +257,18 @@ Route::middleware('auth')->prefix('api')->name('api.')->group(function () {
     Route::get('/notifications/unread', [\App\Http\Controllers\NotificationController::class, 'unread'])->name('notifications.unread');
     Route::post('/notifications/{id}/read', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.read');
     Route::post('/notifications/read-all', [\App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
+    
+    // Notifications push
+    Route::post('/push/subscribe', [\App\Http\Controllers\PushNotificationController::class, 'subscribe'])->name('push.subscribe');
+    Route::post('/push/unsubscribe', [\App\Http\Controllers\PushNotificationController::class, 'unsubscribe'])->name('push.unsubscribe');
+    
+    // Analytics tracking
+    Route::post('/analytics/track', [\App\Http\Controllers\AnalyticsController::class, 'trackEvent'])->name('analytics.track');
+    Route::post('/analytics/heatmap', [\App\Http\Controllers\AnalyticsController::class, 'trackHeatmap'])->name('analytics.heatmap');
+    Route::post('/analytics/funnel', [\App\Http\Controllers\AnalyticsController::class, 'trackFunnelStep'])->name('analytics.funnel');
+    Route::get('/analytics/ab-test/{testId}', [\App\Http\Controllers\AnalyticsController::class, 'getABTestVariant'])->name('analytics.ab-test');
+    Route::get('/analytics/ab-tests', [\App\Http\Controllers\Admin\AnalyticsController::class, 'getActiveABTests'])->name('analytics.ab-tests');
+    Route::post('/analytics/ab-test/conversion', [\App\Http\Controllers\AnalyticsController::class, 'markABTestConversion'])->name('analytics.ab-test.conversion');
 });
 
 // Routes d'authentification utilisateur
@@ -200,6 +304,24 @@ Route::middleware('auth')->prefix('dashboard')->name('dashboard.')->group(functi
     Route::get('/settings', [\App\Http\Controllers\ProfileController::class, 'settings'])->name('settings');
     Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'profile'])->name('profile');
     Route::post('/profile', [\App\Http\Controllers\ProfileController::class, 'updateProfile'])->name('profile.update');
+    
+    // Mes Documents
+    Route::get('/my-documents', [\App\Http\Controllers\DocumentController::class, 'myDocuments'])->name('my-documents');
+    
+    // Messagerie
+    Route::prefix('messages')->name('messages.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\MessageController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\MessageController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\MessageController::class, 'store'])->name('store');
+        Route::get('/{conversationId}', [\App\Http\Controllers\MessageController::class, 'show'])->name('show');
+        Route::post('/{conversationId}/reply', [\App\Http\Controllers\MessageController::class, 'reply'])->name('reply');
+        Route::post('/{conversationId}/delete', [\App\Http\Controllers\MessageController::class, 'deleteConversation'])->name('delete-conversation');
+        Route::post('/message/{messageId}/read', [\App\Http\Controllers\MessageController::class, 'markAsRead'])->name('mark-read');
+        Route::post('/message/{messageId}/delete', [\App\Http\Controllers\MessageController::class, 'deleteMessage'])->name('delete-message');
+        Route::post('/mark-all-read', [\App\Http\Controllers\MessageController::class, 'markAllAsRead'])->name('mark-all-read');
+        Route::get('/api/new-messages', [\App\Http\Controllers\MessageController::class, 'getNewMessages'])->name('api.new-messages');
+        Route::get('/attachment/{attachmentId}/download', [\App\Http\Controllers\MessageController::class, 'downloadAttachment'])->name('download-attachment');
+    });
     
     // Favoris
     Route::get('/favorites', [\App\Http\Controllers\FavoriteController::class, 'index'])->name('favorites');
@@ -259,26 +381,18 @@ Route::middleware(['admin'])->group(function () {
     Route::get('/admin/formation-adsense/{slug}', [\App\Http\Controllers\Admin\FormationAdSenseController::class, 'show'])->name('admin.formation-adsense.show');
     Route::post('/admin/formation-adsense', [\App\Http\Controllers\Admin\FormationAdSenseController::class, 'store'])->name('admin.formation-adsense.store');
     
-    // Routes pour la gestion d'Ezoic
-    Route::get('/admin/ezoic', [\App\Http\Controllers\Admin\EzoicController::class, 'index'])->name('admin.ezoic.index');
-    Route::post('/admin/ezoic', [\App\Http\Controllers\Admin\EzoicController::class, 'update'])->name('admin.ezoic.update');
-    
-    // Routes pour la gestion des unités Ezoic
-    Route::resource('admin/ezoic-units', \App\Http\Controllers\Admin\EzoicUnitController::class)->names([
-        'index' => 'admin.ezoic-units.index',
-        'create' => 'admin.ezoic-units.create',
-        'store' => 'admin.ezoic-units.store',
-        'show' => 'admin.ezoic-units.show',
-        'edit' => 'admin.ezoic-units.edit',
-        'update' => 'admin.ezoic-units.update',
-        'destroy' => 'admin.ezoic-units.destroy',
-    ]);
-    
-    // Routes pour la gestion des annonces Ezoic par formation
-    Route::get('/admin/formation-ezoic', [\App\Http\Controllers\Admin\FormationEzoicController::class, 'index'])->name('admin.formation-ezoic.index');
-    Route::get('/admin/formation-ezoic/{slug}', [\App\Http\Controllers\Admin\FormationEzoicController::class, 'show'])->name('admin.formation-ezoic.show');
-    Route::post('/admin/formation-ezoic', [\App\Http\Controllers\Admin\FormationEzoicController::class, 'store'])->name('admin.formation-ezoic.store');
     Route::put('/admin/formation-adsense/{id}', [\App\Http\Controllers\Admin\FormationAdSenseController::class, 'update'])->name('admin.formation-adsense.update');
+    
+    // Routes pour la gestion des catégories du forum
+    Route::resource('admin/forum/categories', \App\Http\Controllers\Admin\ForumCategoryController::class)->names([
+        'index' => 'admin.forum.categories.index',
+        'create' => 'admin.forum.categories.create',
+        'store' => 'admin.forum.categories.store',
+        'show' => 'admin.forum.categories.show',
+        'edit' => 'admin.forum.categories.edit',
+        'update' => 'admin.forum.categories.update',
+        'destroy' => 'admin.forum.categories.destroy',
+    ]);
     Route::delete('/admin/formation-adsense/{id}', [\App\Http\Controllers\Admin\FormationAdSenseController::class, 'destroy'])->name('admin.formation-adsense.destroy');
     Route::get('/admin/backups', [App\Http\Controllers\AdminController::class, 'backups'])->name('admin.backups');
     Route::post('/admin/backups/create', [App\Http\Controllers\AdminController::class, 'createBackup'])->name('admin.backups.create');
@@ -311,6 +425,15 @@ Route::middleware(['admin'])->group(function () {
         Route::delete('/{id}', [\App\Http\Controllers\Admin\CommentController::class, 'delete'])->name('delete');
         Route::get('/{id}/whatsapp-link', [\App\Http\Controllers\Admin\CommentController::class, 'getWhatsAppLink'])->name('whatsapp-link');
         Route::get('/{id}/email-link', [\App\Http\Controllers\Admin\CommentController::class, 'getEmailLink'])->name('email-link');
+    });
+
+    // Routes Analytics Admin
+    Route::prefix('admin/analytics')->name('admin.analytics.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\AnalyticsController::class, 'index'])->name('index');
+        Route::get('/funnel/{id}', [\App\Http\Controllers\Admin\AnalyticsController::class, 'showFunnel'])->name('funnel');
+        Route::get('/ab-test/{id}', [\App\Http\Controllers\Admin\AnalyticsController::class, 'showABTest'])->name('ab-test');
+        Route::get('/heatmap', [\App\Http\Controllers\Admin\AnalyticsController::class, 'showHeatmap'])->name('heatmap');
+        Route::get('/ab-tests', [\App\Http\Controllers\Admin\AnalyticsController::class, 'getActiveABTests'])->name('ab-tests');
     });
 
     // Routes Logs Admin
@@ -416,6 +539,39 @@ Route::middleware(['admin'])->group(function () {
         // Seeder d'articles
         Route::get('seeder', [\App\Http\Controllers\Admin\ArticleSeederController::class, 'index'])->name('seeder.index');
         Route::post('seeder/seed', [\App\Http\Controllers\Admin\ArticleSeederController::class, 'seed'])->name('seeder.seed');
+    });
+
+    // Routes Documents Admin
+    Route::prefix('admin/documents')->name('admin.documents.')->group(function () {
+        // Documents
+        Route::resource('documents', \App\Http\Controllers\Admin\DocumentController::class);
+        Route::post('documents/{id}/publish', [\App\Http\Controllers\Admin\DocumentController::class, 'publish'])->name('documents.publish');
+        Route::post('documents/{id}/unpublish', [\App\Http\Controllers\Admin\DocumentController::class, 'unpublish'])->name('documents.unpublish');
+        Route::get('statistics', [\App\Http\Controllers\Admin\DocumentController::class, 'statistics'])->name('statistics');
+        
+        // Catégories
+        Route::resource('categories', \App\Http\Controllers\Admin\DocumentCategoryController::class);
+        
+        // Achats
+        Route::prefix('purchases')->name('purchases.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\DocumentPurchaseController::class, 'index'])->name('index');
+            Route::get('/{id}', [\App\Http\Controllers\Admin\DocumentPurchaseController::class, 'show'])->name('show');
+            Route::post('/{id}/approve', [\App\Http\Controllers\Admin\DocumentPurchaseController::class, 'approve'])->name('approve');
+            Route::post('/{id}/cancel', [\App\Http\Controllers\Admin\DocumentPurchaseController::class, 'cancel'])->name('cancel');
+        });
+        
+        // Modération avis
+        Route::prefix('reviews')->name('reviews.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\DocumentReviewController::class, 'index'])->name('index');
+            Route::post('/{reviewId}/approve', [\App\Http\Controllers\Admin\DocumentReviewController::class, 'approve'])->name('approve');
+            Route::delete('/{reviewId}', [\App\Http\Controllers\Admin\DocumentReviewController::class, 'destroy'])->name('destroy');
+        });
+        
+        // Codes promo
+        Route::resource('coupons', \App\Http\Controllers\Admin\DocumentCouponController::class);
+        
+        // Bundles
+        Route::resource('bundles', \App\Http\Controllers\Admin\DocumentBundleController::class);
     });
 
     // Routes Publicités Admin

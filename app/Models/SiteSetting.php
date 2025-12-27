@@ -34,6 +34,7 @@ class SiteSetting extends Model
         'wave_merchant_id',
         'wave_country_code',
         'wave_enabled',
+        'wave_qr_code',
         'paypal_client_id',
         'paypal_client_secret',
         'paypal_mode',

@@ -179,8 +179,8 @@ class MonetizationController extends Controller
                 $query->orderBy('created_at', 'desc');
         }
         
-        // Pagination avec 12 cours par page (3 lignes de 4)
-        $courses = $query->paginate(12)->withQueryString();
+        // Pagination avec 9 cours par page (3 lignes de 3)
+        $courses = $query->paginate(9)->withQueryString();
         
         // Statistiques pour les filtres
         $stats = [

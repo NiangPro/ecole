@@ -1,7 +1,7 @@
 <div class="comments-section" style="margin-top: 25px; padding-top: 25px; border-top: 2px solid rgba(6, 182, 212, 0.2);">
     <h3 class="comments-title" style="font-size: 1.3rem; font-weight: 800; color: #06b6d4; margin-bottom: 20px; display: flex; align-items: center; gap: 8px;">
         <i class="fas fa-comments"></i>
-        Commentaires ({{ $comments->count() }})
+        Commentaires ({{ isset($comments) && is_countable($comments) ? $comments->count() : 0 }})
     </h3>
 
     <!-- Message de succès -->

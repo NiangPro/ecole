@@ -676,6 +676,16 @@
                         </select>
                     </div>
                     
+                    <div class="form-group">
+                        <label class="form-label">Date de publication</label>
+                        <input type="datetime-local" name="published_at" id="publishedAt" value="{{ old('published_at', '') }}"
+                               class="form-input">
+                        <div class="form-help">
+                            <i class="fas fa-info-circle"></i>
+                            Laissez vide pour publier immédiatement. Sélectionnez une date future pour programmer la publication.
+                        </div>
+                    </div>
+                    
                     <!-- Article sponsorisé -->
                     <div class="form-group" style="margin-top: 20px; display: flex; gap: 30px; flex-wrap: wrap;">
                         <label class="form-label">
@@ -864,6 +874,80 @@
                 titleInput.dispatchEvent(new Event('input'));
             }
         }, 500);
+        
+        // Gérer l'interaction entre le statut et la date de publication
+        const statusSelect = document.getElementById('articleStatus');
+        const publishedAtInput = document.getElementById('publishedAt');
+        const publishedAtGroup = publishedAtInput ? publishedAtInput.closest('.form-group') : null;
+        
+        function updatePublishedAtField() {
+            if (!statusSelect || !publishedAtInput || !publishedAtGroup) return;
+            
+            const status = statusSelect.value;
+            const helpText = publishedAtGroup.querySelector('.form-help');
+            
+            if (status === 'published') {
+                publishedAtInput.disabled = false;
+                publishedAtInput.style.opacity = '1';
+                publishedAtInput.style.cursor = 'text';
+                if (helpText) {
+                    helpText.innerHTML = '<i class="fas fa-info-circle"></i> Laissez vide pour publier immédiatement. Sélectionnez une date future pour programmer la publication.';
+                }
+            } else {
+                publishedAtInput.disabled = true;
+                publishedAtInput.style.opacity = '0.5';
+                publishedAtInput.style.cursor = 'not-allowed';
+                if (helpText) {
+                    helpText.innerHTML = '<i class="fas fa-info-circle"></i> La date de publication n\'est disponible que lorsque le statut est "Publié".';
+                }
+            }
+        }
+        
+        // Vérifier si une date future est sélectionnée
+        function checkScheduledPublication() {
+            if (!publishedAtInput || !statusSelect) return;
+            
+            if (statusSelect.value === 'published' && publishedAtInput.value) {
+                const selectedDate = new Date(publishedAtInput.value);
+                const now = new Date();
+                
+                if (selectedDate > now) {
+                    // Date future sélectionnée - publication programmée
+                    const helpText = publishedAtGroup ? publishedAtGroup.querySelector('.form-help') : null;
+                    if (helpText) {
+                        const formattedDate = selectedDate.toLocaleString('fr-FR', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                        });
+                        helpText.innerHTML = `<i class="fas fa-clock" style="color: #f59e0b;"></i> Publication programmée pour le ${formattedDate}.`;
+                    }
+                } else {
+                    // Date passée ou présente
+                    updatePublishedAtField();
+                }
+            }
+        }
+        
+        // Initialiser l'état du champ
+        if (statusSelect && publishedAtInput) {
+            updatePublishedAtField();
+            
+            // Écouter les changements de statut
+            statusSelect.addEventListener('change', function() {
+                updatePublishedAtField();
+                if (statusSelect.value !== 'published') {
+                    publishedAtInput.value = '';
+                }
+            });
+            
+            // Écouter les changements de date
+            publishedAtInput.addEventListener('change', function() {
+                checkScheduledPublication();
+            });
+        }
     });
 </script>
 @endsection

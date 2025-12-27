@@ -38,6 +38,37 @@
         </div>
     </div>
 
+    <!-- Messages Flash -->
+    @if(session('success'))
+    <div class="alert alert-success">
+        <div class="alert-icon">
+            <i class="fas fa-check-circle"></i>
+        </div>
+        <div class="alert-content">
+            <strong>Succès !</strong>
+            <p>{{ session('success') }}</p>
+        </div>
+        <button class="alert-close" onclick="this.parentElement.remove()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    @endif
+
+    @if(session('error'))
+    <div class="alert alert-error">
+        <div class="alert-icon">
+            <i class="fas fa-exclamation-circle"></i>
+        </div>
+        <div class="alert-content">
+            <strong>Erreur !</strong>
+            <p>{{ session('error') }}</p>
+        </div>
+        <button class="alert-close" onclick="this.parentElement.remove()">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    @endif
+
     <!-- Stats Cards -->
     <div class="messages-stats">
         <div class="stat-card stat-total">
@@ -75,120 +106,105 @@
         </div>
     </div>
 
-    <!-- Messages List -->
+    <!-- Messages Table -->
     @if($messages->count() > 0)
-    <div class="messages-list">
-        @foreach($messages as $message)
-        <div class="message-card {{ !$message->is_read ? 'message-unread' : 'message-read' }}">
-            <!-- Card Header -->
-            <div class="message-card-header">
-                <div class="message-header-left">
-                    <div class="message-avatar">
-                        {{ strtoupper(substr($message->name, 0, 1)) }}
-                    </div>
-                    <div class="message-author-info">
-                        <h3 class="message-author-name">{{ $message->name }}</h3>
-                        <p class="message-subject">{{ $message->subject }}</p>
-                    </div>
-                </div>
-                <div class="message-status-badge status-{{ $message->is_read ? 'read' : 'unread' }}">
-                    @if(!$message->is_read)
-                        <i class="fas fa-circle"></i>
-                        <span>Non lu</span>
-                    @else
-                        <i class="fas fa-check-circle"></i>
-                        <span>Lu</span>
-                    @endif
-                </div>
-            </div>
-
-            <!-- Card Body -->
-            <div class="message-card-body">
-                <div class="message-content">
-                    <p>{{ Str::limit($message->message, 200) }}</p>
-                </div>
-                
-                <div class="message-details-grid">
-                    <div class="message-detail-item">
-                        <div class="detail-icon">
-                            <i class="fas fa-envelope"></i>
-                        </div>
-                        <div class="detail-content">
-                            <div class="detail-label">Email</div>
-                            <div class="detail-value">
-                                <a href="mailto:{{ $message->email }}" class="detail-link">{{ $message->email }}</a>
+    <div class="messages-table-wrapper">
+        <table class="messages-table">
+            <thead>
+                <tr>
+                    <th class="table-col-name">Nom</th>
+                    <th class="table-col-email">Email</th>
+                    <th class="table-col-phone">Téléphone</th>
+                    <th class="table-col-subject">Sujet</th>
+                    <th class="table-col-message">Message</th>
+                    <th class="table-col-date">Date</th>
+                    <th class="table-col-status">Statut</th>
+                    <th class="table-col-actions">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($messages as $message)
+                <tr class="table-row table-row-{{ $message->is_read ? 'read' : 'unread' }}">
+                    <td class="table-cell table-cell-name">
+                        <div class="cell-name-wrapper">
+                            <div class="cell-avatar cell-avatar-{{ $message->is_read ? 'read' : 'unread' }}">
+                                {{ strtoupper(substr($message->name, 0, 1)) }}
                             </div>
+                            <div class="cell-name-text">{{ $message->name }}</div>
                         </div>
-                    </div>
-                    
-                    @if($message->phone)
-                    <div class="message-detail-item">
-                        <div class="detail-icon">
-                            <i class="fas fa-phone"></i>
-                        </div>
-                        <div class="detail-content">
-                            <div class="detail-label">Téléphone</div>
-                            <div class="detail-value">
-                                <a href="tel:{{ $message->phone }}" class="detail-link">{{ $message->phone }}</a>
-                            </div>
-                        </div>
-                    </div>
-                    @endif
-                    
-                    <div class="message-detail-item">
-                        <div class="detail-icon">
+                    </td>
+                    <td class="table-cell table-cell-email">
+                        <a href="mailto:{{ $message->email }}" class="cell-email-link">{{ $message->email }}</a>
+                    </td>
+                    <td class="table-cell table-cell-phone">
+                        @if($message->phone)
+                            <a href="tel:{{ $message->phone }}" class="cell-phone-link">{{ $message->phone }}</a>
+                        @else
+                            <span class="cell-no-data">N/A</span>
+                        @endif
+                    </td>
+                    <td class="table-cell table-cell-subject">
+                        <div class="cell-subject-text">{{ \Illuminate\Support\Str::limit($message->subject, 40) }}</div>
+                    </td>
+                    <td class="table-cell table-cell-message">
+                        <div class="cell-message-text">{{ \Illuminate\Support\Str::limit($message->message, 60) }}</div>
+                    </td>
+                    <td class="table-cell table-cell-date">
+                        <div class="cell-date-text">
                             <i class="fas fa-calendar"></i>
+                            {{ $message->created_at->format('d/m/Y') }}
+                            <span class="cell-time">{{ $message->created_at->format('H:i') }}</span>
                         </div>
-                        <div class="detail-content">
-                            <div class="detail-label">Date</div>
-                            <div class="detail-value">
-                                {{ $message->created_at->format('d/m/Y H:i') }}
-                            </div>
+                    </td>
+                    <td class="table-cell table-cell-status">
+                        <span class="cell-status-badge cell-status-{{ $message->is_read ? 'read' : 'unread' }}">
+                            @if($message->is_read)
+                                <i class="fas fa-check-circle"></i>
+                                <span>Lu</span>
+                            @else
+                                <i class="fas fa-circle"></i>
+                                <span>Non lu</span>
+                            @endif
+                        </span>
+                    </td>
+                    <td class="table-cell table-cell-actions">
+                        <div class="cell-actions-wrapper">
+                            <button onclick="showMessageDetails({{ $message->id }})" class="action-btn-icon action-view" title="Voir les détails">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            
+                            @if(!$message->is_read)
+                            <form action="{{ route('admin.messages.mark-read', $message->id) }}" method="POST" class="action-form-inline">
+                                @csrf
+                                <button type="submit" class="action-btn-icon action-mark-read" title="Marquer comme lu">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            </form>
+                            @endif
+                            
+                            @if($message->phone)
+                            <button onclick="openWhatsApp({{ $message->id }})" class="action-btn-icon action-contact" title="Ouvrir WhatsApp">
+                                <i class="fab fa-whatsapp"></i>
+                            </button>
+                            @endif
+                            
+                            <button onclick="openEmail({{ $message->id }})" class="action-btn-icon action-contact" title="Envoyer un email">
+                                <i class="fas fa-envelope"></i>
+                            </button>
+                            
+                            <form action="{{ route('admin.messages.delete', $message->id) }}" method="POST" class="action-form-inline" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce message ?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="action-btn-icon action-delete" title="Supprimer">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
                         </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Card Actions -->
-            <div class="message-card-actions">
-                <button onclick="showMessageDetails({{ $message->id }})" class="action-btn action-view">
-                    <i class="fas fa-eye"></i>
-                    <span>Détails</span>
-                </button>
-                
-                @if(!$message->is_read)
-                <form action="{{ route('admin.messages.mark-read', $message->id) }}" method="POST" class="action-form">
-                    @csrf
-                    <button type="submit" class="action-btn action-mark-read">
-                        <i class="fas fa-check"></i>
-                        <span>Marquer lu</span>
-                    </button>
-                </form>
-                @endif
-                
-                @if($message->phone)
-                <button onclick="openWhatsApp({{ $message->id }})" class="action-btn action-contact">
-                    <i class="fab fa-whatsapp"></i>
-                    <span>WhatsApp</span>
-                </button>
-                @endif
-                
-                <button onclick="openEmail({{ $message->id }})" class="action-btn action-contact">
-                    <i class="fas fa-envelope"></i>
-                    <span>Email</span>
-                </button>
-                
-                <form action="{{ route('admin.messages.delete', $message->id) }}" method="POST" class="action-form" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer ce message ?');">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="action-btn action-delete">
-                        <i class="fas fa-trash-alt"></i>
-                        <span>Supprimer</span>
-                    </button>
-                </form>
-            </div>
-        </div>
-        @endforeach
+                    </td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
     </div>
 
     <!-- Pagination -->
@@ -242,6 +258,11 @@
 }
 
 .messages-header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 2rem;
     background: linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(20, 184, 166, 0.1) 100%);
     border: 2px solid rgba(6, 182, 212, 0.3);
     border-radius: 24px;
@@ -274,7 +295,6 @@ body.light-mode .messages-header-content {
 .messages-header-text {
     position: relative;
     z-index: 1;
-    margin-bottom: 1.5rem;
 }
 
 .messages-title {
@@ -332,16 +352,16 @@ body.light-mode .messages-subtitle {
 }
 
 .filter-tab {
-        display: inline-flex;
-        align-items: center;
+    display: inline-flex;
+    align-items: center;
     gap: 0.5rem;
     padding: 0.75rem 1.5rem;
     background: rgba(107, 114, 128, 0.2);
     border: 1px solid rgba(107, 114, 128, 0.4);
-        border-radius: 12px;
+    border-radius: 12px;
     color: white;
     text-decoration: none;
-        font-weight: 600;
+    font-weight: 600;
     font-size: 0.9rem;
     transition: all 0.3s ease;
 }
@@ -367,6 +387,74 @@ body.light-mode .filter-tab {
     box-shadow: 0 6px 20px rgba(6, 182, 212, 0.4);
 }
 
+/* Alerts */
+.alert {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    border-radius: 16px;
+    margin-bottom: 2rem;
+    animation: slideIn 0.3s ease;
+    position: relative;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.alert-success {
+    background: rgba(16, 185, 129, 0.15);
+    border: 2px solid rgba(16, 185, 129, 0.3);
+    color: #10b981;
+}
+
+.alert-error {
+    background: rgba(239, 68, 68, 0.15);
+    border: 2px solid rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+}
+
+.alert-icon {
+    font-size: 1.5rem;
+}
+
+.alert-content {
+    flex: 1;
+}
+
+.alert-content strong {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-weight: 700;
+}
+
+.alert-content p {
+    margin: 0;
+    opacity: 0.9;
+}
+
+.alert-close {
+    background: transparent;
+    border: none;
+    color: inherit;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: background 0.2s;
+}
+
+.alert-close:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
 /* Stats */
 .messages-stats {
     display: grid;
@@ -381,7 +469,7 @@ body.light-mode .filter-tab {
     border-radius: 20px;
     padding: 1.5rem;
     display: flex;
-        align-items: center;
+    align-items: center;
     gap: 1rem;
     transition: all 0.3s ease;
     position: relative;
@@ -435,8 +523,8 @@ body.light-mode .stat-card {
     height: 60px;
     border-radius: 16px;
     display: flex;
-        align-items: center;
-        justify-content: center;
+    align-items: center;
+    justify-content: center;
     font-size: 1.5rem;
 }
 
@@ -482,313 +570,381 @@ body.light-mode .stat-label {
     color: #64748b;
 }
 
-/* Messages List */
-.messages-list {
-    display: grid;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-}
-
-/* Message Card */
-.message-card {
+/* Messages Table */
+.messages-table-wrapper {
     background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(51, 65, 85, 0.8));
-    border: 2px solid rgba(6, 182, 212, 0.3);
-        border-radius: 24px;
-    padding: 2rem;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        position: relative;
-    overflow: hidden;
+    border: 1px solid rgba(6, 182, 212, 0.3);
+    border-radius: 20px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    position: relative;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(6, 182, 212, 0.6) rgba(6, 182, 212, 0.1);
 }
 
-body.light-mode .message-card {
+body.light-mode .messages-table-wrapper {
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.95));
     border-color: rgba(6, 182, 212, 0.3);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    scrollbar-color: rgba(6, 182, 212, 0.5) rgba(6, 182, 212, 0.1);
 }
 
-.message-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-    height: 4px;
+.messages-table-wrapper::-webkit-scrollbar {
+    height: 14px;
+}
+
+.messages-table-wrapper::-webkit-scrollbar-track {
+    background: rgba(6, 182, 212, 0.1);
+    border-radius: 10px;
+    margin: 0 1rem;
+    box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+}
+
+body.light-mode .messages-table-wrapper::-webkit-scrollbar-track {
+    background: rgba(6, 182, 212, 0.08);
+}
+
+.messages-table-wrapper::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg, rgba(6, 182, 212, 0.6), rgba(20, 184, 166, 0.6));
+    border-radius: 10px;
+    border: 3px solid transparent;
+    background-clip: padding-box;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.messages-table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(90deg, rgba(6, 182, 212, 0.8), rgba(20, 184, 166, 0.8));
+    background-clip: padding-box;
+    transform: scale(1.02);
+    box-shadow: 0 0 10px rgba(6, 182, 212, 0.4);
+}
+
+.messages-table-wrapper::-webkit-scrollbar-thumb:active {
     background: linear-gradient(90deg, #06b6d4, #14b8a6);
-    opacity: 0;
-    transition: opacity 0.3s;
+    background-clip: padding-box;
+    box-shadow: 0 0 15px rgba(6, 182, 212, 0.6);
 }
 
-.message-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 12px 40px rgba(6, 182, 212, 0.4);
-    border-color: rgba(6, 182, 212, 0.6);
+body.light-mode .messages-table-wrapper::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg, rgba(6, 182, 212, 0.5), rgba(20, 184, 166, 0.5));
 }
 
-.message-card:hover::before {
-    opacity: 1;
+body.light-mode .messages-table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(90deg, rgba(6, 182, 212, 0.7), rgba(20, 184, 166, 0.7));
 }
 
-.message-unread {
-    border-color: rgba(251, 146, 60, 0.5);
-    background: linear-gradient(135deg, rgba(30, 41, 59, 0.9), rgba(51, 65, 85, 0.9));
+body.light-mode .messages-table-wrapper::-webkit-scrollbar-thumb:active {
+    background: linear-gradient(90deg, #06b6d4, #14b8a6);
 }
 
-body.light-mode .message-unread {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(254, 252, 232, 0.98));
+.messages-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    min-width: 1200px;
 }
 
-.message-unread::before {
-    background: linear-gradient(90deg, #fb923c, #f97316);
+.messages-table thead {
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(20, 184, 166, 0.15));
 }
 
-.message-read {
-    border-color: rgba(16, 185, 129, 0.3);
+body.light-mode .messages-table thead {
+    background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(20, 184, 166, 0.1));
 }
 
-.message-read::before {
-    background: linear-gradient(90deg, #10b981, #059669);
+.messages-table th {
+    padding: 1.25rem 1rem;
+    text-align: left;
+    font-weight: 800;
+    font-size: 0.9rem;
+    color: #06b6d4;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid rgba(6, 182, 212, 0.3);
+    white-space: nowrap;
 }
 
-.message-card-header {
-        display: flex;
-        justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 1.5rem;
-    gap: 1rem;
+body.light-mode .messages-table th {
+    color: #06b6d4;
 }
 
-.message-header-left {
+.messages-table tbody tr {
+    transition: all 0.3s ease;
+    border-bottom: 1px solid rgba(6, 182, 212, 0.1);
+}
+
+.messages-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.messages-table tbody tr:hover {
+    background: rgba(6, 182, 212, 0.05);
+}
+
+body.light-mode .messages-table tbody tr:hover {
+    background: rgba(6, 182, 212, 0.03);
+}
+
+.table-row-unread {
+    background: rgba(251, 146, 60, 0.08);
+    border-left: 4px solid #fb923c;
+}
+
+body.light-mode .table-row-unread {
+    background: rgba(251, 146, 60, 0.05);
+}
+
+.table-row-unread:hover {
+    background: rgba(251, 146, 60, 0.15);
+}
+
+body.light-mode .table-row-unread:hover {
+    background: rgba(251, 146, 60, 0.1);
+}
+
+.table-row-read {
+    background: rgba(16, 185, 129, 0.08);
+    border-left: 4px solid #10b981;
+}
+
+body.light-mode .table-row-read {
+    background: rgba(16, 185, 129, 0.05);
+}
+
+.table-row-read:hover {
+    background: rgba(16, 185, 129, 0.15);
+}
+
+body.light-mode .table-row-read:hover {
+    background: rgba(16, 185, 129, 0.1);
+}
+
+.messages-table td {
+    padding: 1.25rem 1rem;
+    vertical-align: middle;
+}
+
+/* Colonnes */
+.table-col-name { width: 180px; }
+.table-col-email { width: 220px; }
+.table-col-phone { width: 150px; }
+.table-col-subject { width: 200px; }
+.table-col-message { width: 300px; }
+.table-col-date { width: 150px; }
+.table-col-status { width: 120px; }
+.table-col-actions { width: 200px; }
+
+/* Cellules */
+.table-cell {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+body.light-mode .table-cell {
+    color: #334155;
+}
+
+.cell-name-wrapper {
     display: flex;
-        align-items: center;
-    gap: 1rem;
-    flex: 1;
+    align-items: center;
+    gap: 0.75rem;
 }
 
-.message-avatar {
-    width: 60px;
-    height: 60px;
-    background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2));
-    border-radius: 16px;
+.cell-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5rem;
-    font-weight: 800;
-    color: #06b6d4;
-    border: 2px solid rgba(6, 182, 212, 0.3);
-}
-
-.message-author-info {
-    flex: 1;
-}
-
-.message-author-name {
-    font-size: 1.25rem;
-    font-weight: 800;
-    color: white;
-    margin: 0 0 0.25rem 0;
-}
-
-body.light-mode .message-author-name {
-    color: #1e293b;
-}
-
-.message-subject {
-    font-size: 0.95rem;
-    color: rgba(255, 255, 255, 0.7);
-    margin: 0;
-    font-weight: 600;
-}
-
-body.light-mode .message-subject {
-    color: #64748b;
-}
-
-.message-status-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem;
-    border-radius: 12px;
-    font-size: 0.85rem;
+    font-size: 1rem;
     font-weight: 700;
+    border: 2px solid;
+    flex-shrink: 0;
 }
 
-.status-unread {
-    background: rgba(251, 146, 60, 0.2);
-    border: 1px solid rgba(251, 146, 60, 0.4);
+.cell-avatar-unread {
+    background: linear-gradient(135deg, rgba(251, 146, 60, 0.2), rgba(249, 115, 22, 0.2));
+    border-color: rgba(251, 146, 60, 0.4);
     color: #fb923c;
 }
 
-.status-read {
+.cell-avatar-read {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.2));
+    border-color: rgba(16, 185, 129, 0.4);
+    color: #10b981;
+}
+
+.cell-name-text {
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: white;
+}
+
+body.light-mode .cell-name-text {
+    color: #1e293b;
+}
+
+.cell-email-link,
+.cell-phone-link {
+    color: #06b6d4;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s;
+}
+
+.cell-email-link:hover,
+.cell-phone-link:hover {
+    color: #14b8a6;
+    text-decoration: underline;
+}
+
+.cell-subject-text,
+.cell-message-text {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.4;
+}
+
+body.light-mode .cell-subject-text,
+body.light-mode .cell-message-text {
+    color: #475569;
+}
+
+.cell-date-text {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+body.light-mode .cell-date-text {
+    color: #475569;
+}
+
+.cell-date-text i {
+    color: #06b6d4;
+}
+
+.cell-time {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.6);
+    display: block;
+    margin-top: 0.25rem;
+}
+
+body.light-mode .cell-time {
+    color: #94a3b8;
+}
+
+.cell-no-data {
+    color: rgba(255, 255, 255, 0.5);
+    font-style: italic;
+}
+
+body.light-mode .cell-no-data {
+    color: #94a3b8;
+}
+
+.cell-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: 10px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.cell-status-read {
     background: rgba(16, 185, 129, 0.2);
     border: 1px solid rgba(16, 185, 129, 0.4);
     color: #10b981;
 }
 
-.message-card-body {
-    margin-bottom: 1.5rem;
+.cell-status-unread {
+    background: rgba(251, 146, 60, 0.2);
+    border: 1px solid rgba(251, 146, 60, 0.4);
+    color: #fb923c;
 }
 
-.message-content {
-    background: rgba(6, 182, 212, 0.05);
-    border-left: 3px solid rgba(6, 182, 212, 0.3);
-    border-radius: 8px;
-    padding: 1rem;
-    margin-bottom: 1.5rem;
-}
-
-body.light-mode .message-content {
-    background: rgba(6, 182, 212, 0.03);
-}
-
-.message-content p {
-    margin: 0;
-    color: rgba(255, 255, 255, 0.9);
-    line-height: 1.6;
-}
-
-body.light-mode .message-content p {
-    color: #334155;
-}
-
-.message-details-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-}
-
-.message-detail-item {
-        display: flex;
-        align-items: center;
-    gap: 0.75rem;
-    padding: 1rem;
-    background: rgba(6, 182, 212, 0.05);
-    border-radius: 12px;
-}
-
-body.light-mode .message-detail-item {
-    background: rgba(6, 182, 212, 0.03);
-}
-
-.detail-icon {
-    width: 40px;
-    height: 40px;
-    background: rgba(6, 182, 212, 0.1);
-    border-radius: 10px;
+.cell-actions-wrapper {
     display: flex;
     align-items: center;
-    justify-content: center;
-    color: #06b6d4;
-    font-size: 1rem;
-}
-
-.detail-content {
-    flex: 1;
-}
-
-.detail-label {
-    font-size: 0.75rem;
-    color: rgba(255, 255, 255, 0.6);
-    margin-bottom: 0.25rem;
-}
-
-body.light-mode .detail-label {
-    color: #94a3b8;
-}
-
-.detail-value {
-        font-size: 1rem;
-    font-weight: 700;
-    color: white;
-}
-
-body.light-mode .detail-value {
-    color: #1e293b;
-}
-
-.detail-link {
-    color: #06b6d4;
-    text-decoration: none;
-    transition: color 0.2s;
-}
-
-.detail-link:hover {
-    color: #14b8a6;
-}
-
-.message-card-actions {
-    display: flex;
-    gap: 0.75rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid rgba(6, 182, 212, 0.2);
+    gap: 0.5rem;
     flex-wrap: wrap;
 }
 
-.action-form {
-    flex: 1;
-    min-width: 120px;
+.action-form-inline {
+    display: inline;
+    margin: 0;
 }
 
-.action-btn {
-    flex: 1;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    gap: 0.5rem;
-    padding: 0.75rem 1rem;
+.action-btn-icon {
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     border: none;
-    border-radius: 12px;
-    font-weight: 600;
+    border-radius: 8px;
     font-size: 0.9rem;
-        cursor: pointer;
+    cursor: pointer;
     transition: all 0.3s ease;
-    text-decoration: none;
-    min-width: 120px;
+    background: transparent;
 }
 
 .action-view {
+    color: #3b82f6;
     background: rgba(59, 130, 246, 0.15);
     border: 1px solid rgba(59, 130, 246, 0.3);
-    color: #3b82f6;
 }
 
 .action-view:hover {
     background: rgba(59, 130, 246, 0.25);
     transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
 }
 
 .action-mark-read {
+    color: #10b981;
     background: rgba(16, 185, 129, 0.15);
     border: 1px solid rgba(16, 185, 129, 0.3);
-    color: #10b981;
 }
 
 .action-mark-read:hover {
     background: rgba(16, 185, 129, 0.25);
     transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
 }
 
 .action-contact {
+    color: #06b6d4;
     background: rgba(6, 182, 212, 0.15);
     border: 1px solid rgba(6, 182, 212, 0.3);
-    color: #06b6d4;
 }
 
 .action-contact:hover {
     background: rgba(6, 182, 212, 0.25);
     transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
 }
 
 .action-delete {
+    color: #ef4444;
     background: rgba(239, 68, 68, 0.15);
     border: 1px solid rgba(239, 68, 68, 0.3);
-    color: #ef4444;
 }
 
 .action-delete:hover {
     background: rgba(239, 68, 68, 0.25);
     transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
 }
 
 /* Pagination */
@@ -852,7 +1008,7 @@ body.light-mode .empty-state-text {
 
 /* Message Modal */
 .message-modal {
-            display: none;
+    display: none;
     position: fixed;
     top: 0;
     left: 0;
@@ -900,8 +1056,8 @@ body.light-mode .message-modal-content {
 }
 
 .message-modal-header {
-            display: flex;
-            align-items: center;
+    display: flex;
+    align-items: center;
     gap: 1rem;
     margin-bottom: 1.5rem;
     padding-bottom: 1rem;
@@ -917,7 +1073,7 @@ body.light-mode .message-modal-content {
     align-items: center;
     justify-content: center;
     font-size: 1.5rem;
-            color: #06b6d4;
+    color: #06b6d4;
 }
 
 .message-modal-title {
@@ -940,8 +1096,8 @@ body.light-mode .message-modal-title {
     border-radius: 10px;
     color: #ef4444;
     cursor: pointer;
-        display: flex;
-        align-items: center;
+    display: flex;
+    align-items: center;
     justify-content: center;
     transition: all 0.3s ease;
 }
@@ -958,7 +1114,7 @@ body.light-mode .message-modal-title {
 
 .message-modal-detail {
     padding: 1rem;
-        background: rgba(6, 182, 212, 0.05);
+    background: rgba(6, 182, 212, 0.05);
     border-radius: 12px;
 }
 
@@ -1018,6 +1174,7 @@ body.light-mode .message-modal-content-box {
     
     .messages-filters-tabs {
         flex-direction: column;
+        width: 100%;
     }
     
     .filter-tab {
@@ -1025,20 +1182,28 @@ body.light-mode .message-modal-content-box {
         justify-content: center;
     }
     
-    .message-card-header {
+    .messages-table-wrapper {
+        padding: 1rem;
+    }
+    
+    .messages-table {
+        min-width: 1000px;
+    }
+    
+    .messages-table th,
+    .messages-table td {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.85rem;
+    }
+    
+    .cell-actions-wrapper {
         flex-direction: column;
+        gap: 0.25rem;
     }
     
-    .message-details-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .message-card-actions {
-        flex-direction: column;
-    }
-    
-    .action-btn {
-        width: 100%;
+    .action-btn-icon {
+        width: 32px;
+        height: 32px;
     }
 }
 </style>
@@ -1091,7 +1256,7 @@ function showMessageDetails(messageId) {
         <div class="message-modal-detail">
             <div class="message-modal-detail-label">Sujet</div>
             <div class="message-modal-detail-value font-semibold">${message.subject}</div>
-            </div>
+        </div>
         
         <div class="message-modal-detail">
             <div class="message-modal-detail-label">Message</div>
@@ -1106,7 +1271,7 @@ function showMessageDetails(messageId) {
         <div class="message-modal-detail">
             <div class="message-modal-detail-label">Statut</div>
             <div class="message-modal-detail-value">
-                ${message.is_read ? '<span class="status-badge status-read"><i class="fas fa-check-circle"></i> Lu</span>' : '<span class="status-badge status-unread"><i class="fas fa-circle"></i> Non lu</span>'}
+                ${message.is_read ? '<span class="cell-status-badge cell-status-read"><i class="fas fa-check-circle"></i> Lu</span>' : '<span class="cell-status-badge cell-status-unread"><i class="fas fa-circle"></i> Non lu</span>'}
             </div>
         </div>
     `;

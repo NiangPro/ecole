@@ -52,7 +52,7 @@ class SearchController extends Controller
             });
             
             // Recherche dans les articles d'emploi publiés avec filtres - Optimisé avec eager loading
-            $articlesQuery = JobArticle::where('status', 'published')
+            $articlesQuery = JobArticle::published()
                 ->where(function($q) use ($query) {
                     $q->where('title', 'like', "%{$query}%")
                       ->orWhere('content', 'like', "%{$query}%")

@@ -15,6 +15,7 @@ use App\Models\UserGoal;
 use App\Models\CoursePurchase;
 use App\Models\PaidCourse;
 use App\Models\Affiliate;
+use App\Models\DocumentPurchase;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
@@ -145,6 +146,14 @@ class ProfileController extends Controller
                 $data['quizResults']
             );
         });
+        
+        // Documents achetés (limité aux 6 derniers)
+        $data['purchasedDocuments'] = DocumentPurchase::where('user_id', $user->id)
+            ->where('status', 'completed')
+            ->with(['document.category', 'downloads'])
+            ->orderBy('created_at', 'desc')
+            ->limit(6)
+            ->get();
         
         return view('dashboard.overview', $data);
     }

@@ -2,15 +2,20 @@
   "name": "NiangProgrammeur - Formation Développement Web",
   "short_name": "NiangProg",
   "description": "Plateforme de formation gratuite en développement web. Apprenez HTML5, CSS3, JavaScript, PHP, Laravel et plus encore.",
-  "start_url": "/",
+  "start_url": "/?utm_source=pwa",
   "display": "standalone",
   "background_color": "#0f172a",
   "theme_color": "#06b6d4",
-  "orientation": "portrait-primary",
+  "orientation": "any",
   "scope": "/",
   "lang": "fr",
   "dir": "ltr",
   "categories": ["education", "developer"],
+  "prefer_related_applications": false,
+  "display_override": ["window-controls-overlay", "standalone", "minimal-ui"],
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
   "icons": [
     {
       "src": "/images/logo.png",
@@ -76,6 +81,7 @@
   },
   "prefer_related_applications": false
 }
+
 
 
 

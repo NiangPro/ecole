@@ -33,7 +33,7 @@ class Category extends Model
 
     public function publishedArticles(): HasMany
     {
-        return $this->hasMany(JobArticle::class)->where('status', 'published');
+        return $this->hasMany(JobArticle::class)->published();
     }
 
     /**

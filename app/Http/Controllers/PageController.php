@@ -19,63 +19,61 @@ class PageController extends Controller
         // Forcer la locale AVANT tout traitement pour la traduction
         $locale = $this->ensureLocale();
         
-        // Cache les 9 derniers articles publiés (15 minutes) - Optimisé avec eager loading
-        $latestJobs = \Illuminate\Support\Facades\Cache::remember('latest_jobs', 900, function () {
-            return \App\Models\JobArticle::where('status', 'published')
+        // Cache de la vue complète pour améliorer les performances (15 minutes)
+        $cacheKey = 'homepage_view_' . $locale;
+        $cachedView = \Illuminate\Support\Facades\Cache::remember($cacheKey, 900, function () use ($locale) {
+            // Cache les 12 derniers articles publiés - Optimisé avec eager loading
+            $latestJobs = \App\Models\JobArticle::published()
                 ->where('is_sponsored', false)
-                ->with(['category:id,name,slug']) // Eager loading optimisé
+                ->with(['category:id,name,slug'])
                 ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'created_at', 'views')
                 ->orderBy('created_at', 'desc')
-                ->take(9)
+                ->take(12)
                 ->get();
-        });
-        
-        // Cache les catégories actives (15 minutes) - Optimisé avec eager loading - Limité à 9
-        $categories = \Illuminate\Support\Facades\Cache::remember('active_categories_homepage', 900, function () {
-            return \App\Models\Category::where('is_active', true)
+            
+            // Cache les catégories actives - Optimisé avec eager loading - Limité à 9
+            $categories = \App\Models\Category::where('is_active', true)
                 ->withCount(['publishedArticles' => function ($query) {
-                    $query->where('status', 'published');
+                    $query->published();
                 }])
                 ->orderBy('order', 'asc')
                 ->orderBy('name', 'asc')
                 ->take(9)
                 ->get();
-        });
-        
-        // Cache les articles sponsorisés (15 minutes) - Optimisé avec eager loading
-        $sponsoredArticles = \Illuminate\Support\Facades\Cache::remember('sponsored_articles', 900, function () {
-            return \App\Models\JobArticle::where('status', 'published')
+            
+            // Cache les articles sponsorisés - Optimisé avec eager loading
+            $sponsoredArticles = \App\Models\JobArticle::published()
                 ->where('is_sponsored', true)
-                ->with(['category:id,name,slug']) // Eager loading optimisé
+                ->with(['category:id,name,slug'])
                 ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')
                 ->orderBy('published_at', 'desc')
                 ->take(2)
                 ->get();
-        });
-        
-        // Cache les publicités pour la position "content" (30 minutes)
-        $sidebarAds = \Illuminate\Support\Facades\Cache::remember('sidebar_ads_content', 1800, function () {
-            return \App\Models\Ad::active()
+            
+            // Cache les publicités pour la position "content"
+            $sidebarAds = \App\Models\Ad::active()
                 ->forPosition('content')
                 ->whereNull('location')
                 ->orderBy('order')
                 ->get();
-        });
-        
-        // Cache les publicités pour l'emplacement "homepage_after_exercises" (30 minutes)
-        $homepageAds = \Illuminate\Support\Facades\Cache::remember('homepage_ads_after_exercises', 1800, function () {
-            return \App\Models\Ad::active()
+            
+            // Cache les publicités pour l'emplacement "homepage_after_exercises"
+            $homepageAds = \App\Models\Ad::active()
                 ->forLocation('homepage_after_exercises')
                 ->orderBy('order')
                 ->get();
-        });
-        
-        // Cache les articles conseils et carrières pour la sidebar (15 minutes) - Triés du plus récent au plus ancien
-        $careerAdviceArticles = \Illuminate\Support\Facades\Cache::remember('career_advice_articles', 900, function () {
-            $conseilsCategory = \App\Models\Category::where('slug', 'conseils-carriere')->first();
-            if ($conseilsCategory) {
-                return \App\Models\JobArticle::where('status', 'published')
-                    ->where('category_id', $conseilsCategory->id)
+            
+            // Cache la catégorie conseils-carriere (1 heure) pour éviter les requêtes répétées
+            $conseilsCategoryId = \Illuminate\Support\Facades\Cache::remember('category_conseils_carriere_id', 3600, function () {
+                $cat = \App\Models\Category::where('slug', 'conseils-carriere')->select('id')->first();
+                return $cat ? $cat->id : null;
+            });
+            
+            // Cache les articles conseils et carrières pour la sidebar - Optimisé
+            $careerAdviceArticles = collect();
+            if ($conseilsCategoryId) {
+                $careerAdviceArticles = \App\Models\JobArticle::published()
+                    ->where('category_id', $conseilsCategoryId)
                     ->with('category:id,name,slug')
                     ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')
                     ->orderBy('published_at', 'desc')
@@ -83,21 +81,16 @@ class PageController extends Controller
                     ->take(9)
                     ->get();
             }
-            return collect();
-        });
-        
-        // Cache les cours payants publiés (15 minutes) - Optimisé avec eager loading
-        $paidCourses = \Illuminate\Support\Facades\Cache::remember('homepage_paid_courses', 900, function () {
-            return \App\Models\PaidCourse::where('status', 'published')
+            
+            // Cache les cours payants publiés - Optimisé avec eager loading
+            $paidCourses = \App\Models\PaidCourse::where('status', 'published')
                 ->select('id', 'title', 'slug', 'description', 'cover_image', 'cover_type', 'price', 'currency', 'discount_price', 'discount_start', 'discount_end', 'duration_hours', 'students_count', 'rating', 'reviews_count', 'created_at')
                 ->orderBy('created_at', 'desc')
                 ->take(4)
                 ->get();
-        });
-        
-        // Cache les articles vedettes (15 minutes) - Optimisé avec eager loading
-        $featuredArticles = \Illuminate\Support\Facades\Cache::remember('featured_articles', 900, function () {
-            return \App\Models\JobArticle::where('status', 'published')
+            
+            // Cache les articles vedettes - Optimisé avec eager loading
+            $featuredArticles = \App\Models\JobArticle::published()
                 ->where('is_featured', true)
                 ->with(['category:id,name,slug'])
                 ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')
@@ -105,9 +98,25 @@ class PageController extends Controller
                 ->orderBy('created_at', 'desc')
                 ->take(4)
                 ->get();
+            
+            // Cache les documents vedettes - Optimisé avec une seule requête combinée
+            $featuredDocuments = \App\Models\Document::published()
+                ->active()
+                ->with(['category:id,name,slug'])
+                ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'price', 'discount_price', 'download_count', 'sales_count', 'views_count', 'published_at', 'is_featured')
+                ->orderByRaw('CASE WHEN is_featured = 1 THEN 0 ELSE 1 END')
+                ->orderBy('download_count', 'desc')
+                ->orderBy('views_count', 'desc')
+                ->take(4)
+                ->get();
+            
+            return compact('latestJobs', 'categories', 'sponsoredArticles', 'sidebarAds', 'homepageAds', 'careerAdviceArticles', 'paidCourses', 'featuredArticles', 'featuredDocuments');
         });
         
-        return view('index', compact('latestJobs', 'categories', 'sponsoredArticles', 'sidebarAds', 'homepageAds', 'careerAdviceArticles', 'paidCourses', 'featuredArticles'));
+        // Extraire les données du cache
+        extract($cachedView);
+        
+        return view('index', compact('latestJobs', 'categories', 'sponsoredArticles', 'sidebarAds', 'homepageAds', 'careerAdviceArticles', 'paidCourses', 'featuredArticles', 'featuredDocuments'));
     }
 
     public function about()
@@ -200,7 +209,7 @@ class PageController extends Controller
         ];
         
         // Récupérer les 49 derniers articles
-        $recentArticles = \App\Models\JobArticle::where('status', 'published')
+        $recentArticles = \App\Models\JobArticle::published()
             ->orderBy('published_at', 'desc')
             ->orderBy('created_at', 'desc')
             ->take(49)
@@ -11676,7 +11685,7 @@ console.log(gestionnaire.lister());',
             $categories = \App\Models\Category::where('is_active', true)
                 ->withCount([
                     'articles' => function($query) {
-                        $query->where('status', 'published');
+                        $query->published();
                     }
                 ])
                 ->select('id', 'name', 'slug', 'description', 'icon', 'image', 'image_type', 'order')
@@ -11689,7 +11698,7 @@ console.log(gestionnaire.lister());',
                 // Si articles_count n'existe pas, calculer directement
                 if (!isset($category->articles_count)) {
                     $category->articles_count = \App\Models\JobArticle::where('category_id', $category->id)
-                        ->where('status', 'published')
+                        ->published()
                         ->count();
                 }
                 $category->published_articles_count = $category->articles_count ?? 0;
@@ -11700,7 +11709,7 @@ console.log(gestionnaire.lister());',
         
         // Cache les 6 derniers articles avec sélection optimisée (15 minutes)
         $recentArticles = \Illuminate\Support\Facades\Cache::remember('recent_job_articles', 900, function () {
-            return \App\Models\JobArticle::where('status', 'published')
+            return \App\Models\JobArticle::published()
                 ->with('category:id,name,slug')
                 ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')
                 ->orderBy('published_at', 'desc')
@@ -11731,7 +11740,7 @@ console.log(gestionnaire.lister());',
         $cacheKey = $category ? "job_articles_category_{$category->id}_page_{$page}" : "job_articles_all_page_{$page}";
         
         $articles = \Illuminate\Support\Facades\Cache::remember($cacheKey, 900, function () use ($category) {
-            $query = \App\Models\JobArticle::where('status', 'published')
+            $query = \App\Models\JobArticle::published()
                 ->with('category:id,name,slug')
                 ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views', 'created_at', 'updated_at');
             
@@ -11760,7 +11769,7 @@ console.log(gestionnaire.lister());',
         $cacheKey = $category ? "job_articles_bourses_page_" . request()->get('page', 1) : "job_articles_bourses_all_page_" . request()->get('page', 1);
         
         $articles = \Illuminate\Support\Facades\Cache::remember($cacheKey, 900, function () use ($category) {
-            return \App\Models\JobArticle::where('status', 'published')
+            return \App\Models\JobArticle::published()
                 ->where('category_id', $category->id ?? null)
                 ->with('category:id,name,slug')
                 ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')
@@ -11782,7 +11791,7 @@ console.log(gestionnaire.lister());',
         $cacheKey = "job_articles_candidature_page_" . request()->get('page', 1);
         
         $articles = \Illuminate\Support\Facades\Cache::remember($cacheKey, 900, function () use ($category) {
-            return \App\Models\JobArticle::where('status', 'published')
+            return \App\Models\JobArticle::published()
                 ->where('category_id', $category->id ?? null)
                 ->with('category:id,name,slug')
                 ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')
@@ -11804,7 +11813,7 @@ console.log(gestionnaire.lister());',
         $cacheKey = "job_articles_opportunites_page_" . request()->get('page', 1);
         
         $articles = \Illuminate\Support\Facades\Cache::remember($cacheKey, 900, function () use ($category) {
-            return \App\Models\JobArticle::where('status', 'published')
+            return \App\Models\JobArticle::published()
                 ->where('category_id', $category->id ?? null)
                 ->with('category:id,name,slug')
                 ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')
@@ -11826,7 +11835,7 @@ console.log(gestionnaire.lister());',
         $cacheKey = "job_articles_concours_page_" . request()->get('page', 1);
         
         $articles = \Illuminate\Support\Facades\Cache::remember($cacheKey, 900, function () use ($category) {
-            return \App\Models\JobArticle::where('status', 'published')
+            return \App\Models\JobArticle::published()
                 ->where('category_id', $category->id ?? null)
                 ->with('category:id,name,slug')
                 ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')
@@ -11876,7 +11885,7 @@ console.log(gestionnaire.lister());',
             });
             
             // Recherche dans les articles d'emploi publiés avec filtres
-            $articlesQuery = \App\Models\JobArticle::where('status', 'published')
+            $articlesQuery = \App\Models\JobArticle::published()
                 ->where(function($q) use ($query) {
                     $q->where('title', 'like', "%{$query}%")
                       ->orWhere('content', 'like', "%{$query}%")
@@ -11940,7 +11949,7 @@ console.log(gestionnaire.lister());',
     {
         // Cache les 70 articles les plus récents avec optimisation SEO (15 minutes)
         $recentArticles = \Illuminate\Support\Facades\Cache::remember('recent_articles_70_seo', 900, function () {
-            return \App\Models\JobArticle::where('status', 'published')
+            return \App\Models\JobArticle::published()
                 ->with('category:id,name,slug')
                 ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views', 'meta_title', 'meta_description', 'created_at')
                 ->orderBy('published_at', 'desc')
@@ -11966,7 +11975,7 @@ console.log(gestionnaire.lister());',
         // Cache les articles de la catégorie (15 minutes)
         $articles = \Illuminate\Support\Facades\Cache::remember("category_articles_{$slug}", 900, function () use ($category) {
             return \App\Models\JobArticle::where('category_id', $category->id)
-                ->where('status', 'published')
+                ->published()
                 ->with('category:id,name,slug')
                 ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')
                 ->orderBy('published_at', 'desc')
@@ -11991,7 +12000,7 @@ console.log(gestionnaire.lister());',
         // Cache l'article avec sélection optimisée (30 minutes)
         $article = \Illuminate\Support\Facades\Cache::remember("job_article_{$slug}", 1800, function () use ($slug) {
             return \App\Models\JobArticle::where('slug', $slug)
-                ->where('status', 'published')
+                ->published()
                 ->with('category:id,name,slug')
                 ->select('id', 'title', 'slug', 'excerpt', 'content', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views', 'meta_title', 'meta_description', 'meta_keywords', 'created_at', 'updated_at')
                 ->firstOrFail();
@@ -12002,7 +12011,7 @@ console.log(gestionnaire.lister());',
         
         // Cache les articles similaires avec sélection optimisée (15 minutes)
         $relatedArticles = \Illuminate\Support\Facades\Cache::remember("related_articles_{$article->id}", 900, function () use ($article) {
-            return \App\Models\JobArticle::where('status', 'published')
+            return \App\Models\JobArticle::published()
                 ->where('category_id', $article->category_id)
                 ->where('id', '!=', $article->id)
                 ->with('category:id,name,slug')

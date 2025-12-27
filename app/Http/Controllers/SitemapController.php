@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\JobArticle;
 use App\Models\Category;
+use App\Models\Document;
 use Illuminate\Support\Facades\Cache;
 
 class SitemapController extends Controller
@@ -25,12 +26,28 @@ class SitemapController extends Controller
             // Calculer la date de dernière modification des articles
             $lastArticleUpdate = Cache::remember('sitemap_articles_lastmod', 3600, function () {
                 try {
-                    $lastArticle = JobArticle::where('status', 'published')
+                    $lastArticle = JobArticle::published()
                         ->whereNotNull('published_at')
                         ->orderBy('updated_at', 'desc')
                         ->first();
                     if ($lastArticle && $lastArticle->updated_at) {
                         return $lastArticle->updated_at->format('Y-m-d');
+                    }
+                } catch (\Exception $e) {
+                    // Ignorer si la table n'existe pas
+                }
+                return now()->format('Y-m-d');
+            });
+            
+            // Calculer la date de dernière modification des documents
+            $lastDocumentUpdate = Cache::remember('sitemap_documents_lastmod', 3600, function () {
+                try {
+                    $lastDocument = Document::published()
+                        ->whereNotNull('published_at')
+                        ->orderBy('updated_at', 'desc')
+                        ->first();
+                    if ($lastDocument && $lastDocument->updated_at) {
+                        return $lastDocument->updated_at->format('Y-m-d');
                     }
                 } catch (\Exception $e) {
                     // Ignorer si la table n'existe pas
@@ -46,6 +63,11 @@ class SitemapController extends Controller
             $sitemap .= '  <sitemap>' . PHP_EOL;
             $sitemap .= '    <loc>' . htmlspecialchars($baseUrl . '/sitemap-articles.xml', ENT_XML1, 'UTF-8') . '</loc>' . PHP_EOL;
             $sitemap .= '    <lastmod>' . ($lastArticleUpdate ?? now()->format('Y-m-d')) . '</lastmod>' . PHP_EOL;
+            $sitemap .= '  </sitemap>' . PHP_EOL;
+            
+            $sitemap .= '  <sitemap>' . PHP_EOL;
+            $sitemap .= '    <loc>' . htmlspecialchars($baseUrl . '/sitemap-documents.xml', ENT_XML1, 'UTF-8') . '</loc>' . PHP_EOL;
+            $sitemap .= '    <lastmod>' . ($lastDocumentUpdate ?? now()->format('Y-m-d')) . '</lastmod>' . PHP_EOL;
             $sitemap .= '  </sitemap>' . PHP_EOL;
             
             $sitemap .= '</sitemapindex>';
@@ -183,7 +205,7 @@ class SitemapController extends Controller
             $sitemap .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9">' . PHP_EOL;
             
             try {
-            $articles = JobArticle::where('status', 'published')
+            $articles = JobArticle::published()
                 ->whereNotNull('published_at')
                 ->with(['category' => function($query) {
                     $query->where('is_active', true);
@@ -250,6 +272,78 @@ class SitemapController extends Controller
                 }
                 
                 $sitemap .= '  </url>' . PHP_EOL;
+                }
+            } catch (\Exception $e) {
+                // Ignorer si la table n'existe pas encore
+            }
+            
+            $sitemap .= '</urlset>';
+            
+            return $sitemap;
+        });
+        
+        return response($sitemap, 200)
+            ->header('Content-Type', 'application/xml; charset=utf-8')
+            ->header('Cache-Control', 'public, max-age=3600');
+    }
+    
+    public function documents()
+    {
+        // Détecter l'URL de base (production ou local)
+        $baseUrl = config('app.env') === 'production' 
+            ? 'https://niangprogrammeur.com' 
+            : (request()->getSchemeAndHttpHost());
+        
+        // Cache du sitemap documents pendant 1 heure (3600 secondes)
+        // Le cache est invalidé automatiquement quand un document est créé/modifié/supprimé
+        $sitemap = Cache::remember('sitemap_documents_' . md5($baseUrl), 3600, function () use ($baseUrl) {
+            $sitemap = '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
+            $sitemap .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">' . PHP_EOL;
+            
+            try {
+                $documents = Document::published()
+                    ->whereNotNull('published_at')
+                    ->with(['category', 'author'])
+                    ->orderBy('published_at', 'desc')
+                    ->limit(50000) // Limite Google : 50 000 URLs max par sitemap
+                    ->get();
+                
+                foreach ($documents as $document) {
+                    $sitemap .= '  <url>' . PHP_EOL;
+                    $url = $baseUrl . '/documents/' . $document->slug;
+                    $sitemap .= '    <loc>' . htmlspecialchars($url, ENT_XML1, 'UTF-8') . '</loc>' . PHP_EOL;
+                    $sitemap .= '    <lastmod>' . ($document->updated_at ? $document->updated_at->format('Y-m-d\TH:i:s+00:00') : ($document->published_at ? $document->published_at->format('Y-m-d\TH:i:s+00:00') : now()->format('Y-m-d\TH:i:s+00:00'))) . '</lastmod>' . PHP_EOL;
+                    $sitemap .= '    <changefreq>weekly</changefreq>' . PHP_EOL;
+                    // Priorité dynamique basée sur la fraîcheur du contenu et le statut featured
+                    $priority = $document->is_featured ? '0.9' : ($document->published_at && $document->published_at->gt(now()->subDays(7)) ? '0.8' : '0.7');
+                    $sitemap .= '    <priority>' . $priority . '</priority>' . PHP_EOL;
+                    
+                    // Image pour le document (important pour Google Images et SEO)
+                    if ($document->cover_image) {
+                        $imageUrl = $document->cover_type === 'internal' 
+                            ? $baseUrl . '/' . \Illuminate\Support\Facades\Storage::url($document->cover_image)
+                            : $document->cover_image;
+                        // S'assurer que l'URL de l'image est absolue
+                        if (!preg_match('/^https?:\/\//', $imageUrl)) {
+                            $imageUrl = $baseUrl . '/' . ltrim($imageUrl, '/');
+                        }
+                        $sitemap .= '    <image:image>' . PHP_EOL;
+                        $sitemap .= '      <image:loc>' . htmlspecialchars($imageUrl, ENT_XML1, 'UTF-8') . '</image:loc>' . PHP_EOL;
+                        $sitemap .= '      <image:title>' . htmlspecialchars($document->title, ENT_XML1, 'UTF-8') . '</image:title>' . PHP_EOL;
+                        if ($document->excerpt) {
+                            $caption = strip_tags($document->excerpt);
+                            $sitemap .= '      <image:caption>' . htmlspecialchars(mb_substr($caption, 0, 200), ENT_XML1, 'UTF-8') . '</image:caption>' . PHP_EOL;
+                        } elseif ($document->meta_description) {
+                            $sitemap .= '      <image:caption>' . htmlspecialchars(mb_substr($document->meta_description, 0, 200), ENT_XML1, 'UTF-8') . '</image:caption>' . PHP_EOL;
+                        } elseif ($document->description) {
+                            $caption = strip_tags($document->description);
+                            $sitemap .= '      <image:caption>' . htmlspecialchars(mb_substr($caption, 0, 200), ENT_XML1, 'UTF-8') . '</image:caption>' . PHP_EOL;
+                        }
+                        $sitemap .= '      <image:license>' . htmlspecialchars($baseUrl, ENT_XML1, 'UTF-8') . '</image:license>' . PHP_EOL;
+                        $sitemap .= '    </image:image>' . PHP_EOL;
+                    }
+                    
+                    $sitemap .= '  </url>' . PHP_EOL;
                 }
             } catch (\Exception $e) {
                 // Ignorer si la table n'existe pas encore

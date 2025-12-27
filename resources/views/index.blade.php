@@ -629,12 +629,18 @@
     
     /* Styles spécifiques pour la section Exercices & Quiz */
     .exercices-quiz-section {
+        background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 50%, #ffffff 100%);
+        padding: 80px 20px;
         position: relative;
+        overflow: hidden;
         z-index: 2;
-        padding: 50px 20px 30px;
         max-width: 1600px;
         margin: 0 auto;
         width: 100%;
+    }
+    
+    body.dark-mode .exercices-quiz-section {
+        background: linear-gradient(135deg, #1e293b 0%, #334155 30%, #475569 60%, #1e293b 100%);
     }
     
     .exercices-quiz-section-title {
@@ -643,7 +649,7 @@
         font-weight: 800;
         text-align: center;
         margin-bottom: 20px;
-        background: linear-gradient(135deg, #06b6d4 0%, #14b8a6 50%, #8b5cf6 100%);
+        background: linear-gradient(135deg, #0891b2 0%, #0e7490 30%, #06b6d4 50%, #14b8a6 70%, #0d9488 100%);
         background-size: 200% 200%;
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
@@ -651,12 +657,27 @@
         animation: gradientShift 5s ease infinite;
         position: relative;
         z-index: 1;
+        color: #0e7490;
+    }
+    
+    body:not(.dark-mode) .exercices-quiz-section-title {
+        background: linear-gradient(135deg, #0891b2 0%, #0e7490 30%, #06b6d4 50%, #14b8a6 70%, #0d9488 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    body.dark-mode .exercices-quiz-section-title {
+        background: linear-gradient(135deg, #22d3ee 0%, #06b6d4 30%, #14b8a6 60%, #22d3ee 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
     }
     
     .exercices-quiz-section-subtitle {
         text-align: center;
         font-size: clamp(1rem, 2vw, 1.2rem);
-        color: rgba(30, 41, 59, 0.7);
+        color: #334155;
         width: 100%;
         max-width: 100%;
         margin: 0 auto 60px;
@@ -664,10 +685,20 @@
         position: relative;
         z-index: 1;
         padding: 0 20px;
+        font-weight: 400;
+    }
+    
+    body:not(.dark-mode) .exercices-quiz-section-subtitle {
+        color: #334155;
     }
     
     body.dark-mode .exercices-quiz-section-subtitle {
-        color: rgba(255, 255, 255, 0.7);
+        color: rgba(255, 255, 255, 0.9) !important;
+        font-weight: 400;
+    }
+    
+    body:not(.dark-mode) .exercices-quiz-section-subtitle {
+        color: #334155 !important;
     }
     
     /* Carousel Design Moderne et Épuré */
@@ -1211,56 +1242,56 @@
 </section>
 
 <!-- Exercices & Quiz Section -->
-<section class="exercices-quiz-section">
+<section class="exercices-quiz-section" style="background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 50%, #ffffff 100%); padding: 80px 20px; position: relative; overflow: hidden;">
     <h2 class="exercices-quiz-section-title">{{ trans('app.home.exercices_quiz.section_title') }}</h2>
-    <p class="exercices-quiz-section-subtitle">
+    <p class="exercices-quiz-section-subtitle" style="text-align: center; font-size: clamp(1rem, 2vw, 1.2rem); width: 100%; max-width: 100%; margin: 0 auto 60px; line-height: 1.8; position: relative; z-index: 1; padding: 0 20px; font-weight: 400;">
         {{ trans('app.home.exercices_quiz.section_subtitle') }}
     </p>
     
-    <div class="exercices-quiz-container">
+    <div class="exercices-quiz-container" style="display: grid; grid-template-columns: {{ isset($sidebarAds) && $sidebarAds->count() > 0 ? '1fr 300px' : '1fr' }}; gap: 30px; margin-bottom: 0; align-items: start; max-width: 1600px; margin: 0 auto; width: 100%;">
         <!-- Cards Exercices & Quiz -->
-        <div class="exercices-quiz-cards">
-        <!-- Exercices Card -->
-            <div class="exercices-quiz-card exercices-card">
-                <div class="exercices-quiz-icon-wrapper">
-                    <i class="fas fa-code"></i>
+        <div class="exercices-quiz-cards" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; width: 100%;">
+            <!-- Exercices Card -->
+            <div class="exercices-quiz-card exercices-card" style="border: 1px solid rgba(6, 182, 212, 0.15); border-radius: 16px; padding: 32px; text-align: left; transition: all 0.3s ease; position: relative; overflow: hidden; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); display: flex; flex-direction: column; min-height: 320px;">
+                <div class="exercices-quiz-icon-wrapper" style="width: 64px; height: 64px; background: transparent; border-radius: 0; display: flex; align-items: center; justify-content: flex-start; margin-bottom: 20px; transition: all 0.3s ease; position: relative; z-index: 2; pointer-events: none;">
+                    <i class="fas fa-code" style="font-size: 2rem; transition: all 0.3s ease; z-index: 3;"></i>
                 </div>
-                <h3 class="exercices-quiz-title">{{ trans('app.home.exercices_quiz.exercices_title') }}</h3>
-                <p class="exercices-quiz-description">
-                {{ trans('app.home.exercices_quiz.exercices_description') }}
-            </p>
-                <a href="{{ route('exercices') }}" class="exercices-quiz-btn exercices-btn">
-                {{ trans('app.home.exercices_quiz.exercices_button') }} <i class="fas fa-arrow-right"></i>
-            </a>
-        </div>
-        
-        <!-- Quiz Card -->
-            <div class="exercices-quiz-card quiz-card">
-                <div class="exercices-quiz-icon-wrapper quiz-icon-wrapper">
-                    <i class="fas fa-question-circle"></i>
+                <h3 class="exercices-quiz-title" style="font-size: 1.5rem; font-weight: 700; margin-bottom: 16px; transition: color 0.3s ease; position: relative; z-index: 2; pointer-events: none;">{{ trans('app.home.exercices_quiz.exercices_title') }}</h3>
+                <p class="exercices-quiz-description" style="line-height: 1.7; margin-bottom: 24px; font-size: 1rem; transition: color 0.3s ease; position: relative; z-index: 2; pointer-events: none; flex: 1;">
+                    {{ trans('app.home.exercices_quiz.exercices_description') }}
+                </p>
+                <a href="{{ route('exercices') }}" class="exercices-quiz-btn exercices-btn" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 24px; background: transparent; color: #06b6d4; font-weight: 600; font-size: 1rem; text-decoration: none; border-radius: 8px; transition: all 0.3s ease; position: relative; overflow: hidden; width: fit-content; border: none; z-index: 10 !important; pointer-events: auto !important; cursor: pointer; margin-top: auto;">
+                    {{ trans('app.home.exercices_quiz.exercices_button') }} <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            
+            <!-- Quiz Card -->
+            <div class="exercices-quiz-card quiz-card" style="border: 1px solid rgba(6, 182, 212, 0.15); border-radius: 16px; padding: 32px; text-align: left; transition: all 0.3s ease; position: relative; overflow: hidden; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); display: flex; flex-direction: column; min-height: 320px;">
+                <div class="exercices-quiz-icon-wrapper quiz-icon-wrapper" style="width: 64px; height: 64px; background: transparent; border-radius: 0; display: flex; align-items: center; justify-content: flex-start; margin-bottom: 20px; transition: all 0.3s ease; position: relative; z-index: 2; pointer-events: none;">
+                    <i class="fas fa-question-circle" style="font-size: 2rem; transition: all 0.3s ease; z-index: 3;"></i>
                 </div>
-                <h3 class="exercices-quiz-title">{{ trans('app.home.exercices_quiz.quiz_title') }}</h3>
-                <p class="exercices-quiz-description">
-                {{ trans('app.home.exercices_quiz.quiz_description') }}
-            </p>
-                <a href="{{ route('quiz') }}" class="exercices-quiz-btn quiz-btn">
-                {{ trans('app.home.exercices_quiz.quiz_button') }} <i class="fas fa-arrow-right"></i>
-            </a>
-        </div>
-        
-        <!-- Formations Card -->
-            <div class="exercices-quiz-card formations-card">
-                <div class="exercices-quiz-icon-wrapper formations-icon-wrapper">
-                    <i class="fas fa-graduation-cap"></i>
+                <h3 class="exercices-quiz-title" style="font-size: 1.5rem; font-weight: 700; margin-bottom: 16px; transition: color 0.3s ease; position: relative; z-index: 2; pointer-events: none;">{{ trans('app.home.exercices_quiz.quiz_title') }}</h3>
+                <p class="exercices-quiz-description" style="line-height: 1.7; margin-bottom: 24px; font-size: 1rem; transition: color 0.3s ease; position: relative; z-index: 2; pointer-events: none; flex: 1;">
+                    {{ trans('app.home.exercices_quiz.quiz_description') }}
+                </p>
+                <a href="{{ route('quiz') }}" class="exercices-quiz-btn quiz-btn" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 24px; background: transparent; color: #06b6d4; font-weight: 600; font-size: 1rem; text-decoration: none; border-radius: 8px; transition: all 0.3s ease; position: relative; overflow: hidden; width: fit-content; border: none; z-index: 10 !important; pointer-events: auto !important; cursor: pointer; margin-top: auto;">
+                    {{ trans('app.home.exercices_quiz.quiz_button') }} <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            
+            <!-- Formations Card -->
+            <div class="exercices-quiz-card formations-card" style="border: 1px solid rgba(6, 182, 212, 0.15); border-radius: 16px; padding: 32px; text-align: left; transition: all 0.3s ease; position: relative; overflow: hidden; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); display: flex; flex-direction: column; min-height: 320px;">
+                <div class="exercices-quiz-icon-wrapper formations-icon-wrapper" style="width: 64px; height: 64px; background: transparent; border-radius: 0; display: flex; align-items: center; justify-content: flex-start; margin-bottom: 20px; transition: all 0.3s ease; position: relative; z-index: 2; pointer-events: none;">
+                    <i class="fas fa-graduation-cap" style="font-size: 2rem; transition: all 0.3s ease; z-index: 3;"></i>
                 </div>
-                <h3 class="exercices-quiz-title">{{ trans('app.home.exercices_quiz.formations_title') }}</h3>
-                <p class="exercices-quiz-description">
-                {{ trans('app.home.exercices_quiz.formations_description') }}
-            </p>
-                <a href="{{ route('formations.all') }}" class="exercices-quiz-btn formations-btn">
-                {{ trans('app.home.exercices_quiz.formations_button') }} <i class="fas fa-arrow-right"></i>
-            </a>
-        </div>
+                <h3 class="exercices-quiz-title" style="font-size: 1.5rem; font-weight: 700; margin-bottom: 16px; transition: color 0.3s ease; position: relative; z-index: 2; pointer-events: none;">{{ trans('app.home.exercices_quiz.formations_title') }}</h3>
+                <p class="exercices-quiz-description" style="line-height: 1.7; margin-bottom: 24px; font-size: 1rem; transition: color 0.3s ease; position: relative; z-index: 2; pointer-events: none; flex: 1;">
+                    {{ trans('app.home.exercices_quiz.formations_description') }}
+                </p>
+                <a href="{{ route('formations.all') }}" class="exercices-quiz-btn formations-btn" style="display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 24px; background: transparent; color: #06b6d4; font-weight: 600; font-size: 1rem; text-decoration: none; border-radius: 8px; transition: all 0.3s ease; position: relative; overflow: hidden; width: fit-content; border: none; z-index: 10 !important; pointer-events: auto !important; cursor: pointer; margin-top: auto;">
+                    {{ trans('app.home.exercices_quiz.formations_button') }} <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
         </div>
         
         <!-- Sidebar Publicités -->
@@ -1287,6 +1318,386 @@
         @endif
     </div>
 </section>
+
+<!-- Section Documents Vedettes -->
+@if(isset($featuredDocuments) && $featuredDocuments->count() > 0)
+<section class="featured-documents-section" style="position: relative; z-index: 2; padding: 80px 20px; max-width: 1600px; margin: 0 auto; width: 100%;">
+    <div class="featured-documents-container">
+        <!-- Header -->
+        <div style="text-align: center; margin-bottom: 50px;">
+            <div style="display: inline-flex; align-items: center; gap: 15px; margin-bottom: 16px;">
+                <div style="width: 6px; height: 32px; background: linear-gradient(180deg, #06b6d4, #14b8a6); border-radius: 3px;"></div>
+                <h2 class="featured-documents-title" style="font-size: clamp(2rem, 4vw, 2.5rem); font-weight: 900; letter-spacing: -1px; margin: 0; background: linear-gradient(135deg, #06b6d4, #14b8a6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                    <i class="fas fa-star" style="margin-right: 12px; color: #06b6d4;"></i>
+                    {{ app()->getLocale() === 'fr' ? 'Documents Premium' : 'Premium Documents' }}
+                </h2>
+                <div style="width: 6px; height: 32px; background: linear-gradient(180deg, #14b8a6, #06b6d4); border-radius: 3px;"></div>
+            </div>
+            <p class="featured-documents-subtitle" style="font-size: 1.1rem; color: rgba(30, 41, 59, 0.7); max-width: 600px; margin: 0 auto;">
+                {{ app()->getLocale() === 'fr' ? 'Découvrez nos documents les plus populaires et les plus téléchargés' : 'Discover our most popular and downloaded documents' }}
+            </p>
+        </div>
+        
+        <!-- Documents Grid -->
+        <div class="featured-documents-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem;">
+            @foreach($featuredDocuments as $document)
+            <div class="document-card">
+                <!-- Image wrapper -->
+                <div class="document-cover-wrapper">
+                    @if($document->hasDiscount())
+                        <div class="document-discount-badge">-{{ number_format($document->getDiscountPercentage(), 0) }}%</div>
+                    @endif
+                    <a href="{{ route('documents.show', $document->slug) }}">
+                        @if($document->cover_image)
+                            @if($document->cover_type === 'internal')
+                                <img src="{{ asset('storage/' . $document->cover_image) }}" alt="{{ $document->title }}" class="document-cover" loading="lazy">
+                            @else
+                                <img src="{{ $document->cover_image }}" alt="{{ $document->title }}" class="document-cover" loading="lazy">
+                            @endif
+                        @else
+                            <div class="document-cover-placeholder">
+                                <i class="fas fa-file-{{ $document->file_extension === 'pdf' ? 'pdf' : ($document->file_extension === 'doc' || $document->file_extension === 'docx' ? 'word' : 'alt') }}"></i>
+                            </div>
+                        @endif
+                    </a>
+                    
+                    <!-- Prix scotché sur l'image -->
+                    <div class="document-price-overlay">
+                        @if($document->hasDiscount())
+                            <span class="document-price-old">{{ number_format($document->price, 0, ',', ' ') }} FCFA</span>
+                        @endif
+                        <span class="document-price-current">{{ number_format($document->hasDiscount() ? $document->discount_price : $document->price, 0, ',', ' ') }} FCFA</span>
+                    </div>
+                </div>
+                
+                <div class="document-card-body">
+                    <!-- Titre en haut comme Prepa.sn -->
+                    <h3 class="document-title">
+                        <a href="{{ route('documents.show', $document->slug) }}">
+                            {{ $document->title }}
+                        </a>
+                    </h3>
+                    
+                    <!-- Footer avec catégorie et bouton -->
+                    <div class="document-footer">
+                        <div class="document-category">{{ $document->category->name ?? 'Sans catégorie' }}</div>
+                        <a href="{{ route('documents.show', $document->slug) }}" class="document-btn" title="Voir les détails">
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            @endforeach
+        </div>
+        
+        <!-- Bouton Voir tous les documents -->
+        <div style="text-align: center; margin-top: 50px;">
+            <a href="{{ route('documents.index') }}" class="view-all-documents-btn" style="display: inline-flex; align-items: center; gap: 12px; padding: 16px 32px; background: linear-gradient(135deg, #06b6d4, #14b8a6); color: white; font-weight: 700; font-size: 1.1rem; text-decoration: none; border-radius: 12px; transition: all 0.3s ease; box-shadow: 0 4px 20px rgba(6, 182, 212, 0.3);">
+                <span>{{ app()->getLocale() === 'fr' ? 'Voir tous les documents' : 'View all documents' }}</span>
+                <i class="fas fa-arrow-right" style="transition: transform 0.3s ease;"></i>
+            </a>
+        </div>
+    </div>
+</section>
+
+<style>
+    /* Featured Documents Section Styles */
+    body.dark-mode .featured-documents-section {
+        background: transparent !important;
+    }
+    
+    body.dark-mode .featured-documents-subtitle {
+        color: rgba(255, 255, 255, 0.7) !important;
+    }
+    
+    /* Carte Document Style Prepa.sn - Design Fidèle */
+    .featured-documents-section .document-card {
+        position: relative;
+        background: #ffffff;
+        border-radius: 12px;
+        overflow: hidden;
+        height: 100%;
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e0e0e0;
+    }
+    
+    body.dark-mode .featured-documents-section .document-card {
+        background: rgba(30, 41, 59, 0.95);
+        border-color: rgba(6, 182, 212, 0.2);
+    }
+    
+    .featured-documents-section .document-card:hover {
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.08);
+        transform: translateY(-2px);
+    }
+    
+    body.dark-mode .featured-documents-section .document-card:hover {
+        box-shadow: 0 8px 24px rgba(6, 182, 212, 0.3);
+    }
+    
+    /* Image wrapper - Style Prepa.sn */
+    .featured-documents-section .document-cover-wrapper {
+        position: relative;
+        width: 100%;
+        height: 200px;
+        overflow: hidden;
+        background: #fafafa;
+    }
+    
+    body.dark-mode .featured-documents-section .document-cover-wrapper {
+        background: rgba(15, 23, 42, 0.5);
+    }
+    
+    .featured-documents-section .document-cover {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .featured-documents-section .document-cover-placeholder {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #e0e0e0;
+        color: #999999;
+        font-size: 2.5rem;
+    }
+    
+    body.dark-mode .featured-documents-section .document-cover-placeholder {
+        background: rgba(15, 23, 42, 0.5);
+        color: rgba(6, 182, 212, 0.5);
+    }
+    
+    /* Prix étiquette oblique sur l'image */
+    .featured-documents-section .document-price-overlay {
+        position: absolute;
+        top: 20px;
+        right: -40px;
+        background: #06b6d4;
+        color: white;
+        padding: 0.625rem 3rem;
+        font-size: 1rem;
+        font-weight: 700;
+        z-index: 10;
+        transform: rotate(45deg);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.125rem;
+        min-width: 180px;
+        text-align: center;
+        line-height: 1.2;
+    }
+    
+    .featured-documents-section .document-price-overlay .document-price-old {
+        font-size: 0.7rem;
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: line-through;
+        font-weight: 500;
+        display: block;
+    }
+    
+    .featured-documents-section .document-price-overlay .document-price-current {
+        font-size: 1rem;
+        font-weight: 700;
+        color: white;
+        white-space: nowrap;
+        display: block;
+    }
+    
+    .featured-documents-section .document-card-body {
+        padding: 1rem;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        background: #ffffff;
+    }
+    
+    body.dark-mode .featured-documents-section .document-card-body {
+        background: rgba(30, 41, 59, 0.95);
+    }
+    
+    /* Titre - Style Prepa.sn (en haut) */
+    .featured-documents-section .document-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #212121;
+        margin-bottom: 0.75rem;
+        line-height: 1.4;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        min-height: 2.8em;
+    }
+    
+    body.dark-mode .featured-documents-section .document-title {
+        color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .featured-documents-section .document-title a {
+        color: #212121;
+        text-decoration: none;
+    }
+    
+    body.dark-mode .featured-documents-section .document-title a {
+        color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .featured-documents-section .document-title a:hover {
+        color: #06b6d4;
+    }
+    
+    /* Description - Style Prepa.sn */
+    .featured-documents-section .document-excerpt {
+        font-size: 0.875rem;
+        color: #757575;
+        margin-bottom: 1rem;
+        flex: 1;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        line-height: 1.5;
+        min-height: 2.625em;
+    }
+    
+    body.dark-mode .featured-documents-section .document-excerpt {
+        color: rgba(255, 255, 255, 0.7);
+    }
+    
+    /* Badge catégorie/niveau - Style Prepa.sn */
+    .featured-documents-section .document-category {
+        display: inline-block;
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: #757575;
+        margin-bottom: 0.75rem;
+        padding: 0.125rem 0.5rem;
+        background-color: transparent;
+        border: none;
+        width: fit-content;
+    }
+    
+    body.dark-mode .featured-documents-section .document-category {
+        color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .featured-documents-section .document-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: auto;
+        padding-top: 0.75rem;
+        border-top: 1px solid #e0e0e0;
+        gap: 0.75rem;
+    }
+    
+    body.dark-mode .featured-documents-section .document-footer {
+        border-top-color: rgba(6, 182, 212, 0.2);
+    }
+    
+    .featured-documents-section .document-discount-badge {
+        position: absolute;
+        top: 0.5rem;
+        left: 0.5rem;
+        background-color: #f44336;
+        color: white;
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0;
+        z-index: 10;
+    }
+    
+    .featured-documents-section .document-btn {
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        background-color: #06b6d4;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+    
+    .featured-documents-section .document-btn i {
+        font-size: 0.875rem;
+    }
+    
+    .featured-documents-section .document-btn:hover {
+        background-color: #0891b2;
+        color: white;
+        transform: scale(1.1);
+    }
+    
+    /* Bouton Voir tous les documents */
+    .view-all-documents-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        padding: 16px 32px;
+        background: linear-gradient(135deg, #06b6d4, #14b8a6);
+        color: white;
+        font-weight: 700;
+        font-size: 1.1rem;
+        text-decoration: none;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 20px rgba(6, 182, 212, 0.3);
+    }
+    
+    .view-all-documents-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 30px rgba(6, 182, 212, 0.4);
+        background: linear-gradient(135deg, #0891b2, #0d9488);
+    }
+    
+    .view-all-documents-btn:hover i {
+        transform: translateX(4px);
+    }
+    
+    body.dark-mode .view-all-documents-btn {
+        background: linear-gradient(135deg, #06b6d4, #14b8a6);
+        box-shadow: 0 4px 20px rgba(6, 182, 212, 0.4);
+    }
+    
+    body.dark-mode .view-all-documents-btn:hover {
+        background: linear-gradient(135deg, #22d3ee, #06b6d4);
+        box-shadow: 0 8px 30px rgba(6, 182, 212, 0.5);
+    }
+    
+    @media (max-width: 1200px) {
+        .featured-documents-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 1.5rem !important;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .featured-documents-section {
+            padding: 60px 15px !important;
+        }
+        
+        .featured-documents-grid {
+            grid-template-columns: 1fr !important;
+            gap: 1.5rem !important;
+        }
+    }
+</style>
+@endif
 
 <!-- Section Publicitaire Next-Gen après Exercices & Quiz -->
 @if(isset($homepageAds) && $homepageAds->count() > 0)
@@ -2232,6 +2643,50 @@
 </section>
 
 @section('scripts')
+<script>
+    // Adapter la section Exercices & Quiz pour le mode sombre
+    (function() {
+        function updateExercicesQuizSection() {
+            const section = document.querySelector('.exercices-quiz-section');
+            if (!section) return;
+            
+            const isDarkMode = document.body.classList.contains('dark-mode');
+            
+            if (isDarkMode) {
+                section.style.background = 'linear-gradient(135deg, #1e293b 0%, #334155 30%, #475569 60%, #1e293b 100%)';
+            } else {
+                section.style.background = 'linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 50%, #ffffff 100%)';
+            }
+        }
+        
+        // Observer les changements de classe sur le body
+        const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    updateExercicesQuizSection();
+                }
+            });
+        });
+        
+        // Observer le body pour les changements de classe
+        if (document.body) {
+            observer.observe(document.body, {
+                attributes: true,
+                attributeFilter: ['class']
+            });
+        }
+        
+        // Mettre à jour au chargement
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', updateExercicesQuizSection);
+        } else {
+            updateExercicesQuizSection();
+        }
+        
+        // Mettre à jour après un court délai pour s'assurer que le DOM est prêt
+        setTimeout(updateExercicesQuizSection, 100);
+    })();
+</script>
 <!-- Swiper CSS - Chargement asynchrone pour ne pas bloquer le rendu -->
 <link rel="preload" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"></noscript>
@@ -2394,7 +2849,7 @@
                         @if($article->cover_image)
                         <div class="modern-sidebar-ad-image-wrapper">
                             @if($article->cover_type === 'external')
-                                <img src="{{ $article->cover_image }}" 
+                                <img src="{{ $article->cover_image }}" loading="lazy"
                                      alt="{{ $article->title }}" 
                                      class="modern-sidebar-ad-image"
                                      loading="lazy"
@@ -2403,7 +2858,7 @@
                                      height="180"
                                      onerror="this.style.display='none'">
                             @else
-                                <img src="{{ asset('storage/' . $article->cover_image) }}" 
+                                <img src="{{ asset('storage/' . $article->cover_image) }}" loading="lazy"
                                      alt="{{ $article->title }}" 
                                      class="modern-sidebar-ad-image"
                                      loading="lazy"
@@ -2495,10 +2950,6 @@
                     <!-- Contenu de la card -->
                     <div class="paid-course-content">
                         <h3 class="paid-course-title">{{ $course->title }}</h3>
-                        
-                        @if($course->description)
-                        <p class="paid-course-description">{{ \Illuminate\Support\Str::limit($course->description, 100) }}</p>
-                        @endif
 
                         <!-- Métadonnées -->
                         <div class="paid-course-meta">
@@ -2570,7 +3021,7 @@
                 </div>
                 
                 <div class="latest-jobs-grid" style="margin-bottom: 40px;">
-                    @foreach($latestJobs->take(9) as $index => $job)
+                    @foreach($latestJobs->take(12) as $index => $job)
                     <a href="{{ route('emplois.article', $job->slug) }}" class="latest-job-item modern-job-card-wrapper" style="text-decoration: none; display: block;">
                         <div class="modern-job-card">
                             <!-- Effet de brillance animé -->
@@ -2579,7 +3030,7 @@
                             <!-- Image avec overlay gradient -->
                             <div class="modern-job-image-wrapper">
                                 @if($job->cover_image)
-                                <img src="{{ $job->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($job->cover_image) : $job->cover_image }}"
+                                <img src="{{ $job->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($job->cover_image) : $job->cover_image }}" loading="lazy"
                                      loading="lazy"
                                      decoding="async"
                                      width="400"
@@ -2629,7 +3080,7 @@
                 </div>
                 
                 <div style="text-align: center; margin-top: 40px;">
-                    <a href="{{ route('emplois') }}" style="display: inline-flex; align-items: center; gap: 10px; padding: 14px 32px; background: linear-gradient(135deg, #06b6d4, #14b8a6); color: #000; border-radius: 12px; font-weight: 700; text-decoration: none; transition: all 0.3s ease;">
+                    <a href="{{ route('emplois.all-articles') }}" style="display: inline-flex; align-items: center; gap: 10px; padding: 14px 32px; background: linear-gradient(135deg, #06b6d4, #14b8a6); color: #000; border-radius: 12px; font-weight: 700; text-decoration: none; transition: all 0.3s ease;">
                         {{ trans('app.home.latest_jobs.view_all') }} <i class="fas fa-arrow-right"></i>
                     </a>
                 </div>
@@ -2650,7 +3101,7 @@
                             <div style="position: relative; flex-shrink: 0; width: 120px; height: 90px;">
                                 @if($article->cover_image)
                                 <div style="width: 100%; height: 100%; border-radius: 8px; overflow: hidden; position: relative; background: #f0f0f0;">
-                                    <img src="{{ $article->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($article->cover_image) : $article->cover_image }}"
+                                    <img src="{{ $article->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($article->cover_image) : $article->cover_image }}" loading="lazy"
                                          loading="lazy"
                                          alt="{{ $article->title }}"
                                          style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;"
@@ -3434,22 +3885,69 @@
     .exercices-quiz-cards {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 20px;
+        gap: 24px;
+        width: 100%;
     }
     
-    /* Cards Exercices & Quiz Ultra Modernes */
+    @media (max-width: 1024px) {
+        .exercices-quiz-cards {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .exercices-quiz-cards {
+            grid-template-columns: 1fr;
+        }
+    }
+    
+    /* Cards Exercices & Quiz Ultra Modernes - Mode Clair */
     .exercices-quiz-card {
-        background: linear-gradient(135deg, rgba(51, 65, 85, 0.6) 0%, rgba(71, 85, 105, 0.5) 100%);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 2px solid rgba(6, 182, 212, 0.2);
-        border-radius: 20px;
-        padding: 24px;
+        background: #ffffff;
+        border: 1px solid rgba(6, 182, 212, 0.15);
+        border-radius: 16px;
+        padding: 32px;
         text-align: left;
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: all 0.3s ease;
         position: relative;
-        overflow: visible;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        display: flex;
+        flex-direction: column;
+        min-height: 320px;
+    }
+    
+    /* Mode Clair - Styles par défaut */
+    body:not(.dark-mode) .exercices-quiz-card {
+        background: #ffffff;
+        border-color: rgba(6, 182, 212, 0.15);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    }
+    
+    body:not(.dark-mode) .exercices-quiz-card:hover {
+        transform: translateY(-6px);
+        border-color: rgba(6, 182, 212, 0.3);
+        box-shadow: 0 12px 40px rgba(6, 182, 212, 0.15);
+        background: #ffffff;
+    }
+    
+    /* Mode Sombre */
+    body.dark-mode .exercices-quiz-card {
+        background: rgba(15, 23, 42, 0.95) !important;
+        border-color: rgba(6, 182, 212, 0.4) !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5) !important;
+    }
+    
+    body.dark-mode .exercices-quiz-card:hover {
+        transform: translateY(-6px);
+        border-color: rgba(6, 182, 212, 0.6) !important;
+        box-shadow: 0 12px 40px rgba(6, 182, 212, 0.3) !important;
+        background: rgba(15, 23, 42, 1) !important;
+    }
+    
+    /* Mode Clair - Forcer le fond blanc */
+    body:not(.dark-mode) .exercices-quiz-card {
+        background: #ffffff !important;
     }
     
     .exercices-quiz-card::before {
@@ -3474,40 +3972,18 @@
         z-index: 1;
     }
     
-    .exercices-quiz-card:hover {
-        transform: translateY(-8px) scale(1.02);
-        border-color: rgba(6, 182, 212, 0.5);
-        box-shadow: 0 20px 60px rgba(6, 182, 212, 0.3);
-        background: linear-gradient(135deg, rgba(51, 65, 85, 0.8) 0%, rgba(71, 85, 105, 0.7) 100%);
-    }
-    
-    .exercices-quiz-card:hover::after {
-        opacity: 1;
-    }
-    
-    body:not(.dark-mode) .exercices-quiz-card {
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.8) 100%);
-        border-color: rgba(6, 182, 212, 0.25);
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-    }
-    
-    body:not(.dark-mode) .exercices-quiz-card:hover {
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%);
-        box-shadow: 0 20px 60px rgba(6, 182, 212, 0.2);
-    }
     
     .exercices-quiz-icon-wrapper {
-        width: 56px;
-        height: 56px;
-        background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2));
-        border-radius: 16px;
+        width: 64px;
+        height: 64px;
+        background: transparent;
+        border-radius: 0;
         display: flex;
         align-items: center;
-        justify-content: center;
-        margin-bottom: 18px;
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        justify-content: flex-start;
+        margin-bottom: 20px;
+        transition: all 0.3s ease;
         position: relative;
-        overflow: hidden;
         z-index: 2;
         pointer-events: none;
     }
@@ -3523,48 +3999,82 @@
     }
     
     .exercices-quiz-card:hover .exercices-quiz-icon-wrapper {
-        transform: scale(1.1) rotate(5deg);
-        box-shadow: 0 8px 25px rgba(6, 182, 212, 0.4);
-    }
-    
-    .exercices-quiz-card:hover .exercices-quiz-icon-wrapper::before {
-        opacity: 1;
+        transform: scale(1.05);
     }
     
     .quiz-icon-wrapper {
-        background: linear-gradient(135deg, rgba(20, 184, 166, 0.2), rgba(6, 182, 212, 0.2));
+        background: transparent;
     }
     
+    /* Icônes - Mode Clair */
     .exercices-quiz-icon-wrapper i {
-        font-size: 1.6rem;
-        color: #06b6d4;
+        font-size: 2rem;
+        color: #0f172a;
         position: relative;
         z-index: 1;
         transition: all 0.3s ease;
     }
     
+    body:not(.dark-mode) .exercices-quiz-icon-wrapper i {
+        color: #0f172a;
+    }
+    
     .quiz-icon-wrapper i {
-        color: #14b8a6;
+        color: #0f172a;
+    }
+    
+    body:not(.dark-mode) .quiz-icon-wrapper i {
+        color: #0f172a;
     }
     
     .formations-icon-wrapper {
-        background: linear-gradient(135deg, rgba(20, 184, 166, 0.2), rgba(6, 182, 212, 0.2));
+        background: transparent;
     }
     
     .formations-icon-wrapper i {
-        color: #14b8a6;
+        color: #0f172a;
+    }
+    
+    body:not(.dark-mode) .formations-icon-wrapper i {
+        color: #0f172a;
+    }
+    
+    /* Icônes - Mode Sombre */
+    body.dark-mode .exercices-quiz-icon-wrapper i {
+        color: #ffffff !important;
+    }
+    
+    body.dark-mode .quiz-icon-wrapper i {
+        color: #ffffff !important;
+    }
+    
+    body.dark-mode .formations-icon-wrapper i {
+        color: #ffffff !important;
+    }
+    
+    /* Icônes - Mode Clair */
+    body:not(.dark-mode) .exercices-quiz-icon-wrapper i {
+        color: #0f172a !important;
+    }
+    
+    body:not(.dark-mode) .quiz-icon-wrapper i {
+        color: #0f172a !important;
+    }
+    
+    body:not(.dark-mode) .formations-icon-wrapper i {
+        color: #0f172a !important;
     }
     
     .exercices-quiz-card:hover .exercices-quiz-icon-wrapper i {
-        transform: scale(1.2);
-        filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.6));
+        transform: scale(1.05);
     }
     
+    /* Titres - Mode Clair */
     .exercices-quiz-title {
-        font-size: 1.15rem;
+        font-size: 1.5rem;
         font-weight: 700;
-        color: #fff;
-        margin-bottom: 12px;
+        color: #0f172a;
+        margin-bottom: 16px;
         transition: color 0.3s ease;
         position: relative;
         z-index: 2;
@@ -3572,27 +4082,48 @@
     }
     
     body:not(.dark-mode) .exercices-quiz-title {
-        color: rgba(30, 41, 59, 0.95);
+        color: #0f172a;
     }
     
+    /* Titres - Mode Sombre */
+    body.dark-mode .exercices-quiz-title {
+        color: #ffffff !important;
+        font-weight: 700;
+    }
+    
+    /* Titres - Mode Clair */
+    body:not(.dark-mode) .exercices-quiz-title {
+        color: #0f172a !important;
+    }
+    
+    /* Descriptions - Mode Clair */
     .exercices-quiz-description {
-        color: rgba(255, 255, 255, 0.75);
-        line-height: 1.6;
-        margin-bottom: 18px;
-        font-size: 0.85rem;
+        color: #334155;
+        line-height: 1.7;
+        margin-bottom: 24px;
+        font-size: 1rem;
         transition: color 0.3s ease;
         position: relative;
         z-index: 2;
         pointer-events: none;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
+        flex: 1;
     }
     
     body:not(.dark-mode) .exercices-quiz-description {
-        color: rgba(30, 41, 59, 0.75);
+        color: #334155;
     }
+    
+    /* Descriptions - Mode Sombre */
+    body.dark-mode .exercices-quiz-description {
+        color: rgba(255, 255, 255, 0.9) !important;
+        line-height: 1.7;
+    }
+    
+    /* Descriptions - Mode Clair */
+    body:not(.dark-mode) .exercices-quiz-description {
+        color: #334155 !important;
+    }
+    
     
     /* Styles pour les boutons Exercices & Quiz */
     .exercices-quiz-btn {
@@ -3601,70 +4132,80 @@
         justify-content: center;
         gap: 8px;
         padding: 12px 24px;
-        background: linear-gradient(135deg, #06b6d4, #14b8a6);
-        color: #fff;
-        font-weight: 700;
-        font-size: 0.85rem;
+        background: transparent;
+        color: #06b6d4;
+        font-weight: 600;
+        font-size: 1rem;
         text-decoration: none;
-        border-radius: 50px;
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: 0 4px 15px rgba(6, 182, 212, 0.4);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
         position: relative;
         overflow: hidden;
-        width: 100%;
-        border: 2px solid transparent;
+        width: fit-content;
+        border: none;
         z-index: 10 !important;
         pointer-events: auto !important;
         cursor: pointer;
+        margin-top: auto;
     }
     
-    .quiz-btn {
-        background: linear-gradient(135deg, #14b8a6, #06b6d4);
-        box-shadow: 0 4px 15px rgba(20, 184, 166, 0.4);
+    /* Boutons - Mode Clair */
+    body:not(.dark-mode) .exercices-quiz-btn {
+        background: transparent;
+        color: #06b6d4;
     }
     
-    .formations-btn {
-        background: linear-gradient(135deg, #14b8a6, #06b6d4);
-        box-shadow: 0 4px 15px rgba(20, 184, 166, 0.4);
+    body:not(.dark-mode) .exercices-quiz-btn:hover {
+        color: #0891b2;
+        transform: translateX(4px);
+        background: transparent;
+        box-shadow: none;
     }
     
-    .formations-btn:hover {
-        background: linear-gradient(135deg, #06b6d4, #14b8a6);
-        box-shadow: 0 12px 35px rgba(20, 184, 166, 0.6);
+    body:not(.dark-mode) .quiz-btn {
+        color: #06b6d4;
     }
     
-    .exercices-quiz-btn::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-        transition: left 0.6s ease;
-        pointer-events: none;
-        z-index: 1;
+    body:not(.dark-mode) .quiz-btn:hover {
+        color: #0891b2;
+        transform: translateX(4px);
     }
     
-    .exercices-quiz-btn:hover::before {
-        left: 100%;
+    body:not(.dark-mode) .formations-btn {
+        color: #06b6d4;
     }
     
-    .exercices-quiz-btn:hover {
-        transform: translateY(-3px) scale(1.05);
-        box-shadow: 0 12px 35px rgba(6, 182, 212, 0.6);
-        border-color: rgba(6, 182, 212, 0.5);
+    body:not(.dark-mode) .formations-btn:hover {
+        color: #0891b2;
+        transform: translateX(4px);
     }
     
-    .exercices-btn:hover {
-        background: linear-gradient(135deg, #14b8a6, #06b6d4);
+    /* Boutons - Mode Sombre */
+    body.dark-mode .exercices-quiz-btn {
+        color: #22d3ee;
+        background: transparent;
     }
     
-    .quiz-btn:hover {
-        background: linear-gradient(135deg, #06b6d4, #14b8a6);
-        box-shadow: 0 12px 35px rgba(20, 184, 166, 0.6);
+    body.dark-mode .exercices-quiz-btn:hover {
+        color: #06b6d4;
+        transform: translateX(4px);
+        background: transparent;
+    }
+    
+    body.dark-mode .quiz-btn {
+        color: #22d3ee;
+    }
+    
+    body.dark-mode .quiz-btn:hover {
+        color: #06b6d4;
+    }
+    
+    body.dark-mode .formations-btn {
+        color: #22d3ee;
+    }
+    
+    body.dark-mode .formations-btn:hover {
+        color: #06b6d4;
     }
     
     .exercices-quiz-btn i {
@@ -3678,43 +4219,56 @@
     /* Responsive Exercices & Quiz */
     @media (max-width: 1024px) {
         .exercices-quiz-container {
-            grid-template-columns: 1fr;
+            grid-template-columns: 1fr !important;
         }
         
         .exercices-quiz-cards {
-            grid-template-columns: 1fr;
-            gap: 25px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
         }
     }
     
     @media (max-width: 768px) {
+        .exercices-quiz-container {
+            grid-template-columns: 1fr !important;
+        }
+        
+        .exercices-quiz-cards {
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        
         .exercices-quiz-card {
-            padding: 25px;
+            padding: 24px;
+            min-height: auto;
         }
         
         .exercices-quiz-icon-wrapper {
-            width: 60px;
-            height: 60px;
-            margin-bottom: 20px;
+            width: 56px;
+            height: 56px;
+            margin-bottom: 18px;
         }
         
         .exercices-quiz-icon-wrapper i {
-            font-size: 1.6rem;
+            font-size: 1.5rem;
         }
         
         .exercices-quiz-title {
-            font-size: 1.2rem;
+            font-size: 1.25rem;
             margin-bottom: 12px;
         }
         
         .exercices-quiz-description {
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             margin-bottom: 20px;
+            line-height: 1.6;
         }
         
         .exercices-quiz-btn {
-            padding: 14px 28px;
-            font-size: 0.9rem;
+            padding: 12px 24px;
+            font-size: 0.95rem;
+            width: 100%;
+            justify-content: center;
         }
     }
     
@@ -4639,3 +5193,4 @@
     }
 </style>
 @endif
+

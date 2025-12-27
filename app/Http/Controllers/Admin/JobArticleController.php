@@ -91,6 +91,7 @@ class JobArticleController extends Controller
             'meta_description' => 'nullable|string|max:500',
             'meta_keywords' => 'nullable|string',
             'status' => 'required|in:draft,published,archived',
+            'published_at' => 'nullable|date',
             'is_sponsored' => 'nullable|boolean',
             'is_featured' => 'nullable|boolean'
         ]);
@@ -127,9 +128,15 @@ class JobArticleController extends Controller
         $validated['seo_score'] = $this->calculateSeoScore($validated);
         $validated['readability_score'] = $this->calculateReadabilityScore($validated['content']);
 
-        // Toujours définir published_at à maintenant si publié
+        // Gérer la date de publication
         if ($validated['status'] === 'published') {
-            $validated['published_at'] = now();
+            // Utiliser la date fournie dans le formulaire ou maintenant
+            $validated['published_at'] = $request->has('published_at') && !empty($request->published_at) 
+                ? \Carbon\Carbon::parse($request->published_at) 
+                : now();
+        } else {
+            // Si l'article n'est pas publié, ne pas définir published_at
+            unset($validated['published_at']);
         }
 
         $article = JobArticle::create($validated);

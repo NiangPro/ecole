@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<phpdocumentor>
+    <title>NiangProgrammeur - Documentation API</title>
+    <parser>
+        <target>docs/api</target>
+        <encoding>utf-8</encoding>
+    </parser>
+    <transformer>
+        <target>docs/api</target>
+    </transformer>
+    <files>
+        <directory>app</directory>
+        <directory>routes</directory>
+        <ignore>vendor/*</ignore>
+        <ignore>node_modules/*</ignore>
+        <ignore>storage/*</ignore>
+        <ignore>bootstrap/*</ignore>
+    </files>
+    <transformations>
+        <transformation>
+            <type>xml</type>
+        </transformation>
+        <transformation>
+            <type>html</type>
+        </transformation>
+    </transformations>
+</phpdocumentor>
+

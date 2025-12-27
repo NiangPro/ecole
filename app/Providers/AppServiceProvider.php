@@ -26,9 +26,12 @@ class AppServiceProvider extends ServiceProvider
         // Partager les catégories d'emplois avec la navigation
         view()->composer('partials.navigation', \App\View\Composers\NavigationComposer::class);
         
-        // Charger les paramètres email depuis la base de données
+        // Charger les paramètres email depuis la base de données (avec cache pour améliorer les performances)
         try {
-            $settings = \App\Models\SiteSetting::first();
+            $settings = \Illuminate\Support\Facades\Cache::remember('site_settings_mail', 3600, function () {
+                return \App\Models\SiteSetting::first();
+            });
+            
             if ($settings) {
                 // Configuration mail depuis la base de données
                 if ($settings->mail_mailer) {

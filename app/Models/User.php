@@ -180,6 +180,17 @@ class User extends Authenticatable
         return $this->hasOne(Affiliate::class);
     }
 
+    // Relations Forum
+    public function forumTopics()
+    {
+        return $this->hasMany(ForumTopic::class);
+    }
+
+    public function forumReplies()
+    {
+        return $this->hasMany(ForumReply::class);
+    }
+
     /**
      * Vérifier si l'utilisateur a un abonnement premium actif
      */

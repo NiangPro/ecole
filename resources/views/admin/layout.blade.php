@@ -192,6 +192,40 @@
             transform: rotate(180deg);
         }
         
+        .sidebar-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 20px;
+            height: 20px;
+            padding: 0 6px;
+            background: linear-gradient(135deg, #f59e0b, #f97316);
+            color: white;
+            font-size: 0.7rem;
+            font-weight: 700;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);
+            animation: pulse-badge 2s ease-in-out infinite;
+            margin-left: auto;
+            margin-right: 0.5rem;
+        }
+        
+        @keyframes pulse-badge {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 4px 12px rgba(245, 158, 11, 0.6);
+            }
+        }
+        
+        body.light-mode .sidebar-badge {
+            background: linear-gradient(135deg, #f59e0b, #f97316);
+            box-shadow: 0 2px 8px rgba(245, 158, 11, 0.5);
+        }
+        
         .sidebar-dropdown-menu {
             background: rgba(0, 0, 0, 0.3);
             padding-left: 1rem;
@@ -729,6 +763,11 @@
                 <i class="fas fa-chart-bar text-xl"></i>
                 <span>Statistiques</span>
             </a>
+            
+            <a href="{{ route('admin.analytics.index') }}" class="sidebar-item {{ request()->routeIs('admin.analytics.*') ? 'active' : '' }}">
+                <i class="fas fa-chart-line text-xl"></i>
+                <span>Analytics</span>
+            </a>
             @endif
             @endauth
             
@@ -761,6 +800,49 @@
                 </div>
             </div>
             
+            <!-- Menu Dropdown Documents -->
+            <div class="sidebar-dropdown {{ request()->routeIs('admin.documents.*') ? 'active' : '' }}">
+                <button class="sidebar-item sidebar-dropdown-toggle" onclick="toggleSidebarDropdown('documents')">
+                    <i class="fas fa-file-alt text-xl"></i>
+                    <span>Documents</span>
+                    @php
+                        $pendingPurchasesCount = \App\Models\DocumentPurchase::where('status', 'pending')->count();
+                    @endphp
+                    @if($pendingPurchasesCount > 0)
+                        <span class="sidebar-badge">{{ $pendingPurchasesCount }}</span>
+                    @endif
+                    <i class="fas fa-chevron-down text-sm dropdown-icon" id="documents-icon" style="margin-left: auto;"></i>
+                </button>
+                <div class="sidebar-dropdown-menu" id="documents-dropdown" style="display: {{ request()->routeIs('admin.documents.*') ? 'block' : 'none' }};">
+                    <a href="{{ route('admin.documents.documents.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.documents.documents.*') ? 'active' : '' }}">
+                        <i class="fas fa-file"></i>
+                        <span>Documents</span>
+                    </a>
+                    <a href="{{ route('admin.documents.categories.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.documents.categories.*') ? 'active' : '' }}">
+                        <i class="fas fa-folder"></i>
+                        <span>Catégories</span>
+                    </a>
+                    <a href="{{ route('admin.documents.purchases.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.documents.purchases.*') ? 'active' : '' }}">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span>Achats</span>
+                    </a>
+                    <a href="{{ route('admin.documents.reviews.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.documents.reviews.*') ? 'active' : '' }}">
+                        <i class="fas fa-comments"></i>
+                        <span>Modération Avis</span>
+                        @php
+                            $pendingReviewsCount = \App\Models\DocumentReview::where('is_approved', false)->count();
+                        @endphp
+                        @if($pendingReviewsCount > 0)
+                        <span class="ml-auto bg-yellow-500 text-black text-xs font-bold px-2 py-0.5 rounded-full">{{ $pendingReviewsCount }}</span>
+                        @endif
+                    </a>
+                    <a href="{{ route('admin.documents.statistics') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.documents.statistics') ? 'active' : '' }}">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Statistiques</span>
+                    </a>
+                </div>
+            </div>
+            
             @auth
             @if(Auth::user()->isAdmin())
             <a href="{{ route('admin.messages') }}" class="sidebar-item {{ request()->routeIs('admin.messages') ? 'active' : '' }}">
@@ -786,6 +868,21 @@
                     <span class="ml-auto px-2 py-1 bg-yellow-500 text-white text-xs rounded-full">{{ $pendingComments }}</span>
                 @endif
             </a>
+            
+            <!-- Menu Dropdown Forum -->
+            <div class="sidebar-dropdown {{ request()->routeIs('admin.forum.*') ? 'active' : '' }}">
+                <button class="sidebar-item sidebar-dropdown-toggle" onclick="toggleSidebarDropdown('forum')">
+                    <i class="fas fa-comments text-xl"></i>
+                    <span>Forum</span>
+                    <i class="fas fa-chevron-down dropdown-icon"></i>
+                </button>
+                <div class="sidebar-dropdown-menu" id="forum-dropdown" style="display: {{ request()->routeIs('admin.forum.*') ? 'block' : 'none' }};">
+                    <a href="{{ route('admin.forum.categories.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.forum.categories.*') ? 'active' : '' }}">
+                        <i class="fas fa-folder"></i>
+                        <span>Catégories</span>
+                    </a>
+                </div>
+            </div>
             
             @auth
             @if(Auth::user()->isAdmin())
@@ -848,20 +945,16 @@
             </div>
             
             <!-- Dropdown Configuration -->
-            <div class="sidebar-dropdown {{ request()->routeIs('admin.adsense*') || request()->routeIs('admin.ezoic*') || request()->routeIs('admin.backups*') || request()->routeIs('admin.logs.*') || request()->routeIs('admin.bing*') || request()->routeIs('admin.settings') || request()->routeIs('admin.security-audit.*') || request()->routeIs('admin.payment-gateways.*') ? 'active' : '' }}">
+            <div class="sidebar-dropdown {{ request()->routeIs('admin.adsense*') || request()->routeIs('admin.backups*') || request()->routeIs('admin.logs.*') || request()->routeIs('admin.bing*') || request()->routeIs('admin.settings') || request()->routeIs('admin.security-audit.*') || request()->routeIs('admin.payment-gateways.*') ? 'active' : '' }}">
                 <button class="sidebar-item sidebar-dropdown-toggle" onclick="toggleSidebarDropdown('config')">
                     <i class="fas fa-cog text-xl"></i>
                     <span>Configuration</span>
                     <i class="fas fa-chevron-down dropdown-icon ml-auto" id="config-icon"></i>
                 </button>
-                <div class="sidebar-dropdown-menu" id="config-dropdown" style="display: {{ request()->routeIs('admin.adsense*') || request()->routeIs('admin.ezoic*') || request()->routeIs('admin.backups*') || request()->routeIs('admin.logs.*') || request()->routeIs('admin.bing*') || request()->routeIs('admin.settings') || request()->routeIs('admin.security-audit.*') || request()->routeIs('admin.payment-gateways.*') ? 'block' : 'none' }};">
+                <div class="sidebar-dropdown-menu" id="config-dropdown" style="display: {{ request()->routeIs('admin.adsense*') || request()->routeIs('admin.backups*') || request()->routeIs('admin.logs.*') || request()->routeIs('admin.bing*') || request()->routeIs('admin.settings') || request()->routeIs('admin.security-audit.*') || request()->routeIs('admin.payment-gateways.*') ? 'block' : 'none' }};">
                     <a href="{{ route('admin.adsense') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.adsense*') ? 'active' : '' }}">
                         <i class="fab fa-google"></i>
                         <span>Google AdSense</span>
-                    </a>
-                    <a href="{{ route('admin.ezoic.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.ezoic*') ? 'active' : '' }}">
-                        <i class="fas fa-ad"></i>
-                        <span>Ezoic</span>
                     </a>
                     <a href="{{ route('admin.backups') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.backups*') ? 'active' : '' }}">
                         <i class="fas fa-database"></i>

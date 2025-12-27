@@ -35,8 +35,11 @@ class NotificationController extends Controller
                     'title' => $notification->title,
                     'message' => $notification->message,
                     'link' => $notification->link,
+                    'icon' => $notification->icon ?? 'fa-bell',
+                    'color' => $notification->color ?? '#64748b',
                     'is_read' => $notification->is_read,
-                    'created_at' => $notification->created_at->toISOString(),
+                    'created_at' => $notification->created_at->diffForHumans(),
+                    'created_at_iso' => $notification->created_at->toISOString(),
                 ];
             });
         

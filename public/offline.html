@@ -12,9 +12,9 @@
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            color: #e2e8f0;
+            color: #fff;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -24,7 +24,7 @@
         
         .offline-container {
             text-align: center;
-            max-width: 600px;
+            max-width: 500px;
             width: 100%;
         }
         
@@ -32,30 +32,30 @@
             width: 120px;
             height: 120px;
             margin: 0 auto 30px;
-            background: linear-gradient(135deg, #06b6d4, #14b8a6);
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2));
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 60px;
-            animation: pulse 2s ease-in-out infinite;
-            box-shadow: 0 10px 40px rgba(6, 182, 212, 0.3);
+            color: #06b6d4;
+            animation: pulse 2s infinite;
         }
         
         @keyframes pulse {
             0%, 100% {
                 transform: scale(1);
-                box-shadow: 0 10px 40px rgba(6, 182, 212, 0.3);
+                opacity: 1;
             }
             50% {
-                transform: scale(1.05);
-                box-shadow: 0 15px 50px rgba(6, 182, 212, 0.5);
+                transform: scale(1.1);
+                opacity: 0.8;
             }
         }
         
         h1 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
+            font-size: 2rem;
+            margin-bottom: 15px;
             background: linear-gradient(135deg, #06b6d4, #14b8a6);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -63,213 +63,124 @@
         }
         
         p {
-            font-size: 1.2rem;
-            line-height: 1.8;
-            margin-bottom: 30px;
-            color: #94a3b8;
-        }
-        
-        .features {
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(6, 182, 212, 0.2);
-            border-radius: 16px;
-            padding: 30px;
-            margin: 30px 0;
-            text-align: left;
-        }
-        
-        .features h2 {
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-            color: #06b6d4;
-        }
-        
-        .features ul {
-            list-style: none;
-            padding: 0;
-        }
-        
-        .features li {
-            padding: 12px 0;
-            padding-left: 35px;
-            position: relative;
-            color: #cbd5e1;
-        }
-        
-        .features li:before {
-            content: "✓";
-            position: absolute;
-            left: 0;
-            color: #22c55e;
-            font-weight: bold;
-            font-size: 1.2rem;
-        }
-        
-        .retry-btn {
-            background: linear-gradient(135deg, #06b6d4, #14b8a6);
-            color: white;
-            border: none;
-            padding: 15px 40px;
             font-size: 1.1rem;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 20px;
-            font-weight: 600;
-            box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 30px;
+            line-height: 1.6;
         }
         
-        .retry-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(6, 182, 212, 0.5);
-        }
-        
-        .retry-btn:active {
-            transform: translateY(0);
-        }
-        
-        .status-indicator {
+        .retry-button {
             display: inline-flex;
             align-items: center;
-            gap: 8px;
-            padding: 8px 16px;
-            background: rgba(239, 68, 68, 0.2);
-            border: 1px solid rgba(239, 68, 68, 0.3);
-            border-radius: 20px;
+            gap: 10px;
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #06b6d4, #14b8a6);
+            color: #000;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .retry-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(6, 182, 212, 0.4);
+        }
+        
+        .cached-pages {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid rgba(6, 182, 212, 0.2);
+        }
+        
+        .cached-pages h2 {
+            font-size: 1.2rem;
             margin-bottom: 20px;
-            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.9);
         }
         
-        .status-indicator.online {
-            background: rgba(34, 197, 94, 0.2);
-            border-color: rgba(34, 197, 94, 0.3);
+        .cached-links {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
         
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #ef4444;
-            animation: blink 1.5s ease-in-out infinite;
+        .cached-link {
+            padding: 12px 20px;
+            background: rgba(6, 182, 212, 0.1);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            border-radius: 8px;
+            color: #06b6d4;
+            text-decoration: none;
+            transition: all 0.3s ease;
         }
         
-        .status-indicator.online .status-dot {
-            background: #22c55e;
-            animation: none;
-        }
-        
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-        
-        @media (max-width: 640px) {
-            h1 {
-                font-size: 2rem;
-            }
-            
-            p {
-                font-size: 1rem;
-            }
-            
-            .offline-icon {
-                width: 100px;
-                height: 100px;
-                font-size: 50px;
-            }
+        .cached-link:hover {
+            background: rgba(6, 182, 212, 0.2);
+            transform: translateX(5px);
         }
     </style>
 </head>
 <body>
     <div class="offline-container">
-        <div class="offline-icon">📡</div>
-        <div class="status-indicator" id="statusIndicator">
-            <span class="status-dot"></span>
-            <span id="statusText">Hors ligne</span>
+        <div class="offline-icon">
+            <i class="fas fa-wifi-slash"></i>
         </div>
         <h1>Vous êtes hors ligne</h1>
-        <p>Pas de connexion internet détectée. Mais ne vous inquiétez pas, vous pouvez toujours accéder au contenu mis en cache !</p>
+        <p>Il semble que vous n'ayez pas de connexion Internet. Certaines pages peuvent être disponibles hors ligne.</p>
         
-        <div class="features">
-            <h2>✨ Disponible hors ligne</h2>
-            <ul>
-                <li>Toutes les formations mises en cache</li>
-                <li>Exercices pratiques disponibles</li>
-                <li>Quiz interactifs accessibles</li>
-                <li>Navigation fluide entre les pages</li>
-                <li>Synchronisation automatique à la reconnexion</li>
-            </ul>
+        <button class="retry-button" onclick="window.location.reload()">
+            <i class="fas fa-sync-alt"></i>
+            Réessayer
+        </button>
+        
+        <div class="cached-pages">
+            <h2>Pages disponibles hors ligne</h2>
+            <div class="cached-links">
+                <a href="/" class="cached-link">
+                    <i class="fas fa-home"></i> Accueil
+                </a>
+                <a href="/formations" class="cached-link">
+                    <i class="fas fa-graduation-cap"></i> Formations
+                </a>
+                <a href="/documents" class="cached-link">
+                    <i class="fas fa-file-alt"></i> Documents
+                </a>
+            </div>
         </div>
-        
-        <button class="retry-btn" onclick="retryConnection()">Réessayer la connexion</button>
     </div>
     
     <script>
-        function updateOnlineStatus() {
-            const indicator = document.getElementById('statusIndicator');
-            const statusText = document.getElementById('statusText');
-            
-            if (navigator.onLine) {
-                indicator.classList.add('online');
-                statusText.textContent = 'En ligne';
-                
-                // Rediriger vers la page d'accueil après 2 secondes
-                setTimeout(() => {
-                    window.location.href = '/';
-                }, 2000);
-            } else {
-                indicator.classList.remove('online');
-                statusText.textContent = 'Hors ligne';
-            }
+        // Vérifier la connexion
+        window.addEventListener('online', () => {
+            window.location.reload();
+        });
+        
+        // Afficher les pages mises en cache
+        if ('serviceWorker' in navigator && 'caches' in window) {
+            caches.open('niangprogrammeur-runtime-v2.0.0').then(cache => {
+                cache.keys().then(keys => {
+                    const pages = keys
+                        .filter(key => key.url.includes(window.location.origin) && !key.url.includes('/api/'))
+                        .map(key => {
+                            const url = new URL(key.url);
+                            return {
+                                url: url.pathname,
+                                title: url.pathname === '/' ? 'Accueil' : url.pathname.replace('/', '').charAt(0).toUpperCase() + url.pathname.slice(2)
+                            };
+                        })
+                        .filter((page, index, self) => 
+                            index === self.findIndex(p => p.url === page.url)
+                        );
+                    
+                    // Mettre à jour la liste si nécessaire
+                    console.log('Pages mises en cache:', pages);
+                });
+            });
         }
-        
-        function retryConnection() {
-            if (navigator.onLine) {
-                window.location.href = '/';
-            } else {
-                // Vérifier périodiquement
-                const checkInterval = setInterval(() => {
-                    if (navigator.onLine) {
-                        clearInterval(checkInterval);
-                        updateOnlineStatus();
-                    }
-                }, 1000);
-                
-                // Arrêter après 30 secondes
-                setTimeout(() => {
-                    clearInterval(checkInterval);
-                }, 30000);
-            }
-        }
-        
-        // Écouter les changements de statut réseau
-        window.addEventListener('online', updateOnlineStatus);
-        window.addEventListener('offline', updateOnlineStatus);
-        
-        // Vérifier le statut au chargement
-        updateOnlineStatus();
-        
-        // Vérifier périodiquement
-        setInterval(updateOnlineStatus, 5000);
     </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

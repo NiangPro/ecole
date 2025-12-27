@@ -24,7 +24,7 @@ class EmploiController extends Controller
             $categories = Category::where('is_active', true)
                 ->withCount([
                     'articles' => function($query) {
-                        $query->where('status', 'published');
+                        $query->published();
                     }
                 ])
                 ->select('id', 'name', 'slug', 'description', 'icon', 'image', 'image_type', 'order')
@@ -34,7 +34,7 @@ class EmploiController extends Controller
             foreach ($categories as $category) {
                 if (!isset($category->articles_count)) {
                     $category->articles_count = JobArticle::where('category_id', $category->id)
-                        ->where('status', 'published')
+                        ->published()
                         ->count();
                 }
                 $category->published_articles_count = $category->articles_count ?? 0;
@@ -45,7 +45,7 @@ class EmploiController extends Controller
         
         // Cache les 6 derniers articles avec sélection optimisée (15 minutes) - Optimisé avec eager loading
         $recentArticles = Cache::remember('recent_job_articles', 900, function () {
-            return JobArticle::where('status', 'published')
+            return JobArticle::published()
                 ->with(['category:id,name,slug']) // Eager loading optimisé
                 ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')
                 ->orderBy('published_at', 'desc')
@@ -79,7 +79,7 @@ class EmploiController extends Controller
         $cacheKey = $category ? "job_articles_category_{$category->id}_page_{$page}" : "job_articles_all_page_{$page}";
         
         $articles = Cache::remember($cacheKey, 900, function () use ($category) {
-            $query = JobArticle::where('status', 'published')
+            $query = JobArticle::published()
                 ->with(['category:id,name,slug']) // Eager loading optimisé
                 ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views', 'created_at', 'updated_at');
             
@@ -113,7 +113,7 @@ class EmploiController extends Controller
         // Cache les articles de la catégorie (15 minutes) - Optimisé avec eager loading
         $articles = Cache::remember("category_articles_{$slug}", 900, function () use ($category) {
             return JobArticle::where('category_id', $category->id)
-                ->where('status', 'published')
+                ->published()
                 ->with(['category:id,name,slug']) // Eager loading optimisé
                 ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')
                 ->orderBy('published_at', 'desc')
@@ -141,7 +141,7 @@ class EmploiController extends Controller
         // Cache l'article avec sélection optimisée (30 minutes) - Optimisé avec eager loading
         $article = Cache::remember("job_article_{$slug}", 1800, function () use ($slug) {
             return JobArticle::where('slug', $slug)
-                ->where('status', 'published')
+                ->published()
                 ->whereHas('category', function($query) {
                     $query->where('is_active', true);
                 })
@@ -155,7 +155,7 @@ class EmploiController extends Controller
         
         // Cache les articles similaires avec sélection optimisée (15 minutes) - Optimisé avec eager loading
         $relatedArticles = Cache::remember("related_articles_{$article->id}", 900, function () use ($article) {
-            return JobArticle::where('status', 'published')
+            return JobArticle::published()
                 ->where('category_id', $article->category_id)
                 ->where('id', '!=', $article->id)
                 ->with(['category:id,name,slug']) // Eager loading optimisé
@@ -167,7 +167,7 @@ class EmploiController extends Controller
         
         // Cache les 6 articles les plus vus pour la sidebar (5 minutes - durée réduite pour plus de réactivité)
         $topViewedArticles = Cache::remember('top_viewed_articles_sidebar', 300, function () use ($article) {
-            return JobArticle::where('status', 'published')
+            return JobArticle::published()
                 ->where('id', '!=', $article->id)
                 ->with(['category:id,name,slug'])
                 ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')
@@ -242,7 +242,7 @@ class EmploiController extends Controller
     {
         // Cache les 70 articles les plus récents avec optimisation SEO (15 minutes) - Optimisé avec eager loading
         $recentArticles = Cache::remember('recent_articles_70_seo', 900, function () {
-            return JobArticle::where('status', 'published')
+            return JobArticle::published()
                 ->with(['category:id,name,slug']) // Eager loading optimisé
                 ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views', 'meta_title', 'meta_description', 'created_at')
                 ->orderBy('published_at', 'desc')
@@ -265,7 +265,7 @@ class EmploiController extends Controller
         $cacheKey = 'featured_articles_all_page_' . request()->get('page', 1);
         
         $articles = Cache::remember($cacheKey, 900, function () {
-            return JobArticle::where('status', 'published')
+            return JobArticle::published()
                 ->where('is_featured', true)
                 ->with(['category:id,name,slug']) // Eager loading optimisé
                 ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')
@@ -301,6 +301,38 @@ class EmploiController extends Controller
     }
 
     /**
+     * Affiche tous les articles d'emploi avec pagination (20 par page, 4 par ligne)
+     */
+    public function allArticles(Request $request)
+    {
+        $this->ensureLocale();
+        
+        $page = $request->get('page', 1);
+        
+        // Cache optimisé avec eager loading (15 minutes)
+        $cacheKey = "all_job_articles_page_{$page}";
+        
+        $articles = Cache::remember($cacheKey, 900, function () {
+            return JobArticle::published()
+                ->with(['category:id,name,slug,icon']) // Eager loading optimisé
+                ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views', 'created_at', 'updated_at')
+                ->orderBy('published_at', 'desc')
+                ->orderBy('updated_at', 'desc')
+                ->paginate(20); // 20 articles par page
+        });
+        
+        // Statistiques globales
+        $stats = Cache::remember('all_articles_stats', 3600, function () {
+            return [
+                'total' => JobArticle::published()->count(),
+                'categories' => Category::where('is_active', true)->count(),
+            ];
+        });
+        
+        return view('emplois.all-articles', compact('articles', 'stats'));
+    }
+
+    /**
      * Méthode helper pour récupérer les articles d'une catégorie
      */
     private function getCategoryArticles($categorySlug, $view)
@@ -314,7 +346,7 @@ class EmploiController extends Controller
         $cacheKey = $category ? "job_articles_{$categorySlug}_page_" . request()->get('page', 1) : "job_articles_{$categorySlug}_all_page_" . request()->get('page', 1);
         
         $articles = Cache::remember($cacheKey, 900, function () use ($category) {
-            return JobArticle::where('status', 'published')
+            return JobArticle::published()
                 ->where('category_id', $category->id ?? null)
                 ->with(['category:id,name,slug']) // Eager loading optimisé
                 ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')

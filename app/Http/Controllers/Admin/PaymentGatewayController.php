@@ -44,6 +44,7 @@ class PaymentGatewayController extends Controller
             'wave_merchant_id' => 'nullable|string|max:255',
             'wave_country_code' => 'nullable|string|size:2',
             'wave_enabled' => 'boolean',
+            'wave_qr_code' => 'nullable|string|max:500',
             
             // PayPal
             'paypal_client_id' => 'nullable|string|max:255',
@@ -69,6 +70,7 @@ class PaymentGatewayController extends Controller
             'wave_merchant_id',
             'wave_country_code',
             'wave_enabled',
+            'wave_qr_code',
             'paypal_client_id',
             'paypal_client_secret',
             'paypal_mode',

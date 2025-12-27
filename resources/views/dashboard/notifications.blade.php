@@ -48,19 +48,24 @@
                     onclick="window.location.href='{{ $notification->link }}'; markAsRead({{ $notification->id }});"
                     @endif
                 >
+                    @php
+                        $iconColor = $notification->color ?? '#06b6d4';
+                        $iconBg = $notification->color ? 'rgba(' . implode(', ', array_map('hexdec', str_split(substr($notification->color, 1), 2))) . ', 0.15)' : 'rgba(6, 182, 212, 0.15)';
+                        $iconClass = $notification->icon ?? 'fa-bell';
+                    @endphp
                     <div class="notification-icon-dashboard" style="
                         width: 50px;
                         height: 50px;
                         border-radius: 50%;
-                        background: rgba(6, 182, 212, 0.15);
+                        background: {{ $iconBg }};
                         display: flex;
                         align-items: center;
                         justify-content: center;
-                        color: #06b6d4;
+                        color: {{ $iconColor }};
                         font-size: 1.3rem;
                         flex-shrink: 0;
                     ">
-                        <i class="fas {{ $notification->type === 'comment' ? 'fa-comment' : ($notification->type === 'reply' ? 'fa-reply' : ($notification->type === 'favorite' ? 'fa-heart' : 'fa-info-circle')) }}"></i>
+                        <i class="fas {{ $iconClass }}"></i>
                     </div>
                     <div style="flex: 1; min-width: 0;">
                         <h3 class="dashboard-text-primary" style="font-size: 1rem; font-weight: 700; margin: 0 0 0.5rem 0;">

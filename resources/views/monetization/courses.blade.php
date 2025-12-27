@@ -187,7 +187,7 @@
                 </div>
             </div>
 
-            <!-- Grille de cours (4 par ligne) -->
+            <!-- Grille de cours (3 par ligne) -->
         @if($courses->count() > 0)
             <div class="courses-grid">
             @foreach($courses as $course)
@@ -796,11 +796,11 @@
     }
 
     /* ============================================
-       COURSES GRID (4 par ligne)
+       COURSES GRID (3 par ligne)
        ============================================ */
     .courses-grid {
         display: grid;
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(3, 1fr);
         gap: 30px;
         margin-bottom: 60px;
     }
@@ -1148,6 +1148,12 @@
     @media (max-width: 1400px) {
         .courses-grid {
             grid-template-columns: repeat(3, 1fr);
+        }
+    }
+    
+    @media (max-width: 1200px) {
+        .courses-grid {
+            grid-template-columns: repeat(2, 1fr);
         }
     }
 
@@ -1623,48 +1629,54 @@
 @push('head')
 <!-- Structured Data ItemList pour SEO -->
 <script type="application/ld+json">
-{
-    "@context": "https://schema.org",
-    "@type": "ItemList",
-    "name": "{{ trans('app.monetization.courses_page.title') }}",
-    "description": "{{ trans('app.monetization.courses_page.meta_description') }}",
-    "url": "{{ route('monetization.courses') }}",
-    "numberOfItems": {{ $courses->count() }},
-    "itemListElement": [
-        @foreach($courses as $index => $course)
-        {
-            "@type": "ListItem",
-            "position": {{ $index + 1 }},
-            "item": {
-                "@type": "Course",
-                "name": "{{ addslashes($course->localized_title) }}",
-                "description": "{{ addslashes($course->localized_description ?? '') }}",
-                "url": "{{ route('monetization.course.show', $course->slug) }}",
-                "image": "{{ $course->cover_image ? (($course->cover_type ?? 'internal') === 'internal' ? asset('storage/' . $course->cover_image) : $course->cover_image) : asset('images/logo.png') }}",
-                "provider": {
-                    "@type": "Organization",
-                    "name": "NiangProgrammeur",
-                    "url": "{{ url('/') }}"
-                },
-                @if($course->rating > 0)
-                "aggregateRating": {
-                    "@type": "AggregateRating",
-                    "ratingValue": "{{ $course->rating }}",
-                    "bestRating": "5",
-                    "ratingCount": "{{ $course->reviews_count }}"
-                },
-                @endif
-                "offers": {
-                    "@type": "Offer",
-                    "price": "{{ $course->current_price }}",
-                    "priceCurrency": "{{ $course->currency ?? 'XOF' }}",
-                    "availability": "https://schema.org/InStock"
-                }
-            }
-        }@if(!$loop->last),@endif
-        @endforeach
-    ]
+@php
+$structuredData = [
+    '@context' => 'https://schema.org',
+    '@type' => 'ItemList',
+    'name' => trans('app.monetization.courses_page.title'),
+    'description' => trans('app.monetization.courses_page.meta_description'),
+    'url' => route('monetization.courses'),
+    'numberOfItems' => $courses->count(),
+    'itemListElement' => []
+];
+
+foreach($courses as $index => $course) {
+    $item = [
+        '@type' => 'ListItem',
+        'position' => $index + 1,
+        'item' => [
+            '@type' => 'Course',
+            'name' => $course->localized_title,
+            'description' => $course->localized_description ?? '',
+            'url' => route('monetization.course.show', $course->slug),
+            'image' => $course->cover_image ? (($course->cover_type ?? 'internal') === 'internal' ? asset('storage/' . $course->cover_image) : $course->cover_image) : asset('images/logo.png'),
+            'provider' => [
+                '@type' => 'Organization',
+                'name' => 'NiangProgrammeur',
+                'url' => url('/')
+            ],
+            'offers' => [
+                '@type' => 'Offer',
+                'price' => $course->current_price,
+                'priceCurrency' => $course->currency ?? 'XOF',
+                'availability' => 'https://schema.org/InStock'
+            ]
+        ]
+    ];
+    
+    if($course->rating > 0) {
+        $item['item']['aggregateRating'] = [
+            '@type' => 'AggregateRating',
+            'ratingValue' => $course->rating,
+            'bestRating' => '5',
+            'ratingCount' => $course->reviews_count
+        ];
+    }
+    
+    $structuredData['itemListElement'][] = $item;
 }
+@endphp
+{!! json_encode($structuredData, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) !!}
 </script>
 @endpush
 @endsection

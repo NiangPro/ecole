@@ -525,6 +525,25 @@
                         <span>{{ trans('app.profile.sidebar.paid_courses') }}</span>
                     </a>
                     
+                    <a href="{{ route('dashboard.my-documents') }}" class="nav-item {{ request()->routeIs('dashboard.my-documents') ? 'active' : '' }}" data-no-loader="true">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Mes Documents</span>
+                        @php
+                            $userDocumentsCount = \App\Models\DocumentPurchase::where(function($query) {
+                                $query->where('user_id', Auth::id())
+                                      ->orWhere('customer_email', Auth::user()->email);
+                            })->where('status', 'completed')->count();
+                        @endphp
+                        @if($userDocumentsCount > 0)
+                            <span class="nav-badge">{{ $userDocumentsCount }}</span>
+                        @endif
+                    </a>
+                    
+                    <a href="{{ route('wishlist.index') }}" class="nav-item {{ request()->routeIs('wishlist.*') ? 'active' : '' }}" data-no-loader="true">
+                        <i class="fas fa-heart"></i>
+                        <span>Ma Liste de Souhaits</span>
+                    </a>
+                    
                     <a href="{{ route('dashboard.subscriptions') }}" class="nav-item {{ request()->routeIs('dashboard.subscriptions') ? 'active' : '' }}" data-no-loader="true">
                         <i class="fas fa-crown"></i>
                         <span>{{ trans('app.profile.sidebar.subscriptions') }}</span>
@@ -581,6 +600,32 @@
                     <a href="{{ route('dashboard.favorites') }}" class="nav-item {{ request()->routeIs('dashboard.favorites') ? 'active' : '' }}" data-no-loader="true">
                         <i class="fas fa-heart"></i>
                         <span>{{ trans('app.profile.sidebar.favorites') }}</span>
+                    </a>
+                    
+                    <a href="{{ route('dashboard.messages.index') }}" class="nav-item {{ request()->routeIs('dashboard.messages.*') ? 'active' : '' }}" data-no-loader="true">
+                        <i class="fas fa-envelope"></i>
+                        <span>Messagerie</span>
+                        @php
+                            $unreadMessagesCount = Auth::check() ? \App\Models\Message::where('receiver_id', Auth::id())
+                                ->where('is_read', false)
+                                ->where('receiver_deleted', false)
+                                ->count() : 0;
+                        @endphp
+                        @if($unreadMessagesCount > 0)
+                        <span class="notification-count-badge" style="
+                            background: #ef4444;
+                            color: white;
+                            border-radius: 50%;
+                            width: 20px;
+                            height: 20px;
+                            display: inline-flex;
+                            align-items: center;
+                            justify-content: center;
+                            font-size: 0.7rem;
+                            font-weight: 700;
+                            margin-left: auto;
+                        ">{{ $unreadMessagesCount > 99 ? '99+' : $unreadMessagesCount }}</span>
+                        @endif
                     </a>
                     
                     <a href="{{ route('dashboard.notifications') }}" class="nav-item {{ request()->routeIs('dashboard.notifications') ? 'active' : '' }}" data-no-loader="true">

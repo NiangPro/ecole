@@ -267,24 +267,6 @@
         {!! $adsenseSettings->adsense_code !!}
     @endif
     
-    @php
-        // Configuration Ezoic
-        $ezoicSettings = \Illuminate\Support\Facades\Cache::remember('ezoic_settings', 3600, function () {
-            return \App\Models\EzoicSetting::first();
-        });
-    @endphp
-    
-    @if($ezoicSettings)
-        @if($ezoicSettings->privacy_scripts)
-            <!-- Ezoic Privacy Scripts (DOIT être chargé en premier) -->
-            {!! $ezoicSettings->privacy_scripts !!}
-        @endif
-        
-        @if($ezoicSettings->ezoic_code)
-            <!-- Ezoic Header Script (chargé APRÈS les Privacy Scripts) -->
-            {!! $ezoicSettings->ezoic_code !!}
-        @endif
-    @endif
     
     <!-- Google Analytics -->
     @php
@@ -936,10 +918,6 @@
     </script>
 </head>
 <body class="bg-white text-gray-900" lang="{{ app()->getLocale() }}">
-    @if($ezoicSettings && $ezoicSettings->ezoic_body_code)
-        <!-- Ezoic Code (Body - début) -->
-        {!! $ezoicSettings->ezoic_body_code !!}
-    @endif
     
     <!-- Skip Links pour l'accessibilité -->
     <div class="skip-links">
@@ -1216,6 +1194,8 @@
         (function() {
             function loadScripts() {
                 const scripts = [
+                    '{{ asset("js/pwa-manager.js") }}',
+                    '{{ asset("js/analytics-tracker.js") }}',
                     '{{ asset("js/main.js") }}',
                     '{{ asset("js/ux-improvements.js") }}?v=2.2',
                     '{{ asset("js/social-features.js") }}'
@@ -1239,7 +1219,14 @@
         })();
     </script>
     
+    <!-- Configuration PWA -->
+    <script>
+        // Clé publique VAPID pour les notifications push (à configurer dans .env)
+        window.VAPID_PUBLIC_KEY = '{{ config("services.vapid.public_key", "") }}';
+    </script>
+    
     @yield('scripts')
+    @stack('scripts')
     
     <!-- CSS non critique chargé en bas de page pour ne pas bloquer le rendu -->
     @stack('styles')
@@ -1254,9 +1241,5 @@
         @endif
     </script>
     
-    @if($ezoicSettings && $ezoicSettings->ezoic_footer_code)
-        <!-- Ezoic Code (Footer) -->
-        {!! $ezoicSettings->ezoic_footer_code !!}
-    @endif
 </body>
 </html>

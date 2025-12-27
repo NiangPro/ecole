@@ -96,6 +96,137 @@ FONCTIONNEMENT:
 - Du 1er janvier au 30 novembre: chapeau non affiché
 
 ================================================================================
+DISCUSSION: Plan Système de Vente de Documents
+================================================================================
+
+Date: 2024-12-19
+Demande: Création d'un plan complet pour un système de vente de documents 
+avec catégories sur le site NiangProgrammeur.
+
+RÉPONSE:
+Un plan détaillé a été élaboré et sauvegardé dans le fichier:
+- PLAN_SYSTEME_VENTE_DOCUMENTS.md
+
+CONTENU DU PLAN:
+1. Architecture de base de données (5 tables)
+2. Modèles Eloquent avec relations
+3. Interfaces utilisateur (Frontend + Backend)
+4. Contrôleurs et logique métier
+5. Intégration système de paiement existant
+6. Sécurité et téléchargement sécurisé
+7. Statistiques et rapports
+8. Gestion des fichiers
+9. Recherche et filtres
+10. Notifications et emails
+11. Tests
+12. Phases d'implémentation (8 phases, 21-27 jours)
+
+CARACTÉRISTIQUES PRINCIPALES:
+- Système de catégories hiérarchiques
+- Panier d'achat
+- Intégration paiements existants (Wave, PayPal, Stripe)
+- Téléchargement sécurisé avec tokens
+- Statistiques et rapports
+- Interface admin complète
+- Responsive design
+
+FICHIER CRÉÉ:
+- PLAN_SYSTEME_VENTE_DOCUMENTS.md (plan complet de 500+ lignes)
+
+================================================================================
+MODIFICATION: Programmation de publication pour les articles d'emploi
+================================================================================
+
+Date: 2024-12-24
+Demande: Ajout de la possibilité de programmer une publication sur la page 
+         /admin/jobs/articles/create
+
+DESCRIPTION:
+Implémentation d'un système de programmation de publication permettant aux 
+administrateurs de définir une date et une heure futures pour la publication 
+d'un article d'emploi. L'article sera automatiquement publié à la date 
+programmée.
+
+FICHIERS MODIFIÉS:
+- resources/views/admin/jobs/articles/create.blade.php
+- app/Http/Controllers/Admin/JobArticleController.php
+- app/Models/JobArticle.php
+
+MODIFICATIONS DÉTAILLÉES:
+
+1. FORMULAIRE DE CRÉATION (create.blade.php):
+   - Ajout d'un champ datetime-local pour la date de publication
+   - Champ activé uniquement lorsque le statut est "Publié"
+   - Message d'aide contextuel selon l'état du formulaire
+   - JavaScript pour gérer l'interaction entre statut et date
+   - Affichage d'un message de confirmation si date future sélectionnée
+
+2. CONTRÔLEUR (JobArticleController.php):
+   - Ajout de la validation 'published_at' => 'nullable|date' dans store()
+   - Modification de la logique de gestion de published_at:
+     * Si statut = "published" et date fournie: utiliser la date du formulaire
+     * Si statut = "published" et date vide: utiliser now()
+     * Si statut != "published": ne pas définir published_at
+   - Même logique appliquée dans update() pour cohérence
+
+3. MODÈLE (JobArticle.php):
+   - Ajout d'un scope published() pour filtrer les articles réellement publiés
+   - Le scope vérifie:
+     * status = 'published'
+     * ET (published_at IS NULL OU published_at <= now())
+   - Permet de filtrer automatiquement les articles programmés non encore publiés
+
+FONCTIONNALITÉS:
+
+1. Interface Utilisateur:
+   - Champ datetime-local moderne et intuitif
+   - Désactivation automatique si statut != "published"
+   - Message d'aide contextuel
+   - Confirmation visuelle si publication programmée
+
+2. Logique Backend:
+   - Validation de la date fournie
+   - Gestion automatique de published_at selon le statut
+   - Support des dates passées, présentes et futures
+   - Conservation de l'historique lors des modifications
+
+3. Scope Published:
+   - Filtre automatique des articles réellement publiés
+   - Prend en compte les publications programmées
+   - Utilisable partout: JobArticle::published()->get()
+
+UTILISATION:
+
+1. Publication immédiate:
+   - Sélectionner statut "Publié"
+   - Laisser le champ "Date de publication" vide
+   - L'article sera publié immédiatement
+
+2. Publication programmée:
+   - Sélectionner statut "Publié"
+   - Choisir une date/heure future dans "Date de publication"
+   - L'article sera publié automatiquement à la date programmée
+
+3. Brouillon:
+   - Sélectionner statut "Brouillon" ou "Archivé"
+   - Le champ "Date de publication" est désactivé
+   - published_at n'est pas défini
+
+AVANTAGES:
+- Flexibilité: publication immédiate ou programmée
+- Automatisation: pas besoin de publier manuellement
+- UX améliorée: interface intuitive et claire
+- Cohérence: même logique pour création et modification
+- Sécurité: validation côté serveur
+
+NOTE IMPORTANTE:
+Pour que les articles programmés soient automatiquement publiés, il faudra 
+créer une commande Artisan ou un job Laravel qui vérifie périodiquement les 
+articles avec status='published' et published_at <= now() et les rend 
+visibles. Le scope published() peut être utilisé dans les requêtes pour 
+filtrer automatiquement les articles réellement publiés.
+
+================================================================================
 FIN DE LA SAUVEGARDE
 ================================================================================
 

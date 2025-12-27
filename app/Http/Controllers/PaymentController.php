@@ -7,8 +7,14 @@ use App\Models\Payment;
 use App\Models\Subscription;
 use App\Models\CoursePurchase;
 use App\Models\Donation;
+use App\Models\DocumentPurchase;
+use App\Models\DocumentCart;
 use App\Models\Affiliate;
 use App\Models\AffiliateReferral;
+use App\Mail\DocumentPurchaseConfirmation;
+use App\Services\WhatsAppService;
+use App\Models\WhatsAppSettings;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Services\WavePaymentService;
@@ -489,6 +495,13 @@ class PaymentController extends Controller
                     $payment->payment_reference,
                     $description
                 );
+            } elseif ($paymentable instanceof DocumentPurchase) {
+                $description = 'Achat de document: ' . $paymentable->document->title;
+                $waveLink = WavePaymentService::generatePaymentLink(
+                    (float) $payment->amount,
+                    $payment->payment_reference,
+                    $description
+                );
             }
             
             // Sauvegarder le lien si généré
@@ -830,9 +843,21 @@ class PaymentController extends Controller
     public function paymentSuccess($paymentId)
     {
         $payment = Payment::findOrFail($paymentId);
-        $donation = $payment->paymentable;
+        $paymentable = $payment->paymentable;
 
-        return view('monetization.payment-success', compact('payment', 'donation'));
+        // Rediriger vers la page appropriée selon le type de paiement
+        if ($paymentable instanceof DocumentPurchase) {
+            // Si visiteur anonyme, rediriger vers une page de confirmation avec le lien de téléchargement
+            if (!$paymentable->user_id) {
+                return redirect()->route('documents.guest-success', $payment->id)
+                    ->with('success', 'Votre achat a été confirmé ! Un email avec le lien de téléchargement vous a été envoyé.');
+            }
+            
+            return redirect()->route('documents.my-documents')
+                ->with('success', 'Votre achat a été confirmé ! Vous pouvez maintenant télécharger votre document.');
+        }
+
+        return view('monetization.payment-success', compact('payment', 'paymentable'));
     }
 
     /**
@@ -890,6 +915,58 @@ class PaymentController extends Controller
                 'purchased_at' => now(),
             ]);
             $paymentable->course->increment('students_count');
+        } elseif ($paymentable instanceof DocumentPurchase) {
+            $paymentable->update([
+                'status' => 'completed',
+                'purchased_at' => now(),
+            ]);
+            
+            // Incrémenter le compteur de ventes du document
+            $paymentable->document->increment('sales_count');
+            
+            // Retirer le document du panier
+            if ($paymentable->user_id) {
+                DocumentCart::where('user_id', $paymentable->user_id)
+                    ->where('document_id', $paymentable->document_id)
+                    ->delete();
+            } else {
+                // Pour les visiteurs anonymes, retirer par session
+                DocumentCart::where('session_id', session()->getId())
+                    ->where('document_id', $paymentable->document_id)
+                    ->delete();
+            }
+            
+            // Générer un token de téléchargement et envoyer un email
+            if ($paymentable->customer_email || $paymentable->user_id) {
+                // Générer le token si pas déjà généré
+                if (!$paymentable->download_token) {
+                    $paymentable->generateDownloadToken();
+                }
+                
+                // Envoyer l'email de confirmation
+                try {
+                    $email = $paymentable->customer_email ?? $paymentable->user->email;
+                    if ($email) {
+                        Mail::to($email)->send(new DocumentPurchaseConfirmation($paymentable));
+                    }
+                } catch (\Exception $e) {
+                    // Logger l'erreur mais ne pas bloquer le processus
+                    \Log::error('Erreur envoi email confirmation achat document: ' . $e->getMessage());
+                }
+                
+                // Envoyer WhatsApp si activé et si le téléphone est fourni
+                $whatsappSettings = WhatsAppSettings::getSettings();
+                if ($whatsappSettings->enabled && $whatsappSettings->send_on_payment_confirmed) {
+                    if ($paymentable->customer_phone && $paymentable->country_code && $paymentable->whatsapp_enabled) {
+                        try {
+                            WhatsAppService::sendDocumentPurchaseMessage($paymentable);
+                        } catch (\Exception $e) {
+                            // Logger l'erreur mais ne pas bloquer le processus
+                            \Log::error('Erreur envoi WhatsApp confirmation achat document: ' . $e->getMessage());
+                        }
+                    }
+                }
+            }
         } elseif ($paymentable instanceof Donation) {
             $paymentable->update([
                 'status' => 'completed',

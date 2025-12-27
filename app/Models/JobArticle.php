@@ -61,6 +61,19 @@ class JobArticle extends Model
         return 'slug';
     }
 
+    /**
+     * Scope pour filtrer les articles réellement publiés
+     * (statut "published" et published_at <= maintenant)
+     */
+    public function scopePublished($query)
+    {
+        return $query->where('status', 'published')
+            ->where(function ($q) {
+                $q->whereNull('published_at')
+                  ->orWhere('published_at', '<=', now());
+            });
+    }
+
     protected static function boot()
     {
         parent::boot();

@@ -77,6 +77,82 @@
     </div>
 </div>
 
+<!-- Mes Documents Achetés -->
+@if(isset($purchasedDocuments) && $purchasedDocuments->count() > 0)
+<div class="content-card" style="margin-bottom: 2.5rem;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h2 class="card-title dashboard-text-primary">
+            <i class="fas fa-file-alt"></i>
+            Mes Documents Achetés
+        </h2>
+        <a href="{{ route('dashboard.my-documents') }}" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1.25rem; background: linear-gradient(135deg, #06b6d4, #0891b2); color: white; border-radius: 8px; text-decoration: none; font-weight: 500; font-size: 0.9rem; transition: all 0.2s ease; box-shadow: 0 4px 6px rgba(6, 182, 212, 0.3);">
+            Voir tous
+            <i class="fas fa-arrow-right" style="font-size: 0.8rem;"></i>
+        </a>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.25rem;">
+        @foreach($purchasedDocuments as $purchase)
+        <div style="padding: 1.25rem; background: linear-gradient(135deg, rgba(6, 182, 212, 0.05), rgba(6, 182, 212, 0.02)); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 12px; transition: all 0.3s ease; position: relative; overflow: hidden;">
+            <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #06b6d4, #14b8a6, #06b6d4); background-size: 200% 100%; animation: shimmer 3s linear infinite;"></div>
+            <div style="width: 100%; height: 150px; border-radius: 8px; overflow: hidden; margin-bottom: 1rem; background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(20, 184, 166, 0.1)); display: flex; align-items: center; justify-content: center;">
+                @if($purchase->document && $purchase->document->cover_image)
+                    <img src="{{ asset('storage/' . $purchase->document->cover_image) }}" alt="{{ $purchase->document->title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                @else
+                    <i class="fas fa-file-pdf" style="font-size: 3rem; color: #06b6d4; opacity: 0.5;"></i>
+                @endif
+            </div>
+            <h3 class="dashboard-text-primary" style="font-size: 1.1rem; font-weight: 600; color: #2c3e50; margin: 0 0 0.5rem 0; line-height: 1.3;">
+                {{ $purchase->document ? $purchase->document->title : 'Document supprimé' }}
+            </h3>
+            @if($purchase->document && $purchase->document->category)
+            <div class="dashboard-text-secondary" style="color: #64748b; font-size: 0.85rem; margin-bottom: 0.75rem;">
+                <i class="fas fa-folder" style="margin-right: 0.5rem;"></i>
+                {{ $purchase->document->category->name }}
+            </div>
+            @endif
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; padding-top: 0.75rem; border-top: 1px solid rgba(6, 182, 212, 0.1);">
+                <div style="font-size: 0.85rem; color: #64748b;">
+                    <i class="fas fa-download" style="margin-right: 0.5rem;"></i>
+                    {{ $purchase->downloads->count() }}/{{ $purchase->download_limit }}
+                </div>
+                <div style="font-size: 0.85rem; color: #64748b;">
+                    <i class="fas fa-calendar" style="margin-right: 0.5rem;"></i>
+                    {{ $purchase->purchased_at->format('d/m/Y') }}
+                </div>
+            </div>
+            @if($purchase->document)
+            <div style="display: flex; gap: 0.5rem;">
+                <a href="{{ route('documents.show', $purchase->document->slug) }}" style="flex: 1; padding: 0.625rem; background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 8px; color: #06b6d4; text-decoration: none; text-align: center; font-weight: 500; font-size: 0.85rem; transition: all 0.2s ease;">
+                    <i class="fas fa-eye" style="margin-right: 0.5rem;"></i>
+                    Voir
+                </a>
+                @if($purchase->downloads->count() < $purchase->download_limit)
+                <a href="{{ route('documents.download', $purchase->document->slug) }}" style="flex: 1; padding: 0.625rem; background: linear-gradient(135deg, #06b6d4, #0891b2); border: none; border-radius: 8px; color: white; text-decoration: none; text-align: center; font-weight: 500; font-size: 0.85rem; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(6, 182, 212, 0.3);">
+                    <i class="fas fa-download" style="margin-right: 0.5rem;"></i>
+                    Télécharger
+                </a>
+                @else
+                <button disabled style="flex: 1; padding: 0.625rem; background: rgba(100, 116, 139, 0.1); border: 1px solid rgba(100, 116, 139, 0.3); border-radius: 8px; color: #64748b; text-align: center; font-weight: 500; font-size: 0.85rem; cursor: not-allowed;">
+                    <i class="fas fa-ban" style="margin-right: 0.5rem;"></i>
+                    Limite atteinte
+                </button>
+                @endif
+            </div>
+            @endif
+        </div>
+        @endforeach
+    </div>
+    @if($purchasedDocuments->count() >= 6)
+    <div style="margin-top: 1.5rem; text-align: center;">
+        <a href="{{ route('dashboard.my-documents') }}" style="display: inline-flex; align-items: center; gap: 0.75rem; padding: 0.875rem 1.75rem; background: linear-gradient(135deg, #06b6d4, #0891b2); color: white; border-radius: 12px; text-decoration: none; font-weight: 600; font-size: 1rem; transition: all 0.3s ease; box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);">
+            Voir tous mes documents
+            <i class="fas fa-arrow-right"></i>
+        </a>
+    </div>
+    @endif
+</div>
+@endif
+
 <!-- Formations en cours -->
 @if(isset($formationProgress) && $formationProgress->where('progress_percentage', '<', 100)->count() > 0)
 <div class="content-card" style="margin-bottom: 2.5rem;">
@@ -515,6 +591,22 @@
     body.dark-mode div[style*="background: linear-gradient(135deg, rgba(6, 182, 212"] {
         background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(6, 182, 212, 0.05)) !important;
         border-color: rgba(6, 182, 212, 0.3) !important;
+    }
+    
+    @keyframes shimmer {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+    }
+    
+    body.dark-mode div[style*="background: linear-gradient(135deg, rgba(6, 182, 212, 0.05)"] {
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(6, 182, 212, 0.05)) !important;
+        border-color: rgba(6, 182, 212, 0.3) !important;
+    }
+    
+    body.dark-mode button[disabled] {
+        background: rgba(100, 116, 139, 0.2) !important;
+        border-color: rgba(100, 116, 139, 0.4) !important;
+        color: rgba(255, 255, 255, 0.5) !important;
     }
 </style>
 @endsection

@@ -1,6 +1,6 @@
 @php
 // Breadcrumbs désactivés sur toutes les pages
-$breadcrumbs = [];
+        $breadcrumbs = [];
 @endphp
 
 @if(false && count($breadcrumbs) > 1)

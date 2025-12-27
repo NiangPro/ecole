@@ -154,6 +154,17 @@
         50% { opacity: 1; width: 80%; }
     }
     
+    @keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+        50% {
+            transform: scale(1.15);
+            opacity: 0.9;
+        }
+    }
+    
     /* Dropdown */
     .dropdown {
         position: relative;
@@ -353,6 +364,36 @@
     
     .navbar-notification-badge {
         animation: pulse 2s infinite;
+    }
+    
+    /* Cart Icon Styles */
+    .navbar-cart-icon {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        position: relative !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+    
+    .navbar-cart-icon i,
+    .navbar-cart-icon i.fas,
+    .navbar-cart-icon i.fa-shopping-cart {
+        display: inline-block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        font-family: "Font Awesome 5 Free", "Font Awesome 6 Free" !important;
+        font-weight: 900 !important;
+        font-style: normal !important;
+        font-variant: normal !important;
+        text-rendering: auto !important;
+        line-height: 1 !important;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+    
+    .navbar-cart-icon i.fa-shopping-cart::before {
+        content: "\f07a" !important;
     }
     
     .navbar-notification-dropdown.active {
@@ -1161,14 +1202,26 @@
             
             <!-- Dropdown À propos / Contact -->
             <li class="navbar-item dropdown">
-                <a href="#" class="navbar-link dropdown-toggle {{ request()->routeIs(['about', 'contact', 'monetization.index', 'monetization.affiliates', 'monetization.affiliates.dashboard', 'docs']) ? 'active' : '' }}">
+                <a href="#" class="navbar-link dropdown-toggle {{ request()->routeIs(['about', 'contact', 'monetization.index', 'monetization.affiliates', 'monetization.affiliates.dashboard', 'docs', 'documents.*', 'forum.*']) ? 'active' : '' }}">
                     {{ trans('app.nav.about') }}
                     <i class="fas fa-chevron-down dropdown-icon"></i>
                 </a>
                 <div class="dropdown-menu">
                     @php
                         $hasActiveSubscriptionPlans = \App\Models\SubscriptionPlan::active()->exists();
+                        $hasPublishedDocuments = \App\Models\Document::published()->active()->exists();
                     @endphp
+                    @if($hasPublishedDocuments)
+                    <a href="{{ route('documents.index') }}" class="dropdown-item" data-parent-active="documents">
+                        <div class="dropdown-item-icon" style="background: rgba(6, 182, 212, 0.1);">
+                            <i class="fas fa-file-alt" style="color: #06b6d4;"></i>
+                        </div>
+                        <div class="dropdown-item-content">
+                            <div class="dropdown-item-title">Documents</div>
+                            <div class="dropdown-item-desc">Guides, tutoriels et ressources</div>
+                        </div>
+                    </a>
+                    @endif
                     @if($hasActiveSubscriptionPlans)
                     <a href="{{ route('monetization.index') }}" class="dropdown-item" data-parent-active="monetization">
                         <div class="dropdown-item-icon" style="background: rgba(6, 182, 212, 0.1);">
@@ -1199,8 +1252,8 @@
                         </div>
                     </a>
                     <a href="{{ route('monetization.affiliates') }}" class="dropdown-item" data-parent-active="affiliates">
-                        <div class="dropdown-item-icon" style="background: rgba(139, 92, 246, 0.1);">
-                            <i class="fas fa-users" style="color: #8b5cf6;"></i>
+                        <div class="dropdown-item-icon" style="background: rgba(6, 182, 212, 0.1);">
+                            <i class="fas fa-users" style="color: #06b6d4;"></i>
                         </div>
                         <div class="dropdown-item-content">
                             <div class="dropdown-item-title">Programme d'Affiliation</div>
@@ -1214,6 +1267,15 @@
                         <div class="dropdown-item-content">
                             <div class="dropdown-item-title">Documentation</div>
                             <div class="dropdown-item-desc">Documentation complète du projet</div>
+                        </div>
+                    </a>
+                    <a href="{{ route('forum.index') }}" class="dropdown-item" data-parent-active="forum">
+                        <div class="dropdown-item-icon" style="background: rgba(168, 85, 247, 0.1);">
+                            <i class="fas fa-comments" style="color: #a855f7;"></i>
+                        </div>
+                        <div class="dropdown-item-content">
+                            <div class="dropdown-item-title">Forum</div>
+                            <div class="dropdown-item-desc">Rejoignez la communauté</div>
                         </div>
                     </a>
                 </div>
@@ -1267,6 +1329,9 @@
                 'monetization.course.show',
                 'payment.wave',
                 'docs',
+                'documents.index',
+                'documents.category',
+                'documents.show',
                 'dashboard.*'
             ]);
         @endphp
@@ -1357,6 +1422,69 @@
             </form>
         </div>
         
+        <!-- Cart Widget (dans la navbar) - Visible sur les pages documents -->
+        @php
+            $showCartWidget = request()->routeIs(['documents.*']) || 
+                             request()->is('documents*') || 
+                             request()->is('documents/creem*');
+            $cartItemsCount = 0;
+            $cartTotal = 0;
+            if ($showCartWidget) {
+                try {
+                    $cartItems = \App\Models\DocumentCart::getCurrentCart();
+                    $cartItemsCount = $cartItems->count();
+                    $cartTotal = \App\Models\DocumentCart::getTotal($cartItems);
+                } catch (\Exception $e) {
+                    $cartItemsCount = 0;
+                    $cartTotal = 0;
+                }
+            }
+        @endphp
+        @if($showCartWidget)
+        <div class="navbar-item" style="position: relative;">
+            <a href="{{ route('documents.cart') }}" class="navbar-cart-icon" aria-label="Panier" style="
+                background: none;
+                border: none;
+                color: rgba(255, 255, 255, 0.9);
+                font-size: 1.3rem;
+                cursor: pointer;
+                padding: 10px 14px;
+                border-radius: 10px;
+                transition: all 0.3s ease;
+                position: relative;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                text-decoration: none;
+                min-width: 44px;
+                min-height: 44px;
+            " onmouseover="this.style.background='rgba(6, 182, 212, 0.15)'; this.style.color='#06b6d4'; this.style.transform='scale(1.1)';" 
+               onmouseout="this.style.background='none'; this.style.color='rgba(255, 255, 255, 0.9)'; this.style.transform='scale(1)';">
+                <i class="fas fa-shopping-cart" style="display: inline-block; font-size: 1.3rem; line-height: 1;"></i>
+                @if($cartItemsCount > 0)
+                <span class="navbar-cart-badge" style="
+                    position: absolute;
+                    top: 6px;
+                    right: 6px;
+                    background: linear-gradient(135deg, #06b6d4, #14b8a6);
+                    color: white;
+                    border-radius: 50%;
+                    min-width: 22px;
+                    height: 22px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 0.7rem;
+                    font-weight: 800;
+                    border: 2px solid rgba(15, 23, 42, 0.95);
+                    box-shadow: 0 2px 8px rgba(6, 182, 212, 0.5);
+                    animation: pulse 2s infinite;
+                ">{{ $cartItemsCount }}</span>
+                @endif
+            </a>
+        </div>
+        @endif
+        
         <!-- Notification Widget (dans la navbar) -->
         @auth
         <div class="navbar-item" id="notification-widget-container" style="position: relative;">
@@ -1443,6 +1571,23 @@
                     </div>
                     <div class="dropdown-item-content">
                         <div class="dropdown-item-title">Dashboard</div>
+                    </div>
+                </a>
+                <a href="{{ route('dashboard.my-documents') }}" class="dropdown-item">
+                    <div class="dropdown-item-icon" style="background: rgba(6, 182, 212, 0.2); color: #06b6d4;">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="dropdown-item-content">
+                        <div class="dropdown-item-title">Mes Documents</div>
+                        @php
+                            $userDocumentsCount = Auth::check() ? \App\Models\DocumentPurchase::where(function($query) {
+                                $query->where('user_id', Auth::id())
+                                      ->orWhere('customer_email', Auth::user()->email);
+                            })->where('status', 'completed')->count() : 0;
+                        @endphp
+                        @if($userDocumentsCount > 0)
+                            <div class="dropdown-item-desc">{{ $userDocumentsCount }} document(s)</div>
+                        @endif
                     </div>
                 </a>
                 <a href="{{ route('dashboard.profile') }}" class="dropdown-item">
@@ -1602,6 +1747,18 @@
             </div>
         </li>
         
+        @php
+            $hasPublishedDocumentsMobile = \App\Models\Document::published()->active()->exists();
+        @endphp
+        @if($hasPublishedDocumentsMobile)
+        <li class="mobile-menu-item">
+            <a href="{{ route('documents.index') }}" class="mobile-menu-link">
+                <i class="fas fa-file-alt" style="color: #06b6d4;"></i>
+                Documents
+            </a>
+        </li>
+        @endif
+        
         <li class="mobile-menu-item">
             <a href="{{ route('about') }}" class="mobile-menu-link">
                 <i class="fas fa-info-circle"></i>
@@ -1627,6 +1784,13 @@
             <a href="{{ route('docs') }}" class="mobile-menu-link">
                 <i class="fas fa-book"></i>
                 Documentation
+            </a>
+        </li>
+        
+        <li class="mobile-menu-item">
+            <a href="{{ route('forum.index') }}" class="mobile-menu-link">
+                <i class="fas fa-comments" style="color: #a855f7;"></i>
+                Forum
             </a>
         </li>
         
@@ -1675,6 +1839,9 @@
                 'monetization.course.show',
                 'payment.wave',
                 'docs',
+                'documents.index',
+                'documents.category',
+                'documents.show',
                 'dashboard.*'
             ]);
         @endphp
@@ -1733,6 +1900,12 @@
             <a href="{{ route('dashboard.overview') }}" class="mobile-menu-link" style="background: linear-gradient(135deg, #06b6d4, #14b8a6); color: #000; font-weight: 700;">
                 <i class="fas fa-tachometer-alt"></i>
                 Dashboard
+            </a>
+        </li>
+        <li class="mobile-menu-item">
+            <a href="{{ route('dashboard.my-documents') }}" class="mobile-menu-link">
+                <i class="fas fa-file-alt"></i>
+                Mes Documents
             </a>
         </li>
         <li class="mobile-menu-item">
@@ -2151,8 +2324,61 @@
         }
     };
     
+    // Fonction pour mettre à jour le badge du panier
+    function updateCartBadge() {
+        @if($showCartWidget ?? false)
+        fetch('{{ route("documents.cart.total") }}')
+            .then(response => response.json())
+            .then(data => {
+                const badge = document.querySelector('.navbar-cart-badge');
+                if (data.count > 0) {
+                    if (badge) {
+                        badge.textContent = data.count;
+                        badge.style.display = 'flex';
+                    } else {
+                        // Créer le badge s'il n'existe pas
+                        const cartIcon = document.querySelector('.navbar-cart-icon');
+                        if (cartIcon) {
+                            const newBadge = document.createElement('span');
+                            newBadge.className = 'navbar-cart-badge';
+                            newBadge.style.cssText = `
+                                position: absolute;
+                                top: 4px;
+                                right: 4px;
+                                background: #06b6d4;
+                                color: white;
+                                border-radius: 50%;
+                                width: 20px;
+                                height: 20px;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                font-size: 0.7rem;
+                                font-weight: 700;
+                                border: 2px solid rgba(15, 23, 42, 0.95);
+                                animation: pulse 2s infinite;
+                            `;
+                            newBadge.textContent = data.count;
+                            cartIcon.appendChild(newBadge);
+                        }
+                    }
+                } else {
+                    if (badge) {
+                        badge.style.display = 'none';
+                    }
+                }
+            })
+            .catch(error => console.error('Erreur mise à jour panier:', error));
+        @endif
+    }
+
     // Charger les notifications au chargement de la page
     document.addEventListener('DOMContentLoaded', function() {
+        // Mettre à jour le badge du panier
+        updateCartBadge();
+        // Mettre à jour toutes les 30 secondes
+        setInterval(updateCartBadge, 30000);
+        
         // Charger les notifications immédiatement si l'utilisateur est connecté
         if (window.isAuthenticated) {
             // Attendre un peu pour que le NotificationManager soit initialisé

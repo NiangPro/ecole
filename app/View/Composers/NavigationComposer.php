@@ -9,12 +9,15 @@ class NavigationComposer
 {
     public function compose(View $view)
     {
-        $jobCategories = Category::where('is_active', true)
-            ->withCount('publishedArticles')
-            ->orderBy('published_articles_count', 'desc')
-            ->orderBy('order')
-            ->take(7)
-            ->get();
+        // Cache les catégories pour améliorer les performances (30 minutes)
+        $jobCategories = \Illuminate\Support\Facades\Cache::remember('navigation_job_categories', 1800, function () {
+            return Category::where('is_active', true)
+                ->withCount('publishedArticles')
+                ->orderBy('published_articles_count', 'desc')
+                ->orderBy('order')
+                ->take(7)
+                ->get();
+        });
         
         $view->with('jobCategories', $jobCategories);
     }

@@ -17,10 +17,13 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        // Créer l'utilisateur de test s'il n'existe pas déjà
+        User::firstOrCreate(
+            ['email' => 'test@example.com'],
+            [
+                'name' => 'Test User',
+            ]
+        );
         
         // Créer l'utilisateur admin
         $this->call(AdminUserSeeder::class);
@@ -40,5 +43,14 @@ class DatabaseSeeder extends Seeder
         
         // Seeder pour les plans d'abonnement
         $this->call(SubscriptionPlanSeeder::class);
+        
+        // Seeder pour les catégories de documents
+        $this->call(DocumentCategoriesSeeder::class);
+        
+        // Seeder pour les documents
+        $this->call(DocumentSeeder::class);
+        
+        // Seeder pour les paramètres WhatsApp
+        $this->call(WhatsAppSettingsSeeder::class);
     }
 }

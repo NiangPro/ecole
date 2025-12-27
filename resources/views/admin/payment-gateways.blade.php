@@ -160,6 +160,34 @@
                     @enderror
                 </div>
             </div>
+            
+            <div class="mt-6">
+                <label class="block text-gray-300 mb-2 font-semibold">
+                    <i class="fas fa-qrcode mr-2"></i>QR Code Wave
+                </label>
+                <input type="text" name="wave_qr_code" value="{{ old('wave_qr_code', $settings->wave_qr_code ?? '') }}" 
+                       class="input-admin" placeholder="URL du QR Code Wave (ex: https://example.com/qr.png ou /storage/qr.png)">
+                <p class="text-gray-500 text-sm mt-2">
+                    <i class="fas fa-info-circle mr-1"></i>
+                    Entrez l'URL complète du QR Code Wave ou le chemin relatif (ex: /storage/wave-qr.png)
+                </p>
+                @if($settings->wave_qr_code)
+                    <div class="mt-3">
+                        <p class="text-gray-400 text-sm mb-2">Aperçu du QR Code actuel :</p>
+                        <img src="{{ $settings->wave_qr_code }}" alt="QR Code Wave" 
+                             class="max-w-xs border border-gray-600 rounded-lg p-2 bg-white" 
+                             style="max-height: 200px; object-fit: contain;"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                        <p class="text-red-400 text-sm mt-2" style="display: none;">
+                            <i class="fas fa-exclamation-triangle mr-1"></i>
+                            Impossible de charger l'image. Vérifiez que l'URL est correcte.
+                        </p>
+                    </div>
+                @endif
+                @error('wave_qr_code')
+                <p class="text-red-400 text-sm mt-2">{{ $message }}</p>
+                @enderror
+            </div>
         </div>
         
         <!-- Configuration PayPal -->
