@@ -645,7 +645,7 @@
                     <div class="featured-article-meta">
                         <span>
                             <i class="fas fa-eye"></i>
-                            {{ $article->views }}
+                            {{ $article->featured_display_views }}
                         </span>
                     </div>
                     <span class="featured-read-more">

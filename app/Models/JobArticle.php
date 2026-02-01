@@ -62,6 +62,30 @@ class JobArticle extends Model
     }
 
     /**
+     * Libellé d'affichage des vues pour la section "Articles Vedettes" (paliers fictifs).
+     * Utiliser dans la page d'accueil uniquement : {{ $article->featured_display_views }}
+     */
+    public function getFeaturedDisplayViewsAttribute(): string
+    {
+        $vues = (int) ($this->attributes['views'] ?? 0);
+        $suffix = app()->getLocale() === 'fr' ? ' vues' : ' views';
+
+        if ($vues > 1000) return '2,5 M' . $suffix;
+        if ($vues > 500) return '1 M' . $suffix;
+        if ($vues > 200) return '20 K' . $suffix;
+        if ($vues > 100) return '10,1 K' . $suffix;
+        if ($vues > 50) return '4,5 K' . $suffix;
+        if ($vues > 40) return '3,8 K' . $suffix;
+        if ($vues > 30) return '3,5 K' . $suffix;
+        if ($vues > 20) return '3,2 K' . $suffix;
+        if ($vues > 15) return '2,8 K' . $suffix;
+        if ($vues > 10) return '2,5 K' . $suffix;
+        if ($vues >= 5) return '2,1 K' . $suffix;
+
+        return '1,5 K' . $suffix;
+    }
+
+    /**
      * Scope pour filtrer les articles réellement publiés
      * (statut "published" et published_at <= maintenant)
      */
@@ -119,6 +143,8 @@ class JobArticle extends Model
             Cache::forget('sponsored_articles');
             Cache::forget('career_advice_articles');
             Cache::forget('featured_articles');
+            Cache::forget('homepage_view_fr');
+            Cache::forget('homepage_view_en');
             // Invalider le cache des articles les plus vus (sidebar)
             Cache::forget('top_viewed_articles_sidebar');
             // Invalider le cache du sitemap pour forcer sa régénération

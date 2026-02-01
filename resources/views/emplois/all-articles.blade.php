@@ -537,7 +537,7 @@
                     </span>
                     <span class="all-article-views">
                         <i class="fas fa-eye"></i>
-                        {{ number_format($article->views ?? 0) }}
+                        {{ $article->featured_display_views }}
                     </span>
                 </div>
             </div>

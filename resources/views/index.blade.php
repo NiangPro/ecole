@@ -639,6 +639,18 @@
         width: 100%;
     }
     
+    @media (max-width: 768px) {
+        .exercices-quiz-section {
+            padding: 60px 16px !important;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .exercices-quiz-section {
+            padding: 40px 12px !important;
+        }
+    }
+    
     body.dark-mode .exercices-quiz-section {
         background: linear-gradient(135deg, #1e293b 0%, #334155 30%, #475569 60%, #1e293b 100%);
     }
@@ -1242,15 +1254,15 @@
 </section>
 
 <!-- Exercices & Quiz Section -->
-<section class="exercices-quiz-section" style="background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 50%, #ffffff 100%); padding: 80px 20px; position: relative; overflow: hidden;">
+<section class="exercices-quiz-section" style="position: relative; overflow: hidden;">
     <h2 class="exercices-quiz-section-title">{{ trans('app.home.exercices_quiz.section_title') }}</h2>
     <p class="exercices-quiz-section-subtitle" style="text-align: center; font-size: clamp(1rem, 2vw, 1.2rem); width: 100%; max-width: 100%; margin: 0 auto 60px; line-height: 1.8; position: relative; z-index: 1; padding: 0 20px; font-weight: 400;">
         {{ trans('app.home.exercices_quiz.section_subtitle') }}
     </p>
     
-    <div class="exercices-quiz-container" style="display: grid; grid-template-columns: {{ isset($sidebarAds) && $sidebarAds->count() > 0 ? '1fr 300px' : '1fr' }}; gap: 30px; margin-bottom: 0; align-items: start; max-width: 1600px; margin: 0 auto; width: 100%;">
+    <div class="exercices-quiz-container" style="display: grid; gap: 30px; margin-bottom: 0; align-items: start; max-width: 1600px; margin: 0 auto; width: 100%;">
         <!-- Cards Exercices & Quiz -->
-        <div class="exercices-quiz-cards" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; width: 100%;">
+        <div class="exercices-quiz-cards" style="display: grid; gap: 24px; width: 100%;">
             <!-- Exercices Card -->
             <div class="exercices-quiz-card exercices-card" style="border: 1px solid rgba(6, 182, 212, 0.15); border-radius: 16px; padding: 32px; text-align: left; transition: all 0.3s ease; position: relative; overflow: hidden; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); display: flex; flex-direction: column; min-height: 320px;">
                 <div class="exercices-quiz-icon-wrapper" style="width: 64px; height: 64px; background: transparent; border-radius: 0; display: flex; align-items: center; justify-content: flex-start; margin-bottom: 20px; transition: all 0.3s ease; position: relative; z-index: 2; pointer-events: none;">
@@ -3124,19 +3136,11 @@
                                     {{ $article->title }}
                                 </h4>
                                 <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: rgba(30, 41, 59, 0.65); flex-wrap: wrap;">
-                                    @if($article->views)
                                     <span style="display: flex; align-items: center; gap: 0.25rem;">
                                         <span style="color: #f59e0b;">🔥</span>
                                         <i class="fas fa-eye" style="color: rgba(30, 41, 59, 0.65); font-size: 0.7rem;"></i>
-                                        <span style="font-weight: 500;">
-                                            @if($article->views < 1000)
-                                                1K
-                                            @else
-                                                {{ number_format($article->views / 1000, 1) }}K
-                                            @endif
-                                        </span>
+                                        <span style="font-weight: 500;">{{ $article->featured_display_views }}</span>
                                     </span>
-                                    @endif
                                     <span style="font-weight: 500;">
                                         {{ $article->published_at ? $article->published_at->format('d M') : $article->created_at->format('d M') }}
                                     </span>
@@ -3237,7 +3241,7 @@
                         <div style="display: flex; align-items: center; gap: 12px; color: rgba(30, 41, 59, 0.6); font-size: 0.85rem;">
                             <span style="display: flex; align-items: center; gap: 4px;">
                                 <i class="fas fa-eye"></i>
-                                <span>{{ $article->views }} {{ app()->getLocale() === 'fr' ? 'vues' : 'views' }}</span>
+                                <span>{{ $article->featured_display_views }}</span>
                             </span>
                         </div>
                         <span style="color: #ef4444; font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; gap: 6px;">
@@ -3882,6 +3886,19 @@
         align-items: start;
     }
     
+    @media (max-width: 1024px) {
+        .exercices-quiz-container {
+            grid-template-columns: 1fr !important;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .exercices-quiz-container {
+            grid-template-columns: 1fr !important;
+            gap: 20px !important;
+        }
+    }
+    
     .exercices-quiz-cards {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -3891,13 +3908,20 @@
     
     @media (max-width: 1024px) {
         .exercices-quiz-cards {
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(2, 1fr) !important;
         }
     }
     
     @media (max-width: 768px) {
         .exercices-quiz-cards {
-            grid-template-columns: 1fr;
+            grid-template-columns: 1fr !important;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .exercices-quiz-cards {
+            grid-template-columns: 1fr !important;
+            gap: 16px !important;
         }
     }
     
@@ -4223,24 +4247,25 @@
         }
         
         .exercices-quiz-cards {
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 20px !important;
         }
     }
     
     @media (max-width: 768px) {
         .exercices-quiz-container {
             grid-template-columns: 1fr !important;
+            gap: 20px !important;
         }
         
         .exercices-quiz-cards {
-            grid-template-columns: 1fr;
-            gap: 20px;
+            grid-template-columns: 1fr !important;
+            gap: 20px !important;
         }
         
         .exercices-quiz-card {
-            padding: 24px;
-            min-height: auto;
+            padding: 24px !important;
+            min-height: auto !important;
         }
         
         .exercices-quiz-icon-wrapper {
@@ -4269,6 +4294,44 @@
             font-size: 0.95rem;
             width: 100%;
             justify-content: center;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .exercices-quiz-cards {
+            grid-template-columns: 1fr !important;
+            gap: 16px !important;
+        }
+        
+        .exercices-quiz-card {
+            padding: 20px !important;
+            min-height: auto !important;
+        }
+        
+        .exercices-quiz-icon-wrapper {
+            width: 48px !important;
+            height: 48px !important;
+            margin-bottom: 16px !important;
+        }
+        
+        .exercices-quiz-icon-wrapper i {
+            font-size: 1.25rem !important;
+        }
+        
+        .exercices-quiz-title {
+            font-size: 1.1rem !important;
+            margin-bottom: 10px !important;
+        }
+        
+        .exercices-quiz-description {
+            font-size: 0.9rem !important;
+            margin-bottom: 16px !important;
+            line-height: 1.5 !important;
+        }
+        
+        .exercices-quiz-btn {
+            padding: 10px 20px !important;
+            font-size: 0.9rem !important;
         }
     }
     

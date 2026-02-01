@@ -20,6 +20,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // S'assurer que le répertoire des vues compilées existe (évite HTTP 500 sur file_put_contents)
+        $répertoireVuesCompilées = storage_path('framework/views');
+        if (! is_dir($répertoireVuesCompilées)) {
+            mkdir($répertoireVuesCompilées, 0755, true);
+        }
+
         // Configuration pour éviter l'erreur "La clé est trop longue" avec MySQL/MariaDB
         Schema::defaultStringLength(191);
         

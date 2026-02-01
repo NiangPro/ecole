@@ -865,7 +865,7 @@
                 </h5>
                 <div class="article-item-meta">
                     <span><i class="fas fa-folder mr-1"></i>{{ $article->category->name ?? 'Non catégorisé' }}</span>
-                    <span><i class="fas fa-eye mr-1"></i>{{ number_format($article->views) }} vues</span>
+                    <span><i class="fas fa-eye mr-1"></i>{{ $article->featured_display_views }}</span>
                     <span><i class="fas fa-calendar mr-1"></i>{{ $article->created_at->format('d/m/Y') }}</span>
                 </div>
             </div>
@@ -896,7 +896,7 @@
                 </h5>
                 <div class="article-item-meta">
                     <span><i class="fas fa-folder mr-1"></i>{{ $article->category->name ?? 'Non catégorisé' }}</span>
-                    <span><i class="fas fa-eye mr-1" style="color: #f59e0b;"></i><strong style="color: #f59e0b;">{{ number_format($article->views) }}</strong> vues</span>
+                    <span><i class="fas fa-eye mr-1" style="color: #f59e0b;"></i><strong style="color: #f59e0b;">{{ $article->featured_display_views }}</strong></span>
                     <span><i class="fas fa-calendar mr-1"></i>{{ $article->published_at ? $article->published_at->format('d/m/Y') : $article->created_at->format('d/m/Y') }}</span>
                 </div>
             </div>
