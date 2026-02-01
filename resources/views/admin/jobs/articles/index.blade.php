@@ -849,7 +849,7 @@
                             <span class="text-sm text-gray-400">{{ $readabilityScore }}/100</span>
                         </div>
                     </td>
-                    <td class="p-4 text-gray-400">{{ $article->featured_display_views }}</td>
+                    <td class="p-4 text-gray-400">{{ $article->views }}</td>
                     <td class="p-4">
                         <div class="flex justify-end gap-2">
                             <a href="{{ route('admin.jobs.articles.show', $article->id) }}" class="px-3 py-1 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 rounded transition" title="Voir">

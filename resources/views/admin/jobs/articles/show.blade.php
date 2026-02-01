@@ -141,7 +141,7 @@
                     </span>
                 @endif
                 <span class="text-gray-400 text-sm">
-                    <i class="fas fa-eye mr-1"></i>{{ $article->featured_display_views }}
+                    <i class="fas fa-eye mr-1"></i>{{ number_format($article->views, 0, ',', ' ') }} vues
                 </span>
                 @if($article->published_at)
                 <span class="text-gray-400 text-sm">
