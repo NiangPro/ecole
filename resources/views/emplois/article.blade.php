@@ -944,7 +944,7 @@
                 </div>
                 <div class="article-hero-meta-item">
                     <i class="fas fa-eye"></i>
-                    <span>{{ number_format($article->views, 0, ',', ' ') }} vues</span>
+                    <span>{{ $article->featured_display_views }}</span>
                 </div>
                 <div class="article-hero-meta-item">
                     <i class="fas fa-user"></i>
@@ -986,7 +986,7 @@
             </div>
             <div class="article-hero-meta-item">
                 <i class="fas fa-eye"></i>
-                <span>{{ number_format($article->views, 0, ',', ' ') }} vues</span>
+                <span>{{ $article->featured_display_views }}</span>
             </div>
         </div>
     </div>
@@ -1249,7 +1249,7 @@
                              onerror="this.src='https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=400&h=250&fit=crop'">
                         <div style="position: absolute; top: 8px; right: 8px; background: rgba(0, 0, 0, 0.7); color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; display: flex; align-items: center; gap: 4px;">
                             <i class="fas fa-eye"></i>
-                            <span>{{ number_format($topArticle->views, 0, ',', ' ') }}</span>
+                            <span>{{ $topArticle->featured_display_views }}</span>
                         </div>
                     </div>
                     @endif
@@ -1297,7 +1297,7 @@
                              onerror="this.src='https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=400&h=250&fit=crop'">
                         <div style="position: absolute; top: 8px; right: 8px; background: rgba(0, 0, 0, 0.7); color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; display: flex; align-items: center; gap: 4px;">
                             <i class="fas fa-eye"></i>
-                            <span>{{ number_format($topArticle->views, 0, ',', ' ') }}</span>
+                            <span>{{ $topArticle->featured_display_views }}</span>
                         </div>
                     </div>
                     @endif
@@ -1356,7 +1356,7 @@
                     <h3 class="related-card-modern-title">{{ $related->title }}</h3>
                     <div class="related-card-modern-meta">
                         <span><i class="fas fa-calendar"></i> {{ $related->published_at ? $related->published_at->format('d/m/Y') : '' }}</span>
-                        <span><i class="fas fa-eye"></i> {{ $related->views }} vues</span>
+                        <span><i class="fas fa-eye"></i> {{ $related->featured_display_views }}</span>
                     </div>
                 </div>
             </a>

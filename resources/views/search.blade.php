@@ -599,9 +599,7 @@
                 <div class="result-meta">
                     <span><i class="fas fa-folder"></i> {{ $article->category->name }}</span>
                     <span><i class="fas fa-calendar"></i> {{ $article->published_at ? $article->published_at->format('d/m/Y') : $article->created_at->format('d/m/Y') }}</span>
-                    @if($article->views > 0)
-                    <span><i class="fas fa-eye"></i> {{ $article->views }} vues</span>
-                    @endif
+                    <span><i class="fas fa-eye"></i> {{ $article->featured_display_views }}</span>
                 </div>
             </div>
         </a>

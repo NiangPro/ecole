@@ -33,6 +33,7 @@ class DatabaseSeeder extends Seeder
             JobCategoriesSeeder::class,
             JobArticlesSeeder::class,
             SponsoredArticleSeeder::class,
+            FeaturedArticlesSeeder::class,
         ]);
         
         // Seeder pour les badges

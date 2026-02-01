@@ -3136,19 +3136,11 @@
                                     {{ $article->title }}
                                 </h4>
                                 <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: rgba(30, 41, 59, 0.65); flex-wrap: wrap;">
-                                    @if($article->views)
                                     <span style="display: flex; align-items: center; gap: 0.25rem;">
                                         <span style="color: #f59e0b;">🔥</span>
                                         <i class="fas fa-eye" style="color: rgba(30, 41, 59, 0.65); font-size: 0.7rem;"></i>
-                                        <span style="font-weight: 500;">
-                                            @if($article->views < 1000)
-                                                1K
-                                            @else
-                                                {{ number_format($article->views / 1000, 1) }}K
-                                            @endif
-                                        </span>
+                                        <span style="font-weight: 500;">{{ $article->featured_display_views }}</span>
                                     </span>
-                                    @endif
                                     <span style="font-weight: 500;">
                                         {{ $article->published_at ? $article->published_at->format('d M') : $article->created_at->format('d M') }}
                                     </span>
@@ -3249,7 +3241,7 @@
                         <div style="display: flex; align-items: center; gap: 12px; color: rgba(30, 41, 59, 0.6); font-size: 0.85rem;">
                             <span style="display: flex; align-items: center; gap: 4px;">
                                 <i class="fas fa-eye"></i>
-                                <span>{{ $article->views }} {{ app()->getLocale() === 'fr' ? 'vues' : 'views' }}</span>
+                                <span>{{ $article->featured_display_views }}</span>
                             </span>
                         </div>
                         <span style="color: #ef4444; font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; gap: 6px;">

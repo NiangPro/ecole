@@ -665,7 +665,7 @@
                     <span>{{ $article->published_at ? $article->published_at->format('d/m/Y') : '' }}</span>
                     <span class="mx-2">•</span>
                     <i class="fas fa-eye"></i>
-                    <span>{{ $article->views }} vues</span>
+                    <span>{{ $article->featured_display_views }}</span>
                 </div>
             </div>
         </a>

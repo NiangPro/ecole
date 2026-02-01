@@ -444,7 +444,7 @@
                         </span>
                         <span>
                             <i class="fas fa-eye"></i>
-                            {{ number_format($article->views) }} vue(s)
+                            {{ $article->featured_display_views }}
                         </span>
                         @if($article->meta_title)
                         <span class="seo-badge" title="Article optimisé SEO">
