@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Str;
 use Carbon\Carbon;
 
 class Statistic extends Model
@@ -224,6 +225,50 @@ class Statistic extends Model
                    ->groupBy('month')
                    ->orderBy('month')
                    ->get();
+    }
+
+    /**
+     * Top N articles les plus visités sur la semaine en cours (d'après la table statistics).
+     * Retourne une collection de ['article' => JobArticle|null, 'visits' => int].
+     */
+    public static function getTopArticleVisitsForWeek(int $limit = 5)
+    {
+        $debutSemaine = Carbon::now()->startOfWeek();
+        $finSemaine = Carbon::now()->endOfWeek();
+
+        $lignes = self::whereBetween('visit_date', [$debutSemaine, $finSemaine])
+            ->where('page_url', 'like', '%/emplois/article/%')
+            ->get(['page_url']);
+
+        $parSlug = [];
+        foreach ($lignes as $ligne) {
+            $path = parse_url($ligne->page_url, PHP_URL_PATH);
+            if ($path === null) {
+                continue;
+            }
+            $slug = trim(Str::afterLast($path, '/'), '/');
+            if ($slug !== '') {
+                $parSlug[$slug] = ($parSlug[$slug] ?? 0) + 1;
+            }
+        }
+
+        arsort($parSlug);
+        $topSlugs = array_slice(array_keys($parSlug), 0, $limit, true);
+
+        if (empty($topSlugs)) {
+            return collect();
+        }
+
+        $articles = \App\Models\JobArticle::with('category:id,name,slug')->whereIn('slug', $topSlugs)->get()->keyBy('slug');
+        $resultat = [];
+        foreach ($topSlugs as $slug) {
+            $resultat[] = [
+                'article' => $articles->get($slug),
+                'visits' => $parSlug[$slug],
+            ];
+        }
+
+        return collect($resultat);
     }
 
     // Statistiques hebdomadaires du mois actuel - Cache 5 minutes

@@ -2,28 +2,33 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\Cache;
+
 class GeoIPService
 {
+    /** Durée du cache par IP (24 h) pour éviter les appels API bloquants. */
+    private const CACHE_TTL = 86400;
+
     public static function getCountry($ip)
     {
-        // Pour localhost et IPs privées
         if (in_array($ip, ['127.0.0.1', '::1']) || self::isPrivateIP($ip)) {
-            return 'SN'; // Sénégal par défaut pour le développement local
+            return 'SN';
         }
 
-        try {
-            // Utiliser l'API gratuite ip-api.com (limite: 45 requêtes/minute)
-            $response = @file_get_contents("http://ip-api.com/json/{$ip}?fields=countryCode");
-            
-            if ($response) {
-                $data = json_decode($response, true);
-                return $data['countryCode'] ?? 'XX';
+        $cleCache = 'geo_ip_' . $ip;
+
+        return Cache::remember($cleCache, self::CACHE_TTL, function () use ($ip) {
+            try {
+                $response = @file_get_contents("http://ip-api.com/json/{$ip}?fields=countryCode");
+                if ($response) {
+                    $data = json_decode($response, true);
+                    return $data['countryCode'] ?? 'XX';
+                }
+            } catch (\Exception $e) {
+                //
             }
-        } catch (\Exception $e) {
-            // En cas d'erreur, retourner XX
-        }
-
-        return 'XX'; // Unknown
+            return 'XX';
+        });
     }
 
     private static function isPrivateIP($ip)
