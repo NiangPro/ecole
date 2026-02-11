@@ -54,8 +54,9 @@
         bottom: 0;
         background: linear-gradient(to bottom, transparent 0%, rgba(51, 65, 85, 0.85) 100%);
         display: flex;
-        align-items: flex-end;
-        padding: 60px 20px 40px;
+        align-items: center;
+        justify-content: center;
+        padding: 60px 20px;
     }
     
     body:not(.dark-mode) .offers-hero-overlay {
@@ -68,6 +69,7 @@
         margin: 0 auto;
         position: relative;
         z-index: 1;
+        text-align: center;
     }
     
     .offers-hero-title {
