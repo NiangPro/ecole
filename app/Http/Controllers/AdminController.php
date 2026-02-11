@@ -138,6 +138,8 @@ class AdminController extends Controller
                 'unreadMessages' => ContactMessage::where('is_read', false)->count(),
                 'recentArticles' => \App\Models\JobArticle::orderBy('created_at', 'desc')->take(5)->get(),
                 'topArticles' => \App\Models\JobArticle::where('status', 'published')->orderBy('views', 'desc')->take(5)->get(),
+                'topArticlesWeek' => Statistic::getTopArticleVisitsForWeek(5),
+                'monthlyVisitsYear' => self::getMonthlyVisitsForYear(Carbon::now()->year),
                 'totalPaidCourses' => \App\Models\PaidCourse::count(),
                 'publishedPaidCourses' => \App\Models\PaidCourse::where('status', 'published')->count(),
                 'totalCourseSales' => \App\Models\CoursePurchase::where('status', 'completed')->count(),
@@ -154,6 +156,25 @@ class AdminController extends Controller
             : 0;
         
         return view('admin.dashboard', compact('expiringAds', 'stats'));
+    }
+
+    /**
+     * Visites groupées par mois pour une année (12 valeurs, de Janvier à Décembre).
+     * Retourne ['labels' => [...], 'data' => [...]].
+     */
+    private static function getMonthlyVisitsForYear(int $année): array
+    {
+        $moisLabels = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
+        $stats = Statistic::getMonthlyStatsForYear($année);
+        $parMois = $stats->keyBy('month')->map(fn ($s) => $s->visits);
+        $donnees = [];
+        for ($m = 1; $m <= 12; $m++) {
+            $donnees[] = (int) ($parMois->get($m) ?? 0);
+        }
+        return [
+            'labels' => $moisLabels,
+            'data' => $donnees,
+        ];
     }
     
     public function profile()

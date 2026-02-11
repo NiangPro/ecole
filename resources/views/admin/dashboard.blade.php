@@ -911,6 +911,41 @@
 </div>
 @endif
 
+@if(isset($stats['topArticlesWeek']) && $stats['topArticlesWeek']->isNotEmpty())
+<!-- Top 5 articles les plus visités (cette semaine) -->
+<div class="content-section-modern mb-8">
+    <h4 class="section-title-modern">
+        <i class="fas fa-calendar-week"></i>
+        Top 5 articles les plus visités (cette semaine)
+    </h4>
+    <div style="display: grid; gap: 15px;">
+        @foreach($stats['topArticlesWeek'] as $index => $item)
+        <div class="article-item-card">
+            <div style="flex: 1;">
+                @if($item['article'])
+                <h5 class="article-item-title">
+                    <a href="{{ route('admin.jobs.articles.edit', $item['article']->id) }}">{{ $item['article']->title }}</a>
+                </h5>
+                <div class="article-item-meta">
+                    <span><i class="fas fa-folder mr-1"></i>{{ $item['article']->category->name ?? 'Non catégorisé' }}</span>
+                    <span><i class="fas fa-eye mr-1" style="color: #06b6d4;"></i><strong style="color: #06b6d4;">{{ number_format($item['visits']) }}</strong> visites cette semaine</span>
+                </div>
+                @else
+                <h5 class="article-item-title">Article supprimé (slug)</h5>
+                <div class="article-item-meta">
+                    <span><i class="fas fa-eye mr-1"></i>{{ number_format($item['visits']) }} visites</span>
+                </div>
+                @endif
+            </div>
+            <div>
+                <span class="article-status-badge article-status-top">#{{ $index + 1 }}</span>
+            </div>
+        </div>
+        @endforeach
+    </div>
+</div>
+@endif
+
 <!-- Graphique des visites - Ligne entière -->
 <div class="content-section-modern mb-8" style="width: 100%;">
     <h4 class="section-title-modern">
@@ -921,6 +956,19 @@
         <canvas id="visitsChart" height="350" style="width: 100% !important; max-width: 100%;"></canvas>
     </div>
 </div>
+
+@if(isset($stats['monthlyVisitsYear']))
+<!-- Graphique visites par mois (année en cours) -->
+<div class="content-section-modern mb-8" style="width: 100%;">
+    <h4 class="section-title-modern">
+        <i class="fas fa-chart-bar"></i>
+        Visites par mois ({{ now()->year }})
+    </h4>
+    <div class="visits-chart-container">
+        <canvas id="monthlyVisitsChart" height="350" style="width: 100% !important; max-width: 100%;"></canvas>
+    </div>
+</div>
+@endif
 
 <!-- Top Pages - Ligne entière -->
 <div class="content-section-modern mb-8">
@@ -1210,6 +1258,60 @@
                         }
                     }, 100);
                 });
+            }
+        });
+    }
+
+    // Graphique visites par mois (année)
+    const monthlyCtx = document.getElementById('monthlyVisitsChart');
+    if (monthlyCtx) {
+        const monthlyData = @json($stats['monthlyVisitsYear'] ?? ['labels' => [], 'data' => []]);
+        const isLightModeMonthly = document.body.classList.contains('light-mode');
+        const monthlyTextColor = isLightModeMonthly ? '#64748b' : '#9ca3af';
+        const monthlyGridColor = isLightModeMonthly ? 'rgba(100, 116, 139, 0.2)' : 'rgba(156, 163, 175, 0.1)';
+        const monthlyTooltipBg = isLightModeMonthly ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 0, 0, 0.9)';
+        const monthlyTooltipTextColor = isLightModeMonthly ? '#1e293b' : '#fff';
+
+        new Chart(monthlyCtx, {
+            type: 'bar',
+            data: {
+                labels: monthlyData.labels || [],
+                datasets: [{
+                    label: 'Visites',
+                    data: monthlyData.data || [],
+                    backgroundColor: isLightModeMonthly ? 'rgba(6, 182, 212, 0.5)' : 'rgba(6, 182, 212, 0.6)',
+                    borderColor: '#06b6d4',
+                    borderWidth: 2,
+                    borderRadius: 8,
+                    borderSkipped: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: monthlyTooltipBg,
+                        titleColor: '#06b6d4',
+                        bodyColor: monthlyTooltipTextColor,
+                        borderColor: '#06b6d4',
+                        borderWidth: 2,
+                        padding: 15,
+                        cornerRadius: 10
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { color: monthlyTextColor, precision: 0 },
+                        grid: { color: monthlyGridColor }
+                    },
+                    x: {
+                        ticks: { color: monthlyTextColor },
+                        grid: { color: monthlyGridColor }
+                    }
+                }
             }
         });
     }

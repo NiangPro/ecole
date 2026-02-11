@@ -27,30 +27,36 @@ class TrackVisit
             $cacheKey = 'visit_' . md5($request->ip() . $request->path() . Carbon::today()->format('Y-m-d'));
             
             if (!Cache::has($cacheKey)) {
-                // Mettre en cache pendant 1 heure pour éviter les doublons
                 Cache::put($cacheKey, true, 3600);
-                
-                // Exécuter de manière asynchrone si possible, sinon en arrière-plan
-                try {
-                    $userAgentData = UserAgentParser::parse($request->userAgent());
-                    $country = GeoIPService::getCountry($request->ip());
-                    
-                    // Créer la statistique
-                    Statistic::create([
-                        'page_url' => $request->fullUrl(),
-                        'page_title' => $this->getPageTitle($request),
-                        'ip_address' => $request->ip(),
-                        'user_agent' => $request->userAgent(),
-                        'referer' => $request->header('referer'),
-                        'country' => $country,
-                        'browser' => $userAgentData['browser'],
-                        'device' => $userAgentData['device'],
-                        'visit_date' => Carbon::today(),
-                    ]);
-                } catch (\Exception $e) {
-                    // Ignorer les erreurs de tracking pour ne pas bloquer la requête
-                    \Log::warning('Erreur lors du tracking de visite: ' . $e->getMessage());
-                }
+
+                $donnees = [
+                    'full_url' => $request->fullUrl(),
+                    'page_title' => $this->getPageTitle($request),
+                    'ip' => $request->ip(),
+                    'user_agent' => $request->userAgent(),
+                    'referer' => $request->header('referer'),
+                ];
+
+                // Exécuter après l'envoi de la réponse pour ne pas bloquer (GeoIP = appel HTTP externe)
+                dispatch(function () use ($donnees) {
+                    try {
+                        $userAgentData = UserAgentParser::parse($donnees['user_agent']);
+                        $country = GeoIPService::getCountry($donnees['ip']);
+                        Statistic::create([
+                            'page_url' => $donnees['full_url'],
+                            'page_title' => $donnees['page_title'],
+                            'ip_address' => $donnees['ip'],
+                            'user_agent' => $donnees['user_agent'],
+                            'referer' => $donnees['referer'],
+                            'country' => $country,
+                            'browser' => $userAgentData['browser'],
+                            'device' => $userAgentData['device'],
+                            'visit_date' => Carbon::today(),
+                        ]);
+                    } catch (\Exception $e) {
+                        \Log::warning('Erreur lors du tracking de visite: ' . $e->getMessage());
+                    }
+                })->afterResponse();
             }
         }
         
