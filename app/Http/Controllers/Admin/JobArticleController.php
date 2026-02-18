@@ -9,6 +9,7 @@ use App\Models\AdminLog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Database\UniqueConstraintViolationException;
 
 class JobArticleController extends Controller
 {
@@ -101,7 +102,14 @@ class JobArticleController extends Controller
         $validated['is_featured'] = $request->has('is_featured') ? true : false;
 
         if (empty($validated['slug'])) {
-            $validated['slug'] = Str::slug($validated['title']);
+            $baseSlug = Str::slug($validated['title']);
+            $slug = $baseSlug;
+            $counter = 1;
+            while (JobArticle::where('slug', $slug)->exists()) {
+                $slug = $baseSlug . '-' . $counter;
+                $counter++;
+            }
+            $validated['slug'] = $slug;
         }
 
         // Gérer l'upload d'image si c'est une image interne
@@ -139,7 +147,13 @@ class JobArticleController extends Controller
             unset($validated['published_at']);
         }
 
-        $article = JobArticle::create($validated);
+        try {
+            $article = JobArticle::create($validated);
+        } catch (UniqueConstraintViolationException $e) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['slug' => 'Ce slug existe déjà. Veuillez en choisir un autre.']);
+        }
 
         // Logger l'action
         AdminLog::log('create', $article, "Création de l'article \"{$article->title}\"");
@@ -224,7 +238,14 @@ class JobArticleController extends Controller
         $validated['is_featured'] = $request->has('is_featured') ? true : false;
 
         if (empty($validated['slug'])) {
-            $validated['slug'] = Str::slug($validated['title']);
+            $baseSlug = Str::slug($validated['title']);
+            $slug = $baseSlug;
+            $counter = 1;
+            while (JobArticle::where('slug', $slug)->where('id', '!=', $id)->exists()) {
+                $slug = $baseSlug . '-' . $counter;
+                $counter++;
+            }
+            $validated['slug'] = $slug;
         }
 
         // Gérer l'upload d'image
@@ -312,8 +333,14 @@ class JobArticleController extends Controller
 
         // Sauvegarder les anciennes valeurs pour le log
         $oldValues = $article->toArray();
-        
-        $article->update($validated);
+
+        try {
+            $article->update($validated);
+        } catch (UniqueConstraintViolationException $e) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['slug' => 'Ce slug existe déjà. Veuillez en choisir un autre.']);
+        }
 
         // Logger l'action
         AdminLog::log('update', $article, "Modification de l'article \"{$article->title}\"", $oldValues, $article->toArray());

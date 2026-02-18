@@ -531,6 +531,9 @@
                         @error('title')
                             <div class="form-error">{{ $message }}</div>
                         @enderror
+                        @error('slug')
+                            <div class="form-error">{{ $message }}</div>
+                        @enderror
                     </div>
                 </div>
 
