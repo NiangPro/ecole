@@ -679,7 +679,7 @@ use Illuminate\Support\Facades\Storage;
                     </div>
                     <div class="cover-wrapper">
                         @if($document->cover_type === 'internal')
-                            <img src="{{ asset('storage/' . $document->cover_image) }}" alt="{{ $document->title }}">
+                            <img src="/storage/{{ $document->cover_image }}" alt="{{ $document->title }}">
                         @else
                             <img src="{{ $document->cover_image }}" alt="{{ $document->title }}">
                         @endif
@@ -825,6 +825,44 @@ use Illuminate\Support\Facades\Storage;
                 </div>
             </div>
         </div>
+
+        <!-- Aperçu PDF - Pleine largeur -->
+        @if(strtolower($document->file_extension) === 'pdf')
+        <div class="modern-card mt-6" style="width: 100%;">
+            <div class="card-header">
+                <i class="fas fa-file-pdf"></i>
+                <h3>Aperçu du contenu PDF</h3>
+            </div>
+            <div class="pdf-viewer-wrapper" style="border-radius: 12px; overflow: hidden; border: 1px solid var(--border); background: #1e293b; min-height: 600px; width: 100%;">
+                <iframe
+                    src="{{ route('admin.documents.documents.preview', $document->id) }}"
+                    class="w-full"
+                    style="width: 100%; height: 600px; border: none; display: block;"
+                    title="Aperçu du document PDF"
+                ></iframe>
+            </div>
+            <div class="mt-3 flex gap-2">
+                <a href="{{ route('admin.documents.documents.preview', $document->id) }}" target="_blank" rel="noopener noreferrer"
+                   class="btn-action btn-edit" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
+                    <i class="fas fa-external-link-alt"></i>
+                    <span>Ouvrir dans un nouvel onglet</span>
+                </a>
+            </div>
+        </div>
+        @else
+        <div class="modern-card mt-6">
+            <div class="card-header">
+                <i class="fas fa-info-circle"></i>
+                <h3>Aperçu du fichier</h3>
+            </div>
+            <div class="info-row">
+                <div class="info-value text-gray-400">
+                    <i class="fas fa-file-alt mr-2"></i>
+                    L'aperçu en ligne est disponible uniquement pour les fichiers PDF. Pour les fichiers Word (.doc, .docx) ou autres formats, vous pouvez les télécharger pour les consulter.
+                </div>
+            </div>
+        </div>
+        @endif
     </div>
 </div>
 @endsection

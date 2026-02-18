@@ -1,7 +1,6 @@
 @extends('admin.layout')
 
 @php
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 @endphp
 
@@ -167,11 +166,8 @@ use Illuminate\Support\Str;
                     <tr class="border-b border-cyan-500/20">
                         <th class="text-left p-4 text-cyan-400">Image</th>
                         <th class="text-left p-4 text-cyan-400">Titre</th>
-                        <th class="text-left p-4 text-cyan-400">Catégorie</th>
                         <th class="text-left p-4 text-cyan-400">Prix</th>
                         <th class="text-left p-4 text-cyan-400">Statut</th>
-                        <th class="text-left p-4 text-cyan-400">Ventes</th>
-                        <th class="text-left p-4 text-cyan-400">Vues</th>
                         <th class="text-right p-4 text-cyan-400">Actions</th>
                     </tr>
                 </thead>
@@ -181,7 +177,7 @@ use Illuminate\Support\Str;
                         <td class="p-4">
                             @if($document->cover_image)
                                 <div class="document-thumbnail">
-                                    <img src="{{ $document->cover_type === 'internal' ? Storage::url($document->cover_image) : $document->cover_image }}" 
+                                    <img src="{{ $document->cover_type === 'internal' ? '/storage/' . $document->cover_image : $document->cover_image }}" 
                                          alt="{{ $document->title }}">
                                 </div>
                             @else
@@ -193,11 +189,6 @@ use Illuminate\Support\Str;
                         <td class="p-4">
                             <div class="font-semibold">{{ $document->title }}</div>
                             <div class="text-sm text-gray-400 mt-1">{{ Str::limit($document->excerpt ?? $document->description, 50) }}</div>
-                        </td>
-                        <td class="p-4">
-                            <span class="px-2 py-1 bg-cyan-500/20 text-cyan-400 rounded text-sm">
-                                {{ $document->category->name }}
-                            </span>
                         </td>
                         <td class="p-4">
                             <div class="font-semibold">
@@ -216,12 +207,6 @@ use Illuminate\Support\Str;
                                 @else Archivé
                                 @endif
                             </span>
-                        </td>
-                        <td class="p-4">
-                            <span class="text-gray-300">{{ $document->sales_count }}</span>
-                        </td>
-                        <td class="p-4">
-                            <span class="text-gray-300">{{ $document->views_count }}</span>
                         </td>
                         <td class="p-4">
                             <div class="flex items-center justify-end gap-2">
@@ -262,7 +247,7 @@ use Illuminate\Support\Str;
                     </tr>
                     @empty
                     <tr>
-                        <td colspan="8" class="p-8 text-center text-gray-400">
+                        <td colspan="5" class="p-8 text-center text-gray-400">
                             <i class="fas fa-file-alt text-4xl mb-4 block"></i>
                             <p>Aucun document trouvé</p>
                         </td>

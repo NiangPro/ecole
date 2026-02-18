@@ -28,7 +28,7 @@
                             @if($item->document->cover_image)
                             <div style="width: 80px; height: 80px; border-radius: 8px; overflow: hidden; flex-shrink: 0;">
                                 @if($item->document->cover_type === 'internal')
-                                    <img src="{{ asset('storage/' . $item->document->cover_image) }}" alt="{{ $item->document->title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                                    <img src="/storage/{{ $item->document->cover_image }}" alt="{{ $item->document->title }}" style="width: 100%; height: 100%; object-fit: cover;">
                                 @else
                                     <img src="{{ $item->document->cover_image }}" alt="{{ $item->document->title }}" style="width: 100%; height: 100%; object-fit: cover;">
                                 @endif

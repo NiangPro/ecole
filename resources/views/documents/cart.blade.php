@@ -862,7 +862,7 @@ body.dark-mode .modal-btn-cancel:hover {
                     <div class="cart-item-image-wrapper">
                         @if($item->document->cover_image)
                             @if($item->document->cover_type === 'internal')
-                                <img src="{{ asset('storage/' . $item->document->cover_image) }}" alt="{{ $item->document->title }}" class="cart-item-image">
+                                <img src="/storage/{{ $item->document->cover_image }}" alt="{{ $item->document->title }}" class="cart-item-image">
                             @else
                                 <img src="{{ $item->document->cover_image }}" alt="{{ $item->document->title }}" class="cart-item-image">
                             @endif

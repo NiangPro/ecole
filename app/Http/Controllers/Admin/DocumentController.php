@@ -145,6 +145,29 @@ class DocumentController extends Controller
         return view('admin.documents.show', compact('document'));
     }
 
+    /**
+     * Prévisualiser le contenu du fichier PDF (admin uniquement)
+     */
+    public function preview($id)
+    {
+        $document = Document::findOrFail($id);
+
+        if (strtolower($document->file_extension) !== 'pdf') {
+            abort(404, 'L\'aperçu est disponible uniquement pour les fichiers PDF.');
+        }
+
+        if (!Storage::disk('local')->exists($document->file_path)) {
+            abort(404, 'Le fichier PDF est introuvable.');
+        }
+
+        $filePath = Storage::disk('local')->path($document->file_path);
+
+        return response()->file($filePath, [
+            'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'inline; filename="' . $document->file_name . '"',
+        ]);
+    }
+
     public function edit($id)
     {
         $this->ensureLocale();

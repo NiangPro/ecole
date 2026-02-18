@@ -271,7 +271,7 @@ body.dark-mode .empty-state {
             <div class="document-item">
                 @if($purchase->document->cover_image)
                     @if($purchase->document->cover_type === 'internal')
-                        <img src="{{ asset('storage/' . $purchase->document->cover_image) }}" 
+                        <img src="/storage/{{ $purchase->document->cover_image }}" 
                              alt="{{ $purchase->document->title }}" 
                              class="document-image">
                     @else

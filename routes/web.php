@@ -544,6 +544,7 @@ Route::middleware(['admin'])->group(function () {
     // Routes Documents Admin
     Route::prefix('admin/documents')->name('admin.documents.')->group(function () {
         // Documents
+        Route::get('documents/{id}/preview', [\App\Http\Controllers\Admin\DocumentController::class, 'preview'])->name('documents.preview');
         Route::resource('documents', \App\Http\Controllers\Admin\DocumentController::class);
         Route::post('documents/{id}/publish', [\App\Http\Controllers\Admin\DocumentController::class, 'publish'])->name('documents.publish');
         Route::post('documents/{id}/unpublish', [\App\Http\Controllers\Admin\DocumentController::class, 'unpublish'])->name('documents.unpublish');

@@ -814,7 +814,7 @@ body.dark-mode .flash-close:hover {
         <div class="document-main">
             @if($document->cover_image)
                 @if($document->cover_type === 'internal')
-                    <img src="{{ asset('storage/' . $document->cover_image) }}" alt="{{ $document->title }}" class="document-cover-large">
+                    <img src="/storage/{{ $document->cover_image }}" alt="{{ $document->title }}" class="document-cover-large">
                 @else
                     <img src="{{ $document->cover_image }}" alt="{{ $document->title }}" class="document-cover-large">
                 @endif
@@ -984,7 +984,7 @@ body.dark-mode .flash-close:hover {
                         <div class="related-sidebar-image">
                             @if($related->cover_image)
                                 @if($related->cover_type === 'internal')
-                                    <img src="{{ asset('storage/' . $related->cover_image) }}" alt="{{ $related->title }}">
+                                    <img src="/storage/{{ $related->cover_image }}" alt="{{ $related->title }}">
                                 @else
                                     <img src="{{ $related->cover_image }}" alt="{{ $related->title }}">
                                 @endif

@@ -96,7 +96,11 @@
             <div style="position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, #06b6d4, #14b8a6, #06b6d4); background-size: 200% 100%; animation: shimmer 3s linear infinite;"></div>
             <div style="width: 100%; height: 150px; border-radius: 8px; overflow: hidden; margin-bottom: 1rem; background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(20, 184, 166, 0.1)); display: flex; align-items: center; justify-content: center;">
                 @if($purchase->document && $purchase->document->cover_image)
-                    <img src="{{ asset('storage/' . $purchase->document->cover_image) }}" alt="{{ $purchase->document->title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                    @if($purchase->document->cover_type === 'internal')
+                        <img src="/storage/{{ $purchase->document->cover_image }}" alt="{{ $purchase->document->title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                    @else
+                        <img src="{{ $purchase->document->cover_image }}" alt="{{ $purchase->document->title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                    @endif
                 @else
                     <i class="fas fa-file-pdf" style="font-size: 3rem; color: #06b6d4; opacity: 0.5;"></i>
                 @endif
