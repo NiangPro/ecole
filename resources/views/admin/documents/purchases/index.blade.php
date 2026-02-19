@@ -40,7 +40,7 @@
     /* Table Styles */
     .purchases-table {
         width: 100%;
-        min-width: 1000px;
+        min-width: 800px;
     }
 
     .purchases-table thead {
@@ -321,11 +321,9 @@
             <thead>
                 <tr>
                     <th>Utilisateur</th>
-                    <th>Document</th>
                     <th>Montant</th>
                     <th>Statut</th>
                     <th>Date</th>
-                    <th>Téléchargements</th>
                     <th style="text-align: right;">Actions</th>
                 </tr>
             </thead>
@@ -335,9 +333,6 @@
                     <td>
                         <div class="font-semibold">{{ $purchase->customer_name ?? ($purchase->user ? $purchase->user->name : 'N/A') }}</div>
                         <div class="text-sm text-gray-400">{{ $purchase->customer_email ?? ($purchase->user ? $purchase->user->email : 'N/A') }}</div>
-                    </td>
-                    <td>
-                        <div class="font-semibold">{{ $purchase->document->title }}</div>
                     </td>
                     <td>
                         <span class="font-semibold">{{ number_format($purchase->amount_paid, 0, ',', ' ') }} {{ $purchase->currency }}</span>
@@ -368,19 +363,6 @@
                             <div class="text-xs text-gray-400">Acheté: {{ $purchase->purchased_at->format('d/m/Y H:i') }}</div>
                         @endif
                     </td>
-                    <td>
-                        <span class="download-count" title="Téléchargements: {{ $purchase->download_count }} sur {{ $purchase->download_limit }}">
-                            <i class="fas fa-download"></i>
-                            <span class="download-number">{{ $purchase->download_count }}</span>
-                            <span class="download-separator">/</span>
-                            <span class="download-limit">{{ $purchase->download_limit }}</span>
-                        </span>
-                        @if($purchase->download_count >= $purchase->download_limit)
-                            <span class="download-limit-reached" title="Limite de téléchargements atteinte">
-                                <i class="fas fa-exclamation-triangle"></i>
-                            </span>
-                        @endif
-                    </td>
                     <td style="text-align: right;">
                         <div class="flex items-center justify-end gap-2">
                             <a href="{{ route('admin.documents.purchases.show', $purchase->id) }}" 
@@ -407,7 +389,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="7" class="p-8 text-center text-gray-400">
+                    <td colspan="5" class="p-8 text-center text-gray-400">
                         <i class="fas fa-shopping-cart text-4xl mb-4 block"></i>
                         <p>Aucun achat trouvé</p>
                     </td>
