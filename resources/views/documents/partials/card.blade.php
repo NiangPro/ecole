@@ -7,7 +7,7 @@
         <a href="{{ route('documents.show', $document->slug) }}">
             @if($document->cover_image)
                 @if($document->cover_type === 'internal')
-                    <img src="/storage/{{ $document->cover_image }}" alt="{{ $document->title }}" class="document-cover">
+                    <img src="{{ \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $document->id]) }}" alt="{{ $document->title }}" class="document-cover">
                 @else
                     <img src="{{ $document->cover_image }}" alt="{{ $document->title }}" class="document-cover">
                 @endif

@@ -8,7 +8,7 @@
     $documentUrl = url()->current();
     $documentImage = $document->cover_image 
         ? ($document->cover_type === 'internal' 
-            ? asset('storage/' . $document->cover_image) 
+            ? \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $document->id])
             : $document->cover_image)
         : asset('images/logo.png');
     // S'assurer que l'image est une URL absolue
@@ -314,6 +314,35 @@
     cursor: not-allowed;
 }
 
+/* Procéder au paiement - même style que la page panier */
+.checkout-btn-doc {
+    width: 100%;
+    padding: 1.25rem;
+    background: linear-gradient(135deg, #06b6d4, #14b8a6);
+    color: white;
+    border: none;
+    border-radius: 16px;
+    font-weight: 800;
+    font-size: 1.125rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    box-shadow: 0 8px 24px rgba(6, 182, 212, 0.4);
+}
+
+.checkout-btn-doc:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 32px rgba(6, 182, 212, 0.5);
+}
+
+.document-purchase-forms + .document-purchase-forms {
+    margin-top: 0;
+}
+
 /* Documents Similaires Sidebar */
 .related-sidebar-card {
     background: white;
@@ -558,6 +587,15 @@ body.dark-mode .download-btn {
 body.dark-mode .download-btn:hover {
     background: #059669;
     box-shadow: 0 8px 25px rgba(16, 185, 129, 0.6);
+}
+
+body.dark-mode .checkout-btn-doc {
+    background: linear-gradient(135deg, #06b6d4, #14b8a6);
+    box-shadow: 0 8px 24px rgba(6, 182, 212, 0.5);
+}
+
+body.dark-mode .checkout-btn-doc:hover {
+    box-shadow: 0 12px 32px rgba(6, 182, 212, 0.7);
 }
 
 body.dark-mode .related-sidebar-card {
@@ -814,7 +852,7 @@ body.dark-mode .flash-close:hover {
         <div class="document-main">
             @if($document->cover_image)
                 @if($document->cover_type === 'internal')
-                    <img src="/storage/{{ $document->cover_image }}" alt="{{ $document->title }}" class="document-cover-large">
+                    <img src="{{ \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $document->id]) }}" alt="{{ $document->title }}" class="document-cover-large">
                 @else
                     <img src="{{ $document->cover_image }}" alt="{{ $document->title }}" class="document-cover-large">
                 @endif
@@ -919,7 +957,14 @@ body.dark-mode .flash-close:hover {
                         Vous avez déjà acheté ce document
                     </p>
                 @else
-                    <form action="{{ route('documents.cart.add', $document->id) }}" method="POST">
+                    <form action="{{ route('documents.cart.add', $document->id) }}" method="POST" class="document-purchase-forms">
+                        @csrf
+                        <input type="hidden" name="redirect" value="checkout">
+                        <button type="submit" class="checkout-btn-doc">
+                            <i class="fas fa-credit-card"></i> Procéder au paiement
+                        </button>
+                    </form>
+                    <form action="{{ route('documents.cart.add', $document->id) }}" method="POST" class="document-purchase-forms">
                         @csrf
                         <button type="submit" class="purchase-btn">
                             <i class="fas fa-shopping-cart"></i> Ajouter au panier
@@ -984,7 +1029,7 @@ body.dark-mode .flash-close:hover {
                         <div class="related-sidebar-image">
                             @if($related->cover_image)
                                 @if($related->cover_type === 'internal')
-                                    <img src="/storage/{{ $related->cover_image }}" alt="{{ $related->title }}">
+                                    <img src="{{ \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $related->id]) }}" alt="{{ $related->title }}">
                                 @else
                                     <img src="{{ $related->cover_image }}" alt="{{ $related->title }}">
                                 @endif

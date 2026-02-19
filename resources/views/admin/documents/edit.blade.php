@@ -1,10 +1,27 @@
 @extends('admin.layout')
 
-@php
-use Illuminate\Support\Facades\Storage;
-@endphp
-
 @section('title', 'Modifier Document')
+
+@section('styles')
+<style>
+    .cover-wrapper-edit {
+        border-radius: 16px;
+        overflow: hidden;
+        border: 2px solid rgba(6, 182, 212, 0.3);
+        box-shadow: 0 10px 30px rgba(6, 182, 212, 0.2);
+        transition: all 0.3s ease;
+        max-width: 100%;
+    }
+    .cover-wrapper-edit:hover {
+        box-shadow: 0 15px 40px rgba(6, 182, 212, 0.4);
+    }
+    .cover-wrapper-edit img {
+        width: 100%;
+        height: auto;
+        display: block;
+    }
+</style>
+@endsection
 
 @section('content')
 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
@@ -97,10 +114,9 @@ use Illuminate\Support\Facades\Storage;
                 <div>
                     <label class="block text-cyan-400 mb-2 font-semibold">Image de couverture</label>
                     @if($document->cover_image)
-                        <div class="mb-3">
-                            <img src="{{ $document->cover_type === 'internal' ? Storage::url($document->cover_image) : $document->cover_image }}" 
-                                 alt="{{ $document->title }}" 
-                                 class="w-32 h-32 object-cover rounded-lg border border-cyan-500/20">
+                        <div class="cover-wrapper-edit mb-4">
+                            <img src="{{ $document->cover_type === 'internal' ? \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $document->id]) : $document->cover_image }}" 
+                                 alt="{{ $document->title }}">
                         </div>
                     @endif
                     <select name="cover_type" id="coverType" class="input-admin mb-3">
@@ -108,7 +124,11 @@ use Illuminate\Support\Facades\Storage;
                         <option value="external" {{ old('cover_type', $document->cover_type) === 'external' ? 'selected' : '' }}>Externe (URL)</option>
                     </select>
                     <div id="coverInternal" style="display: {{ old('cover_type', $document->cover_type) === 'internal' ? 'block' : 'none' }};">
-                        <input type="file" name="cover_image_file" accept="image/*" class="input-admin">
+                        <input type="file" name="cover_image_file" id="coverImageFile" accept="image/*" class="input-admin">
+                        <div id="coverUploadPreview" class="mt-3 hidden">
+                            <p class="text-cyan-400 text-sm mb-2">Aperçu :</p>
+                            <img id="coverPreviewImg" src="" alt="Aperçu" class="w-40 h-40 object-cover rounded-lg border border-cyan-500/20">
+                        </div>
                     </div>
                     <div id="coverExternal" style="display: {{ old('cover_type', $document->cover_type) === 'external' ? 'block' : 'none' }};">
                         <input type="url" name="cover_image_url" value="{{ old('cover_image_url', $document->cover_type === 'external' ? $document->cover_image : '') }}"
@@ -185,12 +205,31 @@ use Illuminate\Support\Facades\Storage;
 document.getElementById('coverType').addEventListener('change', function() {
     const internal = document.getElementById('coverInternal');
     const external = document.getElementById('coverExternal');
+    const preview = document.getElementById('coverUploadPreview');
     if (this.value === 'internal') {
         internal.style.display = 'block';
         external.style.display = 'none';
     } else {
         internal.style.display = 'none';
         external.style.display = 'block';
+        preview.classList.add('hidden');
+    }
+});
+
+document.getElementById('coverImageFile').addEventListener('change', function(e) {
+    const preview = document.getElementById('coverUploadPreview');
+    const previewImg = document.getElementById('coverPreviewImg');
+    const file = e.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+            previewImg.src = ev.target.result;
+            preview.classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+    } else {
+        preview.classList.add('hidden');
+        previewImg.src = '';
     }
 });
 </script>

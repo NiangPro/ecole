@@ -63,6 +63,10 @@ class DocumentCartController extends Controller
         }
         
         if ($existingCartItem) {
+            if ($request->input('redirect') === 'checkout') {
+                return redirect()->route('documents.checkout.payment')
+                    ->with('info', 'Ce document est déjà dans votre panier. Procédez au paiement.');
+            }
             return redirect()->back()
                 ->with('info', 'Ce document est déjà dans votre panier.');
         }
@@ -75,6 +79,11 @@ class DocumentCartController extends Controller
             'quantity' => 1,
             'price' => $price,
         ]);
+        
+        if ($request->input('redirect') === 'checkout') {
+            return redirect()->route('documents.checkout.payment')
+                ->with('success', 'Document ajouté au panier. Procédez au paiement.');
+        }
         
         return redirect()->back()
             ->with('success', 'Document ajouté au panier avec succès.');

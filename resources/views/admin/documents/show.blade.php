@@ -541,7 +541,7 @@ use Illuminate\Support\Facades\Storage;
 
         <!-- Hero Section -->
         <div class="page-hero">
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div class="flex flex-col gap-4">
                 <div class="flex-1">
                     <h1 class="page-title">{{ $document->title }}</h1>
                     <p class="page-subtitle">Détails et statistiques du document</p>
@@ -679,7 +679,7 @@ use Illuminate\Support\Facades\Storage;
                     </div>
                     <div class="cover-wrapper">
                         @if($document->cover_type === 'internal')
-                            <img src="/storage/{{ $document->cover_image }}" alt="{{ $document->title }}">
+                            <img src="{{ route('admin.documents.documents.cover', $document->id) }}" alt="{{ $document->title }}">
                         @else
                             <img src="{{ $document->cover_image }}" alt="{{ $document->title }}">
                         @endif

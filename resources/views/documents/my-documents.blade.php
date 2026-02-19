@@ -330,7 +330,7 @@ body.dark-mode .empty-state p {
                 <div class="document-image-wrapper">
                     @if($purchase->document->cover_image)
                         @if($purchase->document->cover_type === 'internal')
-                            <img src="/storage/{{ $purchase->document->cover_image }}" alt="{{ $purchase->document->title }}">
+                            <img src="{{ \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $purchase->document->id]) }}" alt="{{ $purchase->document->title }}">
                         @else
                             <img src="{{ $purchase->document->cover_image }}" alt="{{ $purchase->document->title }}">
                         @endif

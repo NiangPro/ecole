@@ -1747,51 +1747,62 @@
             </div>
         </li>
         
-        @php
-            $hasPublishedDocumentsMobile = \App\Models\Document::published()->active()->exists();
-        @endphp
-        @if($hasPublishedDocumentsMobile)
+        <!-- Recherche (équivalent à l'icône search du desktop) -->
         <li class="mobile-menu-item">
-            <a href="{{ route('documents.index') }}" class="mobile-menu-link">
-                <i class="fas fa-file-alt" style="color: #06b6d4;"></i>
-                Documents
+            <a href="#" class="mobile-menu-link" onclick="closeMobileMenu(); setTimeout(function(){ document.getElementById('searchIcon')?.click(); }, 300); return false;">
+                <i class="fas fa-search"></i> {{ trans('app.home.search.button') }}
+            </a>
+        </li>
+        
+        <!-- Panier (visible sur les pages documents, comme le desktop) -->
+        @if(isset($showCartWidget) && $showCartWidget)
+        <li class="mobile-menu-item">
+            <a href="{{ route('documents.cart') }}" class="mobile-menu-link">
+                <i class="fas fa-shopping-cart"></i> Panier
+                @if($cartItemsCount > 0)
+                <span style="margin-left: auto; background: linear-gradient(135deg, #06b6d4, #14b8a6); color: #000; padding: 2px 8px; border-radius: 10px; font-size: 0.75rem; font-weight: 700;">{{ $cartItemsCount }}</span>
+                @endif
             </a>
         </li>
         @endif
         
+        <!-- Mobile Dropdown À propos (conforme au menu desktop) -->
         <li class="mobile-menu-item">
-            <a href="{{ route('about') }}" class="mobile-menu-link">
-                <i class="fas fa-info-circle"></i>
-                {{ trans('app.nav.about') }}
-            </a>
-        </li>
-        
-        <li class="mobile-menu-item">
-            <a href="{{ route('contact') }}" class="mobile-menu-link">
-                <i class="fas fa-envelope"></i>
-                {{ trans('app.nav.contact') }}
-            </a>
-        </li>
-        
-        <li class="mobile-menu-item">
-            <a href="{{ route('monetization.affiliates') }}" class="mobile-menu-link">
-                <i class="fas fa-users"></i>
-                Programme d'Affiliation
-            </a>
-        </li>
-        
-        <li class="mobile-menu-item">
-            <a href="{{ route('docs') }}" class="mobile-menu-link">
-                <i class="fas fa-book"></i>
-                Documentation
-            </a>
-        </li>
-        
-        <li class="mobile-menu-item">
-            <a href="{{ route('forum.index') }}" class="mobile-menu-link">
-                <i class="fas fa-comments" style="color: #a855f7;"></i>
-                Forum
-            </a>
+            <button class="mobile-dropdown-toggle" onclick="toggleMobileDropdown('apropos')">
+                <span><i class="fas fa-info-circle"></i> {{ trans('app.nav.about') }}</span>
+                <i class="fas fa-chevron-down dropdown-icon" id="apropos-icon"></i>
+            </button>
+            <div class="mobile-dropdown-content" id="apropos-dropdown">
+                @php
+                    $hasActiveSubscriptionPlansMobile = \App\Models\SubscriptionPlan::active()->exists();
+                    $hasPublishedDocumentsMobile = \App\Models\Document::published()->active()->exists();
+                @endphp
+                @if($hasPublishedDocumentsMobile)
+                <a href="{{ route('documents.index') }}" class="mobile-dropdown-item">
+                    <i class="fas fa-file-alt" style="color: #06b6d4;"></i> Documents
+                </a>
+                @endif
+                @if($hasActiveSubscriptionPlansMobile)
+                <a href="{{ route('monetization.index') }}" class="mobile-dropdown-item">
+                    <i class="fas fa-crown" style="color: #06b6d4;"></i> Abonnement
+                </a>
+                @endif
+                <a href="{{ route('about') }}" class="mobile-dropdown-item">
+                    <i class="fas fa-info-circle" style="color: #06b6d4;"></i> {{ trans('app.nav.about') }}
+                </a>
+                <a href="{{ route('contact') }}" class="mobile-dropdown-item">
+                    <i class="fas fa-envelope" style="color: #06b6d4;"></i> {{ trans('app.nav.contact') }}
+                </a>
+                <a href="{{ route('monetization.affiliates') }}" class="mobile-dropdown-item">
+                    <i class="fas fa-users" style="color: #06b6d4;"></i> Programme d'Affiliation
+                </a>
+                <a href="{{ route('docs') }}" class="mobile-dropdown-item">
+                    <i class="fas fa-book" style="color: #22c55e;"></i> Documentation
+                </a>
+                <a href="{{ route('forum.index') }}" class="mobile-dropdown-item">
+                    <i class="fas fa-comments" style="color: #a855f7;"></i> Forum
+                </a>
+            </div>
         </li>
         
         <!-- Language Toggle dans le menu mobile -->

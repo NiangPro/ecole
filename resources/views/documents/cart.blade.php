@@ -860,12 +860,12 @@ body.dark-mode .modal-btn-cancel:hover {
                 @foreach($cartItems as $item)
                 <div class="cart-item" data-item-id="{{ $item->id }}">
                     <div class="cart-item-image-wrapper">
-                        @if($item->document->cover_image)
-                            @if($item->document->cover_type === 'internal')
-                                <img src="/storage/{{ $item->document->cover_image }}" alt="{{ $item->document->title }}" class="cart-item-image">
-                            @else
+@if($item->document->cover_image)
+                                @if($item->document->cover_type === 'internal')
+                                <img src="{{ \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $item->document->id]) }}" alt="{{ $item->document->title }}" class="cart-item-image">
+                                @else
                                 <img src="{{ $item->document->cover_image }}" alt="{{ $item->document->title }}" class="cart-item-image">
-                            @endif
+                                @endif
                         @else
                             <div class="cart-item-image-placeholder">
                                 <i class="fas fa-file-{{ $item->document->file_extension === 'pdf' ? 'pdf' : ($item->document->file_extension === 'doc' || $item->document->file_extension === 'docx' ? 'word' : 'alt') }}"></i>

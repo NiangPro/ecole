@@ -5,6 +5,11 @@ use App\Http\Controllers\PageController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Admin\NewsletterController;
 
+// Fallback storage : sert les fichiers quand le lien symbolique n'existe pas (LWS, hébergement partagé)
+Route::get('/storage/{path}', [\App\Http\Controllers\StorageFileController::class, 'serve'])
+    ->where('path', '.*')
+    ->name('storage.serve');
+
 // Favicon.ico - DOIT être défini EN PREMIER pour être prioritaire
 Route::get('/favicon.ico', function () {
     $logoPath = public_path('images/logo.png');
@@ -354,6 +359,11 @@ Route::middleware('auth')->group(function () {
 Route::get('/admin/login', [App\Http\Controllers\AdminController::class, 'showLogin'])->name('admin.login');
 Route::post('/admin/login', [App\Http\Controllers\AdminController::class, 'login'])->name('admin.login.post');
 
+// Image de couverture document (URL signée, pas de session requise pour l'affichage)
+Route::get('/document-cover/{id}', [\App\Http\Controllers\Admin\DocumentController::class, 'serveCover'])
+    ->middleware('signed')
+    ->name('document.cover.signed');
+
 // Routes protégées par middleware admin
 Route::middleware(['admin'])->group(function () {
     Route::get('/admin/dashboard', [App\Http\Controllers\AdminController::class, 'dashboard'])->name('admin.dashboard');
@@ -541,10 +551,33 @@ Route::middleware(['admin'])->group(function () {
         Route::post('seeder/seed', [\App\Http\Controllers\Admin\ArticleSeederController::class, 'seed'])->name('seeder.seed');
     });
 
+    // Diagnostic storage (admin uniquement) - supprimer en production si besoin
+    Route::get('/admin/storage-check', function () {
+        $storagePath = storage_path('app/public');
+        $exists = is_dir($storagePath);
+        $realPath = $exists ? realpath($storagePath) : false;
+        $samples = [];
+        if ($exists) {
+            foreach (['document-covers', 'job-covers'] as $dir) {
+                $fullDir = $storagePath . '/' . $dir;
+                $samples[$dir] = is_dir($fullDir) ? array_values(array_filter(scandir($fullDir), fn($f) => $f !== '.' && $f !== '..')) : [];
+            }
+        }
+        return response()->json([
+            'storage_path' => $storagePath,
+            'exists' => $exists,
+            'real_path' => $realPath,
+            'base_path' => base_path(),
+            'samples' => $samples,
+            'test_url' => $exists ? url('/storage/document-covers/' . ($samples['document-covers'][0] ?? ($samples['job-covers'][0] ?? 'test.jpg'))) : null,
+        ], 200, [], JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+    })->name('admin.storage-check');
+
     // Routes Documents Admin
     Route::prefix('admin/documents')->name('admin.documents.')->group(function () {
         // Documents
         Route::get('documents/{id}/preview', [\App\Http\Controllers\Admin\DocumentController::class, 'preview'])->name('documents.preview');
+        Route::get('documents/{id}/cover', [\App\Http\Controllers\Admin\DocumentController::class, 'serveCover'])->name('documents.cover');
         Route::resource('documents', \App\Http\Controllers\Admin\DocumentController::class);
         Route::post('documents/{id}/publish', [\App\Http\Controllers\Admin\DocumentController::class, 'publish'])->name('documents.publish');
         Route::post('documents/{id}/unpublish', [\App\Http\Controllers\Admin\DocumentController::class, 'unpublish'])->name('documents.unpublish');

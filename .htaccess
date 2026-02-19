@@ -1,0 +1,6 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    # Rediriger toutes les requêtes vers le dossier public (document root Laravel)
+    RewriteRule ^$ public/ [L]
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>

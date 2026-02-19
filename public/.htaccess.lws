@@ -1,4 +1,5 @@
 # Optimisations SEO et Performance pour NiangProgrammeur
+# Version LWS - Inclut la règle storage pour l'affichage des images
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
         Options -MultiViews -Indexes
@@ -8,16 +9,9 @@
     RewriteBase /
 
     # Fichiers statiques importants - DOIT être en PREMIER pour servir directement
-    # Ces fichiers doivent être servis AVANT toute redirection ou traitement Laravel
-    # ads.txt - Priorité absolue : servir le fichier physique directement
+    # ads.txt - Redirection vers adstxtmanager.com (PRIORITÉ ABSOLUE)
     RewriteCond %{REQUEST_URI} ^/ads\.txt$ [NC]
-    RewriteCond %{REQUEST_FILENAME} -f
-    RewriteRule ^ads\.txt$ ads.txt [L,T=text/plain]
-    
-    # Si ads.txt n'existe pas physiquement, laisser Laravel gérer via la route
-    RewriteCond %{REQUEST_URI} ^/ads\.txt$ [NC]
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^ads\.txt$ - [L]
+    RewriteRule ^(.*)$ https://srv.adstxtmanager.com/19390/niangprogrammeur.com [R=301,L]
     
     # robots.txt - Servir le fichier physique s'il existe
     RewriteCond %{REQUEST_URI} ^/robots\.txt$ [NC]
@@ -43,13 +37,13 @@
     RewriteCond %{HTTP:Authorization} .
     RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
+    # Storage : toujours passer par Laravel (StorageFileController) pour servir les images
+    RewriteCond %{REQUEST_URI} ^/storage/
+    RewriteRule ^storage/(.*)$ index.php [L]
+
     # Favicon.ico - Laisser passer pour la route Laravel
     RewriteCond %{REQUEST_URI} ^/favicon\.ico$ [NC]
     RewriteRule ^ - [L]
-
-    # Storage : envoyer à Laravel (serve les fichiers depuis storage/app/public)
-    RewriteCond %{REQUEST_URI} ^/storage/ [NC]
-    RewriteRule ^ index.php [L]
 
     # Redirect Trailing Slashes If Not A Folder...
     RewriteCond %{REQUEST_FILENAME} !-d
@@ -64,20 +58,16 @@
 
 # Compression GZIP/Brotli pour améliorer les performances
 <IfModule mod_deflate.c>
-    # Activer la compression pour tous les types de fichiers textuels
     AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css text/javascript
     AddOutputFilterByType DEFLATE application/javascript application/x-javascript application/json
     AddOutputFilterByType DEFLATE application/xml application/xhtml+xml application/rss+xml application/atom+xml
     AddOutputFilterByType DEFLATE image/svg+xml
     AddOutputFilterByType DEFLATE application/font-woff application/font-woff2 font/woff font/woff2 font/ttf font/otf
-    
-    # Compression niveau 6 (équilibre entre compression et CPU)
     SetOutputFilter DEFLATE
     SetEnvIfNoCase Request_URI \.(?:gif|jpe?g|png|webp|avif)$ no-gzip dont-vary
     SetEnvIfNoCase Request_URI \.(?:exe|t?gz|zip|bz2|sit|rar)$ no-gzip dont-vary
 </IfModule>
 
-# Compression Brotli (si disponible)
 <IfModule mod_brotli.c>
     AddOutputFilterByType BROTLI_COMPRESS text/html text/plain text/xml text/css text/javascript
     AddOutputFilterByType BROTLI_COMPRESS application/javascript application/x-javascript application/json
@@ -86,15 +76,10 @@
     AddOutputFilterByType BROTLI_COMPRESS application/font-woff application/font-woff2 font/woff font/woff2
 </IfModule>
 
-# Cache des fichiers statiques - Optimisé pour les performances
 <IfModule mod_expires.c>
     ExpiresActive On
     ExpiresDefault "access plus 1 month"
-    
-    # HTML - Cache court (1 heure)
     ExpiresByType text/html "access plus 1 hour"
-    
-    # Images - Cache long terme (1 an)
     ExpiresByType image/jpg "access plus 1 year"
     ExpiresByType image/jpeg "access plus 1 year"
     ExpiresByType image/gif "access plus 1 year"
@@ -103,110 +88,58 @@
     ExpiresByType image/webp "access plus 1 year"
     ExpiresByType image/avif "access plus 1 year"
     ExpiresByType image/x-icon "access plus 1 year"
-    
-    # Fonts - Cache long terme
     ExpiresByType font/woff "access plus 1 year"
     ExpiresByType font/woff2 "access plus 1 year"
     ExpiresByType font/ttf "access plus 1 year"
     ExpiresByType font/otf "access plus 1 year"
     ExpiresByType application/font-woff "access plus 1 year"
     ExpiresByType application/font-woff2 "access plus 1 year"
-    
-    # CSS et JavaScript - Cache moyen terme
     ExpiresByType text/css "access plus 1 month"
     ExpiresByType application/javascript "access plus 1 month"
     ExpiresByType text/javascript "access plus 1 month"
     ExpiresByType application/json "access plus 1 month"
-    
-    # Documents
     ExpiresByType application/pdf "access plus 1 month"
-    
-    # HTML - Cache court terme (pour les mises à jour)
-    ExpiresByType text/html "access plus 1 hour"
-    
-    # JavaScript et CSS - Cache moyen terme
-    ExpiresByType application/javascript "access plus 1 month"
-    ExpiresByType text/javascript "access plus 1 month"
-    ExpiresByType text/css "access plus 1 month"
 </IfModule>
 
-# Optimisation des images - Headers pour améliorer le chargement
 <IfModule mod_headers.c>
-    # Fichiers texte importants (ads.txt, robots.txt) - Accessibles publiquement
-    # Exclure ces fichiers du traitement CDN/Ezoic si possible
     <FilesMatch "^(ads\.txt|robots\.txt)$">
         Header set Content-Type "text/plain; charset=utf-8"
         Header set Cache-Control "public, max-age=3600"
         Header set Access-Control-Allow-Origin "*"
         Header unset X-Frame-Options
-        # Headers pour indiquer que ce fichier ne doit pas être traité par CDN
         Header set X-Accel-Buffering "no"
         Header set X-Cache-Control "no-transform"
     </FilesMatch>
-    
-    # Activer la mise en cache des images
     <FilesMatch "\.(jpg|jpeg|png|gif|webp|avif|svg)$">
         Header set Cache-Control "max-age=31536000, public, immutable"
         Header append Vary "Accept-Encoding"
     </FilesMatch>
-    
-    # Activer la mise en cache des fonts
     <FilesMatch "\.(woff|woff2|ttf|otf|eot)$">
         Header set Cache-Control "max-age=31536000, public, immutable"
         Header set Access-Control-Allow-Origin "*"
     </FilesMatch>
-    
-    # Activer la mise en cache des CSS et JS
     <FilesMatch "\.(css|js)$">
         Header set Cache-Control "max-age=2592000, public"
         Header append Vary "Accept-Encoding"
     </FilesMatch>
-</IfModule>
-
-# Headers de sécurité, SEO et Performance
-<IfModule mod_headers.c>
-    # Sécurité
     Header set X-Content-Type-Options "nosniff"
     Header set X-Frame-Options "SAMEORIGIN"
     Header set X-XSS-Protection "1; mode=block"
     Header set Referrer-Policy "strict-origin-when-cross-origin"
-    
-    # Performance - Preconnect pour les ressources externes
     <FilesMatch "\.(html|htm|php)$">
         Header set Link "</fonts.googleapis.com>; rel=preconnect; crossorigin, </fonts.gstatic.com>; rel=preconnect; crossorigin"
     </FilesMatch>
-    
-    # SEO - Ne pas mettre en cache les pages HTML dynamiques
     <FilesMatch "\.(html|htm|php)$">
         Header set Cache-Control "max-age=3600, must-revalidate, public"
         Header set Pragma "public"
     </FilesMatch>
-    
-    # Cache des fichiers statiques - Cache long terme
     <FilesMatch "\.(jpg|jpeg|png|gif|ico|svg|webp|avif)$">
         Header set Cache-Control "max-age=31536000, public, immutable"
         Header append Vary "Accept-Encoding"
     </FilesMatch>
-    
-    # Cache des fonts
-    <FilesMatch "\.(woff|woff2|ttf|otf|eot)$">
-        Header set Cache-Control "max-age=31536000, public, immutable"
-        Header set Access-Control-Allow-Origin "*"
-    </FilesMatch>
-    
-    # Cache des CSS et JS
-    <FilesMatch "\.(css|js)$">
-        Header set Cache-Control "max-age=2592000, public"
-        Header append Vary "Accept-Encoding"
-    </FilesMatch>
+    Header set X-Robots-Tag "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
 </IfModule>
 
-# Protection des fichiers sensibles
 <FilesMatch "(^#.*#|\.(bak|conf|dist|fla|in[ci]|log|psd|sh|sql|sw[op])|~)$">
     Require all denied
 </FilesMatch>
-
-# Optimisation pour les robots
-<IfModule mod_headers.c>
-    Header set X-Robots-Tag "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
-</IfModule>

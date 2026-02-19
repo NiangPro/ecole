@@ -168,6 +168,40 @@ class DocumentController extends Controller
         ]);
     }
 
+    /**
+     * Sert l'image de couverture d'un document (contourne /storage/ sur LWS)
+     */
+    public function serveCover($id)
+    {
+        $document = Document::findOrFail($id);
+
+        if ($document->cover_type !== 'internal' || empty($document->cover_image)) {
+            abort(404);
+        }
+
+        $path = $document->cover_image;
+        $storagePath = storage_path('app/public/' . $path);
+        $publicPath = public_path('storage/' . $path);
+
+        $fullPath = null;
+        if (file_exists($storagePath) && is_file($storagePath)) {
+            $fullPath = $storagePath;
+        } elseif (file_exists($publicPath) && is_file($publicPath)) {
+            $fullPath = $publicPath;
+        }
+
+        if (!$fullPath) {
+            abort(404);
+        }
+
+        $mimeType = mime_content_type($fullPath) ?: 'image/png';
+
+        return response()->file($fullPath, [
+            'Content-Type' => $mimeType,
+            'Cache-Control' => 'public, max-age=31536000, immutable',
+        ]);
+    }
+
     public function edit($id)
     {
         $this->ensureLocale();
