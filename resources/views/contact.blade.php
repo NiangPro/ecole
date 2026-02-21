@@ -453,9 +453,9 @@
                                 Je réponds généralement sous 24 heures, souvent même plus rapidement pour les demandes urgentes. 
                                 N'hésitez pas à détailler votre projet ou votre question pour que je puisse vous apporter la meilleure réponse possible.
                             </p>
-                            <a href="mailto:{{ $siteSettings->contact_email ?? 'NiangProgrammeur@gmail.com' }}" 
+                            <a href="mailto:{{ optional($siteSettings)->contact_email ?? 'NiangProgrammeur@gmail.com' }}" 
                                class="text-cyan-400 hover:text-cyan-300 font-semibold text-lg flex items-center gap-2">
-                                {{ $siteSettings->contact_email ?? 'NiangProgrammeur@gmail.com' }}
+                                {{ optional($siteSettings)->contact_email ?? 'NiangProgrammeur@gmail.com' }}
                                 <i class="fas fa-external-link-alt text-sm"></i>
                             </a>
                         </div>
@@ -475,9 +475,9 @@
                                 rapides, ou si vous préférez échanger verbalement. Je suis disponible du lundi au vendredi de 9h à 18h (heure de Dakar). 
                                 Pour les appels internationaux, vous pouvez également me joindre via WhatsApp pour une communication plus flexible.
                             </p>
-                            <a href="tel:{{ $siteSettings->contact_phone ?? '+221783123657' }}" 
+                            <a href="tel:{{ str_replace(' ', '', optional($siteSettings)->contact_phone ?? '+221783123657') }}" 
                                class="text-teal-400 hover:text-teal-300 font-semibold text-lg flex items-center gap-2">
-                                {{ $siteSettings->contact_phone ?? '+221 78 312 36 57' }}
+                                {{ optional($siteSettings)->contact_phone ?? '+221 78 312 36 57' }}
                                 <i class="fas fa-phone-alt text-sm"></i>
                             </a>
                         </div>
@@ -499,7 +499,7 @@
                                 de formation en ligne et des consultations à distance pour votre plus grande flexibilité.
                             </p>
                             <p class="text-purple-400 font-semibold text-lg">
-                                {{ $siteSettings->contact_address ?? 'Dakar, Sénégal' }}
+                                {{ optional($siteSettings)->contact_address ?? 'Dakar, Sénégal' }}
                             </p>
                         </div>
                     </div>

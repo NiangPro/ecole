@@ -440,6 +440,13 @@
         }
     }
     
+    @media (max-width: 1200px) {
+        .article-main-grid {
+            grid-template-columns: 1fr 300px !important;
+            gap: 30px !important;
+        }
+    }
+    
     .article-content {
         background: rgba(51, 65, 85, 0.5);
         border: 1px solid rgba(6, 182, 212, 0.2);
@@ -995,9 +1002,9 @@
 
 {{-- Breadcrumbs supprimés --}}
 
-<!-- Article Container -->
+    <!-- Article Container -->
 <div class="article-container">
-    <!-- Contenu et Commentaires côte à côte (toujours en deux colonnes) -->
+    <!-- Contenu et Commentaires côte à côte (responsive) -->
     <div class="article-main-grid" style="display: grid; grid-template-columns: 1fr 350px; gap: 40px; align-items: start; margin-bottom: 60px;">
         <div>
             <a href="{{ route('emplois.offres') }}" class="back-button">
@@ -1006,16 +1013,16 @@
             </a>
             
             <!-- Note importante sur le recrutement -->
-            <div style="margin-bottom: 30px; padding: 20px; background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1)); border-left: 4px solid #ef4444; border-radius: 8px; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.1);">
-                <div style="display: flex; align-items: flex-start; gap: 15px;">
-                    <div style="flex-shrink: 0; width: 40px; height: 40px; background: linear-gradient(135deg, #ef4444, #dc2626); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem;">
+            <div class="important-note-wrapper" style="margin-bottom: 30px; padding: 20px; background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1)); border-left: 4px solid #ef4444; border-radius: 8px; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.1);">
+                <div class="important-note-content" style="display: flex; align-items: flex-start; gap: 15px;">
+                    <div class="important-note-icon" style="flex-shrink: 0; width: 40px; height: 40px; background: linear-gradient(135deg, #ef4444, #dc2626); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem;">
                         <i class="fas fa-info-circle"></i>
                     </div>
-                    <div style="flex: 1;">
-                        <h4 style="margin: 0 0 8px 0; font-size: 1.1rem; font-weight: 700; color: rgba(30, 41, 59, 0.9);">
+                    <div style="flex: 1; min-width: 0;">
+                        <h4 class="important-note-title" style="margin: 0 0 8px 0; font-size: 1.1rem; font-weight: 700; color: rgba(30, 41, 59, 0.9);">
                             {{ app()->getLocale() === 'fr' ? 'Note importante' : 'Important Note' }}
                         </h4>
-                        <p style="margin: 0; color: rgba(30, 41, 59, 0.8); line-height: 1.6; font-size: 0.95rem;">
+                        <p class="important-note-text" style="margin: 0; color: rgba(30, 41, 59, 0.8); line-height: 1.6; font-size: 0.95rem; word-wrap: break-word;">
                             {{ app()->getLocale() === 'fr' 
                                 ? 'NiangProgrammeur ne recrute pas directement. Nous partageons uniquement les offres d\'emploi, bourses d\'études et opportunités disponibles au Sénégal. Pour postuler, veuillez contacter directement l\'organisme ou l\'entreprise concernée via les coordonnées fournies dans l\'article.' 
                                 : 'NiangProgrammeur does not recruit directly. We only share job offers, scholarships and opportunities available in Senegal. To apply, please contact the organization or company directly using the contact information provided in the article.' }}
@@ -1202,7 +1209,7 @@
         
         <!-- Sidebar Publicités Moderne -->
         @if(isset($sidebarAds) && $sidebarAds->count() > 0)
-        <aside style="position: sticky; top: 80px; align-self: flex-start;">
+        <aside style="position: sticky; top: 80px; align-self: flex-start; width: 100%; max-width: 100%; box-sizing: border-box;">
             @foreach($sidebarAds as $ad)
             <div class="modern-sidebar-ad">
                 <a href="{{ $ad->link_url ?? '#' }}" target="_blank" onclick="trackAdClick({{ $ad->id }})" class="modern-sidebar-ad-link">
@@ -1231,40 +1238,47 @@
             @endphp
             @endforeach
             
-            <!-- Section Articles les plus vus -->
-            @if(isset($topViewedArticles) && $topViewedArticles->count() > 0)
-            <div class="top-viewed-articles-sidebar" style="margin-bottom: 25px;">
+            <!-- Section Documents pertinents -->
+            @if(isset($relatedDocuments) && $relatedDocuments->count() > 0)
+            <div class="related-documents-sidebar" style="margin-bottom: 25px;">
                 <h4 style="font-size: 1.1rem; font-weight: 700; color: rgba(255, 255, 255, 0.95); margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
-                    <i class="fas fa-fire" style="color: #f59e0b;"></i>
-                    <span>{{ app()->getLocale() === 'fr' ? 'Les plus lus' : 'Most Read' }}</span>
+                    <i class="fas fa-file-alt" style="color: #06b6d4;"></i>
+                    <span>{{ app()->getLocale() === 'fr' ? 'Documents pertinents' : 'Related Documents' }}</span>
                 </h4>
-                @foreach($topViewedArticles as $topArticle)
-                <a href="{{ route('emplois.article', $topArticle->slug) }}" class="top-viewed-article-card" style="display: block; background: rgba(51, 65, 85, 0.6); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 12px; padding: 15px; margin-bottom: 15px; text-decoration: none; transition: all 0.3s ease; overflow: hidden;">
-                    @if($topArticle->cover_image)
+                @foreach($relatedDocuments as $document)
+                <a href="{{ route('documents.show', $document->slug) }}" class="related-document-card" style="display: block; background: rgba(51, 65, 85, 0.6); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 12px; padding: 15px; margin-bottom: 15px; text-decoration: none; transition: all 0.3s ease; overflow: hidden;">
+                    @if($document->cover_image)
                     <div style="width: 100%; height: 120px; border-radius: 8px; overflow: hidden; margin-bottom: 12px; position: relative;">
-                        <img src="{{ $topArticle->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($topArticle->cover_image) : $topArticle->cover_image }}" 
-                             alt="{{ $topArticle->title }}" 
+                        <img src="{{ $document->cover_type === 'internal' ? \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $document->id]) : $document->cover_image }}" 
+                             alt="{{ $document->title }}" 
                              style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;"
                              loading="lazy"
                              onerror="this.src='https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=400&h=250&fit=crop'">
-                        <div style="position: absolute; top: 8px; right: 8px; background: rgba(0, 0, 0, 0.7); color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; display: flex; align-items: center; gap: 4px;">
-                            <i class="fas fa-eye"></i>
-                            <span>{{ $topArticle->featured_display_views }}</span>
+                        @if($document->is_free)
+                        <div style="position: absolute; top: 8px; left: 8px; background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700;">
+                            GRATUIT
                         </div>
+                        @else
+                        <div style="position: absolute; top: 8px; right: 8px; background: rgba(0, 0, 0, 0.7); color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 600;">
+                            {{ number_format($document->discount_price ?? $document->price, 0, ',', ' ') }} FCFA
+                        </div>
+                        @endif
                     </div>
                     @endif
                     <h5 style="font-size: 0.95rem; font-weight: 600; color: rgba(255, 255, 255, 0.95); margin: 0 0 8px 0; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-                        {{ $topArticle->title }}
+                        {{ $document->title }}
                     </h5>
-                    <div style="display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: rgba(255, 255, 255, 0.6);">
-                        <span style="display: flex; align-items: center; gap: 4px;">
-                            <i class="fas fa-calendar"></i>
-                            {{ $topArticle->published_at ? $topArticle->published_at->format('d/m/Y') : '' }}
-                        </span>
-                        @if($topArticle->category)
+                    <div style="display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: rgba(255, 255, 255, 0.6); flex-wrap: wrap;">
+                        @if($document->category)
                         <span style="display: flex; align-items: center; gap: 4px; color: #06b6d4;">
                             <i class="fas fa-folder"></i>
-                            {{ $topArticle->category->name }}
+                            {{ $document->category->name }}
+                        </span>
+                        @endif
+                        @if($document->sales_count > 0)
+                        <span style="display: flex; align-items: center; gap: 4px;">
+                            <i class="fas fa-shopping-cart"></i>
+                            {{ $document->sales_count }} {{ $document->sales_count > 1 ? 'ventes' : 'vente' }}
                         </span>
                         @endif
                     </div>
@@ -1277,42 +1291,49 @@
             @include('partials.comments', ['commentable' => $article, 'comments' => $comments ?? []])
         </aside>
         @else
-        <!-- Si pas de publicités, afficher les articles les plus vus et les commentaires -->
-        <aside style="position: sticky; top: 80px; align-self: flex-start;">
-            <!-- Section Articles les plus vus -->
-            @if(isset($topViewedArticles) && $topViewedArticles->count() > 0)
-            <div class="top-viewed-articles-sidebar" style="margin-bottom: 25px;">
+        <!-- Si pas de publicités, afficher les documents pertinents et les commentaires -->
+        <aside style="position: sticky; top: 80px; align-self: flex-start; width: 100%; max-width: 100%; box-sizing: border-box;">
+            <!-- Section Documents pertinents -->
+            @if(isset($relatedDocuments) && $relatedDocuments->count() > 0)
+            <div class="related-documents-sidebar" style="margin-bottom: 25px;">
                 <h4 style="font-size: 1.1rem; font-weight: 700; color: rgba(255, 255, 255, 0.95); margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
-                    <i class="fas fa-fire" style="color: #f59e0b;"></i>
-                    <span>{{ app()->getLocale() === 'fr' ? 'Les plus lus' : 'Most Read' }}</span>
+                    <i class="fas fa-file-alt" style="color: #06b6d4;"></i>
+                    <span>{{ app()->getLocale() === 'fr' ? 'Documents pertinents' : 'Related Documents' }}</span>
                 </h4>
-                @foreach($topViewedArticles as $topArticle)
-                <a href="{{ route('emplois.article', $topArticle->slug) }}" class="top-viewed-article-card" style="display: block; background: rgba(51, 65, 85, 0.6); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 12px; padding: 15px; margin-bottom: 15px; text-decoration: none; transition: all 0.3s ease; overflow: hidden;">
-                    @if($topArticle->cover_image)
+                @foreach($relatedDocuments as $document)
+                <a href="{{ route('documents.show', $document->slug) }}" class="related-document-card" style="display: block; background: rgba(51, 65, 85, 0.6); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 12px; padding: 15px; margin-bottom: 15px; text-decoration: none; transition: all 0.3s ease; overflow: hidden;">
+                    @if($document->cover_image)
                     <div style="width: 100%; height: 120px; border-radius: 8px; overflow: hidden; margin-bottom: 12px; position: relative;">
-                        <img src="{{ $topArticle->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($topArticle->cover_image) : $topArticle->cover_image }}" 
-                             alt="{{ $topArticle->title }}" 
+                        <img src="{{ $document->cover_type === 'internal' ? \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $document->id]) : $document->cover_image }}" 
+                             alt="{{ $document->title }}" 
                              style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;"
                              loading="lazy"
                              onerror="this.src='https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=400&h=250&fit=crop'">
-                        <div style="position: absolute; top: 8px; right: 8px; background: rgba(0, 0, 0, 0.7); color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; display: flex; align-items: center; gap: 4px;">
-                            <i class="fas fa-eye"></i>
-                            <span>{{ $topArticle->featured_display_views }}</span>
+                        @if($document->is_free)
+                        <div style="position: absolute; top: 8px; left: 8px; background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700;">
+                            GRATUIT
                         </div>
+                        @else
+                        <div style="position: absolute; top: 8px; right: 8px; background: rgba(0, 0, 0, 0.7); color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 600;">
+                            {{ number_format($document->discount_price ?? $document->price, 0, ',', ' ') }} FCFA
+                        </div>
+                        @endif
                     </div>
                     @endif
                     <h5 style="font-size: 0.95rem; font-weight: 600; color: rgba(255, 255, 255, 0.95); margin: 0 0 8px 0; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-                        {{ $topArticle->title }}
+                        {{ $document->title }}
                     </h5>
-                    <div style="display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: rgba(255, 255, 255, 0.6);">
-                        <span style="display: flex; align-items: center; gap: 4px;">
-                            <i class="fas fa-calendar"></i>
-                            {{ $topArticle->published_at ? $topArticle->published_at->format('d/m/Y') : '' }}
-                        </span>
-                        @if($topArticle->category)
+                    <div style="display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: rgba(255, 255, 255, 0.6); flex-wrap: wrap;">
+                        @if($document->category)
                         <span style="display: flex; align-items: center; gap: 4px; color: #06b6d4;">
                             <i class="fas fa-folder"></i>
-                            {{ $topArticle->category->name }}
+                            {{ $document->category->name }}
+                        </span>
+                        @endif
+                        @if($document->sales_count > 0)
+                        <span style="display: flex; align-items: center; gap: 4px;">
+                            <i class="fas fa-shopping-cart"></i>
+                            {{ $document->sales_count }} {{ $document->sales_count > 1 ? 'ventes' : 'vente' }}
                         </span>
                         @endif
                     </div>
@@ -1565,54 +1586,54 @@
         gap: 8px;
     }
     
-    /* Styles pour les articles les plus vus dans la sidebar */
-    .top-viewed-article-card {
+    /* Styles pour les documents pertinents dans la sidebar */
+    .related-document-card {
         position: relative;
         overflow: hidden;
     }
     
-    .top-viewed-article-card:hover {
+    .related-document-card:hover {
         background: rgba(51, 65, 85, 0.8) !important;
         border-color: rgba(6, 182, 212, 0.4) !important;
         transform: translateY(-2px);
         box-shadow: 0 4px 12px rgba(6, 182, 212, 0.2);
     }
     
-    .top-viewed-article-card:hover img {
+    .related-document-card:hover img {
         transform: scale(1.05);
     }
     
-    .top-viewed-article-card h5 {
+    .related-document-card h5 {
         transition: color 0.3s ease;
     }
     
-    .top-viewed-article-card:hover h5 {
+    .related-document-card:hover h5 {
         color: #06b6d4 !important;
     }
     
-    body:not(.dark-mode) .top-viewed-articles-sidebar h4 {
+    body:not(.dark-mode) .related-documents-sidebar h4 {
         color: rgba(30, 41, 59, 0.95) !important;
     }
     
-    body:not(.dark-mode) .top-viewed-article-card {
+    body:not(.dark-mode) .related-document-card {
         background: rgba(248, 250, 252, 0.8) !important;
         border-color: rgba(6, 182, 212, 0.2) !important;
     }
     
-    body:not(.dark-mode) .top-viewed-article-card:hover {
+    body:not(.dark-mode) .related-document-card:hover {
         background: rgba(241, 245, 249, 0.95) !important;
         border-color: rgba(6, 182, 212, 0.4) !important;
     }
     
-    body:not(.dark-mode) .top-viewed-article-card h5 {
+    body:not(.dark-mode) .related-document-card h5 {
         color: rgba(30, 41, 59, 0.95) !important;
     }
     
-    body:not(.dark-mode) .top-viewed-article-card:hover h5 {
+    body:not(.dark-mode) .related-document-card:hover h5 {
         color: #06b6d4 !important;
     }
     
-    body:not(.dark-mode) .top-viewed-article-card > div:last-child {
+    body:not(.dark-mode) .related-document-card > div:last-child {
         color: rgba(30, 41, 59, 0.7) !important;
     }
     
@@ -1826,6 +1847,18 @@
         .related-grid-full {
             grid-template-columns: repeat(2, 1fr);
         }
+        
+        aside {
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+    }
+    
+    @media (max-width: 1024px) and (min-width: 769px) {
+        .article-main-grid {
+            grid-template-columns: 1fr 280px !important;
+            gap: 25px !important;
+        }
     }
     
     @media (max-width: 768px) {
@@ -1856,6 +1889,7 @@
             position: relative !important;
             top: auto !important;
             margin-top: 30px;
+            width: 100% !important;
         }
         
         /* Ajuster les publicités pour mobile */
@@ -1886,6 +1920,105 @@
             display: table;
             width: 100%;
             table-layout: fixed;
+        }
+        
+        /* Note importante responsive */
+        .important-note-wrapper {
+            padding: 15px !important;
+            margin-bottom: 20px !important;
+        }
+        
+        .important-note-content {
+            flex-direction: column !important;
+            gap: 10px !important;
+        }
+        
+        .important-note-icon {
+            width: 35px !important;
+            height: 35px !important;
+            font-size: 1rem !important;
+        }
+        
+        .important-note-title {
+            font-size: 1rem !important;
+        }
+        
+        .important-note-text {
+            font-size: 0.9rem !important;
+            line-height: 1.5 !important;
+        }
+        
+        /* Boutons de partage social responsive */
+        .social-share-buttons {
+            justify-content: center !important;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .article-container {
+            padding: 20px 10px !important;
+        }
+        
+        .article-content {
+            padding: 20px 12px !important;
+        }
+        
+        .article-hero-title {
+            font-size: 1.75rem !important;
+        }
+        
+        .article-hero-meta {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 8px !important;
+        }
+        
+        .article-hero-meta-item {
+            font-size: 0.75rem !important;
+            padding: 5px 10px !important;
+        }
+        
+        .back-button {
+            padding: 10px 16px !important;
+            font-size: 0.9rem !important;
+        }
+        
+        .related-articles-title {
+            font-size: 1.75rem !important;
+        }
+        
+        /* Sidebar responsive pour très petits écrans */
+        aside {
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+        
+        .related-document-card {
+            padding: 12px !important;
+        }
+        
+        .related-document-card h5 {
+            font-size: 0.9rem !important;
+        }
+        
+        .modern-sidebar-ad-image-wrapper {
+            min-height: 250px !important;
+        }
+    }
+    
+    /* Assurer que tous les éléments de la sidebar sont responsives */
+    @media (max-width: 768px) {
+        aside > * {
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+        
+        .related-documents-sidebar {
+            width: 100% !important;
+        }
+        
+        .related-documents-sidebar h4 {
+            font-size: 1rem !important;
         }
     }
 </style>

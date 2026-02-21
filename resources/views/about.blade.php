@@ -2214,8 +2214,8 @@
                             </div>
                             <div class="contact-info">
                                 <p class="contact-label">{{ trans('app.about.contact.email') }}</p>
-                                <a href="mailto:NiangProgrammeur@gmail.com" class="contact-value">
-                                    NiangProgrammeur@gmail.com
+                                <a href="mailto:{{ optional($siteSettings)->contact_email ?? 'NiangProgrammeur@gmail.com' }}" class="contact-value">
+                                    {{ optional($siteSettings)->contact_email ?? 'NiangProgrammeur@gmail.com' }}
                                 </a>
                             </div>
                             <div class="contact-hover-effect"></div>
@@ -2227,8 +2227,8 @@
                             </div>
                             <div class="contact-info">
                                 <p class="contact-label">{{ trans('app.about.contact.phone') }}</p>
-                                <a href="tel:+221783123657" class="contact-value">
-                                    +221 78 312 36 57
+                                <a href="tel:{{ str_replace(' ', '', optional($siteSettings)->contact_phone ?? '+221783123657') }}" class="contact-value">
+                                    {{ optional($siteSettings)->contact_phone ?? '+221 78 312 36 57' }}
                                 </a>
                             </div>
                             <div class="contact-hover-effect"></div>

@@ -124,12 +124,18 @@ class PageController extends Controller
         $this->ensureLocale();
         $achievements = \App\Models\Achievement::visible()->ordered()->get();
         $showAchievementsSection = \App\Models\SiteSetting::get('show_achievements_section', true);
-        return view('about', compact('achievements', 'showAchievementsSection'));
+        $siteSettings = \Illuminate\Support\Facades\Cache::remember('site_settings', 3600, function () {
+            return \App\Models\SiteSetting::first();
+        });
+        return view('about', compact('achievements', 'showAchievementsSection', 'siteSettings'));
     }
     
     public function contact()
     {
-        return view('contact');
+        $siteSettings = \Illuminate\Support\Facades\Cache::remember('site_settings', 3600, function () {
+            return \App\Models\SiteSetting::first();
+        });
+        return view('contact', compact('siteSettings'));
     }
     
     public function docs()

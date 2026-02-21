@@ -165,15 +165,151 @@ class EmploiController extends Controller
                 ->get();
         });
         
-        // Cache les 6 articles les plus vus pour la sidebar (5 minutes - durée réduite pour plus de réactivité)
-        $topViewedArticles = Cache::remember('top_viewed_articles_sidebar', 300, function () use ($article) {
-            return JobArticle::published()
-                ->where('id', '!=', $article->id)
-                ->with(['category:id,name,slug'])
-                ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')
-                ->orderBy('views', 'desc')
-                ->take(6)
-                ->get();
+        // Cache les documents pertinents selon l'article (15 minutes)
+        $relatedDocuments = Cache::remember("related_documents_article_{$article->id}", 900, function () use ($article) {
+            $documents = collect();
+            $existingIds = [];
+            
+            // Essayer de trouver des documents pertinents basés sur les tags/mots-clés
+            $articleKeywords = [];
+            
+            // Récupérer les mots-clés de l'article
+            if ($article->meta_keywords && is_array($article->meta_keywords)) {
+                $articleKeywords = array_map('strtolower', $article->meta_keywords);
+            } elseif ($article->meta_keywords) {
+                $decoded = json_decode($article->meta_keywords, true);
+                if (is_array($decoded)) {
+                    $articleKeywords = array_map('strtolower', $decoded);
+                } else {
+                    $articleKeywords = array_map('strtolower', explode(',', $article->meta_keywords));
+                }
+            }
+            
+            // Si on a des mots-clés, chercher des documents avec des tags similaires
+            if (!empty($articleKeywords)) {
+                $query = \App\Models\Document::published()
+                    ->with(['category:id,name,slug'])
+                    ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'price', 'discount_price', 'is_free', 'published_at', 'views_count', 'sales_count')
+                    ->where(function($q) use ($articleKeywords) {
+                        foreach ($articleKeywords as $keyword) {
+                            $keyword = trim($keyword);
+                            if (!empty($keyword)) {
+                                $q->orWhereJsonContains('tags', $keyword)
+                                  ->orWhere('title', 'like', "%{$keyword}%")
+                                  ->orWhere('description', 'like', "%{$keyword}%")
+                                  ->orWhere('meta_keywords', 'like', "%{$keyword}%");
+                            }
+                        }
+                    })
+                    ->orderBy('sales_count', 'desc')
+                    ->orderBy('views_count', 'desc')
+                    ->take(6);
+                
+                $documents = $query->get();
+                $existingIds = $documents->pluck('id')->toArray();
+            } else {
+                // Si pas de mots-clés, commencer avec les documents featured
+                $documents = \App\Models\Document::published()
+                    ->where('is_featured', true)
+                    ->with(['category:id,name,slug'])
+                    ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'price', 'discount_price', 'is_free', 'published_at', 'views_count', 'sales_count')
+                    ->orderBy('sales_count', 'desc')
+                    ->orderBy('views_count', 'desc')
+                    ->take(3)
+                    ->get();
+                
+                $existingIds = $documents->pluck('id')->toArray();
+            }
+            
+            // Si moins de 3 documents, compléter avec les documents featured
+            if ($documents->count() < 3) {
+                $additionalCount = 3 - $documents->count();
+                
+                $additionalDocuments = \App\Models\Document::published()
+                    ->whereNotIn('id', $existingIds)
+                    ->where('is_featured', true)
+                    ->with(['category:id,name,slug'])
+                    ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'price', 'discount_price', 'is_free', 'published_at', 'views_count', 'sales_count')
+                    ->orderBy('sales_count', 'desc')
+                    ->orderBy('views_count', 'desc')
+                    ->take($additionalCount)
+                    ->get();
+                
+                $documents = $documents->merge($additionalDocuments);
+                $existingIds = $documents->pluck('id')->toArray();
+            }
+            
+            // Si toujours moins de 3 documents, compléter avec les documents les plus populaires (tous documents)
+            if ($documents->count() < 3) {
+                $additionalCount = 3 - $documents->count();
+                
+                $additionalDocuments = \App\Models\Document::published()
+                    ->whereNotIn('id', $existingIds)
+                    ->with(['category:id,name,slug'])
+                    ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'price', 'discount_price', 'is_free', 'published_at', 'views_count', 'sales_count')
+                    ->orderBy('sales_count', 'desc')
+                    ->orderBy('views_count', 'desc')
+                    ->orderBy('created_at', 'desc')
+                    ->take($additionalCount)
+                    ->get();
+                
+                $documents = $documents->merge($additionalDocuments);
+                $existingIds = $documents->pluck('id')->toArray();
+            }
+            
+            // Compléter jusqu'à 6 documents si possible avec des documents featured
+            if ($documents->count() < 6) {
+                $additionalCount = 6 - $documents->count();
+                
+                $additionalDocuments = \App\Models\Document::published()
+                    ->whereNotIn('id', $existingIds)
+                    ->where('is_featured', true)
+                    ->with(['category:id,name,slug'])
+                    ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'price', 'discount_price', 'is_free', 'published_at', 'views_count', 'sales_count')
+                    ->orderBy('sales_count', 'desc')
+                    ->orderBy('views_count', 'desc')
+                    ->take($additionalCount)
+                    ->get();
+                
+                $documents = $documents->merge($additionalDocuments);
+                $existingIds = $documents->pluck('id')->toArray();
+            }
+            
+            // Si toujours moins de 6, compléter avec n'importe quels documents publiés
+            if ($documents->count() < 6) {
+                $additionalCount = 6 - $documents->count();
+                
+                $additionalDocuments = \App\Models\Document::published()
+                    ->whereNotIn('id', $existingIds)
+                    ->with(['category:id,name,slug'])
+                    ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'price', 'discount_price', 'is_free', 'published_at', 'views_count', 'sales_count')
+                    ->orderBy('sales_count', 'desc')
+                    ->orderBy('views_count', 'desc')
+                    ->orderBy('created_at', 'desc')
+                    ->take($additionalCount)
+                    ->get();
+                
+                $documents = $documents->merge($additionalDocuments);
+            }
+            
+            // Garantir au minimum 3 documents - si toujours moins, prendre les 3 premiers documents publiés
+            if ($documents->count() < 3) {
+                $existingIds = $documents->pluck('id')->toArray();
+                $needed = 3 - $documents->count();
+                
+                $fallbackDocuments = \App\Models\Document::published()
+                    ->whereNotIn('id', $existingIds)
+                    ->with(['category:id,name,slug'])
+                    ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'price', 'discount_price', 'is_free', 'published_at', 'views_count', 'sales_count')
+                    ->orderBy('created_at', 'desc')
+                    ->take($needed)
+                    ->get();
+                
+                $documents = $documents->merge($fallbackDocuments);
+            }
+            
+            // Retourner au minimum 3 documents, au maximum 6
+            return $documents->take(6);
         });
         
         // Cache les publicités pour la sidebar des articles (30 minutes)
@@ -232,7 +368,7 @@ class EmploiController extends Controller
             return $comments;
         });
         
-        return view('emplois.article', compact('article', 'relatedArticles', 'sidebarAds', 'comments', 'latestComments', 'topViewedArticles'));
+        return view('emplois.article', compact('article', 'relatedArticles', 'sidebarAds', 'comments', 'latestComments', 'relatedDocuments'));
     }
 
     /**
