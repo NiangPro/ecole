@@ -852,9 +852,9 @@ body.dark-mode .flash-close:hover {
         <div class="document-main">
             @if($document->cover_image)
                 @if($document->cover_type === 'internal')
-                    <img src="{{ \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $document->id]) }}" alt="{{ $document->title }}" class="document-cover-large">
+                    <img src="{{ \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $document->id]) }}" alt="{{ $document->title }}" class="document-cover-large" width="600" height="400" loading="eager" fetchpriority="high" decoding="async">
                 @else
-                    <img src="{{ $document->cover_image }}" alt="{{ $document->title }}" class="document-cover-large">
+                    <img src="{{ $document->cover_image }}" alt="{{ $document->title }}" class="document-cover-large" width="600" height="400" loading="eager" fetchpriority="high" decoding="async">
                 @endif
             @else
                 <div class="document-cover-large">
@@ -1029,9 +1029,9 @@ body.dark-mode .flash-close:hover {
                         <div class="related-sidebar-image">
                             @if($related->cover_image)
                                 @if($related->cover_type === 'internal')
-                                    <img src="{{ \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $related->id]) }}" alt="{{ $related->title }}">
+                                    <img src="{{ \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $related->id]) }}" alt="{{ $related->title }}" width="80" height="80" loading="lazy" decoding="async">
                                 @else
-                                    <img src="{{ $related->cover_image }}" alt="{{ $related->title }}">
+                                    <img src="{{ $related->cover_image }}" alt="{{ $related->title }}" width="80" height="80" loading="lazy" decoding="async">
                                 @endif
                             @else
                                 <div class="related-sidebar-placeholder">

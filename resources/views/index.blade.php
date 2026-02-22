@@ -1188,7 +1188,7 @@
         
         <!-- Documents Grid -->
         <div class="featured-documents-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem;">
-            @foreach($featuredDocuments as $document)
+            @foreach($featuredDocuments as $index => $document)
             <div class="document-card">
                 <!-- Image wrapper -->
                 <div class="document-cover-wrapper">
@@ -1198,9 +1198,9 @@
                     <a href="{{ route('documents.show', $document->slug) }}">
                         @if($document->cover_image)
                             @if($document->cover_type === 'internal')
-                                <img src="{{ \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $document->id]) }}" alt="{{ $document->title }}" class="document-cover" loading="lazy">
+                                <img src="{{ \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $document->id]) }}" alt="{{ $document->title }}" class="document-cover" width="280" height="200" loading="{{ $index < 2 ? 'eager' : 'lazy' }}" {{ $index < 2 ? 'fetchpriority="high"' : '' }} decoding="async">
                             @else
-                                <img src="{{ $document->cover_image }}" alt="{{ $document->title }}" class="document-cover" loading="lazy">
+                                <img src="{{ $document->cover_image }}" alt="{{ $document->title }}" class="document-cover" width="280" height="200" loading="{{ $index < 2 ? 'eager' : 'lazy' }}" {{ $index < 2 ? 'fetchpriority="high"' : '' }} decoding="async">
                             @endif
                         @else
                             <div class="document-cover-placeholder">
