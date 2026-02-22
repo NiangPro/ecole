@@ -294,9 +294,10 @@ class DocumentController extends Controller
         // Enregistrer le téléchargement
         $document->increment('download_count');
         
-        // Enregistrer dans DocumentDownload si utilisateur connecté
+        // Enregistrer dans DocumentDownload si utilisateur connecté (sans purchase pour gratuit)
         if (Auth::check()) {
             DocumentDownload::create([
+                'purchase_id' => null,
                 'user_id' => Auth::id(),
                 'document_id' => $document->id,
                 'ip_address' => request()->ip(),

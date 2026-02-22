@@ -202,11 +202,13 @@ class Document extends Model
     }
 
     /**
-     * Vérifier si le document est gratuit
+     * Vérifier si le document est gratuit (prix final = 0, avec ou sans réduction)
      */
     public function isFree(): bool
     {
-        return $this->is_free || $this->price == 0;
+        return $this->is_free
+            || $this->price == 0
+            || (float) ($this->discount_price ?? $this->price) == 0;
     }
 
     /**

@@ -58,7 +58,7 @@
 <meta name="twitter:site" content="@niangprogrammeur">
 <meta name="twitter:creator" content="@niangprogrammeur">
 
-<!-- Schema.org JSON-LD - Product Schema -->
+<!-- Schema.org JSON-LD - Product Schema (conforme Search Console / Fiches marchand) -->
 @php
     $productSchema = [
         "@context" => "https://schema.org",
@@ -70,31 +70,47 @@
         "brand" => [
             "@type" => "Brand",
             "name" => "NiangProgrammeur"
-        ],
-        "aggregateRating" => [
-            "@type" => "AggregateRating",
-            "ratingValue" => "4.5",
-            "reviewCount" => $document->sales_count ?? 0
         ]
     ];
+
+    // aggregateRating uniquement si reviewCount > 0 (obligatoire positif pour Google)
+    $reviewsCount = (int) ($document->reviews_count ?? 0);
+    if ($reviewsCount > 0) {
+        $productSchema["aggregateRating"] = [
+            "@type" => "AggregateRating",
+            "ratingValue" => (string) number_format($document->average_rating ?? 0, 1),
+            "reviewCount" => $reviewsCount,
+            "bestRating" => "5"
+        ];
+    }
     
     if ($document->category) {
         $productSchema["category"] = $document->category->name;
     }
     
-    if ($document->price) {
-        $productSchema["offers"] = [
+    if ($document->price || $document->isFree()) {
+        $offer = [
             "@type" => "Offer",
             "url" => $documentUrl,
             "priceCurrency" => $documentCurrency,
-            "price" => (string)$documentPrice,
+            "price" => (string) ($documentPrice ?? 0),
             "priceValidUntil" => now()->addYear()->format('Y-m-d'),
             "availability" => "https://schema.org/InStock",
             "seller" => [
                 "@type" => "Organization",
                 "name" => "NiangProgrammeur"
+            ],
+            "shippingDetails" => [
+                "@type" => "OfferShippingDetails",
+                "doesNotShip" => true
+            ],
+            "hasMerchantReturnPolicy" => [
+                "@type" => "MerchantReturnPolicy",
+                "applicableCountry" => "SN",
+                "returnPolicyCategory" => "https://schema.org/MerchantReturnNotPermitted"
             ]
         ];
+        $productSchema["offers"] = $offer;
     }
 @endphp
 <script type="application/ld+json">
