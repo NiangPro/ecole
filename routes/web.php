@@ -45,6 +45,7 @@ Route::get('/sitemap.xml', [\App\Http\Controllers\SitemapController::class, 'ind
 Route::get('/sitemap-pages.xml', [\App\Http\Controllers\SitemapController::class, 'pages'])->name('sitemap.pages');
 Route::get('/sitemap-articles.xml', [\App\Http\Controllers\SitemapController::class, 'articles'])->name('sitemap.articles');
 Route::get('/sitemap-documents.xml', [\App\Http\Controllers\SitemapController::class, 'documents'])->name('sitemap.documents');
+Route::get('/sitemap-administrative-documents.xml', [\App\Http\Controllers\SitemapController::class, 'administrativeDocuments'])->name('sitemap.administrative-documents');
 
 Route::get('/', [PageController::class, 'index'])->name('home');
 // Route Recherche - Utiliser SearchController
@@ -251,6 +252,13 @@ Route::get('/emplois/article/{slug}', [EmploiController::class, 'show'])
     ->where('slug', '^(?!articles-recents$).+')
     ->name('emplois.article');
 
+// Routes Documents Administratifs (papiers)
+use App\Http\Controllers\AdministrativeDocumentController;
+Route::get('/papiers-administratifs', [AdministrativeDocumentController::class, 'index'])
+    ->name('admin-docs.index');
+Route::get('/papiers-administratifs/{slug}', [AdministrativeDocumentController::class, 'show'])
+    ->name('admin-docs.show');
+
 // Commentaires (publiques - avec rate limiting)
 Route::post('/comments', [\App\Http\Controllers\CommentController::class, 'store'])->middleware('throttle:5,15')->name('comments.store');
 Route::post('/comments/{id}/like', [\App\Http\Controllers\CommentController::class, 'like'])->middleware('throttle:10,1')->name('comments.like');
@@ -363,6 +371,11 @@ Route::post('/admin/login', [App\Http\Controllers\AdminController::class, 'login
 Route::get('/document-cover/{id}', [\App\Http\Controllers\Admin\DocumentController::class, 'serveCover'])
     ->middleware('signed')
     ->name('document.cover.signed');
+
+// Image de couverture document administratif (même logique que /documents)
+Route::get('/administrative-document-cover/{id}', [\App\Http\Controllers\Admin\AdministrativeDocumentController::class, 'serveCover'])
+    ->middleware('signed')
+    ->name('admin-docs.cover.signed');
 
 // Routes protégées par middleware admin
 Route::middleware(['admin'])->group(function () {
@@ -606,6 +619,9 @@ Route::middleware(['admin'])->group(function () {
         
         // Bundles
         Route::resource('bundles', \App\Http\Controllers\Admin\DocumentBundleController::class);
+
+        // Documents administratifs (papiers / fiches)
+        Route::resource('administrative-documents', \App\Http\Controllers\Admin\AdministrativeDocumentController::class)->names('administrative-documents');
     });
 
     // Routes Publicités Admin

@@ -1202,7 +1202,7 @@
             
             <!-- Dropdown À propos / Contact -->
             <li class="navbar-item dropdown">
-                <a href="#" class="navbar-link dropdown-toggle {{ request()->routeIs(['about', 'contact', 'monetization.index', 'monetization.affiliates', 'monetization.affiliates.dashboard', 'docs', 'documents.*', 'forum.*']) ? 'active' : '' }}">
+                <a href="#" class="navbar-link dropdown-toggle {{ request()->routeIs(['about', 'contact', 'monetization.index', 'monetization.affiliates', 'monetization.affiliates.dashboard', 'docs', 'documents.*', 'forum.*', 'admin-docs.*']) ? 'active' : '' }}">
                     {{ trans('app.nav.about') }}
                     <i class="fas fa-chevron-down dropdown-icon"></i>
                 </a>
@@ -1211,6 +1211,15 @@
                         $hasActiveSubscriptionPlans = \App\Models\SubscriptionPlan::active()->exists();
                         $hasPublishedDocuments = \App\Models\Document::published()->active()->exists();
                     @endphp
+                    <a href="{{ route('admin-docs.index') }}" class="dropdown-item" data-parent-active="admin-docs">
+                        <div class="dropdown-item-icon" style="background: rgba(56, 189, 248, 0.1);">
+                            <i class="fas fa-id-card" style="color: #38bdf8;"></i>
+                        </div>
+                        <div class="dropdown-item-content">
+                            <div class="dropdown-item-title">Documents administratifs</div>
+                            <div class="dropdown-item-desc">Papiers & démarches au Sénégal</div>
+                        </div>
+                    </a>
                     @if($hasPublishedDocuments)
                     <a href="{{ route('documents.index') }}" class="dropdown-item" data-parent-active="documents">
                         <div class="dropdown-item-icon" style="background: rgba(6, 182, 212, 0.1);">
@@ -1777,6 +1786,9 @@
                     $hasActiveSubscriptionPlansMobile = \App\Models\SubscriptionPlan::active()->exists();
                     $hasPublishedDocumentsMobile = \App\Models\Document::published()->active()->exists();
                 @endphp
+                <a href="{{ route('admin-docs.index') }}" class="mobile-dropdown-item">
+                    <i class="fas fa-id-card" style="color: #38bdf8;"></i> Documents administratifs
+                </a>
                 @if($hasPublishedDocumentsMobile)
                 <a href="{{ route('documents.index') }}" class="mobile-dropdown-item">
                     <i class="fas fa-file-alt" style="color: #06b6d4;"></i> Documents

@@ -12,8 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('job_categories', function (Blueprint $table) {
-            $table->string('image')->nullable()->after('icon');
-            $table->enum('image_type', ['internal', 'external'])->default('internal')->after('image');
+            // Éviter l'erreur si la colonne existe déjà (cas de ré-exécution des migrations)
+            if (!Schema::hasColumn('job_categories', 'image')) {
+                $table->string('image')->nullable()->after('icon');
+            }
+
+            if (!Schema::hasColumn('job_categories', 'image_type')) {
+                $table->enum('image_type', ['internal', 'external'])->default('internal')->after('image');
+            }
         });
     }
 

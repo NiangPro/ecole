@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\JobArticle;
 use App\Models\Category;
 use App\Models\Document;
+use App\Models\AdministrativeDocument;
 use Illuminate\Support\Facades\Cache;
 
 class SitemapController extends Controller
@@ -68,6 +69,11 @@ class SitemapController extends Controller
             $sitemap .= '  <sitemap>' . PHP_EOL;
             $sitemap .= '    <loc>' . htmlspecialchars($baseUrl . '/sitemap-documents.xml', ENT_XML1, 'UTF-8') . '</loc>' . PHP_EOL;
             $sitemap .= '    <lastmod>' . ($lastDocumentUpdate ?? now()->format('Y-m-d')) . '</lastmod>' . PHP_EOL;
+            $sitemap .= '  </sitemap>' . PHP_EOL;
+            
+            $sitemap .= '  <sitemap>' . PHP_EOL;
+            $sitemap .= '    <loc>' . htmlspecialchars($baseUrl . '/sitemap-administrative-documents.xml', ENT_XML1, 'UTF-8') . '</loc>' . PHP_EOL;
+            $sitemap .= '    <lastmod>' . now()->format('Y-m-d') . '</lastmod>' . PHP_EOL;
             $sitemap .= '  </sitemap>' . PHP_EOL;
             
             $sitemap .= '</sitemapindex>';
@@ -159,6 +165,7 @@ class SitemapController extends Controller
         $pages[] = ['url' => '/emplois/opportunites', 'priority' => '0.8', 'changefreq' => 'daily', 'lastmod' => now()->format('Y-m-d')];
         $pages[] = ['url' => '/emplois/concours', 'priority' => '0.8', 'changefreq' => 'daily', 'lastmod' => now()->format('Y-m-d')];
         $pages[] = ['url' => '/articles/vedettes', 'priority' => '0.8', 'changefreq' => 'daily', 'lastmod' => now()->format('Y-m-d')];
+        $pages[] = ['url' => '/papiers-administratifs', 'priority' => '0.9', 'changefreq' => 'weekly', 'lastmod' => now()->format('Y-m-d')];
         
         // Pages catégories d'emplois
         try {
@@ -354,6 +361,61 @@ class SitemapController extends Controller
             return $sitemap;
         });
         
+        return response($sitemap, 200)
+            ->header('Content-Type', 'application/xml; charset=utf-8')
+            ->header('Cache-Control', 'public, max-age=3600');
+    }
+
+    public function administrativeDocuments()
+    {
+        $baseUrl = config('app.env') === 'production'
+            ? 'https://niangprogrammeur.com'
+            : request()->getSchemeAndHttpHost();
+
+        $sitemap = Cache::remember('sitemap_administrative_documents_' . md5($baseUrl), 3600, function () use ($baseUrl) {
+            $sitemap = '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
+            $sitemap .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">' . PHP_EOL;
+
+            try {
+                $documents = AdministrativeDocument::published()
+                    ->orderBy('updated_at', 'desc')
+                    ->limit(50000)
+                    ->get();
+
+                foreach ($documents as $doc) {
+                    $sitemap .= '  <url>' . PHP_EOL;
+                    $url = $baseUrl . '/papiers-administratifs/' . $doc->slug;
+                    $sitemap .= '    <loc>' . htmlspecialchars($url, ENT_XML1, 'UTF-8') . '</loc>' . PHP_EOL;
+                    $sitemap .= '    <lastmod>' . ($doc->updated_at ? $doc->updated_at->format('Y-m-d\TH:i:s+00:00') : now()->format('Y-m-d\TH:i:s+00:00')) . '</lastmod>' . PHP_EOL;
+                    $sitemap .= '    <changefreq>weekly</changefreq>' . PHP_EOL;
+                    $sitemap .= '    <priority>' . ($doc->is_featured ? '0.9' : '0.8') . '</priority>' . PHP_EOL;
+
+                    if ($doc->cover_image) {
+                        $imageUrl = $doc->cover_type === 'internal'
+                            ? $baseUrl . '/storage/' . ltrim($doc->cover_image, '/')
+                            : $doc->cover_image;
+                        if (!preg_match('/^https?:\/\//', $imageUrl)) {
+                            $imageUrl = $baseUrl . '/' . ltrim($imageUrl, '/');
+                        }
+                        $sitemap .= '    <image:image>' . PHP_EOL;
+                        $sitemap .= '      <image:loc>' . htmlspecialchars($imageUrl, ENT_XML1, 'UTF-8') . '</image:loc>' . PHP_EOL;
+                        $sitemap .= '      <image:title>' . htmlspecialchars($doc->title, ENT_XML1, 'UTF-8') . '</image:title>' . PHP_EOL;
+                        if ($doc->summary) {
+                            $sitemap .= '      <image:caption>' . htmlspecialchars(mb_substr($doc->summary, 0, 200), ENT_XML1, 'UTF-8') . '</image:caption>' . PHP_EOL;
+                        }
+                        $sitemap .= '    </image:image>' . PHP_EOL;
+                    }
+
+                    $sitemap .= '  </url>' . PHP_EOL;
+                }
+            } catch (\Exception $e) {
+                // Ignorer si la table n'existe pas
+            }
+
+            $sitemap .= '</urlset>';
+            return $sitemap;
+        });
+
         return response($sitemap, 200)
             ->header('Content-Type', 'application/xml; charset=utf-8')
             ->header('Cache-Control', 'public, max-age=3600');

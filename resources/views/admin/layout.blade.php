@@ -801,7 +801,7 @@
             </div>
             
             <!-- Menu Dropdown Documents -->
-            <div class="sidebar-dropdown {{ request()->routeIs('admin.documents.*') ? 'active' : '' }}">
+            <div class="sidebar-dropdown {{ request()->routeIs('admin.documents.*') || request()->routeIs('admin.documents.administrative-documents.*') ? 'active' : '' }}">
                 <button class="sidebar-item sidebar-dropdown-toggle" onclick="toggleSidebarDropdown('documents')">
                     <i class="fas fa-file-alt text-xl"></i>
                     <span>Documents</span>
@@ -817,6 +817,10 @@
                     <a href="{{ route('admin.documents.documents.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.documents.documents.*') ? 'active' : '' }}">
                         <i class="fas fa-file"></i>
                         <span>Documents</span>
+                    </a>
+                    <a href="{{ route('admin.documents.administrative-documents.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.documents.administrative-documents.*') ? 'active' : '' }}">
+                        <i class="fas fa-id-card"></i>
+                        <span>Documents administratifs</span>
                     </a>
                     <a href="{{ route('admin.documents.categories.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.documents.categories.*') ? 'active' : '' }}">
                         <i class="fas fa-folder"></i>
