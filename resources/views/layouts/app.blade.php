@@ -1211,10 +1211,12 @@
         (function() {
             function loadScripts() {
                 const scripts = [
+                    '{{ asset("js/targeted-pagespeed.js") }}',
+                    '{{ asset("js/critical-pagespeed.js") }}',
+                    '{{ asset("js/pagespeed-optimizer.js") }}',
                     '{{ asset("js/webp-optimizer.js") }}',
                     '{{ asset("js/minifier.js") }}',
                     '{{ asset("js/intelligent-prefetch.js") }}',
-                    '{{ asset("js/prefetch-monitor.js") }}',
                     '{{ asset("js/silence-console.js") }}',
                     '{{ asset("js/lazy-loading.js") }}',
                     '{{ asset("js/pwa-manager.js") }}',
