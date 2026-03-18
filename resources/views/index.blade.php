@@ -4,7 +4,7 @@
 @section('meta_description', 'Plateforme de formation gratuite en développement web. Apprenez HTML5, CSS3, JavaScript, PHP, Laravel, Bootstrap, Git, WordPress et Intelligence Artificielle.')
 
 @push('preload_images')
-<link rel="preload" as="image" href="https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=75" fetchpriority="high">
+<!-- Plus de preload d'image externe -->
 @endpush
 
 @push('styles')
@@ -171,7 +171,7 @@
     
     body.dark-mode .hero-section {
         background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.9) 100%),
-                    url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1200&q=75') center/cover no-repeat;
+                    linear-gradient(135deg, #1e3a8a 0%, #2d3748 50%, #1e293b 100%);
         background-attachment: fixed;
     }
     
@@ -240,11 +240,34 @@
             padding: 60px 20px 40px;
         }
         
+        .subtitle {
+            display: none; /* Masquer la description en mode mobile */
+        }
         
         .main-title {
             font-size: clamp(1.8rem, 4vw, 2.2rem) !important;
             line-height: 1.3;
             margin-bottom: 20px;
+        }
+        
+        .cta-buttons {
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .tech-carousel-wrapper {
+            margin-top: 20px;
+            padding: 20px 15px;
+        }
+        
+        .tech-card-carousel {
+            padding: 20px;
+        }
+        
+        .tech-icon-carousel {
+            font-size: 3rem;
+            height: 80px;
         }
     }
     
@@ -312,6 +335,7 @@
         margin-left: auto;
         margin-right: auto;
         text-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+        display: none; /* Masquer complètement le sous-titre */
     }
     
     body.dark-mode .subtitle {
@@ -375,6 +399,7 @@
         padding: 40px 20px;
         margin: 0;
         width: 100%;
+        display: none; /* Section masquée */
     }
     
     /* Masquer la section stats sur mobile */
@@ -1345,18 +1370,18 @@
     }
     
     .featured-documents-section .document-price-overlay .document-price-old {
-        font-size: 0.7rem;
+        font-size: 0.6rem;
         color: rgba(255, 255, 255, 0.8);
         text-decoration: line-through;
-        font-weight: 500;
+        margin-bottom: 2px;
         display: block;
     }
     
     .featured-documents-section .document-price-overlay .document-price-current {
-        font-size: 1rem;
+        font-size: 0.8rem;
         font-weight: 700;
         color: white;
-        white-space: nowrap;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
         display: block;
     }
     
@@ -2246,9 +2271,6 @@
                             <h3 class="tech-name-carousel">HTML5</h3>
                         </div>
                         <div class="tech-card-content-section">
-                            <p class="tech-desc-carousel">
-                                {{ trans('app.home.technologies.html5_desc') }}
-                            </p>
                             <a href="{{ route('formations.html5') }}" class="tech-link-carousel">
                                 {{ trans('app.home.technologies.start_button') }} <i class="fas fa-arrow-right"></i>
                             </a>
@@ -2266,9 +2288,6 @@
                             <h3 class="tech-name-carousel">CSS3</h3>
                         </div>
                         <div class="tech-card-content-section">
-                            <p class="tech-desc-carousel">
-                                {{ trans('app.home.technologies.css3_desc') }}
-                            </p>
                             <a href="{{ route('formations.css3') }}" class="tech-link-carousel">
                                 {{ trans('app.home.technologies.start_button') }} <i class="fas fa-arrow-right"></i>
                             </a>
@@ -2286,9 +2305,6 @@
                             <h3 class="tech-name-carousel">JavaScript</h3>
                         </div>
                         <div class="tech-card-content-section">
-                            <p class="tech-desc-carousel">
-                                {{ trans('app.home.technologies.javascript_desc') }}
-                            </p>
                             <a href="{{ route('formations.javascript') }}" class="tech-link-carousel">
                                 {{ trans('app.home.technologies.start_button') }} <i class="fas fa-arrow-right"></i>
                             </a>
@@ -2306,9 +2322,6 @@
                             <h3 class="tech-name-carousel">PHP</h3>
                         </div>
                         <div class="tech-card-content-section">
-                            <p class="tech-desc-carousel">
-                                {{ trans('app.home.technologies.php_desc') }}
-                            </p>
                             <a href="{{ route('formations.php') }}" class="tech-link-carousel">
                                 {{ trans('app.home.technologies.start_button') }} <i class="fas fa-arrow-right"></i>
                             </a>

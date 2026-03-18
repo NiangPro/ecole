@@ -26,23 +26,35 @@
 @endsection
 
 @section('content')
-<div class="max-w-4xl mx-auto">
-    <div class="mb-6">
+<div class="max-w-5xl mx-auto">
+    <div class="mb-6 flex items-center justify-between gap-4">
         <a href="{{ route('admin.documents.administrative-documents.index') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-white transition">
             <i class="fas fa-arrow-left"></i> Retour à la liste
         </a>
+        <div class="text-sm text-gray-400 hidden sm:block">
+            <span class="px-2 py-1 rounded-full border border-yellow-400/40 bg-yellow-500/10 text-yellow-300">
+                Édition de fiche existante
+            </span>
+        </div>
     </div>
-    <div class="admin-adm-doc-form-card p-6 rounded-xl bg-gray-800/70 border border-cyan-500/20">
-        <h1 class="text-2xl font-bold mb-6 text-cyan-400">Modifier : {{ $document->title }}</h1>
-        <form action="{{ route('admin.documents.administrative-documents.update', $document) }}" method="POST" enctype="multipart/form-data">
+    <div class="admin-adm-doc-form-card p-6 rounded-xl bg-gray-800/80 border border-cyan-500/30 shadow-xl">
+        <div class="flex items-start justify-between gap-4 mb-6">
+            <div>
+                <h1 class="text-2xl font-bold text-cyan-400">Modifier : {{ $document->title }}</h1>
+                <p class="mt-1 text-sm text-gray-400">Mets à jour les informations de la fiche administrative.</p>
+            </div>
+        </div>
+        <form action="{{ route('admin.documents.administrative-documents.update', $document) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
             @method('PUT')
-            @include('admin.documents.administrative-documents._form', ['document' => $document])
-            <div class="mt-8 flex gap-3">
-                <button type="submit" class="px-6 py-2 bg-cyan-500 hover:bg-cyan-600 text-black font-semibold rounded-lg transition">
-                    <i class="fas fa-save mr-2"></i>Mettre à jour
+            @include('admin.documents.administrative-documents._form', ['document' => $document, 'categories' => $categories])
+            <div class="pt-4 border-t border-gray-700 flex flex-wrap gap-3 justify-end">
+                <a href="{{ route('admin.documents.administrative-documents.index') }}" class="px-6 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition">
+                    Annuler
+                </a>
+                <button type="submit" class="px-6 py-2 bg-cyan-500 hover:bg-cyan-400 text-black font-semibold rounded-lg transition inline-flex items-center gap-2">
+                    <i class="fas fa-save"></i> Mettre à jour la fiche
                 </button>
-                <a href="{{ route('admin.documents.administrative-documents.index') }}" class="px-6 py-2 bg-gray-600 hover:bg-gray-500 rounded-lg transition">Annuler</a>
             </div>
         </form>
     </div>
@@ -51,12 +63,20 @@
 <script>
 document.getElementById('coverType')?.addEventListener('change', function() {
     const isInternal = this.value === 'internal';
-    document.getElementById('coverInternal').style.display = isInternal ? 'block' : 'none';
-    document.getElementById('coverExternal').style.display = isInternal ? 'none' : 'block';
+    const internal = document.getElementById('coverInternal');
+    const external = document.getElementById('coverExternal');
+    if (internal && external) {
+        internal.style.display = isInternal ? 'block' : 'none';
+        external.style.display = isInternal ? 'none' : 'block';
+    }
 });
 document.getElementById('categorySelect')?.addEventListener('change', function() {
-    document.getElementById('categoryNewWrap').style.display = this.value === '__new__' ? 'block' : 'none';
+    const wrap = document.getElementById('categoryNewWrap');
+    if (wrap) {
+        wrap.style.display = this.value === '__new__' ? 'block' : 'none';
+    }
 });
 </script>
 @endsection
 @endsection
+

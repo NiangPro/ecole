@@ -621,7 +621,9 @@ Route::middleware(['admin'])->group(function () {
         Route::resource('bundles', \App\Http\Controllers\Admin\DocumentBundleController::class);
 
         // Documents administratifs (papiers / fiches)
-        Route::resource('administrative-documents', \App\Http\Controllers\Admin\AdministrativeDocumentController::class)->names('administrative-documents');
+        // Ressource complète (index, create, store, edit, update, destroy)
+        Route::resource('administrative-documents', \App\Http\Controllers\Admin\AdministrativeDocumentController::class)
+            ->names('administrative-documents');
     });
 
     // Routes Publicités Admin

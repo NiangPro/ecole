@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Console</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .error { background: #ffebee; border: 1px solid #f8d7da; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        .success { background: #d4edda; border: 1px solid #c3e6cb; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        .warning { background: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        code { background: #f8f9fa; padding: 2px 6px; border-radius: 3px; font-family: 'Courier New', monospace; }
+    </style>
+</head>
+<body>
+    <h1>🔍 Debug Console NiangProgrammeur</h1>
+    
+    <div class="success">
+        <h3>✅ État Actuel</h3>
+        <p>En cours de diagnostic des erreurs console...</p>
+    </div>
+    
+    <div id="results"></div>
+    
+    <script>
+        // Test des images
+        console.log('=== TEST IMAGES ===');
+        
+        // Test 1: Icônes FontAwesome
+        const icons = ['fa-html5', 'fa-css3-alt', 'fa-js', 'fa-php'];
+        icons.forEach(icon => {
+            const element = document.createElement('i');
+            element.className = icon;
+            element.style.color = '#e34c26';
+            document.body.appendChild(element);
+            
+            setTimeout(() => {
+                const computed = window.getComputedStyle(element);
+                const isVisible = computed.display !== 'none' && computed.visibility !== 'hidden';
+                console.log(`Icon ${icon}:`, isVisible ? '✅ Visible' : '❌ Masqué');
+            }, 100);
+        });
+        
+        // Test 2: Images avec asset()
+        const testImages = [
+            'images/logo.png',
+            'images/chapeau-noel.png'
+        ];
+        
+        testImages.forEach(src => {
+            const img = document.createElement('img');
+            img.src = src;
+            img.onload = () => console.log(`Image ${src}: ✅ Chargée`);
+            img.onerror = () => console.log(`Image ${src}: ❌ Erreur de chargement`);
+            document.body.appendChild(img);
+        });
+        
+        // Test 3: Vérification des scripts
+        console.log('=== TEST SCRIPTS ===');
+        const scripts = document.querySelectorAll('script');
+        scripts.forEach((script, index) => {
+            if (script.src) {
+                console.log(`Script ${index + 1}: ${script.src}`);
+            }
+        });
+        
+        // Test 4: Vérification CSS
+        console.log('=== TEST CSS ===');
+        const stylesheets = document.querySelectorAll('link[rel="stylesheet"]');
+        stylesheets.forEach((sheet, index) => {
+            console.log(`CSS ${index + 1}: ${sheet.href}`);
+        });
+        
+        // Test 5: Erreurs JavaScript globales
+        console.log('=== TEST ERREURS GLOBALES ===');
+        setTimeout(() => {
+            if (window.jQuery) {
+                console.log('jQuery: ✅ Chargé');
+            } else {
+                console.log('jQuery: ❌ Non chargé');
+            }
+            
+            if (window.Swiper) {
+                console.log('Swiper: ✅ Chargé');
+            } else {
+                console.log('Swiper: ❌ Non chargé');
+            }
+        }, 1000);
+        
+        // Capture des erreurs
+        window.addEventListener('error', (e) => {
+            console.error('Erreur globale:', e.error);
+        });
+        
+        window.addEventListener('unhandledrejection', (e) => {
+            console.error('Promesse rejetée:', e.reason);
+        });
+        
+        console.log('=== FIN TESTS ===');
+        console.log('Ouvrez la console (F12) sur le site principal pour voir les résultats');
+    </script>
+</body>
+</html>

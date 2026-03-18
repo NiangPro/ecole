@@ -48,6 +48,23 @@
     <link rel="apple-touch-icon" sizes="114x114" href="{{ $faviconPng }}">
     <link rel="apple-touch-icon" sizes="76x76" href="{{ $faviconPng }}">
     <link rel="apple-touch-icon" sizes="72x72" href="{{ $faviconPng }}">
+    
+    <!-- Meta Tags Performance -->
+    <meta name="theme-color" content="#06b6d4">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="NiangProgrammeur">
+    
+    <!-- Preconnect et DNS-prefetch pour performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="//images.unsplash.com">
+    
+    <!-- Polices optimisées -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap"></noscript>
     <link rel="apple-touch-icon" sizes="60x60" href="{{ $faviconPng }}">
     <link rel="apple-touch-icon" sizes="57x57" href="{{ $faviconPng }}">
     
@@ -1194,6 +1211,12 @@
         (function() {
             function loadScripts() {
                 const scripts = [
+                    '{{ asset("js/webp-optimizer.js") }}',
+                    '{{ asset("js/minifier.js") }}',
+                    '{{ asset("js/intelligent-prefetch.js") }}',
+                    '{{ asset("js/prefetch-monitor.js") }}',
+                    '{{ asset("js/silence-console.js") }}',
+                    '{{ asset("js/lazy-loading.js") }}',
                     '{{ asset("js/pwa-manager.js") }}',
                     '{{ asset("js/analytics-tracker.js") }}',
                     '{{ asset("js/main.js") }}',
@@ -1223,6 +1246,19 @@
     <script>
         // Clé publique VAPID pour les notifications push (à configurer dans .env)
         window.VAPID_PUBLIC_KEY = '{{ config("services.vapid.public_key", "") }}';
+        
+        // Enregistrer le Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('SW registered: ', registration);
+                    })
+                    .catch(registrationError => {
+                        console.log('SW registration failed: ', registrationError);
+                    });
+            });
+        }
     </script>
     
     @yield('scripts')

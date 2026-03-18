@@ -53,7 +53,19 @@ class AdministrativeDocumentController extends Controller
     {
         $document = AdministrativeDocument::published()->where('slug', $slug)->firstOrFail();
 
-        return view('admin-docs.show', compact('document'));
+        $relatedQuery = AdministrativeDocument::published()
+            ->where('id', '!=', $document->id);
+
+        if (!empty($document->category)) {
+            $relatedQuery->where('category', $document->category);
+        }
+
+        $relatedDocuments = $relatedQuery
+            ->inRandomOrder()
+            ->limit(4)
+            ->get();
+
+        return view('admin-docs.show', compact('document', 'relatedDocuments'));
     }
 }
 

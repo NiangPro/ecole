@@ -206,6 +206,103 @@
 }
 .admin-doc-back:hover { box-shadow: 0 6px 20px rgba(14, 165, 233, 0.45); }
 
+/* Related documents */
+.admin-doc-related-section {
+    max-width: 900px;
+    margin: 2.5rem auto 0;
+    padding: 0 1.5rem 0.5rem;
+}
+.admin-doc-related-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1.25rem;
+}
+.admin-doc-related-title span {
+    display: inline-flex;
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #0ea5e9, #22c55e);
+    box-shadow: 0 0 0 5px rgba(14, 165, 233, 0.25);
+}
+.admin-doc-related-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
+}
+.admin-doc-related-card {
+    background: #ffffff;
+    border-radius: 0.9rem;
+    padding: 0.9rem 0.9rem 0.85rem;
+    border: 1px solid rgba(226, 232, 240, 0.9);
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    transition: transform 0.16s ease-out, box-shadow 0.16s ease-out, border-color 0.16s ease-out;
+}
+.admin-doc-related-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+    border-color: rgba(14, 165, 233, 0.6);
+}
+.admin-doc-related-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.18rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    background: #ecfeff;
+    color: #0e7490;
+}
+.admin-doc-related-title-link {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: #0f172a;
+    text-decoration: none;
+}
+.admin-doc-related-title-link:hover {
+    color: #0ea5e9;
+}
+.admin-doc-related-meta {
+    font-size: 0.75rem;
+    color: #64748b;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.15rem;
+}
+.admin-doc-related-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+.admin-doc-related-meta i {
+    color: #0ea5e9;
+}
+.admin-doc-related-link {
+    margin-top: 0.3rem;
+}
+.admin-doc-related-link a {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #0284c7;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+.admin-doc-related-link a:hover {
+    color: #0369a1;
+}
 /* ----- Dark theme ----- */
 body.dark-mode .admin-doc-show-page {
     background:
@@ -246,12 +343,54 @@ body.dark-mode .admin-doc-back {
 }
 body.dark-mode .admin-doc-back:hover { box-shadow: 0 6px 28px rgba(14, 165, 233, 0.5); }
 
+body.dark-mode .admin-doc-related-title {
+    color: #e5e7eb;
+}
+body.dark-mode .admin-doc-related-card {
+    background: rgba(15, 23, 42, 0.96);
+    border-color: rgba(51, 65, 85, 0.9);
+    box-shadow: 0 18px 45px rgba(0, 0, 0, 0.7);
+}
+body.dark-mode .admin-doc-related-badge {
+    background: rgba(8, 47, 73, 0.9);
+    color: #7dd3fc;
+}
+body.dark-mode .admin-doc-related-title-link {
+    color: #f9fafb;
+}
+body.dark-mode .admin-doc-related-title-link:hover {
+    color: #38bdf8;
+}
+body.dark-mode .admin-doc-related-meta {
+    color: #9ca3af;
+}
+body.dark-mode .admin-doc-related-meta i {
+    color: #38bdf8;
+}
+body.dark-mode .admin-doc-related-link a {
+    color: #38bdf8;
+}
+body.dark-mode .admin-doc-related-link a:hover {
+    color: #0ea5e9;
+}
+
 @media (max-width: 640px) {
     .admin-doc-show-hero { min-height: 220px; padding-bottom: 1.5rem; margin-bottom: -1.5rem; }
     .admin-doc-show-card { padding: 1.5rem 1.25rem; }
     .admin-doc-show-title { font-size: 1.5rem; }
     .admin-doc-show-meta-bar { gap: 0.65rem; }
     .admin-doc-show-meta-item { padding: 0.4rem 0.85rem; font-size: 0.85rem; }
+    .admin-doc-related-section {
+        padding: 0 1rem 1.5rem;
+    }
+    .admin-doc-related-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+@media (min-width: 641px) and (max-width: 1024px) {
+    .admin-doc-related-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
 }
 </style>
 @endpush
@@ -365,4 +504,40 @@ body.dark-mode .admin-doc-back:hover { box-shadow: 0 6px 28px rgba(14, 165, 233,
         </article>
     </div>
 </div>
+
+@if(isset($relatedDocuments) && $relatedDocuments->isNotEmpty())
+    <section class="admin-doc-related-section">
+        <h2 class="admin-doc-related-title">
+            <span></span>
+            Autres documents similaires
+        </h2>
+        <div class="admin-doc-related-grid">
+            @foreach($relatedDocuments as $related)
+                <article class="admin-doc-related-card">
+                    @if($related->category)
+                        <div class="admin-doc-related-badge">
+                            <i class="fas fa-folder-open"></i> {{ $related->category }}
+                        </div>
+                    @endif
+                    <a href="{{ route('admin-docs.show', $related->slug) }}" class="admin-doc-related-title-link">
+                        {{ $related->title }}
+                    </a>
+                    <div class="admin-doc-related-meta">
+                        @if($related->approx_cost)
+                            <span><i class="fas fa-money-bill-wave"></i>{!! \Illuminate\Support\Str::limit($related->approx_cost, 40) !!}</span>
+                        @endif
+                        @if($related->approx_delay)
+                            <span><i class="fas fa-clock"></i>{!! \Illuminate\Support\Str::limit($related->approx_delay, 30) !!}</span>
+                        @endif
+                    </div>
+                    <div class="admin-doc-related-link">
+                        <a href="{{ route('admin-docs.show', $related->slug) }}">
+                            Voir la fiche <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </article>
+            @endforeach
+        </div>
+    </section>
+@endif
 @endsection
