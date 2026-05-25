@@ -239,8 +239,8 @@ class SitemapController extends Controller
                 
                 // Image pour l'article (important pour AdSense et SEO)
                 if ($article->cover_image) {
-                    $imageUrl = $article->cover_type === 'internal' 
-                        ? $baseUrl . '/' . \Illuminate\Support\Facades\Storage::url($article->cover_image)
+                    $imageUrl = $article->cover_type === 'internal'
+                        ? $baseUrl . \Illuminate\Support\Facades\Storage::url($article->cover_image)
                         : $article->cover_image;
                     // S'assurer que l'URL de l'image est absolue
                     if (!preg_match('/^https?:\/\//', $imageUrl)) {
@@ -327,8 +327,8 @@ class SitemapController extends Controller
                     
                     // Image pour le document (important pour Google Images et SEO)
                     if ($document->cover_image) {
-                        $imageUrl = $document->cover_type === 'internal' 
-                            ? $baseUrl . '/' . \Illuminate\Support\Facades\Storage::url($document->cover_image)
+                        $imageUrl = $document->cover_type === 'internal'
+                            ? $baseUrl . \Illuminate\Support\Facades\Storage::url($document->cover_image)
                             : $document->cover_image;
                         // S'assurer que l'URL de l'image est absolue
                         if (!preg_match('/^https?:\/\//', $imageUrl)) {

@@ -29,7 +29,7 @@
         $adFormat = $unit->ad_format;
         $responsive = $unit->responsive ? 'true' : 'false';
         $containerClass = $containerClass ?? 'adsense-container';
-        $containerStyle = $containerStyle ?? 'margin: 20px 0; text-align: center; min-height: 250px;';
+        $containerStyle = $containerStyle ?? 'margin: 20px 0; text-align: center;';
     } else {
         // Utiliser les paramètres fournis directement
         $clientId = $clientId ?? ($clientIdParam ?? null);
@@ -37,7 +37,7 @@
         $adFormat = $adFormat ?? 'auto';
         $responsive = $responsive ?? 'true';
         $containerClass = $containerClass ?? 'adsense-container';
-        $containerStyle = $containerStyle ?? 'margin: 20px 0; text-align: center; min-height: 250px;';
+        $containerStyle = $containerStyle ?? 'margin: 20px 0; text-align: center;';
     }
     
     $adStyle = $adStyle ?? 'display:block';

@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             ['email' => 'test@example.com'],
             [
                 'name' => 'Test User',
+                'password' => bcrypt('password123'),
             ]
         );
         
@@ -53,5 +54,11 @@ class DatabaseSeeder extends Seeder
         
         // Seeder pour les paramètres WhatsApp
         $this->call(WhatsAppSettingsSeeder::class);
+        
+        // Seeder pour les formations gratuites
+        $this->call(FormationSeeder::class);
+        
+        // Seeder pour les catégories de forum
+        $this->call(ForumCategorySeeder::class);
     }
 }

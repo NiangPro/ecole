@@ -1,233 +1,228 @@
 @extends('layouts.app')
 
-@section('title', trans('app.quiz.result.title') . ' ' . trans('app.formations.languages.' . $language, [], null, ucfirst($language)) . ' | NiangProgrammeur')
+@php
+  $langMap = [
+    'html5'        => ['icon' => 'fab fa-html5',       'color' => 'orange'],
+    'css3'         => ['icon' => 'fab fa-css3-alt',    'color' => 'blue'],
+    'javascript'   => ['icon' => 'fab fa-js',           'color' => 'yellow'],
+    'php'          => ['icon' => 'fab fa-php',          'color' => 'cyan'],
+    'bootstrap'    => ['icon' => 'fab fa-bootstrap',   'color' => 'cyan'],
+    'git'          => ['icon' => 'fab fa-git-alt',     'color' => 'red'],
+    'wordpress'    => ['icon' => 'fab fa-wordpress',   'color' => 'blue'],
+    'ia'           => ['icon' => 'fas fa-robot',        'color' => 'green'],
+    'python'       => ['icon' => 'fab fa-python',       'color' => 'blue'],
+    'java'         => ['icon' => 'fab fa-java',         'color' => 'orange'],
+    'sql'          => ['icon' => 'fas fa-database',    'color' => 'blue'],
+    'c'            => ['icon' => 'fab fa-c',            'color' => 'gray'],
+    'cpp'          => ['icon' => 'fab fa-cuttlefish',  'color' => 'blue'],
+    'csharp'       => ['icon' => 'fab fa-microsoft',   'color' => 'green'],
+    'dart'         => ['icon' => 'fas fa-feather-alt', 'color' => 'blue'],
+    'go'           => ['icon' => 'fab fa-golang',      'color' => 'blue'],
+    'swift'        => ['icon' => 'fab fa-swift',       'color' => 'orange'],
+    'perl'         => ['icon' => 'fas fa-code',        'color' => 'blue'],
+    'typescript'   => ['icon' => 'fab fa-js-square',   'color' => 'blue'],
+    'rust'         => ['icon' => 'fab fa-rust',        'color' => 'gray'],
+    'ruby'         => ['icon' => 'fas fa-gem',         'color' => 'red'],
+    'cybersecurite'=> ['icon' => 'fas fa-shield-alt',  'color' => 'orange'],
+    'data-science' => ['icon' => 'fas fa-chart-line',  'color' => 'blue'],
+    'big-data'     => ['icon' => 'fas fa-database',    'color' => 'cyan'],
+  ];
 
-@section('styles')
-<style>
-    body {
-        overflow-x: hidden;
-    }
-    
-    /* Body background */
-    body:not(.dark-mode) {
-        background: #ffffff !important;
-    }
-    
-    body.dark-mode {
-        background: #0a0a0f !important;
-    }
-    
-    .result-container {
-        max-width: 900px;
-        margin: 0 auto;
-    }
-    
-    .score-card {
-        background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(236, 72, 153, 0.2));
-        border: 2px solid rgba(168, 85, 247, 0.3);
-        border-radius: 20px;
-        padding: 3rem;
-        text-align: center;
-        margin-bottom: 3rem;
-    }
-    
-    body:not(.dark-mode) .score-card {
-        background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(236, 72, 153, 0.1)) !important;
-        border-color: rgba(168, 85, 247, 0.25) !important;
-        box-shadow: 0 10px 40px rgba(168, 85, 247, 0.1) !important;
-    }
-    
-    .score-circle {
-        width: 200px;
-        height: 200px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #a855f7, #ec4899);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto 2rem;
-        box-shadow: 0 0 40px rgba(168, 85, 247, 0.5);
-    }
-    
-    .answer-card {
-        background: linear-gradient(135deg, rgba(10, 10, 26, 0.9), rgba(0, 0, 0, 0.9));
-        border: 2px solid rgba(168, 85, 247, 0.2);
-        border-radius: 15px;
-        padding: 1.5rem;
-        margin-bottom: 1.5rem;
-    }
-    
-    body:not(.dark-mode) .answer-card {
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.95)) !important;
-        border-color: rgba(168, 85, 247, 0.25) !important;
-        box-shadow: 0 10px 40px rgba(168, 85, 247, 0.1) !important;
-    }
-    
-    .answer-card.correct {
-        border-color: rgba(34, 197, 94, 0.5);
-        background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(34, 197, 94, 0.05));
-    }
-    
-    body:not(.dark-mode) .answer-card.correct {
-        background: linear-gradient(135deg, rgba(34, 197, 94, 0.08), rgba(34, 197, 94, 0.05)) !important;
-        border-color: rgba(34, 197, 94, 0.3) !important;
-    }
-    
-    .answer-card.incorrect {
-        border-color: rgba(239, 68, 68, 0.5);
-        background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05));
-    }
-    
-    body:not(.dark-mode) .answer-card.incorrect {
-        background: linear-gradient(135deg, rgba(239, 68, 68, 0.08), rgba(239, 68, 68, 0.05)) !important;
-        border-color: rgba(239, 68, 68, 0.3) !important;
-    }
-    
-    /* Text colors */
-    body:not(.dark-mode) .text-gray-300 {
-        color: rgba(30, 41, 59, 0.8) !important;
-    }
-    
-    body:not(.dark-mode) .text-white {
-        color: rgba(30, 41, 59, 0.9) !important;
-    }
-    
-    /* Buttons */
-    body:not(.dark-mode) .bg-white\/10 {
-        background: rgba(168, 85, 247, 0.1) !important;
-        border-color: rgba(168, 85, 247, 0.3) !important;
-    }
-    
-    body:not(.dark-mode) .bg-white\/10:hover {
-        background: rgba(168, 85, 247, 0.15) !important;
-    }
-    
-    body:not(.dark-mode) .text-white.border-white\/20 {
-        color: rgba(30, 41, 59, 0.9) !important;
-        border-color: rgba(168, 85, 247, 0.3) !important;
-    }
-    
-    /* CTA section */
-    body:not(.dark-mode) .bg-gradient-to-r.from-purple-500\/10.to-pink-500\/10 {
-        background: linear-gradient(to right, rgba(168, 85, 247, 0.05), rgba(236, 72, 153, 0.05)) !important;
-        border-color: rgba(168, 85, 247, 0.2) !important;
-    }
-    
-    body:not(.dark-mode) .text-purple-400 {
-        color: #a855f7 !important;
-    }
-</style>
-@endsection
+  $pct   = (int) round($percentage);
+  $wrong = $total - $score;
+
+  /* Score tier */
+  if ($pct >= 80) {
+    $tier    = 'great';
+    $tierKey = trans('app.quiz.result.excellent');
+    $emoji   = '🏆';
+  } elseif ($pct >= 60) {
+    $tier    = 'good';
+    $tierKey = trans('app.quiz.result.good');
+    $emoji   = '👍';
+  } elseif ($pct >= 40) {
+    $tier    = 'medium';
+    $tierKey = trans('app.quiz.result.continue');
+    $emoji   = '💪';
+  } else {
+    $tier    = 'low';
+    $tierKey = trans('app.quiz.result.dont_give_up');
+    $emoji   = '🎯';
+  }
+
+  /* SVG ring: r=70, circumference ≈ 439.82 → use 440 */
+  $ringCirc   = 440;
+  $ringOffset = round($ringCirc * (1 - $pct / 100), 2);
+
+  $langLabel = trans('app.formations.languages.' . $language, [], null, ucfirst($language));
+@endphp
+
+@section('title', trans('app.quiz.result.title') . ' ' . $langLabel . ' | NiangProgrammeur')
+@section('meta_description', trans('app.quiz.result.got_score', [':score' => $score, ':total' => $total]))
 
 @section('content')
-<section class="py-20 relative overflow-hidden pt-8">
-    <div class="container mx-auto px-6">
-        <div class="result-container">
-            <!-- Score Card -->
-            <div class="score-card">
-                <div class="score-circle">
-                    <div class="text-center">
-                        <div class="text-6xl font-bold text-white">{{ number_format($percentage, 0) }}%</div>
-                        <div class="text-white text-lg">{{ trans('app.quiz.result.score') }}</div>
-                    </div>
-                </div>
-                
-                <h1 class="text-4xl font-bold text-white mb-4">
-                    @if($percentage >= 80)
-                        {{ trans('app.quiz.result.excellent') }}
-                    @elseif($percentage >= 60)
-                        {{ trans('app.quiz.result.good') }}
-                    @elseif($percentage >= 40)
-                        {{ trans('app.quiz.result.continue') }}
-                    @else
-                        {{ trans('app.quiz.result.dont_give_up') }}
-                    @endif
-                </h1>
-                
-                <p class="text-2xl text-gray-300 mb-6">
-                    {{ str_replace([':score', ':total'], [$score, $total], trans('app.quiz.result.got_score')) }}
-                </p>
-                
-                <div class="flex gap-4 justify-center flex-wrap">
-                    <a href="{{ route('quiz.language', $language) }}" class="px-8 py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white font-bold rounded-lg hover:shadow-lg hover:scale-105 transition">
-                        <i class="fas fa-redo mr-2"></i>{{ trans('app.quiz.result.retry') }}
-                    </a>
-                    <a href="{{ route('quiz') }}" class="px-8 py-3 bg-white/10 border border-white/20 text-white font-bold rounded-lg hover:bg-white/20 transition">
-                        <i class="fas fa-arrow-left mr-2"></i>{{ trans('app.quiz.result.back') }}
-                    </a>
-                    <a href="{{ route('exercices.language', $language) }}" class="px-8 py-3 bg-gradient-to-r from-cyan-500 to-teal-600 text-white font-bold rounded-lg hover:shadow-lg hover:scale-105 transition">
-                        <i class="fas fa-code mr-2"></i>{{ trans('app.quiz.result.do_exercices') }}
-                    </a>
-                </div>
-            </div>
+<div class="qr-page">
 
-            <!-- Results Details -->
-            <div class="mb-8">
-                <h2 class="text-3xl font-bold text-white mb-6">
-                    <i class="fas fa-list-check text-purple-400 mr-3"></i>
-                    {{ trans('app.quiz.result.details') }}
-                </h2>
-            </div>
+  {{-- ── SCORE HERO ─────────────────────────────────────────── --}}
+  <div class="qr-hero">
+    <div class="qr-hero__inner">
 
-            @foreach($results as $index => $result)
-            <div class="answer-card {{ $result['isCorrect'] ? 'correct' : 'incorrect' }}">
-                <div class="flex items-start gap-4 mb-4">
-                    <div class="w-10 h-10 rounded-full {{ $result['isCorrect'] ? 'bg-green-500/20 border-2 border-green-500/40' : 'bg-red-500/20 border-2 border-red-500/40' }} flex items-center justify-center flex-shrink-0">
-                        @if($result['isCorrect'])
-                            <i class="fas fa-check text-green-400"></i>
-                        @else
-                            <i class="fas fa-times text-red-400"></i>
-                        @endif
-                    </div>
-                    <div class="flex-1">
-                        <h3 class="text-lg font-bold text-white mb-3">
-                            {{ trans('app.quiz.result.question') }} {{ $index + 1 }}: {{ $result['question'] }}
-                        </h3>
-                        
-                        @if($result['isCorrect'])
-                            <div class="flex items-center gap-2 text-green-400">
-                                <i class="fas fa-check-circle"></i>
-                                <span class="font-semibold">{{ trans('app.quiz.result.good_answer') }}</span>
-                            </div>
-                        @else
-                            <div class="mb-2">
-                                <div class="flex items-center gap-2 text-red-400 mb-2">
-                                    <i class="fas fa-times-circle"></i>
-                                    <span class="font-semibold">{{ trans('app.quiz.result.your_answer') }}</span>
-                                    <span>{{ $result['options'][$result['userAnswer']] ?? trans('app.quiz.result.no_answer') }}</span>
-                                </div>
-                                <div class="flex items-center gap-2 text-green-400">
-                                    <i class="fas fa-check-circle"></i>
-                                    <span class="font-semibold">{{ trans('app.quiz.result.correct_answer') }}</span>
-                                    <span>{{ $result['options'][$result['correctAnswer']] }}</span>
-                                </div>
-                            </div>
-                        @endif
-                    </div>
-                </div>
-            </div>
-            @endforeach
-
-            <!-- Bottom Actions -->
-            <div class="mt-12 text-center">
-                <div class="bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-2xl p-8">
-                    <h3 class="text-2xl font-bold text-white mb-4">
-                        {{ trans('app.quiz.result.continue_learning') }}
-                    </h3>
-                    <p class="text-gray-300 mb-6">
-                        {{ trans('app.quiz.result.continue_learning_desc') }}
-                    </p>
-                    <div class="flex gap-4 justify-center flex-wrap">
-                        <a href="{{ route('exercices') }}" class="px-6 py-3 bg-gradient-to-r from-cyan-500 to-teal-600 text-white font-bold rounded-lg hover:shadow-lg hover:scale-105 transition">
-                            <i class="fas fa-code mr-2"></i>{{ trans('app.exercices.title') }}
-                        </a>
-                        <a href="{{ route('quiz') }}" class="px-6 py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white font-bold rounded-lg hover:shadow-lg hover:scale-105 transition">
-                            <i class="fas fa-question-circle mr-2"></i>{{ trans('app.quiz.title') }}
-                        </a>
-                    </div>
-                </div>
-            </div>
+      {{-- Ring SVG --}}
+      <div class="qr-score-ring" aria-label="{{ $pct }}%">
+        <svg viewBox="0 0 160 160" aria-hidden="true">
+          <circle class="qr-score-ring__track" cx="80" cy="80" r="70"/>
+          <circle class="qr-score-ring__fill qr-score-ring__fill--{{ $tier }}"
+                  cx="80" cy="80" r="70"
+                  id="ringFill"
+                  stroke-dashoffset="{{ $ringCirc }}"/>
+        </svg>
+        <div class="qr-score-ring__center">
+          <span class="qr-score-ring__pct">{{ $pct }}%</span>
+          <span class="qr-score-ring__label">{{ trans('app.quiz.result.score') }}</span>
         </div>
+      </div>
+
+      {{-- Content --}}
+      <div class="qr-hero__content">
+        <div class="qr-hero__eyebrow qr-hero__eyebrow--{{ $tier }}">
+          {{ $tierKey }}
+        </div>
+        <h1 class="qr-hero__title">
+          {{ trans('app.quiz.title') }} {{ $langLabel }}
+        </h1>
+        <p class="qr-hero__sub">
+          {{ trans('app.quiz.result.got_score', [':score' => $score, ':total' => $total]) }}
+        </p>
+
+        <div class="qr-actions">
+          <a href="{{ route('quiz.language', $language) }}" class="qr-btn qr-btn--primary">
+            <i class="fas fa-redo"></i>
+            {{ trans('app.quiz.result.retry') }}
+          </a>
+          <a href="{{ route('quiz') }}" class="qr-btn qr-btn--ghost">
+            <i class="fas fa-arrow-left"></i>
+            {{ trans('app.quiz.result.back') }}
+          </a>
+          @php
+            try { $exRoute = route('exercices.language', $language); } catch(\Exception $e) { $exRoute = route('exercices'); }
+          @endphp
+          <a href="{{ $exRoute }}" class="qr-btn qr-btn--ghost">
+            <i class="fas fa-code"></i>
+            {{ trans('app.quiz.result.do_exercices') }}
+          </a>
+        </div>
+      </div>
+
     </div>
-</section>
+  </div>
+
+  {{-- ── STAT CHIPS ──────────────────────────────────────────── --}}
+  <div class="qr-stats">
+    <div class="qr-stats__inner">
+      <div class="qr-chip qr-chip--correct">
+        <div class="qr-chip__icon"><i class="fas fa-check"></i></div>
+        <div>
+          <div class="qr-chip__val">{{ $score }}</div>
+          <div class="qr-chip__lbl">{{ trans('app.quiz.result.correct_answers') }}</div>
+        </div>
+      </div>
+      <div class="qr-chip qr-chip--wrong">
+        <div class="qr-chip__icon"><i class="fas fa-times"></i></div>
+        <div>
+          <div class="qr-chip__val">{{ $wrong }}</div>
+          <div class="qr-chip__lbl">{{ trans('app.quiz.result.wrong_answers') }}</div>
+        </div>
+      </div>
+      <div class="qr-chip qr-chip--pct">
+        <div class="qr-chip__icon"><i class="fas fa-chart-pie"></i></div>
+        <div>
+          <div class="qr-chip__val">{{ $pct }}%</div>
+          <div class="qr-chip__lbl">{{ trans('app.quiz.result.score') }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {{-- ── ANSWERS DETAIL ──────────────────────────────────────── --}}
+  <div class="qr-main">
+    <div class="qr-container">
+
+      <h2 class="qr-section-title">
+        <i class="fas fa-list-check"></i>
+        {{ trans('app.quiz.result.details') }}
+      </h2>
+
+      @foreach($results as $index => $result)
+      <div class="qr-answer qr-answer--{{ $result['isCorrect'] ? 'correct' : 'wrong' }}">
+        <div class="qr-answer__header">
+
+          <div class="qr-answer__icon">
+            @if($result['isCorrect'])
+              <i class="fas fa-check"></i>
+            @else
+              <i class="fas fa-times"></i>
+            @endif
+          </div>
+
+          <div class="qr-answer__body">
+            <div class="qr-answer__num">{{ trans('app.quiz.result.question') }} {{ $index + 1 }}</div>
+            <p class="qr-answer__question">{{ $result['question'] }}</p>
+
+            <div class="qr-answer__feedback">
+              @if($result['isCorrect'])
+                <div class="qr-answer__row qr-answer__row--correct">
+                  <span class="qr-answer__row-label">{{ trans('app.quiz.result.good_answer') }}</span>
+                  <span class="qr-answer__row-val">{{ $result['options'][$result['correctAnswer']] }}</span>
+                </div>
+              @else
+                <div class="qr-answer__row qr-answer__row--wrong">
+                  <span class="qr-answer__row-label">{{ trans('app.quiz.result.your_answer') }}</span>
+                  <span class="qr-answer__row-val">{{ $result['options'][$result['userAnswer']] ?? trans('app.quiz.result.no_answer') }}</span>
+                </div>
+                <div class="qr-answer__row qr-answer__row--correct">
+                  <span class="qr-answer__row-label">{{ trans('app.quiz.result.correct_answer') }}</span>
+                  <span class="qr-answer__row-val">{{ $result['options'][$result['correctAnswer']] }}</span>
+                </div>
+              @endif
+            </div>
+          </div>
+
+        </div>
+      </div>
+      @endforeach
+
+      {{-- CTA bottom --}}
+      <div class="qr-cta">
+        <h3 class="qr-cta__title">{{ trans('app.quiz.result.continue_learning') }}</h3>
+        <p class="qr-cta__sub">{{ trans('app.quiz.result.continue_learning_desc') }}</p>
+        <div class="qr-cta__actions">
+          <a href="{{ route('exercices') }}" class="qr-btn qr-btn--primary">
+            <i class="fas fa-code"></i>
+            {{ trans('app.exercices.title') }}
+          </a>
+          <a href="{{ route('quiz') }}" class="qr-btn qr-btn--ghost">
+            <i class="fas fa-question-circle"></i>
+            {{ trans('app.quiz.title') }}
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  /* Animate the SVG ring on load */
+  const fill   = document.getElementById('ringFill');
+  const target = {{ $ringCirc }} - ({{ $ringCirc }} * {{ $pct }} / 100);
+  requestAnimationFrame(function () {
+    setTimeout(function () {
+      fill.style.transition = 'stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1)';
+      fill.style.strokeDashoffset = target;
+    }, 120);
+  });
+})();
+</script>
 @endsection

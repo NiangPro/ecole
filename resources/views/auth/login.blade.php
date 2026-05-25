@@ -2,254 +2,202 @@
 
 @section('title', trans('app.auth.login.title') . ' | NiangProgrammeur')
 
-@section('styles')
-<style>
-    .auth-container {
-        min-height: calc(100vh - 200px);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 40px 20px;
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
-    }
-    
-    body:not(.dark-mode) .auth-container {
-        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%);
-    }
-    
-    .auth-card {
-        max-width: 450px;
-        width: 100%;
-        background: rgba(15, 23, 42, 0.8);
-        backdrop-filter: blur(20px);
-        border: 2px solid rgba(6, 182, 212, 0.3);
-        border-radius: 24px;
-        padding: 40px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-        transition: all 0.3s ease;
-    }
-    
-    body:not(.dark-mode) .auth-card {
-        background: rgba(255, 255, 255, 0.95);
-        border-color: rgba(6, 182, 212, 0.25);
-        box-shadow: 0 20px 60px rgba(6, 182, 212, 0.15);
-    }
-    
-    .auth-title {
-        font-size: 2rem;
-        font-weight: 900;
-        color: #fff;
-        margin-bottom: 10px;
-        text-align: center;
-        background: linear-gradient(135deg, #06b6d4, #14b8a6);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-    
-    body:not(.dark-mode) .auth-title {
-        color: rgba(30, 41, 59, 0.95);
-    }
-    
-    .auth-subtitle {
-        text-align: center;
-        color: rgba(255, 255, 255, 0.6);
-        margin-bottom: 30px;
-    }
-    
-    body:not(.dark-mode) .auth-subtitle {
-        color: rgba(30, 41, 59, 0.7);
-    }
-    
-    .auth-label {
-        display: block;
-        color: rgba(255, 255, 255, 0.9);
-        font-weight: 600;
-        margin-bottom: 8px;
-    }
-    
-    body:not(.dark-mode) .auth-label {
-        color: rgba(30, 41, 59, 0.9);
-    }
-    
-    .auth-input {
-        width: 100%;
-        padding: 12px 15px;
-        background: rgba(15, 23, 42, 0.8);
-        border: 1px solid rgba(6, 182, 212, 0.3);
-        border-radius: 12px;
-        color: #fff;
-        font-size: 1rem;
-        transition: all 0.3s ease;
-    }
-    
-    body:not(.dark-mode) .auth-input {
-        background: rgba(248, 250, 252, 0.9);
-        border-color: rgba(6, 182, 212, 0.25);
-        color: rgba(30, 41, 59, 0.9);
-    }
-    
-    .auth-input:focus {
-        outline: none;
-        border-color: rgba(6, 182, 212, 0.6);
-        box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.1);
-    }
-    
-    .auth-input::placeholder {
-        color: rgba(255, 255, 255, 0.5);
-    }
-    
-    body:not(.dark-mode) .auth-input::placeholder {
-        color: rgba(30, 41, 59, 0.5);
-    }
-    
-    .auth-checkbox-label {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        color: rgba(255, 255, 255, 0.7);
-        cursor: pointer;
-    }
-    
-    body:not(.dark-mode) .auth-checkbox-label {
-        color: rgba(30, 41, 59, 0.7);
-    }
-    
-    .auth-button {
-        width: 100%;
-        padding: 14px;
-        background: linear-gradient(135deg, #06b6d4, #14b8a6);
-        color: #fff;
-        border: none;
-        border-radius: 12px;
-        font-weight: 700;
-        font-size: 1rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        margin-bottom: 20px;
-    }
-    
-    .auth-button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(6, 182, 212, 0.4);
-    }
-    
-    .auth-link-text {
-        text-align: center;
-        padding-top: 20px;
-        border-top: 1px solid rgba(6, 182, 212, 0.2);
-    }
-    
-    .auth-link-text p {
-        color: rgba(255, 255, 255, 0.6);
-        margin-bottom: 15px;
-    }
-    
-    body:not(.dark-mode) .auth-link-text p {
-        color: rgba(30, 41, 59, 0.7);
-    }
-    
-    .auth-link-button {
-        display: inline-block;
-        padding: 12px 30px;
-        background: rgba(15, 23, 42, 0.8);
-        color: #06b6d4;
-        border: 2px solid rgba(6, 182, 212, 0.3);
-        border-radius: 12px;
-        text-decoration: none;
-        font-weight: 600;
-        transition: all 0.3s ease;
-    }
-    
-    body:not(.dark-mode) .auth-link-button {
-        background: rgba(248, 250, 252, 0.9);
-        border-color: rgba(6, 182, 212, 0.25);
-    }
-    
-    .auth-link-button:hover {
-        transform: translateY(-2px);
-        border-color: rgba(6, 182, 212, 0.5);
-        box-shadow: 0 4px 12px rgba(6, 182, 212, 0.2);
-    }
-    
-    .auth-alert {
-        padding: 15px;
-        border-radius: 12px;
-        margin-bottom: 20px;
-    }
-    
-    .auth-alert-success {
-        background: rgba(34, 197, 94, 0.1);
-        border: 1px solid rgba(34, 197, 94, 0.3);
-        color: #22c55e;
-    }
-    
-    .auth-alert-error {
-        background: rgba(239, 68, 68, 0.1);
-        border: 1px solid rgba(239, 68, 68, 0.3);
-        color: #ef4444;
-    }
-</style>
-@endsection
-
 @section('content')
-<div class="auth-container">
-    <div class="auth-card">
-        <h1 class="auth-title">{{ trans('app.auth.login.title') }}</h1>
-        <p class="auth-subtitle">{{ trans('app.auth.login.subtitle') }}</p>
+<div class="lg-page">
 
-        @if(session('success'))
-            <div class="auth-alert auth-alert-success">
-                <i class="fas fa-check-circle mr-2"></i>{{ session('success') }}
-            </div>
-        @endif
+  {{-- ── PANNEAU GAUCHE — Branding ─────────────────────── --}}
+  <div class="lg-brand">
+    <div class="lg-brand__content">
 
-        @if($errors->any())
-            <div class="auth-alert auth-alert-error">
-                <ul style="margin: 0; padding-left: 20px;">
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
+      <a href="{{ route('home') }}" class="lg-brand__logo">
+        <div class="lg-brand__logo-icon">NP</div>
+        <span class="lg-brand__logo-name">NiangProgrammeur</span>
+      </a>
 
-        <form action="{{ route('login.post') }}" method="POST">
-            @csrf
-            
-            <div style="margin-bottom: 20px;">
-                <label class="auth-label">{{ trans('app.auth.login.email') }}</label>
-                <input type="email" name="email" value="{{ old('email') }}" required 
-                       class="auth-input"
-                       placeholder="votre@email.com">
-            </div>
-            
-            <div style="margin-bottom: 25px;">
-                <label class="auth-label">{{ trans('app.auth.login.password') }}</label>
-                <input type="password" name="password" required 
-                       class="auth-input"
-                       placeholder="••••••••">
-            </div>
-            
-            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 25px;">
-                <label class="auth-checkbox-label">
-                    <input type="checkbox" name="remember" style="width: 18px; height: 18px; cursor: pointer;">
-                    <span style="font-size: 0.9rem;">{{ trans('app.auth.login.remember') }}</span>
-                </label>
-            </div>
-            
-            <button type="submit" class="auth-button">
-                <i class="fas fa-sign-in-alt mr-2"></i>{{ trans('app.auth.login.button') }}
-            </button>
-        </form>
-        
-        <div class="auth-link-text">
-            <p>{{ trans('app.auth.login.no_account') }}</p>
-            <a href="{{ route('register') }}" class="auth-link-button">
-                <i class="fas fa-user-plus mr-2"></i>{{ trans('app.auth.login.create_account') }}
-            </a>
+      <h2 class="lg-brand__headline">
+        Accédez à<br>
+        <span class="lg-brand__headline-grad">votre espace</span><br>
+        d'apprentissage
+      </h2>
+      <p class="lg-brand__sub">
+        Formations gratuites, articles tech, offres d'emploi et documents téléchargeables — tout en un seul endroit.
+      </p>
+
+      <div class="lg-features">
+        <div class="lg-feature">
+          <div class="lg-feature__icon"><i class="fas fa-play-circle"></i></div>
+          <div>
+            <div class="lg-feature__text">Formations gratuites</div>
+            <div class="lg-feature__sub">HTML, CSS, JS, Laravel, Python…</div>
+          </div>
         </div>
-    </div>
-</div>
-@endsection
+        <div class="lg-feature">
+          <div class="lg-feature__icon"><i class="fas fa-newspaper"></i></div>
+          <div>
+            <div class="lg-feature__text">Articles &amp; tutoriels</div>
+            <div class="lg-feature__sub">Contenu mis à jour chaque semaine</div>
+          </div>
+        </div>
+        <div class="lg-feature">
+          <div class="lg-feature__icon"><i class="fas fa-briefcase"></i></div>
+          <div>
+            <div class="lg-feature__text">Offres d'emploi tech</div>
+            <div class="lg-feature__sub">Dakar, remote et international</div>
+          </div>
+        </div>
+        <div class="lg-feature">
+          <div class="lg-feature__icon"><i class="fas fa-file-download"></i></div>
+          <div>
+            <div class="lg-feature__text">Documents téléchargeables</div>
+            <div class="lg-feature__sub">CV, exercices, fiches de révision</div>
+          </div>
+        </div>
+      </div>
 
+      <div class="lg-brand__dots">
+        <div class="lg-brand__dot lg-brand__dot--active"></div>
+        <div class="lg-brand__dot"></div>
+        <div class="lg-brand__dot"></div>
+      </div>
+
+    </div>
+  </div>
+
+  {{-- ── PANNEAU DROIT — Formulaire ──────────────────────── --}}
+  <div class="lg-form-panel">
+    <div class="lg-form-wrap">
+
+      {{-- Logo mobile --}}
+      <a href="{{ route('home') }}" class="lg-mobile-logo">
+        <div class="lg-mobile-logo__icon">NP</div>
+        <span class="lg-mobile-logo__name">NiangProgrammeur</span>
+      </a>
+
+      <div class="lg-form-header">
+        <h1 class="lg-form-title">
+          {{ trans('app.auth.login.title') }}
+          <span>votre compte</span>
+        </h1>
+        <p class="lg-form-subtitle">{{ trans('app.auth.login.subtitle') }}</p>
+      </div>
+
+      {{-- Alertes --}}
+      @if(session('success'))
+      <div class="lg-alert lg-alert--success">
+        <i class="fas fa-check-circle" style="margin-top:.1rem;flex-shrink:0"></i>
+        <span>{{ session('success') }}</span>
+      </div>
+      @endif
+
+      @if($errors->any())
+      <div class="lg-alert lg-alert--error">
+        <i class="fas fa-exclamation-circle" style="margin-top:.15rem;flex-shrink:0"></i>
+        <ul>
+          @foreach($errors->all() as $error)
+            <li>{{ $error }}</li>
+          @endforeach
+        </ul>
+      </div>
+      @endif
+
+      {{-- Formulaire --}}
+      <form action="{{ route('login.post') }}" method="POST" class="lg-form">
+        @csrf
+
+        {{-- E-mail --}}
+        <div class="lg-field">
+          <label class="lg-label" for="lg-email">
+            {{ trans('app.auth.login.email') }}
+          </label>
+          <div class="lg-input-wrap">
+            <input
+              type="email"
+              id="lg-email"
+              name="email"
+              value="{{ old('email') }}"
+              required
+              autocomplete="email"
+              class="lg-input"
+              placeholder="votre@email.com"
+            >
+            <i class="fas fa-envelope lg-input-icon"></i>
+          </div>
+        </div>
+
+        {{-- Mot de passe --}}
+        <div class="lg-field">
+          <label class="lg-label" for="lg-password">
+            {{ trans('app.auth.login.password') }}
+          </label>
+          <div class="lg-input-wrap">
+            <input
+              type="password"
+              id="lg-password"
+              name="password"
+              required
+              autocomplete="current-password"
+              class="lg-input lg-input--pwd"
+              placeholder="••••••••"
+            >
+            <i class="fas fa-lock lg-input-icon"></i>
+            <button type="button" class="lg-pwd-toggle" onclick="lgTogglePwd()"
+                    aria-label="{{ trans('app.auth.login.password') }}">
+              <i class="fas fa-eye" id="lg-pwd-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        {{-- Se souvenir + mot de passe oublié --}}
+        <div class="lg-row">
+          <label class="lg-remember">
+            <input type="checkbox" name="remember" class="lg-remember__box">
+            <span class="lg-remember__label">{{ trans('app.auth.login.remember') }}</span>
+          </label>
+          @if(Route::has('password.request'))
+          <a href="{{ route('password.request') }}" class="lg-forgot">
+            {{ trans('app.auth.login.forgot') }}
+          </a>
+          @endif
+        </div>
+
+        {{-- Bouton --}}
+        <button type="submit" class="lg-submit">
+          <i class="fas fa-sign-in-alt"></i>
+          {{ trans('app.auth.login.button') }}
+        </button>
+
+        <div class="lg-divider">ou</div>
+
+        <div class="lg-register">
+          <span>{{ trans('app.auth.login.no_account') }}</span>
+          <a href="{{ route('register') }}">{{ trans('app.auth.login.create_account') }}</a>
+        </div>
+
+      </form>
+
+      <div class="lg-back">
+        <a href="{{ route('home') }}">
+          <i class="fas fa-arrow-left"></i>
+          {{ trans('app.auth.login.back_home') }}
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+function lgTogglePwd() {
+  const input = document.getElementById('lg-password');
+  const icon  = document.getElementById('lg-pwd-eye');
+  if (input.type === 'password') {
+    input.type = 'text';
+    icon.className = 'fas fa-eye-slash';
+  } else {
+    input.type = 'password';
+    icon.className = 'fas fa-eye';
+  }
+}
+</script>
+@endsection

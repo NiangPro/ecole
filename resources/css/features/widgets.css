@@ -1,0 +1,537 @@
+/*
+ * Widgets fixes — Back-to-top · Dark mode · WhatsApp · Language navbar
+ *
+ * Techniques CSS 2026 utilisées :
+ *  - CSS nesting natif (plus besoin de SCSS)
+ *  - @starting-style pour les animations d'entrée déclaratives
+ *  - @property pour les propriétés animables typées
+ *  - Propriétés logiques (inset-block-end, inline-size…)
+ *  - color-mix() pour la manipulation de couleurs
+ *  - oklch() pour les définitions de couleurs
+ */
+
+/* ─────────────────────────────────────────────────────────
+   Propriété animable : intensité du glow WhatsApp
+   ───────────────────────────────────────────────────────── */
+@property --wa-glow {
+  syntax:        '<color>';
+  initial-value: oklch(72% 0.22 145 / 40%);
+  inherits:      false;
+}
+
+@layer components {
+
+  /* ══════════════════════════════════════════════════════
+     BACK TO TOP
+     ══════════════════════════════════════════════════════ */
+  .back-to-top-button {
+    position: fixed;
+    inset-block-end: 170px;
+    inset-inline-end: 20px;
+    z-index: 10000;
+
+    inline-size: 40px;
+    block-size: 40px;
+    border-radius: var(--radius-pill);
+
+    background: linear-gradient(135deg, oklch(65% 0.20 200), oklch(65% 0.18 170));
+    border: 2px solid oklch(65% 0.20 200 / 30%);
+    color: oklch(100% 0 0);
+    font-size: 1rem;
+    cursor: pointer;
+
+    display: none;
+    align-items: center;
+    justify-content: center;
+
+    opacity: 0;
+    translate: 0 20px;
+    scale: 0.8;
+
+    box-shadow: 0 4px 20px oklch(65% 0.20 200 / 40%);
+
+    &.show {
+      display: flex;
+      opacity: 1;
+      translate: 0 0;
+      scale: 1;
+      transition:
+        opacity   var(--duration-normal) ease,
+        translate var(--duration-normal) var(--ease-spring),
+        scale     var(--duration-normal) var(--ease-spring);
+    }
+
+    &:hover {
+      translate: 0 -5px;
+      scale: 1.1;
+      box-shadow: 0 8px 30px oklch(65% 0.20 200 / 60%);
+      border-color: oklch(65% 0.20 200 / 60%);
+      background: linear-gradient(135deg, oklch(65% 0.18 170), oklch(65% 0.20 200));
+    }
+
+    &:active {
+      translate: 0 -3px;
+      scale: 1.05;
+    }
+
+    &.no-language-widget {
+      inset-block-end: 120px;
+    }
+
+    /* Tooltip masqué sur mobile */
+    & .back-to-top-tooltip {
+      @media (width <= 768px) { display: none; }
+    }
+
+    &:hover .back-to-top-tooltip {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    @media (width <= 768px) {
+      inset-block-end: 170px;
+      inset-inline-end: 18px;
+      inline-size: 36px;
+      block-size: 36px;
+      font-size: 0.875rem;
+
+      &.no-language-widget { inset-block-end: 120px; }
+    }
+  }
+
+  .back-to-top-tooltip {
+    position: absolute;
+    inset-inline-end: calc(100% + 12px);
+    inset-block-start: 50%;
+    translate: 0 -50%;
+
+    background: oklch(18% 0 0 / 95%);
+    color: oklch(100% 0 0);
+    padding-block: 0.375rem;
+    padding-inline: 0.625rem;
+    border-radius: var(--radius-tooltip);
+    font-size: 0.6875rem;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    backdrop-filter: blur(10px);
+    border: 1px solid oklch(65% 0.20 200 / 30%);
+    transition:
+      opacity    var(--duration-normal) ease,
+      visibility var(--duration-normal) ease;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset-inline-start: 100%;
+      inset-block-start: 50%;
+      translate: 0 -50%;
+      border: 6px solid transparent;
+      border-inline-start-color: oklch(18% 0 0 / 95%);
+    }
+  }
+
+  /* En mode clair : tooltip fond blanc */
+  body:not(.dark-mode) .back-to-top-tooltip {
+    background: oklch(100% 0 0 / 95%);
+    color: oklch(25% 0 0 / 90%);
+    border-color: oklch(65% 0.20 200 / 30%);
+  }
+
+  /* ══════════════════════════════════════════════════════
+     DARK MODE WIDGET
+     ══════════════════════════════════════════════════════ */
+  .dark-mode-widget {
+    position: fixed;
+    inset-block-end: 70px;
+    inset-inline-end: 20px;
+    z-index: 9998;
+
+    @media (width <= 768px) {
+      inset-block-end: 70px;
+      inset-inline-end: 12px;
+    }
+  }
+
+  .dark-mode-button {
+    inline-size: 40px;
+    block-size: 40px;
+    border-radius: var(--radius-pill);
+    background: linear-gradient(135deg, oklch(28% 0.03 230), oklch(35% 0.03 230));
+    border: 2px solid oklch(65% 0.20 200 / 30%);
+    color: oklch(100% 0 0);
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 20px oklch(0% 0 0 / 30%);
+    transition:
+      transform     var(--duration-normal) ease,
+      box-shadow    var(--duration-normal) ease,
+      border-color  var(--duration-normal) ease,
+      background    var(--duration-normal) ease;
+    position: relative;
+
+    &:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 6px 25px oklch(65% 0.20 200 / 40%);
+      border-color: oklch(65% 0.20 200 / 50%);
+    }
+
+    &.active {
+      background: linear-gradient(135deg, oklch(65% 0.20 200), oklch(65% 0.18 170));
+      border-color: oklch(65% 0.20 200 / 60%);
+    }
+
+    &:hover .dark-mode-tooltip {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    @media (width <= 768px) {
+      inline-size: 36px;
+      block-size: 36px;
+      font-size: 0.875rem;
+    }
+  }
+
+  .dark-mode-tooltip {
+    position: absolute;
+    inset-inline-end: calc(100% + 12px);
+    inset-block-start: 50%;
+    translate: 0 -50%;
+    background: oklch(18% 0 0 / 95%);
+    color: oklch(100% 0 0);
+    padding-block: 0.375rem;
+    padding-inline: 0.625rem;
+    border-radius: var(--radius-tooltip);
+    font-size: 0.6875rem;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    border: 1px solid oklch(65% 0.20 200 / 30%);
+    transition:
+      opacity    var(--duration-normal) ease,
+      visibility var(--duration-normal) ease;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset-inline-start: 100%;
+      inset-block-start: 50%;
+      translate: 0 -50%;
+      border: 6px solid transparent;
+      border-inline-start-color: oklch(18% 0 0 / 95%);
+    }
+  }
+
+  /* ══════════════════════════════════════════════════════
+     WHATSAPP WIDGET
+     ══════════════════════════════════════════════════════ */
+  .whatsapp-widget {
+    position: fixed;
+    inset-block-end: 20px;
+    inset-inline-end: 20px;
+    z-index: 9999;
+
+    @media (width <= 768px) {
+      inset-block-end: 15px;
+      inset-inline-end: 15px;
+    }
+  }
+
+  .whatsapp-button {
+    position: relative;
+    inline-size: 40px;
+    block-size: 40px;
+    background: linear-gradient(135deg, var(--color-whatsapp), var(--color-whatsapp-dark));
+    border-radius: var(--radius-pill);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 20px oklch(72% 0.22 145 / 40%);
+    transition:
+      transform   var(--duration-normal) ease,
+      box-shadow  var(--duration-normal) ease;
+    animation: whatsapp-pulse 2s ease-in-out infinite;
+
+    & i {
+      font-size: 1.125rem;
+      color: oklch(100% 0 0);
+      z-index: 1;
+    }
+
+    &:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 30px oklch(72% 0.22 145 / 60%);
+    }
+
+    &:hover .whatsapp-tooltip {
+      opacity: 1;
+      visibility: visible;
+      translate: 0 0;
+    }
+
+    @media (width <= 768px) {
+      inline-size: 36px;
+      block-size: 36px;
+    }
+  }
+
+  @keyframes whatsapp-pulse {
+    0%, 100% { box-shadow: 0 4px 20px oklch(72% 0.22 145 / 40%); }
+    50%       { box-shadow: 0 4px 30px oklch(72% 0.22 145 / 80%); }
+  }
+
+  .whatsapp-tooltip {
+    position: absolute;
+    inset-block-end: 110%;
+    inset-inline-end: 0;
+    background: oklch(0% 0 0 / 90%);
+    color: oklch(100% 0 0);
+    padding-block: 0.625rem;
+    padding-inline: 0.9375rem;
+    border-radius: var(--radius-tooltip);
+    font-size: 0.8125rem;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    translate: 0 10px;
+    pointer-events: none;
+    z-index: 10000;
+    box-shadow: 0 4px 15px oklch(0% 0 0 / 30%);
+    transition:
+      opacity    var(--duration-normal) ease,
+      visibility var(--duration-normal) ease,
+      translate  var(--duration-normal) ease;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset-block-end: -6px;
+      inset-inline-end: 20px;
+      border-inline: 6px solid transparent;
+      border-block-start: 6px solid oklch(0% 0 0 / 90%);
+    }
+  }
+
+  /* Popup WhatsApp — @starting-style pour l'animation d'entrée */
+  .whatsapp-popup {
+    position: absolute;
+    inset-block-end: 80px;
+    inset-inline-end: 0;
+    inline-size: 320px;
+    background: oklch(100% 0 0);
+    border-radius: var(--radius-popup);
+    box-shadow: 0 10px 40px oklch(0% 0 0 / 30%);
+    display: none;
+    overflow: hidden;
+
+    opacity: 1;
+    translate: 0 0;
+    transition:
+      opacity   var(--duration-normal) ease,
+      translate var(--duration-normal) var(--ease-spring);
+
+    @starting-style {
+      opacity: 0;
+      translate: 0 20px;
+    }
+
+    &.active {
+      display: block;
+    }
+
+    @media (width <= 768px) {
+      inline-size: calc(100vw - 40px);
+      inset-inline-end: -10px;
+    }
+  }
+
+  .whatsapp-header {
+    background: linear-gradient(135deg, var(--color-whatsapp), var(--color-whatsapp-dark));
+    padding-block: 1.25rem;
+    padding-inline: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: oklch(100% 0 0);
+  }
+
+  .whatsapp-avatar {
+    inline-size: 50px;
+    block-size: 50px;
+    background: oklch(100% 0 0 / 20%);
+    border-radius: var(--radius-pill);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+  }
+
+  .whatsapp-name {
+    font-weight: 700;
+    font-size: 1rem;
+    flex: 1;
+  }
+
+  .whatsapp-status {
+    font-size: 0.75rem;
+    opacity: 0.9;
+  }
+
+  .whatsapp-close {
+    background: none;
+    border: none;
+    color: oklch(100% 0 0);
+    font-size: 1.25rem;
+    cursor: pointer;
+    padding: 5px;
+    transition: rotate var(--duration-normal) ease;
+
+    &:hover { rotate: 90deg; }
+  }
+
+  .whatsapp-body {
+    padding-block: 1.25rem;
+    padding-inline: 1.25rem;
+    min-block-size: 100px;
+    background: var(--surface-subtle);
+  }
+
+  .whatsapp-message {
+    background: var(--surface);
+    padding-block: 0.9375rem;
+    padding-inline: 0.9375rem;
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 0.875rem;
+    line-height: 1.6;
+  }
+
+  .whatsapp-footer {
+    padding-block: 0.9375rem;
+    padding-inline: 1.25rem;
+    background: var(--surface-subtle);
+  }
+
+  .whatsapp-send-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem;
+    background: linear-gradient(135deg, var(--color-whatsapp), var(--color-whatsapp-dark));
+    color: oklch(100% 0 0);
+    padding-block: 0.75rem;
+    padding-inline: 1.25rem;
+    border-radius: var(--radius-pill);
+    text-decoration: none;
+    font-weight: 600;
+    transition:
+      transform   var(--duration-normal) ease,
+      box-shadow  var(--duration-normal) ease;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px oklch(72% 0.22 145 / 40%);
+    }
+  }
+
+  /* ══════════════════════════════════════════════════════
+     LANGUAGE WIDGET (dans la navbar)
+     ══════════════════════════════════════════════════════ */
+  .navbar-language-widget {
+    display: flex;
+    align-items: center;
+    margin-inline-end: 0.75rem;
+  }
+
+  .navbar-language-button {
+    inline-size: 36px;
+    block-size: 36px;
+    border-radius: var(--radius-pill);
+    background: oklch(65% 0.20 200 / 10%);
+    border: 1px solid oklch(65% 0.20 200 / 30%);
+    color: oklch(65% 0.20 200);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: visible;
+    transition:
+      background    var(--duration-normal) ease,
+      border-color  var(--duration-normal) ease,
+      transform     var(--duration-normal) ease,
+      box-shadow    var(--duration-normal) ease;
+
+    &:hover {
+      background: oklch(65% 0.20 200 / 20%);
+      border-color: oklch(65% 0.20 200 / 50%);
+      transform: scale(1.1);
+      box-shadow: 0 4px 12px oklch(65% 0.20 200 / 30%);
+    }
+
+    &:hover .navbar-language-tooltip {
+      opacity: 1;
+      visibility: visible;
+      translate: 0 0;
+    }
+
+    @media (width <= 768px) {
+      inline-size: 32px;
+      block-size: 32px;
+    }
+  }
+
+  .navbar-language-flag {
+    inline-size: 22px;
+    block-size: 16px;
+    border-radius: 2px;
+    object-fit: cover;
+    display: block;
+
+    @media (width <= 768px) {
+      inline-size: 18px;
+      block-size: 13px;
+    }
+  }
+
+  .navbar-language-tooltip {
+    position: absolute;
+    inset-block-start: calc(100% + 10px);
+    inset-inline-end: 0;
+    background: oklch(18% 0 0 / 95%);
+    backdrop-filter: blur(10px);
+    color: oklch(100% 0 0);
+    padding-block: 0.5rem;
+    padding-inline: 0.75rem;
+    border-radius: var(--radius-tooltip);
+    font-size: 0.75rem;
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    translate: 0 -5px;
+    pointer-events: none;
+    z-index: 10000;
+    box-shadow: 0 4px 15px oklch(0% 0 0 / 30%);
+    border: 1px solid oklch(65% 0.20 200 / 30%);
+    transition:
+      opacity    var(--duration-normal) ease,
+      visibility var(--duration-normal) ease,
+      translate  var(--duration-normal) ease;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset-block-end: 100%;
+      inset-inline-end: 12px;
+      border: 5px solid transparent;
+      border-block-end-color: oklch(18% 0 0 / 95%);
+    }
+  }
+}

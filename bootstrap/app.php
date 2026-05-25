@@ -19,7 +19,6 @@ return Application::configure(basePath: dirname(__DIR__))
         
         $middleware->web(append: [
             \App\Http\Middleware\TrackVisit::class,
-            \App\Http\Middleware\CriticalCSS::class,
         ]);
         
         // Alias pour les middlewares

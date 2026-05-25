@@ -11,12 +11,12 @@ class StripePaymentService
      */
     private static function getConfig(): array
     {
-        $settings = SiteSetting::first();
-        
+        $settings = \Illuminate\Support\Facades\Cache::remember('site_settings', 3600, fn () => SiteSetting::first());
+
         if (!$settings || !$settings->stripe_enabled) {
             throw new \Exception('Stripe n\'est pas activé dans les configurations');
         }
-        
+
         return [
             'public_key' => $settings->stripe_public_key,
             'secret_key' => $settings->stripe_secret_key,

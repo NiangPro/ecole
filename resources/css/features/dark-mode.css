@@ -1,0 +1,162 @@
+/*
+ * Dark mode — CSS custom properties (color-scheme + variables sémantiques)
+ *
+ * Approche 2026 : pas de !important, pas de surcharges fragiles.
+ * On redéfinit les variables sémantiques déclarées dans :root,
+ * et tous les composants qui utilisent ces variables s'adaptent automatiquement.
+ */
+
+@layer base {
+
+  /* ── Variables dark mode ── */
+  body.dark-mode {
+    --surface:         oklch(10% 0.01 230);
+    --surface-muted:   oklch(15% 0.02 230);
+    --surface-subtle:  oklch(12% 0.01 230);
+    --border:          oklch(25% 0.02 230);
+    --text:            oklch(90% 0 0);
+    --text-muted:      oklch(65% 0 0);
+    --navbar-bg:       oklch(12% 0.01 230 / 95%);
+    --navbar-scrolled: oklch(12% 0.01 230 / 98%);
+    color-scheme: dark;
+
+    background-color: var(--surface);
+    color: var(--text);
+  }
+}
+
+@layer components {
+
+  /* Transition fluide lors du basculement dark/light */
+  body {
+    transition:
+      background-color var(--duration-normal) ease,
+      color            var(--duration-normal) ease;
+  }
+
+  /* ── Navbar ── */
+  body.dark-mode {
+
+    & .navbar-modern {
+      background: var(--navbar-bg);
+
+      &.scrolled {
+        background: var(--navbar-scrolled);
+      }
+    }
+
+    /* ── Fond général ── */
+    & .bg-canvas {
+      background: linear-gradient(
+        135deg,
+        oklch(12% 0.02 230) 0%,
+        oklch(18% 0.03 220) 50%,
+        oklch(12% 0.02 230) 100%
+      );
+    }
+
+    /* ── Cards ── */
+    & .card {
+      background: var(--surface-muted);
+      border-color: var(--border);
+
+      &:hover {
+        border-color: oklch(65% 0.20 200 / 40%);
+        box-shadow: 0 12px 40px oklch(65% 0.20 200 / 10%);
+      }
+    }
+
+    /* ── Popup WhatsApp ── */
+    & .whatsapp-popup {
+      background: var(--surface-muted);
+
+      & .whatsapp-body   { background: var(--surface-subtle); }
+      & .whatsapp-footer { background: var(--surface-subtle); }
+      & .whatsapp-message {
+        background: var(--surface-muted);
+        color: var(--text);
+      }
+    }
+
+    /* ── Tooltip back-to-top (fond blanc → fond sombre) ── */
+    & .back-to-top-tooltip {
+      background: oklch(18% 0 0 / 95%);
+      color: oklch(90% 0 0);
+    }
+
+    /* ── Bouton dark mode (état actif) ── */
+    & .dark-mode-button {
+      background: linear-gradient(135deg, oklch(65% 0.20 200), oklch(65% 0.18 170));
+      border-color: oklch(65% 0.20 200 / 60%);
+    }
+
+    /* ── Inputs & formulaires ── */
+    & input,
+    & textarea,
+    & select {
+      background-color: var(--surface-muted);
+      border-color: var(--border);
+      color: var(--text);
+
+      &::placeholder { color: var(--text-muted); }
+      &:focus {
+        border-color: oklch(65% 0.20 200 / 60%);
+        box-shadow: 0 0 0 3px oklch(65% 0.20 200 / 15%);
+      }
+    }
+
+    /* ── Tables ── */
+    & table {
+      & th {
+        background: var(--surface-muted);
+        color: var(--text);
+      }
+      & td {
+        border-color: var(--border);
+        color: var(--text);
+      }
+      & tr:hover td {
+        background: oklch(65% 0.20 200 / 5%);
+      }
+    }
+
+    /* ── Code blocks ── */
+    & pre,
+    & code {
+      background: var(--surface-subtle);
+      color: oklch(80% 0.10 200);
+      border-color: var(--border);
+    }
+
+    /* ── Liens ── */
+    & a:not(.btn-primary):not(.whatsapp-send-btn) {
+      color: oklch(70% 0.20 200);
+
+      &:hover { color: oklch(80% 0.18 200); }
+    }
+  }
+
+  /* ── Réduction de contraste si l'utilisateur le préfère ── */
+  @media (prefers-contrast: less) {
+    body.dark-mode {
+      --surface:       oklch(15% 0.01 230);
+      --text:          oklch(80% 0 0);
+      --border:        oklch(30% 0.02 230);
+    }
+  }
+
+  /* ── Respect de la préférence système (sans JS) ── */
+  @media (prefers-color-scheme: dark) {
+    body:not(.light-mode-forced) {
+      --surface:         oklch(10% 0.01 230);
+      --surface-muted:   oklch(15% 0.02 230);
+      --surface-subtle:  oklch(12% 0.01 230);
+      --border:          oklch(25% 0.02 230);
+      --text:            oklch(90% 0 0);
+      --text-muted:      oklch(65% 0 0);
+      --navbar-bg:       oklch(12% 0.01 230 / 95%);
+      --navbar-scrolled: oklch(12% 0.01 230 / 98%);
+      color-scheme: dark;
+    }
+  }
+}

@@ -342,8 +342,11 @@ class JobArticleController extends Controller
                 ->withErrors(['slug' => 'Ce slug existe déjà. Veuillez en choisir un autre.']);
         }
 
-        // Logger l'action
-        AdminLog::log('update', $article, "Modification de l'article \"{$article->title}\"", $oldValues, $article->toArray());
+        try {
+            AdminLog::log('update', $article, "Modification de l'article \"{$article->title}\"", $oldValues, $article->toArray());
+        } catch (\Exception $e) {
+            \Log::error('AdminLog failed: ' . $e->getMessage());
+        }
 
         return redirect()->route('admin.jobs.articles.index')
             ->with('success', 'Article mis à jour avec succès');

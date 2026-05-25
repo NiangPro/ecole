@@ -5,9 +5,9 @@
 @section('canonical', url('/donations'))
 
 @php
-    $settings = \App\Models\SiteSetting::first();
+    $settings = $siteSettings;
     $paymentMethods = [];
-    
+
     if ($settings) {
         if ($settings->wave_enabled) {
             $paymentMethods['wave'] = [

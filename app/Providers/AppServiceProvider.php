@@ -31,6 +31,9 @@ class AppServiceProvider extends ServiceProvider
         
         // Partager les catégories d'emplois avec la navigation
         view()->composer('partials.navigation', \App\View\Composers\NavigationComposer::class);
+
+        // Partager $siteSettings avec toutes les vues (depuis le cache, 0 requête SQL supplémentaire)
+        view()->composer('*', \App\View\Composers\SiteSettingsComposer::class);
         
         // Charger les paramètres email depuis la base de données (avec cache pour améliorer les performances)
         try {

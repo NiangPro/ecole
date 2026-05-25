@@ -1,0 +1,20 @@
+# ads.txt pour niangprogrammeur.com
+# Generated: 2026-03-30 09:43:00
+# Contact: contact@niangprogrammeur.com
+
+# SOLUTION DÉFINITIVE - Plus de redirection vers adstxtmanager.com
+# Ce fichier est servi directement par Apache sans passer par Laravel
+# Remplacer XXXXXXXXXXXXXXXX par votre vrai Publisher ID AdSense
+# Format: ca-pub-XXXXXXXXXXXXXXXX
+google.com, pub-2155957988614905, DIRECT, f08c47fec0942fa0
+
+# Instructions:
+# 1. Trouvez votre Publisher ID dans AdSense > Compte > Informations
+# 2. Remplacez XXXXXXXXXXXXXXXX ci-dessus par votre vrai ID
+# 3. Sauvegardez ce fichier
+# 4. Testez: https://niangprogrammeur.com/ads.txt
+
+# Exemple avec un vrai Publisher ID:
+# google.com, pub-1234567890123456, DIRECT, f08c47fec0942fa0
+
+# Status: FONCTIONNEL - Plus de redirection adstxtmanager.com

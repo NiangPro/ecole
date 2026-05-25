@@ -11,12 +11,12 @@ class PayPalPaymentService
      */
     private static function getConfig(): array
     {
-        $settings = SiteSetting::first();
-        
+        $settings = \Illuminate\Support\Facades\Cache::remember('site_settings', 3600, fn () => SiteSetting::first());
+
         if (!$settings || !$settings->paypal_enabled) {
             throw new \Exception('PayPal n\'est pas activé dans les configurations');
         }
-        
+
         return [
             'client_id' => $settings->paypal_client_id,
             'client_secret' => $settings->paypal_client_secret,

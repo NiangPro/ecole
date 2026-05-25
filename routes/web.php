@@ -34,13 +34,32 @@ Route::get('/favicon.ico', function () {
     return response('', 404);
 })->name('favicon');
 
-// Fichier ads.txt - Redirection vers adstxtmanager.com
+// Fichier ads.txt - Sert le fichier statique pour résoudre immédiatement le problème
 Route::get('/ads.txt', function () {
-    return redirect('https://srv.adstxtmanager.com/19390/niangprogrammeur.com', 301)
-        ->header('Content-Type', 'text/plain; charset=utf-8');
+    $adsPath = public_path('ads.txt');
+    
+    if (file_exists($adsPath)) {
+        return response()->file($adsPath, [
+            'Content-Type' => 'text/plain; charset=utf-8',
+            'Cache-Control' => 'public, max-age=86400', // Cache 24h
+        ]);
+    }
+    
+    // Fallback si le fichier n'existe pas
+    $fallbackContent = "# ads.txt pour niangprogrammeur.com
+# Generated: " . date('Y-m-d H:i:s') . "
+# Contact: contact@niangprogrammeur.com
+
+# ATTENTION: Veuillez configurer votre Publisher ID AdSense
+google.com, pub-XXXXXXXXXXXXXXXX, DIRECT, f08c47fec0942fa0";
+    
+    return response($fallbackContent, 200)
+        ->header('Content-Type', 'text/plain; charset=utf-8')
+        ->header('Cache-Control', 'public, max-age=86400');
 })->name('ads.txt');
 
-// Sitemaps SEO
+// Sitemaps SEO — redirect majuscule → minuscule
+Route::get('/Sitemap.xml', fn() => redirect('/sitemap.xml', 301));
 Route::get('/sitemap.xml', [\App\Http\Controllers\SitemapController::class, 'index'])->name('sitemap.index');
 Route::get('/sitemap-pages.xml', [\App\Http\Controllers\SitemapController::class, 'pages'])->name('sitemap.pages');
 Route::get('/sitemap-articles.xml', [\App\Http\Controllers\SitemapController::class, 'articles'])->name('sitemap.articles');
@@ -82,7 +101,6 @@ Route::post('/newsletter/subscribe', [PageController::class, 'newsletterSubscrib
 Route::get('/about', [PageController::class, 'about'])->name('about');
 Route::get('/contact', [PageController::class, 'contact'])->name('contact');
 Route::get('/docs', [PageController::class, 'docs'])->name('docs');
-Route::post('/contact', [PageController::class, 'sendContact'])->name('contact.send');
 Route::get('/faq', [PageController::class, 'faq'])->name('faq');
 // Routes Exercices - Utiliser ExerciceController
 use App\Http\Controllers\ExerciceController;
@@ -101,7 +119,6 @@ Route::get('/all-links', [PageController::class, 'allLinks'])->name('all.links')
 Route::get('/legal', [PageController::class, 'legal'])->name('legal');
 Route::get('/privacy-policy', [PageController::class, 'privacyPolicy'])->name('privacy-policy');
 Route::get('/terms', [PageController::class, 'terms'])->name('terms');
-Route::post('/newsletter/subscribe', [PageController::class, 'newsletterSubscribe'])->name('newsletter.subscribe');
 Route::get('/newsletter/unsubscribe/{token}', [PageController::class, 'newsletterUnsubscribe'])->name('newsletter.unsubscribe');
 
 // Route pour changer la langue

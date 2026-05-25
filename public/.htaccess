@@ -14,11 +14,6 @@
     RewriteCond %{REQUEST_FILENAME} -f
     RewriteRule ^ads\.txt$ ads.txt [L,T=text/plain]
     
-    # Si ads.txt n'existe pas physiquement, laisser Laravel gérer via la route
-    RewriteCond %{REQUEST_URI} ^/ads\.txt$ [NC]
-    RewriteCond %{REQUEST_FILENAME} !-f
-    RewriteRule ^ads\.txt$ - [L]
-    
     # robots.txt - Servir le fichier physique s'il existe
     RewriteCond %{REQUEST_URI} ^/robots\.txt$ [NC]
     RewriteCond %{REQUEST_FILENAME} -f

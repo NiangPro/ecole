@@ -1,11 +1,401 @@
+/*
+ * NiangProgrammeur — CSS Entry Point
+ * Architecture : Tailwind CSS v4 · Cascade Layers · Design Tokens oklch · CSS 2026
+ *
+ * Ordre des layers (priorité croissante) :
+ *   base → components → utilities → features
+ */
+
+/* ─────────────────────────────────────────────────────────
+   1. TAILWIND CSS v4
+   ───────────────────────────────────────────────────────── */
 @import 'tailwindcss';
 
+/* Content scanning pour Tailwind */
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
 @source '../**/*.blade.php';
 @source '../**/*.js';
 
+/* ─────────────────────────────────────────────────────────
+   2. DESIGN TOKENS — @theme
+   Tailwind v4 expose ces variables comme classes utilitaires
+   ex: bg-brand-500, text-brand-900, font-heading...
+   ───────────────────────────────────────────────────────── */
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+  /* Typographie */
+  --font-sans:    'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-heading: 'Poppins', ui-sans-serif, system-ui, sans-serif;
+  --font-mono:    ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, monospace;
+  --font-brand:   'Orbitron', sans-serif;
+
+  /*
+   * Couleurs en oklch — espace colorimétrique perceptuellement uniforme.
+   * Avantages vs hex/hsl :
+   *  - Interpolations visuellement cohérentes
+   *  - Accès aux couleurs P3 (gamut élargi sur écrans modernes)
+   *  - L = luminosité, C = chroma, H = teinte
+   */
+  --color-brand-50:  oklch(97% 0.03 200);
+  --color-brand-100: oklch(93% 0.06 200);
+  --color-brand-200: oklch(86% 0.10 200);
+  --color-brand-300: oklch(78% 0.14 200);
+  --color-brand-400: oklch(70% 0.18 200);
+  --color-brand-500: oklch(65% 0.20 200);   /* Cyan principal ≈ #06b6d4 */
+  --color-brand-600: oklch(58% 0.19 200);
+  --color-brand-700: oklch(50% 0.18 200);
+  --color-brand-800: oklch(42% 0.16 200);
+  --color-brand-900: oklch(33% 0.13 200);
+  --color-brand-950: oklch(22% 0.10 200);
+
+  --color-teal-500: oklch(65% 0.18 170);
+  --color-teal-600: oklch(57% 0.16 170);
+
+  --color-whatsapp:      oklch(72% 0.22 145);   /* #25D366 */
+  --color-whatsapp-dark: oklch(55% 0.20 170);   /* #128C7E */
+
+  /* Durées d'animation */
+  --duration-fast:   150ms;
+  --duration-normal: 300ms;
+  --duration-slow:   500ms;
+
+  /* Courbes de Bézier */
+  --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --ease-out:    cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.6, 1);
+
+  /* Layout */
+  --spacing-navbar: 76px;
+
+  /* Rayons */
+  --radius-pill:    9999px;
+  --radius-popup:   20px;
+  --radius-card:    12px;
+  --radius-tooltip: 8px;
 }
+
+/* ─────────────────────────────────────────────────────────
+   3. PROPRIÉTÉS ANIMABLES (@property)
+   Permet l'animation de propriétés custom typées
+   ───────────────────────────────────────────────────────── */
+@property --gradient-angle {
+  syntax:        '<angle>';
+  initial-value: 135deg;
+  inherits:      false;
+}
+
+@property --glow-opacity {
+  syntax:        '<number>';
+  initial-value: 0.4;
+  inherits:      false;
+}
+
+/* ─────────────────────────────────────────────────────────
+   4. BASE LAYER — Reset, typographie, HTML global
+   ───────────────────────────────────────────────────────── */
+@layer base {
+
+  /* Variables sémantiques (surchargeables par le dark mode) */
+  :root {
+    --surface:         oklch(100% 0 0);
+    --surface-muted:   oklch(97% 0 0);
+    --surface-subtle:  oklch(94% 0 0);
+    --border:          oklch(90% 0 0);
+    --text:            oklch(18% 0 0);
+    --text-muted:      oklch(45% 0 0);
+    --navbar-bg:       oklch(100% 0 0 / 95%);
+    --navbar-scrolled: oklch(100% 0 0 / 98%);
+    color-scheme: light;
+  }
+
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    tab-size: 4;
+  }
+
+  body {
+    margin: 0;
+    padding-block-start: var(--spacing-navbar);
+    overflow-x: hidden;
+    min-block-size: 100dvh;
+    font-family: var(--font-sans);
+    background-color: var(--surface);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeSpeed;
+
+    /* Révélation fluide via @starting-style — remplace le hack JS anti-FOUC */
+    opacity: 1;
+    transition: opacity var(--duration-fast) ease;
+
+    @starting-style {
+      opacity: 0;
+    }
+  }
+
+  /* Focus visible accessible */
+  :focus-visible {
+    outline: 2px solid oklch(65% 0.20 200);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  /* Meilleur rendu typographique */
+  h1, h2, h3, h4, h5, h6 {
+    text-wrap: balance;
+    font-family: var(--font-heading);
+  }
+
+  p, li {
+    text-wrap: pretty;
+  }
+
+  /* Propriétés logiques pour meilleur support RTL/i18n */
+  img, video {
+    max-inline-size: 100%;
+    block-size: auto;
+  }
+
+  /* Respect des préférences d'animation */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration:       0.01ms !important;
+      animation-iteration-count: 1     !important;
+      transition-duration:      0.01ms !important;
+      scroll-behavior:          auto   !important;
+    }
+  }
+
+  /* font-display: swap via @font-face déclaratif */
+  @font-face { font-family: 'Inter';    font-display: swap; }
+  @font-face { font-family: 'Poppins';  font-display: swap; }
+  @font-face { font-family: 'Orbitron'; font-display: swap; }
+}
+
+/* ─────────────────────────────────────────────────────────
+   5. COMPONENTS LAYER — Composants UI réutilisables
+   ───────────────────────────────────────────────────────── */
+@layer components {
+
+  /* Skip links (accessibilité) */
+  .skip-links {
+    position: fixed;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    z-index: 99999;
+  }
+
+  .skip-link {
+    position: absolute;
+    inset-block-start: -100%;
+    inset-inline-start: 0;
+    background: oklch(65% 0.20 200);
+    color: oklch(100% 0 0);
+    padding-block: 0.5rem;
+    padding-inline: 1rem;
+    border-radius: 0 0 var(--radius-card) 0;
+    font-weight: 600;
+    text-decoration: none;
+    transition: inset-block-start var(--duration-fast) ease;
+
+    &:focus {
+      inset-block-start: 0;
+    }
+  }
+
+  /* Hero section */
+  .hero-section {
+    position: relative;
+    z-index: 2;
+    inline-size: 100%;
+    min-block-size: 65dvh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-block: 80px 60px;
+    padding-inline: 40px;
+    overflow: hidden;
+    background: linear-gradient(
+      var(--gradient-angle),
+      oklch(18% 0.02 230 / 85%) 0%,
+      oklch(22% 0.03 220 / 90%) 100%
+    );
+
+    @media (width <= 768px) {
+      min-block-size: 55dvh;
+      padding-block: 60px 40px;
+      padding-inline: 20px;
+    }
+  }
+
+  .hero-content {
+    max-inline-size: 75rem;
+    margin-inline: auto;
+    inline-size: 100%;
+    text-align: center;
+  }
+
+  .main-title {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 900;
+    line-height: 1.2;
+    margin-block-end: 1.875rem;
+    color: oklch(100% 0 0);
+
+    @media (width <= 768px) {
+      font-size: clamp(1.8rem, 4vw, 2.2rem);
+      line-height: 1.3;
+      margin-block-end: 1.25rem;
+    }
+  }
+
+  .subtitle {
+    font-size: clamp(1rem, 2vw, 1.3rem);
+    color: oklch(100% 0 0 / 90%);
+    margin-block-end: 2.5rem;
+    line-height: 1.6;
+  }
+
+  /* Container avec container queries activées */
+  .card-grid {
+    container-type: inline-size;
+    container-name: card-grid;
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: 1fr;
+
+    @container card-grid (width >= 500px) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @container card-grid (width >= 900px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  /* Carte générique avec :has() pour adapter selon le contenu */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    padding: 1.5rem;
+    transition:
+      transform var(--duration-normal) var(--ease-out),
+      box-shadow var(--duration-normal) var(--ease-out),
+      border-color var(--duration-normal) ease;
+
+    &:has(img) {
+      padding-block-start: 0;
+      overflow: hidden;
+    }
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px oklch(65% 0.20 200 / 15%);
+      border-color: oklch(65% 0.20 200 / 40%);
+    }
+  }
+
+  /* Bouton primaire */
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-block: 0.75rem;
+    padding-inline: 1.5rem;
+    background: oklch(65% 0.20 200);
+    color: oklch(100% 0 0);
+    border-radius: var(--radius-pill);
+    font-weight: 600;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition:
+      background var(--duration-normal) ease,
+      transform var(--duration-normal) var(--ease-spring),
+      box-shadow var(--duration-normal) ease;
+
+    &:hover {
+      background: color-mix(in oklch, oklch(65% 0.20 200), black 10%);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px oklch(65% 0.20 200 / 40%);
+    }
+
+    &:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+  }
+}
+
+/* ─────────────────────────────────────────────────────────
+   6. UTILITIES LAYER — Classes utilitaires personnalisées
+   ───────────────────────────────────────────────────────── */
+@layer utilities {
+
+  /* Propriétés logiques pour les max-widths courants */
+  .max-w-3xl { max-inline-size: 48rem; margin-inline: auto; }
+  .max-w-5xl { max-inline-size: 64rem; margin-inline: auto; }
+  .max-w-7xl { max-inline-size: 80rem; margin-inline: auto; }
+
+  /* Transitions de page (View Transitions API) */
+  .page-transition {
+    view-transition-name: main-content;
+  }
+
+  /* Texte dégradé réutilisable */
+  .text-gradient {
+    background: linear-gradient(135deg, oklch(65% 0.20 200), oklch(65% 0.18 170));
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  /* Glassmorphism */
+  .glass {
+    background: oklch(100% 0 0 / 10%);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid oklch(100% 0 0 / 20%);
+  }
+
+  /* Animation d'entrée réutilisable */
+  .animate-fade-up {
+    animation: fade-up var(--duration-slow) var(--ease-out) both;
+  }
+
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      translate: 0 24px;
+    }
+    to {
+      opacity: 1;
+      translate: 0 0;
+    }
+  }
+}
+
+/* ─────────────────────────────────────────────────────────
+   7. FEATURES — Imports des fonctionnalités
+   ───────────────────────────────────────────────────────── */
+@import './features/widgets.css';
+@import './features/dark-mode.css';
+@import './features/homepage.css';
+@import './features/about.css';
+@import './features/login.css';
+@import './features/exercices.css';
+@import './features/quiz.css';
+@import './features/quiz-language.css';
+@import './features/quiz-result.css';
+@import './features/exercices-language.css';
+@import './features/exercice-detail.css';
+@import './features/contact.css';
+@import './features/emplois.css';

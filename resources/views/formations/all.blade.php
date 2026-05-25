@@ -49,10 +49,9 @@
         position: relative;
         padding: 80px 20px 50px;
         text-align: center;
-        background: linear-gradient(135deg, rgba(15, 23, 42, 0.85) 0%, rgba(30, 41, 59, 0.9) 100%),
-                    url('https://images.unsplash.com/photo-1498050108023-c5249f4df085?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2072&q=80') center/cover no-repeat;
+        background: linear-gradient(135deg, rgba(5, 8, 20, 0.80) 0%, rgba(10, 15, 35, 0.72) 50%, rgba(5, 8, 20, 0.82) 100%),
+                    url('/images/formations-bg.png') center bottom / cover no-repeat;
         background-attachment: fixed;
-        background-size: cover;
         overflow: hidden;
         min-height: 35vh;
         display: flex;

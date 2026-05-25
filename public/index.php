@@ -5,6 +5,10 @@ use Illuminate\Http\Request;
 
 define('LARAVEL_START', microtime(true));
 
+// Masquer les E_DEPRECATED de PHP 8.5 (PDO::MYSQL_ATTR_SSL_CA → Pdo\Mysql::ATTR_SSL_CA)
+// Ces avertissements viennent du vendor Laravel et sont sans impact fonctionnel.
+error_reporting(E_ALL & ~E_DEPRECATED);
+
 // Determine if the application is in maintenance mode...
 if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
     require $maintenance;

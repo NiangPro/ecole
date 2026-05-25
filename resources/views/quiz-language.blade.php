@@ -1,235 +1,183 @@
 @extends('layouts.app')
 
-@section('title', trans('app.quiz.title') . ' ' . trans('app.formations.languages.' . $language, [], null, ucfirst($language)) . ' | NiangProgrammeur')
+@php
+  $langMap = [
+    'html5'        => ['icon' => 'fab fa-html5',       'color' => 'orange'],
+    'css3'         => ['icon' => 'fab fa-css3-alt',    'color' => 'blue'],
+    'javascript'   => ['icon' => 'fab fa-js',           'color' => 'yellow'],
+    'php'          => ['icon' => 'fab fa-php',          'color' => 'cyan'],
+    'bootstrap'    => ['icon' => 'fab fa-bootstrap',   'color' => 'cyan'],
+    'git'          => ['icon' => 'fab fa-git-alt',     'color' => 'red'],
+    'wordpress'    => ['icon' => 'fab fa-wordpress',   'color' => 'blue'],
+    'ia'           => ['icon' => 'fas fa-robot',        'color' => 'green'],
+    'python'       => ['icon' => 'fab fa-python',       'color' => 'blue'],
+    'java'         => ['icon' => 'fab fa-java',         'color' => 'orange'],
+    'sql'          => ['icon' => 'fas fa-database',    'color' => 'blue'],
+    'c'            => ['icon' => 'fab fa-c',            'color' => 'gray'],
+    'cpp'          => ['icon' => 'fab fa-cuttlefish',  'color' => 'blue'],
+    'csharp'       => ['icon' => 'fab fa-microsoft',   'color' => 'green'],
+    'dart'         => ['icon' => 'fas fa-feather-alt', 'color' => 'blue'],
+    'go'           => ['icon' => 'fab fa-golang',      'color' => 'blue'],
+    'swift'        => ['icon' => 'fab fa-swift',       'color' => 'orange'],
+    'perl'         => ['icon' => 'fas fa-code',        'color' => 'blue'],
+    'typescript'   => ['icon' => 'fab fa-js-square',   'color' => 'blue'],
+    'rust'         => ['icon' => 'fab fa-rust',        'color' => 'gray'],
+    'ruby'         => ['icon' => 'fas fa-gem',         'color' => 'red'],
+    'cybersecurite'=> ['icon' => 'fas fa-shield-alt',  'color' => 'orange'],
+    'data-science' => ['icon' => 'fas fa-chart-line',  'color' => 'blue'],
+    'big-data'     => ['icon' => 'fas fa-database',    'color' => 'cyan'],
+  ];
+  $info = $langMap[$language] ?? ['icon' => 'fas fa-code', 'color' => 'cyan'];
+  $colorMap = [
+    'orange' => ['bg' => '#fff7ed', 'color' => '#ea580c'],
+    'blue'   => ['bg' => '#eff6ff', 'color' => '#2563eb'],
+    'yellow' => ['bg' => '#fefce8', 'color' => '#ca8a04'],
+    'cyan'   => ['bg' => '#ecfeff', 'color' => '#0891b2'],
+    'red'    => ['bg' => '#fff1f2', 'color' => '#dc2626'],
+    'green'  => ['bg' => '#f0fdf4', 'color' => '#16a34a'],
+    'gray'   => ['bg' => '#f8fafc', 'color' => '#475569'],
+  ];
+  $c = $colorMap[$info['color']] ?? $colorMap['cyan'];
+  $langLabel = trans('app.formations.languages.' . $language, [], null, ucfirst($language));
+@endphp
 
-@section('styles')
-<style>
-    body {
-        overflow-x: hidden;
-    }
-    
-    /* Body background */
-    body:not(.dark-mode) {
-        background: #ffffff !important;
-    }
-    
-    body.dark-mode {
-        background: #0a0a0f !important;
-    }
-    
-    .quiz-container {
-        max-width: 900px;
-        margin: 0 auto;
-    }
-    
-    .question-card {
-        background: linear-gradient(135deg, rgba(10, 10, 26, 0.9), rgba(0, 0, 0, 0.9));
-        border: 2px solid rgba(168, 85, 247, 0.2);
-        border-radius: 20px;
-        padding: 2rem;
-        margin-bottom: 2rem;
-    }
-    
-    body:not(.dark-mode) .question-card {
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.95)) !important;
-        border-color: rgba(168, 85, 247, 0.25) !important;
-        box-shadow: 0 10px 40px rgba(168, 85, 247, 0.1) !important;
-    }
-    
-    .option-label {
-        background: linear-gradient(135deg, rgba(10, 10, 26, 0.9), rgba(0, 0, 0, 0.9));
-        border: 2px solid rgba(168, 85, 247, 0.2);
-        border-radius: 12px;
-        padding: 1rem 1.5rem;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-    }
-    
-    body:not(.dark-mode) .option-label {
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.95)) !important;
-        border-color: rgba(168, 85, 247, 0.25) !important;
-    }
-    
-    .option-label:hover {
-        border-color: rgba(168, 85, 247, 0.5);
-        background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(236, 72, 153, 0.1));
-        transform: translateX(10px);
-    }
-    
-    body:not(.dark-mode) .option-label:hover {
-        background: linear-gradient(135deg, rgba(168, 85, 247, 0.08), rgba(236, 72, 153, 0.08)) !important;
-    }
-    
-    .option-input:checked + .option-label {
-        border-color: rgba(168, 85, 247, 0.8);
-        background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(236, 72, 153, 0.2));
-        box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
-    }
-    
-    body:not(.dark-mode) .option-input:checked + .option-label {
-        box-shadow: 0 0 20px rgba(168, 85, 247, 0.2) !important;
-    }
-    
-    .option-input {
-        display: none;
-    }
-    
-    .option-letter {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background: rgba(168, 85, 247, 0.2);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: bold;
-        color: #a855f7;
-        flex-shrink: 0;
-    }
-    
-    .option-input:checked + .option-label .option-letter {
-        background: #a855f7;
-        color: white;
-    }
-    
-    .progress-bar {
-        height: 8px;
-        background: rgba(168, 85, 247, 0.2);
-        border-radius: 10px;
-        overflow: hidden;
-    }
-    
-    .progress-fill {
-        height: 100%;
-        background: linear-gradient(90deg, #a855f7, #ec4899);
-        transition: width 0.3s ease;
-    }
-    
-    /* Text colors */
-    body:not(.dark-mode) .text-gray-300 {
-        color: rgba(30, 41, 59, 0.8) !important;
-    }
-    
-    body:not(.dark-mode) .text-gray-400 {
-        color: rgba(30, 41, 59, 0.6) !important;
-    }
-    
-    body:not(.dark-mode) .text-white {
-        color: rgba(30, 41, 59, 0.9) !important;
-    }
-    
-    /* Number badge */
-    body:not(.dark-mode) .bg-purple-500\/20 {
-        background: rgba(168, 85, 247, 0.1) !important;
-        border-color: rgba(168, 85, 247, 0.25) !important;
-    }
-    
-    body:not(.dark-mode) .text-purple-400 {
-        color: #a855f7 !important;
-    }
-</style>
-@endsection
+@section('title', trans('app.quiz.title') . ' ' . $langLabel . ' | NiangProgrammeur')
+@section('meta_description', trans('app.quiz.answer_questions', [':count' => count($questions)]))
 
 @section('content')
-<section class="py-20 relative overflow-hidden pt-8">
-    <div class="container mx-auto px-6">
-        <div class="quiz-container">
-            <!-- Header -->
-            <div class="mb-8">
-                <a href="{{ route('quiz') }}" class="text-purple-400 hover:text-purple-300 transition mb-4 inline-block">
-                    <i class="fas fa-arrow-left mr-2"></i>{{ trans('app.quiz.back_to_quiz') }}
-                </a>
-                <h1 class="text-5xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent">
-                    {{ trans('app.quiz.title') }} {{ trans('app.formations.languages.' . $language, [], null, ucfirst($language)) }}
-                </h1>
-                <p class="text-xl text-gray-300">
-                    {{ str_replace(':count', count($questions), trans('app.quiz.answer_questions')) }}
-                </p>
-            </div>
+<div class="ql-page">
 
-            <!-- Progress -->
-            <div class="mb-8">
-                <div class="flex items-center justify-between mb-2">
-                    <span class="text-gray-400">{{ trans('app.exercices.progress') }}</span>
-                    <span class="text-purple-400 font-bold" id="progressText">0/{{ count($questions) }}</span>
-                </div>
-                <div class="progress-bar">
-                    <div class="progress-fill" id="progressFill" style="width: 0%"></div>
-                </div>
-            </div>
+  {{-- ── HEADER ────────────────────────────────────────────── --}}
+  <div class="ql-header">
+    <div class="ql-header__inner">
 
-            <!-- Quiz Form -->
-            <form id="quizForm" action="{{ route('quiz.submit', $language) }}" method="POST">
-                @csrf
-                
-                @foreach($questions as $index => $question)
-                <div class="question-card">
-                    <div class="flex items-start gap-4 mb-6">
-                        <div class="w-12 h-12 rounded-full bg-purple-500/20 border-2 border-purple-500/40 flex items-center justify-center text-purple-400 font-bold text-lg flex-shrink-0">
-                            {{ $index + 1 }}
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="text-xl font-bold text-white">{{ $question['question'] }}</h3>
-                        </div>
-                    </div>
-                    
-                    <div class="space-y-3 pl-16">
-                        @foreach($question['options'] as $optIndex => $option)
-                        <div>
-                            <input type="radio" 
-                                   name="answers[{{ $index }}]" 
-                                   value="{{ $optIndex }}" 
-                                   id="q{{ $index }}_opt{{ $optIndex }}" 
-                                   class="option-input"
-                                   onchange="updateProgress()">
-                            <label for="q{{ $index }}_opt{{ $optIndex }}" class="option-label">
-                                <span class="option-letter">{{ chr(65 + $optIndex) }}</span>
-                                <span class="text-white flex-1">{{ $option }}</span>
-                            </label>
-                        </div>
-                        @endforeach
-                    </div>
-                </div>
-                @endforeach
+      <a href="{{ route('quiz') }}" class="ql-back">
+        <i class="fas fa-arrow-left"></i>
+        {{ trans('app.quiz.back_to_quiz') }}
+      </a>
 
-                <!-- Submit Button -->
-                <div class="text-center mt-8">
-                    <button type="submit" class="px-12 py-4 bg-gradient-to-r from-purple-500 to-pink-600 text-white font-bold text-lg rounded-lg hover:shadow-lg hover:scale-105 transition">
-                        <i class="fas fa-check-circle mr-2"></i>{{ trans('app.quiz.submit_quiz') }}
-                    </button>
-                </div>
-            </form>
+      <div class="ql-header__top">
+        <div class="ql-lang-icon" style="background:{{ $c['bg'] }};color:{{ $c['color'] }};border-color:{{ $c['bg'] }}">
+          <i class="{{ $info['icon'] }}"></i>
         </div>
+        <div class="ql-header__info">
+          <h1 class="ql-title">
+            {{ trans('app.quiz.title') }}
+            <span>{{ $langLabel }}</span>
+          </h1>
+          <div class="ql-meta">
+            <span class="ql-meta-item">
+              <i class="fas fa-question-circle"></i>
+              {{ count($questions) }} {{ trans('app.quiz.questions_count') }}
+            </span>
+            <span class="ql-meta-item">
+              <i class="fas fa-clock"></i>
+              20 min
+            </span>
+            <span class="ql-meta-item">
+              <i class="fas fa-list-check"></i>
+              QCM
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {{-- Progress bar --}}
+      <div class="ql-progress-wrap">
+        <div class="ql-progress__top">
+          <span class="ql-progress__label">{{ trans('app.exercices.progress') }}</span>
+          <span class="ql-progress__count" id="progressText">0 / {{ count($questions) }}</span>
+        </div>
+        <div class="ql-progress__track">
+          <div class="ql-progress__fill" id="progressFill"></div>
+        </div>
+      </div>
+
     </div>
-</section>
+  </div>
+
+  {{-- ── FORM ──────────────────────────────────────────────── --}}
+  <div class="ql-main">
+    <div class="ql-container">
+
+      <form id="quizForm" action="{{ route('quiz.submit', $language) }}" method="POST">
+        @csrf
+
+        @foreach($questions as $index => $question)
+        <div class="ql-question" id="question-{{ $index }}">
+          <div class="ql-question__header">
+            <div class="ql-question__num">{{ $index + 1 }}</div>
+            <p class="ql-question__text">{{ $question['question'] }}</p>
+          </div>
+
+          <div class="ql-options">
+            @foreach($question['options'] as $optIndex => $option)
+            <div>
+              <input type="radio"
+                     name="answers[{{ $index }}]"
+                     value="{{ $optIndex }}"
+                     id="q{{ $index }}_opt{{ $optIndex }}"
+                     class="ql-option__input"
+                     onchange="handleAnswer({{ $index }}, this)">
+              <label for="q{{ $index }}_opt{{ $optIndex }}" class="ql-option__label">
+                <span class="ql-option__letter">{{ chr(65 + $optIndex) }}</span>
+                <span class="ql-option__text">{{ $option }}</span>
+              </label>
+            </div>
+            @endforeach
+          </div>
+        </div>
+        @endforeach
+
+        {{-- Submit zone --}}
+        <div class="ql-submit-zone">
+          <p class="ql-submit-zone__hint">
+            <strong id="answeredCount">0</strong> / {{ count($questions) }}
+            {{ trans('app.quiz.questions_count') }} répondues
+          </p>
+          <button type="submit" class="ql-btn-submit">
+            <i class="fas fa-paper-plane"></i>
+            {{ trans('app.quiz.submit_quiz') }}
+          </button>
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+
+</div>
 
 <script>
-    const totalQuestions = {{ count($questions) }};
-    
-    function updateProgress() {
-        const checkedInputs = document.querySelectorAll('input[type="radio"]:checked');
-        const answered = checkedInputs.length;
-        const percentage = (answered / totalQuestions) * 100;
-        
-        document.getElementById('progressText').textContent = answered + '/' + totalQuestions;
-        document.getElementById('progressFill').style.width = percentage + '%';
+(function () {
+  const total = {{ count($questions) }};
+  let answered = 0;
+
+  function updateProgress() {
+    const pct = (answered / total) * 100;
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressText').textContent = answered + ' / ' + total;
+    document.getElementById('answeredCount').textContent = answered;
+  }
+
+  window.handleAnswer = function (questionIndex, radio) {
+    const card = document.getElementById('question-' + questionIndex);
+    if (!card.classList.contains('is-answered')) {
+      card.classList.add('is-answered');
+      answered++;
+      updateProgress();
     }
-    
-    // Prevent form submission if not all questions answered
-    document.getElementById('quizForm').addEventListener('submit', function(e) {
-        const checkedInputs = document.querySelectorAll('input[type="radio"]:checked');
-        
-        if (checkedInputs.length < totalQuestions) {
-            e.preventDefault();
-            alert(@json(trans('app.quiz.answer_all')));
-            return false;
-        }
-    });
-    
-    // Scroll to top on load
-    window.scrollTo(0, 0);
+  };
+
+  document.getElementById('quizForm').addEventListener('submit', function (e) {
+    const checked = document.querySelectorAll('input[type="radio"]:checked').length;
+    if (checked < total) {
+      e.preventDefault();
+      alert(@json(trans('app.quiz.answer_all')));
+    }
+  });
+
+  window.scrollTo(0, 0);
+})();
 </script>
 @endsection

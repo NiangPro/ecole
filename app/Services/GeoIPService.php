@@ -19,7 +19,8 @@ class GeoIPService
 
         return Cache::remember($cleCache, self::CACHE_TTL, function () use ($ip) {
             try {
-                $response = @file_get_contents("http://ip-api.com/json/{$ip}?fields=countryCode");
+                $ctx = stream_context_create(['http' => ['timeout' => 3]]);
+                $response = @file_get_contents("http://ip-api.com/json/{$ip}?fields=countryCode", false, $ctx);
                 if ($response) {
                     $data = json_decode($response, true);
                     return $data['countryCode'] ?? 'XX';

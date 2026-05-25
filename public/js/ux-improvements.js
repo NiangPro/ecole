@@ -360,19 +360,14 @@
         }
 
         addInstallPrompt() {
-            // Vérifier si l'app est déjà installée
             if (window.matchMedia('(display-mode: standalone)').matches) {
-                return;
+                return; // app déjà installée
             }
-
-            // Intercepter l'événement beforeinstallprompt
             window.addEventListener('beforeinstallprompt', (e) => {
                 e.preventDefault();
                 this.deferredPrompt = e;
                 this.showInstallButton();
             });
-
-            // Attacher l'événement click de manière globale (délégation d'événements) - backup
             document.addEventListener('click', (e) => {
                 const target = e.target.closest('#pwa-install-btn') || e.target.closest('.pwa-install-button');
                 if (target) {
@@ -380,7 +375,7 @@
                     e.stopPropagation();
                     this.installPWA();
                 }
-            }, true); // Capture phase pour priorité
+            }, true);
         }
 
         showInstallButton() {
@@ -418,6 +413,27 @@
                     handleClick(e);
                 });
                 
+                // Position fixée en bas à gauche, au-dessus du bouton notifications
+                installBtn.style.cssText = `
+                    position: fixed !important;
+                    bottom: 130px !important;
+                    left: 20px !important;
+                    z-index: 9997 !important;
+                    display: flex !important;
+                    align-items: center;
+                    gap: 8px;
+                    padding: 10px 18px;
+                    background: linear-gradient(135deg, #06b6d4, #14b8a6);
+                    color: #fff;
+                    border: none;
+                    border-radius: 50px;
+                    font-weight: 700;
+                    font-size: 0.82rem;
+                    cursor: pointer;
+                    box-shadow: 0 4px 16px rgba(6,182,212,0.35);
+                    font-family: inherit;
+                    pointer-events: auto;
+                `;
                 document.body.appendChild(installBtn);
             } else {
                 const self = this;
@@ -429,10 +445,8 @@
                 };
                 installBtn.onclick = handleClick;
                 installBtn.addEventListener('click', handleClick, true);
+                installBtn.style.setProperty('display', 'flex', 'important');
             }
-            installBtn.style.display = 'flex';
-            installBtn.style.pointerEvents = 'auto';
-            installBtn.style.cursor = 'pointer';
         }
 
         async installPWA() {

@@ -96,7 +96,7 @@
                 </label>
 
                 <!-- Wave -->
-                @if(\App\Models\SiteSetting::get('wave_enabled', true))
+                @if($siteSettings->wave_enabled ?? true)
                 <label class="payment-method-card">
                     <input type="radio" name="payment_method" value="wave" {{ $payment->payment_method === 'wave' ? 'checked' : '' }} class="method-radio">
                     <div class="method-content">
@@ -115,7 +115,7 @@
                             @endif
 
                 <!-- PayPal -->
-                @if(\App\Models\SiteSetting::get('paypal_enabled', false))
+                @if($siteSettings->paypal_enabled ?? false)
                 <label class="payment-method-card">
                     <input type="radio" name="payment_method" value="paypal" {{ $payment->payment_method === 'paypal' ? 'checked' : '' }} class="method-radio">
                     <div class="method-content">
@@ -134,7 +134,7 @@
                 @endif
 
                 <!-- Stripe -->
-                @if(\App\Models\SiteSetting::get('stripe_enabled', false))
+                @if($siteSettings->stripe_enabled ?? false)
                 <label class="payment-method-card">
                     <input type="radio" name="payment_method" value="stripe" {{ $payment->payment_method === 'stripe' ? 'checked' : '' }} class="method-radio">
                     <div class="method-content">

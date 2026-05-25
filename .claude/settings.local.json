@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php artisan *)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://127.0.0.1:8000)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code} — %{time_total}s\" http://127.0.0.1:8000)",
+      "Bash(curl -s -o /dev/null -w \"DNS:%{time_namelookup} Connect:%{time_connect} TTFB:%{time_starttransfer} Total:%{time_total}\" http://127.0.0.1:8000)",
+      "Bash(php -r ' *)",
+      "Bash(curl -s -o /dev/null -w \"TTFB:%{time_starttransfer}s Total:%{time_total}s\" http://127.0.0.1:8000)",
+      "Bash(curl -s -o /dev/null -w \"TTFB:%{time_starttransfer}s\" http://127.0.0.1:8000/formations/php)",
+      "Bash(curl -s -o /dev/null -w \" | TTFB:%{time_starttransfer}s\" http://127.0.0.1:8000/formations/javascript)",
+      "Bash(curl -s -o /dev/null -w \" | TTFB:%{time_starttransfer}s\" http://127.0.0.1:8000/emplois)",
+      "Bash(curl -s -o /dev/null -w \" | TTFB:%{time_starttransfer}s\" http://127.0.0.1:8000/documents)",
+      "Bash(sort -k5 -rn)",
+      "Bash(time curl *)",
+      "Bash(curl -s -o /dev/null -w \"Accueil: %{time_total}s\\\\n\" http://127.0.0.1:8000)",
+      "Bash(curl -s -o /dev/null -w \"Formation PHP: %{time_total}s\\\\n\" http://127.0.0.1:8000/formations/php)",
+      "Bash(curl -s -o /dev/null -w \"Emplois: %{time_total}s\\\\n\" http://127.0.0.1:8000/emplois)",
+      "Bash(curl -s -o /dev/null -w \"Documents: %{time_total}s\\\\n\" http://127.0.0.1:8000/documents)",
+      "Bash(awk 'NR==1 || NR>=984' resources/views/partials/navigation.blade.php)",
+      "Bash(mv /tmp/nav_clean.blade.php resources/views/partials/navigation.blade.php)",
+      "Bash(curl -s -o /dev/null -w \"Accueil:       %{time_total}s\\\\n\" http://127.0.0.1:8000)",
+      "Bash(curl -s -o /dev/null -w \"Emplois:       %{time_total}s\\\\n\" http://127.0.0.1:8000/emplois)",
+      "Bash(curl -s -o /dev/null -w \"Documents:     %{time_total}s\\\\n\" http://127.0.0.1:8000/documents)",
+      "Bash(awk '{print $5, $9}')",
+      "Bash(curl -s http://127.0.0.1:8000)",
+      "Bash(curl -s http://127.0.0.1:8000/formations/php)",
+      "Bash(curl -s http://127.0.0.1:8000/emplois)",
+      "Bash(grep -rn '$table->index\\\\|$table->unique' database/migrations/ '--include=*.php')",
+      "Bash(awk '{sum+=$5; count++} END {print \"Total:\", sum/1024 \"KB,\", \"Moy:\", sum/count/1024 \"KB, Fichiers:\", count}')",
+      "Bash(grep -v \"^\\\\s*$\")",
+      "Bash(npm --version)"
+    ]
+  }
+}

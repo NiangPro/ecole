@@ -1,9 +1,9 @@
 // Service Worker amélioré pour NiangProgrammeur
-// Version: 2.0.0
-const CACHE_NAME = 'niangprogrammeur-v2.0.0';
-const RUNTIME_CACHE = 'niangprogrammeur-runtime-v2.0.0';
-const IMAGE_CACHE = 'niangprogrammeur-images-v2.0.0';
-const API_CACHE = 'niangprogrammeur-api-v2.0.0';
+// Version: 2.1.0
+const CACHE_NAME = 'niangprogrammeur-v2.1.0';
+const RUNTIME_CACHE = 'niangprogrammeur-runtime-v2.1.0';
+const IMAGE_CACHE = 'niangprogrammeur-images-v2.1.0';
+const API_CACHE = 'niangprogrammeur-api-v2.1.0';
 
 // Ressources critiques à mettre en cache immédiatement
 const PRECACHE_RESOURCES = [

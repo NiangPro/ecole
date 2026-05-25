@@ -243,20 +243,30 @@ class FormationController extends Controller
      */
     private function showFormation(string $slug, string $view)
     {
-        $this->ensureLocale();
-        
+        $locale = $this->ensureLocale();
+
         $progress = null;
         if (Auth::check()) {
             $progress = Auth::user()->getProgressForFormation($slug);
         }
-        
-        // Récupérer les annonces AdSense pour cette formation
-        $formationAds = \App\Models\FormationAdSenseUnit::getAdsForFormation($slug);
-        $headerAds = \App\Models\FormationAdSenseUnit::getAdsForFormation($slug, 'header');
-        $contentAds = \App\Models\FormationAdSenseUnit::getAdsForFormation($slug, 'content');
-        $sidebarAds = \App\Models\FormationAdSenseUnit::getAdsForFormation($slug, 'sidebar');
-        $footerAds = \App\Models\FormationAdSenseUnit::getAdsForFormation($slug, 'footer');
-        
+
+        // 1 seule requête pour toutes les positions, filtrée en mémoire
+        $allAds = \App\Models\FormationAdSenseUnit::getAdsForFormation($slug);
+        $formationAds = $allAds;
+        $headerAds  = $allAds->where('position', 'header');
+        $contentAds = $allAds->where('position', 'content');
+        $sidebarAds = $allAds->where('position', 'sidebar');
+        $footerAds  = $allAds->where('position', 'footer');
+
+        // Cache du HTML rendu pour les visiteurs non-connectés (le contenu ne change pas souvent)
+        if (!Auth::check()) {
+            $cacheKey = "formation_html_{$slug}_{$locale}";
+            $html = \Illuminate\Support\Facades\Cache::remember($cacheKey, 3600, function () use ($view, $formationAds, $headerAds, $contentAds, $sidebarAds, $footerAds, $progress) {
+                return view($view, compact('progress', 'formationAds', 'headerAds', 'contentAds', 'sidebarAds', 'footerAds'))->render();
+            });
+            return response($html);
+        }
+
         return view($view, compact('progress', 'formationAds', 'headerAds', 'contentAds', 'sidebarAds', 'footerAds'));
     }
 

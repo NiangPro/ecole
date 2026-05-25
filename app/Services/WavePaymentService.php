@@ -9,17 +9,12 @@ class WavePaymentService
      */
     private static function getMerchantId(): string
     {
-        $settings = \App\Models\SiteSetting::first();
-        return $settings && $settings->wave_merchant_id ? $settings->wave_merchant_id : 'M_sn_XKgk0Xq-zzy4';
+        return \App\Models\SiteSetting::get('wave_merchant_id', 'M_sn_XKgk0Xq-zzy4');
     }
-    
-    /**
-     * Obtenir le code pays Wave depuis les paramètres
-     */
+
     private static function getCountryCode(): string
     {
-        $settings = \App\Models\SiteSetting::first();
-        return $settings && $settings->wave_country_code ? $settings->wave_country_code : 'sn';
+        return \App\Models\SiteSetting::get('wave_country_code', 'sn');
     }
 
     /**

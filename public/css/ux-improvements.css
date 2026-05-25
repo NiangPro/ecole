@@ -204,7 +204,7 @@ textarea:focus-visible {
 /* Bouton d'installation PWA */
 .pwa-install-button {
     position: fixed;
-    bottom: 20px;
+    bottom: 130px;
     left: 20px;
     background: linear-gradient(135deg, #06b6d4, #14b8a6);
     color: white;

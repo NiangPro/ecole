@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
 <head>
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-56V4D8K6');</script>
+    <!-- End Google Tag Manager -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="@yield('meta_description', 'Plateforme de formation gratuite en développement web. Apprenez HTML5, CSS3, JavaScript, PHP, Laravel, Bootstrap, Git, WordPress et Intelligence Artificielle avec NiangProgrammeur.')">
@@ -28,46 +35,17 @@
         $faviconPng = asset('images/logo.png');
         $faviconIco = url('/favicon.ico');
     @endphp
-    <!-- Favicon ICO (priorité pour compatibilité navigateurs) -->
     <link rel="icon" type="image/x-icon" href="{{ $faviconIco }}">
-    <link rel="shortcut icon" type="image/x-icon" href="{{ $faviconIco }}">
-    <!-- Favicon PNG (meilleure qualité) - Plusieurs formats pour compatibilité maximale -->
-    <link rel="preload" as="image" href="{{ $faviconPng }}" fetchpriority="high">
-    <link rel="icon" type="image/png" href="{{ $faviconPng }}">
-    <link rel="icon" type="image/png" sizes="192x192" href="{{ $faviconPng }}">
     <link rel="icon" type="image/png" sizes="32x32" href="{{ $faviconPng }}">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ $faviconPng }}">
-    <!-- Fallback supplémentaire pour tous les navigateurs -->
-    <link rel="icon" href="{{ $faviconPng }}" type="image/png">
-    <link rel="icon" href="{{ $faviconIco }}" type="image/x-icon">
-    <!-- Apple Touch Icons -->
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ $faviconPng }}">
     <link rel="apple-touch-icon" sizes="180x180" href="{{ $faviconPng }}">
-    <link rel="apple-touch-icon" sizes="152x152" href="{{ $faviconPng }}">
-    <link rel="apple-touch-icon" sizes="144x144" href="{{ $faviconPng }}">
-    <link rel="apple-touch-icon" sizes="120x120" href="{{ $faviconPng }}">
-    <link rel="apple-touch-icon" sizes="114x114" href="{{ $faviconPng }}">
-    <link rel="apple-touch-icon" sizes="76x76" href="{{ $faviconPng }}">
-    <link rel="apple-touch-icon" sizes="72x72" href="{{ $faviconPng }}">
     
-    <!-- Meta Tags Performance -->
-    <meta name="theme-color" content="#06b6d4">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="NiangProgrammeur">
-    
-    <!-- Preconnect et DNS-prefetch pour performance -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <!-- Preconnect — limité aux 4 origines critiques -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
     <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
-    <link rel="dns-prefetch" href="//images.unsplash.com">
-    
-    <!-- Polices optimisées -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;900&display=swap"></noscript>
-    <link rel="apple-touch-icon" sizes="60x60" href="{{ $faviconPng }}">
-    <link rel="apple-touch-icon" sizes="57x57" href="{{ $faviconPng }}">
-    
+    <link rel="dns-prefetch" href="//pagead2.googlesyndication.com">
     <!-- Canonical URL -->
     @hasSection('canonical')
         <link rel="canonical" href="@yield('canonical')">
@@ -105,22 +83,7 @@
     <meta name="twitter:description" content="@yield('meta_description', 'Plateforme de formation gratuite en développement web.')">
     <meta name="twitter:image" content="{{ asset('images/logo.png') }}">
     
-    <!-- DNS Prefetch et Preconnect optimisés pour améliorer les performances -->
-    <link rel="dns-prefetch" href="//fonts.googleapis.com">
-    <link rel="dns-prefetch" href="//fonts.gstatic.com">
-    <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
-    <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
-    <link rel="dns-prefetch" href="//images.unsplash.com">
-    <link rel="dns-prefetch" href="//www.google-analytics.com">
-    <link rel="dns-prefetch" href="//www.googletagmanager.com">
-    <link rel="dns-prefetch" href="//pagead2.googlesyndication.com">
-    
-    <!-- Preconnect pour les ressources critiques (priorité) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-    
+
     <!-- PWA Manifest -->
     <link rel="manifest" href="{{ asset('manifest.json') }}">
     <meta name="theme-color" content="#06b6d4">
@@ -128,7 +91,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="NiangProgrammeur">
-    
+
     @stack('meta')
     @stack('head')
     @stack('preload_images')
@@ -148,27 +111,12 @@
         }
     </script>
     
-    <!-- CSS critique minimal - Chargé de manière synchrone pour éviter le FOUC -->
-    <link rel="preload" href="{{ asset('css/critical.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="{{ asset('css/critical.css') }}"></noscript>
-    <style>
-        /* Fallback minimal inline pour éviter le FOUC si le CSS externe ne charge pas */
-        html,body{margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:#fff;color:#1e293b}
-    </style>
-    
-    
-    <!-- Tailwind CSS - Chargé de manière asynchrone pour ne pas bloquer le rendu -->
-    <link rel="preload" href="https://cdn.tailwindcss.com" as="script">
-    <script>
-        // Charger Tailwind CSS de manière asynchrone après le rendu initial
-        (function() {
-            const script = document.createElement('script');
-            script.src = 'https://cdn.tailwindcss.com';
-            script.async = true;
-            script.defer = true;
-            document.head.appendChild(script);
-        })();
-    </script>
+    <!-- CSS critique - synchrone pour éviter le FOUC -->
+    <link rel="stylesheet" href="{{ asset('css/critical.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/navigation.css') }}">
+
+    <!-- Tailwind CSS v4 + CSS moderne compilé par Vite (remplace le CDN) -->
+    @vite(['resources/css/app.css'])
     
     <!-- reCAPTCHA v3 (invisible) -->
     @php
@@ -224,27 +172,9 @@
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"></noscript>
     
-    <!-- Google Fonts optimisé avec preload et font-display: swap -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Google Fonts - Chargement asynchrone pour ne pas bloquer le rendu -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800;900&family=Orbitron:wght@400;700;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800;900&family=Orbitron:wght@400;700;900&display=swap"></noscript>
-    <!-- Force font-display: swap pour toutes les polices -->
-    <style>
-        @font-face {
-            font-family: 'Inter';
-            font-display: swap;
-        }
-        @font-face {
-            font-family: 'Poppins';
-            font-display: swap;
-        }
-        @font-face {
-            font-family: 'Orbitron';
-            font-display: swap;
-        }
-    </style>
+    <!-- Google Fonts - Chargement asynchrone (Inter + Poppins uniquement) -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@700;800;900&display=swap"></noscript>
     
     <!-- Toastr CSS - Chargement asynchrone -->
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
@@ -253,7 +183,7 @@
     <!-- UX Improvements CSS - Chargement asynchrone -->
     <link rel="preload" href="{{ asset('css/ux-improvements.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="{{ asset('css/ux-improvements.css') }}"></noscript>
-    
+
     <!-- Social Features CSS - Chargement asynchrone -->
     <link rel="preload" href="{{ asset('css/social-features.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="{{ asset('css/social-features.css') }}"></noscript>
@@ -339,603 +269,14 @@
     </script>
     @endif
     
-    <style>
-        /* GLOBAL STYLES */
-        html {
-            overflow-x: hidden;
-            scroll-behavior: smooth;
-        }
-        
-        html.loaded,
-        html.tailwind-loaded {
-            visibility: visible !important;
-        }
-        
-        /* Le body est toujours visible */
-        body {
-            margin: 0;
-            padding: 0;
-            padding-top: 60px;
-            overflow-x: hidden;
-            min-height: 100vh;
-            opacity: 1 !important;
-            visibility: visible !important;
-        }
-        
-        * {
-            box-sizing: border-box;
-        }
-        
-        /* Back to Top Button */
-        .back-to-top-button {
-            position: fixed;
-            bottom: 170px;
-            right: 20px;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #06b6d4, #14b8a6);
-            border: 2px solid rgba(6, 182, 212, 0.3);
-            color: #fff;
-            font-size: 16px;
-            cursor: pointer;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 20px rgba(6, 182, 212, 0.4);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            z-index: 10000;
-            opacity: 0;
-            transform: translateY(20px) scale(0.8);
-        }
-        
-        /* Quand le widget de langue n'existe pas, le bouton back to top prend sa place */
-        .back-to-top-button.no-language-widget {
-            bottom: 120px;
-        }
-        
-        .back-to-top-button.show {
-            display: flex;
-            opacity: 1;
-            transform: translateY(0) scale(1);
-        }
-        
-        .back-to-top-button:hover {
-            transform: translateY(-5px) scale(1.1);
-            box-shadow: 0 8px 30px rgba(6, 182, 212, 0.6);
-            border-color: rgba(6, 182, 212, 0.6);
-            background: linear-gradient(135deg, #14b8a6, #06b6d4);
-        }
-        
-        .back-to-top-button:active {
-            transform: translateY(-3px) scale(1.05);
-        }
-        
-        .back-to-top-tooltip {
-            position: absolute;
-            right: 60px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(15, 23, 42, 0.95);
-            color: #fff;
-            padding: 6px 10px;
-            border-radius: 8px;
-            font-size: 11px;
-            white-space: nowrap;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(6, 182, 212, 0.3);
-        }
-        
-        body:not(.dark-mode) .back-to-top-tooltip {
-            background: rgba(255, 255, 255, 0.95) !important;
-            color: rgba(30, 41, 59, 0.9) !important;
-            border-color: rgba(6, 182, 212, 0.3) !important;
-        }
-        
-        .back-to-top-button:hover .back-to-top-tooltip {
-            opacity: 1;
-        }
-        
-        body:not(.dark-mode) .back-to-top-button {
-            background: linear-gradient(135deg, #06b6d4, #14b8a6) !important;
-            border-color: rgba(6, 182, 212, 0.4) !important;
-            box-shadow: 0 4px 20px rgba(6, 182, 212, 0.3) !important;
-        }
-        
-        body:not(.dark-mode) .back-to-top-button:hover {
-            box-shadow: 0 8px 30px rgba(6, 182, 212, 0.5) !important;
-        }
-        
-        @media (max-width: 768px) {
-            .back-to-top-button {
-                bottom: 170px;
-                right: 18px;
-                width: 36px;
-                height: 36px;
-                font-size: 14px;
-                z-index: 10000;
-            }
-            
-            .back-to-top-button.no-language-widget {
-                bottom: 120px;
-            }
-            
-            .navbar-language-button {
-                width: 32px;
-                height: 32px;
-            }
-            
-            .navbar-language-flag {
-                width: 18px;
-                height: 13px;
-            }
-            
-            .dark-mode-widget {
-                bottom: 70px;
-                right: 12px;
-                z-index: 9999;
-            }
-            
-            .dark-mode-button {
-                width: 36px;
-                height: 36px;
-                font-size: 14px;
-            }
-            
-            .whatsapp-widget {
-                bottom: 10px;
-                right: 12px;
-                z-index: 9998;
-            }
-            
-            .whatsapp-button {
-                width: 36px;
-                height: 36px;
-                font-size: 16px;
-            }
-            
-            .back-to-top-tooltip {
-                display: none;
-            }
-        }
-        
-        /* Language Widget dans la navbar */
-        .navbar-language-widget {
-            display: flex;
-            align-items: center;
-            margin-right: 12px;
-        }
-        
-        .navbar-language-button {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: rgba(6, 182, 212, 0.1);
-            border: 1px solid rgba(6, 182, 212, 0.3);
-            color: #06b6d4;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: visible;
-        }
-        
-        .navbar-language-flag {
-            width: 22px;
-            height: 16px;
-            border-radius: 2px;
-            object-fit: cover;
-            display: block;
-        }
-        
-        .navbar-language-button:hover {
-            background: rgba(6, 182, 212, 0.2);
-            border-color: rgba(6, 182, 212, 0.5);
-            transform: scale(1.1);
-            box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
-        }
-        
-        .navbar-language-tooltip {
-            position: absolute;
-            top: calc(100% + 10px);
-            right: 0;
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(10px);
-            color: #fff;
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-size: 12px;
-            white-space: nowrap;
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(-5px);
-            transition: all 0.3s ease;
-            pointer-events: none;
-            z-index: 10000;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(6, 182, 212, 0.3);
-        }
-        
-        .navbar-language-tooltip::after {
-            content: '';
-            position: absolute;
-            bottom: 100%;
-            right: 12px;
-            border: 5px solid transparent;
-            border-bottom-color: rgba(15, 23, 42, 0.95);
-        }
-        
-        .navbar-language-button:hover .navbar-language-tooltip {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-        
-        /* Dark Mode Widget */
-        .dark-mode-widget {
-            position: fixed;
-            bottom: 70px;
-            right: 20px;
-            z-index: 9998;
-        }
-        
-        .dark-mode-button {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #334155, #475569);
-            border: 2px solid rgba(6, 182, 212, 0.3);
-            color: #fff;
-            font-size: 16px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            transition: all 0.3s ease;
-            position: relative;
-        }
-        
-        .dark-mode-button:hover {
-            transform: translateY(-3px) scale(1.05);
-            box-shadow: 0 6px 25px rgba(6, 182, 212, 0.4);
-            border-color: rgba(6, 182, 212, 0.5);
-        }
-        
-        .dark-mode-button.active {
-            background: linear-gradient(135deg, #06b6d4, #14b8a6);
-            border-color: rgba(6, 182, 212, 0.6);
-        }
-        
-        .dark-mode-tooltip {
-            position: absolute;
-            right: 60px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(15, 23, 42, 0.95);
-            color: #fff;
-            padding: 6px 10px;
-            border-radius: 8px;
-            font-size: 11px;
-            white-space: nowrap;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            pointer-events: none;
-            border: 1px solid rgba(6, 182, 212, 0.3);
-        }
-        
-        .dark-mode-tooltip::after {
-            content: '';
-            position: absolute;
-            left: 100%;
-            top: 50%;
-            transform: translateY(-50%);
-            border: 6px solid transparent;
-            border-left-color: rgba(15, 23, 42, 0.95);
-        }
-        
-        .dark-mode-button:hover .dark-mode-tooltip {
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        /* Dark Mode Styles */
-        body.dark-mode {
-            background: #0a0a0f !important;
-            color: #e5e7eb !important;
-        }
-        
-        body.dark-mode .bg-canvas {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%) !important;
-        }
-        
-        body.dark-mode .navbar-modern {
-            background: rgba(15, 23, 42, 0.95) !important;
-        }
-        
-        body.dark-mode .navbar-modern.scrolled {
-            background: rgba(15, 23, 42, 0.98) !important;
-        }
-        
-        body.dark-mode [style*="rgba(51, 65, 85"] {
-            background: rgba(15, 23, 42, 0.8) !important;
-        }
-        
-        body.dark-mode [style*="rgba(51, 65, 85, 0.5"] {
-            background: rgba(15, 23, 42, 0.6) !important;
-        }
-        
-        body.dark-mode [style*="rgba(51, 65, 85, 0.7"] {
-            background: rgba(15, 23, 42, 0.8) !important;
-        }
-        
-        body.dark-mode [style*="rgba(51, 65, 85, 0.85"] {
-            background: rgba(15, 23, 42, 0.95) !important;
-        }
-        
-        body.dark-mode [style*="rgba(71, 85, 105"] {
-            background: rgba(30, 41, 59, 0.8) !important;
-        }
-        
-        .whatsapp-widget {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 9999;
-        }
-        
-        .whatsapp-button {
-            position: relative;
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #25D366, #128C7E);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
-            transition: all 0.3s ease;
-            animation: whatsappPulse 2s ease-in-out infinite;
-        }
-        
-        .whatsapp-button:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 30px rgba(37, 211, 102, 0.6);
-        }
-        
-        .whatsapp-button i {
-            font-size: 18px;
-            color: #fff;
-            z-index: 1;
-        }
-        
-        .whatsapp-tooltip {
-            position: absolute;
-            bottom: 70px;
-            right: 0;
-            background: rgba(0, 0, 0, 0.9);
-            color: #fff;
-            padding: 10px 15px;
-            border-radius: 8px;
-            font-size: 13px;
-            white-space: nowrap;
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(10px);
-            transition: all 0.3s ease;
-            pointer-events: none;
-            z-index: 10000;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-        }
-        
-        .whatsapp-tooltip::after {
-            content: '';
-            position: absolute;
-            bottom: -6px;
-            right: 20px;
-            width: 0;
-            height: 0;
-            border-left: 6px solid transparent;
-            border-right: 6px solid transparent;
-            border-top: 6px solid rgba(0, 0, 0, 0.9);
-        }
-        
-        .whatsapp-button:hover .whatsapp-tooltip {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-        
-        @keyframes whatsappPulse {
-            0%, 100% {
-                box-shadow: 0 4px 20px rgba(37, 211, 102, 0.4);
-            }
-            50% {
-                box-shadow: 0 4px 30px rgba(37, 211, 102, 0.8);
-            }
-        }
-        
-        .whatsapp-popup {
-            position: absolute;
-            bottom: 80px;
-            right: 0;
-            width: 320px;
-            background: #fff;
-            border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
-            display: none;
-            overflow: hidden;
-            animation: slideUp 0.3s ease;
-        }
-        
-        .whatsapp-popup.active {
-            display: block;
-        }
-        
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .whatsapp-header {
-            background: linear-gradient(135deg, #25D366, #128C7E);
-            padding: 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            color: #fff;
-        }
-        
-        .whatsapp-avatar {
-            width: 50px;
-            height: 50px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 24px;
-        }
-        
-        .whatsapp-name {
-            font-weight: 700;
-            font-size: 16px;
-            flex: 1;
-        }
-        
-        .whatsapp-status {
-            font-size: 12px;
-            opacity: 0.9;
-        }
-        
-        .whatsapp-close {
-            background: none;
-            border: none;
-            color: #fff;
-            font-size: 20px;
-            cursor: pointer;
-            padding: 5px;
-            transition: transform 0.2s;
-        }
-        
-        .whatsapp-close:hover {
-            transform: rotate(90deg);
-        }
-        
-        .whatsapp-body {
-            padding: 20px;
-            min-height: 100px;
-            background: #f0f0f0;
-        }
-        
-        .whatsapp-message {
-            background: #fff;
-            padding: 15px;
-            border-radius: 10px;
-            color: #333;
-            font-size: 14px;
-            line-height: 1.6;
-        }
-        
-        .whatsapp-footer {
-            padding: 15px 20px;
-            background: #f0f0f0;
-        }
-        
-        .whatsapp-send-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            background: linear-gradient(135deg, #25D366, #128C7E);
-            color: #fff;
-            padding: 12px 20px;
-            border-radius: 25px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-        
-        .whatsapp-send-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.4);
-        }
-        
-        @media (max-width: 768px) {
-            .whatsapp-popup {
-                width: calc(100vw - 40px);
-                right: -10px;
-            }
-            
-            .whatsapp-widget {
-                bottom: 15px;
-                right: 15px;
-            }
-            
-            .dark-mode-widget {
-                bottom: 75px;
-                right: 15px;
-            }
-            
-            .language-widget {
-                bottom: 120px;
-                right: 15px;
-            }
-            
-            .back-to-top-button {
-                bottom: 170px;
-                right: 15px;
-            }
-        }
-    </style>
     @yield('styles')
-    
-    <!-- Style critique pour éviter le FOUC -->
-    <style>
-        /* Masquer le contenu jusqu'à ce que les CSS soient chargés */
-        html {
-            visibility: hidden;
-            opacity: 0;
-        }
-        html.css-loaded {
-            visibility: visible;
-            opacity: 1;
-            transition: opacity 0.3s ease;
-        }
-        /* Fallback pour navigateurs sans JavaScript */
-        body {
-            opacity: 1 !important;
-            visibility: visible !important;
-        }
-    </style>
-    <script>
-        // Marquer comme chargé une fois que les CSS critiques sont prêts
-        (function() {
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', function() {
-                    document.documentElement.classList.add('css-loaded');
-                });
-            } else {
-                document.documentElement.classList.add('css-loaded');
-            }
-        })();
-    </script>
 </head>
-<body class="bg-white text-gray-900" lang="{{ app()->getLocale() }}">
-    
+<body class="bg-white text-gray-900 light-mode-forced" lang="{{ app()->getLocale() }}">
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-56V4D8K6"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
     <!-- Skip Links pour l'accessibilité -->
     <div class="skip-links">
         <a href="#main-content" class="skip-link">Aller au contenu principal</a>
@@ -1095,10 +436,17 @@
             const icon = document.getElementById('dark-mode-icon');
             const tooltip = document.getElementById('dark-mode-tooltip');
             const button = document.getElementById('dark-mode-toggle');
-            
+
+            // En dark mode, on retire light-mode-forced pour que le media query puisse agir
+            if (isDark) {
+                body.classList.remove('light-mode-forced');
+            } else {
+                body.classList.add('light-mode-forced');
+            }
+
             // Sauvegarder la préférence
             localStorage.setItem('darkMode', isDark ? 'enabled' : 'disabled');
-            
+
             // Mettre à jour l'icône et le tooltip
             if (isDark) {
                 icon.classList.remove('fa-moon');
@@ -1112,7 +460,7 @@
                 button.classList.remove('active');
             }
         }
-        
+
         // Initialiser le dark mode au chargement
         document.addEventListener('DOMContentLoaded', function() {
             const darkMode = localStorage.getItem('darkMode');
@@ -1120,14 +468,16 @@
             const icon = document.getElementById('dark-mode-icon');
             const tooltip = document.getElementById('dark-mode-tooltip');
             const button = document.getElementById('dark-mode-toggle');
-            
+
             if (darkMode === 'enabled') {
                 body.classList.add('dark-mode');
+                body.classList.remove('light-mode-forced');
                 icon.classList.remove('fa-moon');
                 icon.classList.add('fa-sun');
                 tooltip.textContent = 'Désactiver le mode sombre';
                 button.classList.add('active');
             }
+            // Si darkMode est null ou 'disabled', light-mode-forced reste actif (défaut clair)
         });
         
         // Language Toggle Function
@@ -1211,13 +561,8 @@
         (function() {
             function loadScripts() {
                 const scripts = [
-                    '{{ asset("js/targeted-pagespeed.js") }}',
-                    '{{ asset("js/critical-pagespeed.js") }}',
-                    '{{ asset("js/pagespeed-optimizer.js") }}',
-                    '{{ asset("js/webp-optimizer.js") }}',
-                    '{{ asset("js/minifier.js") }}',
+                    '{{ asset("js/performance.js") }}',
                     '{{ asset("js/intelligent-prefetch.js") }}',
-                    '{{ asset("js/silence-console.js") }}',
                     '{{ asset("js/lazy-loading.js") }}',
                     '{{ asset("js/pwa-manager.js") }}',
                     '{{ asset("js/analytics-tracker.js") }}',

@@ -53,65 +53,50 @@ class PWAManager {
 
     // Configuration de l'invite d'installation
     setupInstallPrompt() {
+        if (window.matchMedia('(display-mode: standalone)').matches) {
+            document.body.classList.add('pwa-installed');
+            return; // app déjà installée, pas de bouton
+        }
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             this.deferredPrompt = e;
             this.showInstallButton();
         });
-
-        // Détecter si l'app est déjà installée
-        if (window.matchMedia('(display-mode: standalone)').matches) {
-            document.body.classList.add('pwa-installed');
-        }
     }
 
     // Afficher le bouton d'installation
     showInstallButton() {
-        // Vérifier si le bouton n'existe pas déjà
-        if (document.getElementById('pwa-install-button')) {
+        const existing = document.getElementById('pwa-install-btn') || document.getElementById('pwa-install-button');
+        if (existing) {
+            existing.style.setProperty('display', 'flex', 'important');
             return;
         }
 
-        const installButton = document.createElement('button');
-        installButton.id = 'pwa-install-button';
-        installButton.className = 'pwa-install-button';
-        installButton.innerHTML = `
-            <i class="fas fa-download"></i>
-            <span>Installer l'application</span>
+        // Création de secours si ux-improvements.js n'est pas chargé
+        const btn = document.createElement('button');
+        btn.id = 'pwa-install-button';
+        btn.innerHTML = '<i class="fas fa-download"></i><span>Installer l\'application</span>';
+        btn.addEventListener('click', () => this.installApp());
+        btn.style.cssText = `
+            position: fixed !important;
+            bottom: 130px !important;
+            left: 20px !important;
+            z-index: 9997 !important;
+            display: flex !important;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            background: linear-gradient(135deg, #06b6d4, #14b8a6);
+            color: #fff;
+            border: none;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.82rem;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(6,182,212,0.35);
+            font-family: inherit;
         `;
-        installButton.addEventListener('click', () => this.installApp());
-
-        // Ajouter le bouton dans la navbar ou un endroit visible
-        const navbar = document.querySelector('.navbar-container') || document.body;
-        navbar.appendChild(installButton);
-
-        // Style du bouton
-        const style = document.createElement('style');
-        style.textContent = `
-            .pwa-install-button {
-                display: inline-flex;
-                align-items: center;
-                gap: 8px;
-                padding: 10px 20px;
-                background: linear-gradient(135deg, #06b6d4, #14b8a6);
-                color: #000;
-                border: none;
-                border-radius: 8px;
-                font-weight: 700;
-                font-size: 0.875rem;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
-            }
-            .pwa-install-button:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 8px 25px rgba(6, 182, 212, 0.5);
-            }
-            .pwa-install-button:active {
-                transform: translateY(0);
-            }
-        `;
-        document.head.appendChild(style);
+        document.body.appendChild(btn);
     }
 
     // Installer l'application
@@ -183,15 +168,44 @@ class PWAManager {
         const pushButton = document.createElement('button');
         pushButton.id = 'pwa-push-button';
         pushButton.className = 'pwa-push-button';
-        pushButton.innerHTML = `
-            <i class="fas fa-bell"></i>
-            <span>Activer les notifications</span>
-        `;
+        pushButton.title = 'Activer les notifications';
+        pushButton.setAttribute('aria-label', 'Activer les notifications push');
+        pushButton.innerHTML = `<i class="fas fa-bell"></i>`;
         pushButton.addEventListener('click', () => this.requestPushPermission());
 
-        // Ajouter dans les paramètres ou un endroit approprié
-        const settings = document.querySelector('.user-settings') || document.body;
-        settings.appendChild(pushButton);
+        // Style fixe en bas à gauche, aligné avec les widgets de droite
+        pushButton.style.cssText = `
+            position: fixed;
+            bottom: 70px;
+            left: 20px;
+            z-index: 9998;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1e293b, #334155);
+            border: 2px solid rgba(6, 182, 212, 0.3);
+            color: #06b6d4;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        `;
+
+        pushButton.addEventListener('mouseenter', () => {
+            pushButton.style.transform = 'translateY(-3px)';
+            pushButton.style.boxShadow = '0 8px 24px rgba(6,182,212,0.35)';
+            pushButton.style.borderColor = 'rgba(6,182,212,0.7)';
+        });
+        pushButton.addEventListener('mouseleave', () => {
+            pushButton.style.transform = '';
+            pushButton.style.boxShadow = '0 4px 16px rgba(0,0,0,0.25)';
+            pushButton.style.borderColor = 'rgba(6,182,212,0.3)';
+        });
+
+        document.body.appendChild(pushButton);
     }
 
     // Demander la permission pour les notifications push

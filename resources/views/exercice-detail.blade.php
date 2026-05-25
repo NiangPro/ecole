@@ -1,664 +1,197 @@
 @extends('layouts.app')
 
-@section('title', trans('app.exercices.exercise') . ' ' . $id . ' - ' . $exercise['title'] . ' | NiangProgrammeur')
+@php
+  $langMap = [
+    'html5'        => ['icon' => 'fab fa-html5',       'bg' => '#fff7ed', 'fg' => '#ea580c'],
+    'css3'         => ['icon' => 'fab fa-css3-alt',    'bg' => '#eff6ff', 'fg' => '#2563eb'],
+    'javascript'   => ['icon' => 'fab fa-js',           'bg' => '#fefce8', 'fg' => '#ca8a04'],
+    'php'          => ['icon' => 'fab fa-php',          'bg' => '#ecfeff', 'fg' => '#0891b2'],
+    'bootstrap'    => ['icon' => 'fab fa-bootstrap',   'bg' => '#ecfeff', 'fg' => '#0891b2'],
+    'git'          => ['icon' => 'fab fa-git-alt',     'bg' => '#fff1f2', 'fg' => '#dc2626'],
+    'wordpress'    => ['icon' => 'fab fa-wordpress',   'bg' => '#eff6ff', 'fg' => '#2563eb'],
+    'ia'           => ['icon' => 'fas fa-robot',        'bg' => '#f0fdf4', 'fg' => '#16a34a'],
+    'python'       => ['icon' => 'fab fa-python',       'bg' => '#eff6ff', 'fg' => '#2563eb'],
+    'java'         => ['icon' => 'fab fa-java',         'bg' => '#fff7ed', 'fg' => '#ea580c'],
+    'sql'          => ['icon' => 'fas fa-database',    'bg' => '#eff6ff', 'fg' => '#2563eb'],
+    'c'            => ['icon' => 'fab fa-c',            'bg' => '#f8fafc', 'fg' => '#475569'],
+    'cpp'          => ['icon' => 'fab fa-cuttlefish',  'bg' => '#eff6ff', 'fg' => '#2563eb'],
+    'csharp'       => ['icon' => 'fab fa-microsoft',   'bg' => '#f0fdf4', 'fg' => '#16a34a'],
+    'dart'         => ['icon' => 'fas fa-feather-alt', 'bg' => '#eff6ff', 'fg' => '#2563eb'],
+    'go'           => ['icon' => 'fab fa-golang',      'bg' => '#eff6ff', 'fg' => '#2563eb'],
+    'swift'        => ['icon' => 'fab fa-swift',       'bg' => '#fff7ed', 'fg' => '#ea580c'],
+    'perl'         => ['icon' => 'fas fa-code',        'bg' => '#eff6ff', 'fg' => '#2563eb'],
+    'typescript'   => ['icon' => 'fab fa-js-square',   'bg' => '#eff6ff', 'fg' => '#2563eb'],
+    'rust'         => ['icon' => 'fab fa-rust',        'bg' => '#f8fafc', 'fg' => '#475569'],
+    'ruby'         => ['icon' => 'fas fa-gem',         'bg' => '#fff1f2', 'fg' => '#dc2626'],
+    'cybersecurite'=> ['icon' => 'fas fa-shield-alt',  'bg' => '#fff7ed', 'fg' => '#ea580c'],
+    'data-science' => ['icon' => 'fas fa-chart-line',  'bg' => '#eff6ff', 'fg' => '#2563eb'],
+    'big-data'     => ['icon' => 'fas fa-database',    'bg' => '#ecfeff', 'fg' => '#0891b2'],
+  ];
+  $info = $langMap[$language] ?? ['icon' => 'fas fa-code', 'bg' => '#ecfeff', 'fg' => '#0891b2'];
+
+  $easyKey   = trans('app.exercices.difficulty.easy');
+  $mediumKey = trans('app.exercices.difficulty.medium');
+  $diffLower = strtolower($exercise['difficulty'] ?? '');
+  if (in_array($diffLower, ['facile','easy']))                $diffTier = 'easy';
+  elseif (in_array($diffLower, ['moyen','medium','intermédiaire'])) $diffTier = 'medium';
+  else                                                         $diffTier = 'hard';
+
+  $langLabel = trans('app.formations.languages.' . $language, [], null, ucfirst($language));
+@endphp
+
+@section('title', trans('app.exercices.exercise') . ' ' . $id . ' — ' . $exercise['title'] . ' | NiangProgrammeur')
 
 @section('styles')
-<!-- CodeMirror CSS -->
+{{-- CodeMirror --}}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/eclipse.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/hint/show-hint.min.css">
+{{-- Hide textarea before CodeMirror init --}}
 <style>
-    body {
-        overflow-x: hidden;
-    }
-    
-    /* Body background */
-    body:not(.dark-mode) {
-        background: #ffffff !important;
-    }
-    
-    body.dark-mode {
-        background: #0a0a0f !important;
-    }
-    
-    .exercise-container {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 2rem;
-        min-height: calc(100vh - 200px);
-    }
-    
-    /* Empêcher le débordement */
-    .exercise-panel {
-        overflow: hidden;
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
-    }
-    
-    .code-editor-wrapper {
-        width: 100%;
-        max-width: 100%;
-        overflow: hidden;
-        box-sizing: border-box;
-    }
-    
-    .CodeMirror {
-        width: 100% !important;
-        max-width: 100% !important;
-        box-sizing: border-box;
-    }
-    
-    .result-frame {
-        width: 100% !important;
-        max-width: 100% !important;
-        box-sizing: border-box;
-        overflow-x: auto;
-        overflow-y: auto;
-    }
-    
-    @media (max-width: 768px) {
-        section.py-20 {
-            padding-top: 100px !important;
-            padding-bottom: 40px !important;
-        }
-        
-        .w-full.px-6 {
-            padding-left: 16px !important;
-            padding-right: 16px !important;
-            width: 100% !important;
-            max-width: 100% !important;
-            box-sizing: border-box;
-        }
-        
-        .exercise-container {
-            grid-template-columns: 1fr !important;
-            gap: 1.5rem !important;
-            width: 100% !important;
-            max-width: 100% !important;
-            box-sizing: border-box;
-        }
-        
-        .flex.items-center.justify-between.mb-3 {
-            flex-direction: column !important;
-            align-items: flex-start !important;
-            gap: 1rem !important;
-        }
-        
-        .flex.gap-2 {
-            width: 100% !important;
-            flex-direction: column !important;
-        }
-        
-        .flex.gap-2 a {
-            width: 100% !important;
-            text-align: center !important;
-        }
-        
-        h1.text-4xl {
-            font-size: 1.75rem !important;
-            line-height: 1.3 !important;
-        }
-        
-        .flex.items-center.gap-4 {
-            flex-direction: column !important;
-            align-items: flex-start !important;
-            gap: 1rem !important;
-        }
-        
-        .text-xl {
-            font-size: 1rem !important;
-        }
-        
-        .exercise-panel {
-            padding: 1.5rem !important;
-        }
-        
-        h3.text-xl {
-            font-size: 1.125rem !important;
-        }
-        
-        .code-editor-wrapper {
-            width: 100% !important;
-            max-width: 100% !important;
-            overflow-x: auto !important;
-            overflow-y: hidden !important;
-        }
-        
-        .CodeMirror {
-            min-height: 300px !important;
-            font-size: 12px !important;
-            width: 100% !important;
-            max-width: 100% !important;
-            overflow-x: auto !important;
-            overflow-y: auto !important;
-        }
-        
-        .CodeMirror-scroll {
-            min-height: 300px !important;
-            overflow-x: auto !important;
-            overflow-y: auto !important;
-        }
-        
-        .CodeMirror-scrollbar {
-            overflow-x: auto !important;
-        }
-        
-        .result-frame {
-            min-height: 300px !important;
-            width: 100% !important;
-            max-width: 100% !important;
-            overflow-x: auto !important;
-            overflow-y: auto !important;
-            box-sizing: border-box !important;
-        }
-        
-        /* Scroll horizontal dans l'iframe */
-        .result-frame iframe {
-            width: 100% !important;
-            max-width: 100% !important;
-            overflow-x: auto !important;
-            overflow-y: auto !important;
-        }
-        
-        .mt-4.flex.gap-3 {
-            flex-direction: column !important;
-            gap: 0.75rem !important;
-        }
-        
-        .exercise-buttons button,
-        .mt-4.flex.gap-3 button {
-            width: 100% !important;
-            padding: 0.75rem 1rem !important;
-            font-size: 0.875rem !important;
-        }
-        
-        .exercise-buttons button i,
-        .mt-4.flex.gap-3 button i {
-            font-size: 0.875rem !important;
-            margin-right: 0.5rem !important;
-        }
-        
-        .p-4 {
-            padding: 1rem !important;
-        }
-        
-        .text-sm {
-            font-size: 0.875rem !important;
-        }
-    }
-    
-    @media (max-width: 480px) {
-        section.py-20 {
-            padding-top: 80px !important;
-            padding-bottom: 30px !important;
-        }
-        
-        h1.text-4xl {
-            font-size: 1.5rem !important;
-        }
-        
-        .exercise-panel {
-            padding: 1.25rem !important;
-        }
-        
-        .CodeMirror {
-            min-height: 250px !important;
-            font-size: 11px !important;
-        }
-        
-        .CodeMirror-scroll {
-            min-height: 250px !important;
-        }
-        
-        .result-frame {
-            min-height: 250px !important;
-        }
-        
-        .text-xl {
-            font-size: 0.9rem !important;
-        }
-        
-        .px-4.py-2 {
-            padding: 0.75rem 1rem !important;
-            font-size: 0.875rem !important;
-        }
-        
-        .px-6.py-3 {
-            padding: 0.75rem 0.875rem !important;
-            font-size: 0.8rem !important;
-        }
-        
-        .code-editor-wrapper {
-            width: 100% !important;
-            max-width: 100% !important;
-            overflow-x: auto !important;
-        }
-        
-        .CodeMirror {
-            width: 100% !important;
-            max-width: 100% !important;
-            overflow-x: auto !important;
-        }
-        
-        .result-frame {
-            width: 100% !important;
-            max-width: 100% !important;
-            overflow-x: auto !important;
-        }
-    }
-    
-    .exercise-panel {
-        background: linear-gradient(135deg, rgba(10, 10, 26, 0.9), rgba(0, 0, 0, 0.9));
-        border: 2px solid rgba(6, 182, 212, 0.2);
-        border-radius: 15px;
-        padding: 2rem;
-        height: fit-content;
-    }
-    
-    body:not(.dark-mode) .exercise-panel {
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 250, 252, 0.95)) !important;
-        border-color: rgba(6, 182, 212, 0.25) !important;
-        box-shadow: 0 10px 40px rgba(6, 182, 212, 0.1) !important;
-    }
-    
-    /* CodeMirror Editor Styles */
-    .CodeMirror {
-        width: 100%;
-        min-height: 400px;
-        border: 2px solid rgba(6, 182, 212, 0.3);
-        border-radius: 10px;
-        font-size: 14px;
-        line-height: 1.6;
-        font-family: 'Courier New', 'Consolas', 'Monaco', monospace;
-    }
-    
-    .CodeMirror:focus-within {
-        border-color: rgba(6, 182, 212, 0.6);
-        box-shadow: 0 0 20px rgba(6, 182, 212, 0.2);
-    }
-    
-    body:not(.dark-mode) .CodeMirror:focus-within {
-        box-shadow: 0 0 20px rgba(6, 182, 212, 0.15) !important;
-    }
-    
-    /* CodeMirror Scrollbar */
-    .CodeMirror-scroll {
-        min-height: 400px;
-    }
-    
-    .CodeMirror-vscrollbar {
-        overflow-x: hidden;
-        overflow-y: scroll;
-    }
-    
-    /* CodeMirror Line Numbers */
-    .CodeMirror-linenumber {
-        color: #858585;
-        padding: 0 10px 0 5px;
-    }
-    
-    body:not(.dark-mode) .CodeMirror-linenumber {
-        color: #999 !important;
-    }
-    
-    /* CodeMirror Cursor */
-    .CodeMirror-cursor {
-        border-left: 2px solid #06b6d4;
-    }
-    
-    body:not(.dark-mode) .CodeMirror-cursor {
-        border-left-color: #06b6d4 !important;
-    }
-    
-    /* CodeMirror Selection */
-    .CodeMirror-selected {
-        background: rgba(6, 182, 212, 0.3) !important;
-    }
-    
-    body:not(.dark-mode) .CodeMirror-selected {
-        background: rgba(6, 182, 212, 0.2) !important;
-    }
-    
-    /* Amélioration de la coloration syntaxique HTML */
-    /* Balises HTML - couleur bleue/cyan */
-    .cm-tag {
-        color: #569cd6 !important;
-        font-weight: 500;
-    }
-    
-    body:not(.dark-mode) .cm-tag {
-        color: #0066cc !important;
-    }
-    
-    /* Attributs HTML - couleur jaune/orange */
-    .cm-attribute {
-        color: #9cdcfe !important;
-    }
-    
-    body:not(.dark-mode) .cm-attribute {
-        color: #d97706 !important;
-    }
-    
-    /* Valeurs d'attributs - couleur verte */
-    .cm-string {
-        color: #ce9178 !important;
-    }
-    
-    body:not(.dark-mode) .cm-string {
-        color: #008000 !important;
-    }
-    
-    /* Contenu texte - couleur blanche/gris */
-    .cm-meta {
-        color: #d4d4d4 !important;
-    }
-    
-    body:not(.dark-mode) .cm-meta {
-        color: #333333 !important;
-    }
-    
-    /* Commentaires - couleur grise */
-    .cm-comment {
-        color: #6a9955 !important;
-        font-style: italic;
-    }
-    
-    body:not(.dark-mode) .cm-comment {
-        color: #6a737d !important;
-    }
-    
-    /* Désactiver les erreurs de balises dans CodeMirror - Masquer toutes les erreurs rouges */
-    .CodeMirror .cm-error,
-    .CodeMirror .cm-tag.cm-error,
-    .CodeMirror .cm-tag.cm-bracket.cm-error,
-    .CodeMirror span.cm-error,
-    .CodeMirror .cm-error.cm-tag,
-    .CodeMirror .cm-error.cm-bracket,
-    .CodeMirror .cm-error.cm-tag-name,
-    .CodeMirror span[class*="error"] {
-        color: inherit !important;
-        background: transparent !important;
-        text-decoration: none !important;
-        border: none !important;
-        box-shadow: none !important;
-    }
-    
-    /* Forcer la couleur normale pour les balises (pas rouge) - Override toutes les erreurs */
-    .CodeMirror .cm-tag,
-    .CodeMirror .cm-tag.cm-error,
-    .CodeMirror .cm-tag.cm-bracket.cm-error {
-        color: #f472b6 !important;
-    }
-    
-    body:not(.dark-mode) .CodeMirror .cm-tag,
-    body:not(.dark-mode) .CodeMirror .cm-tag.cm-error,
-    body:not(.dark-mode) .CodeMirror .cm-tag.cm-bracket.cm-error {
-        color: #c026d3 !important;
-    }
-    
-    .CodeMirror .cm-tag.cm-bracket,
-    .CodeMirror .cm-tag.cm-bracket.cm-error {
-        color: #94a3b8 !important;
-    }
-    
-    body:not(.dark-mode) .CodeMirror .cm-tag.cm-bracket,
-    body:not(.dark-mode) .CodeMirror .cm-tag.cm-bracket.cm-error {
-        color: #64748b !important;
-    }
-    
-    /* S'assurer que les balises fermantes ne sont pas en rouge */
-    .CodeMirror .cm-tag.cm-tag-name,
-    .CodeMirror .cm-tag.cm-tag-name.cm-error {
-        color: #f472b6 !important;
-    }
-    
-    body:not(.dark-mode) .CodeMirror .cm-tag.cm-tag-name,
-    body:not(.dark-mode) .CodeMirror .cm-tag.cm-tag-name.cm-error {
-        color: #c026d3 !important;
-    }
-    
-    /* S'assurer que les balises fermantes ne sont pas en rouge */
-    .CodeMirror .cm-tag.cm-tag-name {
-        color: #f472b6 !important;
-    }
-    
-    body:not(.dark-mode) .CodeMirror .cm-tag.cm-tag-name {
-        color: #c026d3 !important;
-    }
-    
-    /* Hide textarea but keep it in DOM for CodeMirror */
-    #codeEditor {
-        position: absolute !important;
-        left: -9999px !important;
-        opacity: 0 !important;
-        width: 1px !important;
-        height: 1px !important;
-        visibility: hidden !important;
-        display: none !important;
-    }
-    
-    /* S'assurer que CodeMirror est visible */
-    .CodeMirror {
-        display: block !important;
-        visibility: visible !important;
-    }
-    
-    .code-editor-wrapper {
-        position: relative;
-    }
-    
-    .result-frame {
-        width: 100%;
-        min-height: 400px;
-        background: white;
-        border: 2px solid rgba(6, 182, 212, 0.3);
-        border-radius: 10px;
-    }
-    
-    .success-message {
-        background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(34, 197, 94, 0.05));
-        border: 2px solid rgba(34, 197, 94, 0.3);
-        border-radius: 10px;
-        padding: 1rem;
-        color: #22c55e;
-        display: none;
-    }
-    
-    .error-message {
-        background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05));
-        border: 2px solid rgba(239, 68, 68, 0.3);
-        border-radius: 10px;
-        padding: 1rem;
-        color: #ef4444;
-        display: none;
-    }
-    
-    /* Text colors */
-    body:not(.dark-mode) .text-gray-300 {
-        color: rgba(30, 41, 59, 0.8) !important;
-    }
-    
-    body:not(.dark-mode) .text-gray-400 {
-        color: rgba(30, 41, 59, 0.6) !important;
-    }
-    
-    body:not(.dark-mode) .text-gray-500 {
-        color: rgba(30, 41, 59, 0.5) !important;
-    }
-    
-    body:not(.dark-mode) .text-white {
-        color: rgba(30, 41, 59, 0.9) !important;
-    }
-    
-    /* Buttons */
-    body:not(.dark-mode) .bg-gray-700 {
-        background: rgba(6, 182, 212, 0.1) !important;
-        color: rgba(30, 41, 59, 0.9) !important;
-        border: 1px solid rgba(6, 182, 212, 0.3) !important;
-    }
-    
-    body:not(.dark-mode) .bg-gray-700:hover {
-        background: rgba(6, 182, 212, 0.15) !important;
-    }
-    
-    /* Info boxes */
-    body:not(.dark-mode) .bg-yellow-500\/10 {
-        background: rgba(234, 179, 8, 0.05) !important;
-        border-color: rgba(234, 179, 8, 0.2) !important;
-    }
-    
-    body:not(.dark-mode) .bg-cyan-500\/10 {
-        background: rgba(6, 182, 212, 0.05) !important;
-        border-color: rgba(6, 182, 212, 0.2) !important;
-    }
-    
-    body:not(.dark-mode) .text-gray-300 {
-        color: rgba(30, 41, 59, 0.7) !important;
-    }
-    
-    body:not(.dark-mode) .text-cyan-400 {
-        color: #06b6d4 !important;
-    }
+  #codeEditor {
+    position: absolute !important; left: -9999px !important;
+    opacity: 0 !important; width: 1px !important; height: 1px !important;
+    display: none !important; visibility: hidden !important;
+  }
 </style>
 @endsection
 
 @section('content')
-<section class="py-20 relative overflow-hidden pt-8">
-    <div class="w-full px-6">
-        <!-- Breadcrumb & Navigation -->
-        <div class="flex items-center justify-between mb-3 flex-wrap gap-4">
-            @if($language !== 'cybersecurite')
-            <div>
-                <a href="{{ route('exercices') }}" class="text-cyan-400 hover:text-cyan-300 transition">
-                    <i class="fas fa-arrow-left mr-2"></i>{{ trans('app.exercices.all_exercices') }}
-                </a>
-                <span class="text-gray-500 mx-2">/</span>
-                <a href="{{ route('exercices.language', $language) }}" class="text-cyan-400 hover:text-cyan-300 transition">
-                    {{ trans('app.formations.languages.' . $language, [], null, ucfirst($language)) }}
-                </a>
-                <span class="text-gray-500 mx-2">/</span>
-                <span class="text-gray-400">{{ trans('app.exercices.exercise') }} {{ $id }}</span>
-            </div>
-            @endif
-            <div class="flex gap-2">
-                @if($id > 1)
-                <a href="{{ route('exercices.detail', [$language, $id - 1]) }}" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition">
-                    <i class="fas fa-chevron-left mr-2"></i>{{ trans('app.exercices.detail.previous') }}
-                </a>
-                @endif
-                @if(isset($totalExercises) && $id < $totalExercises)
-                <a href="{{ route('exercices.detail', [$language, $id + 1]) }}" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition">
-                    {{ trans('app.exercices.detail.next') }}<i class="fas fa-chevron-right ml-2"></i>
-                </a>
-                @endif
-            </div>
-        </div>
+<div class="ed-page">
 
-        <!-- Header -->
-        <div class="mb-8">
-            <div class="flex items-center gap-4 mb-4">
-                <h1 class="text-4xl font-bold text-white">{{ $exercise['title'] }}</h1>
-                @php
-                    $easyDifficulty = trans('app.exercices.difficulty.easy');
-                    $mediumDifficulty = trans('app.exercices.difficulty.medium');
-                    $hardDifficulty = trans('app.exercices.difficulty.hard');
-                    $isEasy = $exercise['difficulty'] === $easyDifficulty || $exercise['difficulty'] === 'Facile' || $exercise['difficulty'] === 'Easy';
-                    $isMedium = $exercise['difficulty'] === $mediumDifficulty || $exercise['difficulty'] === 'Moyen' || $exercise['difficulty'] === 'Medium';
-                    $isHard = $exercise['difficulty'] === $hardDifficulty || $exercise['difficulty'] === 'Difficile' || $exercise['difficulty'] === 'Hard';
-                    $difficultyColor = $isEasy ? 'green' : ($isMedium ? 'yellow' : 'red');
-                    $displayDifficulty = $isEasy ? $easyDifficulty : ($isMedium ? $mediumDifficulty : $hardDifficulty);
-                @endphp
-                <span class="px-4 py-2 bg-{{ $difficultyColor }}-500/10 text-{{ $difficultyColor }}-400 rounded-full text-sm font-semibold">
-                    {{ $displayDifficulty }}
-                </span>
-                <span class="px-4 py-2 bg-purple-500/10 text-purple-400 rounded-full text-sm font-semibold">
-                    <i class="fas fa-star mr-1"></i>{{ $exercise['points'] }} {{ trans('app.exercices.points') }}
-                </span>
-            </div>
-            <p class="text-xl text-cyan-400 mb-2">{{ $exercise['instruction'] }}</p>
-            <p class="text-gray-400">{{ $exercise['description'] }}</p>
-        </div>
+  {{-- ── TOPBAR ─────────────────────────────────────────────── --}}
+  <div class="ed-topbar">
+    <nav class="ed-breadcrumb" aria-label="Fil d'Ariane">
+      <a href="{{ route('exercices') }}"><i class="fas fa-dumbbell"></i> {{ trans('app.exercices.all_exercices') }}</a>
+      <span class="ed-breadcrumb__sep">›</span>
+      <a href="{{ route('exercices.language', $language) }}">{{ $langLabel }}</a>
+      <span class="ed-breadcrumb__sep">›</span>
+      <span class="ed-breadcrumb__current">{{ trans('app.exercices.exercise') }} {{ $id }}</span>
+    </nav>
 
-        <!-- Messages -->
-        <div id="successMessage" class="success-message mb-4">
-            <div class="flex items-center gap-3">
-                <i class="fas fa-check-circle text-2xl"></i>
-                <div>
-                    <div class="font-bold text-lg">{{ trans('app.exercices.detail.success_title') }}</div>
-                    <div>{{ str_replace(':points', $exercise['points'], trans('app.exercices.detail.success_message')) }}</div>
-                </div>
-            </div>
-        </div>
-
-        <div id="errorMessage" class="error-message mb-4">
-            <div class="flex items-center gap-3">
-                <i class="fas fa-times-circle text-2xl"></i>
-                <div>
-                    <div class="font-bold text-lg">{{ trans('app.exercices.detail.error_title') }}</div>
-                    <div id="errorText">{{ trans('app.exercices.detail.error_message') }}</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Exercise Container -->
-        <div class="exercise-container">
-            <!-- Left Panel - Code Editor -->
-            <div class="exercise-panel">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-xl font-bold text-white flex items-center gap-2">
-                        <i class="fas fa-code text-cyan-400"></i>
-                        {{ trans('app.exercices.detail.your_code') }}
-                    </h3>
-                    <button onclick="resetCode()" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition text-sm">
-                        <i class="fas fa-undo mr-2"></i>{{ trans('app.exercices.detail.reset') }}
-                    </button>
-                </div>
-                <div class="code-editor-wrapper">
-                    <textarea id="codeEditor" spellcheck="false" style="display: none !important; visibility: hidden !important; position: absolute !important; left: -9999px !important; opacity: 0 !important; width: 1px !important; height: 1px !important;">{!! htmlspecialchars($exercise['startCode'], ENT_QUOTES, 'UTF-8') !!}</textarea>
-                </div>
-                
-                <div class="mt-4 flex gap-3">
-                    <button onclick="runCode()" class="flex-1 px-6 py-3 bg-gradient-to-r from-cyan-500 to-teal-600 text-white font-bold rounded-lg hover:shadow-lg hover:scale-105 transition">
-                        <i class="fas fa-play mr-2"></i>{{ trans('app.exercices.detail.run_code') }}
-                    </button>
-                    <button onclick="submitCode()" class="flex-1 px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold rounded-lg hover:shadow-lg hover:scale-105 transition">
-                        <i class="fas fa-check mr-2"></i>{{ trans('app.exercices.detail.submit') }}
-                    </button>
-                </div>
-
-                <div class="mt-4 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
-                    <div class="flex items-start gap-2">
-                        <i class="fas fa-lightbulb text-yellow-400 mt-1"></i>
-                        <div>
-                            <div class="font-semibold text-yellow-400 mb-1">{{ trans('app.exercices.detail.hint') }}</div>
-                            <div class="text-gray-300 text-sm">{{ $exercise['hint'] }}</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Right Panel - Result -->
-            <div class="exercise-panel">
-                <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
-                    <i class="fas fa-eye text-cyan-400"></i>
-                    {{ trans('app.exercices.detail.result') }}
-                </h3>
-                <iframe id="resultFrame" class="result-frame"></iframe>
-                
-                <div class="mt-4 p-4 bg-cyan-500/10 border border-cyan-500/20 rounded-lg">
-                    <div class="flex items-start gap-2">
-                        <i class="fas fa-info-circle text-cyan-400 mt-1"></i>
-                        <div class="text-gray-300 text-sm">
-                            {{ trans('app.exercices.detail.result_help') }}
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <div class="ed-nav">
+      @if($id > 1)
+      <a href="{{ route('exercices.detail', [$language, $id - 1]) }}" class="ed-nav-btn">
+        <i class="fas fa-chevron-left"></i>{{ trans('app.exercices.detail.previous') }}
+      </a>
+      @endif
+      @if(isset($totalExercises) && $id < $totalExercises)
+      <a href="{{ route('exercices.detail', [$language, $id + 1]) }}" class="ed-nav-btn">
+        {{ trans('app.exercices.detail.next') }}<i class="fas fa-chevron-right"></i>
+      </a>
+      @endif
     </div>
-</section>
+  </div>
+
+  {{-- ── INFO ──────────────────────────────────────────────── --}}
+  <div class="ed-info">
+    <div class="ed-info__top">
+      <h1 class="ed-ex-title">{{ $exercise['title'] }}</h1>
+      <div class="ed-badges">
+        <span class="ed-badge ed-badge--{{ $diffTier }}">
+          <i class="fas fa-signal"></i>
+          {{ $exercise['difficulty'] }}
+        </span>
+        <span class="ed-badge ed-badge--points">
+          <i class="fas fa-star"></i>
+          {{ $exercise['points'] }} {{ trans('app.exercices.points') }}
+        </span>
+      </div>
+    </div>
+    <p class="ed-instruction">{{ $exercise['instruction'] }}</p>
+    <p class="ed-description">{{ $exercise['description'] }}</p>
+  </div>
+
+  {{-- ── MESSAGES ──────────────────────────────────────────── --}}
+  <div id="successMessage" class="ed-msg ed-msg--success">
+    <div class="ed-msg__inner">
+      <i class="fas fa-check-circle ed-msg__icon"></i>
+      <div>
+        <div class="ed-msg__title">{{ trans('app.exercices.detail.success_title') }}</div>
+        <div class="ed-msg__text">{{ str_replace(':points', $exercise['points'], trans('app.exercices.detail.success_message')) }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="errorMessage" class="ed-msg ed-msg--error">
+    <div class="ed-msg__inner">
+      <i class="fas fa-times-circle ed-msg__icon"></i>
+      <div>
+        <div class="ed-msg__title">{{ trans('app.exercices.detail.error_title') }}</div>
+        <div class="ed-msg__text" id="errorText">{{ trans('app.exercices.detail.error_message') }}</div>
+      </div>
+    </div>
+  </div>
+
+  {{-- ── SPLIT ─────────────────────────────────────────────── --}}
+  <div class="ed-split">
+
+    {{-- LEFT — Code Editor --}}
+    <div class="ed-panel">
+      <div class="ed-panel__header">
+        <div class="ed-panel__title">
+          <i class="fas fa-code"></i>
+          {{ trans('app.exercices.detail.your_code') }}
+          <span class="ed-panel__lang-chip" style="background:{{ $info['bg'] }}22;color:{{ $info['fg'] }};border-color:{{ $info['fg'] }}44">
+            <i class="{{ $info['icon'] }}"></i>
+            {{ $langLabel }}
+          </span>
+        </div>
+        <button onclick="resetCode()" class="ed-panel__btn">
+          <i class="fas fa-undo"></i>{{ trans('app.exercices.detail.reset') }}
+        </button>
+      </div>
+
+      <div class="ed-editor-wrap">
+        <textarea id="codeEditor" spellcheck="false">{!! htmlspecialchars($exercise['startCode'], ENT_QUOTES, 'UTF-8') !!}</textarea>
+      </div>
+
+      <div class="ed-panel__footer">
+        <div class="ed-hint">
+          <i class="fas fa-lightbulb"></i>
+          <div>
+            <div class="ed-hint__label">{{ trans('app.exercices.detail.hint') }}</div>
+            <div class="ed-hint__text">{{ $exercise['hint'] }}</div>
+          </div>
+        </div>
+
+        <div class="ed-actions">
+          <button onclick="runCode()" class="ed-btn ed-btn--run">
+            <i class="fas fa-play"></i>{{ trans('app.exercices.detail.run_code') }}
+          </button>
+          <button onclick="submitCode()" class="ed-btn ed-btn--submit">
+            <i class="fas fa-check"></i>{{ trans('app.exercices.detail.submit') }}
+          </button>
+        </div>
+        <div class="ed-shortcut-hint">Ctrl+Enter → Exécuter</div>
+      </div>
+    </div>
+
+    {{-- RIGHT — Preview --}}
+    <div class="ed-panel">
+      <div class="ed-panel__header">
+        <div class="ed-panel__title">
+          <i class="fas fa-eye"></i>
+          {{ trans('app.exercices.detail.result') }}
+        </div>
+        <button onclick="runCode()" class="ed-panel__btn">
+          <i class="fas fa-sync-alt"></i>Actualiser
+        </button>
+      </div>
+
+      <iframe id="resultFrame" class="ed-iframe"></iframe>
+
+      <div class="ed-panel__footer">
+        <div class="ed-tip">
+          <i class="fas fa-info-circle"></i>
+          <span class="ed-tip__text">{{ trans('app.exercices.detail.result_help') }}</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
 @endsection
 
 @section('scripts')

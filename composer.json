@@ -30,7 +30,8 @@
             "app/Helpers/AssetHelper.php",
             "app/Helpers/CdnHelper.php",
             "app/Helpers/MarkdownHelper.php",
-            "app/Helpers/ImageOptimizer.php"
+            "app/Helpers/ImageOptimizer.php",
+            "app/Helpers/SettingsHelper.php"
         ]
     },
     "autoload-dev": {
