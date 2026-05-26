@@ -1,632 +1,869 @@
 @extends('layouts.app')
 
-@section('title', 'Recherche' . ($query ? " : {$query}" : '') . ' | NiangProgrammeur')
-@section('meta_description', 'Recherchez parmi nos formations et articles d\'emploi.')
+@section('title', $query ? "« {$query} » — Recherche | NiangProgrammeur" : 'Recherche | NiangProgrammeur')
+@section('meta_description', 'Recherchez parmi nos formations, articles emploi et ressources pour développeurs.')
 @push('meta')
-    <link rel="canonical" href="{{ route('search', ['q' => $query]) }}">
+<link rel="canonical" href="{{ route('search', ['q' => $query]) }}">
 @endpush
 
 @section('styles')
 <style>
-    /* Fonts chargées via preload dans layouts.app - pas de @import bloquant */
-    
-    * {
-        box-sizing: border-box;
-    }
-    
-    /* Body background */
-    body:not(.dark-mode) {
-        background: #ffffff !important;
-    }
-    
-    body.dark-mode {
-        background: #0a0a0f !important;
-    }
-    
-    /* Search Hero Section - Ultra Moderne */
-    .search-hero {
-        padding: 140px 20px 80px;
-        text-align: center;
-        background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%);
-        border-bottom: 2px solid rgba(6, 182, 212, 0.2);
-        position: relative;
-        overflow: hidden;
-    }
-    
-    body:not(.dark-mode) .search-hero {
-        background: linear-gradient(135deg, rgba(6, 182, 212, 0.05) 0%, rgba(20, 184, 166, 0.05) 100%) !important;
-        border-bottom-color: rgba(6, 182, 212, 0.15) !important;
-    }
-    
-    .search-hero::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.1), transparent 70%);
-        pointer-events: none;
-    }
-    
-    body:not(.dark-mode) .search-hero::before {
-        background: radial-gradient(circle at 50% 50%, rgba(6, 182, 212, 0.05), transparent 70%) !important;
-    }
-    
-    .search-hero-content {
-        position: relative;
-        z-index: 1;
-        max-width: 800px;
-        margin: 0 auto;
-    }
-    
-    .search-hero h1 {
-        font-family: 'Inter', sans-serif;
-        font-size: clamp(2.5rem, 5vw, 4rem);
-        font-weight: 900;
-        margin-bottom: 30px;
-        background: linear-gradient(135deg, #06b6d4, #14b8a6);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        letter-spacing: -0.02em;
-    }
-    
-    /* Search Form - Glassmorphism */
-    .search-form-large {
-        max-width: 700px;
-        margin: 0 auto;
-        position: relative;
-    }
-    
-    .search-input-large {
-        width: 100%;
-        padding: 20px 70px 20px 25px;
-        background: rgba(15, 23, 42, 0.8);
-        backdrop-filter: blur(20px);
-        border: 2px solid rgba(6, 182, 212, 0.3);
-        border-radius: 16px;
-        color: #fff;
-        font-size: 1.1rem;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        outline: none;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-    }
-    
-    body:not(.dark-mode) .search-input-large {
-        background: rgba(255, 255, 255, 0.9) !important;
-        border-color: rgba(6, 182, 212, 0.3) !important;
-        color: rgba(30, 41, 59, 0.9) !important;
-        box-shadow: 0 10px 40px rgba(6, 182, 212, 0.1) !important;
-    }
-    
-    .search-input-large:focus {
-        border-color: #06b6d4;
-        box-shadow: 0 0 30px rgba(6, 182, 212, 0.4);
-        transform: translateY(-2px);
-    }
-    
-    body:not(.dark-mode) .search-input-large:focus {
-        box-shadow: 0 0 30px rgba(6, 182, 212, 0.3) !important;
-    }
-    
-    .search-input-large::placeholder {
-        color: rgba(255, 255, 255, 0.5);
-    }
-    
-    body:not(.dark-mode) .search-input-large::placeholder {
-        color: rgba(30, 41, 59, 0.5) !important;
-    }
-    
-    .search-button-large {
-        position: absolute;
-        right: 8px;
-        top: 50%;
-        transform: translateY(-50%);
-        background: linear-gradient(135deg, #06b6d4, #14b8a6);
-        border: none;
-        color: #000;
-        padding: 14px 24px;
-        border-radius: 12px;
-        cursor: pointer;
-        font-weight: 700;
-        font-size: 1rem;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
-    }
-    
-    .search-button-large:hover {
-        transform: translateY(-50%) scale(1.05);
-        box-shadow: 0 8px 25px rgba(6, 182, 212, 0.5);
-    }
-    
-    .search-button-large:active {
-        transform: translateY(-50%) scale(0.98);
-    }
-    
-    /* Results Section */
-    .results-section {
-        max-width: 1400px;
-        margin: 80px auto;
-        padding: 0 20px;
-    }
-    
-    .results-header {
-        margin-bottom: 40px;
-    }
-    
-    .results-count {
-        color: rgba(255, 255, 255, 0.8);
-        font-size: 1.2rem;
-        font-weight: 500;
-    }
-    
-    body:not(.dark-mode) .results-count {
-        color: rgba(30, 41, 59, 0.8) !important;
-    }
-    
-    .results-count strong {
-        color: #06b6d4;
-        font-weight: 700;
-    }
-    
-    /* Filters - Modern Design */
-    .filters-container {
-        display: flex;
-        gap: 12px;
-        flex-wrap: wrap;
-        align-items: center;
-        margin-top: 20px;
-        padding: 20px;
-        background: rgba(15, 23, 42, 0.6);
-        backdrop-filter: blur(20px);
-        border: 1px solid rgba(6, 182, 212, 0.2);
-        border-radius: 16px;
-    }
-    
-    body:not(.dark-mode) .filters-container {
-        background: rgba(255, 255, 255, 0.9) !important;
-        border-color: rgba(6, 182, 212, 0.25) !important;
-        box-shadow: 0 10px 40px rgba(6, 182, 212, 0.1) !important;
-    }
-    
-    .filter-select {
-        padding: 10px 16px;
-        background: rgba(15, 23, 42, 0.8);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(6, 182, 212, 0.3);
-        border-radius: 10px;
-        color: #fff;
-        font-size: 0.95rem;
-        outline: none;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        flex: 1;
-        min-width: 150px;
-    }
-    
-    body:not(.dark-mode) .filter-select {
-        background: rgba(255, 255, 255, 0.9) !important;
-        border-color: rgba(6, 182, 212, 0.3) !important;
-        color: rgba(30, 41, 59, 0.9) !important;
-    }
-    
-    .filter-select:focus {
-        border-color: #06b6d4;
-        box-shadow: 0 0 15px rgba(6, 182, 212, 0.3);
-    }
-    
-    .filter-button {
-        padding: 10px 20px;
-        background: linear-gradient(135deg, #06b6d4, #14b8a6);
-        border: none;
-        border-radius: 10px;
-        color: #000;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        white-space: nowrap;
-        box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
-    }
-    
-    .filter-button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(6, 182, 212, 0.4);
-    }
-    
-    /* Results Grid - Ultra Modern Cards */
-    .results-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-        gap: 30px;
-        margin-top: 40px;
-    }
-    
-    @media (max-width: 768px) {
-        .results-grid {
-            grid-template-columns: 1fr;
-            gap: 20px;
-        }
-    }
-    
-    .result-card {
-        background: rgba(15, 23, 42, 0.7);
-        backdrop-filter: blur(20px);
-        border: 2px solid rgba(6, 182, 212, 0.2);
-        border-radius: 24px;
-        padding: 0;
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        text-decoration: none;
-        display: block;
-        color: inherit;
-        position: relative;
-        overflow: hidden;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-    }
-    
-    .result-card-image-wrapper {
-        width: 100%;
-        height: 200px;
-        overflow: hidden;
-        position: relative;
-    }
-    
-    .result-card-image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.5s ease;
-    }
-    
-    .result-card:hover .result-card-image {
-        transform: scale(1.1);
-    }
-    
-    .result-card-image-placeholder {
-        width: 100%;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2));
-    }
-    
-    .result-card-image-placeholder i {
-        font-size: 4rem;
-        color: rgba(6, 182, 212, 0.4);
-    }
-    
-    .result-card-content {
-        padding: 30px;
-    }
-    
-    body:not(.dark-mode) .result-card {
-        background: rgba(255, 255, 255, 0.9) !important;
-        border-color: rgba(6, 182, 212, 0.25) !important;
-        box-shadow: 0 10px 40px rgba(6, 182, 212, 0.1) !important;
-    }
-    
-    .result-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(6, 182, 212, 0.1), transparent);
-        transition: left 0.6s;
-    }
-    
-    .result-card:hover {
-        border-color: rgba(6, 182, 212, 0.6);
-        transform: translateY(-8px) scale(1.02);
-        box-shadow: 0 20px 60px rgba(6, 182, 212, 0.3);
-    }
-    
-    body:not(.dark-mode) .result-card:hover {
-        box-shadow: 0 20px 60px rgba(6, 182, 212, 0.2) !important;
-    }
-    
-    .result-card:hover::before {
-        left: 100%;
-    }
-    
-    .result-type {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-        padding: 6px 14px;
-        background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2));
-        color: #06b6d4;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 16px;
-        border: 1px solid rgba(6, 182, 212, 0.3);
-    }
-    
-    body:not(.dark-mode) .result-type {
-        background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(20, 184, 166, 0.1)) !important;
-        border-color: rgba(6, 182, 212, 0.25) !important;
-    }
-    
-    .result-title {
-        font-size: 1.4rem;
-        font-weight: 800;
-        color: #fff;
-        margin-bottom: 12px;
-        line-height: 1.3;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-    
-    body:not(.dark-mode) .result-title {
-        color: rgba(30, 41, 59, 0.9) !important;
-    }
-    
-    .result-description {
-        color: rgba(255, 255, 255, 0.75);
-        line-height: 1.7;
-        margin-bottom: 20px;
-        font-size: 0.95rem;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-    
-    body:not(.dark-mode) .result-description {
-        color: rgba(30, 41, 59, 0.7) !important;
-    }
-    
-    .result-meta {
-        display: flex;
-        align-items: center;
-        gap: 20px;
-        flex-wrap: wrap;
-        color: rgba(255, 255, 255, 0.6);
-        font-size: 0.9rem;
-        padding-top: 16px;
-        border-top: 1px solid rgba(6, 182, 212, 0.2);
-    }
-    
-    body:not(.dark-mode) .result-meta {
-        color: rgba(30, 41, 59, 0.6) !important;
-        border-top-color: rgba(6, 182, 212, 0.15) !important;
-    }
-    
-    .result-meta span {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-    }
-    
-    .result-meta i {
-        color: #06b6d4;
-        font-size: 0.85rem;
-    }
-    
-    /* No Results */
-    .no-results {
-        text-align: center;
-        padding: 100px 20px;
-        background: rgba(15, 23, 42, 0.5);
-        backdrop-filter: blur(20px);
-        border: 2px dashed rgba(6, 182, 212, 0.3);
-        border-radius: 24px;
-    }
-    
-    body:not(.dark-mode) .no-results {
-        background: rgba(255, 255, 255, 0.9) !important;
-        border-color: rgba(6, 182, 212, 0.25) !important;
-    }
-    
-    .no-results-icon {
-        font-size: 5rem;
-        color: rgba(6, 182, 212, 0.4);
-        margin-bottom: 30px;
-        animation: pulse 2s ease-in-out infinite;
-    }
-    
-    @keyframes pulse {
-        0%, 100% { transform: scale(1); opacity: 0.4; }
-        50% { transform: scale(1.1); opacity: 0.6; }
-    }
-    
-    .no-results h2 {
-        font-size: 2rem;
-        font-weight: 800;
-        margin-bottom: 20px;
-        color: rgba(255, 255, 255, 0.9);
-    }
-    
-    body:not(.dark-mode) .no-results h2 {
-        color: rgba(30, 41, 59, 0.9) !important;
-    }
-    
-    .no-results p {
-        color: rgba(255, 255, 255, 0.7);
-        margin-bottom: 40px;
-        font-size: 1.1rem;
-    }
-    
-    body:not(.dark-mode) .no-results p {
-        color: rgba(30, 41, 59, 0.7) !important;
-    }
-    
-    .no-results-button {
-        display: inline-block;
-        padding: 14px 28px;
-        background: linear-gradient(135deg, #06b6d4, #14b8a6);
-        color: #000;
-        font-weight: 700;
-        border-radius: 12px;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(6, 182, 212, 0.3);
-    }
-    
-    .no-results-button:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 25px rgba(6, 182, 212, 0.5);
-    }
+/* ============================================================
+   SEARCH PAGE — sr-* design system
+   Charte NiangProgrammeur — accent cyan/teal — unlayered
+   ============================================================ */
+
+.sr-page {
+  --sr-bg:      #f8fafc;
+  --sr-surface: #ffffff;
+  --sr-border:  #e2e8f0;
+  --sr-accent:  oklch(52% 0.18 200);
+  --sr-accent2: oklch(50% 0.15 178);
+  --sr-text:    #0f172a;
+  --sr-muted:   #64748b;
+  --sr-shadow:  0 1px 3px rgba(0,0,0,.05), 0 4px 16px rgba(0,0,0,.06);
+  --sr-formation: oklch(52% 0.18 200);
+  --sr-article:   oklch(50% 0.18 145);
+
+  background: var(--sr-bg);
+  color: var(--sr-text);
+  font-family: 'Inter', system-ui, sans-serif;
+  min-block-size: 100dvh;
+  padding-block-end: 4rem;
+}
+
+/* ── HERO ─────────────────────────────────────────────────── */
+.sr-hero {
+  background: var(--sr-surface);
+  border-block-end: 1px solid var(--sr-border);
+  padding-block-start: calc(var(--spacing-navbar, 76px) + 3rem) !important;
+  padding-block-end: 2.5rem;
+  padding-inline: 1.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.sr-hero::before {
+  content: '';
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  block-size: 3px;
+  background: linear-gradient(90deg,
+    oklch(52% 0.18 200),
+    oklch(50% 0.15 178),
+    oklch(52% 0.18 200));
+  background-size: 200% 100%;
+  animation: sr-shimmer 4s linear infinite;
+}
+
+@keyframes sr-shimmer {
+  0%   { background-position:  200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.sr-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 50% 80% at 95% 40%, oklch(52% 0.18 200 / 5%) 0%, transparent 55%),
+    radial-gradient(ellipse 35% 50% at 0%  90%, oklch(50% 0.15 178 / 4%) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.sr-hero__inner {
+  max-inline-size: 56rem;
+  margin-inline: auto;
+  position: relative;
+  z-index: 1;
+}
+
+.sr-hero__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .3rem .9rem;
+  border-radius: 100px;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  background: oklch(52% 0.18 200 / 8%);
+  border: 1px solid oklch(52% 0.18 200 / 25%);
+  color: oklch(52% 0.18 200);
+  margin-block-end: 1.1rem;
+}
+
+.sr-hero__title {
+  font-family: 'Poppins', system-ui, sans-serif;
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 900;
+  line-height: 1.1;
+  color: var(--sr-text);
+  margin-block-end: .5rem;
+}
+
+.sr-hero__title span {
+  background: linear-gradient(135deg, oklch(52% 0.18 200), oklch(50% 0.15 178));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.sr-hero__count {
+  font-size: .95rem;
+  color: var(--sr-muted);
+  margin-block-end: 1.75rem;
+  min-block-size: 1.4em;
+}
+
+.sr-hero__count strong { color: var(--sr-text); font-weight: 700; }
+.sr-hero__count em    { color: oklch(52% 0.18 200); font-style: normal; font-weight: 700; }
+
+/* Search bar */
+.sr-search {
+  max-inline-size: 52rem;
+}
+
+.sr-search__wrap {
+  display: flex;
+  align-items: center;
+  background: var(--sr-bg);
+  border: 1.5px solid var(--sr-border);
+  border-radius: 14px;
+  overflow: hidden;
+  transition: border-color .2s, box-shadow .2s;
+}
+
+.sr-search__wrap:focus-within {
+  border-color: oklch(52% 0.18 200 / 65%);
+  box-shadow: 0 0 0 3px oklch(52% 0.18 200 / 10%);
+}
+
+.sr-search__ico {
+  padding-inline: 1.15rem;
+  color: var(--sr-muted);
+  font-size: .9rem;
+  flex-shrink: 0;
+}
+
+.sr-search__input {
+  flex: 1;
+  padding: .95rem 0;
+  border: none;
+  background: transparent;
+  font-size: 1rem;
+  color: var(--sr-text);
+  outline: none;
+  font-family: inherit;
+}
+
+.sr-search__input::placeholder { color: var(--sr-muted); }
+
+.sr-search__btn {
+  margin: .3rem;
+  padding: .7rem 1.5rem;
+  background: linear-gradient(135deg, oklch(52% 0.18 200), oklch(50% 0.15 178));
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: .85rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: transform .2s, box-shadow .2s;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+}
+
+.sr-search__btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px oklch(52% 0.18 200 / 30%);
+}
+
+/* ── FILTERS STRIP ────────────────────────────────────────── */
+.sr-strip {
+  background: var(--sr-surface);
+  border-block-end: 1px solid var(--sr-border);
+  padding-block: .85rem;
+  padding-inline: 1.5rem;
+}
+
+.sr-strip__inner {
+  max-inline-size: 56rem;
+  margin-inline: auto;
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  flex-wrap: wrap;
+}
+
+.sr-filters {
+  display: contents;
+}
+
+.sr-filter-lbl {
+  font-size: .75rem;
+  font-weight: 700;
+  color: var(--sr-muted);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  flex-shrink: 0;
+}
+
+.sr-select {
+  padding: .5rem .85rem;
+  background: var(--sr-bg);
+  border: 1.5px solid var(--sr-border);
+  border-radius: 9px;
+  color: var(--sr-text);
+  font-size: .82rem;
+  font-family: inherit;
+  outline: none;
+  cursor: pointer;
+  transition: border-color .2s;
+  min-inline-size: 0;
+}
+
+.sr-select:focus {
+  border-color: oklch(52% 0.18 200 / 50%);
+}
+
+.sr-filter-btn {
+  padding: .5rem 1.1rem;
+  background: linear-gradient(135deg, oklch(52% 0.18 200), oklch(50% 0.15 178));
+  color: #fff;
+  border: none;
+  border-radius: 9px;
+  font-size: .82rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: transform .15s, box-shadow .15s;
+  display: flex;
+  align-items: center;
+  gap: .35rem;
+  flex-shrink: 0;
+}
+
+.sr-filter-btn:hover { transform: translateY(-1px); box-shadow: 0 3px 10px oklch(52% 0.18 200 / 28%); }
+
+.sr-clear {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  font-size: .78rem;
+  font-weight: 600;
+  color: var(--sr-muted);
+  text-decoration: none;
+  padding: .4rem .75rem;
+  border-radius: 8px;
+  border: 1px solid var(--sr-border);
+  transition: color .2s, border-color .2s;
+  flex-shrink: 0;
+}
+
+.sr-clear:hover { color: oklch(52% 0.20 25); border-color: oklch(52% 0.20 25 / 40%); }
+
+/* ── MAIN ─────────────────────────────────────────────────── */
+.sr-main {
+  padding-block: 2.5rem;
+  padding-inline: 1.5rem;
+}
+
+.sr-container {
+  max-inline-size: 56rem;
+  margin-inline: auto;
+}
+
+/* Section header */
+.sr-section { margin-block-end: 2.5rem; }
+
+.sr-section__hd {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  margin-block-end: 1.1rem;
+  padding-block-end: .75rem;
+  border-block-end: 1.5px solid var(--sr-border);
+}
+
+.sr-section__icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .82rem;
+  flex-shrink: 0;
+}
+
+.sr-section--formations .sr-section__icon { background: oklch(52% 0.18 200 / 10%); color: oklch(52% 0.18 200); }
+.sr-section--articles   .sr-section__icon { background: oklch(50% 0.18 145 / 10%); color: oklch(50% 0.18 145); }
+
+.sr-section__title {
+  font-family: 'Poppins', system-ui, sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--sr-text);
+  flex: 1;
+}
+
+.sr-section__badge {
+  display: inline-flex;
+  align-items: center;
+  padding: .2rem .65rem;
+  border-radius: 100px;
+  font-size: .72rem;
+  font-weight: 700;
+}
+
+.sr-section--formations .sr-section__badge { background: oklch(52% 0.18 200 / 10%); color: oklch(52% 0.18 200); }
+.sr-section--articles   .sr-section__badge { background: oklch(50% 0.18 145 / 10%); color: oklch(50% 0.18 145); }
+
+/* ── RESULT CARD ──────────────────────────────────────────── */
+.sr-list {
+  display: flex;
+  flex-direction: column;
+  gap: .85rem;
+}
+
+.sr-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.1rem;
+  background: var(--sr-surface);
+  border: 1.5px solid var(--sr-border);
+  border-radius: 16px;
+  padding: 1.25rem;
+  text-decoration: none;
+  color: inherit;
+  box-shadow: var(--sr-shadow);
+  transition: box-shadow .22s, border-color .22s, transform .22s;
+  position: relative;
+  overflow: hidden;
+}
+
+.sr-card::before {
+  content: '';
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block: 0;
+  inline-size: 3px;
+  border-radius: 16px 0 0 16px;
+  opacity: 0;
+  transition: opacity .22s;
+}
+
+.sr-section--formations .sr-card::before { background: oklch(52% 0.18 200); }
+.sr-section--articles   .sr-card::before { background: oklch(50% 0.18 145); }
+
+.sr-card:hover {
+  box-shadow: 0 6px 28px rgba(0,0,0,.09);
+  border-color: oklch(52% 0.18 200 / 30%);
+  transform: translateX(4px);
+  color: inherit;
+  text-decoration: none;
+}
+
+.sr-card:hover::before { opacity: 1; }
+
+/* Thumbnail */
+.sr-card__thumb {
+  width: 76px;
+  height: 76px;
+  border-radius: 12px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: var(--sr-bg);
+  border: 1px solid var(--sr-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sr-card__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .35s;
+}
+
+.sr-card:hover .sr-card__thumb img { transform: scale(1.08); }
+
+.sr-card__thumb-ico {
+  font-size: 1.6rem;
+  opacity: .35;
+}
+
+.sr-section--formations .sr-card__thumb-ico { color: oklch(52% 0.18 200); }
+.sr-section--articles   .sr-card__thumb-ico { color: oklch(50% 0.18 145); }
+
+/* Content */
+.sr-card__body { flex: 1; min-inline-size: 0; }
+
+.sr-card__type {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  padding: .18rem .6rem;
+  border-radius: 100px;
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  margin-block-end: .45rem;
+  border: 1px solid;
+}
+
+.sr-section--formations .sr-card__type {
+  background: oklch(52% 0.18 200 / 8%);
+  border-color: oklch(52% 0.18 200 / 25%);
+  color: oklch(52% 0.18 200);
+}
+
+.sr-section--articles .sr-card__type {
+  background: oklch(50% 0.18 145 / 8%);
+  border-color: oklch(50% 0.18 145 / 25%);
+  color: oklch(50% 0.18 145);
+}
+
+.sr-card__title {
+  font-family: 'Poppins', system-ui, sans-serif;
+  font-size: .98rem;
+  font-weight: 800;
+  color: var(--sr-text);
+  line-height: 1.3;
+  margin-block-end: .4rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  transition: color .2s;
+}
+
+.sr-card:hover .sr-card__title { color: oklch(52% 0.18 200); }
+
+.sr-card__excerpt {
+  font-size: .8rem;
+  color: var(--sr-muted);
+  line-height: 1.55;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin-block-end: .6rem;
+}
+
+.sr-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem;
+  align-items: center;
+}
+
+.sr-meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  font-size: .72rem;
+  font-weight: 600;
+  color: var(--sr-muted);
+}
+
+.sr-meta-item i { font-size: .65rem; color: oklch(52% 0.18 200); }
+
+/* Arrow */
+.sr-card__arrow {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: oklch(52% 0.18 200 / 8%);
+  border: 1px solid oklch(52% 0.18 200 / 20%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .65rem;
+  color: var(--sr-muted);
+  flex-shrink: 0;
+  align-self: center;
+  transition: background .2s, color .2s, transform .2s;
+}
+
+.sr-card:hover .sr-card__arrow {
+  background: oklch(52% 0.18 200);
+  color: #fff;
+  transform: translateX(2px);
+}
+
+/* ── EMPTY / NO-QUERY STATE ───────────────────────────────── */
+.sr-empty {
+  background: var(--sr-surface);
+  border: 1.5px dashed var(--sr-border);
+  border-radius: 18px;
+  padding: 4rem 2rem;
+  text-align: center;
+}
+
+.sr-empty__ico {
+  width: 64px;
+  height: 64px;
+  border-radius: 18px;
+  background: oklch(52% 0.18 200 / 8%);
+  border: 1px solid oklch(52% 0.18 200 / 20%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: oklch(52% 0.18 200);
+  margin: 0 auto 1.25rem;
+}
+
+.sr-empty__title {
+  font-family: 'Poppins', system-ui, sans-serif;
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--sr-text);
+  margin-block-end: .5rem;
+}
+
+.sr-empty__sub {
+  font-size: .9rem;
+  color: var(--sr-muted);
+  line-height: 1.6;
+  margin-block-end: 1.75rem;
+  max-inline-size: 36rem;
+  margin-inline: auto;
+}
+
+.sr-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  padding: .7rem 1.5rem;
+  background: linear-gradient(135deg, oklch(52% 0.18 200), oklch(50% 0.15 178));
+  color: #fff;
+  border-radius: 10px;
+  font-size: .85rem;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 4px 14px oklch(52% 0.18 200 / 28%);
+  transition: transform .2s, box-shadow .2s;
+}
+
+.sr-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px oklch(52% 0.18 200 / 38%);
+  color: #fff;
+}
+
+/* Popular suggestions chips */
+.sr-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  justify-content: center;
+  margin-block-start: 1.25rem;
+}
+
+.sr-suggestion {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  padding: .4rem .9rem;
+  background: var(--sr-bg);
+  border: 1.5px solid var(--sr-border);
+  border-radius: 100px;
+  font-size: .78rem;
+  font-weight: 600;
+  color: var(--sr-text);
+  text-decoration: none;
+  transition: border-color .2s, background .2s, color .2s;
+}
+
+.sr-suggestion:hover {
+  border-color: oklch(52% 0.18 200 / 50%);
+  background: oklch(52% 0.18 200 / 6%);
+  color: oklch(52% 0.18 200);
+}
+
+.sr-suggestion i { font-size: .7rem; color: oklch(52% 0.18 200); }
+
+/* ── RESPONSIVE ───────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .sr-card { flex-direction: column; gap: .85rem; }
+  .sr-card__thumb { width: 100%; height: 160px; border-radius: 10px; }
+  .sr-card__arrow { display: none; }
+  .sr-strip__inner { gap: .5rem; }
+  .sr-select { min-inline-size: 120px; }
+}
 </style>
 @endsection
 
 @section('content')
-<!-- Search Hero -->
-<section class="search-hero">
-    <div class="search-hero-content">
-        <h1>🔍 Recherche</h1>
-        <form action="{{ route('search') }}" method="GET" class="search-form-large" role="search">
-            <input type="search" name="q" value="{{ $query }}" 
-                   placeholder="Rechercher une formation, un article..." 
-                   class="search-input-large"
-                   aria-label="Rechercher sur le site"
-                   autofocus>
-            <button type="submit" class="search-button-large" aria-label="Lancer la recherche">
-                <i class="fas fa-search"></i> Rechercher
-            </button>
-        </form>
-    </div>
-</section>
+<div class="sr-page">
 
-<!-- Results Section -->
-@if($query)
-<section class="results-section">
-    <div class="results-header">
-        <p class="results-count">
-            <strong>{{ $results['total'] }}</strong> résultat(s) pour "<strong>{{ $query }}</strong>"
-        </p>
-        
-        <!-- Filtres avancés -->
-        <form action="{{ route('search') }}" method="GET" class="filters-container">
-            <input type="hidden" name="q" value="{{ $query }}">
-            
-            <select name="category" class="filter-select">
-                <option value="">Toutes les catégories</option>
-                @foreach($categories as $cat)
-                    <option value="{{ $cat->id }}" {{ $category == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
-                @endforeach
-            </select>
-            
-            <select name="date" class="filter-select">
-                <option value="">Toutes les dates</option>
-                <option value="today" {{ $dateFilter == 'today' ? 'selected' : '' }}>Aujourd'hui</option>
-                <option value="week" {{ $dateFilter == 'week' ? 'selected' : '' }}>Cette semaine</option>
-                <option value="month" {{ $dateFilter == 'month' ? 'selected' : '' }}>Ce mois</option>
-                <option value="year" {{ $dateFilter == 'year' ? 'selected' : '' }}>Cette année</option>
-            </select>
-            
-            <select name="sort" class="filter-select">
-                <option value="relevance" {{ $sortBy == 'relevance' ? 'selected' : '' }}>Pertinence</option>
-                <option value="date" {{ $sortBy == 'date' ? 'selected' : '' }}>Plus récent</option>
-                <option value="views" {{ $sortBy == 'views' ? 'selected' : '' }}>Plus vus</option>
-                <option value="title" {{ $sortBy == 'title' ? 'selected' : '' }}>Titre (A-Z)</option>
-            </select>
-            
-            <button type="submit" class="filter-button">
-                <i class="fas fa-filter"></i> Appliquer
-            </button>
-        </form>
-    </div>
-    
-    @if($results['total'] > 0)
-    <div class="results-grid">
-        @foreach($results['formations'] as $formation)
-        <a href="{{ $formation['url'] }}" class="result-card">
-            <div class="result-card-image-wrapper">
-                @php
-                    $formationImages = [
-                        'HTML5' => 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=600&h=400&fit=crop',
-                        'CSS3' => 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=400&fit=crop',
-                        'JavaScript' => 'https://images.unsplash.com/photo-1579468118864-1b9ea3c0db4a?w=600&h=400&fit=crop',
-                        'PHP' => 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=400&fit=crop',
-                        'Bootstrap' => 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=600&h=400&fit=crop',
-                        'Git' => 'https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?w=600&h=400&fit=crop',
-                        'WordPress' => 'https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=600&h=400&fit=crop',
-                        'Intelligence Artificielle' => 'https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=600&h=400&fit=crop',
-                    ];
-                    $formationImage = $formationImages[$formation['name']] ?? 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&h=400&fit=crop';
-                @endphp
-                <img src="{{ $formationImage }}" 
-                     alt="{{ $formation['name'] }} - Formation"
-                     class="result-card-image"
-                     loading="lazy"
-                     onerror="this.parentElement.innerHTML='<div class=\'result-card-image-placeholder\'><i class=\'fas fa-graduation-cap\'></i></div>'">
-            </div>
-            <div class="result-card-content">
-                <span class="result-type">
-                    <i class="fas fa-graduation-cap"></i>
-                    Formation
-                </span>
-                <h3 class="result-title">{{ $formation['name'] }}</h3>
-                <p class="result-description">{{ $formation['description'] }}</p>
-                <div class="result-meta">
-                    <span><i class="fas fa-clock"></i> Gratuit</span>
-                    <span><i class="fas fa-book"></i> Cours complet</span>
-                </div>
-            </div>
-        </a>
-        @endforeach
-        
-        @foreach($results['articles'] as $article)
-        <a href="{{ route('emplois.article', $article->slug) }}" class="result-card">
-            <div class="result-card-image-wrapper">
-                @if($article->cover_image)
-                <img src="{{ $article->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($article->cover_image) : $article->cover_image }}" 
-                     alt="{{ $article->title }} - {{ $article->category->name }}" 
-                     class="result-card-image"
-                     loading="lazy"
-                     onerror="this.parentElement.innerHTML='<div class=\'result-card-image-placeholder\'><i class=\'fas fa-briefcase\'></i></div>'">
-                @else
-                <div class="result-card-image-placeholder">
-                    <i class="fas fa-briefcase"></i>
-                </div>
-                @endif
-            </div>
-            <div class="result-card-content">
-                <span class="result-type">
-                    <i class="fas fa-briefcase"></i>
-                    Article d'emploi
-                </span>
-                <h3 class="result-title">{{ $article->title }}</h3>
-                <p class="result-description">{{ $article->excerpt ?? Str::limit(strip_tags($article->content), 150) }}</p>
-                <div class="result-meta">
-                    <span><i class="fas fa-folder"></i> {{ $article->category->name }}</span>
-                    <span><i class="fas fa-calendar"></i> {{ $article->published_at ? $article->published_at->format('d/m/Y') : $article->created_at->format('d/m/Y') }}</span>
-                    <span><i class="fas fa-eye"></i> {{ $article->featured_display_views }}</span>
-                </div>
-            </div>
-        </a>
-        @endforeach
-    </div>
-    @else
-    <div class="no-results">
-        <div class="no-results-icon">
-            <i class="fas fa-search"></i>
+  {{-- ── HERO ──────────────────────────────────────────────── --}}
+  <div class="sr-hero">
+    <div class="sr-hero__inner">
+
+      <div class="sr-hero__eyebrow">
+        <i class="fas fa-search"></i>
+        Recherche globale
+      </div>
+
+      <h1 class="sr-hero__title">
+        @if($query)
+          Résultats pour <span>« {{ $query }} »</span>
+        @else
+          Rechercher sur <span>NiangProgrammeur</span>
+        @endif
+      </h1>
+
+      <p class="sr-hero__count">
+        @if($query && strlen($query) >= 2)
+          <strong>{{ $results['total'] }}</strong>
+          résultat{{ $results['total'] > 1 ? 's' : '' }} trouvé{{ $results['total'] > 1 ? 's' : '' }}
+          — <em>{{ $results['formations']->count() }}</em> formation{{ $results['formations']->count() > 1 ? 's' : '' }},
+          <em>{{ $results['articles']->count() }}</em> article{{ $results['articles']->count() > 1 ? 's' : '' }}
+        @elseif($query)
+          Saisissez au moins 2 caractères pour lancer la recherche.
+        @else
+          Formations, articles emploi, ressources…
+        @endif
+      </p>
+
+      <form class="sr-search" action="{{ route('search') }}" method="GET" role="search">
+        <div class="sr-search__wrap">
+          <i class="fas fa-search sr-search__ico" aria-hidden="true"></i>
+          <input
+            class="sr-search__input"
+            type="search"
+            name="q"
+            value="{{ $query }}"
+            placeholder="Formation, technologie, emploi…"
+            aria-label="Rechercher sur le site"
+            autocomplete="off"
+            autofocus
+          >
+          <button class="sr-search__btn" type="submit">
+            <i class="fas fa-arrow-right"></i>
+            Rechercher
+          </button>
         </div>
-        <h2>Aucun résultat trouvé</h2>
-        <p>Essayez avec d'autres mots-clés ou parcourez nos formations ci-dessous.</p>
-        <a href="{{ route('home') }}#technologies" class="no-results-button">
-            <i class="fas fa-arrow-left"></i> Voir toutes les formations
-        </a>
+      </form>
+
     </div>
-    @endif
-</section>
-@else
-<section class="results-section">
-    <div class="no-results">
-        <div class="no-results-icon">
-            <i class="fas fa-search"></i>
+  </div>
+
+  {{-- ── FILTERS STRIP ──────────────────────────────────────── --}}
+  @if($query && strlen($query) >= 2)
+  <div class="sr-strip">
+    <div class="sr-strip__inner">
+      <form class="sr-filters" action="{{ route('search') }}" method="GET">
+        <input type="hidden" name="q" value="{{ $query }}">
+
+        <span class="sr-filter-lbl"><i class="fas fa-sliders-h"></i> Filtrer</span>
+
+        <select name="category" class="sr-select" onchange="this.form.submit()">
+          <option value="">Toutes catégories</option>
+          @foreach($categories as $cat)
+          <option value="{{ $cat->id }}" {{ $category == $cat->id ? 'selected' : '' }}>
+            {{ $cat->name }}
+          </option>
+          @endforeach
+        </select>
+
+        <select name="date" class="sr-select" onchange="this.form.submit()">
+          <option value="">Toutes dates</option>
+          <option value="today" {{ $dateFilter == 'today' ? 'selected' : '' }}>Aujourd'hui</option>
+          <option value="week"  {{ $dateFilter == 'week'  ? 'selected' : '' }}>Cette semaine</option>
+          <option value="month" {{ $dateFilter == 'month' ? 'selected' : '' }}>Ce mois</option>
+          <option value="year"  {{ $dateFilter == 'year'  ? 'selected' : '' }}>Cette année</option>
+        </select>
+
+        <select name="sort" class="sr-select" onchange="this.form.submit()">
+          <option value="relevance" {{ $sortBy == 'relevance' ? 'selected' : '' }}>Pertinence</option>
+          <option value="date"      {{ $sortBy == 'date'      ? 'selected' : '' }}>Plus récent</option>
+          <option value="views"     {{ $sortBy == 'views'     ? 'selected' : '' }}>Plus vus</option>
+          <option value="title"     {{ $sortBy == 'title'     ? 'selected' : '' }}>Titre A-Z</option>
+        </select>
+
+      </form>
+
+      @if($category || $dateFilter || $sortBy !== 'relevance')
+      <a href="{{ route('search', ['q' => $query]) }}" class="sr-clear">
+        <i class="fas fa-times"></i> Effacer filtres
+      </a>
+      @endif
+
+    </div>
+  </div>
+  @endif
+
+  {{-- ── RESULTS ─────────────────────────────────────────────── --}}
+  <div class="sr-main">
+    <div class="sr-container">
+
+      @if($query && strlen($query) >= 2)
+
+        @if($results['total'] > 0)
+
+          {{-- FORMATIONS --}}
+          @if($results['formations']->count() > 0)
+          <div class="sr-section sr-section--formations">
+            <div class="sr-section__hd">
+              <div class="sr-section__icon"><i class="fas fa-graduation-cap"></i></div>
+              <span class="sr-section__title">Formations</span>
+              <span class="sr-section__badge">{{ $results['formations']->count() }}</span>
+            </div>
+            <div class="sr-list">
+              @foreach($results['formations'] as $formation)
+              @php
+                $icons = [
+                  'HTML5' => 'fab fa-html5', 'CSS3' => 'fab fa-css3-alt',
+                  'JavaScript' => 'fab fa-js', 'PHP' => 'fab fa-php',
+                  'Bootstrap' => 'fab fa-bootstrap', 'Git' => 'fab fa-git-alt',
+                  'WordPress' => 'fab fa-wordpress',
+                  'Intelligence Artificielle' => 'fas fa-robot',
+                ];
+                $fIcon = $icons[$formation['name']] ?? 'fas fa-code';
+              @endphp
+              <a href="{{ $formation['url'] }}" class="sr-card">
+                <div class="sr-card__thumb">
+                  <i class="{{ $fIcon }} sr-card__thumb-ico"></i>
+                </div>
+                <div class="sr-card__body">
+                  <div class="sr-card__type">
+                    <i class="fas fa-graduation-cap"></i> Formation
+                  </div>
+                  <div class="sr-card__title">{{ $formation['name'] }}</div>
+                  <div class="sr-card__excerpt">{{ $formation['description'] }}</div>
+                  <div class="sr-card__meta">
+                    <span class="sr-meta-item"><i class="fas fa-check-circle"></i> Gratuit</span>
+                    <span class="sr-meta-item"><i class="fas fa-book-open"></i> Cours complet</span>
+                    <span class="sr-meta-item"><i class="fas fa-infinity"></i> Accès illimité</span>
+                  </div>
+                </div>
+                <div class="sr-card__arrow"><i class="fas fa-arrow-right"></i></div>
+              </a>
+              @endforeach
+            </div>
+          </div>
+          @endif
+
+          {{-- ARTICLES --}}
+          @if($results['articles']->count() > 0)
+          <div class="sr-section sr-section--articles">
+            <div class="sr-section__hd">
+              <div class="sr-section__icon"><i class="fas fa-briefcase"></i></div>
+              <span class="sr-section__title">Articles emploi</span>
+              <span class="sr-section__badge">{{ $results['articles']->count() }}</span>
+            </div>
+            <div class="sr-list">
+              @foreach($results['articles'] as $article)
+              <a href="{{ route('emplois.article', $article->slug) }}" class="sr-card">
+
+                <div class="sr-card__thumb">
+                  @if($article->cover_image)
+                  <img
+                    src="{{ $article->cover_type === 'internal'
+                      ? \Illuminate\Support\Facades\Storage::url($article->cover_image)
+                      : $article->cover_image }}"
+                    alt="{{ $article->title }}"
+                    loading="lazy"
+                    onerror="this.parentElement.innerHTML='<i class=\'fas fa-briefcase sr-card__thumb-ico\'></i>'"
+                  >
+                  @else
+                  <i class="fas fa-briefcase sr-card__thumb-ico"></i>
+                  @endif
+                </div>
+
+                <div class="sr-card__body">
+                  <div class="sr-card__type">
+                    <i class="fas fa-briefcase"></i> Emploi
+                  </div>
+                  <div class="sr-card__title">{{ $article->title }}</div>
+                  <div class="sr-card__excerpt">
+                    {{ $article->excerpt ?? \Illuminate\Support\Str::limit(strip_tags($article->content), 130) }}
+                  </div>
+                  <div class="sr-card__meta">
+                    @if($article->category)
+                    <span class="sr-meta-item">
+                      <i class="fas fa-folder"></i> {{ $article->category->name }}
+                    </span>
+                    @endif
+                    <span class="sr-meta-item">
+                      <i class="fas fa-calendar"></i>
+                      {{ ($article->published_at ?? $article->created_at)->format('d/m/Y') }}
+                    </span>
+                    <span class="sr-meta-item">
+                      <i class="fas fa-eye"></i> {{ $article->featured_display_views }}
+                    </span>
+                  </div>
+                </div>
+
+                <div class="sr-card__arrow"><i class="fas fa-arrow-right"></i></div>
+              </a>
+              @endforeach
+            </div>
+          </div>
+          @endif
+
+        @else
+
+          {{-- Aucun résultat --}}
+          <div class="sr-empty">
+            <div class="sr-empty__ico"><i class="fas fa-search-minus"></i></div>
+            <h2 class="sr-empty__title">Aucun résultat pour « {{ $query }} »</h2>
+            <p class="sr-empty__sub">
+              Essayez avec d'autres mots-clés, vérifiez l'orthographe
+              ou parcourez nos formations disponibles.
+            </p>
+            <a href="{{ route('home') }}#technologies" class="sr-btn">
+              <i class="fas fa-graduation-cap"></i> Voir toutes les formations
+            </a>
+            <div class="sr-suggestions">
+              @foreach(['HTML', 'CSS', 'JavaScript', 'PHP', 'Python', 'Git'] as $sug)
+              <a href="{{ route('search', ['q' => $sug]) }}" class="sr-suggestion">
+                <i class="fas fa-search"></i> {{ $sug }}
+              </a>
+              @endforeach
+            </div>
+          </div>
+
+        @endif
+
+      @else
+
+        {{-- Pas de requête --}}
+        <div class="sr-empty">
+          <div class="sr-empty__ico"><i class="fas fa-search"></i></div>
+          <h2 class="sr-empty__title">Que recherchez-vous ?</h2>
+          <p class="sr-empty__sub">
+            Entrez un mot-clé ci-dessus pour trouver des formations,
+            des articles emploi et des ressources pour développeurs.
+          </p>
+          <p style="font-size:.82rem; color:var(--sr-muted); margin-block-end:1rem; font-weight:600;">
+            SUGGESTIONS POPULAIRES
+          </p>
+          <div class="sr-suggestions">
+            @foreach(['HTML5', 'CSS3', 'JavaScript', 'PHP', 'Python', 'Bootstrap', 'Git', 'WordPress'] as $sug)
+            <a href="{{ route('search', ['q' => $sug]) }}" class="sr-suggestion">
+              <i class="fas fa-bolt"></i> {{ $sug }}
+            </a>
+            @endforeach
+          </div>
         </div>
-        <h2>Recherchez sur NiangProgrammeur</h2>
-        <p>Entrez un mot-clé dans la barre de recherche ci-dessus pour trouver des formations ou des articles d'emploi.</p>
+
+      @endif
+
     </div>
-</section>
-@endif
+  </div>
+
+</div>
 @endsection

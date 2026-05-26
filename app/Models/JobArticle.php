@@ -62,27 +62,56 @@ class JobArticle extends Model
     }
 
     /**
-     * Libellé d'affichage des vues pour la section "Articles Vedettes" (paliers fictifs).
-     * Utiliser dans la page d'accueil uniquement : {{ $article->featured_display_views }}
+     * Vues gonflées formatées — utilisé partout sauf dans l'admin.
+     * Formule dégressive : 0→~1.1k, 5→~2.5k, 50→~5.8k, 100→~12k.
      */
     public function getFeaturedDisplayViewsAttribute(): string
     {
-        $vues = (int) ($this->attributes['views'] ?? 0);
-        $suffix = app()->getLocale() === 'fr' ? ' vues' : ' views';
+        return self::formatViewCount($this->calcInflatedViews());
+    }
 
-        if ($vues > 1000) return '2,5 M' . $suffix;
-        if ($vues > 500) return '1 M' . $suffix;
-        if ($vues > 200) return '20 K' . $suffix;
-        if ($vues > 100) return '10,1 K' . $suffix;
-        if ($vues > 50) return '4,5 K' . $suffix;
-        if ($vues > 40) return '3,8 K' . $suffix;
-        if ($vues > 30) return '3,5 K' . $suffix;
-        if ($vues > 20) return '3,2 K' . $suffix;
-        if ($vues > 15) return '2,8 K' . $suffix;
-        if ($vues > 10) return '2,5 K' . $suffix;
-        if ($vues >= 5) return '2,1 K' . $suffix;
+    private function calcInflatedViews(): int
+    {
+        $v = (int) ($this->attributes['views'] ?? 0);
 
-        return '1,5 K' . $suffix;
+        if ($v === 0) {
+            // Valeur stable basée sur l'ID pour éviter les fluctuations au rechargement
+            return 1000 + (($this->id ?? 0) % 300);
+        }
+        if ($v < 10) {
+            return (int) (1150 + $v * 270);        // 1 → 1.4k … 9 → 3.6k
+        }
+        if ($v < 50) {
+            return (int) (3700 + ($v - 10) * 52.5); // 10 → 3.7k … 49 → 5.8k
+        }
+        if ($v < 100) {
+            return (int) (5800 + ($v - 50) * 124);  // 50 → 5.8k … 99 → 12k
+        }
+        if ($v < 1000) {
+            return (int) (12000 + ($v - 100) * 50); // 100 → 12k … 999 → 56.9k
+        }
+        return $v * 60;                              // 1000+ → 60k+
+    }
+
+    private static function formatViewCount(int $n): string
+    {
+        if ($n >= 1_000_000) {
+            $v = round($n / 1_000_000, 1);
+            return ($v == (int) $v ? (int) $v : $v) . 'M';
+        }
+        $k = round($n / 1_000, 1);
+        return ($k == (int) $k ? (int) $k : $k) . 'k';
+    }
+
+    /**
+     * Total des vues gonflées pour le compteur global (page emplois).
+     */
+    public static function getTotalInflatedViews(): string
+    {
+        $count    = static::where('status', 'published')->count();
+        $realSum  = (int) static::where('status', 'published')->sum('views');
+        $inflated = ($count * 1150) + ($realSum * 120);
+        return self::formatViewCount(max($inflated, 1000));
     }
 
     /**

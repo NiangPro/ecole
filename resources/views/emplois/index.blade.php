@@ -50,7 +50,7 @@
         <div class="em-stat__lbl">Catégories actives</div>
       </div>
       <div class="em-stat">
-        <div class="em-stat__num">{{ number_format(\App\Models\JobArticle::where('status', 'published')->sum('views')) }}+</div>
+        <div class="em-stat__num">{{ \App\Models\JobArticle::getTotalInflatedViews() }}+</div>
         <div class="em-stat__lbl">Vues totales</div>
       </div>
       <div class="em-stat">

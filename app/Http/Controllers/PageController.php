@@ -47,7 +47,7 @@ class PageController extends Controller
                 ->with(['category:id,name,slug'])
                 ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')
                 ->orderBy('published_at', 'desc')
-                ->take(2)
+                ->take(3)
                 ->get();
             
             // Cache les publicités pour la position "content"

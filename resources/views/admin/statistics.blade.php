@@ -18,6 +18,21 @@
                     Analysez les performances et le trafic de votre site
                 </p>
             </div>
+            <div style="margin-top:1rem;">
+                @if(session('success'))
+                    <div style="background:#d1fae5;color:#065f46;padding:.5rem 1rem;border-radius:.5rem;margin-bottom:.5rem;font-size:.875rem;">
+                        {{ session('success') }}
+                    </div>
+                @endif
+                @if(\Illuminate\Support\Facades\Route::has('admin.statistics.clear-cache'))
+                <form method="POST" action="{{ route('admin.statistics.clear-cache') }}" style="display:inline;">
+                    @csrf
+                    <button type="submit" style="background:#0891b2;color:#fff;border:none;padding:.5rem 1rem;border-radius:.5rem;cursor:pointer;font-size:.875rem;">
+                        <i class="fas fa-sync-alt" style="margin-right:.4rem;"></i> Rafraîchir les stats
+                    </button>
+                </form>
+                @endif
+            </div>
         </div>
     </div>
 

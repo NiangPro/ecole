@@ -54,6 +54,9 @@
     opacity: 0 !important; width: 1px !important; height: 1px !important;
     display: none !important; visibility: hidden !important;
   }
+  .ed-topbar {
+    padding-block-start: calc(var(--spacing-navbar, 76px) + .75rem) !important;
+  }
 </style>
 @endsection
 

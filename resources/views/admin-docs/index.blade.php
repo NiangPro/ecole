@@ -8,7 +8,7 @@
 /* Light theme (default) */
 .admin-docs-page {
     min-height: 100vh;
-    padding: 3rem 1.5rem 4rem;
+    padding: calc(var(--spacing-navbar, 76px) + 3rem) 1.5rem 4rem;
     position: relative;
     overflow: hidden;
     background:

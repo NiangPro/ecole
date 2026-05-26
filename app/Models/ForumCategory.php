@@ -102,6 +102,12 @@ class ForumCategory extends Model
             ->orderBy('last_reply_at', 'desc');
     }
 
+    public function latestTopic(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(ForumTopic::class, 'category_id')
+            ->latestOfMany('last_reply_at');
+    }
+
     /**
      * Incrémente le compteur de topics de la catégorie
      * 

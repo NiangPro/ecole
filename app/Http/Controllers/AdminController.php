@@ -391,12 +391,38 @@ class AdminController extends Controller
     }
     
     public function truncateStatistics()
-    {Statistic::truncate();
-        
-        // Vider tous les caches liés aux statistiques
+    {
+        Statistic::truncate();
         Cache::flush();
-        
         return redirect()->route('admin.statistics')->with('success', 'Table statistics vidée avec succès!');
+    }
+
+    public function clearStatisticsCache()
+    {
+        $year  = Carbon::now()->year;
+        $month = Carbon::now()->month;
+        $today = Carbon::today()->format('Y-m-d');
+
+        $keys = [
+            'dashboard_stats_detailed',
+            "statistics_day_{$today}",
+            "statistics_month_{$year}_{$month}",
+            "statistics_year_{$year}",
+            'daily_stats_30_days',
+            'top_pages_day',
+            'top_pages_month',
+            'top_pages_year',
+            "weekly_stats_{$year}_{$month}",
+            'weekly_stats_current_month',
+            "year_total_visits_{$year}",
+            'statistics_available_years',
+        ];
+
+        foreach ($keys as $key) {
+            Cache::forget($key);
+        }
+
+        return back()->with('success', 'Cache des statistiques vidé avec succès.');
     }
     
     public function users(Request $request)

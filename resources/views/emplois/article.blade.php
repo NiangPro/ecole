@@ -100,1971 +100,889 @@
 
 @section('styles')
 <style>
-    * {
-        box-sizing: border-box;
-    }
-    
-    /* Body background for article page */
-    body:not(.dark-mode) {
-        background: #ffffff !important;
-    }
-    
-    body.dark-mode {
-        background: #0a0a0f !important;
-    }
-    
-    /* Hero Section Moderne - Design de dernière génération */
-    .article-hero {
-        position: relative;
-        min-height: 450px;
-        height: 55vh;
-        max-height: 600px;
-        overflow: hidden;
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        background-attachment: fixed;
-        display: flex;
-        align-items: flex-end;
-        isolation: isolate;
-    }
-    
-    @media (max-width: 768px) {
-        .article-hero {
-            background-attachment: scroll;
-        }
-    }
-    
-    .article-hero::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(
-            180deg,
-            transparent 0%,
-            rgba(15, 23, 42, 0.3) 40%,
-            rgba(15, 23, 42, 0.85) 80%,
-            rgba(15, 23, 42, 0.95) 100%
-        );
-        z-index: 1;
-    }
-    
-    .article-hero::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: radial-gradient(
-            ellipse at center bottom,
-            rgba(6, 182, 212, 0.15) 0%,
-            transparent 70%
-        );
-        z-index: 2;
-        pointer-events: none;
-    }
-    
-    body:not(.dark-mode) .article-hero::before {
-        background: linear-gradient(
-            180deg,
-            transparent 0%,
-            rgba(30, 41, 59, 0.2) 40%,
-            rgba(30, 41, 59, 0.75) 80%,
-            rgba(30, 41, 59, 0.9) 100%
-        );
-    }
-    
-    .article-hero-image {
-        display: none;
-    }
-    
-    .article-hero-overlay {
-        position: relative;
-        width: 100%;
-        z-index: 3;
-        padding: 40px 20px 60px;
-        display: flex;
-        align-items: flex-end;
-    }
-    
-    .article-hero-content {
-        max-width: 1200px;
-        width: 100%;
-        margin: 0 auto;
-        position: relative;
-        animation: fadeInUp 0.8s ease-out;
-    }
-    
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    .article-hero-category {
-        display: inline-flex !important;
-        align-items: center;
-        gap: 8px;
-        padding: 10px 20px;
-        background: linear-gradient(135deg, rgba(6, 182, 212, 0.9) 0%, rgba(6, 182, 212, 0.85) 100%) !important;
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        color: #ffffff !important;
-        border-radius: 50px;
-        font-size: 0.875rem;
-        font-weight: 700;
-        margin-bottom: 24px;
-        border: 2px solid rgba(255, 255, 255, 0.3) !important;
-        box-shadow: 0 4px 20px rgba(6, 182, 212, 0.4), 0 0 0 1px rgba(6, 182, 212, 0.2) inset;
-        transition: all 0.3s ease;
-        letter-spacing: 0.5px;
-        text-transform: uppercase;
-        position: relative;
-        z-index: 5;
-    }
-    
-    .article-hero-category i {
-        color: #ffffff !important;
-        font-size: 0.9rem;
-    }
-    
-    .article-hero-category span {
-        color: #ffffff !important;
-    }
-    
-    .article-hero-category:hover {
-        background: linear-gradient(135deg, rgba(6, 182, 212, 1) 0%, rgba(20, 184, 166, 0.95) 100%) !important;
-        border-color: rgba(255, 255, 255, 0.5) !important;
-        transform: translateY(-2px);
-        box-shadow: 0 6px 30px rgba(6, 182, 212, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.3) inset;
-    }
-    
-    .article-hero-title {
-        font-size: clamp(2.5rem, 5vw + 1rem, 4.5rem);
-        font-weight: 900;
-        color: #ffffff;
-        margin-bottom: 24px;
-        line-height: 1.1;
-        text-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-        letter-spacing: -0.02em;
-        animation: fadeInUp 0.8s ease-out 0.2s both;
-    }
-    
-    body:not(.dark-mode) .article-hero-title {
-        color: #ffffff !important;
-        text-shadow: 0 4px 25px rgba(0, 0, 0, 0.6) !important;
-    }
-    
-    .article-hero-meta {
-        display: flex;
-        align-items: center;
-        gap: 32px;
-        flex-wrap: wrap;
-        color: rgba(255, 255, 255, 0.95);
-        font-size: 0.95rem;
-        font-weight: 500;
-        animation: fadeInUp 0.8s ease-out 0.4s both;
-    }
-    
-    body:not(.dark-mode) .article-hero-meta {
-        color: rgba(255, 255, 255, 0.98) !important;
-        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4) !important;
-    }
-    
-    .article-hero-meta-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 16px;
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        border-radius: 50px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        transition: all 0.3s ease;
-    }
-    
-    .article-hero-meta-item:hover {
-        background: rgba(255, 255, 255, 0.15);
-        transform: translateY(-2px);
-    }
-    
-    .article-hero-meta-item i {
-        font-size: 0.9rem;
-        opacity: 0.9;
-    }
-    
-    /* Bouton favori moderne */
-    .article-hero-actions {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        z-index: 10;
-    }
-    
-    @media (max-width: 768px) {
-        .article-hero-actions {
-            top: 15px;
-            right: 15px;
-        }
-    }
-    
-    .article-hero-favorite-btn {
-        background: rgba(255, 255, 255, 0.15);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-        border: 1.5px solid rgba(255, 255, 255, 0.3);
-        color: white;
-        padding: 12px 24px;
-        border-radius: 50px;
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 0.9rem;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-    }
-    
-    .article-hero-favorite-btn:hover {
-        background: rgba(255, 255, 255, 0.25);
-        border-color: rgba(255, 255, 255, 0.5);
-        transform: translateY(-2px);
-        box-shadow: 0 6px 30px rgba(0, 0, 0, 0.25);
-    }
-    
-    .article-hero-favorite-btn:active {
-        transform: translateY(0);
-    }
-    
-    /* Hero Fallback Moderne */
-    .article-hero-fallback-modern {
-        position: relative;
-        min-height: 450px;
-        height: 55vh;
-        max-height: 600px;
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 30%, #0f172a 100%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 40px 20px;
-        overflow: hidden;
-    }
-    
-    .article-hero-fallback-modern::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: 
-            radial-gradient(circle at 20% 50%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
-            radial-gradient(circle at 80% 80%, rgba(20, 184, 166, 0.1) 0%, transparent 50%);
-        pointer-events: none;
-    }
-    
-    .article-hero-fallback-content {
-        max-width: 1200px;
-        width: 100%;
-        text-align: center;
-        position: relative;
-        z-index: 1;
-        animation: fadeInUp 0.8s ease-out;
-    }
-    
-    body:not(.dark-mode) .article-hero-fallback-modern {
-        background: linear-gradient(135deg, rgba(30, 41, 59, 0.95) 0%, rgba(51, 65, 85, 0.95) 30%, rgba(30, 41, 59, 0.95) 100%);
-    }
-    
-    /* Responsive Hero */
-    @media (max-width: 768px) {
-        .article-hero {
-            min-height: 400px;
-            height: 50vh;
-        }
-        
-        .article-hero-overlay {
-            padding: 30px 15px 50px;
-        }
-        
-        .article-hero-title {
-            font-size: clamp(2rem, 6vw, 3rem) !important;
-            margin-bottom: 20px;
-        }
-        
-        .article-hero-meta {
-            gap: 12px;
-            font-size: 0.85rem;
-        }
-        
-        .article-hero-meta-item {
-            padding: 6px 12px;
-            font-size: 0.8rem;
-        }
-        
-        .article-hero-favorite-btn {
-            padding: 10px 18px;
-            font-size: 0.85rem;
-        }
-        
-        .article-hero-fallback-modern {
-            min-height: 400px;
-            height: 50vh;
-            padding: 30px 15px;
-        }
-        
-        .article-hero-category {
-            font-size: 0.8rem;
-            padding: 8px 16px;
-        }
-    }
-    
-    .article-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 60px 20px;
-        width: 100%;
-        box-sizing: border-box;
-    }
-    
-    .article-main-grid {
-        width: 100%;
-        box-sizing: border-box;
-    }
-    
-    @media (max-width: 1024px) {
-        .article-main-grid {
-            grid-template-columns: 1fr !important;
-        }
-    }
-    
-    @media (max-width: 1200px) {
-        .article-main-grid {
-            grid-template-columns: 1fr 300px !important;
-            gap: 30px !important;
-        }
-    }
-    
-    .article-content {
-        background: rgba(51, 65, 85, 0.5);
-        border: 1px solid rgba(6, 182, 212, 0.2);
-        border-radius: 24px;
-        padding: 50px;
-        margin-bottom: 40px;
-        line-height: 1.9;
-        font-size: 1.1rem;
-        color: rgba(255, 255, 255, 0.95);
-        width: 100%;
-        max-width: 100%;
-        box-sizing: border-box;
-        overflow-x: hidden;
-        word-wrap: break-word;
-        overflow-wrap: break-word;
-    }
-    
-    /* Assurer que tous les éléments enfants sont responsives */
-    .article-content * {
-        max-width: 100%;
-        box-sizing: border-box;
-    }
-    
-    body:not(.dark-mode) .article-content {
-        background: rgba(255, 255, 255, 0.98) !important;
-        border-color: rgba(6, 182, 212, 0.25) !important;
-        color: rgba(30, 41, 59, 0.95) !important;
-        box-shadow: 0 10px 40px rgba(6, 182, 212, 0.1) !important;
-    }
-    
-    .article-content img {
-        max-width: 100% !important;
-        width: 100% !important;
-        height: auto !important;
-        border-radius: 12px;
-        margin: 25px 0;
-        display: block;
-        loading: lazy;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-    }
-    
-    body:not(.dark-mode) .article-content img {
-        box-shadow: 0 8px 24px rgba(6, 182, 212, 0.15) !important;
-    }
-    
-    /* Wrapper pour tableaux avec scroll horizontal */
-    .article-content > * {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-    
-    /* Tableaux responsives */
-    .article-content table {
-        width: 100% !important;
-        max-width: 100% !important;
-        border-collapse: collapse;
-        margin: 25px 0;
-        display: table;
-        table-layout: auto;
-    }
-    
-    @media (max-width: 768px) {
-        .article-content table {
-            display: block;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-        
-        .article-content table thead,
-        .article-content table tbody,
-        .article-content table tr {
-            display: table;
-            width: 100%;
-            table-layout: fixed;
-        }
-    }
-    
-    .article-content table th,
-    .article-content table td {
-        padding: 12px 15px;
-        text-align: left;
-        border: 1px solid rgba(6, 182, 212, 0.3);
-        word-wrap: break-word;
-        overflow-wrap: break-word;
-    }
-    
-    .article-content table th {
-        background: rgba(6, 182, 212, 0.2);
-        font-weight: 700;
-        color: #06b6d4;
-    }
-    
-    body:not(.dark-mode) .article-content table th {
-        background: rgba(6, 182, 212, 0.1) !important;
-        color: #0891b2 !important;
-    }
-    
-    /* Préformatté et code blocks */
-    .article-content pre {
-        max-width: 100% !important;
-        width: 100% !important;
-        overflow-x: auto;
-        padding: 20px;
-        background: rgba(6, 182, 212, 0.1);
-        border-radius: 8px;
-        margin: 25px 0;
-        font-size: 0.9rem;
-        line-height: 1.6;
-    }
-    
-    body:not(.dark-mode) .article-content pre {
-        background: rgba(6, 182, 212, 0.05) !important;
-    }
-    
-    .article-content pre code {
-        background: transparent;
-        padding: 0;
-        font-size: inherit;
-    }
-    
-    /* Iframes responsives */
-    .article-content iframe,
-    .article-content embed,
-    .article-content object,
-    .article-content video {
-        max-width: 100% !important;
-        width: 100% !important;
-        height: auto !important;
-        border-radius: 12px;
-        margin: 25px 0;
-    }
-    
-    /* Divs et conteneurs */
-    .article-content div {
-        max-width: 100% !important;
-        overflow-x: auto;
-    }
-    
-    /* Listes responsives */
-    .article-content ul,
-    .article-content ol {
-        max-width: 100%;
-        word-wrap: break-word;
-        overflow-wrap: break-word;
-    }
-    
-    /* Paragraphes responsives */
-    .article-content p {
-        max-width: 100%;
-        word-wrap: break-word;
-        overflow-wrap: break-word;
-        hyphens: auto;
-    }
-    
-    .article-content h2 {
-        font-size: 2rem;
-        font-weight: 800;
-        color: #06b6d4;
-        margin: 40px 0 25px;
-        padding-bottom: 15px;
-        border-bottom: 3px solid rgba(6, 182, 212, 0.4);
-        line-height: 1.3;
-    }
-    
-    body:not(.dark-mode) .article-content h2 {
-        color: #0891b2 !important;
-        border-bottom-color: rgba(6, 182, 212, 0.3) !important;
-    }
-    
-    .article-content h3 {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: #14b8a6;
-        margin: 35px 0 20px;
-        line-height: 1.4;
-    }
-    
-    body:not(.dark-mode) .article-content h3 {
-        color: #0d9488 !important;
-    }
-    
-    .article-content p {
-        margin-bottom: 20px;
-        text-align: justify;
-        color: rgba(255, 255, 255, 0.95);
-    }
-    
-    body:not(.dark-mode) .article-content p {
-        color: rgba(30, 41, 59, 0.9) !important;
-    }
-    
-    .article-content ul, .article-content ol {
-        margin: 25px 0;
-        padding-left: 35px;
-    }
-    
-    .article-content ul {
-        list-style-type: disc;
-    }
-    
-    .article-content ol {
-        list-style-type: decimal;
-    }
-    
-    .article-content li {
-        margin-bottom: 12px;
-        line-height: 1.7;
-        color: rgba(255, 255, 255, 0.95);
-    }
-    
-    body:not(.dark-mode) .article-content li {
-        color: rgba(30, 41, 59, 0.9) !important;
-    }
-    
-    .article-content strong {
-        color: #06b6d4;
-        font-weight: 700;
-    }
-    
-    body:not(.dark-mode) .article-content strong {
-        color: #0891b2 !important;
-    }
-    
-    .article-content a {
-        color: #06b6d4;
-        text-decoration: underline;
-        transition: color 0.3s ease;
-    }
-    
-    .article-content a:hover {
-        color: #22d3ee;
-    }
-    
-    body:not(.dark-mode) .article-content a {
-        color: #0891b2 !important;
-    }
-    
-    body:not(.dark-mode) .article-content a:hover {
-        color: #06b6d4 !important;
-    }
-    
-    .article-content blockquote {
-        border-left: 4px solid #06b6d4;
-        padding-left: 20px;
-        margin: 25px 0;
-        font-style: italic;
-        color: rgba(255, 255, 255, 0.8);
-    }
-    
-    body:not(.dark-mode) .article-content blockquote {
-        border-left-color: #06b6d4 !important;
-        color: rgba(30, 41, 59, 0.8) !important;
-        background: rgba(6, 182, 212, 0.05) !important;
-        padding: 15px 20px;
-        border-radius: 8px;
-    }
-    
-    .article-content code {
-        background: rgba(6, 182, 212, 0.1);
-        padding: 2px 6px;
-        border-radius: 4px;
-        font-family: 'Courier New', monospace;
-        font-size: 0.9em;
-        color: #06b6d4;
-    }
-    
-    body:not(.dark-mode) .article-content code {
-        background: rgba(6, 182, 212, 0.1) !important;
-        color: #0891b2 !important;
-    }
-    
-    .related-articles {
-        margin-top: 60px;
-    }
-    
-    .related-articles h2 {
-        font-size: 2.2rem;
-        font-weight: 900;
-        background: linear-gradient(135deg, #06b6d4, #14b8a6);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        margin-bottom: 40px;
-    }
-    
-    .related-grid {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 20px;
-    }
-    
-    @media (max-width: 1400px) {
-        .related-grid {
-            grid-template-columns: repeat(3, 1fr);
-        }
-    }
-    
-    @media (max-width: 1024px) {
-        .related-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
-    }
-    
-    @media (max-width: 768px) {
-        .related-grid {
-            grid-template-columns: 1fr;
-        }
-    }
-    
-    .related-card {
-        background: rgba(51, 65, 85, 0.5);
-        border: 1px solid rgba(6, 182, 212, 0.2);
-        border-radius: 20px;
-        overflow: hidden;
-        transition: all 0.3s ease;
-        text-decoration: none;
-    }
-    
-    body:not(.dark-mode) .related-card {
-        background: rgba(255, 255, 255, 0.9) !important;
-        border-color: rgba(6, 182, 212, 0.25) !important;
-        box-shadow: 0 10px 40px rgba(6, 182, 212, 0.1) !important;
-    }
-    
-    .related-card-image {
-        display: block;
-    }
-    
-    .related-card:hover {
-        transform: translateY(-8px);
-        border-color: rgba(6, 182, 212, 0.5);
-        box-shadow: 0 15px 40px rgba(6, 182, 212, 0.25);
-    }
-    
-    .related-card-image {
-        width: 100%;
-        height: 200px;
-        object-fit: cover;
-    }
-    
-    .related-card-content {
-        padding: 20px;
-    }
-    
-    .related-card-title {
-        font-size: 1.1rem;
-        font-weight: 700;
-        color: #fff;
-        margin-bottom: 10px;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-    
-    body:not(.dark-mode) .related-card-title {
-        color: rgba(30, 41, 59, 0.9) !important;
-    }
-    
-    .related-card-meta {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        color: rgba(255, 255, 255, 0.6);
-        font-size: 0.85rem;
-        margin-top: 10px;
-    }
-    
-    body:not(.dark-mode) .related-card-meta {
-        color: rgba(30, 41, 59, 0.6) !important;
-    }
-    
-    .back-button {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        padding: 12px 24px;
-        background: rgba(6, 182, 212, 0.1);
-        color: #06b6d4;
-        border: 1px solid rgba(6, 182, 212, 0.3);
-        border-radius: 12px;
-        text-decoration: none;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        margin-bottom: 30px;
-    }
-    
-    .back-button:hover {
-        background: rgba(6, 182, 212, 0.2);
-        border-color: rgba(6, 182, 212, 0.5);
-        transform: translateX(-5px);
-    }
-    
-    
-    @media (max-width: 768px) {
-        .article-content {
-            padding: 20px 15px !important;
-            font-size: 1rem !important;
-            line-height: 1.8 !important;
-        }
-        
-        .article-content h2 {
-            font-size: 1.5rem !important;
-            margin: 30px 0 20px !important;
-        }
-        
-        .article-content h3 {
-            font-size: 1.25rem !important;
-            margin: 25px 0 15px !important;
-        }
-        
-        .article-content p {
-            margin-bottom: 15px !important;
-            text-align: left !important;
-        }
-        
-        .article-content ul,
-        .article-content ol {
-            padding-left: 25px !important;
-            margin: 20px 0 !important;
-        }
-        
-        .article-content li {
-            margin-bottom: 10px !important;
-        }
-        
-        .article-content table {
-            font-size: 0.85rem !important;
-        }
-        
-        .article-content table th,
-        .article-content table td {
-            padding: 8px 10px !important;
-        }
-        
-        .article-content pre {
-            font-size: 0.8rem !important;
-            padding: 15px !important;
-        }
-        
-        .article-content blockquote {
-            padding-left: 15px !important;
-            margin: 20px 0 !important;
-        }
-        
-        .article-hero {
-            height: 300px;
-        }
-        
-        .article-hero-overlay {
-            padding: 20px 15px 30px;
-        }
-        
-        .article-hero-content {
-            padding-top: 10px;
-        }
-        
-        .related-grid {
-            grid-template-columns: 1fr;
-        }
-        
-        .article-container {
-            padding: 30px 15px !important;
-        }
-        
-        /* Bouton favori responsive - déjà centré, pas besoin de modification */
-    }
+/* ═══════════════════════════════════════════
+   ARTICLE — Ultra-Modern 2026
+   ═══════════════════════════════════════════ */
+:root {
+  --c:   #06b6d4;
+  --cd:  #0891b2;
+  --ct:  #14b8a6;
+  --r:   20px;
+  --rs:  12px;
+  --tr:  all .3s cubic-bezier(.4,0,.2,1);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body:not(.dark-mode) { background: #f8fafc !important; }
+body.dark-mode        { background: #020617 !important; }
+
+/* ── Reading progress bar ── */
+#art-progress {
+  position: fixed; top: 0; left: 0;
+  width: 0%; height: 3px;
+  background: linear-gradient(90deg, var(--c), var(--ct));
+  z-index: 9999;
+  transition: width .1s linear;
+  border-radius: 0 2px 2px 0;
+}
+
+/* ── Navbar clearance ── */
+.art-hero, .art-hero-none {
+  margin-block-start: var(--spacing-navbar, 76px) !important;
+}
+
+/* ── Hero with image ── */
+.art-hero {
+  position: relative;
+  height: 68vh; min-height: 520px; max-height: 720px;
+  overflow: hidden;
+  display: flex; align-items: flex-end;
+}
+.art-hero-bg {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 9s ease;
+}
+.art-hero:hover .art-hero-bg { transform: scale(1.06); }
+
+.art-hero-veil {
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom,
+    rgba(2,6,23,.05) 0%,
+    rgba(2,6,23,.35) 38%,
+    rgba(2,6,23,.86) 75%,
+    rgba(2,6,23,.97) 100%);
+}
+body:not(.dark-mode) .art-hero-veil {
+  background: linear-gradient(to bottom,
+    rgba(15,23,42,.05) 0%,
+    rgba(15,23,42,.32) 38%,
+    rgba(15,23,42,.82) 75%,
+    rgba(15,23,42,.95) 100%);
+}
+
+/* subtle cyan glow at bottom */
+.art-hero-veil::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0; height: 45%;
+  background: radial-gradient(ellipse 60% 80% at 25% 100%, rgba(6,182,212,.18) 0%, transparent 60%);
+}
+
+.art-hero-inner {
+  position: relative; z-index: 2;
+  width: 100%; max-width: 1240px;
+  margin: 0 auto; padding: 0 28px 64px;
+}
+
+/* ── Hero fallback (no image) ── */
+.art-hero-none {
+  position: relative; min-height: 480px;
+  display: flex; align-items: center;
+  background: linear-gradient(140deg, #020617 0%, #0f172a 45%, #020617 100%);
+  overflow: hidden;
+}
+.art-hero-none::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 55% 55% at 12% 50%, rgba(6,182,212,.22) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 40% at 88% 75%, rgba(20,184,166,.14) 0%, transparent 55%);
+}
+.art-hero-none-inner {
+  position: relative; z-index: 1;
+  width: 100%; max-width: 1240px;
+  margin: 0 auto; padding: 80px 28px;
+}
+
+/* Favorite button (hero corner) */
+.art-fav-wrap {
+  position: absolute; top: 24px; right: 24px; z-index: 6;
+}
+.art-fav-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 22px;
+  background: rgba(255,255,255,.11);
+  backdrop-filter: blur(20px);
+  border: 1.5px solid rgba(255,255,255,.25);
+  border-radius: 100px;
+  color: #fff; font-size: .85rem; font-weight: 600;
+  cursor: pointer; transition: var(--tr);
+}
+.art-fav-btn:hover {
+  background: rgba(255,255,255,.22);
+  border-color: rgba(255,255,255,.45);
+  transform: translateY(-2px);
+}
+
+/* Badge catégorie */
+.art-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 6px 16px;
+  background: rgba(6,182,212,.88);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,.22);
+  border-radius: 100px;
+  font-size: .72rem; font-weight: 700;
+  letter-spacing: .08em; text-transform: uppercase;
+  color: #fff; margin-bottom: 18px;
+}
+
+/* Titre hero */
+.art-hero-title {
+  font-size: clamp(1.9rem, 4.2vw, 3.6rem);
+  font-weight: 900; color: #fff;
+  line-height: 1.12; letter-spacing: -.025em;
+  margin-bottom: 26px; max-width: 820px;
+  text-shadow: 0 2px 32px rgba(0,0,0,.28);
+}
+
+/* Meta chips */
+.art-meta-row {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.art-chip {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 7px 15px;
+  background: rgba(255,255,255,.1);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 100px;
+  font-size: .8rem; font-weight: 500;
+  color: rgba(255,255,255,.9); white-space: nowrap;
+}
+.art-chip i { font-size: .7rem; opacity: .8; }
+
+/* ── Page wrapper ── */
+.art-page {
+  max-width: 1240px; margin: 0 auto;
+  padding: 52px 28px 88px;
+}
+.art-layout {
+  display: grid;
+  grid-template-columns: 1fr 360px;
+  gap: 52px; align-items: start;
+}
+
+/* ── Back link ── */
+.art-back {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 9px 18px;
+  border: 1.5px solid rgba(6,182,212,.3);
+  border-radius: var(--rs);
+  color: var(--cd); font-size: .875rem; font-weight: 600;
+  text-decoration: none; transition: var(--tr);
+  margin-bottom: 28px;
+}
+.art-back:hover {
+  background: rgba(6,182,212,.07);
+  border-color: var(--c);
+  transform: translateX(-4px);
+}
+body.dark-mode .art-back { color: var(--c); }
+
+/* ── Important notice ── */
+.art-notice {
+  display: flex; gap: 16px;
+  padding: 20px 22px;
+  background: rgba(239,68,68,.06);
+  border: 1px solid rgba(239,68,68,.22);
+  border-left: 4px solid #ef4444;
+  border-radius: var(--rs);
+  margin-bottom: 32px;
+}
+.art-notice-ico {
+  flex-shrink: 0; width: 38px; height: 38px;
+  background: linear-gradient(135deg,#ef4444,#dc2626);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: .95rem;
+}
+.art-notice-txt h4 {
+  font-size: .95rem; font-weight: 700; margin: 0 0 6px;
+  color: rgba(15,23,42,.92);
+}
+body.dark-mode .art-notice-txt h4 { color: rgba(255,255,255,.9); }
+.art-notice-txt p {
+  margin: 0; font-size: .875rem; line-height: 1.65;
+  color: rgba(15,23,42,.78);
+}
+body.dark-mode .art-notice-txt p { color: rgba(255,255,255,.75); }
+
+/* ── Article body card ── */
+.art-body {
+  background: #fff;
+  border: 1px solid rgba(6,182,212,.1);
+  border-radius: var(--r);
+  padding: 52px 56px;
+  box-shadow: 0 4px 32px rgba(6,182,212,.06), 0 1px 3px rgba(0,0,0,.04);
+  line-height: 1.9; font-size: 1.05rem;
+  color: rgba(15,23,42,.88);
+  margin-bottom: 40px;
+  word-wrap: break-word; overflow-wrap: break-word; overflow-x: hidden;
+}
+body.dark-mode .art-body {
+  background: rgba(15,23,42,.65);
+  border-color: rgba(6,182,212,.2);
+  color: rgba(255,255,255,.88);
+  box-shadow: 0 4px 32px rgba(0,0,0,.25);
+}
+.art-body * { max-width: 100%; box-sizing: border-box; }
+
+/* Typography inside article */
+.art-body h2 {
+  font-size: 1.6rem; font-weight: 800;
+  color: var(--cd);
+  margin: 48px 0 18px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid rgba(6,182,212,.2);
+  line-height: 1.3;
+}
+body.dark-mode .art-body h2 { color: var(--c); border-bottom-color: rgba(6,182,212,.25); }
+
+.art-body h3 {
+  font-size: 1.225rem; font-weight: 700;
+  color: #0d9488;
+  margin: 36px 0 14px; line-height: 1.4;
+}
+body.dark-mode .art-body h3 { color: var(--ct); }
+
+.art-body h4 {
+  font-size: 1.05rem; font-weight: 700;
+  color: rgba(15,23,42,.85);
+  margin: 28px 0 10px;
+}
+body.dark-mode .art-body h4 { color: rgba(255,255,255,.85); }
+
+.art-body p { margin-bottom: 18px; }
+.art-body p:last-child { margin-bottom: 0; }
+
+.art-body ul, .art-body ol { margin: 22px 0; padding-left: 28px; }
+.art-body li { margin-bottom: 10px; line-height: 1.75; }
+
+.art-body strong { font-weight: 700; color: var(--cd); }
+body.dark-mode .art-body strong { color: var(--c); }
+
+.art-body a { color: var(--cd); text-decoration: underline; text-underline-offset: 3px; transition: color .2s; }
+.art-body a:hover { color: var(--c); }
+body.dark-mode .art-body a { color: var(--c); }
+
+.art-body blockquote {
+  margin: 28px 0; padding: 18px 22px;
+  border-left: 4px solid var(--c);
+  background: rgba(6,182,212,.05);
+  border-radius: 0 var(--rs) var(--rs) 0;
+  font-style: italic;
+  color: rgba(30,41,59,.8);
+}
+body.dark-mode .art-body blockquote { background: rgba(6,182,212,.08); color: rgba(255,255,255,.8); }
+
+.art-body code {
+  background: rgba(6,182,212,.08); color: var(--cd);
+  padding: 2px 7px; border-radius: 5px;
+  font-size: .87em; font-family: 'Courier New', monospace;
+}
+body.dark-mode .art-body code { color: var(--c); }
+
+.art-body pre {
+  background: rgba(6,182,212,.05);
+  border: 1px solid rgba(6,182,212,.15);
+  border-radius: var(--rs);
+  padding: 24px; overflow-x: auto;
+  margin: 28px 0; font-size: .87rem; line-height: 1.65;
+}
+.art-body pre code { background: none; padding: 0; color: inherit; font-size: inherit; }
+
+.art-body img {
+  width: 100%; height: auto;
+  border-radius: var(--rs);
+  margin: 24px 0; display: block;
+  box-shadow: 0 8px 28px rgba(0,0,0,.1);
+}
+
+.art-body table {
+  width: 100%; border-collapse: collapse;
+  margin: 24px 0; font-size: .9rem;
+}
+.art-body th {
+  background: rgba(6,182,212,.1); color: var(--cd);
+  font-weight: 700; padding: 12px 15px;
+  text-align: left; border: 1px solid rgba(6,182,212,.2);
+}
+.art-body td {
+  padding: 11px 15px; border: 1px solid rgba(6,182,212,.12);
+  color: rgba(30,41,59,.85);
+}
+body.dark-mode .art-body th { color: var(--c); }
+body.dark-mode .art-body td { color: rgba(255,255,255,.8); border-color: rgba(6,182,212,.18); }
+
+@media (max-width: 640px) {
+  .art-body table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+}
+
+.art-body iframe, .art-body video, .art-body embed {
+  width: 100%; height: auto;
+  border-radius: var(--rs); margin: 24px 0;
+}
+
+/* ── Share bar ── */
+.art-share {
+  padding-top: 28px;
+  border-top: 1.5px solid rgba(6,182,212,.14);
+}
+.art-share-lbl {
+  font-size: .72rem; font-weight: 700;
+  letter-spacing: .07em; text-transform: uppercase;
+  color: rgba(30,41,59,.45); margin-bottom: 14px;
+}
+body.dark-mode .art-share-lbl { color: rgba(255,255,255,.4); }
+.art-share-row { display: flex; gap: 9px; flex-wrap: wrap; }
+.art-shr {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 9px 17px; border-radius: 100px; border: none;
+  cursor: pointer; font-size: .8rem; font-weight: 600;
+  color: #fff; transition: var(--tr);
+}
+.art-shr:hover { transform: translateY(-2px); filter: brightness(1.1); }
+.art-shr[data-share="facebook"]  { background: #1877f2; }
+.art-shr[data-share="twitter"]   { background: #1da1f2; }
+.art-shr[data-share="linkedin"]  { background: #0077b5; }
+.art-shr[data-share="whatsapp"]  { background: #25d366; }
+.art-shr[data-share="email"]     { background: var(--cd); }
+.art-shr[data-share="copy"]      { background: #6366f1; }
+
+/* ── Sidebar ── */
+.art-sidebar {
+  position: sticky; top: 84px;
+  display: flex; flex-direction: column; gap: 22px;
+}
+
+/* Ad card */
+.art-sidebar-ad {
+  background: #fff;
+  border: 1.5px solid rgba(6,182,212,.18);
+  border-radius: var(--r); overflow: hidden;
+  transition: var(--tr);
+  box-shadow: 0 6px 28px rgba(6,182,212,.07);
+}
+body.dark-mode .art-sidebar-ad {
+  background: rgba(15,23,42,.7);
+  border-color: rgba(6,182,212,.25);
+  box-shadow: 0 6px 28px rgba(0,0,0,.25);
+}
+.art-sidebar-ad:hover {
+  transform: translateY(-4px);
+  border-color: var(--c);
+  box-shadow: 0 16px 44px rgba(6,182,212,.18);
+}
+.art-ad-imgwrap {
+  position: relative; width: 100%; overflow: hidden;
+}
+.art-ad-imgwrap img {
+  width: 100%; height: auto; display: block;
+  transition: transform .5s ease;
+}
+.art-sidebar-ad:hover .art-ad-imgwrap img { transform: scale(1.05); }
+.art-ad-veil {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, transparent 35%, rgba(2,6,23,.82) 100%);
+  display: flex; align-items: flex-end; padding: 20px;
+}
+.art-ad-info h4 {
+  font-size: .95rem; font-weight: 700; color: #fff;
+  margin: 0 0 5px; text-shadow: 0 2px 8px rgba(0,0,0,.4);
+}
+.art-ad-info p {
+  font-size: .82rem; color: rgba(255,255,255,.85);
+  margin: 0 0 10px; line-height: 1.5;
+}
+.art-ad-cta {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: .78rem; font-weight: 700; color: var(--c);
+}
+
+/* Section label */
+.art-sec-lbl {
+  font-size: .72rem; font-weight: 700;
+  letter-spacing: .07em; text-transform: uppercase;
+  color: rgba(30,41,59,.45); margin-bottom: 12px;
+  display: flex; align-items: center; gap: 7px;
+}
+body.dark-mode .art-sec-lbl { color: rgba(255,255,255,.42); }
+.art-sec-lbl i { color: var(--c); }
+
+/* Document card */
+.art-doc {
+  display: flex; gap: 13px; padding: 13px 14px;
+  background: rgba(248,250,252,.9);
+  border: 1px solid rgba(6,182,212,.12);
+  border-radius: var(--rs);
+  text-decoration: none; transition: var(--tr);
+  margin-bottom: 9px;
+}
+body.dark-mode .art-doc {
+  background: rgba(15,23,42,.65);
+  border-color: rgba(6,182,212,.2);
+}
+.art-doc:hover {
+  border-color: var(--c);
+  transform: translateX(4px);
+  box-shadow: 0 4px 18px rgba(6,182,212,.12);
+}
+.art-doc-thumb {
+  width: 68px; height: 68px;
+  border-radius: 8px; object-fit: cover; flex-shrink: 0;
+}
+.art-doc-info { flex: 1; min-width: 0; }
+.art-doc-name {
+  font-size: .855rem; font-weight: 600;
+  color: rgba(15,23,42,.9); line-height: 1.4;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden; margin-bottom: 7px;
+}
+body.dark-mode .art-doc-name { color: rgba(255,255,255,.9); }
+.art-doc-meta {
+  display: flex; align-items: center; gap: 7px;
+  font-size: .72rem; color: rgba(30,41,59,.5); flex-wrap: wrap;
+}
+body.dark-mode .art-doc-meta { color: rgba(255,255,255,.45); }
+.badge-free {
+  padding: 2px 7px;
+  background: linear-gradient(135deg,#10b981,#059669);
+  color: #fff; font-size: .65rem; font-weight: 700; border-radius: 4px;
+}
+.badge-price {
+  padding: 2px 8px;
+  background: rgba(6,182,212,.08);
+  border: 1px solid rgba(6,182,212,.22);
+  color: var(--cd); font-size: .7rem; font-weight: 600; border-radius: 4px;
+}
+body.dark-mode .badge-price { color: var(--c); }
+
+/* ── Related articles ── */
+.art-related {
+  margin-top: 68px; padding-top: 64px;
+  border-top: 1.5px solid rgba(6,182,212,.14);
+}
+.art-related-hd { text-align: center; margin-bottom: 44px; }
+.art-related-eyebrow {
+  display: inline-block;
+  font-size: .72rem; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--c); margin-bottom: 10px;
+}
+.art-related-title {
+  font-size: 2rem; font-weight: 900; margin: 0;
+  background: linear-gradient(135deg, #06b6d4, #14b8a6);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.art-related-grid {
+  display: grid; grid-template-columns: repeat(3,1fr); gap: 24px;
+}
+.art-rel-card {
+  background: #fff;
+  border: 1.5px solid rgba(6,182,212,.12);
+  border-radius: var(--r); overflow: hidden;
+  text-decoration: none; transition: var(--tr);
+  box-shadow: 0 4px 18px rgba(6,182,212,.05);
+}
+body.dark-mode .art-rel-card {
+  background: rgba(15,23,42,.6);
+  border-color: rgba(6,182,212,.2);
+  box-shadow: 0 4px 18px rgba(0,0,0,.2);
+}
+.art-rel-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--c);
+  box-shadow: 0 22px 52px rgba(6,182,212,.18);
+}
+.art-rel-img-wrap {
+  position: relative; height: 198px; overflow: hidden;
+  background: linear-gradient(135deg, rgba(6,182,212,.18), rgba(20,184,166,.18));
+}
+.art-rel-img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform .4s ease;
+}
+.art-rel-card:hover .art-rel-img { transform: scale(1.06); }
+.art-rel-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(180deg, transparent 50%, rgba(2,6,23,.55) 100%);
+  display: flex; align-items: flex-end; justify-content: flex-end;
+  padding: 12px; opacity: 0; transition: opacity .3s;
+}
+.art-rel-card:hover .art-rel-overlay { opacity: 1; }
+.art-rel-overlay span {
+  font-size: .75rem; font-weight: 700; color: #fff;
+  display: flex; align-items: center; gap: 5px;
+}
+.art-rel-body { padding: 18px 20px; }
+.art-rel-cat {
+  font-size: .7rem; font-weight: 700;
+  letter-spacing: .06em; text-transform: uppercase;
+  color: var(--c); margin-bottom: 8px; display: block;
+}
+.art-rel-ttl {
+  font-size: .975rem; font-weight: 700; line-height: 1.45;
+  color: rgba(15,23,42,.9);
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden; margin-bottom: 12px;
+}
+body.dark-mode .art-rel-ttl { color: rgba(255,255,255,.9); }
+.art-rel-meta {
+  display: flex; align-items: center; gap: 13px;
+  font-size: .76rem; color: rgba(30,41,59,.48);
+}
+body.dark-mode .art-rel-meta { color: rgba(255,255,255,.43); }
+
+/* ── Responsive ── */
+@media (max-width: 1100px) {
+  .art-layout { grid-template-columns: 1fr 320px; gap: 38px; }
+}
+@media (max-width: 880px) {
+  .art-layout { grid-template-columns: 1fr; }
+  .art-sidebar { position: static; }
+  .art-related-grid { grid-template-columns: repeat(2,1fr); }
+}
+@media (max-width: 640px) {
+  .art-page { padding: 28px 16px 60px; }
+  .art-body { padding: 26px 18px; font-size: .975rem; }
+  .art-hero-inner, .art-hero-none-inner { padding: 0 16px 44px; }
+  .art-hero { height: 54vh; min-height: 400px; }
+  .art-hero-title { font-size: clamp(1.65rem, 6vw, 2.4rem); }
+  .art-related-grid { grid-template-columns: 1fr; }
+  .art-shr span { display: none; }
+  .art-shr { padding: 9px 13px; }
+  .art-hero-none-inner { padding: 56px 16px; }
+}
+@media (max-width: 400px) {
+  .art-hero { min-height: 360px; }
+  .art-hero-title { font-size: 1.6rem; }
+}
+
+/* ── Comments & misc overrides ── */
+.comments-section {
+  background: rgba(15,23,42,.55) !important;
+  backdrop-filter: blur(20px) !important;
+  border-color: rgba(6,182,212,.2) !important;
+}
+body:not(.dark-mode) .comments-section {
+  background: rgba(255,255,255,.95) !important;
+  border-color: rgba(6,182,212,.22) !important;
+  box-shadow: 0 4px 20px rgba(6,182,212,.06) !important;
+}
+.comments-title { color: var(--c) !important; }
+body:not(.dark-mode) .comments-title { color: rgba(15,23,42,.9) !important; }
+.comment-form-wrapper {
+  background: rgba(30,41,59,.5) !important;
+  border-color: rgba(6,182,212,.28) !important;
+}
+body:not(.dark-mode) .comment-form-wrapper {
+  background: rgba(248,250,252,.95) !important;
+  border-color: rgba(6,182,212,.22) !important;
+}
+.comment-form-wrapper label { color: rgba(255,255,255,.9) !important; }
+body:not(.dark-mode) .comment-form-wrapper label { color: rgba(15,23,42,.85) !important; }
+.comment-form-wrapper input,
+.comment-form-wrapper textarea {
+  background: rgba(30,41,59,.65) !important;
+  border-color: rgba(6,182,212,.35) !important;
+  color: #fff !important;
+}
+body:not(.dark-mode) .comment-form-wrapper input,
+body:not(.dark-mode) .comment-form-wrapper textarea {
+  background: rgba(255,255,255,.95) !important;
+  border-color: rgba(6,182,212,.25) !important;
+  color: rgba(15,23,42,.9) !important;
+}
 </style>
 @endsection
 
+
 @section('content')
-<!-- Hero Section Moderne -->
+<div id="art-progress"></div>
+
+@php $wordCount = str_word_count(strip_tags($article->content)); $readingTime = max(1, ceil($wordCount / 200)); @endphp
+
+{{-- ── HERO ── --}}
 @if($article->cover_image)
-<div class="article-hero" style="background-image: url('{{ $article->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($article->cover_image) : $article->cover_image }}');">
-    <div class="article-hero-overlay">
-        <div class="article-hero-content">
-            <!-- Bouton favori moderne -->
-            <div class="article-hero-actions">
-                <button data-favorite 
-                        data-favorite-type="article" 
-                        data-favorite-slug="{{ $article->slug }}" 
-                        data-favorite-name="{{ $article->title }}"
-                        class="article-hero-favorite-btn">
-                    <i class="far fa-heart"></i>
-                    <span>Favoris</span>
-                </button>
-            </div>
-            
-            <!-- Catégorie -->
-            <span class="article-hero-category">
-                <i class="fas fa-folder"></i>
-                <span>{{ $article->category->name }}</span>
-            </span>
-            
-            <!-- Titre -->
-            <h1 class="article-hero-title">{{ $article->title }}</h1>
-            
-            <!-- Métadonnées -->
-            <div class="article-hero-meta">
-                <div class="article-hero-meta-item">
-                    <i class="fas fa-calendar"></i>
-                    <span>{{ $article->published_at ? $article->published_at->format('d F Y') : '' }}</span>
-                </div>
-                <div class="article-hero-meta-item">
-                    <i class="fas fa-eye"></i>
-                    <span>{{ $article->featured_display_views }}</span>
-                </div>
-                <div class="article-hero-meta-item">
-                    <i class="fas fa-user"></i>
-                    <span>NiangProgrammeur</span>
-                </div>
-            </div>
-        </div>
+<div class="art-hero">
+  <img class="art-hero-bg"
+       src="{{ $article->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($article->cover_image) : $article->cover_image }}"
+       alt="{{ $article->title }}"
+       loading="eager">
+  <div class="art-hero-veil"></div>
+
+  <div class="art-fav-wrap">
+    <button class="art-fav-btn"
+            data-favorite
+            data-favorite-type="article"
+            data-favorite-slug="{{ $article->slug }}"
+            data-favorite-name="{{ $article->title }}">
+      <i class="far fa-heart"></i>
+      <span>Favoris</span>
+    </button>
+  </div>
+
+  <div class="art-hero-inner">
+    @if($article->category)
+    <span class="art-badge"><i class="{{ $article->category->icon ?? 'fas fa-folder' }}"></i> {{ $article->category->name }}</span>
+    @endif
+    <h1 class="art-hero-title">{{ $article->title }}</h1>
+    <div class="art-meta-row">
+      @if($article->published_at)
+      <span class="art-chip"><i class="fas fa-calendar"></i> {{ $article->published_at->format('d F Y') }}</span>
+      @endif
+      <span class="art-chip"><i class="fas fa-eye"></i> {{ $article->featured_display_views }}</span>
+      <span class="art-chip"><i class="fas fa-clock"></i> {{ $readingTime }} min de lecture</span>
+      <span class="art-chip"><i class="fas fa-user"></i> NiangProgrammeur</span>
     </div>
+  </div>
 </div>
 @else
-<div class="article-hero-fallback-modern">
-    <div class="article-hero-fallback-content">
-        <!-- Bouton favori moderne -->
-        <div class="article-hero-actions">
-            <button data-favorite 
-                    data-favorite-type="article" 
-                    data-favorite-slug="{{ $article->slug }}" 
-                    data-favorite-name="{{ $article->title }}"
-                    class="article-hero-favorite-btn">
-                <i class="far fa-heart"></i>
-                <span>Favoris</span>
-            </button>
-        </div>
-        
-        <!-- Catégorie -->
-        <span class="article-hero-category">
-            <i class="fas fa-folder"></i>
-            <span>{{ $article->category->name }}</span>
-        </span>
-        
-        <!-- Titre -->
-        <h1 class="article-hero-title">{{ $article->title }}</h1>
-        
-        <!-- Métadonnées -->
-        <div class="article-hero-meta">
-            <div class="article-hero-meta-item">
-                <i class="fas fa-calendar"></i>
-                <span>{{ $article->published_at ? $article->published_at->format('d F Y') : '' }}</span>
-            </div>
-            <div class="article-hero-meta-item">
-                <i class="fas fa-eye"></i>
-                <span>{{ $article->featured_display_views }}</span>
-            </div>
-        </div>
+<div class="art-hero-none">
+  <div class="art-fav-wrap">
+    <button class="art-fav-btn"
+            data-favorite
+            data-favorite-type="article"
+            data-favorite-slug="{{ $article->slug }}"
+            data-favorite-name="{{ $article->title }}">
+      <i class="far fa-heart"></i>
+      <span>Favoris</span>
+    </button>
+  </div>
+  <div class="art-hero-none-inner">
+    @if($article->category)
+    <span class="art-badge"><i class="{{ $article->category->icon ?? 'fas fa-folder' }}"></i> {{ $article->category->name }}</span>
+    @endif
+    <h1 class="art-hero-title">{{ $article->title }}</h1>
+    <div class="art-meta-row">
+      @if($article->published_at)
+      <span class="art-chip"><i class="fas fa-calendar"></i> {{ $article->published_at->format('d F Y') }}</span>
+      @endif
+      <span class="art-chip"><i class="fas fa-eye"></i> {{ $article->featured_display_views }}</span>
+      <span class="art-chip"><i class="fas fa-clock"></i> {{ $readingTime }} min de lecture</span>
     </div>
+  </div>
 </div>
 @endif
 
-{{-- Breadcrumbs supprimés --}}
+{{-- ── MAIN ── --}}
+<div class="art-page">
+  <div class="art-layout">
 
-    <!-- Article Container -->
-<div class="article-container">
-    <!-- Contenu et Commentaires côte à côte (responsive) -->
-    <div class="article-main-grid" style="display: grid; grid-template-columns: 1fr 350px; gap: 40px; align-items: start; margin-bottom: 60px;">
-        <div>
-            <a href="{{ route('emplois.offres') }}" class="back-button">
-                <i class="fas fa-arrow-left"></i>
-                Retour aux offres
-            </a>
-            
-            <!-- Note importante sur le recrutement -->
-            <div class="important-note-wrapper" style="margin-bottom: 30px; padding: 20px; background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1)); border-left: 4px solid #ef4444; border-radius: 8px; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.1);">
-                <div class="important-note-content" style="display: flex; align-items: flex-start; gap: 15px;">
-                    <div class="important-note-icon" style="flex-shrink: 0; width: 40px; height: 40px; background: linear-gradient(135deg, #ef4444, #dc2626); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem;">
-                        <i class="fas fa-info-circle"></i>
-                    </div>
-                    <div style="flex: 1; min-width: 0;">
-                        <h4 class="important-note-title" style="margin: 0 0 8px 0; font-size: 1.1rem; font-weight: 700; color: rgba(30, 41, 59, 0.9);">
-                            {{ app()->getLocale() === 'fr' ? 'Note importante' : 'Important Note' }}
-                        </h4>
-                        <p class="important-note-text" style="margin: 0; color: rgba(30, 41, 59, 0.8); line-height: 1.6; font-size: 0.95rem; word-wrap: break-word;">
-                            {{ app()->getLocale() === 'fr' 
-                                ? 'NiangProgrammeur ne recrute pas directement. Nous partageons uniquement les offres d\'emploi, bourses d\'études et opportunités disponibles au Sénégal. Pour postuler, veuillez contacter directement l\'organisme ou l\'entreprise concernée via les coordonnées fournies dans l\'article.' 
-                                : 'NiangProgrammeur does not recruit directly. We only share job offers, scholarships and opportunities available in Senegal. To apply, please contact the organization or company directly using the contact information provided in the article.' }}
-                        </p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="article-content">
-                {!! markdown_to_html($article->content) !!}
-            </div>
-            
-            <!-- Partage Social -->
-            <div style="margin-top: 40px; padding-top: 30px; border-top: 2px solid rgba(6, 182, 212, 0.2);">
-                <h3 style="font-size: 1.2rem; font-weight: 700; color: #06b6d4; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;">
-                    <i class="fas fa-share-alt"></i>
-                    Partager cet article
-                </h3>
-                <div class="social-share-buttons">
-                    <button data-share="facebook" 
-                            data-share-url="{{ $articleUrl }}" 
-                            data-share-title="{{ $article->title }}"
-                            data-share-text="{{ $article->excerpt ?? '' }}">
-                        <i class="fab fa-facebook"></i>
-                    </button>
-                    <button data-share="twitter" 
-                            data-share-url="{{ $articleUrl }}" 
-                            data-share-title="{{ $article->title }}"
-                            data-share-text="{{ $article->excerpt ?? '' }}">
-                        <i class="fab fa-twitter"></i>
-                    </button>
-                    <button data-share="linkedin" 
-                            data-share-url="{{ $articleUrl }}" 
-                            data-share-title="{{ $article->title }}"
-                            data-share-text="{{ $article->excerpt ?? '' }}">
-                        <i class="fab fa-linkedin"></i>
-                    </button>
-                    <button data-share="whatsapp" 
-                            data-share-url="{{ $articleUrl }}" 
-                            data-share-title="{{ $article->title }}"
-                            data-share-text="{{ $article->excerpt ?? '' }}">
-                        <i class="fab fa-whatsapp"></i>
-                    </button>
-                    <button data-share="email" 
-                            data-share-url="{{ $articleUrl }}" 
-                            data-share-title="{{ $article->title }}"
-                            data-share-text="{{ $article->excerpt ?? '' }}">
-                        <i class="fas fa-envelope"></i>
-                    </button>
-                    <button data-share="copy" 
-                            data-share-url="{{ $articleUrl }}">
-                        <i class="fas fa-link"></i>
-                    </button>
-                </div>
-            </div>
-            
-            <style>
-                body.dark-mode div[style*="background: linear-gradient"][style*="rgba(239, 68, 68"] {
-                    background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(220, 38, 38, 0.15)) !important;
-                    border-left-color: #ef4444 !important;
-                }
-                body.dark-mode div[style*="background: linear-gradient"][style*="rgba(239, 68, 68"] h4 {
-                    color: rgba(255, 255, 255, 0.9) !important;
-                }
-                body.dark-mode div[style*="background: linear-gradient"][style*="rgba(239, 68, 68"] p {
-                    color: rgba(255, 255, 255, 0.8) !important;
-                }
-                
-                /* Styles pour les boutons de partage social */
-                .social-share-buttons {
-                    display: flex;
-                    flex-direction: row;
-                    flex-wrap: wrap;
-                    gap: 12px;
-                    margin-top: 15px;
-                }
-                
-                .social-share-buttons button {
-                    display: inline-flex;
-                    align-items: center;
-                    justify-content: center;
-                    width: 48px;
-                    height: 48px;
-                    border-radius: 12px;
-                    border: none;
-                    cursor: pointer;
-                    transition: all 0.3s ease;
-                    font-size: 20px;
-                    color: #fff;
-                    position: relative;
-                    overflow: hidden;
-                }
-                
-                .social-share-buttons button:hover {
-                    transform: translateY(-2px);
-                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-                }
-                
-                .social-share-buttons button[data-share="facebook"] {
-                    background: linear-gradient(135deg, #1877f2, #0d5fcc);
-                }
-                
-                .social-share-buttons button[data-share="facebook"]:hover {
-                    background: linear-gradient(135deg, #0d5fcc, #1877f2);
-                }
-                
-                .social-share-buttons button[data-share="twitter"] {
-                    background: linear-gradient(135deg, #1da1f2, #0d8bd9);
-                }
-                
-                .social-share-buttons button[data-share="twitter"]:hover {
-                    background: linear-gradient(135deg, #0d8bd9, #1da1f2);
-                }
-                
-                .social-share-buttons button[data-share="linkedin"] {
-                    background: linear-gradient(135deg, #0077b5, #005885);
-                }
-                
-                .social-share-buttons button[data-share="linkedin"]:hover {
-                    background: linear-gradient(135deg, #005885, #0077b5);
-                }
-                
-                .social-share-buttons button[data-share="whatsapp"] {
-                    background: linear-gradient(135deg, #25d366, #1da851);
-                }
-                
-                .social-share-buttons button[data-share="whatsapp"]:hover {
-                    background: linear-gradient(135deg, #1da851, #25d366);
-                }
-                
-                .social-share-buttons button[data-share="email"] {
-                    background: linear-gradient(135deg, #06b6d4, #0891b2);
-                }
-                
-                .social-share-buttons button[data-share="email"]:hover {
-                    background: linear-gradient(135deg, #0891b2, #06b6d4);
-                }
-                
-                .social-share-buttons button[data-share="copy"] {
-                    background: linear-gradient(135deg, #6366f1, #4f46e5);
-                }
-                
-                .social-share-buttons button[data-share="copy"]:hover {
-                    background: linear-gradient(135deg, #4f46e5, #6366f1);
-                }
-                
-                /* Mode sombre */
-                body.dark-mode .social-share-buttons button {
-                    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-                }
-                
-                body.dark-mode .social-share-buttons button:hover {
-                    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-                }
-                
-                /* Responsive */
-                @media (max-width: 640px) {
-                    .social-share-buttons {
-                        display: flex !important;
-                        flex-direction: row !important;
-                        flex-wrap: nowrap !important;
-                        gap: 8px;
-                        overflow-x: auto;
-                        -webkit-overflow-scrolling: touch;
-                        scrollbar-width: none;
-                        -ms-overflow-style: none;
-                    }
-                    
-                    .social-share-buttons::-webkit-scrollbar {
-                        display: none;
-                    }
-                    
-                    .social-share-buttons button {
-                        width: 42px;
-                        height: 42px;
-                        font-size: 18px;
-                        flex-shrink: 0;
-                    }
-                }
-            </style>
-            
-            <!-- @include('partials.share-buttons', ['article' => $article]) -->
+    {{-- Left: article content --}}
+    <div>
+      <a href="{{ route('emplois.offres') }}" class="art-back">
+        <i class="fas fa-arrow-left"></i> Retour aux offres
+      </a>
+
+      <div class="art-notice">
+        <div class="art-notice-ico"><i class="fas fa-info-circle"></i></div>
+        <div class="art-notice-txt">
+          <h4>{{ app()->getLocale() === 'fr' ? 'Note importante' : 'Important Note' }}</h4>
+          <p>{{ app()->getLocale() === 'fr'
+            ? 'NiangProgrammeur ne recrute pas directement. Nous partageons uniquement les offres d\'emploi, bourses d\'études et opportunités disponibles au Sénégal. Pour postuler, veuillez contacter directement l\'organisme ou l\'entreprise concernée via les coordonnées fournies dans l\'article.'
+            : 'NiangProgrammeur does not recruit directly. We only share job offers, scholarships and opportunities available in Senegal. To apply, please contact the organization or company directly using the contact information provided in the article.' }}</p>
         </div>
-        
-        <!-- Sidebar Publicités Moderne -->
-        @if(isset($sidebarAds) && $sidebarAds->count() > 0)
-        <aside style="position: sticky; top: 80px; align-self: flex-start; width: 100%; max-width: 100%; box-sizing: border-box;">
-            @foreach($sidebarAds as $ad)
-            <div class="modern-sidebar-ad">
-                <a href="{{ $ad->link_url ?? '#' }}" target="_blank" onclick="trackAdClick({{ $ad->id }})" class="modern-sidebar-ad-link">
-                    @if($ad->image)
-                    <div class="modern-sidebar-ad-image-wrapper">
-                        <img src="{{ $ad->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($ad->image) : $ad->image }}" 
-                             alt="{{ $ad->name }}" 
-                             class="modern-sidebar-ad-image"
-                             loading="lazy"
-                             onerror="this.style.display='none'">
-                        <div class="modern-sidebar-ad-overlay">
-                            <div class="modern-sidebar-ad-content">
-                                <h4 class="modern-sidebar-ad-title">{{ $ad->name }}</h4>
-                                @if($ad->description)
-                                <p class="modern-sidebar-ad-description">{{ $ad->description }}</p>
-                                @endif
-                                <span class="modern-sidebar-ad-cta">Découvrir <i class="fas fa-arrow-right"></i></span>
-                            </div>
-                        </div>
-                    </div>
-                    @endif
-                </a>
-            </div>
-            @php
-                $ad->incrementImpressions();
-            @endphp
-            @endforeach
-            
-            <!-- Section Documents pertinents -->
-            @if(isset($relatedDocuments) && $relatedDocuments->count() > 0)
-            <div class="related-documents-sidebar" style="margin-bottom: 25px;">
-                <h4 style="font-size: 1.1rem; font-weight: 700; color: rgba(255, 255, 255, 0.95); margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
-                    <i class="fas fa-file-alt" style="color: #06b6d4;"></i>
-                    <span>{{ app()->getLocale() === 'fr' ? 'Documents pertinents' : 'Related Documents' }}</span>
-                </h4>
-                @foreach($relatedDocuments as $document)
-                <a href="{{ route('documents.show', $document->slug) }}" class="related-document-card" style="display: block; background: rgba(51, 65, 85, 0.6); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 12px; padding: 15px; margin-bottom: 15px; text-decoration: none; transition: all 0.3s ease; overflow: hidden;">
-                    @if($document->cover_image)
-                    <div style="width: 100%; height: 120px; border-radius: 8px; overflow: hidden; margin-bottom: 12px; position: relative;">
-                        <img src="{{ $document->cover_type === 'internal' ? \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $document->id]) : $document->cover_image }}" 
-                             alt="{{ $document->title }}" 
-                             style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;"
-                             loading="lazy"
-                             onerror="this.src='https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=400&h=250&fit=crop'">
-                        @if($document->is_free)
-                        <div style="position: absolute; top: 8px; left: 8px; background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700;">
-                            GRATUIT
-                        </div>
-                        @else
-                        <div style="position: absolute; top: 8px; right: 8px; background: rgba(0, 0, 0, 0.7); color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 600;">
-                            {{ number_format($document->discount_price ?? $document->price, 0, ',', ' ') }} FCFA
-                        </div>
-                        @endif
-                    </div>
-                    @endif
-                    <h5 style="font-size: 0.95rem; font-weight: 600; color: rgba(255, 255, 255, 0.95); margin: 0 0 8px 0; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-                        {{ $document->title }}
-                    </h5>
-                    <div style="display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: rgba(255, 255, 255, 0.6); flex-wrap: wrap;">
-                        @if($document->category)
-                        <span style="display: flex; align-items: center; gap: 4px; color: #06b6d4;">
-                            <i class="fas fa-folder"></i>
-                            {{ $document->category->name }}
-                        </span>
-                        @endif
-                        @if($document->sales_count > 0)
-                        <span style="display: flex; align-items: center; gap: 4px;">
-                            <i class="fas fa-shopping-cart"></i>
-                            {{ $document->sales_count }} {{ $document->sales_count > 1 ? 'ventes' : 'vente' }}
-                        </span>
-                        @endif
-                    </div>
-                </a>
-                @endforeach
+      </div>
+
+      <div class="art-body">
+        {!! markdown_to_html($article->content) !!}
+      </div>
+
+      <div class="art-share">
+        <div class="art-share-lbl">Partager cet article</div>
+        <div class="art-share-row">
+          <button class="art-shr" data-share="facebook"
+                  data-share-url="{{ $articleUrl }}"
+                  data-share-title="{{ $article->title }}"
+                  data-share-text="{{ $article->excerpt ?? '' }}">
+            <i class="fab fa-facebook"></i><span>Facebook</span>
+          </button>
+          <button class="art-shr" data-share="twitter"
+                  data-share-url="{{ $articleUrl }}"
+                  data-share-title="{{ $article->title }}"
+                  data-share-text="{{ $article->excerpt ?? '' }}">
+            <i class="fab fa-twitter"></i><span>Twitter</span>
+          </button>
+          <button class="art-shr" data-share="linkedin"
+                  data-share-url="{{ $articleUrl }}"
+                  data-share-title="{{ $article->title }}"
+                  data-share-text="{{ $article->excerpt ?? '' }}">
+            <i class="fab fa-linkedin"></i><span>LinkedIn</span>
+          </button>
+          <button class="art-shr" data-share="whatsapp"
+                  data-share-url="{{ $articleUrl }}"
+                  data-share-title="{{ $article->title }}"
+                  data-share-text="{{ $article->excerpt ?? '' }}">
+            <i class="fab fa-whatsapp"></i><span>WhatsApp</span>
+          </button>
+          <button class="art-shr" data-share="email"
+                  data-share-url="{{ $articleUrl }}"
+                  data-share-title="{{ $article->title }}"
+                  data-share-text="{{ $article->excerpt ?? '' }}">
+            <i class="fas fa-envelope"></i><span>Email</span>
+          </button>
+          <button class="art-shr" data-share="copy"
+                  data-share-url="{{ $articleUrl }}">
+            <i class="fas fa-link"></i><span>Copier</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    {{-- Right: sidebar --}}
+    <aside class="art-sidebar">
+
+      @if(isset($sidebarAds) && $sidebarAds->count() > 0)
+        @foreach($sidebarAds as $ad)
+        <div class="art-sidebar-ad">
+          <a href="{{ $ad->link_url ?? '#' }}" target="_blank" onclick="trackAdClick({{ $ad->id }})" style="display:block;text-decoration:none;color:inherit;">
+            @if($ad->image)
+            <div class="art-ad-imgwrap">
+              <img src="{{ $ad->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($ad->image) : $ad->image }}"
+                   alt="{{ $ad->name }}" loading="lazy"
+                   onerror="this.style.display='none'">
+              <div class="art-ad-veil">
+                <div class="art-ad-info">
+                  <h4>{{ $ad->name }}</h4>
+                  @if($ad->description)<p>{{ $ad->description }}</p>@endif
+                  <span class="art-ad-cta">Découvrir <i class="fas fa-arrow-right"></i></span>
+                </div>
+              </div>
             </div>
             @endif
-            
-            <!-- Section Commentaires (dans la sidebar) -->
-            @include('partials.comments', ['commentable' => $article, 'comments' => $comments ?? []])
-        </aside>
-        @else
-        <!-- Si pas de publicités, afficher les documents pertinents et les commentaires -->
-        <aside style="position: sticky; top: 80px; align-self: flex-start; width: 100%; max-width: 100%; box-sizing: border-box;">
-            <!-- Section Documents pertinents -->
-            @if(isset($relatedDocuments) && $relatedDocuments->count() > 0)
-            <div class="related-documents-sidebar" style="margin-bottom: 25px;">
-                <h4 style="font-size: 1.1rem; font-weight: 700; color: rgba(255, 255, 255, 0.95); margin-bottom: 15px; display: flex; align-items: center; gap: 8px;">
-                    <i class="fas fa-file-alt" style="color: #06b6d4;"></i>
-                    <span>{{ app()->getLocale() === 'fr' ? 'Documents pertinents' : 'Related Documents' }}</span>
-                </h4>
-                @foreach($relatedDocuments as $document)
-                <a href="{{ route('documents.show', $document->slug) }}" class="related-document-card" style="display: block; background: rgba(51, 65, 85, 0.6); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 12px; padding: 15px; margin-bottom: 15px; text-decoration: none; transition: all 0.3s ease; overflow: hidden;">
-                    @if($document->cover_image)
-                    <div style="width: 100%; height: 120px; border-radius: 8px; overflow: hidden; margin-bottom: 12px; position: relative;">
-                        <img src="{{ $document->cover_type === 'internal' ? \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $document->id]) : $document->cover_image }}" 
-                             alt="{{ $document->title }}" 
-                             style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s ease;"
-                             loading="lazy"
-                             onerror="this.src='https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=400&h=250&fit=crop'">
-                        @if($document->is_free)
-                        <div style="position: absolute; top: 8px; left: 8px; background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 700;">
-                            GRATUIT
-                        </div>
-                        @else
-                        <div style="position: absolute; top: 8px; right: 8px; background: rgba(0, 0, 0, 0.7); color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; font-weight: 600;">
-                            {{ number_format($document->discount_price ?? $document->price, 0, ',', ' ') }} FCFA
-                        </div>
-                        @endif
-                    </div>
-                    @endif
-                    <h5 style="font-size: 0.95rem; font-weight: 600; color: rgba(255, 255, 255, 0.95); margin: 0 0 8px 0; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
-                        {{ $document->title }}
-                    </h5>
-                    <div style="display: flex; align-items: center; gap: 8px; font-size: 0.8rem; color: rgba(255, 255, 255, 0.6); flex-wrap: wrap;">
-                        @if($document->category)
-                        <span style="display: flex; align-items: center; gap: 4px; color: #06b6d4;">
-                            <i class="fas fa-folder"></i>
-                            {{ $document->category->name }}
-                        </span>
-                        @endif
-                        @if($document->sales_count > 0)
-                        <span style="display: flex; align-items: center; gap: 4px;">
-                            <i class="fas fa-shopping-cart"></i>
-                            {{ $document->sales_count }} {{ $document->sales_count > 1 ? 'ventes' : 'vente' }}
-                        </span>
-                        @endif
-                    </div>
-                </a>
-                @endforeach
-            </div>
-            @endif
-            
-            @include('partials.comments', ['commentable' => $article, 'comments' => $comments ?? []])
-        </aside>
-        @endif
-    </div>
-    
-    <!-- Articles Similaires en ligne entière -->
-    @if($relatedArticles && $relatedArticles->count() > 0)
-    <div class="related-articles-full">
-        <h2 class="related-articles-title">
-            <i class="fas fa-newspaper mr-3"></i>
-            Articles Similaires
-        </h2>
-        <div class="related-grid-full">
-            @foreach($relatedArticles as $related)
-            <a href="{{ route('emplois.article', $related->slug) }}" class="related-card-modern">
-                @if($related->cover_image)
-                <div class="related-card-modern-image-wrapper">
-                        <img src="{{ $related->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($related->cover_image) : $related->cover_image }}"
-                             loading="lazy"
-                             alt="{{ $related->title }} - {{ $related->category->name ?? 'Article' }}" 
-                         class="related-card-modern-image"
-                         onerror="this.src='https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=400&h=250&fit=crop'">
-                    <div class="related-card-modern-overlay">
-                        <span class="related-card-modern-cta">Lire l'article <i class="fas fa-arrow-right"></i></span>
-                    </div>
-                </div>
-                @else
-                <div class="related-card-modern-image-wrapper" style="background: linear-gradient(135deg, rgba(6, 182, 212, 0.3), rgba(20, 184, 166, 0.3)); display: flex; align-items: center; justify-content: center;">
-                    <i class="fas fa-image text-5xl text-cyan-400/50"></i>
-                </div>
-                @endif
-                <div class="related-card-modern-content">
-                    <h3 class="related-card-modern-title">{{ $related->title }}</h3>
-                    <div class="related-card-modern-meta">
-                        <span><i class="fas fa-calendar"></i> {{ $related->published_at ? $related->published_at->format('d/m/Y') : '' }}</span>
-                        <span><i class="fas fa-eye"></i> {{ $related->featured_display_views }}</span>
-                    </div>
-                </div>
-            </a>
-            @endforeach
+          </a>
         </div>
+        @php $ad->incrementImpressions(); @endphp
+        @endforeach
+      @endif
+
+      @if(isset($relatedDocuments) && $relatedDocuments->count() > 0)
+      <div>
+        <div class="art-sec-lbl"><i class="fas fa-file-alt"></i> Documents pertinents</div>
+        @foreach($relatedDocuments as $document)
+        <a href="{{ route('documents.show', $document->slug) }}" class="art-doc">
+          @if($document->cover_image)
+          <img class="art-doc-thumb"
+               src="{{ $document->cover_type === 'internal' ? \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $document->id]) : $document->cover_image }}"
+               alt="{{ $document->title }}" loading="lazy"
+               onerror="this.style.display='none'">
+          @endif
+          <div class="art-doc-info">
+            <div class="art-doc-name">{{ $document->title }}</div>
+            <div class="art-doc-meta">
+              @if($document->is_free)
+                <span class="badge-free">GRATUIT</span>
+              @else
+                <span class="badge-price">{{ number_format($document->discount_price ?? $document->price, 0, ',', ' ') }} FCFA</span>
+              @endif
+              @if($document->category)
+              <span><i class="fas fa-folder" style="color:#06b6d4"></i> {{ $document->category->name }}</span>
+              @endif
+              @if($document->sales_count > 0)
+              <span><i class="fas fa-shopping-cart"></i> {{ $document->sales_count }} {{ $document->sales_count > 1 ? 'ventes' : 'vente' }}</span>
+              @endif
+            </div>
+          </div>
+        </a>
+        @endforeach
+      </div>
+      @endif
+
+      @include('partials.comments', ['commentable' => $article, 'comments' => $comments ?? []])
+
+    </aside>
+  </div>
+
+  {{-- Related articles --}}
+  @if($relatedArticles && $relatedArticles->count() > 0)
+  <div class="art-related">
+    <div class="art-related-hd">
+      <div class="art-related-eyebrow"><i class="fas fa-newspaper"></i> À lire aussi</div>
+      <h2 class="art-related-title">Articles Similaires</h2>
     </div>
-    @endif
+    <div class="art-related-grid">
+      @foreach($relatedArticles as $related)
+      <a href="{{ route('emplois.article', $related->slug) }}" class="art-rel-card">
+        <div class="art-rel-img-wrap">
+          @if($related->cover_image)
+          <img class="art-rel-img"
+               src="{{ $related->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($related->cover_image) : $related->cover_image }}"
+               alt="{{ $related->title }}" loading="lazy"
+               onerror="this.parentElement.style.background='linear-gradient(135deg,rgba(6,182,212,.18),rgba(20,184,166,.18))'">
+          @endif
+          <div class="art-rel-overlay"><span>Lire l'article <i class="fas fa-arrow-right"></i></span></div>
+        </div>
+        <div class="art-rel-body">
+          @if($related->category)
+          <span class="art-rel-cat">{{ $related->category->name }}</span>
+          @endif
+          <div class="art-rel-ttl">{{ $related->title }}</div>
+          <div class="art-rel-meta">
+            @if($related->published_at)
+            <span><i class="fas fa-calendar"></i> {{ $related->published_at->format('d/m/Y') }}</span>
+            @endif
+            <span><i class="fas fa-eye"></i> {{ $related->featured_display_views }}</span>
+          </div>
+        </div>
+      </a>
+      @endforeach
+    </div>
+  </div>
+  @endif
+
 </div>
 
-<style>
-    /* Modern Sidebar Ad */
-    .modern-sidebar-ad {
-        background: rgba(51, 65, 85, 0.7);
-        border: 2px solid rgba(6, 182, 212, 0.3);
-        border-radius: 20px;
-        overflow: hidden;
-        margin-bottom: 25px;
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-    }
-    
-    body:not(.dark-mode) .modern-sidebar-ad {
-        background: rgba(255, 255, 255, 0.9) !important;
-        border-color: rgba(6, 182, 212, 0.25) !important;
-        box-shadow: 0 10px 30px rgba(6, 182, 212, 0.1) !important;
-    }
-    
-    .modern-sidebar-ad:hover {
-        transform: translateY(-5px);
-        border-color: rgba(6, 182, 212, 0.6);
-        box-shadow: 0 15px 40px rgba(6, 182, 212, 0.4);
-    }
-    
-    .modern-sidebar-ad-link {
-        display: block;
-        text-decoration: none;
-        color: inherit;
-    }
-    
-    .modern-sidebar-ad-image-wrapper {
-        position: relative;
-        width: 100%;
-        min-height: 450px;
-        height: auto;
-        overflow: hidden;
-    }
-    
-    .modern-sidebar-ad-image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.5s ease;
-    }
-    
-    .modern-sidebar-ad:hover .modern-sidebar-ad-image {
-        transform: scale(1.1);
-    }
-    
-    .modern-sidebar-ad-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(180deg, transparent 0%, rgba(51, 65, 85, 0.7) 50%, rgba(51, 65, 85, 0.85) 100%);
-        display: flex;
-        align-items: flex-end;
-        padding: 25px;
-        min-height: 100%;
-    }
-    
-    body:not(.dark-mode) .modern-sidebar-ad-overlay {
-        background: linear-gradient(180deg, transparent 0%, rgba(30, 41, 59, 0.6) 50%, rgba(30, 41, 59, 0.8) 100%) !important;
-    }
-    
-    .modern-sidebar-ad-content {
-        width: 100%;
-    }
-    
-    .modern-sidebar-ad-title {
-        font-size: 1.1rem;
-        font-weight: 700;
-        color: #fff;
-        margin-bottom: 8px;
-        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
-        line-height: 1.3;
-    }
-    
-    .modern-sidebar-ad-description {
-        font-size: 0.9rem;
-        color: rgba(255, 255, 255, 0.9);
-        margin-bottom: 15px;
-        line-height: 1.6;
-        max-height: none;
-        overflow: visible;
-        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-    }
-    
-    .modern-sidebar-ad-cta {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        color: #06b6d4;
-        font-weight: 600;
-        font-size: 0.9rem;
-        transition: gap 0.3s ease;
-    }
-    
-    .modern-sidebar-ad:hover .modern-sidebar-ad-cta {
-        gap: 12px;
-    }
-    
-    /* Related Articles Full Width */
-    .related-articles-full {
-        margin-top: 60px;
-        padding-top: 60px;
-        border-top: 2px solid rgba(6, 182, 212, 0.2);
-    }
-    
-    .related-articles-title {
-        font-size: 2.5rem;
-        font-weight: 900;
-        color: #fff;
-        margin-bottom: 40px;
-        text-align: center;
-        background: linear-gradient(135deg, #06b6d4, #14b8a6);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-    }
-    
-    .related-grid-full {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 30px;
-    }
-    
-    .related-card-modern {
-        background: rgba(51, 65, 85, 0.5);
-        border: 2px solid rgba(6, 182, 212, 0.2);
-        border-radius: 20px;
-        overflow: hidden;
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        text-decoration: none;
-    }
-    
-    body:not(.dark-mode) .related-card-modern {
-        background: rgba(255, 255, 255, 0.9) !important;
-        border-color: rgba(6, 182, 212, 0.25) !important;
-        box-shadow: 0 10px 40px rgba(6, 182, 212, 0.1) !important;
-    }
-    
-    .related-card-modern-link {
-        color: inherit;
-        display: block;
-    }
-    
-    .related-card-modern:hover {
-        transform: translateY(-10px);
-        border-color: rgba(6, 182, 212, 0.5);
-        box-shadow: 0 20px 50px rgba(6, 182, 212, 0.3);
-    }
-    
-    .related-card-modern-image-wrapper {
-        position: relative;
-        width: 100%;
-        height: 200px;
-        overflow: hidden;
-    }
-    
-    .related-card-modern-image {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        transition: transform 0.5s ease;
-    }
-    
-    .related-card-modern:hover .related-card-modern-image {
-        transform: scale(1.1);
-    }
-    
-    .related-card-modern-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: linear-gradient(180deg, transparent 0%, rgba(51, 65, 85, 0.8) 100%);
-        display: flex;
-        align-items: flex-end;
-        padding: 15px;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-    }
-    
-    .related-card-modern:hover .related-card-modern-overlay {
-        opacity: 1;
-    }
-    
-    .related-card-modern-cta {
-        color: #06b6d4;
-        font-weight: 600;
-        font-size: 0.9rem;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-    
-    /* Styles pour les documents pertinents dans la sidebar */
-    .related-document-card {
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .related-document-card:hover {
-        background: rgba(51, 65, 85, 0.8) !important;
-        border-color: rgba(6, 182, 212, 0.4) !important;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(6, 182, 212, 0.2);
-    }
-    
-    .related-document-card:hover img {
-        transform: scale(1.05);
-    }
-    
-    .related-document-card h5 {
-        transition: color 0.3s ease;
-    }
-    
-    .related-document-card:hover h5 {
-        color: #06b6d4 !important;
-    }
-    
-    body:not(.dark-mode) .related-documents-sidebar h4 {
-        color: rgba(30, 41, 59, 0.95) !important;
-    }
-    
-    body:not(.dark-mode) .related-document-card {
-        background: rgba(248, 250, 252, 0.8) !important;
-        border-color: rgba(6, 182, 212, 0.2) !important;
-    }
-    
-    body:not(.dark-mode) .related-document-card:hover {
-        background: rgba(241, 245, 249, 0.95) !important;
-        border-color: rgba(6, 182, 212, 0.4) !important;
-    }
-    
-    body:not(.dark-mode) .related-document-card h5 {
-        color: rgba(30, 41, 59, 0.95) !important;
-    }
-    
-    body:not(.dark-mode) .related-document-card:hover h5 {
-        color: #06b6d4 !important;
-    }
-    
-    body:not(.dark-mode) .related-document-card > div:last-child {
-        color: rgba(30, 41, 59, 0.7) !important;
-    }
-    
-    .related-card-modern-content {
-        padding: 20px;
-    }
-    
-    .related-card-modern-title {
-        font-size: 1.1rem;
-        font-weight: 700;
-        color: #fff;
-        margin-bottom: 12px;
-        line-height: 1.4;
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        overflow: hidden;
-    }
-    
-    body:not(.dark-mode) .related-card-modern-title {
-        color: rgba(30, 41, 59, 0.9) !important;
-    }
-    
-    .related-card-modern-meta {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        color: rgba(255, 255, 255, 0.6);
-        font-size: 0.85rem;
-    }
-    
-    body:not(.dark-mode) .related-card-modern-meta {
-        color: rgba(30, 41, 59, 0.6) !important;
-    }
-    
-    .related-card-modern-meta i {
-        color: #06b6d4;
-    }
-    
-    body:not(.dark-mode) .related-articles-title {
-        -webkit-text-fill-color: transparent !important;
-    }
-    
-    body:not(.dark-mode) .related-articles-full {
-        border-top-color: rgba(6, 182, 212, 0.25) !important;
-    }
-    
-    body:not(.dark-mode) .back-button {
-        background: rgba(6, 182, 212, 0.1) !important;
-        border-color: rgba(6, 182, 212, 0.3) !important;
-    }
-    
-    body:not(.dark-mode) .back-button:hover {
-        background: rgba(6, 182, 212, 0.15) !important;
-    }
-    
-    /* Force text colors in light mode */
-    /* Styles light mode déjà définis plus haut dans .article-content */
-    
-    /* Buttons and links adaptation */
-    body:not(.dark-mode) .back-button {
-        color: #06b6d4 !important;
-    }
-    
-    body:not(.dark-mode) .modern-sidebar-ad-title {
-        color: rgba(255, 255, 255, 0.95) !important;
-        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7) !important;
-    }
-    
-    body:not(.dark-mode) .modern-sidebar-ad-description {
-        color: rgba(255, 255, 255, 0.9) !important;
-        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5) !important;
-    }
-    
-    body:not(.dark-mode) .modern-sidebar-ad-cta {
-        color: #06b6d4 !important;
-    }
-    
-    /* ============================================
-       DARK MODE - SECTIONS PUBLICITÉ & COMMENTAIRES
-       ============================================ */
-    
-    /* Section Commentaires - Dark Mode */
-    .comments-section {
-        background: rgba(15, 23, 42, 0.6) !important;
-        backdrop-filter: blur(20px) !important;
-        border-color: rgba(6, 182, 212, 0.2) !important;
-    }
-    
-    body:not(.dark-mode) .comments-section {
-        background: rgba(255, 255, 255, 0.9) !important;
-        border-color: rgba(6, 182, 212, 0.25) !important;
-    }
-    
-    .comments-title {
-        color: #06b6d4 !important;
-    }
-    
-    body:not(.dark-mode) .comments-title {
-        color: rgba(30, 41, 59, 0.95) !important;
-    }
-    
-    /* Formulaire de commentaire */
-    .comment-form-wrapper {
-        background: rgba(51, 65, 85, 0.5) !important;
-        border-color: rgba(6, 182, 212, 0.3) !important;
-    }
-    
-    body:not(.dark-mode) .comment-form-wrapper {
-        background: rgba(255, 255, 255, 0.9) !important;
-        border-color: rgba(6, 182, 212, 0.25) !important;
-    }
-    
-    .comment-form-wrapper label {
-        color: rgba(255, 255, 255, 0.9) !important;
-    }
-    
-    body:not(.dark-mode) .comment-form-wrapper label {
-        color: rgba(30, 41, 59, 0.9) !important;
-    }
-    
-    .comment-form-wrapper input,
-    .comment-form-wrapper textarea {
-        background: rgba(51, 65, 85, 0.7) !important;
-        border-color: rgba(6, 182, 212, 0.4) !important;
-        color: #fff !important;
-    }
-    
-    body:not(.dark-mode) .comment-form-wrapper input,
-    body:not(.dark-mode) .comment-form-wrapper textarea {
-        background: rgba(255, 255, 255, 0.95) !important;
-        border-color: rgba(6, 182, 212, 0.3) !important;
-        color: rgba(30, 41, 59, 0.9) !important;
-    }
-    
-    .comment-form-wrapper input::placeholder,
-    .comment-form-wrapper textarea::placeholder {
-        color: rgba(255, 255, 255, 0.5) !important;
-    }
-    
-    body:not(.dark-mode) .comment-form-wrapper input::placeholder,
-    body:not(.dark-mode) .comment-form-wrapper textarea::placeholder {
-        color: rgba(30, 41, 59, 0.5) !important;
-    }
-    
-    /* Commentaires individuels */
-    .comments-section > div > div[style*="background: linear-gradient"] {
-        background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(20, 184, 166, 0.1)) !important;
-        border-color: rgba(6, 182, 212, 0.3) !important;
-    }
-    
-    body:not(.dark-mode) .comments-section > div > div[style*="background: linear-gradient"] {
-        background: linear-gradient(135deg, rgba(6, 182, 212, 0.05), rgba(20, 184, 166, 0.05)) !important;
-        border-color: rgba(6, 182, 212, 0.2) !important;
-    }
-    
-    .comments-section h5 {
-        color: #fff !important;
-    }
-    
-    body:not(.dark-mode) .comments-section h5 {
-        color: rgba(30, 41, 59, 0.95) !important;
-    }
-    
-    .comments-section p {
-        color: rgba(255, 255, 255, 0.9) !important;
-    }
-    
-    body:not(.dark-mode) .comments-section p {
-        color: rgba(30, 41, 59, 0.85) !important;
-    }
-    
-    .comments-section > div > div[style*="background: rgba(51, 65, 85, 0.4)"] {
-        background: rgba(51, 65, 85, 0.4) !important;
-    }
-    
-    body:not(.dark-mode) .comments-section > div > div[style*="background: rgba(51, 65, 85, 0.4)"] {
-        background: rgba(6, 182, 212, 0.05) !important;
-    }
-    
-    .comments-section span[style*="color: rgba(255, 255, 255, 0.6)"] {
-        color: rgba(255, 255, 255, 0.6) !important;
-    }
-    
-    body:not(.dark-mode) .comments-section span[style*="color: rgba(255, 255, 255, 0.6)"] {
-        color: rgba(30, 41, 59, 0.6) !important;
-    }
-    
-    /* Titre "Derniers commentaires" */
-    .comments-section h4 {
-        color: #06b6d4 !important;
-    }
-    
-    body:not(.dark-mode) .comments-section h4 {
-        color: rgba(30, 41, 59, 0.95) !important;
-    }
-    
-    @media (max-width: 1400px) {
-        .related-grid-full {
-            grid-template-columns: repeat(3, 1fr);
-        }
-    }
-    
-    @media (max-width: 1200px) and (min-width: 769px) {
-        /* Garder la disposition en deux colonnes même sur les écrans moyens */
-        .article-main-grid {
-            grid-template-columns: 1fr 300px !important;
-            gap: 30px !important;
-        }
-        
-        .related-grid-full {
-            grid-template-columns: repeat(2, 1fr);
-        }
-        
-        aside {
-            width: 100% !important;
-            max-width: 100% !important;
-        }
-    }
-    
-    @media (max-width: 1024px) and (min-width: 769px) {
-        .article-main-grid {
-            grid-template-columns: 1fr 280px !important;
-            gap: 25px !important;
-        }
-    }
-    
-    @media (max-width: 768px) {
-        .related-grid-full {
-            grid-template-columns: 1fr;
-        }
-        
-        .related-articles-title {
-            font-size: 2rem;
-        }
-        
-        /* En mobile, afficher les sections publicité et commentaires sous le contenu */
-        .article-main-grid {
-            grid-template-columns: 1fr !important;
-            gap: 30px !important;
-        }
-        
-        .article-container > div[style*="grid-template-columns"] {
-            grid-template-columns: 1fr !important;
-        }
-        
-        .article-container > div {
-            grid-template-columns: 1fr !important;
-        }
-        
-        /* Ajuster la sidebar pour mobile */
-        .article-container > div > aside {
-            position: relative !important;
-            top: auto !important;
-            margin-top: 30px;
-            width: 100% !important;
-        }
-        
-        /* Ajuster les publicités pour mobile */
-        .modern-sidebar-ad {
-            margin-bottom: 20px;
-        }
-        
-        .modern-sidebar-ad-image-wrapper {
-            min-height: 300px !important;
-        }
-        
-        /* Assurer que tous les éléments du contenu sont responsives */
-        .article-content * {
-            max-width: 100% !important;
-            box-sizing: border-box !important;
-        }
-        
-        /* Tableaux avec scroll horizontal si nécessaire */
-        .article-content table {
-            display: block;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-        
-        .article-content table thead,
-        .article-content table tbody,
-        .article-content table tr {
-            display: table;
-            width: 100%;
-            table-layout: fixed;
-        }
-        
-        /* Note importante responsive */
-        .important-note-wrapper {
-            padding: 15px !important;
-            margin-bottom: 20px !important;
-        }
-        
-        .important-note-content {
-            flex-direction: column !important;
-            gap: 10px !important;
-        }
-        
-        .important-note-icon {
-            width: 35px !important;
-            height: 35px !important;
-            font-size: 1rem !important;
-        }
-        
-        .important-note-title {
-            font-size: 1rem !important;
-        }
-        
-        .important-note-text {
-            font-size: 0.9rem !important;
-            line-height: 1.5 !important;
-        }
-        
-        /* Boutons de partage social responsive */
-        .social-share-buttons {
-            justify-content: center !important;
-        }
-    }
-    
-    @media (max-width: 480px) {
-        .article-container {
-            padding: 20px 10px !important;
-        }
-        
-        .article-content {
-            padding: 20px 12px !important;
-        }
-        
-        .article-hero-title {
-            font-size: 1.75rem !important;
-        }
-        
-        .article-hero-meta {
-            flex-direction: column !important;
-            align-items: flex-start !important;
-            gap: 8px !important;
-        }
-        
-        .article-hero-meta-item {
-            font-size: 0.75rem !important;
-            padding: 5px 10px !important;
-        }
-        
-        .back-button {
-            padding: 10px 16px !important;
-            font-size: 0.9rem !important;
-        }
-        
-        .related-articles-title {
-            font-size: 1.75rem !important;
-        }
-        
-        /* Sidebar responsive pour très petits écrans */
-        aside {
-            width: 100% !important;
-            max-width: 100% !important;
-        }
-        
-        .related-document-card {
-            padding: 12px !important;
-        }
-        
-        .related-document-card h5 {
-            font-size: 0.9rem !important;
-        }
-        
-        .modern-sidebar-ad-image-wrapper {
-            min-height: 250px !important;
-        }
-    }
-    
-    /* Assurer que tous les éléments de la sidebar sont responsives */
-    @media (max-width: 768px) {
-        aside > * {
-            width: 100% !important;
-            max-width: 100% !important;
-        }
-        
-        .related-documents-sidebar {
-            width: 100% !important;
-        }
-        
-        .related-documents-sidebar h4 {
-            font-size: 1rem !important;
-        }
-    }
-</style>
-
 <script>
-    function trackAdClick(adId) {
-        fetch('/api/ads/' + adId + '/click', {
-            method: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
-                'Content-Type': 'application/json'
-            }
-        }).catch(err => console.log('Ad click tracking error:', err));
-    }
+  (function() {
+    var bar = document.getElementById('art-progress');
+    if (!bar) return;
+    window.addEventListener('scroll', function() {
+      var doc = document.documentElement;
+      var scrolled = doc.scrollTop || document.body.scrollTop;
+      var total = (doc.scrollHeight || document.body.scrollHeight) - doc.clientHeight;
+      bar.style.width = total > 0 ? Math.min(100, (scrolled / total) * 100) + '%' : '0%';
+    }, { passive: true });
+  })();
 </script>
 
 <script>
-    // Initialiser les boutons de partage social
-    (function() {
-        function initSocialShare() {
-            // Vérifier si SocialShareManager est disponible
-            if (typeof SocialShareManager !== 'undefined') {
-                // Si le manager n'existe pas encore, le créer
-                if (!window.socialShareManager) {
-                    window.socialShareManager = new SocialShareManager();
-                }
-            } else {
-                // Si le script n'est pas encore chargé, attendre un peu et réessayer
-                setTimeout(initSocialShare, 100);
-            }
+  function trackAdClick(adId) {
+    fetch('/api/ads/' + adId + '/click', {
+      method: 'POST',
+      headers: {
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+        'Content-Type': 'application/json'
+      }
+    }).catch(function(e) { console.log('Ad click tracking error:', e); });
+  }
+</script>
+
+<script>
+  (function() {
+    function initSocialShare() {
+      if (typeof SocialShareManager !== 'undefined') {
+        if (!window.socialShareManager) {
+          window.socialShareManager = new SocialShareManager();
         }
-        
-        // Initialiser immédiatement si le DOM est prêt
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initSocialShare);
-        } else {
-            initSocialShare();
-        }
-        
-        // Fallback: initialiser après le chargement complet de la page
-        window.addEventListener('load', function() {
-            if (typeof SocialShareManager !== 'undefined' && !window.socialShareManager) {
-                window.socialShareManager = new SocialShareManager();
-            }
-        });
-    })();
+      } else {
+        setTimeout(initSocialShare, 100);
+      }
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initSocialShare);
+    } else {
+      initSocialShare();
+    }
+    window.addEventListener('load', function() {
+      if (typeof SocialShareManager !== 'undefined' && !window.socialShareManager) {
+        window.socialShareManager = new SocialShareManager();
+      }
+    });
+  })();
 </script>
 @endsection
-

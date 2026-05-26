@@ -330,33 +330,38 @@ class Statistic extends Model
             $today = Carbon::today();
             $month = $today->month;
             $year = $today->year;
-            
-            // Invalider les caches seulement si la visite est d'aujourd'hui
-            // Pour éviter d'invalider les caches des jours/mois/années passés
+
+            // Dashboard principal — toujours invalider
+            Cache::forget('dashboard_stats_detailed');
+
             if ($visitDate->isToday()) {
                 $todayKey = $today->format('Y-m-d');
                 Cache::forget("statistics_day_{$todayKey}");
                 Cache::forget("top_pages_day");
                 Cache::forget("dashboard_today_visits");
+                Cache::forget("statistics_day");
             }
-            
-            // Invalider les caches du mois (seulement si c'est le mois actuel)
+
             if ($visitDate->month == $month && $visitDate->year == $year) {
                 Cache::forget("statistics_month_{$year}_{$month}");
+                Cache::forget("statistics_month");
                 Cache::forget("top_pages_month");
                 Cache::forget("dashboard_month_visits");
                 Cache::forget("weekly_stats_{$year}_{$month}");
+                Cache::forget("weekly_stats_current_month");
+                Cache::forget("year_total_visits_{$year}");
             }
-            
-            // Invalider les caches de l'année (seulement si c'est l'année actuelle)
+
             if ($visitDate->year == $year) {
                 Cache::forget("statistics_year_{$year}");
                 Cache::forget("top_pages_year");
+                Cache::forget("statistics_available_years");
             }
-            
-            // Invalider les caches des statistiques détaillées (seulement si récent)
+
             if ($visitDate->gte(Carbon::now()->subDays(30))) {
                 Cache::forget("daily_stats_30_days");
+                Cache::forget("statistics_month_{$year}_{$month}");
+                Cache::forget("statistics_day_" . $today->format('Y-m-d'));
             }
         });
     }

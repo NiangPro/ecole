@@ -60,6 +60,14 @@
 @section('title', trans('app.quiz.result.title') . ' ' . $langLabel . ' | NiangProgrammeur')
 @section('meta_description', trans('app.quiz.result.got_score', [':score' => $score, ':total' => $total]))
 
+@section('styles')
+<style>
+.qr-hero {
+  padding-block-start: calc(var(--spacing-navbar, 76px) + 4rem) !important;
+}
+</style>
+@endsection
+
 @section('content')
 <div class="qr-page">
 
@@ -224,5 +232,10 @@
     }, 120);
   });
 })();
+
+// Corriger l'URL (la vue est rendue depuis /submit, on affiche /result)
+if (window.history && window.history.replaceState) {
+  window.history.replaceState(null, '', '{{ route('quiz.result', $language) }}');
+}
 </script>
 @endsection

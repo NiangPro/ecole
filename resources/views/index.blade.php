@@ -232,10 +232,8 @@
               <h3 class="hp-article-title">{{ $article->title }}</h3>
               <div class="hp-article-meta">
                 <span>{{ $article->published_at ? \Carbon\Carbon::parse($article->published_at)->diffForHumans() : 'Récemment' }}</span>
-                @if($article->views)
-                  <span>·</span>
-                  <span>{{ number_format($article->views) }} vues</span>
-                @endif
+                <span>·</span>
+                <span>{{ $article->featured_display_views }} vues</span>
               </div>
             </div>
           </a>
@@ -466,10 +464,8 @@
             <h3 class="hp-article-title">{{ $article->title }}</h3>
             <div class="hp-article-meta">
               <span>{{ $article->published_at ? \Carbon\Carbon::parse($article->published_at)->diffForHumans() : 'Récemment' }}</span>
-              @if($article->views)
-                <span>·</span>
-                <span>{{ number_format($article->views) }} vues</span>
-              @endif
+              <span>·</span>
+              <span>{{ $article->featured_display_views }} vues</span>
             </div>
           </div>
         </a>

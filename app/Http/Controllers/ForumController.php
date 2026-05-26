@@ -46,6 +46,8 @@ class ForumController extends Controller
             ->withCount(['topics' => function($query) {
                 $query->where('is_locked', false);
             }])
+            ->withSum('topics', 'replies_count')
+            ->with('latestTopic.user')
             ->orderBy('order')
             ->orderBy('name')
             ->get();

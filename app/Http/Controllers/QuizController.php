@@ -99,85 +99,65 @@ class QuizController extends Controller
             ];
         }
         
-        $percentage = ($score / $total) * 100;
-        
+        $percentage = $total > 0 ? ($score / $total) * 100 : 0;
+
         // Enregistrer le résultat du quiz si l'utilisateur est connecté
         if (Auth::check()) {
-            $user = Auth::user();
-            
-            $correctAnswers = $score;
-            $wrongAnswers = $total - $score;
-            
-            $quizResult = QuizResult::create([
-                'user_id' => $user->id,
-                'quiz_id' => $language,
-                'language' => $language,
-                'score' => $score,
-                'total_questions' => $total,
-                'correct_answers' => $correctAnswers,
-                'wrong_answers' => $wrongAnswers,
-                'answers' => $results,
-                'completed_at' => now(),
-            ]);
-            
-            UserActivity::log(
-                $user->id,
-                'quiz',
-                'Quiz complété : ' . ucfirst($language),
-                "quiz/{$language}",
-                [
+            try {
+                $user = Auth::user();
+
+                QuizResult::create([
+                    'user_id' => $user->id,
+                    'quiz_id' => $language,
+                    'language' => $language,
                     'score' => $score,
                     'total_questions' => $total,
-                    'percentage' => round($percentage, 2),
+                    'correct_answers' => $score,
+                    'wrong_answers' => $total - $score,
+                    'answers' => $results,
+                    'completed_at' => now(),
+                ]);
+
+                UserActivity::log(
+                    $user->id,
+                    'quiz',
+                    'Quiz complété : ' . ucfirst($language),
+                    "quiz/{$language}",
+                    [
+                        'score' => $score,
+                        'total_questions' => $total,
+                        'percentage' => round($percentage, 2),
+                        'language' => $language,
+                    ]
+                );
+
+                \App\Http\Controllers\ProfileController::clearCache($user->id);
+            } catch (\Exception $e) {
+                \Log::warning('Quiz: impossible de sauvegarder le résultat', [
                     'language' => $language,
-                ]
-            );
-            
-            \App\Http\Controllers\ProfileController::clearCache($user->id);
+                    'user_id' => Auth::id(),
+                    'error' => $e->getMessage(),
+                ]);
+            }
         }
         
-        // Stocker les résultats en session pour éviter la re-soumission
-        session([
-            'quiz_results_' . $language => [
-                'score' => $score,
-                'total' => $total,
-                'percentage' => $percentage,
-                'results' => $results
-            ]
+        // Rendu direct : évite la perte de session sur hébergements multi-serveurs
+        return view('quiz-result', [
+            'language'   => $language,
+            'score'      => $score,
+            'total'      => $total,
+            'percentage' => $percentage,
+            'results'    => $results,
         ]);
-        
-        return redirect()->route('quiz.result', $language);
     }
 
     /**
-     * Afficher les résultats du quiz
+     * Fallback GET — redirige vers le quiz (les résultats sont rendus directement depuis submit)
      */
     public function result($language)
     {
         $this->ensureLocale();
-        
-        $sessionKey = 'quiz_results_' . $language;
-        $quizData = session($sessionKey);
-        
-        if (!$quizData) {
-            return redirect()->route('quiz.language', $language)
-                ->with('error', trans('app.quiz.result.no_results'));
-        }
-        
-        session()->forget($sessionKey);
-        
-        $translatedResults = [];
-        foreach ($quizData['results'] as $result) {
-            $translatedResults[] = $result;
-        }
-        
-        return view('quiz-result', [
-            'language' => $language,
-            'score' => $quizData['score'],
-            'total' => $quizData['total'],
-            'percentage' => $quizData['percentage'],
-            'results' => $translatedResults
-        ]);
+        return redirect()->route('quiz.language', $language);
     }
 
     // ============================================

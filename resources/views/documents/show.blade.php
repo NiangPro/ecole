@@ -134,7 +134,7 @@
    ═══════════════════════════════════════════ */
 .document-detail-page {
   min-height: 100vh;
-  padding: 2.5rem 1.25rem 4rem;
+  padding: calc(var(--spacing-navbar, 76px) + 2.5rem) 1.25rem 4rem;
   position: relative;
   background:
     radial-gradient(ellipse 80% 50% at 20% 0%, rgba(6,182,212,.08) 0%, transparent 60%),

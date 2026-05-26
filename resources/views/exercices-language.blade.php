@@ -44,6 +44,14 @@
 @section('title', trans('app.exercices.exercises') . ' ' . $langLabel . ' | NiangProgrammeur')
 @section('meta_description', trans('app.exercices.practice_skills'))
 
+@section('styles')
+<style>
+.el-header {
+  padding-block-start: calc(var(--spacing-navbar, 76px) + 2.5rem) !important;
+}
+</style>
+@endsection
+
 @section('content')
 <div class="el-page">
 

@@ -28,7 +28,8 @@
 .qr-hero {
   background: var(--qr-surface);
   border-block-end: 1px solid var(--qr-border);
-  padding-block: 3rem 2.5rem;
+  padding-block-start: calc(var(--spacing-navbar, 76px) + 4rem);
+  padding-block-end: 2.5rem;
   padding-inline: 1.5rem;
 }
 

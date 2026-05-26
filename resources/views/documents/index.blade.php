@@ -26,7 +26,7 @@
 
 .documents-hero {
     text-align: center;
-    padding: 3rem 1rem 2rem;
+    padding: calc(var(--spacing-navbar, 76px) + 3rem) 1rem 2rem;
     margin-bottom: 2rem;
     position: relative;
     z-index: 1;

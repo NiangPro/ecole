@@ -688,6 +688,14 @@
         <h1><i class="fas fa-tachometer-alt mr-3"></i>Tableau de Bord</h1>
         <p>Bienvenue sur votre panneau d'administration - Gérez votre plateforme efficacement</p>
     </div>
+    @if(\Illuminate\Support\Facades\Route::has('admin.statistics.clear-cache'))
+    <form method="POST" action="{{ route('admin.statistics.clear-cache') }}" style="margin-top:.75rem;">
+        @csrf
+        <button type="submit" style="background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);padding:.45rem .9rem;border-radius:.5rem;cursor:pointer;font-size:.8rem;">
+            <i class="fas fa-sync-alt" style="margin-right:.35rem;"></i> Rafraîchir les stats
+        </button>
+    </form>
+    @endif
 </div>
 
 <!-- Alertes Publicités Expirantes -->

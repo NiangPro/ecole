@@ -44,6 +44,14 @@
 @section('title', trans('app.quiz.title') . ' ' . $langLabel . ' | NiangProgrammeur')
 @section('meta_description', trans('app.quiz.answer_questions', [':count' => count($questions)]))
 
+@section('styles')
+<style>
+.ql-header {
+  padding-block-start: calc(var(--spacing-navbar, 76px) + 2.5rem) !important;
+}
+</style>
+@endsection
+
 @section('content')
 <div class="ql-page">
 

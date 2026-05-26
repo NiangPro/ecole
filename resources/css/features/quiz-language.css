@@ -26,7 +26,8 @@
 .ql-header {
   background: var(--ql-surface);
   border-block-end: 1px solid var(--ql-border);
-  padding-block: 2.5rem 2rem;
+  padding-block-start: calc(var(--spacing-navbar, 76px) + 2.5rem);
+  padding-block-end: 2rem;
   padding-inline: 1.5rem;
 }
 
