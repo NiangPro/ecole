@@ -47,6 +47,11 @@ class JobArticleController extends Controller
         if ($request->filled('sponsored')) {
             $query->where('is_sponsored', $request->sponsored == '1');
         }
+
+        // Filtre par statut (draft, published, archived)
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
         
         // Tri par défaut : plus récents au plus anciens (par updated_at puis created_at)
         $sortBy = $request->get('sort_by', 'updated_at');

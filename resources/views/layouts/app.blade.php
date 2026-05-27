@@ -1,13 +1,6 @@
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
 <head>
-    <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-56V4D8K6');</script>
-    <!-- End Google Tag Manager -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="@yield('meta_description', 'Plateforme de formation gratuite en développement web. Apprenez HTML5, CSS3, JavaScript, PHP, Laravel, Bootstrap, Git, WordPress et Intelligence Artificielle avec NiangProgrammeur.')">
@@ -40,12 +33,13 @@
     <link rel="icon" type="image/png" sizes="192x192" href="{{ $faviconPng }}">
     <link rel="apple-touch-icon" sizes="180x180" href="{{ $faviconPng }}">
     
-    <!-- Preconnect — limité aux 4 origines critiques -->
+    <!-- Preconnect — origines critiques uniquement (max 4) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin>
+    <link rel="preconnect" href="https://fundingchoicesmessages.google.com" crossorigin>
     <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
     <link rel="dns-prefetch" href="//pagead2.googlesyndication.com">
+    <link rel="dns-prefetch" href="//www.googletagmanager.com">
     <!-- Canonical URL -->
     @hasSection('canonical')
         <link rel="canonical" href="@yield('canonical')">
@@ -111,12 +105,31 @@
         }
     </script>
     
-    <!-- CSS critique - synchrone pour éviter le FOUC -->
-    <link rel="stylesheet" href="{{ asset('css/critical.css') }}">
-    <link rel="stylesheet" href="{{ asset('css/navigation.css') }}">
+    <!-- font-display:swap pour Font Awesome (avant son chargement) -->
+    <style>
+    @font-face{font-family:"Font Awesome 6 Free";font-style:normal;font-weight:900;font-display:swap;src:url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/webfonts/fa-solid-900.woff2") format("woff2")}
+    @font-face{font-family:"Font Awesome 6 Brands";font-style:normal;font-weight:400;font-display:swap;src:url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/webfonts/fa-brands-400.woff2") format("woff2")}
+    </style>
 
-    <!-- Tailwind CSS v4 + CSS moderne compilé par Vite (remplace le CDN) -->
-    @vite(['resources/css/app.css'])
+    <!-- CSS critique inline (above the fold — aucun HTTP request) -->
+    <style>*{box-sizing:border-box}html,body{margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;background:#fff;color:#1e293b;overflow-x:hidden}.hero-section{position:relative;z-index:2;width:100%;min-height:65vh;display:flex;align-items:center;justify-content:center;padding:80px 40px 60px;overflow:hidden;background:linear-gradient(135deg,rgba(15,23,42,.85) 0%,rgba(30,41,59,.9) 100%)}.hero-content{max-width:1200px;margin:0 auto;width:100%;text-align:center}.main-title{font-size:clamp(2.5rem,5vw,4rem);font-weight:900;line-height:1.2;margin-bottom:30px;color:#fff}.subtitle{font-size:clamp(1rem,2vw,1.3rem);color:rgba(255,255,255,.9);margin-bottom:40px;line-height:1.6}@media (max-width:768px){.hero-section{min-height:55vh;padding:60px 20px 40px}.main-title{font-size:clamp(1.8rem,4vw,2.2rem);line-height:1.3;margin-bottom:20px}}.container{width:100%!important;margin-left:auto!important;margin-right:auto!important;padding-left:1rem!important;padding-right:1rem!important}@media (min-width:640px){.container{padding-left:1.5rem!important;padding-right:1.5rem!important}}section.relative.min-h-screen>div.container{text-align:center!important}section.relative.min-h-screen>div.container>div{margin-left:auto!important;margin-right:auto!important;text-align:center!important}section.relative.min-h-screen h1,section.relative.min-h-screen p{text-align:center!important;margin-left:auto!important;margin-right:auto!important}.max-w-5xl{max-width:64rem!important;margin-left:auto!important;margin-right:auto!important;display:block!important}.max-w-7xl{max-width:80rem!important;margin-left:auto!important;margin-right:auto!important;display:block!important}.max-w-3xl{max-width:48rem!important;margin-left:auto!important;margin-right:auto!important;display:block!important}</style>
+
+    @php
+        $viteManifest = json_decode(file_get_contents(public_path('build/manifest.json')), true);
+        $viteCssFile  = $viteManifest['resources/css/app.css']['file'] ?? null;
+    @endphp
+
+    <!-- Preload hints — démarrer le téléchargement tôt sans différer l'application -->
+    <link rel="preload" href="{{ asset('css/navigation.css') }}" as="style">
+    @if($viteCssFile)
+    <link rel="preload" href="{{ asset('build/' . $viteCssFile) }}" as="style">
+    @endif
+
+    <!-- CSS synchrone (bloquant mais sans CLS — styles appliqués avant le premier paint) -->
+    <link rel="stylesheet" href="{{ asset('css/navigation.css') }}">
+    @if($viteCssFile)
+    <link rel="stylesheet" href="{{ asset('build/' . $viteCssFile) }}">
+    @endif
     
     <!-- reCAPTCHA v3 (invisible) -->
     @php
@@ -205,14 +218,7 @@
         }
     @endphp
     
-    @if($adsenseSettings && $adsenseClientId)
-        <!-- AdSense Auto Ads - Chargé de manière différée -->
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ $adsenseClientId }}"
-                crossorigin="anonymous"></script>
-    @elseif($adsenseSettings && $adsenseSettings->adsense_code && strpos($adsenseSettings->adsense_code, '<script') !== false)
-        <!-- AdSense - Code complet fourni -->
-        {!! $adsenseSettings->adsense_code !!}
-    @endif
+    {{-- AdSense déplacé en bas de body pour ne pas bloquer le rendu --}}
     
     
     <!-- Google Analytics -->
@@ -272,10 +278,6 @@
     @yield('styles')
 </head>
 <body class="bg-white text-gray-900 light-mode-forced" lang="{{ app()->getLocale() }}">
-    <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-56V4D8K6"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
 
     <!-- Skip Links pour l'accessibilité -->
     <div class="skip-links">
@@ -623,6 +625,21 @@
         document.body.dataset.userId = {{ Auth::id() }};
         @endif
     </script>
-    
+
+    <!-- Google Tag Manager (déplacé en bas de body — non bloquant) -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-56V4D8K6');</script>
+
+    <!-- AdSense — chargé après le contenu -->
+    @if($adsenseSettings && $adsenseClientId)
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ $adsenseClientId }}"
+            crossorigin="anonymous"></script>
+    @elseif($adsenseSettings && !empty($adsenseSettings->adsense_code) && strpos($adsenseSettings->adsense_code, '<script') !== false)
+    {!! $adsenseSettings->adsense_code !!}
+    @endif
+
 </body>
 </html>

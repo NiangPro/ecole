@@ -19,7 +19,10 @@
     <div class="navbar-container">
         <!-- Logo -->
         <a href="{{ route('home') }}" class="navbar-logo">
-            <img src="{{ asset('images/logo.png') }}" alt="Logo" class="logo-image">
+            <picture>
+                <source srcset="{{ asset('images/logo.webp') }}" type="image/webp">
+                <img src="{{ asset('images/logo.png') }}" alt="Logo NiangProgrammeur" class="logo-image" width="44" height="44" loading="eager" fetchpriority="high">
+            </picture>
             <span class="logo-text">NiangProgrammeur</span>
         </a>
         

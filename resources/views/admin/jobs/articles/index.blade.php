@@ -710,6 +710,16 @@
         </div>
         
         <div>
+            <label class="block text-gray-300 mb-2 text-sm font-semibold">Statut</label>
+            <select name="status" class="input-admin">
+                <option value="">Tous les statuts</option>
+                <option value="published" {{ request('status') == 'published' ? 'selected' : '' }}>✅ Publiés</option>
+                <option value="draft"     {{ request('status') == 'draft'     ? 'selected' : '' }}>✏️ Brouillons</option>
+                <option value="archived"  {{ request('status') == 'archived'  ? 'selected' : '' }}>🗄️ Archivés</option>
+            </select>
+        </div>
+
+        <div>
             <label class="block text-gray-300 mb-2 text-sm font-semibold">Type</label>
             <select name="sponsored" class="input-admin">
                 <option value="">Tous les articles</option>
@@ -779,6 +789,7 @@
                     <th class="text-left p-4 text-cyan-400">Image</th>
                     <th class="text-left p-4 text-cyan-400">Titre</th>
                     <th class="text-left p-4 text-cyan-400">Catégorie</th>
+                    <th class="text-left p-4 text-cyan-400">Statut</th>
                     <th class="text-left p-4 text-cyan-400">SEO</th>
                     <th class="text-left p-4 text-cyan-400">Lisibilité</th>
                     <th class="text-left p-4 text-cyan-400">Vues</th>
@@ -825,6 +836,20 @@
                     <td class="p-4">
                         <span class="px-2 py-1 bg-cyan-500/20 text-cyan-400 rounded text-sm">
                             {{ $article->category->name }}
+                        </span>
+                    </td>
+                    <td class="p-4">
+                        @php
+                            $statusMap = [
+                                'published' => ['label' => 'Publié',    'icon' => 'fa-check-circle',  'bg' => 'bg-green-500/20',  'text' => 'text-green-400',  'border' => 'border-green-500/30'],
+                                'draft'     => ['label' => 'Brouillon', 'icon' => 'fa-pencil-alt',    'bg' => 'bg-yellow-500/20', 'text' => 'text-yellow-400', 'border' => 'border-yellow-500/30'],
+                                'archived'  => ['label' => 'Archivé',   'icon' => 'fa-archive',       'bg' => 'bg-gray-500/20',   'text' => 'text-gray-400',   'border' => 'border-gray-500/30'],
+                            ];
+                            $s = $statusMap[$article->status] ?? $statusMap['draft'];
+                        @endphp
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border {{ $s['bg'] }} {{ $s['text'] }} {{ $s['border'] }}">
+                            <i class="fas {{ $s['icon'] }} text-[10px]"></i>
+                            {{ $s['label'] }}
                         </span>
                     </td>
                     <td class="p-4">
@@ -898,7 +923,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="7" class="p-8 text-center text-gray-400">
+                    <td colspan="8" class="p-8 text-center text-gray-400">
                         <i class="fas fa-newspaper text-4xl mb-4 block"></i>
                         Aucun article trouvé
                     </td>
