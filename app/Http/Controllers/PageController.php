@@ -132,12 +132,22 @@ class PageController extends Controller
     
     public function contact()
     {
+        $this->ensureLocale();
         $siteSettings = \Illuminate\Support\Facades\Cache::remember('site_settings', 3600, function () {
             return \App\Models\SiteSetting::first();
         });
         return view('contact', compact('siteSettings'));
     }
     
+    public function maintenance()
+    {
+        $this->ensureLocale();
+        $settings = \Illuminate\Support\Facades\Cache::remember('site_settings', 3600, function () {
+            return \App\Models\SiteSetting::first();
+        });
+        return view('maintenance', compact('settings'));
+    }
+
     public function docs()
     {
         $this->ensureLocale();

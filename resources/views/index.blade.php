@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'NiangProgrammeur — Formation Gratuite en Développement Web')
-@section('meta_description', 'Plateforme de formation gratuite en développement web. Apprenez HTML5, CSS3, JavaScript, PHP, Laravel, Bootstrap, Git, WordPress et Intelligence Artificielle.')
+@section('title', __('homepage.title'))
+@section('meta_description', __('homepage.meta_description'))
 
 @push('preload_images')
 <link rel="preload" as="image" href="{{ asset('images/hero-bg-mobile.webp') }}" type="image/webp" fetchpriority="high" media="(max-width: 768px)">
@@ -18,25 +18,25 @@
     <div>
       <span class="hp-hero__eyebrow">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-        Plateforme #1 de formation web en Afrique
+        {{ __('homepage.hero.eyebrow') }}
       </span>
 
       <h1 class="hp-hero__title">
-        Apprends à coder.<br>
-        <span class="accent">Lance ta carrière.</span>
+        {{ __('homepage.hero.title_1') }}<br>
+        <span class="accent">{{ __('homepage.hero.title_2') }}</span>
       </h1>
 
       <p class="hp-hero__subtitle">
-        Formations gratuites, documents téléchargeables, exercices pratiques et offres d'emploi tech — tout en un seul endroit.
+        {{ __('homepage.hero.subtitle') }}
       </p>
 
       <div class="hp-hero__actions">
         <a href="{{ route('formations.all') }}" class="hp-btn-primary">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 3l14 9-14 9V3z"/></svg>
-          Commencer gratuitement
+          {{ __('homepage.hero.btn_start') }}
         </a>
         <a href="{{ route('documents.index') }}" class="hp-btn-secondary">
-          Parcourir les ressources
+          {{ __('homepage.hero.btn_browse') }}
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </a>
       </div>
@@ -47,19 +47,19 @@
   <div class="hp-stats">
     <div class="hp-stat-item">
       <div class="hp-stat-number">10 000+</div>
-      <div class="hp-stat-label">Apprenants actifs</div>
+      <div class="hp-stat-label">{{ __('homepage.stats.learners') }}</div>
     </div>
     <div class="hp-stat-item">
       <div class="hp-stat-number">{{ $categories->count() }}+</div>
-      <div class="hp-stat-label">Technologies enseignées</div>
+      <div class="hp-stat-label">{{ __('homepage.stats.technologies') }}</div>
     </div>
     <div class="hp-stat-item">
       <div class="hp-stat-number">{{ $featuredDocuments->count() + 50 }}+</div>
-      <div class="hp-stat-label">Ressources disponibles</div>
+      <div class="hp-stat-label">{{ __('homepage.stats.resources') }}</div>
     </div>
     <div class="hp-stat-item">
       <div class="hp-stat-number">100%</div>
-      <div class="hp-stat-label">Formations gratuites</div>
+      <div class="hp-stat-label">{{ __('homepage.stats.free') }}</div>
     </div>
   </div>
 
@@ -73,12 +73,12 @@
 
       <div class="hp-section-header" style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
         <div>
-          <span class="hp-section-eyebrow">Ressources</span>
-          <h2 class="hp-section-title">Documents téléchargeables</h2>
-          <p class="hp-section-subtitle">Fiches de révision, templates et guides pratiques.</p>
+          <span class="hp-section-eyebrow">{{ __('homepage.docs.eyebrow') }}</span>
+          <h2 class="hp-section-title">{{ __('homepage.docs.title') }}</h2>
+          <p class="hp-section-subtitle">{{ __('homepage.docs.subtitle') }}</p>
         </div>
         <a href="{{ route('documents.index') }}" class="hp-section-action">
-          Voir tout
+          {{ __('homepage.docs.view_all') }}
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </a>
       </div>
@@ -107,7 +107,7 @@
             @endif
 
             @if($document->is_featured)
-              <span class="hp-doc-badge">Vedette</span>
+              <span class="hp-doc-badge">{{ __('homepage.docs.featured') }}</span>
             @endif
 
             <div class="hp-doc-price">
@@ -119,7 +119,7 @@
                   <span class="hp-doc-price-old">{{ number_format($document->price, 0, ',', ' ') }}</span>
                 @endif
               @else
-                <span class="hp-doc-price-current">Gratuit</span>
+                <span class="hp-doc-price-current">{{ __('homepage.docs.free') }}</span>
               @endif
             </div>
           </a>
@@ -129,7 +129,7 @@
               {{ $document->title }}
             </a>
             <div class="hp-doc-footer">
-              <span class="hp-doc-category">{{ $document->category?->name ?? 'Général' }}</span>
+              <span class="hp-doc-category">{{ $document->category?->name ?? __('homepage.docs.general') }}</span>
               <a href="{{ route('documents.show', $document->slug) }}" class="hp-doc-arrow" aria-label="Voir le document">→</a>
             </div>
           </div>
@@ -151,37 +151,28 @@
 
       <div class="hp-section-header" style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
         <div>
-          <span class="hp-section-eyebrow">Catégories</span>
-          <h2 class="hp-section-title">Parcourir par catégorie</h2>
-          <p class="hp-section-subtitle">Explorez nos articles classés par domaine et trouvez ce qui vous intéresse.</p>
+          <span class="hp-section-eyebrow">{{ __('homepage.categories.eyebrow') }}</span>
+          <h2 class="hp-section-title">{{ __('homepage.categories.title') }}</h2>
+          <p class="hp-section-subtitle">{{ __('homepage.categories.subtitle') }}</p>
         </div>
       </div>
 
       <div class="hp-tech-grid">
-        @php
-          $techIcons = [
-            'html'        => '🌐', 'css'         => '🎨', 'javascript'  => '⚡',
-            'php'         => '🐘', 'laravel'     => '🔴', 'python'      => '🐍',
-            'react'       => '⚛️',  'vue'         => '💚', 'nodejs'      => '🟢',
-            'mysql'       => '🗄️',  'git'         => '🌿', 'wordpress'   => '🔵',
-            'bootstrap'   => '🅱️',  'typescript'  => '🔷', 'ia'          => '🤖',
-            'default'     => '💻',
-          ];
-        @endphp
-
         @foreach($categories as $category)
-        @php
-          $slug = strtolower($category->slug ?? '');
-          $icon = '💻';
-          foreach($techIcons as $key => $emoji) {
-            if(str_contains($slug, $key)) { $icon = $emoji; break; }
-          }
-        @endphp
         <a href="{{ route('emplois.category', $category->slug) }}" class="hp-tech-card">
-          <div class="hp-tech-icon">{{ $icon }}</div>
+          <div class="hp-tech-icon">
+            @if($category->image)
+              <img src="{{ $category->image }}" alt="{{ $category->name }}" loading="lazy" width="44" height="44">
+            @else
+              💻
+            @endif
+          </div>
           <div>
             <div class="hp-tech-name">{{ $category->name }}</div>
-            <div class="hp-tech-count">{{ $category->published_articles_count ?? 0 }} article{{ ($category->published_articles_count ?? 0) > 1 ? 's' : '' }}</div>
+            <div class="hp-tech-count">
+              @php $count = $category->published_articles_count ?? 0; @endphp
+              {{ $count }} {{ $count > 1 ? __('homepage.categories.article_other') : __('homepage.categories.article_one') }}
+            </div>
           </div>
           <span class="hp-tech-arrow">→</span>
         </a>
@@ -201,12 +192,12 @@
 
       <div class="hp-section-header" style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
         <div>
-          <span class="hp-section-eyebrow">Articles</span>
-          <h2 class="hp-section-title">À la une</h2>
-          <p class="hp-section-subtitle">Les dernières actualités tech, tutoriels et offres d'emploi.</p>
+          <span class="hp-section-eyebrow">{{ __('homepage.featured.eyebrow') }}</span>
+          <h2 class="hp-section-title">{{ __('homepage.featured.title') }}</h2>
+          <p class="hp-section-subtitle">{{ __('homepage.featured.subtitle') }}</p>
         </div>
         <a href="{{ route('emplois') }}" class="hp-section-action">
-          Tous les articles
+          {{ __('homepage.featured.view_all') }}
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </a>
       </div>
@@ -228,12 +219,12 @@
             </div>
             @endif
             <div class="hp-article-body">
-              <span class="hp-article-category">{{ $article->category?->name ?? 'Général' }}</span>
+              <span class="hp-article-category">{{ $article->category?->name ?? __('homepage.featured.general') }}</span>
               <h3 class="hp-article-title">{{ $article->title }}</h3>
               <div class="hp-article-meta">
-                <span>{{ $article->published_at ? \Carbon\Carbon::parse($article->published_at)->diffForHumans() : 'Récemment' }}</span>
+                <span>{{ $article->published_at ? \Carbon\Carbon::parse($article->published_at)->diffForHumans() : __('homepage.featured.recently') }}</span>
                 <span>·</span>
-                <span>{{ $article->featured_display_views }} vues</span>
+                <span>{{ $article->featured_display_views }} {{ __('homepage.featured.views') }}</span>
               </div>
             </div>
           </a>
@@ -243,14 +234,14 @@
         {{-- SIDEBAR --}}
         @if($careerAdviceArticles->isNotEmpty())
         <aside class="hp-sidebar">
-          <div class="hp-sidebar-title">Conseils & Carrière</div>
+          <div class="hp-sidebar-title">{{ __('homepage.featured.sidebar') }}</div>
           @foreach($careerAdviceArticles->take(6) as $i => $article)
           <a href="{{ route('emplois.article', $article->slug) }}" class="hp-sidebar-item">
             <span class="hp-sidebar-num">{{ str_pad($i + 1, 2, '0', STR_PAD_LEFT) }}</span>
             <div>
               <div class="hp-sidebar-item-title">{{ $article->title }}</div>
               <div class="hp-sidebar-item-meta">
-                {{ $article->published_at ? \Carbon\Carbon::parse($article->published_at)->diffForHumans() : 'Récemment' }}
+                {{ $article->published_at ? \Carbon\Carbon::parse($article->published_at)->diffForHumans() : __('homepage.featured.recently') }}
               </div>
             </div>
           </a>
@@ -273,12 +264,12 @@
 
       <div class="hp-section-header" style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
         <div>
-          <span class="hp-section-eyebrow">Formations premium</span>
-          <h2 class="hp-section-title">Cours certifiants</h2>
-          <p class="hp-section-subtitle">Allez plus loin avec nos formations structurées et accompagnées.</p>
+          <span class="hp-section-eyebrow">{{ __('homepage.courses.eyebrow') }}</span>
+          <h2 class="hp-section-title">{{ __('homepage.courses.title') }}</h2>
+          <p class="hp-section-subtitle">{{ __('homepage.courses.subtitle') }}</p>
         </div>
         <a href="{{ route('formations.all') }}" class="hp-section-action">
-          Voir tous les cours
+          {{ __('homepage.courses.view_all') }}
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </a>
       </div>
@@ -301,7 +292,7 @@
                 <img src="{{ $course->cover_image }}" alt="{{ $course->title }}" width="340" height="192" loading="lazy" decoding="async">
               @endif
             @endif
-            <span class="hp-course-level-badge">Premium</span>
+            <span class="hp-course-level-badge">{{ __('homepage.courses.premium') }}</span>
           </div>
 
           <div class="hp-course-body">
@@ -318,7 +309,7 @@
               @endif
               @if($course->students_count)
               <span class="hp-course-meta-item">
-                <i>👥</i> {{ number_format($course->students_count) }} élèves
+                <i>👥</i> {{ number_format($course->students_count) }} {{ __('homepage.courses.students') }}
               </span>
               @endif
               @if($course->rating)
@@ -335,7 +326,7 @@
                 @endif
                 <span class="hp-course-price">{{ number_format($displayPrice, 0, ',', ' ') }} {{ $course->currency ?? 'FCFA' }}</span>
               </div>
-              <a href="{{ route('monetization.index') }}" class="hp-course-cta">S'inscrire</a>
+              <a href="{{ route('monetization.index') }}" class="hp-course-cta">{{ __('homepage.courses.enroll') }}</a>
             </div>
           </div>
         </article>
@@ -354,7 +345,7 @@
     <div class="hp-container">
       @foreach($homepageAds->take(1) as $ad)
       <div class="hp-native-ad" style="margin-block-end:1.5rem;">
-        <span class="hp-native-ad__label">Sponsorisé</span>
+        <span class="hp-native-ad__label">{{ __('homepage.ads.sponsored') }}</span>
 
         @if($ad->image)
         <div class="hp-native-ad__img-wrap">
@@ -373,7 +364,7 @@
           @endif
           @if($ad->link_url)
             <a href="{{ $ad->link_url }}" class="hp-native-ad__cta" target="_blank" rel="noopener sponsored">
-              En savoir plus
+              {{ __('homepage.ads.learn_more') }}
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </a>
           @endif
@@ -392,8 +383,8 @@
     <div class="hp-container">
 
       <div class="hp-section-header">
-        <span class="hp-section-eyebrow">Sponsorisé</span>
-        <h2 class="hp-section-title">Contenu mis en avant</h2>
+        <span class="hp-section-eyebrow">{{ __('homepage.ads.sponsored') }}</span>
+        <h2 class="hp-section-title">{{ __('homepage.ads.title') }}</h2>
       </div>
 
       <div class="hp-articles-grid--3col">
@@ -409,7 +400,7 @@
           </div>
           @endif
           <div class="hp-article-body">
-            <span class="hp-article-category">{{ $article->category?->name ?? 'Sponsorisé' }}</span>
+            <span class="hp-article-category">{{ $article->category?->name ?? __('homepage.ads.sponsored') }}</span>
             <h3 class="hp-article-title">{{ $article->title }}</h3>
             @if($article->excerpt)
               <p style="font-size:0.8125rem;color:var(--text-muted);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
@@ -417,7 +408,7 @@
               </p>
             @endif
             <div class="hp-article-meta">
-              <span>{{ $article->published_at ? \Carbon\Carbon::parse($article->published_at)->diffForHumans() : 'Récemment' }}</span>
+              <span>{{ $article->published_at ? \Carbon\Carbon::parse($article->published_at)->diffForHumans() : __('homepage.featured.recently') }}</span>
             </div>
           </div>
         </a>
@@ -437,12 +428,12 @@
 
       <div class="hp-section-header" style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
         <div>
-          <span class="hp-section-eyebrow">Actualité</span>
-          <h2 class="hp-section-title">Derniers articles</h2>
-          <p class="hp-section-subtitle">Restez à jour avec l'écosystème tech.</p>
+          <span class="hp-section-eyebrow">{{ __('homepage.latest.eyebrow') }}</span>
+          <h2 class="hp-section-title">{{ __('homepage.latest.title') }}</h2>
+          <p class="hp-section-subtitle">{{ __('homepage.latest.subtitle') }}</p>
         </div>
         <a href="{{ route('emplois') }}" class="hp-section-action">
-          Voir tout
+          {{ __('homepage.latest.view_all') }}
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </a>
       </div>
@@ -460,18 +451,17 @@
           </div>
           @endif
           <div class="hp-article-body">
-            <span class="hp-article-category">{{ $article->category?->name ?? 'Général' }}</span>
+            <span class="hp-article-category">{{ $article->category?->name ?? __('homepage.latest.general') }}</span>
             <h3 class="hp-article-title">{{ $article->title }}</h3>
             <div class="hp-article-meta">
-              <span>{{ $article->published_at ? \Carbon\Carbon::parse($article->published_at)->diffForHumans() : 'Récemment' }}</span>
+              <span>{{ $article->published_at ? \Carbon\Carbon::parse($article->published_at)->diffForHumans() : __('homepage.latest.recently') }}</span>
               <span>·</span>
-              <span>{{ $article->featured_display_views }} vues</span>
+              <span>{{ $article->featured_display_views }} {{ __('homepage.latest.views') }}</span>
             </div>
           </div>
         </a>
         @endforeach
       </div>
-
 
     </div>
   </section>
@@ -484,12 +474,12 @@
   <section class="hp-section hp-section--alt">
     <div class="hp-container">
       <div class="hp-section-header">
-        <span class="hp-section-eyebrow">Partenaires</span>
-        <h2 class="hp-section-title">Nos partenaires</h2>
+        <span class="hp-section-eyebrow">{{ __('homepage.partners.eyebrow') }}</span>
+        <h2 class="hp-section-title">{{ __('homepage.partners.title') }}</h2>
       </div>
       @foreach($sidebarAds as $ad)
       <div class="hp-native-ad" style="margin-block-end:1.5rem;">
-        <span class="hp-native-ad__label">Partenaire</span>
+        <span class="hp-native-ad__label">{{ __('homepage.partners.label') }}</span>
         @if($ad->image)
         <div class="hp-native-ad__img-wrap">
           @if(($ad->image_type ?? 'internal') === 'internal')
@@ -506,7 +496,7 @@
           @endif
           @if($ad->link_url)
             <a href="{{ $ad->link_url }}" class="hp-native-ad__cta" target="_blank" rel="noopener sponsored">
-              Découvrir
+              {{ __('homepage.partners.discover') }}
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </a>
           @endif
@@ -522,17 +512,17 @@
        ───────────────────────────────────────────────────────── --}}
   <div class="hp-cta-banner">
     <div class="hp-container">
-      <h2 class="hp-cta-banner__title">Prêt à lancer ta carrière dans le dev ?</h2>
+      <h2 class="hp-cta-banner__title">{{ __('homepage.cta.title') }}</h2>
       <p class="hp-cta-banner__subtitle">
-        Rejoins des milliers d'apprenants qui ont transformé leur vie grâce au code. C'est gratuit, c'est maintenant.
+        {{ __('homepage.cta.subtitle') }}
       </p>
       <div style="display:flex;align-items:center;justify-content:center;gap:1rem;flex-wrap:wrap;">
         <a href="{{ route('formations.all') }}" class="hp-btn-primary">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-          Démarrer maintenant
+          {{ __('homepage.cta.btn_start') }}
         </a>
         <a href="{{ route('documents.index') }}" class="hp-btn-secondary" style="border-color:oklch(65% 0.20 200 / 30%);color:oklch(65% 0.20 200);">
-          Télécharger des ressources
+          {{ __('homepage.cta.btn_dl') }}
         </a>
       </div>
     </div>

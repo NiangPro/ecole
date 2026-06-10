@@ -11,6 +11,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Hébergement LWS derrière un reverse proxy : sans ceci, $request->ip()
+        // renvoie l'IP du proxy pour tous les visiteurs, qui partagent alors
+        // les mêmes compteurs de throttle (erreurs 429 "Too Many Requests")
+        $middleware->trustProxies(at: '*');
+
         // Middleware pour forcer www en production
         $middleware->web(prepend: [
             \App\Http\Middleware\ForceWwwRedirect::class,
@@ -19,6 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
         
         $middleware->web(append: [
             \App\Http\Middleware\TrackVisit::class,
+            \App\Http\Middleware\CheckMaintenanceMode::class,
         ]);
         
         // Alias pour les middlewares

@@ -29,7 +29,13 @@
       "Bash(grep -rn '$table->index\\\\|$table->unique' database/migrations/ '--include=*.php')",
       "Bash(awk '{sum+=$5; count++} END {print \"Total:\", sum/1024 \"KB,\", \"Moy:\", sum/count/1024 \"KB, Fichiers:\", count}')",
       "Bash(grep -v \"^\\\\s*$\")",
-      "Bash(npm --version)"
+      "Bash(npm --version)",
+      "Bash(curl -sI https://www.niangprogrammeur.com)",
+      "WebFetch(domain:epreuvesetcorriges.com)",
+      "Bash(curl -sL -A \"Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/125.0.0.0 Safari/537.36\" \"https://epreuvesetcorriges.com/categories/senegal\" -o /tmp/epreuves.html -w \"%{http_code}\")",
+      "Bash(grep -oE '<a[^>]+href=\"[^\"]*\"[^>]*>[^<]{2,80}</a>' /tmp/epreuves.html)",
+      "Bash(curl -sL -A \"Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/125.0.0.0 Safari/537.36\" \"https://epreuvesetcorriges.com/categories/senegal/examens/bac\" -o /tmp/bac.html -w \"%{http_code}\\\\n\")",
+      "Bash(grep -oE '<a[^>]+href=\"[^\"]*\"[^>]*>[^<]{2,80}</a>' /tmp/bac.html)"
     ]
   }
 }

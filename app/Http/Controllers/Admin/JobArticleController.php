@@ -163,7 +163,10 @@ class JobArticleController extends Controller
         // Logger l'action
         AdminLog::log('create', $article, "Création de l'article \"{$article->title}\"");
 
-        // Le cache sera invalidé automatiquement par l'événement du modèle
+        // Envoyer les notifications si l'article est publié
+        if ($article->status === 'published') {
+            \App\Services\NotificationService::notifyNewArticle($article);
+        }
 
         return redirect()->route('admin.jobs.articles.index')
             ->with('success', 'Article créé avec succès');
@@ -337,7 +340,8 @@ class JobArticleController extends Controller
         }
 
         // Sauvegarder les anciennes valeurs pour le log
-        $oldValues = $article->toArray();
+        $oldValues      = $article->toArray();
+        $wasNotPublished = $article->status !== 'published';
 
         try {
             $article->update($validated);
@@ -345,6 +349,11 @@ class JobArticleController extends Controller
             return redirect()->back()
                 ->withInput()
                 ->withErrors(['slug' => 'Ce slug existe déjà. Veuillez en choisir un autre.']);
+        }
+
+        // Notifier si l'article vient de passer en publié
+        if ($article->status === 'published' && $wasNotPublished) {
+            \App\Services\NotificationService::notifyNewArticle($article);
         }
 
         try {

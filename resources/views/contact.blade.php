@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
-@section('title', 'Contact — NiangProgrammeur')
-@section('meta_description', 'Contactez NiangProgrammeur pour vos questions, projets ou collaborations. Formulaire de contact, email et téléphone disponibles. Réponse sous 24h.')
-@section('meta_keywords', 'contact NiangProgrammeur, contacter développeur, projet web, collaboration développement, devis site web')
+@section('title', __('contact.title'))
+@section('meta_description', __('contact.meta_description'))
+@section('meta_keywords', __('contact.meta_keywords'))
 
 @section('styles')
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/intl-tel-input@19.5.3/build/css/intlTelInput.css">
@@ -15,19 +15,18 @@
   <div class="ct-hero">
     <div class="ct-hero__eyebrow">
       <span class="ct-hero__dot"></span>
-      Disponible & Réactif
+      {{ __('contact.hero.eyebrow') }}
     </div>
     <h1 class="ct-hero__title">
-      Prenons <span>Contact</span>
+      {{ __('contact.hero.title_1') }} <span>{{ __('contact.hero.title_2') }}</span>
     </h1>
     <p class="ct-hero__sub">
-      Une question sur nos formations, un projet de développement, ou une idée de collaboration ?
-      Je lis tous les messages et réponds sous 24h. N'hésitez pas.
+      {{ __('contact.hero.subtitle') }}
     </p>
     <div class="ct-hero__chips">
       <span class="ct-info-chip">
         <i class="fas fa-clock"></i>
-        Réponse &lt; 24h
+        {!! __('contact.hero.response') !!}
       </span>
       <a href="mailto:{{ optional($siteSettings)->contact_email ?? 'NiangProgrammeur@gmail.com' }}" class="ct-info-chip">
         <i class="fas fa-envelope"></i>
@@ -48,7 +47,7 @@
       <div class="ct-form-card">
         <h2 class="ct-form-title">
           <i class="fas fa-paper-plane"></i>
-          Envoyez-moi un message
+          {{ __('contact.form.title') }}
         </h2>
 
         @if(session('success'))
@@ -63,7 +62,7 @@
 
           {{-- Honeypot --}}
           <div style="position:absolute;left:-9999px;opacity:0;pointer-events:none;visibility:hidden;" aria-hidden="true">
-            <label for="website">Website (ne pas remplir)</label>
+            <label for="website">Website</label>
             <input type="text" name="website" id="website" autocomplete="off" tabindex="-1">
           </div>
 
@@ -75,16 +74,17 @@
             <div class="ct-field">
               <label class="ct-label" for="name">
                 <i class="fas fa-user"></i>
-                Nom complet
+                {{ __('contact.form.name_label') }}
                 <span class="ct-label__req">*</span>
               </label>
-              <input class="ct-input" type="text" id="name" name="name" required placeholder="Votre nom">
+              <input class="ct-input" type="text" id="name" name="name" required
+                     placeholder="{{ __('contact.form.name_placeholder') }}">
             </div>
 
             <div class="ct-field">
               <label class="ct-label" for="email">
                 <i class="fas fa-envelope"></i>
-                Email
+                {{ __('contact.form.email_label') }}
                 <span class="ct-label__req">*</span>
               </label>
               <input class="ct-input" type="email" id="email" name="email" required placeholder="votre@email.com">
@@ -93,7 +93,7 @@
             <div class="ct-field">
               <label class="ct-label" for="phone">
                 <i class="fas fa-phone"></i>
-                Téléphone
+                {{ __('contact.form.phone_label') }}
               </label>
               <input class="ct-input" type="tel" id="phone" name="phone" placeholder="">
               <input type="hidden" id="phone_country" name="phone_country" value="">
@@ -102,25 +102,27 @@
             <div class="ct-field">
               <label class="ct-label" for="subject">
                 <i class="fas fa-tag"></i>
-                Sujet
+                {{ __('contact.form.subject_label') }}
                 <span class="ct-label__req">*</span>
               </label>
-              <input class="ct-input" type="text" id="subject" name="subject" required placeholder="Objet de votre message">
+              <input class="ct-input" type="text" id="subject" name="subject" required
+                     placeholder="{{ __('contact.form.subject_placeholder') }}">
             </div>
 
             <div class="ct-field">
               <label class="ct-label" for="message">
                 <i class="fas fa-comment"></i>
-                Message
+                {{ __('contact.form.message_label') }}
                 <span class="ct-label__req">*</span>
               </label>
-              <textarea class="ct-textarea" id="message" name="message" required placeholder="Votre message..."></textarea>
+              <textarea class="ct-textarea" id="message" name="message" required
+                        placeholder="{{ __('contact.form.message_placeholder') }}"></textarea>
             </div>
 
             <button type="submit" class="ct-submit"
               onclick="event.preventDefault(); if (typeof executeRecaptcha === 'function') { executeRecaptcha('contact-form', function() { document.getElementById('contact-form').submit(); }); } else { document.getElementById('contact-form').submit(); }">
               <i class="fas fa-paper-plane"></i>
-              Envoyer le message
+              {{ __('contact.form.submit') }}
             </button>
 
           </div>
@@ -136,10 +138,10 @@
             <i class="fas fa-envelope"></i>
           </div>
           <div class="ct-contact-card__body">
-            <div class="ct-contact-card__label">Email</div>
-            <div class="ct-contact-card__title">Écrivez-moi</div>
+            <div class="ct-contact-card__label">{{ __('contact.cards.email_label') }}</div>
+            <div class="ct-contact-card__title">{{ __('contact.cards.email_title') }}</div>
             <div class="ct-contact-card__value">
-              Pour toute question, demande de devis ou collaboration. Je réponds généralement en moins de 24h.
+              {{ __('contact.cards.email_desc') }}
             </div>
             <a href="mailto:{{ optional($siteSettings)->contact_email ?? 'NiangProgrammeur@gmail.com' }}" class="ct-contact-card__link">
               {{ optional($siteSettings)->contact_email ?? 'NiangProgrammeur@gmail.com' }}
@@ -147,7 +149,7 @@
             </a>
             <div class="ct-response-badge">
               <i class="fas fa-bolt" style="font-size:.6rem"></i>
-              Réponse &lt; 24h
+              {!! __('contact.cards.email_badge') !!}
             </div>
           </div>
         </div>
@@ -158,10 +160,10 @@
             <i class="fas fa-phone"></i>
           </div>
           <div class="ct-contact-card__body">
-            <div class="ct-contact-card__label">Téléphone &amp; WhatsApp</div>
-            <div class="ct-contact-card__title">Appelez-moi</div>
+            <div class="ct-contact-card__label">{!! __('contact.cards.phone_label') !!}</div>
+            <div class="ct-contact-card__title">{{ __('contact.cards.phone_title') }}</div>
             <div class="ct-contact-card__value">
-              Disponible du lundi au vendredi, 9h–18h (Dakar). WhatsApp disponible pour les messages internationaux.
+              {{ __('contact.cards.phone_desc') }}
             </div>
             <a href="tel:{{ str_replace(' ', '', optional($siteSettings)->contact_phone ?? '+221783123657') }}" class="ct-contact-card__link">
               {{ optional($siteSettings)->contact_phone ?? '+221 78 312 36 57' }}
@@ -176,17 +178,17 @@
             <i class="fas fa-map-marker-alt"></i>
           </div>
           <div class="ct-contact-card__body">
-            <div class="ct-contact-card__label">Localisation</div>
-            <div class="ct-contact-card__title">Dakar, Sénégal</div>
+            <div class="ct-contact-card__label">{{ __('contact.cards.location_label') }}</div>
+            <div class="ct-contact-card__title">{{ __('contact.cards.location_title') }}</div>
             <div class="ct-contact-card__value">
-              {{ optional($siteSettings)->contact_address ?? 'Dakar, Sénégal' }} — Je travaille avec des clients du monde entier à distance.
+              {{ optional($siteSettings)->contact_address ?? 'Dakar, Sénégal' }} — {{ __('contact.cards.location_desc') }}
             </div>
           </div>
         </div>
 
         {{-- Socials --}}
         <div class="ct-social-card">
-          <div class="ct-social-card__title">Suivez-moi sur les réseaux</div>
+          <div class="ct-social-card__title">{{ __('contact.social_title') }}</div>
           <div class="ct-socials">
 
             @php
@@ -267,7 +269,7 @@ document.addEventListener('DOMContentLoaded', function () {
         if (phoneInput.value.trim()) {
           if (!iti.isValidNumber()) {
             e.preventDefault();
-            alert('Numéro de téléphone invalide. Veuillez vérifier le format.');
+            alert('{{ __('contact.form.phone_invalid') }}');
             phoneInput.focus();
             return false;
           }

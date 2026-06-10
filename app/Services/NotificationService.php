@@ -2,31 +2,131 @@
 
 namespace App\Services;
 
-use App\Models\Notification;
 use App\Models\Document;
 use App\Models\DocumentPurchase;
+use App\Models\JobArticle;
+use App\Models\Notification;
+use App\Models\PushSubscription;
 use App\Models\User;
-use Carbon\Carbon;
+use Minishlink\WebPush\WebPush;
+use Minishlink\WebPush\Subscription;
+use Illuminate\Support\Facades\Log;
 
-/**
- * Service pour gérer les notifications in-app
- */
 class NotificationService
 {
+    // ─────────────────────────────────────────────
+    // WEB PUSH (navigateur)
+    // ─────────────────────────────────────────────
+
     /**
-     * Créer une notification pour un nouveau document
-     * 
-     * @param Document $document Le document nouvellement publié
-     * @return void
+     * Envoie une notification web push à tous les abonnés.
+     */
+    public static function sendWebPushToAll(string $title, string $body, string $url = '/', ?string $icon = null): void
+    {
+        $publicKey  = config('services.vapid.public_key');
+        $privateKey = config('services.vapid.private_key');
+        $subject    = config('services.vapid.subject');
+
+        if (empty($publicKey) || empty($privateKey)) {
+            return;
+        }
+
+        $subscriptions = PushSubscription::all();
+        if ($subscriptions->isEmpty()) {
+            return;
+        }
+
+        $webPush = new WebPush([
+            'VAPID' => [
+                'subject'    => $subject,
+                'publicKey'  => $publicKey,
+                'privateKey' => $privateKey,
+            ],
+        ]);
+
+        $payload = json_encode([
+            'title'   => $title,
+            'body'    => $body,
+            'icon'    => $icon ?? '/images/logo.png',
+            'badge'   => '/images/logo.png',
+            'tag'     => 'new-content',
+            'requireInteraction' => false,
+            'data'    => ['url' => $url],
+            'actions' => [
+                ['action' => 'open', 'title' => 'Voir'],
+            ],
+        ]);
+
+        foreach ($subscriptions as $sub) {
+            $keys = is_array($sub->keys) ? $sub->keys : json_decode($sub->keys, true);
+            if (empty($keys['p256dh']) || empty($keys['auth'])) {
+                continue;
+            }
+
+            try {
+                $webPush->queueNotification(
+                    Subscription::create([
+                        'endpoint'        => $sub->endpoint,
+                        'contentEncoding' => 'aesgcm',
+                        'keys'            => $keys,
+                    ]),
+                    $payload
+                );
+            } catch (\Throwable $e) {
+                Log::warning('WebPush queue error: ' . $e->getMessage());
+            }
+        }
+
+        foreach ($webPush->flush() as $report) {
+            if (!$report->isSuccess()) {
+                $endpoint = $report->getRequest()->getUri()->__toString();
+                // Supprimer les abonnements expirés / invalides
+                if ($report->isSubscriptionExpired()) {
+                    PushSubscription::where('endpoint', $endpoint)->delete();
+                }
+                Log::warning('WebPush send failed: ' . $report->getReason());
+            }
+        }
+    }
+
+    // ─────────────────────────────────────────────
+    // IN-APP NOTIFICATIONS (cloche)
+    // ─────────────────────────────────────────────
+
+    /**
+     * Notifie tous les utilisateurs actifs d'un nouvel article publié.
+     */
+    public static function notifyNewArticle(JobArticle $article): void
+    {
+        $users = User::where('is_active', true)->get(['id']);
+
+        foreach ($users as $user) {
+            Notification::createNotification(
+                $user->id,
+                'nouvel_article',
+                'Nouvel article publié',
+                "Un nouvel article est disponible : {$article->title}",
+                route('emplois.article', $article->slug),
+                'fa-newspaper',
+                '#06b6d4'
+            );
+        }
+
+        // Web push en parallèle
+        self::sendWebPushToAll(
+            'Nouvel article — NiangProgrammeur',
+            $article->title,
+            route('emplois.article', $article->slug),
+            '/images/logo.png'
+        );
+    }
+
+    /**
+     * Notifie tous les utilisateurs actifs d'un nouveau document publié.
      */
     public static function notifyNewDocument(Document $document): void
     {
-        // Notifier tous les utilisateurs actifs qui ont acheté des documents similaires
-        $users = User::where('is_active', true)
-            ->whereHas('documentPurchases', function ($query) use ($document) {
-                $query->where('status', 'completed');
-            })
-            ->get();
+        $users = User::where('is_active', true)->get(['id']);
 
         foreach ($users as $user) {
             Notification::createNotification(
@@ -39,28 +139,29 @@ class NotificationService
                 '#06b6d4'
             );
         }
+
+        // Web push en parallèle
+        self::sendWebPushToAll(
+            'Nouveau document — NiangProgrammeur',
+            $document->title,
+            route('documents.show', $document->slug),
+            '/images/logo.png'
+        );
     }
 
-    /**
-     * Créer une notification de rappel d'expiration de téléchargement
-     * 
-     * @param DocumentPurchase $purchase L'achat dont le téléchargement expire bientôt
-     * @return void
-     */
+    // ─────────────────────────────────────────────
+    // AUTRES NOTIFICATIONS EXISTANTES
+    // ─────────────────────────────────────────────
+
     public static function notifyDownloadExpiration(DocumentPurchase $purchase): void
     {
-        $user = $purchase->user;
-        if (!$user) {
-            return;
-        }
-
+        $user     = $purchase->user;
         $document = $purchase->document;
-        if (!$document) {
+        if (!$user || !$document) {
             return;
         }
 
-        // Calculer les jours restants
-        $expiresAt = $purchase->created_at->addDays($purchase->download_limit ?? 30);
+        $expiresAt     = $purchase->created_at->addDays($purchase->download_limit ?? 30);
         $daysRemaining = now()->diffInDays($expiresAt, false);
 
         if ($daysRemaining <= 3 && $daysRemaining > 0) {
@@ -76,31 +177,18 @@ class NotificationService
         }
     }
 
-    /**
-     * Créer une notification de réduction
-     * 
-     * @param Document $document Le document en réduction
-     * @param float $oldPrice L'ancien prix
-     * @param float $newPrice Le nouveau prix
-     * @return void
-     */
     public static function notifyDiscount(Document $document, float $oldPrice, float $newPrice): void
     {
-        // Notifier les utilisateurs qui ont ce document dans leur wishlist
-        $users = User::whereHas('documentWishlist', function ($query) use ($document) {
-            $query->where('document_id', $document->id);
-        })->get();
-
-        $discount = $oldPrice - $newPrice;
-        $discountPercent = round(($discount / $oldPrice) * 100, 0);
-        $discountFormatted = number_format($discount, 0, ',', ' ');
+        $users           = User::whereHas('documentWishlist', fn($q) => $q->where('document_id', $document->id))->get();
+        $discountPercent = round(($oldPrice - $newPrice) / $oldPrice * 100);
+        $discountFmt     = number_format($oldPrice - $newPrice, 0, ',', ' ');
 
         foreach ($users as $user) {
             Notification::createNotification(
                 $user->id,
                 'reduction',
                 'Réduction disponible !',
-                "Le document \"{$document->title}\" est en réduction : {$discountPercent}% de réduction ({$discountFormatted} FCFA économisés)",
+                "Le document \"{$document->title}\" est en réduction : {$discountPercent}% ({$discountFmt} FCFA économisés)",
                 route('documents.show', $document->slug),
                 'fa-tag',
                 '#10b981'
@@ -108,39 +196,26 @@ class NotificationService
         }
     }
 
-    /**
-     * Vérifier et envoyer les notifications d'expiration de téléchargement
-     * Cette méthode doit être appelée via une commande cron
-     * 
-     * @return int Nombre de notifications créées
-     */
     public static function checkDownloadExpirations(): int
     {
-        $count = 0;
-        
-        // Récupérer tous les achats actifs
-        $purchases = DocumentPurchase::where('status', 'completed')
-            ->with(['user', 'document'])
-            ->get();
+        $count     = 0;
+        $purchases = DocumentPurchase::where('status', 'completed')->with(['user', 'document'])->get();
 
         foreach ($purchases as $purchase) {
             if (!$purchase->user || !$purchase->document) {
                 continue;
             }
-
-            $expiresAt = $purchase->created_at->addDays($purchase->download_limit ?? 30);
+            $expiresAt     = $purchase->created_at->addDays($purchase->download_limit ?? 30);
             $daysRemaining = now()->diffInDays($expiresAt, false);
 
-            // Notifier si expiration dans 3 jours ou moins
             if ($daysRemaining <= 3 && $daysRemaining > 0) {
-                // Vérifier si une notification n'a pas déjà été envoyée récemment
-                $existingNotification = Notification::where('user_id', $purchase->user_id)
+                $exists = Notification::where('user_id', $purchase->user_id)
                     ->where('type', 'expiration_telechargement')
                     ->where('link', route('documents.show', $purchase->document->slug))
                     ->where('created_at', '>', now()->subDays(1))
                     ->exists();
 
-                if (!$existingNotification) {
+                if (!$exists) {
                     self::notifyDownloadExpiration($purchase);
                     $count++;
                 }
@@ -150,18 +225,6 @@ class NotificationService
         return $count;
     }
 
-    /**
-     * Notifier un utilisateur spécifique
-     * 
-     * @param int $userId ID de l'utilisateur
-     * @param string $type Type de notification
-     * @param string $title Titre
-     * @param string $message Message
-     * @param string|null $link Lien
-     * @param string|null $icon Icône
-     * @param string|null $color Couleur
-     * @return Notification
-     */
     public static function notifyUser(
         int $userId,
         string $type,
@@ -171,15 +234,6 @@ class NotificationService
         ?string $icon = null,
         ?string $color = null
     ): Notification {
-        return Notification::createNotification(
-            $userId,
-            $type,
-            $title,
-            $message,
-            $link,
-            $icon,
-            $color
-        );
+        return Notification::createNotification($userId, $type, $title, $message, $link, $icon, $color);
     }
 }
-

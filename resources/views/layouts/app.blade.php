@@ -287,7 +287,21 @@
     </div>
     
     @include('partials.navigation')
-    
+
+    @auth
+    @if(auth()->user()->isAdmin())
+    @php $__maint = \Illuminate\Support\Facades\Cache::remember('site_settings', 3600, fn() => \App\Models\SiteSetting::first()); @endphp
+    @if($__maint?->maintenance_mode)
+    <div id="maint-admin-bar" style="position:fixed;bottom:1.25rem;left:50%;transform:translateX(-50%);z-index:9999;background:linear-gradient(90deg,#f59e0b,#d97706);color:#000;font-size:.78rem;font-weight:700;display:flex;align-items:center;gap:.75rem;padding:.45rem 1rem .45rem 1.1rem;border-radius:999px;box-shadow:0 4px 20px rgba(0,0,0,.35);white-space:nowrap;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" viewBox="0 0 16 16" style="flex-shrink:0"><path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/></svg>
+        <span>Mode maintenance actif — Les visiteurs voient la page de maintenance</span>
+        <a href="{{ route('admin.settings') }}" style="color:#000;text-decoration:none;background:rgba(0,0,0,.15);padding:.18rem .6rem;border-radius:999px;font-size:.72rem;">⚙ Gérer</a>
+        <button onclick="document.getElementById('maint-admin-bar').remove()" style="background:none;border:none;cursor:pointer;padding:0 .2rem;color:#000;font-size:1.1rem;line-height:1;" title="Masquer">&times;</button>
+    </div>
+    @endif
+    @endif
+    @endauth
+
     @include('partials.schema-org')
     
     <main id="main-content" role="main">

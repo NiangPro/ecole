@@ -67,6 +67,7 @@ Route::get('/sitemap-documents.xml', [\App\Http\Controllers\SitemapController::c
 Route::get('/sitemap-administrative-documents.xml', [\App\Http\Controllers\SitemapController::class, 'administrativeDocuments'])->name('sitemap.administrative-documents');
 
 Route::get('/', [PageController::class, 'index'])->name('home');
+Route::get('/maintenance', [PageController::class, 'maintenance'])->name('maintenance');
 // Route Recherche - Utiliser SearchController
 use App\Http\Controllers\SearchController;
 Route::get('/search', [SearchController::class, 'index'])->middleware('throttle:30,1')->name('search');
@@ -450,6 +451,7 @@ Route::middleware(['admin'])->group(function () {
     Route::delete('/admin/messages/{id}', [App\Http\Controllers\AdminController::class, 'deleteMessage'])->name('admin.messages.delete');
     Route::get('/admin/settings', [App\Http\Controllers\AdminController::class, 'settings'])->name('admin.settings');
     Route::post('/admin/settings', [App\Http\Controllers\AdminController::class, 'updateSettings'])->name('admin.settings.update');
+    Route::post('/admin/settings/maintenance', [App\Http\Controllers\AdminController::class, 'toggleMaintenance'])->name('admin.settings.maintenance');
     
     // Configuration des moyens de paiement
     Route::get('/admin/payment-gateways', [App\Http\Controllers\Admin\PaymentGatewayController::class, 'index'])->name('admin.payment-gateways.index');

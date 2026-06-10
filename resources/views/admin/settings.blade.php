@@ -559,7 +559,8 @@
         </div>
     </div>
     
-    <div class="flex gap-4 mt-6">
+    <!-- Bouton submit du formulaire principal -->
+    <div class="flex gap-4 mt-6 mb-8">
         <button type="submit" class="btn-primary">
             <i class="fas fa-save mr-2"></i>Enregistrer les modifications
         </button>
@@ -568,5 +569,158 @@
         </a>
     </div>
 </form>
+
+    <!-- Mode Maintenance (section indépendante, sauvegarde instantanée) -->
+
+    <div id="maint-section" class="content-section mb-6" style="border:2px solid {{ ($settings->maintenance_mode ?? false) ? '#f97316' : 'rgba(255,255,255,.08)' }};transition:border-color .3s;">
+        <h4 class="text-xl font-bold mb-2 flex items-center gap-2">
+            <i class="fas fa-tools text-orange-400"></i>
+            Mode Maintenance
+        </h4>
+        <p class="text-sm text-gray-400 mb-6">Les modifications dans cette section sont sauvegardées <strong class="text-gray-200">immédiatement</strong>, sans cliquer sur "Enregistrer".</p>
+
+        <!-- Statut actuel -->
+        <div id="maint-status" class="rounded-lg p-4 mb-6 flex items-start gap-3 {{ ($settings->maintenance_mode ?? false) ? 'bg-orange-500/10 border border-orange-500/40' : 'bg-gray-700/40 border border-gray-600' }}">
+            <i id="maint-status-icon" class="fas {{ ($settings->maintenance_mode ?? false) ? 'fa-exclamation-triangle text-orange-400' : 'fa-check-circle text-green-400' }} text-xl mt-1"></i>
+            <div>
+                <p id="maint-status-title" class="font-semibold {{ ($settings->maintenance_mode ?? false) ? 'text-orange-400' : 'text-green-400' }} mb-1">
+                    {{ ($settings->maintenance_mode ?? false) ? 'Le site est actuellement en mode maintenance' : 'Le site est en ligne' }}
+                </p>
+                <p id="maint-status-desc" class="text-sm text-gray-300">
+                    {{ ($settings->maintenance_mode ?? false) ? 'Les visiteurs voient la page de maintenance. Seuls les administrateurs naviguent normalement.' : 'Tous les visiteurs peuvent accéder au site normalement.' }}
+                </p>
+            </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+            <!-- Toggle -->
+            <div class="md:col-span-2">
+                <label class="flex items-center gap-4 cursor-pointer select-none" id="maint-toggle-label">
+                    <div class="relative">
+                        <input type="checkbox" id="maintenance_toggle" class="sr-only peer"
+                               {{ ($settings->maintenance_mode ?? false) ? 'checked' : '' }}>
+                        <div class="w-14 h-7 bg-gray-600 peer-checked:bg-orange-500 rounded-full transition-colors duration-200"></div>
+                        <div class="absolute top-0.5 left-0.5 w-6 h-6 bg-white rounded-full shadow transition-transform duration-200 peer-checked:translate-x-7"></div>
+                    </div>
+                    <div>
+                        <span class="font-semibold text-gray-200">Activer le mode maintenance</span>
+                        <p class="text-sm text-gray-400 mt-0.5">Les visiteurs non-administrateurs verront la page de maintenance (erreur 503).</p>
+                    </div>
+                </label>
+            </div>
+
+            <!-- Message personnalisé -->
+            <div class="md:col-span-2">
+                <label class="block text-gray-300 mb-2 font-semibold">
+                    <i class="fas fa-comment-alt mr-2"></i>Message personnalisé <span class="text-gray-500 font-normal">(optionnel)</span>
+                </label>
+                <textarea id="maintenance_message" class="input-admin" rows="3"
+                          placeholder="Ex : Nous effectuons une mise à jour. Merci de votre patience.">{{ $settings->maintenance_message ?? '' }}</textarea>
+                <p class="text-gray-500 text-sm mt-1">Laissez vide pour utiliser le message par défaut.</p>
+            </div>
+
+            <!-- Date de retour -->
+            <div>
+                <label class="block text-gray-300 mb-2 font-semibold">
+                    <i class="fas fa-calendar-alt mr-2"></i>Date de retour prévue <span class="text-gray-500 font-normal">(optionnel)</span>
+                </label>
+                <input type="datetime-local" id="maintenance_ends_at"
+                       value="{{ $settings->maintenance_ends_at ? \Carbon\Carbon::parse($settings->maintenance_ends_at)->format('Y-m-d\TH:i') : '' }}"
+                       class="input-admin">
+                <p class="text-gray-500 text-sm mt-1">Affichée sur la page de maintenance si définie.</p>
+            </div>
+
+            <!-- Bouton save + preview -->
+            <div class="flex flex-col justify-end gap-3">
+                <button type="button" id="maint-save-btn" onclick="saveMaintenance()"
+                        class="inline-flex items-center gap-2 px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-black font-bold rounded-lg transition text-sm">
+                    <i class="fas fa-save"></i>Sauvegarder la maintenance
+                </button>
+                <a href="{{ route('maintenance') }}" target="_blank"
+                   class="inline-flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 border border-gray-600 rounded-lg text-sm font-semibold transition">
+                    <i class="fas fa-eye"></i>Prévisualiser la page
+                </a>
+            </div>
+        </div>
+
+        <!-- Toast feedback -->
+        <div id="maint-toast" class="hidden mt-4 px-4 py-2.5 rounded-lg text-sm font-semibold"></div>
+    </div>
+
 </div>
+
+@section('scripts')
+<script>
+async function saveMaintenance() {
+    const btn     = document.getElementById('maint-save-btn');
+    const active  = document.getElementById('maintenance_toggle').checked;
+    const message = document.getElementById('maintenance_message').value;
+    const endsAt  = document.getElementById('maintenance_ends_at').value;
+    const toast   = document.getElementById('maint-toast');
+    const section = document.getElementById('maint-section');
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sauvegarde…';
+
+    try {
+        const res  = await fetch('{{ route("admin.settings.maintenance") }}', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({
+                maintenance_mode:    active ? 1 : 0,
+                maintenance_message: message,
+                maintenance_ends_at: endsAt || null,
+            }),
+        });
+
+        const json = await res.json();
+
+        if (json.success) {
+            const isOn = json.active;
+
+            // Mettre à jour la bordure de la section
+            section.style.borderColor = isOn ? '#f97316' : 'rgba(255,255,255,.08)';
+
+            // Mettre à jour le statut
+            const statusBox   = document.getElementById('maint-status');
+            const statusIcon  = document.getElementById('maint-status-icon');
+            const statusTitle = document.getElementById('maint-status-title');
+            const statusDesc  = document.getElementById('maint-status-desc');
+
+            if (isOn) {
+                statusBox.className   = 'rounded-lg p-4 mb-6 flex items-start gap-3 bg-orange-500/10 border border-orange-500/40';
+                statusIcon.className  = 'fas fa-exclamation-triangle text-orange-400 text-xl mt-1';
+                statusTitle.className = 'font-semibold text-orange-400 mb-1';
+                statusTitle.textContent = 'Le site est actuellement en mode maintenance';
+                statusDesc.textContent  = 'Les visiteurs voient la page de maintenance. Seuls les administrateurs naviguent normalement.';
+            } else {
+                statusBox.className   = 'rounded-lg p-4 mb-6 flex items-start gap-3 bg-gray-700/40 border border-gray-600';
+                statusIcon.className  = 'fas fa-check-circle text-green-400 text-xl mt-1';
+                statusTitle.className = 'font-semibold text-green-400 mb-1';
+                statusTitle.textContent = 'Le site est en ligne';
+                statusDesc.textContent  = 'Tous les visiteurs peuvent accéder au site normalement.';
+            }
+
+            // Toast succès
+            toast.className   = 'mt-4 px-4 py-2.5 rounded-lg text-sm font-semibold bg-green-500/15 border border-green-500/40 text-green-400';
+            toast.textContent = isOn ? '✓ Mode maintenance activé — les visiteurs sont redirigés.' : '✓ Mode maintenance désactivé — le site est accessible.';
+            setTimeout(() => { toast.className = 'hidden mt-4 px-4 py-2.5 rounded-lg text-sm font-semibold'; }, 4000);
+        } else {
+            throw new Error('Erreur serveur');
+        }
+    } catch (e) {
+        toast.className   = 'mt-4 px-4 py-2.5 rounded-lg text-sm font-semibold bg-red-500/15 border border-red-500/40 text-red-400';
+        toast.textContent = '✗ Erreur lors de la sauvegarde. Veuillez réessayer.';
+        setTimeout(() => { toast.className = 'hidden mt-4 px-4 py-2.5 rounded-lg text-sm font-semibold'; }, 5000);
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-save"></i>Sauvegarder la maintenance';
+    }
+}
+</script>
+@endsection
 @endsection

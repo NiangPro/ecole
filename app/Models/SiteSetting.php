@@ -43,6 +43,17 @@ class SiteSetting extends Model
         'stripe_secret_key',
         'stripe_webhook_secret',
         'stripe_enabled',
+        'maintenance_mode',
+        'maintenance_message',
+        'maintenance_ends_at',
+    ];
+
+    protected $casts = [
+        'maintenance_mode'   => 'boolean',
+        'maintenance_ends_at' => 'datetime',
+        'wave_enabled'       => 'boolean',
+        'paypal_enabled'     => 'boolean',
+        'stripe_enabled'     => 'boolean',
     ];
 
     public static function get($key, $default = null)

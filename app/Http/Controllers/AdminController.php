@@ -564,13 +564,34 @@ class AdminController extends Controller
     public function settings()
     {
         $settings = SiteSetting::first();
-        
-        // Si aucun paramètre n'existe, créer un objet vide pour éviter les erreurs
+
         if (!$settings) {
             $settings = new SiteSetting();
         }
-        
+
         return view('admin.settings', compact('settings'));
+    }
+
+    public function toggleMaintenance(Request $request)
+    {
+        $request->validate([
+            'maintenance_mode'    => 'required|boolean',
+            'maintenance_message' => 'nullable|string|max:1000',
+            'maintenance_ends_at' => 'nullable|date',
+        ]);
+
+        $settings = SiteSetting::firstOrNew([]);
+        $settings->maintenance_mode    = $request->boolean('maintenance_mode');
+        $settings->maintenance_message = $request->input('maintenance_message') ?: null;
+        $settings->maintenance_ends_at = $request->filled('maintenance_ends_at')
+            ? $request->input('maintenance_ends_at')
+            : null;
+        $settings->save();
+
+        return response()->json([
+            'success' => true,
+            'active'  => $settings->maintenance_mode,
+        ]);
     }
     
     public function updateSettings(Request $request)
@@ -597,21 +618,31 @@ class AdminController extends Controller
             'mail_encryption' => 'nullable|string|in:tls,ssl',
             'mail_from_address' => 'nullable|email|max:255',
             'mail_from_name' => 'nullable|string|max:255',
+            'maintenance_message' => 'nullable|string|max:1000',
+            'maintenance_ends_at' => 'nullable|date',
         ]);
-        
+
         $settings = SiteSetting::first();
-        
+
         if (!$settings) {
             $settings = new SiteSetting();
         }
-        
+
         $data = $request->all();
-        
+
         // Si le mot de passe est vide, ne pas le mettre à jour (garder l'ancien)
         if (empty($data['mail_password'])) {
             unset($data['mail_password']);
         }
-        
+
+        // Checkbox non-cochée = absent du POST, on force à false
+        $data['maintenance_mode'] = $request->boolean('maintenance_mode');
+
+        // Date vide → null
+        if (empty($data['maintenance_ends_at'])) {
+            $data['maintenance_ends_at'] = null;
+        }
+
         $settings->fill($data);
         $settings->save();
         
