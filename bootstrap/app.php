@@ -11,9 +11,14 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // Hébergement LWS derrière un reverse proxy : sans ceci, $request->ip()
-        // renvoie l'IP du proxy pour tous les visiteurs, qui partagent alors
-        // les mêmes compteurs de throttle (erreurs 429 "Too Many Requests")
+        // L'hébergement (LWS comme Infomaniak) place un reverse proxy devant
+        // Apache : il ajoute l'en-tête X-Forwarded-* et, sans cette ligne,
+        // $request->ip() renvoie l'IP du proxy pour TOUS les visiteurs. Ils
+        // partagent alors un unique compteur de throttle → erreurs 429 en masse.
+        // On fait confiance au proxy pour lire la vraie IP du client. Trust « * »
+        // est sûr ici car l'application n'est joignable QUE via le proxy de
+        // l'hébergeur (impossible de l'atteindre en direct pour usurper l'en-tête).
+        // Volontairement inconditionnel (pas via env) pour survivre à config:cache.
         $middleware->trustProxies(at: '*');
 
         // Middleware pour forcer www en production

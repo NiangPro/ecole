@@ -822,6 +822,10 @@
                         <i class="fas fa-id-card"></i>
                         <span>Documents administratifs</span>
                     </a>
+                    <a href="{{ route('admin.epreuves.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.epreuves.*') ? 'active' : '' }}">
+                        <i class="fas fa-graduation-cap"></i>
+                        <span>Épreuves &amp; Corrigés</span>
+                    </a>
                     <a href="{{ route('admin.documents.categories.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.documents.categories.*') ? 'active' : '' }}">
                         <i class="fas fa-folder"></i>
                         <span>Catégories</span>

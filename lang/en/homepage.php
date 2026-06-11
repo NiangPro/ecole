@@ -30,6 +30,14 @@ return [
         'general'  => 'General',
     ],
 
+    'epreuves' => [
+        'eyebrow'  => 'Senegal Exams',
+        'title'    => 'Recent Exam Papers & Answers',
+        'subtitle' => 'BAC, BFEM, CFEE papers and more — free PDF downloads.',
+        'view_all' => 'All exam papers',
+        'downloads' => 'downloads',
+    ],
+
     'categories' => [
         'eyebrow'       => 'Categories',
         'title'         => 'Browse by category',

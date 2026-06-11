@@ -25,6 +25,7 @@ class SearchController extends Controller
         $results = [
             'formations' => collect(),
             'articles' => collect(),
+            'epreuves' => collect(),
             'total' => 0
         ];
         
@@ -107,9 +108,26 @@ class SearchController extends Controller
                     ->get();
             });
             
+            // Recherche dans les épreuves & corrigés publiés (titre, description, matière)
+            $epreuves = Cache::remember("search_epreuves_{$query}", 300, function () use ($query) {
+                return \App\Models\Epreuve::published()
+                    ->with('matiere:id,name,slug')
+                    ->where(function ($q) use ($query) {
+                        $q->where('title', 'like', "%{$query}%")
+                          ->orWhere('description', 'like', "%{$query}%")
+                          ->orWhere('serie', $query)
+                          ->orWhereHas('matiere', fn ($mq) => $mq->where('name', 'like', "%{$query}%"));
+                    })
+                    ->orderByDesc('year')
+                    ->orderByDesc('downloads_count')
+                    ->limit(30)
+                    ->get();
+            });
+
             $results['formations'] = $formations;
             $results['articles'] = $articles;
-            $results['total'] = $formations->count() + $articles->count();
+            $results['epreuves'] = $epreuves;
+            $results['total'] = $formations->count() + $articles->count() + $epreuves->count();
         }
         
         return view('search', compact('query', 'results', 'categories', 'category', 'dateFilter', 'sortBy'));

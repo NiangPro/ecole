@@ -75,7 +75,12 @@ class SitemapController extends Controller
             $sitemap .= '    <loc>' . htmlspecialchars($baseUrl . '/sitemap-administrative-documents.xml', ENT_XML1, 'UTF-8') . '</loc>' . PHP_EOL;
             $sitemap .= '    <lastmod>' . now()->format('Y-m-d') . '</lastmod>' . PHP_EOL;
             $sitemap .= '  </sitemap>' . PHP_EOL;
-            
+
+            $sitemap .= '  <sitemap>' . PHP_EOL;
+            $sitemap .= '    <loc>' . htmlspecialchars($baseUrl . '/sitemap-epreuves.xml', ENT_XML1, 'UTF-8') . '</loc>' . PHP_EOL;
+            $sitemap .= '    <lastmod>' . now()->format('Y-m-d') . '</lastmod>' . PHP_EOL;
+            $sitemap .= '  </sitemap>' . PHP_EOL;
+
             $sitemap .= '</sitemapindex>';
             
             return $sitemap;
@@ -410,6 +415,59 @@ class SitemapController extends Controller
                 }
             } catch (\Exception $e) {
                 // Ignorer si la table n'existe pas
+            }
+
+            $sitemap .= '</urlset>';
+            return $sitemap;
+        });
+
+        return response($sitemap, 200)
+            ->header('Content-Type', 'application/xml; charset=utf-8')
+            ->header('Cache-Control', 'public, max-age=3600');
+    }
+
+    public function epreuves()
+    {
+        $baseUrl = config('app.env') === 'production'
+            ? 'https://niangprogrammeur.com'
+            : request()->getSchemeAndHttpHost();
+
+        $sitemap = Cache::remember('sitemap_epreuves_' . md5($baseUrl), 3600, function () use ($baseUrl) {
+            $sitemap = '<?xml version="1.0" encoding="UTF-8"?>' . PHP_EOL;
+            $sitemap .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . PHP_EOL;
+
+            try {
+                // Hub + pages examens et classes
+                $staticUrls = [$baseUrl . '/epreuves'];
+                foreach (array_keys(\App\Models\Epreuve::EXAMS) as $exam) {
+                    $staticUrls[] = $baseUrl . '/epreuves/examen/' . $exam;
+                }
+                foreach (array_keys(\App\Models\Epreuve::flatLevels()) as $level) {
+                    $staticUrls[] = $baseUrl . '/epreuves/classe/' . $level;
+                }
+                foreach ($staticUrls as $url) {
+                    $sitemap .= '  <url>' . PHP_EOL;
+                    $sitemap .= '    <loc>' . htmlspecialchars($url, ENT_XML1, 'UTF-8') . '</loc>' . PHP_EOL;
+                    $sitemap .= '    <changefreq>daily</changefreq>' . PHP_EOL;
+                    $sitemap .= '    <priority>0.8</priority>' . PHP_EOL;
+                    $sitemap .= '  </url>' . PHP_EOL;
+                }
+
+                $epreuves = \App\Models\Epreuve::published()
+                    ->orderBy('updated_at', 'desc')
+                    ->limit(50000)
+                    ->get();
+
+                foreach ($epreuves as $epreuve) {
+                    $sitemap .= '  <url>' . PHP_EOL;
+                    $sitemap .= '    <loc>' . htmlspecialchars($baseUrl . '/epreuves/' . $epreuve->slug, ENT_XML1, 'UTF-8') . '</loc>' . PHP_EOL;
+                    $sitemap .= '    <lastmod>' . $epreuve->updated_at->format('Y-m-d\TH:i:s+00:00') . '</lastmod>' . PHP_EOL;
+                    $sitemap .= '    <changefreq>monthly</changefreq>' . PHP_EOL;
+                    $sitemap .= '    <priority>' . ($epreuve->is_featured ? '0.9' : '0.7') . '</priority>' . PHP_EOL;
+                    $sitemap .= '  </url>' . PHP_EOL;
+                }
+            } catch (\Exception $e) {
+                // Ignorer si la table n'existe pas encore
             }
 
             $sitemap .= '</urlset>';

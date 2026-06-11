@@ -249,6 +249,15 @@
                             <div class="dropdown-item-desc">Papiers & démarches au Sénégal</div>
                         </div>
                     </a>
+                    <a href="{{ route('epreuves.index') }}" class="dropdown-item" data-parent-active="epreuves">
+                        <div class="dropdown-item-icon" style="background: rgba(16, 185, 129, 0.1);">
+                            <i class="fas fa-graduation-cap" style="color: #10b981;"></i>
+                        </div>
+                        <div class="dropdown-item-content">
+                            <div class="dropdown-item-title">Épreuves &amp; Corrigés</div>
+                            <div class="dropdown-item-desc">CFEE, BFEM, BAC — PDF gratuits</div>
+                        </div>
+                    </a>
                     @if($hasPublishedDocuments)
                     <a href="{{ route('documents.index') }}" class="dropdown-item" data-parent-active="documents">
                         <div class="dropdown-item-icon" style="background: rgba(6, 182, 212, 0.1);">
@@ -806,6 +815,9 @@
                 @endphp
                 <a href="{{ route('admin-docs.index') }}" class="mobile-dropdown-item">
                     <i class="fas fa-id-card" style="color: #38bdf8;"></i> Documents administratifs
+                </a>
+                <a href="{{ route('epreuves.index') }}" class="mobile-dropdown-item">
+                    <i class="fas fa-graduation-cap" style="color: #10b981;"></i> Épreuves &amp; Corrigés
                 </a>
                 @if($hasPublishedDocumentsMobile)
                 <a href="{{ route('documents.index') }}" class="mobile-dropdown-item">

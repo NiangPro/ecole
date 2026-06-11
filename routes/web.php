@@ -65,6 +65,7 @@ Route::get('/sitemap-pages.xml', [\App\Http\Controllers\SitemapController::class
 Route::get('/sitemap-articles.xml', [\App\Http\Controllers\SitemapController::class, 'articles'])->name('sitemap.articles');
 Route::get('/sitemap-documents.xml', [\App\Http\Controllers\SitemapController::class, 'documents'])->name('sitemap.documents');
 Route::get('/sitemap-administrative-documents.xml', [\App\Http\Controllers\SitemapController::class, 'administrativeDocuments'])->name('sitemap.administrative-documents');
+Route::get('/sitemap-epreuves.xml', [\App\Http\Controllers\SitemapController::class, 'epreuves'])->name('sitemap.epreuves');
 
 Route::get('/', [PageController::class, 'index'])->name('home');
 Route::get('/maintenance', [PageController::class, 'maintenance'])->name('maintenance');
@@ -276,6 +277,24 @@ Route::get('/papiers-administratifs', [AdministrativeDocumentController::class, 
     ->name('admin-docs.index');
 Route::get('/papiers-administratifs/{slug}', [AdministrativeDocumentController::class, 'show'])
     ->name('admin-docs.show');
+
+// Routes Épreuves & Corrigés (examens du Sénégal)
+use App\Http\Controllers\EpreuveController;
+Route::get('/epreuves', [EpreuveController::class, 'index'])->name('epreuves.index');
+Route::get('/epreuves/examen/{exam}/{matiereSlug?}', [EpreuveController::class, 'exam'])->name('epreuves.exam');
+Route::get('/epreuves/classe/{level}/{matiereSlug?}', [EpreuveController::class, 'level'])->name('epreuves.level');
+Route::get('/epreuves/{id}/telecharger/{file?}', [EpreuveController::class, 'download'])
+    ->whereNumber('id')->whereIn('file', ['epreuve', 'corrige'])
+    ->middleware('throttle:120,1')->name('epreuves.download');
+// Pas de throttle serré sur l'aperçu : la visionneuse PDF du navigateur émet
+// plusieurs requêtes de plage (range) pour un seul affichage ; une limite par
+// minute provoquerait des 429 en lecture normale. La route ne fait que streamer
+// un fichier existant. On garde une limite très haute comme simple garde-fou.
+Route::get('/epreuves/{id}/apercu/{file?}', [EpreuveController::class, 'view'])
+    ->whereNumber('id')->whereIn('file', ['epreuve', 'corrige'])
+    ->middleware('throttle:600,1')->name('epreuves.view');
+Route::get('/epreuves/{slug}', [EpreuveController::class, 'show'])
+    ->where('slug', '^(?!examen|classe)[a-z0-9-]+$')->name('epreuves.show');
 
 // Commentaires (publiques - avec rate limiting)
 Route::post('/comments', [\App\Http\Controllers\CommentController::class, 'store'])->middleware('throttle:5,15')->name('comments.store');
@@ -644,6 +663,17 @@ Route::middleware(['admin'])->group(function () {
         // Ressource complète (index, create, store, edit, update, destroy)
         Route::resource('administrative-documents', \App\Http\Controllers\Admin\AdministrativeDocumentController::class)
             ->names('administrative-documents');
+    });
+
+    // Routes Épreuves & Corrigés Admin
+    Route::prefix('admin/epreuves')->name('admin.epreuves.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\EpreuveController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\Admin\EpreuveController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\Admin\EpreuveController::class, 'store'])->name('store');
+        Route::get('/{epreuve}/edit', [\App\Http\Controllers\Admin\EpreuveController::class, 'edit'])->name('edit');
+        Route::match(['put', 'patch'], '/{epreuve}', [\App\Http\Controllers\Admin\EpreuveController::class, 'update'])->name('update');
+        Route::delete('/{epreuve}', [\App\Http\Controllers\Admin\EpreuveController::class, 'destroy'])->name('destroy');
+        Route::post('/{epreuve}/toggle-publish', [\App\Http\Controllers\Admin\EpreuveController::class, 'togglePublish'])->name('toggle-publish');
     });
 
     // Routes Publicités Admin

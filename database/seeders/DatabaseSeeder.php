@@ -28,6 +28,9 @@ class DatabaseSeeder extends Seeder
         
         // Créer l'utilisateur admin
         $this->call(AdminUserSeeder::class);
+
+        // Matières des épreuves & corrigés
+        $this->call(EpreuveMatieresSeeder::class);
         
         // Seeders pour les emplois
         $this->call([

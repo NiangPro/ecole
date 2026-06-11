@@ -30,6 +30,14 @@ return [
         'general'  => 'Général',
     ],
 
+    'epreuves' => [
+        'eyebrow'  => 'Examens du Sénégal',
+        'title'    => 'Épreuves & Corrigés récents',
+        'subtitle' => 'Sujets du BAC, BFEM, CFEE et plus — à télécharger gratuitement en PDF.',
+        'view_all' => 'Toutes les épreuves',
+        'downloads' => 'téléch.',
+    ],
+
     'categories' => [
         'eyebrow'        => 'Catégories',
         'title'          => 'Parcourir par catégorie',

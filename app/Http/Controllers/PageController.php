@@ -19,8 +19,11 @@ class PageController extends Controller
         // Forcer la locale AVANT tout traitement pour la traduction
         $locale = $this->ensureLocale();
         
-        // Cache de la vue complète pour améliorer les performances (15 minutes)
-        $cacheKey = 'homepage_view_' . $locale;
+        // Cache de la vue complète pour améliorer les performances (15 minutes).
+        // Le suffixe de version (v2) garantit qu'un cache écrit par une version
+        // antérieure du contrôleur — avec moins de variables — est ignoré après
+        // déploiement, au lieu de provoquer une erreur compact()/Undefined variable.
+        $cacheKey = 'homepage_view_v2_' . $locale;
         $cachedView = \Illuminate\Support\Facades\Cache::remember($cacheKey, 900, function () use ($locale) {
             // Cache les 12 derniers articles publiés - Optimisé avec eager loading
             $latestJobs = \App\Models\JobArticle::published()
@@ -110,13 +113,30 @@ class PageController extends Controller
                 ->take(4)
                 ->get();
             
-            return compact('latestJobs', 'categories', 'sponsoredArticles', 'sidebarAds', 'homepageAds', 'careerAdviceArticles', 'paidCourses', 'featuredArticles', 'featuredDocuments');
+            // Cache les épreuves récentes (BAC, BFEM…) — en vedette d'abord, puis les plus récentes
+            $latestEpreuves = \App\Models\Epreuve::published()
+                ->with('matiere:id,name')
+                ->select('id', 'title', 'slug', 'type', 'exam', 'level', 'matiere_id', 'serie', 'year', 'downloads_count')
+                ->orderByDesc('is_featured')
+                ->orderByDesc('year')
+                ->orderByDesc('created_at')
+                ->take(8)
+                ->get();
+
+            return compact('latestJobs', 'categories', 'sponsoredArticles', 'sidebarAds', 'homepageAds', 'careerAdviceArticles', 'paidCourses', 'featuredArticles', 'featuredDocuments', 'latestEpreuves');
         });
         
-        // Extraire les données du cache
-        extract($cachedView);
-        
-        return view('index', compact('latestJobs', 'categories', 'sponsoredArticles', 'sidebarAds', 'homepageAds', 'careerAdviceArticles', 'paidCourses', 'featuredArticles', 'featuredDocuments'));
+        // Passer directement les données du cache à la vue. On garantit un défaut
+        // pour chaque variable afin qu'un cache incomplet (ancienne structure) ne
+        // casse jamais la page d'accueil — la vue reçoit toujours des collections.
+        $defaults = [
+            'latestJobs' => collect(), 'categories' => collect(), 'sponsoredArticles' => collect(),
+            'sidebarAds' => collect(), 'homepageAds' => collect(), 'careerAdviceArticles' => collect(),
+            'paidCourses' => collect(), 'featuredArticles' => collect(), 'featuredDocuments' => collect(),
+            'latestEpreuves' => collect(),
+        ];
+
+        return view('index', array_merge($defaults, $cachedView));
     }
 
     public function about()

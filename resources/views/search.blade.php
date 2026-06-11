@@ -304,6 +304,7 @@
 
 .sr-section--formations .sr-section__icon { background: oklch(52% 0.18 200 / 10%); color: oklch(52% 0.18 200); }
 .sr-section--articles   .sr-section__icon { background: oklch(50% 0.18 145 / 10%); color: oklch(50% 0.18 145); }
+.sr-section--epreuves   .sr-section__icon { background: oklch(60% 0.15 165 / 10%); color: oklch(60% 0.15 165); }
 
 .sr-section__title {
   font-family: 'Poppins', system-ui, sans-serif;
@@ -324,6 +325,7 @@
 
 .sr-section--formations .sr-section__badge { background: oklch(52% 0.18 200 / 10%); color: oklch(52% 0.18 200); }
 .sr-section--articles   .sr-section__badge { background: oklch(50% 0.18 145 / 10%); color: oklch(50% 0.18 145); }
+.sr-section--epreuves   .sr-section__badge { background: oklch(60% 0.15 165 / 10%); color: oklch(60% 0.15 165); }
 
 /* ── RESULT CARD ──────────────────────────────────────────── */
 .sr-list {
@@ -361,6 +363,7 @@
 
 .sr-section--formations .sr-card::before { background: oklch(52% 0.18 200); }
 .sr-section--articles   .sr-card::before { background: oklch(50% 0.18 145); }
+.sr-section--epreuves   .sr-card::before { background: oklch(60% 0.15 165); }
 
 .sr-card:hover {
   box-shadow: 0 6px 28px rgba(0,0,0,.09);
@@ -402,6 +405,7 @@
 
 .sr-section--formations .sr-card__thumb-ico { color: oklch(52% 0.18 200); }
 .sr-section--articles   .sr-card__thumb-ico { color: oklch(50% 0.18 145); }
+.sr-section--epreuves   .sr-card__thumb-ico { color: oklch(60% 0.15 165); }
 
 /* Content */
 .sr-card__body { flex: 1; min-inline-size: 0; }
@@ -430,6 +434,12 @@
   background: oklch(50% 0.18 145 / 8%);
   border-color: oklch(50% 0.18 145 / 25%);
   color: oklch(50% 0.18 145);
+}
+
+.sr-section--epreuves .sr-card__type {
+  background: oklch(60% 0.15 165 / 8%);
+  border-color: oklch(60% 0.15 165 / 25%);
+  color: oklch(60% 0.15 165);
 }
 
 .sr-card__title {
@@ -629,7 +639,8 @@
           <strong>{{ $results['total'] }}</strong>
           résultat{{ $results['total'] > 1 ? 's' : '' }} trouvé{{ $results['total'] > 1 ? 's' : '' }}
           — <em>{{ $results['formations']->count() }}</em> formation{{ $results['formations']->count() > 1 ? 's' : '' }},
-          <em>{{ $results['articles']->count() }}</em> article{{ $results['articles']->count() > 1 ? 's' : '' }}
+          <em>{{ $results['articles']->count() }}</em> article{{ $results['articles']->count() > 1 ? 's' : '' }},
+          <em>{{ $results['epreuves']->count() }}</em> épreuve{{ $results['epreuves']->count() > 1 ? 's' : '' }}
         @elseif($query)
           Saisissez au moins 2 caractères pour lancer la recherche.
         @else
@@ -807,6 +818,49 @@
                   </div>
                 </div>
 
+                <div class="sr-card__arrow"><i class="fas fa-arrow-right"></i></div>
+              </a>
+              @endforeach
+            </div>
+          </div>
+          @endif
+
+          {{-- ÉPREUVES & CORRIGÉS --}}
+          @if($results['epreuves']->count() > 0)
+          <div class="sr-section sr-section--epreuves">
+            <div class="sr-section__hd">
+              <div class="sr-section__icon"><i class="fas fa-file-pdf"></i></div>
+              <span class="sr-section__title">Épreuves &amp; Corrigés</span>
+              <span class="sr-section__badge">{{ $results['epreuves']->count() }}</span>
+            </div>
+            <div class="sr-list">
+              @foreach($results['epreuves'] as $epreuve)
+              <a href="{{ route('epreuves.show', $epreuve->slug) }}" class="sr-card">
+                <div class="sr-card__thumb">
+                  <i class="fas fa-file-pdf sr-card__thumb-ico"></i>
+                </div>
+                <div class="sr-card__body">
+                  <div class="sr-card__type">
+                    <i class="fas fa-graduation-cap"></i>
+                    {{ $epreuve->exam_label ?? $epreuve->level_label ?? 'Épreuve' }}
+                  </div>
+                  <div class="sr-card__title">{{ $epreuve->title }}</div>
+                  <div class="sr-card__excerpt">
+                    {{ $epreuve->description ? \Illuminate\Support\Str::limit(strip_tags($epreuve->description), 130) : $epreuve->type_label . ($epreuve->matiere ? ' de ' . $epreuve->matiere->name : '') . ' à télécharger gratuitement en PDF.' }}
+                  </div>
+                  <div class="sr-card__meta">
+                    @if($epreuve->matiere)
+                    <span class="sr-meta-item"><i class="fas fa-book"></i> {{ $epreuve->matiere->name }}</span>
+                    @endif
+                    @if($epreuve->serie)
+                    <span class="sr-meta-item"><i class="fas fa-layer-group"></i> Série {{ $epreuve->serie }}</span>
+                    @endif
+                    @if($epreuve->year)
+                    <span class="sr-meta-item"><i class="fas fa-calendar"></i> {{ $epreuve->year }}</span>
+                    @endif
+                    <span class="sr-meta-item"><i class="fas fa-download"></i> {{ number_format($epreuve->downloads_count, 0, ',', ' ') }}</span>
+                  </div>
+                </div>
                 <div class="sr-card__arrow"><i class="fas fa-arrow-right"></i></div>
               </a>
               @endforeach

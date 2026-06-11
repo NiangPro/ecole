@@ -184,6 +184,43 @@
   @endif
 
   {{-- ─────────────────────────────────────────────────────────
+       ÉPREUVES & CORRIGÉS RÉCENTS
+       ───────────────────────────────────────────────────────── --}}
+  @if($latestEpreuves->isNotEmpty())
+  <section class="hp-section">
+    <div class="hp-container">
+
+      <div class="hp-section-header" style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+        <div>
+          <span class="hp-section-eyebrow">{{ __('homepage.epreuves.eyebrow') }}</span>
+          <h2 class="hp-section-title">{{ __('homepage.epreuves.title') }}</h2>
+          <p class="hp-section-subtitle">{{ __('homepage.epreuves.subtitle') }}</p>
+        </div>
+        <a href="{{ route('epreuves.index') }}" class="hp-section-action">{{ __('homepage.epreuves.view_all') }} →</a>
+      </div>
+
+      <div class="hp-epreuves-grid">
+        @foreach($latestEpreuves as $epreuve)
+        <a href="{{ route('epreuves.show', $epreuve->slug) }}" class="hp-epreuve-card">
+          <div class="hp-epreuve-top">
+            <span class="hp-epreuve-icon"><i class="fas fa-file-pdf"></i></span>
+            <span class="hp-epreuve-badge">{{ $epreuve->exam_label ?? $epreuve->level_label ?? __('homepage.epreuves.eyebrow') }}</span>
+          </div>
+          <div class="hp-epreuve-title">{{ \Illuminate\Support\Str::limit($epreuve->title, 70) }}</div>
+          <div class="hp-epreuve-meta">
+            @if($epreuve->matiere)<span><i class="fas fa-book"></i> {{ $epreuve->matiere->name }}</span>@endif
+            @if($epreuve->year)<span><i class="fas fa-calendar"></i> {{ $epreuve->year }}</span>@endif
+            <span><i class="fas fa-download"></i> {{ number_format($epreuve->downloads_count, 0, ' ', ' ') }} {{ __('homepage.epreuves.downloads') }}</span>
+          </div>
+        </a>
+        @endforeach
+      </div>
+
+    </div>
+  </section>
+  @endif
+
+  {{-- ─────────────────────────────────────────────────────────
        ARTICLES VEDETTES + SIDEBAR
        ───────────────────────────────────────────────────────── --}}
   @if($featuredArticles->isNotEmpty() || $latestJobs->isNotEmpty())
