@@ -31,7 +31,12 @@ class EpreuveController extends Controller
 
         $matiere = $matiereSlug ? EpreuveMatiere::where('slug', $matiereSlug)->firstOrFail() : null;
 
-        $request->merge(['exam' => $exam, 'matiere' => $matiere?->slug]);
+        // Forcer l'examen ; ne forcer la matière que si elle vient de l'URL,
+        // sinon on écraserait le filtre matière choisi dans le formulaire.
+        $request->merge(['exam' => $exam]);
+        if ($matiere) {
+            $request->merge(['matiere' => $matiere->slug]);
+        }
 
         $titleSuffix = $matiere ? " de {$matiere->name}" : '';
 
@@ -55,7 +60,11 @@ class EpreuveController extends Controller
 
         $matiere = $matiereSlug ? EpreuveMatiere::where('slug', $matiereSlug)->firstOrFail() : null;
 
-        $request->merge(['level' => $level, 'matiere' => $matiere?->slug]);
+        // Forcer la classe ; ne forcer la matière que si elle vient de l'URL.
+        $request->merge(['level' => $level]);
+        if ($matiere) {
+            $request->merge(['matiere' => $matiere->slug]);
+        }
 
         $titleSuffix = $matiere ? " de {$matiere->name}" : '';
 
@@ -97,32 +106,37 @@ class EpreuveController extends Controller
     }
 
     /**
-     * Téléchargement du PDF (épreuve ou corrigé) avec compteur.
+     * Téléchargement libre du PDF de l'épreuve (gratuit) avec compteur.
+     * Le corrigé n'est JAMAIS servi ici : il est payant et passe par
+     * CorrigeController::download avec un token d'achat valide.
      */
-    public function download(int $id, string $file = 'epreuve')
+    public function download(int $id)
     {
         $epreuve = Epreuve::published()->findOrFail($id);
 
-        $path = $file === 'corrige' ? $epreuve->corrige_file_path : $epreuve->file_path;
+        // Un document qui est lui-même un corrigé n'est pas téléchargeable librement.
+        abort_if($epreuve->isCorrige(), 403);
+
+        $path = $epreuve->file_path;
         abort_unless($path && Storage::disk('public')->exists($path), 404);
 
         Epreuve::where('id', $epreuve->id)->increment('downloads_count');
 
-        $downloadName = $epreuve->slug . ($file === 'corrige' ? '-corrige' : '') . '.pdf';
-
-        return Storage::disk('public')->download($path, $downloadName);
+        return Storage::disk('public')->download($path, $epreuve->slug . '.pdf');
     }
 
     /**
-     * Sert le PDF en ligne (inline) pour la visionneuse intégrée, sans incrémenter
-     * le compteur de téléchargements. Passe par une route Laravel pour ne pas
-     * dépendre du lien symbolique /storage (indisponible selon l'hébergement).
+     * Sert le PDF de l'épreuve en ligne (inline) pour la visionneuse intégrée.
+     * Refuse tout corrigé : un corrigé ne doit jamais être affiché sans achat.
      */
-    public function view(int $id, string $file = 'epreuve')
+    public function view(int $id)
     {
         $epreuve = Epreuve::published()->findOrFail($id);
 
-        $path = $file === 'corrige' ? $epreuve->corrige_file_path : $epreuve->file_path;
+        // Jamais d'aperçu pour un corrigé (document payant).
+        abort_if($epreuve->isCorrige(), 403);
+
+        $path = $epreuve->file_path;
         abort_unless($path && Storage::disk('public')->exists($path), 404);
 
         return response()->file(Storage::disk('public')->path($path), [

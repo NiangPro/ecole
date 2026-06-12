@@ -967,6 +967,9 @@ class PaymentController extends Controller
                     }
                 }
             }
+        } elseif ($paymentable instanceof \App\Models\CorrigePurchase) {
+            // Marque complété, génère le token et livre (e-mail + WhatsApp)
+            $paymentable->markCompletedAndDeliver();
         } elseif ($paymentable instanceof Donation) {
             $paymentable->update([
                 'status' => 'completed',

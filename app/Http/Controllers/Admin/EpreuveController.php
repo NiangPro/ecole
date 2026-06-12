@@ -33,10 +33,22 @@ class EpreuveController extends Controller
         if ($status = $request->get('status')) {
             $query->where('status', $status);
         }
+        // Filtre : nombre minimum de téléchargements
+        if (($min = $request->get('min_downloads')) !== null && $min !== '') {
+            $query->where('downloads_count', '>=', (int) $min);
+        }
 
-        $epreuves = $query->orderByDesc('created_at')
+        // Tri (par défaut : plus récents)
+        $sort = $request->get('sort', 'recent');
+        match ($sort) {
+            'downloads_desc' => $query->orderByDesc('downloads_count'),
+            'downloads_asc'  => $query->orderBy('downloads_count'),
+            default          => $query->orderByDesc('created_at'),
+        };
+
+        $epreuves = $query
             ->paginate(20)
-            ->appends($request->only('q', 'exam', 'level', 'matiere_id', 'status'));
+            ->appends($request->only('q', 'exam', 'level', 'matiere_id', 'status', 'min_downloads', 'sort'));
 
         $matieres = EpreuveMatiere::orderBy('order')->orderBy('name')->get();
 
@@ -73,6 +85,7 @@ class EpreuveController extends Controller
         $data['slug'] = $this->uniqueSlug($data['slug'] ?? '', $data['title']);
 
         $epreuve = Epreuve::create($data);
+        Epreuve::clearHomepageCache();
 
         return redirect()->route('admin.epreuves.edit', $epreuve)
             ->with('success', 'Épreuve créée avec succès.');
@@ -112,6 +125,7 @@ class EpreuveController extends Controller
         }
 
         $epreuve->update($data);
+        Epreuve::clearHomepageCache();
 
         return redirect()->route('admin.epreuves.edit', $epreuve)
             ->with('success', 'Épreuve mise à jour.');
@@ -125,6 +139,7 @@ class EpreuveController extends Controller
             }
         }
         $epreuve->delete();
+        Epreuve::clearHomepageCache();
 
         return redirect()->route('admin.epreuves.index')
             ->with('success', 'Épreuve supprimée.');
@@ -133,6 +148,7 @@ class EpreuveController extends Controller
     public function togglePublish(Epreuve $epreuve)
     {
         $epreuve->update(['status' => $epreuve->status === 'published' ? 'draft' : 'published']);
+        Epreuve::clearHomepageCache();
 
         return back()->with('success', $epreuve->status === 'published' ? 'Épreuve publiée.' : 'Épreuve dépubliée.');
     }

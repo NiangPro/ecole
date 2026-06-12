@@ -172,8 +172,10 @@ class JobArticle extends Model
             Cache::forget('sponsored_articles');
             Cache::forget('career_advice_articles');
             Cache::forget('featured_articles');
-            Cache::forget('homepage_view_fr');
-            Cache::forget('homepage_view_en');
+            // Clé alignée sur PageController (homepage_view_v2_) — l'ancienne
+            // clé (sans v2) ne vidait plus rien depuis le changement de version.
+            Cache::forget('homepage_view_v2_fr');
+            Cache::forget('homepage_view_v2_en');
             // Invalider le cache des articles les plus vus (sidebar)
             Cache::forget('top_viewed_articles_sidebar');
             // Invalider le cache du sitemap pour forcer sa régénération

@@ -19,9 +19,11 @@ return new class extends Migration
             }
         });
         
-        // Renommer image en cover_image en utilisant DB::statement
+        // Renommer image en cover_image (compatible MySQL et SQLite)
         if (Schema::hasColumn('paid_courses', 'image') && !Schema::hasColumn('paid_courses', 'cover_image')) {
-            DB::statement('ALTER TABLE `paid_courses` CHANGE `image` `cover_image` VARCHAR(191) NULL');
+            Schema::table('paid_courses', function (Blueprint $table) {
+                $table->renameColumn('image', 'cover_image');
+            });
         }
     }
 
@@ -30,9 +32,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // Renommer cover_image en image
+        // Renommer cover_image en image (compatible MySQL et SQLite)
         if (Schema::hasColumn('paid_courses', 'cover_image') && !Schema::hasColumn('paid_courses', 'image')) {
-            DB::statement('ALTER TABLE `paid_courses` CHANGE `cover_image` `image` VARCHAR(191) NULL');
+            Schema::table('paid_courses', function (Blueprint $table) {
+                $table->renameColumn('cover_image', 'image');
+            });
         }
         
         Schema::table('paid_courses', function (Blueprint $table) {

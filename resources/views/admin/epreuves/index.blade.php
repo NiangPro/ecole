@@ -21,7 +21,7 @@
         </div>
     @endif
 
-    <form method="GET" action="{{ route('admin.epreuves.index') }}" class="grid md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
+    <form method="GET" action="{{ route('admin.epreuves.index') }}" class="grid md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
         <input type="text" name="q" value="{{ request('q') }}" placeholder="Recherche (titre…)" class="px-4 py-2 rounded-lg bg-gray-800 border border-gray-600 text-white placeholder-gray-500 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 lg:col-span-2">
         <select name="exam" class="px-4 py-2 rounded-lg bg-gray-800 border border-gray-600 text-white focus:border-cyan-500">
             <option value="">Tous les examens</option>
@@ -39,6 +39,14 @@
             <option value="">Tous les statuts</option>
             <option value="published" @selected(request('status') === 'published')>Publié</option>
             <option value="draft" @selected(request('status') === 'draft')>Brouillon</option>
+        </select>
+        <input type="number" name="min_downloads" min="0" step="1" value="{{ request('min_downloads') }}"
+               placeholder="Téléch. min (ex : 10)"
+               class="px-4 py-2 rounded-lg bg-gray-800 border border-gray-600 text-white placeholder-gray-500 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500">
+        <select name="sort" class="px-4 py-2 rounded-lg bg-gray-800 border border-gray-600 text-white focus:border-cyan-500">
+            <option value="recent" @selected(request('sort', 'recent') === 'recent')>Tri : plus récents</option>
+            <option value="downloads_desc" @selected(request('sort') === 'downloads_desc')>Tri : téléch. décroissant</option>
+            <option value="downloads_asc" @selected(request('sort') === 'downloads_asc')>Tri : téléch. croissant</option>
         </select>
         <button type="submit" class="px-4 py-2 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-400 rounded-lg border border-cyan-500/40 transition">
             <i class="fas fa-search mr-2"></i>Filtrer

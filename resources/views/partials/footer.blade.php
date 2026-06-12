@@ -18,7 +18,7 @@
       {{-- COL 1 — Marque --}}
       <div class="ft__col ft__col--brand">
         <a href="{{ route('home') }}" class="ft__logo-wrap">
-          <img src="{{ asset('images/logo.png') }}" alt="Logo {{ $siteName }}" class="ft__logo-img" width="44" height="44">
+          <img src="{{ \App\Models\SiteSetting::logoUrl() }}" alt="Logo {{ $siteName }}" class="ft__logo-img" width="44" height="44">
           <span class="ft__logo-name">{{ $siteName }}</span>
         </a>
         <p class="ft__tagline">

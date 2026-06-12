@@ -3,7 +3,7 @@
 @section('title', $pageTitle . ' - NiangProgrammeur')
 @section('meta_description', $metaDescription)
 
-@push('styles')
+@section('styles')
 <style>
 .epreuves-page {
     min-height: 100vh;
@@ -82,7 +82,7 @@ body.dark-mode .epreuve-badge--exam { background: rgba(52,211,153,0.15); color: 
 body.dark-mode .epreuve-badge--type { background: rgba(56,189,248,0.15); color: #38bdf8; }
 body.dark-mode .epreuve-badge--corrige { background: rgba(251,191,36,0.15); color: #fbbf24; }
 </style>
-@endpush
+@endsection
 
 @section('content')
 <div class="epreuves-page">

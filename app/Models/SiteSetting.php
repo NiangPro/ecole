@@ -9,6 +9,7 @@ class SiteSetting extends Model
     protected $fillable = [
         'site_name',
         'site_description',
+        'logo',
         'contact_email',
         'contact_phone',
         'contact_address',
@@ -46,6 +47,7 @@ class SiteSetting extends Model
         'maintenance_mode',
         'maintenance_message',
         'maintenance_ends_at',
+        'corrige_price',
     ];
 
     protected $casts = [
@@ -54,6 +56,7 @@ class SiteSetting extends Model
         'wave_enabled'       => 'boolean',
         'paypal_enabled'     => 'boolean',
         'stripe_enabled'     => 'boolean',
+        'corrige_price'      => 'decimal:2',
     ];
 
     public static function get($key, $default = null)
@@ -67,6 +70,36 @@ class SiteSetting extends Model
     public static function clearCache()
     {
         \Illuminate\Support\Facades\Cache::forget('site_settings');
+    }
+
+    /**
+     * Un logo personnalisé a été téléversé.
+     */
+    public static function hasCustomLogo(): bool
+    {
+        try {
+            return (bool) self::get('logo');
+        } catch (\Throwable $e) {
+            return false;
+        }
+    }
+
+    /**
+     * URL du logo du site : le logo téléversé si présent, sinon le logo par défaut.
+     * Résilient (utilisé jusque dans les pages d'erreur) : ne lève jamais d'exception.
+     */
+    public static function logoUrl(): string
+    {
+        try {
+            $logo = self::get('logo');
+            if ($logo) {
+                return \Illuminate\Support\Facades\Storage::disk('public')->url($logo);
+            }
+        } catch (\Throwable $e) {
+            // Base indisponible (ex. page d'erreur) → on retombe sur le logo par défaut
+        }
+
+        return asset('images/logo.png');
     }
     
     /**

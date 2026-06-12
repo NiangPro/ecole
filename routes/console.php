@@ -28,5 +28,13 @@ Schedule::command('articles:seed --count=5 --days=3')->dailyAt('04:00')->without
 // Planifier la vérification des expirations de téléchargement tous les jours à 6h du matin
 Schedule::command('notifications:check-expirations')->dailyAt('06:00')->withoutOverlapping();
 
+// Traiter la file d'attente chaque minute via le planificateur (pas besoin d'un
+// worker permanent sur l'hébergement mutualisé). Draine les e-mails de newsletter
+// et tout job en attente, puis s'arrête. --max-time borne la durée pour ne pas
+// chevaucher l'exécution suivante ; withoutOverlapping évite les doublons.
+Schedule::command('queue:work --stop-when-empty --max-time=55 --tries=3 --quiet')
+    ->everyMinute()
+    ->withoutOverlapping();
+
 // Optionnel : Créer des articles toutes les 6 heures (4 fois par jour)
 // Schedule::command('articles:seed --count=2 --days=1')->everySixHours()->withoutOverlapping();

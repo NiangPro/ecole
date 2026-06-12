@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Dashboard Admin - NiangProgrammeur')</title>
-    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
+    <link rel="icon" type="image/png" href="{{ \App\Models\SiteSetting::logoUrl() }}">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     
@@ -745,7 +745,7 @@
     <aside class="sidebar" id="sidebar">
         <div class="logo-admin">
             <div class="flex items-center gap-3 mb-2">
-                <img src="{{ asset('images/logo.png') }}" alt="Logo" class="h-10 w-10 rounded-lg" style="filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.8));">
+                <img src="{{ \App\Models\SiteSetting::logoUrl() }}" alt="Logo" class="h-10 w-10 rounded-lg" style="filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.8));">
                 <h1 class="text-xl">ADMIN PANEL</h1>
             </div>
             <p class="text-sm text-gray-400">NiangProgrammeur</p>
@@ -822,9 +822,16 @@
                         <i class="fas fa-id-card"></i>
                         <span>Documents administratifs</span>
                     </a>
-                    <a href="{{ route('admin.epreuves.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.epreuves.*') ? 'active' : '' }}">
+                    <a href="{{ route('admin.epreuves.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.epreuves.index') || request()->routeIs('admin.epreuves.create') || request()->routeIs('admin.epreuves.edit') ? 'active' : '' }}">
                         <i class="fas fa-graduation-cap"></i>
                         <span>Épreuves &amp; Corrigés</span>
+                    </a>
+                    <a href="{{ route('admin.epreuves.purchases') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.epreuves.purchases*') ? 'active' : '' }}">
+                        <i class="fas fa-receipt"></i>
+                        <span>Achats corrigés
+                            @php $pendingCorriges = \App\Models\CorrigePurchase::where('status','pending')->count(); @endphp
+                            @if($pendingCorriges > 0)<span class="sidebar-badge">{{ $pendingCorriges }}</span>@endif
+                        </span>
                     </a>
                     <a href="{{ route('admin.documents.categories.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.documents.categories.*') ? 'active' : '' }}">
                         <i class="fas fa-folder"></i>

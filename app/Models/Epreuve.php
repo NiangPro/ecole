@@ -83,6 +83,47 @@ class Epreuve extends Model
         return $query->where('status', 'published');
     }
 
+    public function corrigePurchases(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(CorrigePurchase::class, 'epreuve_id');
+    }
+
+    /**
+     * Un corrigé payant est disponible pour cette épreuve.
+     */
+    public function hasCorrige(): bool
+    {
+        return !empty($this->corrige_file_path);
+    }
+
+    /**
+     * Ce document EST lui-même un corrigé (vendu, jamais affiché en aperçu).
+     */
+    public function isCorrige(): bool
+    {
+        return in_array($this->type, ['corrige', 'epreuve_corrige'], true);
+    }
+
+    /**
+     * Prix global d'un corrigé (FCFA), défini en admin.
+     */
+    public static function corrigePrice(): float
+    {
+        return (float) (\App\Models\SiteSetting::get('corrige_price', 500) ?: 500);
+    }
+
+    /**
+     * Vide le cache de la page d'accueil (toutes les langues) afin qu'un
+     * changement d'épreuve — notamment la mise en vedette — s'y reflète
+     * immédiatement, sans attendre l'expiration du cache de 15 min.
+     */
+    public static function clearHomepageCache(): void
+    {
+        foreach (['fr', 'en'] as $locale) {
+            \Illuminate\Support\Facades\Cache::forget('homepage_view_v2_' . $locale);
+        }
+    }
+
     /**
      * Liste plate des niveaux (slug => label), sans les groupes.
      */

@@ -4,10 +4,50 @@ namespace App\Services;
 
 use App\Models\WhatsAppSettings;
 use App\Models\DocumentPurchase;
+use App\Models\CorrigePurchase;
 use Illuminate\Support\Facades\Log;
 
 class WhatsAppService
 {
+    /**
+     * Envoyer le lien de téléchargement d'un corrigé acheté.
+     */
+    public static function sendCorrigePurchaseMessage(CorrigePurchase $purchase): bool
+    {
+        $settings = WhatsAppSettings::getSettings();
+
+        if (!$settings->enabled || !$purchase->customer_phone || !$purchase->country_code || !$purchase->whatsapp_enabled) {
+            return false;
+        }
+
+        $fullPhone = $purchase->country_code . preg_replace('/[^0-9]/', '', $purchase->customer_phone);
+
+        if (!$purchase->download_token) {
+            $purchase->generateDownloadToken();
+        }
+
+        $link = route('epreuves.corrige.download', ['token' => $purchase->download_token]);
+        $message = "Bonjour " . ($purchase->customer_name ?? '') . ",\n\n";
+        $message .= "Merci pour votre achat du corrigé :\n*" . $purchase->epreuve->title . "*\n\n";
+        $message .= "Lien de téléchargement (valide 30 jours) :\n" . $link . "\n\n";
+        $message .= "Cordialement,\nNiangProgrammeur";
+
+        try {
+            switch ($settings->api_provider) {
+                case 'twilio':
+                    return self::sendViaTwilio($fullPhone, $message, $settings);
+                case 'whatsapp_business':
+                    return self::sendViaWhatsAppBusiness($fullPhone, $message, $settings);
+                default:
+                    Log::info('WhatsApp corrigé message would be sent', ['phone' => $fullPhone, 'message' => $message]);
+                    return true;
+            }
+        } catch (\Exception $e) {
+            Log::error('Erreur envoi WhatsApp corrigé: ' . $e->getMessage(), ['purchase_id' => $purchase->id]);
+            return false;
+        }
+    }
+
     /**
      * Envoyer un message WhatsApp pour un achat de document
      */

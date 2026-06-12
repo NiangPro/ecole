@@ -12,8 +12,23 @@ Route::get('/storage/{path}', [\App\Http\Controllers\StorageFileController::clas
 
 // Favicon.ico - DOIT être défini EN PREMIER pour être prioritaire
 Route::get('/favicon.ico', function () {
+    // Logo personnalisé téléversé en priorité
+    try {
+        $customLogo = \App\Models\SiteSetting::get('logo');
+        if ($customLogo && \Illuminate\Support\Facades\Storage::disk('public')->exists($customLogo)) {
+            $fullPath = \Illuminate\Support\Facades\Storage::disk('public')->path($customLogo);
+            $mime = \Illuminate\Support\Facades\File::mimeType($fullPath) ?: 'image/png';
+            return response()->file($fullPath, [
+                'Content-Type' => $mime,
+                'Cache-Control' => 'public, max-age=86400',
+            ]);
+        }
+    } catch (\Throwable $e) {
+        // Base indisponible → on retombe sur le logo par défaut
+    }
+
     $logoPath = public_path('images/logo.png');
-    
+
     if (file_exists($logoPath)) {
         return response()->file($logoPath, [
             'Content-Type' => 'image/png',
@@ -283,16 +298,22 @@ use App\Http\Controllers\EpreuveController;
 Route::get('/epreuves', [EpreuveController::class, 'index'])->name('epreuves.index');
 Route::get('/epreuves/examen/{exam}/{matiereSlug?}', [EpreuveController::class, 'exam'])->name('epreuves.exam');
 Route::get('/epreuves/classe/{level}/{matiereSlug?}', [EpreuveController::class, 'level'])->name('epreuves.level');
-Route::get('/epreuves/{id}/telecharger/{file?}', [EpreuveController::class, 'download'])
-    ->whereNumber('id')->whereIn('file', ['epreuve', 'corrige'])
-    ->middleware('throttle:120,1')->name('epreuves.download');
+Route::get('/epreuves/{id}/telecharger', [EpreuveController::class, 'download'])
+    ->whereNumber('id')->middleware('throttle:120,1')->name('epreuves.download');
 // Pas de throttle serré sur l'aperçu : la visionneuse PDF du navigateur émet
 // plusieurs requêtes de plage (range) pour un seul affichage ; une limite par
 // minute provoquerait des 429 en lecture normale. La route ne fait que streamer
 // un fichier existant. On garde une limite très haute comme simple garde-fou.
-Route::get('/epreuves/{id}/apercu/{file?}', [EpreuveController::class, 'view'])
-    ->whereNumber('id')->whereIn('file', ['epreuve', 'corrige'])
-    ->middleware('throttle:600,1')->name('epreuves.view');
+Route::get('/epreuves/{id}/apercu', [EpreuveController::class, 'view'])
+    ->whereNumber('id')->middleware('throttle:600,1')->name('epreuves.view');
+
+// Achat & téléchargement du corrigé (payant, Wave, e-mail OU téléphone)
+Route::post('/epreuves/{id}/corrige/acheter', [\App\Http\Controllers\CorrigeController::class, 'checkout'])
+    ->whereNumber('id')->middleware('throttle:10,1')->name('epreuves.corrige.checkout');
+Route::get('/epreuves/corrige/succes/{paymentId}', [\App\Http\Controllers\CorrigeController::class, 'success'])
+    ->whereNumber('paymentId')->name('epreuves.corrige.success');
+Route::get('/epreuves/corrige/telecharger/{token}', [\App\Http\Controllers\CorrigeController::class, 'download'])
+    ->middleware('throttle:60,1')->name('epreuves.corrige.download');
 Route::get('/epreuves/{slug}', [EpreuveController::class, 'show'])
     ->where('slug', '^(?!examen|classe)[a-z0-9-]+$')->name('epreuves.show');
 
@@ -674,6 +695,11 @@ Route::middleware(['admin'])->group(function () {
         Route::match(['put', 'patch'], '/{epreuve}', [\App\Http\Controllers\Admin\EpreuveController::class, 'update'])->name('update');
         Route::delete('/{epreuve}', [\App\Http\Controllers\Admin\EpreuveController::class, 'destroy'])->name('destroy');
         Route::post('/{epreuve}/toggle-publish', [\App\Http\Controllers\Admin\EpreuveController::class, 'togglePublish'])->name('toggle-publish');
+
+        // Achats de corrigés (validation manuelle, comme les documents)
+        Route::get('/achats/liste', [\App\Http\Controllers\Admin\CorrigePurchaseController::class, 'index'])->name('purchases');
+        Route::post('/achats/{id}/valider', [\App\Http\Controllers\Admin\CorrigePurchaseController::class, 'approve'])->name('purchases.approve');
+        Route::post('/achats/{id}/annuler', [\App\Http\Controllers\Admin\CorrigePurchaseController::class, 'cancel'])->name('purchases.cancel');
     });
 
     // Routes Publicités Admin

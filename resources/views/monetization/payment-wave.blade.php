@@ -238,6 +238,58 @@
         background: rgba(59, 130, 246, 0.1);
     }
     
+    .wave-payment-urgent {
+        margin-top: 30px;
+        padding: 22px 24px;
+        background: rgba(37, 211, 102, 0.12);
+        border: 1px solid rgba(37, 211, 102, 0.35);
+        border-radius: 16px;
+        text-align: center;
+    }
+    body:not(.dark-mode) .wave-payment-urgent {
+        background: rgba(37, 211, 102, 0.08);
+    }
+    .wave-urgent-icon {
+        font-size: 2.2rem;
+        color: #25d366;
+        margin-bottom: 8px;
+    }
+    .wave-urgent-text {
+        color: rgba(255, 255, 255, 0.85);
+        font-size: 1rem;
+        line-height: 1.6;
+        margin-bottom: 16px;
+        max-width: 520px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    body:not(.dark-mode) .wave-urgent-text {
+        color: #475569;
+    }
+    .wave-urgent-text strong {
+        color: #25d366;
+        display: block;
+        font-size: 1.1rem;
+        margin-bottom: 4px;
+    }
+    .wave-urgent-btn {
+        display: inline-flex;
+        align-items: center;
+        padding: 13px 28px;
+        background: #25d366;
+        color: #fff;
+        border-radius: 12px;
+        font-weight: 700;
+        text-decoration: none;
+        box-shadow: 0 8px 22px rgba(37, 211, 102, 0.35);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .wave-urgent-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 28px rgba(37, 211, 102, 0.45);
+        color: #fff;
+    }
+
     @media (max-width: 768px) {
         .wave-payment-container {
             padding: 20px 10px;
@@ -358,6 +410,25 @@
                     {{ trans('app.donations.wave_payment.already_paid') }}
                 </a>
             </div>
+
+            @php
+                $sitePhone = \App\Models\SiteSetting::get('contact_phone');
+                $waNumber = $sitePhone ? preg_replace('/[^0-9]/', '', $sitePhone) : null;
+                $waText = rawurlencode("Bonjour, je viens d'effectuer un paiement Wave (réf. " . $payment->payment_reference . ") et c'est urgent. Pouvez-vous valider et m'envoyer mon document ?");
+            @endphp
+            @if($waNumber)
+            <div class="wave-payment-urgent">
+                <i class="fab fa-whatsapp wave-urgent-icon"></i>
+                <div class="wave-urgent-text">
+                    <strong>C'est urgent&nbsp;?</strong>
+                    Après avoir payé, envoyez-nous un message WhatsApp pour une validation rapide&nbsp;:
+                </div>
+                <a href="https://wa.me/{{ $waNumber }}?text={{ $waText }}" target="_blank" rel="noopener" class="wave-urgent-btn">
+                    <i class="fab fa-whatsapp" style="margin-right: 8px;"></i>
+                    Écrire sur WhatsApp ({{ $sitePhone }})
+                </a>
+            </div>
+            @endif
 
         </div>
 

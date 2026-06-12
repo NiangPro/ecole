@@ -19,10 +19,14 @@
     <div class="navbar-container">
         <!-- Logo -->
         <a href="{{ route('home') }}" class="navbar-logo">
-            <picture>
-                <source srcset="{{ asset('images/logo.webp') }}" type="image/webp">
-                <img src="{{ asset('images/logo.png') }}" alt="Logo NiangProgrammeur" class="logo-image" width="44" height="44" loading="eager" fetchpriority="high">
-            </picture>
+            @if(\App\Models\SiteSetting::hasCustomLogo())
+                <img src="{{ \App\Models\SiteSetting::logoUrl() }}" alt="Logo NiangProgrammeur" class="logo-image" width="44" height="44" loading="eager" fetchpriority="high">
+            @else
+                <picture>
+                    <source srcset="{{ asset('images/logo.webp') }}" type="image/webp">
+                    <img src="{{ asset('images/logo.png') }}" alt="Logo NiangProgrammeur" class="logo-image" width="44" height="44" loading="eager" fetchpriority="high">
+                </picture>
+            @endif
             <span class="logo-text">NiangProgrammeur</span>
         </a>
         
@@ -229,6 +233,13 @@
                 </div>
             </li>
             
+            <!-- Épreuves & Corrigés (menu principal) -->
+            <li class="navbar-item">
+                <a href="{{ route('epreuves.index') }}" class="navbar-link {{ request()->routeIs('epreuves.*') ? 'active' : '' }}">
+                    Épreuves &amp; Corrigés
+                </a>
+            </li>
+
             <!-- Dropdown À propos / Contact -->
             <li class="navbar-item dropdown">
                 <a href="#" class="navbar-link dropdown-toggle {{ request()->routeIs(['about', 'contact', 'monetization.index', 'monetization.affiliates', 'monetization.affiliates.dashboard', 'docs', 'documents.*', 'forum.*', 'admin-docs.*']) ? 'active' : '' }}">
@@ -247,15 +258,6 @@
                         <div class="dropdown-item-content">
                             <div class="dropdown-item-title">Documents administratifs</div>
                             <div class="dropdown-item-desc">Papiers & démarches au Sénégal</div>
-                        </div>
-                    </a>
-                    <a href="{{ route('epreuves.index') }}" class="dropdown-item" data-parent-active="epreuves">
-                        <div class="dropdown-item-icon" style="background: rgba(16, 185, 129, 0.1);">
-                            <i class="fas fa-graduation-cap" style="color: #10b981;"></i>
-                        </div>
-                        <div class="dropdown-item-content">
-                            <div class="dropdown-item-title">Épreuves &amp; Corrigés</div>
-                            <div class="dropdown-item-desc">CFEE, BFEM, BAC — PDF gratuits</div>
                         </div>
                     </a>
                     @if($hasPublishedDocuments)
@@ -802,6 +804,13 @@
         </li>
         @endif
         
+        <!-- Épreuves & Corrigés (lien principal mobile) -->
+        <li class="mobile-menu-item">
+            <a href="{{ route('epreuves.index') }}" class="mobile-menu-link {{ request()->routeIs('epreuves.*') ? 'active' : '' }}">
+                <span><i class="fas fa-graduation-cap"></i> Épreuves &amp; Corrigés</span>
+            </a>
+        </li>
+
         <!-- Mobile Dropdown À propos (conforme au menu desktop) -->
         <li class="mobile-menu-item">
             <button class="mobile-dropdown-toggle" onclick="toggleMobileDropdown('apropos')">
@@ -815,9 +824,6 @@
                 @endphp
                 <a href="{{ route('admin-docs.index') }}" class="mobile-dropdown-item">
                     <i class="fas fa-id-card" style="color: #38bdf8;"></i> Documents administratifs
-                </a>
-                <a href="{{ route('epreuves.index') }}" class="mobile-dropdown-item">
-                    <i class="fas fa-graduation-cap" style="color: #10b981;"></i> Épreuves &amp; Corrigés
                 </a>
                 @if($hasPublishedDocumentsMobile)
                 <a href="{{ route('documents.index') }}" class="mobile-dropdown-item">
@@ -1300,7 +1306,12 @@
                 } else {
                     list.innerHTML = notifications.map(notif => {
                         const icon = getNotificationIcon(notif.type);
-                        const time = formatNotificationTime(notif.created_at);
+                        // created_at_iso est une date ISO parsable ; created_at est déjà
+                        // un texte humain (diffForHumans). On utilise l'ISO si présent,
+                        // sinon on retombe sur le texte serveur (jamais "Invalid Date").
+                        const time = notif.created_at_iso
+                            ? formatNotificationTime(notif.created_at_iso)
+                            : (notif.created_at || '');
                         const message = notif.message || notif.title || 'Nouvelle notification';
                         const link = notif.link || '/dashboard/notifications';
                         return `
@@ -1333,6 +1344,10 @@
     
     window.formatNotificationTime = function(dateString) {
         const date = new Date(dateString);
+        // Garde-fou : date non parsable → ne jamais afficher "Invalid Date"
+        if (isNaN(date.getTime())) {
+            return typeof dateString === 'string' ? dateString : '';
+        }
         const now = new Date();
         const diff = now - date;
         const minutes = Math.floor(diff / 60000);

@@ -4,12 +4,17 @@ namespace App\Mail;
 
 use App\Models\DocumentPurchase;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class DocumentPurchaseConfirmation extends Mailable
+class DocumentPurchaseConfirmation extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
+
+    // Relances en cas d'échec SMTP transitoire
+    public $tries = 3;
+    public $backoff = 30;
 
     public $purchase;
     public $downloadUrl;

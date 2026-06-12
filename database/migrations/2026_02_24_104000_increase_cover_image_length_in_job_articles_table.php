@@ -11,7 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement('ALTER TABLE job_articles MODIFY cover_image VARCHAR(2048) NULL');
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement('ALTER TABLE job_articles MODIFY cover_image VARCHAR(2048) NULL');
+        }
     }
 
     /**
@@ -19,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        DB::statement('ALTER TABLE job_articles MODIFY cover_image VARCHAR(255) NULL');
+        if (DB::getDriverName() === 'mysql') {
+            DB::statement('ALTER TABLE job_articles MODIFY cover_image VARCHAR(255) NULL');
+        }
     }
 };

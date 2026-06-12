@@ -170,7 +170,7 @@
     </div>
 @endif
 
-<form action="{{ route('admin.settings.update') }}" method="POST">
+<form action="{{ route('admin.settings.update') }}" method="POST" enctype="multipart/form-data">
     @csrf
     
     <!-- Informations générales -->
@@ -210,6 +210,25 @@
             </label>
             <textarea name="site_description" class="input-admin" rows="3">{{ old('site_description', $settings->site_description ?? 'Plateforme de formation gratuite en développement web') }}</textarea>
             @error('site_description')
+                <p class="text-red-400 text-sm mt-2">{{ $message }}</p>
+            @enderror
+        </div>
+
+        <div class="mt-6">
+            <label class="block text-gray-300 mb-2 font-semibold">
+                <i class="fas fa-image mr-2"></i>Logo du site
+            </label>
+            <div class="flex items-center gap-4 flex-wrap">
+                <div style="width:72px;height:72px;border-radius:14px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);display:grid;place-items:center;overflow:hidden;flex-shrink:0;">
+                    <img src="{{ \App\Models\SiteSetting::logoUrl() }}" alt="Logo actuel" style="max-width:100%;max-height:100%;object-fit:contain;">
+                </div>
+                <div class="flex-1" style="min-width:240px;">
+                    <input type="file" name="logo" accept="image/png,image/jpeg,image/webp,image/svg+xml"
+                           class="block w-full text-sm text-gray-300 file:mr-3 file:px-4 file:py-2 file:rounded-lg file:border-0 file:bg-cyan-500/20 file:text-cyan-400 file:cursor-pointer">
+                    <p class="text-xs text-gray-500 mt-2">PNG, JPG, WEBP ou SVG · 2 Mo max. Utilisé dans la navbar, le pied de page, les tableaux de bord et le favicon. Laissez vide pour conserver le logo actuel.</p>
+                </div>
+            </div>
+            @error('logo')
                 <p class="text-red-400 text-sm mt-2">{{ $message }}</p>
             @enderror
         </div>
@@ -559,6 +578,28 @@
         </div>
     </div>
     
+    <!-- Tarif des corrigés (Épreuves & Corrigés) -->
+    <div class="content-section mb-6">
+        <h4 class="text-xl font-bold mb-2 flex items-center gap-2">
+            <i class="fas fa-graduation-cap text-emerald-400"></i>
+            Épreuves &amp; Corrigés
+        </h4>
+        <p class="text-sm text-gray-400 mb-6">Prix unique appliqué à tous les corrigés payants (paiement Wave).</p>
+        <div class="grid md:grid-cols-2 gap-6">
+            <div>
+                <label class="block text-gray-300 mb-2 font-semibold">
+                    <i class="fas fa-tag mr-2"></i>Prix d'un corrigé (FCFA)
+                </label>
+                <input type="number" name="corrige_price" min="0" step="50"
+                       value="{{ old('corrige_price', $settings->corrige_price ?? 500) }}"
+                       class="input-admin" placeholder="500">
+                @error('corrige_price')
+                    <p class="text-red-400 text-sm mt-2">{{ $message }}</p>
+                @enderror
+            </div>
+        </div>
+    </div>
+
     <!-- Bouton submit du formulaire principal -->
     <div class="flex gap-4 mt-6 mb-8">
         <button type="submit" class="btn-primary">

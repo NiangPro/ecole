@@ -25,7 +25,7 @@
     
     <!-- Favicon - Logo du site (placé tôt pour un chargement prioritaire) -->
     @php
-        $faviconPng = asset('images/logo.png');
+        $faviconPng = \App\Models\SiteSetting::logoUrl();
         $faviconIco = url('/favicon.ico');
     @endphp
     <link rel="icon" type="image/x-icon" href="{{ $faviconIco }}">

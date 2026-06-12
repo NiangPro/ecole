@@ -598,6 +598,7 @@ class AdminController extends Controller
     {        $request->validate([
             'site_name' => 'required|string|max:255',
             'site_description' => 'nullable|string',
+            'logo' => 'nullable|image|mimes:png,jpg,jpeg,webp,svg|max:2048',
             'contact_email' => 'nullable|email',
             'contact_phone' => 'nullable|string|max:20',
             'contact_address' => 'nullable|string',
@@ -620,6 +621,7 @@ class AdminController extends Controller
             'mail_from_name' => 'nullable|string|max:255',
             'maintenance_message' => 'nullable|string|max:1000',
             'maintenance_ends_at' => 'nullable|date',
+            'corrige_price' => 'nullable|numeric|min:0|max:1000000',
         ]);
 
         $settings = SiteSetting::first();
@@ -629,6 +631,16 @@ class AdminController extends Controller
         }
 
         $data = $request->all();
+
+        // Logo : on ne remplace que si un nouveau fichier est envoyé
+        unset($data['logo']);
+        if ($request->hasFile('logo')) {
+            // Supprimer l'ancien logo téléversé (pas le logo par défaut dans /public)
+            if ($settings->logo) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($settings->logo);
+            }
+            $data['logo'] = $request->file('logo')->store('logos', 'public');
+        }
 
         // Si le mot de passe est vide, ne pas le mettre à jour (garder l'ancien)
         if (empty($data['mail_password'])) {
