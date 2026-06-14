@@ -88,6 +88,38 @@
     <meta name="googlebot" content="index, follow">
     <meta name="bingbot" content="index, follow">
     
+    <!-- Schema.org JobPosting -->
+    @php
+        $jldFlags = JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_UNESCAPED_SLASHES | JSON_INVALID_UTF8_SUBSTITUTE;
+        $jldTitle = json_encode($article->title ?? '', $jldFlags);
+        $jldDesc  = json_encode(strip_tags($article->excerpt ?? substr(strip_tags($article->content ?? ''), 0, 500)), $jldFlags);
+    @endphp
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "JobPosting",
+      "title": {!! $jldTitle !!},
+      "description": {!! $jldDesc !!},
+      "datePosted": "{{ ($article->published_at ?? $article->created_at)->toIso8601String() }}",
+      "validThrough": "{{ now()->addMonths(2)->toIso8601String() }}",
+      "hiringOrganization": {
+        "@type": "Organization",
+        "name": "NiangProgrammeur",
+        "sameAs": "https://www.niangprogrammeur.com"
+      },
+      "jobLocation": {
+        "@type": "Place",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Dakar",
+          "addressCountry": "SN"
+        }
+      },
+      "employmentType": "FULL_TIME",
+      "url": "{{ $articleUrl }}"
+    }
+    </script>
+
     <!-- Article Meta -->
     <meta property="article:published_time" content="{{ $article->published_at ? $article->published_at->toIso8601String() : $article->created_at->toIso8601String() }}">
     <meta property="article:modified_time" content="{{ $article->updated_at->toIso8601String() }}">

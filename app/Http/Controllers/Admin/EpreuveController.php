@@ -37,6 +37,14 @@ class EpreuveController extends Controller
         if (($min = $request->get('min_downloads')) !== null && $min !== '') {
             $query->where('downloads_count', '>=', (int) $min);
         }
+        // Filtre : présence d'un corrigé
+        if ($request->get('corrige') === '1') {
+            $query->whereNotNull('corrige_file_path')->where('corrige_file_path', '!=', '');
+        } elseif ($request->get('corrige') === '0') {
+            $query->where(function ($q) {
+                $q->whereNull('corrige_file_path')->orWhere('corrige_file_path', '');
+            });
+        }
 
         // Tri (par défaut : plus récents)
         $sort = $request->get('sort', 'recent');
@@ -48,7 +56,7 @@ class EpreuveController extends Controller
 
         $epreuves = $query
             ->paginate(20)
-            ->appends($request->only('q', 'exam', 'level', 'matiere_id', 'status', 'min_downloads', 'sort'));
+            ->appends($request->only('q', 'exam', 'level', 'matiere_id', 'status', 'min_downloads', 'sort', 'corrige'));
 
         $matieres = EpreuveMatiere::orderBy('order')->orderBy('name')->get();
 

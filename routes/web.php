@@ -750,8 +750,43 @@ Route::get('/robots.txt', function () {
     $content = "User-agent: *\n";
     $content .= "Allow: /\n\n";
     $content .= "Sitemap: {$sitemapUrl}\n";
-    
+
     return response($content, 200)
         ->header('Content-Type', 'text/plain');
 });
+
+// ══════════════════════════════════════════════════════
+// REDIRECTIONS WORDPRESS → Laravel (301 Permanent)
+// Placées EN FIN DE FICHIER pour ne pas capter les URLs légitimes
+// ══════════════════════════════════════════════════════
+
+// Catégories WordPress → pages Laravel équivalentes
+Route::redirect('/category/emplois', '/emplois', 301);
+Route::redirect('/category/opportunites', '/emplois', 301);
+Route::redirect('/category/recrutement/appel-a-candidatures', '/emplois', 301);
+Route::redirect('/category/sports/football', '/', 301);
+Route::get('/category/{any}', fn() => redirect('/emplois', 301))->where('any', '.*');
+
+// Tags et auteur WordPress → homepage
+Route::get('/tag/{tag}', fn() => redirect('/', 301))->where('tag', '[^/]+');
+Route::get('/author/{author}', fn() => redirect('/', 301))->where('author', '[^/]+');
+
+// Archive mensuelle WordPress (/YYYY/MM) → /emplois
+Route::get('/{year}/{month}', fn($y, $m) => redirect('/emplois', 301))
+    ->where(['year' => '\d{4}', 'month' => '\d{2}']);
+
+// Archives WordPress date-based (/YYYY/MM/DD/{slug}) → /emplois/article/{slug} ou /emplois
+Route::get('/{year}/{month}/{day}/{slug}', function ($year, $month, $day, $slug) {
+    $cleanSlug = rtrim(urldecode($slug), '/');
+    $article = \App\Models\JobArticle::where('slug', $cleanSlug)->first();
+    if ($article) {
+        return redirect('/emplois/article/' . $article->slug, 301);
+    }
+    return redirect('/emplois', 301);
+})->where([
+    'year'  => '\d{4}',
+    'month' => '\d{2}',
+    'day'   => '\d{2}',
+    'slug'  => '[^/]+',
+]);
 

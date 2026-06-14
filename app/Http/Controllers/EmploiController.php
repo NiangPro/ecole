@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 use App\Models\JobArticle;
 use App\Models\Category;
 use App\Models\Comment;
@@ -138,236 +139,209 @@ class EmploiController extends Controller
      */
     public function show($slug)
     {
-        // Cache l'article avec sélection optimisée (30 minutes) - Optimisé avec eager loading
-        $article = Cache::remember("job_article_{$slug}", 1800, function () use ($slug) {
-            return JobArticle::where('slug', $slug)
-                ->published()
-                ->whereHas('category', function($query) {
-                    $query->where('is_active', true);
-                })
-                ->with(['category:id,name,slug']) // Eager loading optimisé
-                ->select('id', 'title', 'slug', 'excerpt', 'content', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views', 'meta_title', 'meta_description', 'meta_keywords', 'created_at', 'updated_at')
-                ->firstOrFail();
-        });
-        
-        // Incrémenter les vues de manière optimisée (sans recharger l'article)
-        JobArticle::where('id', $article->id)->increment('views');
-        
-        // Cache les articles similaires avec sélection optimisée (15 minutes) - Optimisé avec eager loading
-        $relatedArticles = Cache::remember("related_articles_{$article->id}", 900, function () use ($article) {
-            return JobArticle::published()
-                ->where('category_id', $article->category_id)
-                ->where('id', '!=', $article->id)
-                ->with(['category:id,name,slug']) // Eager loading optimisé
-                ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')
-                ->orderBy('published_at', 'desc')
-                ->take(3)
-                ->get();
-        });
-        
-        // Cache les documents pertinents selon l'article (15 minutes)
-        $relatedDocuments = Cache::remember("related_documents_article_{$article->id}", 900, function () use ($article) {
-            $documents = collect();
-            $existingIds = [];
-            
-            // Essayer de trouver des documents pertinents basés sur les tags/mots-clés
-            $articleKeywords = [];
-            
-            // Récupérer les mots-clés de l'article
-            if ($article->meta_keywords && is_array($article->meta_keywords)) {
-                $articleKeywords = array_map('strtolower', $article->meta_keywords);
-            } elseif ($article->meta_keywords) {
-                $decoded = json_decode($article->meta_keywords, true);
-                if (is_array($decoded)) {
-                    $articleKeywords = array_map('strtolower', $decoded);
-                } else {
-                    $articleKeywords = array_map('strtolower', explode(',', $article->meta_keywords));
-                }
-            }
-            
-            // Si on a des mots-clés, chercher des documents avec des tags similaires
-            if (!empty($articleKeywords)) {
-                $query = \App\Models\Document::published()
-                    ->with(['category:id,name,slug'])
-                    ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'price', 'discount_price', 'is_free', 'published_at', 'views_count', 'sales_count')
-                    ->where(function($q) use ($articleKeywords) {
-                        foreach ($articleKeywords as $keyword) {
-                            $keyword = trim($keyword);
-                            if (!empty($keyword)) {
-                                $q->orWhereJsonContains('tags', $keyword)
-                                  ->orWhere('title', 'like', "%{$keyword}%")
-                                  ->orWhere('description', 'like', "%{$keyword}%")
-                                  ->orWhere('meta_keywords', 'like', "%{$keyword}%");
-                            }
-                        }
+        // Charger l'article depuis le cache ou la DB (30 minutes)
+        try {
+            $article = Cache::remember("job_article_{$slug}", 1800, function () use ($slug) {
+                return JobArticle::where('slug', $slug)
+                    ->published()
+                    ->whereHas('category', function($query) {
+                        $query->where('is_active', true);
                     })
-                    ->orderBy('sales_count', 'desc')
-                    ->orderBy('views_count', 'desc')
-                    ->take(6);
-                
-                $documents = $query->get();
-                $existingIds = $documents->pluck('id')->toArray();
-            } else {
-                // Si pas de mots-clés, commencer avec les documents featured
-                $documents = \App\Models\Document::published()
-                    ->where('is_featured', true)
                     ->with(['category:id,name,slug'])
-                    ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'price', 'discount_price', 'is_free', 'published_at', 'views_count', 'sales_count')
-                    ->orderBy('sales_count', 'desc')
-                    ->orderBy('views_count', 'desc')
+                    ->select('id', 'title', 'slug', 'excerpt', 'content', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views', 'meta_title', 'meta_description', 'meta_keywords', 'created_at', 'updated_at')
+                    ->firstOrFail();
+            });
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            abort(404);
+        } catch (\Throwable $e) {
+            Log::error('EmploiController::show — article load failed', [
+                'slug' => $slug,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+            abort(500);
+        }
+
+        // Incrémenter les vues sans recharger l'article
+        try {
+            JobArticle::where('id', $article->id)->increment('views');
+        } catch (\Throwable $e) {
+            Log::warning('EmploiController::show — increment views failed', ['id' => $article->id, 'error' => $e->getMessage()]);
+        }
+
+        // Articles similaires (15 minutes)
+        try {
+            $relatedArticles = Cache::remember("related_articles_{$article->id}", 900, function () use ($article) {
+                return JobArticle::published()
+                    ->where('category_id', $article->category_id)
+                    ->where('id', '!=', $article->id)
+                    ->with(['category:id,name,slug'])
+                    ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')
+                    ->orderBy('published_at', 'desc')
                     ->take(3)
                     ->get();
-                
-                $existingIds = $documents->pluck('id')->toArray();
-            }
-            
-            // Si moins de 3 documents, compléter avec les documents featured
-            if ($documents->count() < 3) {
-                $additionalCount = 3 - $documents->count();
-                
-                $additionalDocuments = \App\Models\Document::published()
-                    ->whereNotIn('id', $existingIds)
-                    ->where('is_featured', true)
-                    ->with(['category:id,name,slug'])
-                    ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'price', 'discount_price', 'is_free', 'published_at', 'views_count', 'sales_count')
-                    ->orderBy('sales_count', 'desc')
-                    ->orderBy('views_count', 'desc')
-                    ->take($additionalCount)
-                    ->get();
-                
-                $documents = $documents->merge($additionalDocuments);
-                $existingIds = $documents->pluck('id')->toArray();
-            }
-            
-            // Si toujours moins de 3 documents, compléter avec les documents les plus populaires (tous documents)
-            if ($documents->count() < 3) {
-                $additionalCount = 3 - $documents->count();
-                
-                $additionalDocuments = \App\Models\Document::published()
-                    ->whereNotIn('id', $existingIds)
-                    ->with(['category:id,name,slug'])
-                    ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'price', 'discount_price', 'is_free', 'published_at', 'views_count', 'sales_count')
-                    ->orderBy('sales_count', 'desc')
-                    ->orderBy('views_count', 'desc')
-                    ->orderBy('created_at', 'desc')
-                    ->take($additionalCount)
-                    ->get();
-                
-                $documents = $documents->merge($additionalDocuments);
-                $existingIds = $documents->pluck('id')->toArray();
-            }
-            
-            // Compléter jusqu'à 6 documents si possible avec des documents featured
-            if ($documents->count() < 6) {
-                $additionalCount = 6 - $documents->count();
-                
-                $additionalDocuments = \App\Models\Document::published()
-                    ->whereNotIn('id', $existingIds)
-                    ->where('is_featured', true)
-                    ->with(['category:id,name,slug'])
-                    ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'price', 'discount_price', 'is_free', 'published_at', 'views_count', 'sales_count')
-                    ->orderBy('sales_count', 'desc')
-                    ->orderBy('views_count', 'desc')
-                    ->take($additionalCount)
-                    ->get();
-                
-                $documents = $documents->merge($additionalDocuments);
-                $existingIds = $documents->pluck('id')->toArray();
-            }
-            
-            // Si toujours moins de 6, compléter avec n'importe quels documents publiés
-            if ($documents->count() < 6) {
-                $additionalCount = 6 - $documents->count();
-                
-                $additionalDocuments = \App\Models\Document::published()
-                    ->whereNotIn('id', $existingIds)
-                    ->with(['category:id,name,slug'])
-                    ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'price', 'discount_price', 'is_free', 'published_at', 'views_count', 'sales_count')
-                    ->orderBy('sales_count', 'desc')
-                    ->orderBy('views_count', 'desc')
-                    ->orderBy('created_at', 'desc')
-                    ->take($additionalCount)
-                    ->get();
-                
-                $documents = $documents->merge($additionalDocuments);
-            }
-            
-            // Garantir au minimum 3 documents - si toujours moins, prendre les 3 premiers documents publiés
-            if ($documents->count() < 3) {
-                $existingIds = $documents->pluck('id')->toArray();
-                $needed = 3 - $documents->count();
-                
-                $fallbackDocuments = \App\Models\Document::published()
-                    ->whereNotIn('id', $existingIds)
-                    ->with(['category:id,name,slug'])
-                    ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'price', 'discount_price', 'is_free', 'published_at', 'views_count', 'sales_count')
-                    ->orderBy('created_at', 'desc')
-                    ->take($needed)
-                    ->get();
-                
-                $documents = $documents->merge($fallbackDocuments);
-            }
-            
-            // Retourner au minimum 3 documents, au maximum 6
-            return $documents->take(6);
-        });
-        
-        // Cache les publicités pour la sidebar des articles (30 minutes)
-        $sidebarAds = Cache::remember('sidebar_ads_articles', 1800, function () {
-            return Ad::active()
-                ->forPosition('content')
-                ->where(function($q) {
-                    $q->whereNull('location')
-                      ->orWhere('location', 'article_sidebar');
-                })
-                ->select('id', 'name', 'description', 'image', 'image_type', 'link_url')
-                ->orderBy('order')
-                ->get();
-        });
+            });
+        } catch (\Throwable $e) {
+            Log::error('EmploiController::show — relatedArticles failed', ['id' => $article->id, 'error' => $e->getMessage()]);
+            $relatedArticles = collect();
+        }
 
-        // Cache les 3 derniers commentaires approuvés avec sélection optimisée (15 minutes)
-        $latestComments = Cache::remember("article_latest_comments_{$article->id}", 900, function () use ($article) {
-            return Comment::where('commentable_type', 'App\\Models\\JobArticle')
-                ->where('commentable_id', $article->id)
-                ->where('status', 'approved')
-                ->whereNull('parent_id')
-                ->select('id', 'name', 'email', 'content', 'created_at', 'user_id')
-                ->orderBy('created_at', 'desc')
-                ->take(3)
-                ->get();
-        });
+        // Documents pertinents (15 minutes)
+        try {
+            $relatedDocuments = Cache::remember("related_documents_article_{$article->id}", 900, function () use ($article) {
+                $documents = collect();
+                $existingIds = [];
 
-        // Cache les commentaires avec sélection optimisée (15 minutes) - Optimisé avec eager loading
-        $latestCommentIds = $latestComments->pluck('id')->toArray();
-        $comments = Cache::remember("article_comments_{$article->id}", 900, function () use ($article, $latestCommentIds) {
-            $query = Comment::where('commentable_type', 'App\\Models\\JobArticle')
-                ->where('commentable_id', $article->id)
-                ->where('status', 'approved')
-                ->select('id', 'name', 'email', 'content', 'parent_id', 'created_at', 'user_id');
-            
-            if (!empty($latestCommentIds)) {
-                $query->whereNotIn('id', $latestCommentIds);
-            }
-            
-            $comments = $query->orderBy('created_at', 'desc')->get();
-            
-            // Charger les réponses de manière optimisée avec eager loading
-            $commentIds = $comments->pluck('id')->toArray();
-            if (!empty($commentIds)) {
-                $replies = Comment::whereIn('parent_id', $commentIds)
-                    ->where('status', 'approved')
-                    ->select('id', 'name', 'email', 'content', 'parent_id', 'created_at', 'user_id')
-                    ->get()
-                    ->groupBy('parent_id');
-                
-                foreach ($comments as $comment) {
-                    $comment->setRelation('replies', $replies->get($comment->id, collect()));
+                $articleKeywords = [];
+                if ($article->meta_keywords && is_array($article->meta_keywords)) {
+                    $articleKeywords = array_map(fn($v) => strtolower((string) $v), $article->meta_keywords);
+                } elseif ($article->meta_keywords) {
+                    $decoded = json_decode($article->meta_keywords, true);
+                    if (is_array($decoded)) {
+                        $articleKeywords = array_map(fn($v) => strtolower((string) $v), $decoded);
+                    } else {
+                        $articleKeywords = array_map(fn($v) => strtolower(trim((string) $v)), explode(',', $article->meta_keywords));
+                    }
                 }
-            }
-            
-            return $comments;
-        });
-        
+                $articleKeywords = array_filter($articleKeywords);
+
+                if (!empty($articleKeywords)) {
+                    try {
+                        $documents = \App\Models\Document::published()
+                            ->with(['category:id,name,slug'])
+                            ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'price', 'discount_price', 'is_free', 'published_at', 'views_count', 'sales_count')
+                            ->where(function($q) use ($articleKeywords) {
+                                foreach ($articleKeywords as $keyword) {
+                                    if (!empty($keyword)) {
+                                        $q->orWhereJsonContains('tags', $keyword)
+                                          ->orWhere('title', 'like', "%{$keyword}%")
+                                          ->orWhere('description', 'like', "%{$keyword}%")
+                                          ->orWhere('meta_keywords', 'like', "%{$keyword}%");
+                                    }
+                                }
+                            })
+                            ->orderBy('sales_count', 'desc')
+                            ->orderBy('views_count', 'desc')
+                            ->take(6)
+                            ->get();
+                    } catch (\Throwable $e) {
+                        Log::error('EmploiController::show — keyword doc search failed', [
+                            'article_id' => $article->id,
+                            'keywords' => $articleKeywords,
+                            'error' => $e->getMessage(),
+                        ]);
+                        $documents = collect();
+                    }
+                    $existingIds = $documents->pluck('id')->toArray();
+                }
+
+                $docSelect = ['id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'price', 'discount_price', 'is_free', 'published_at', 'views_count', 'sales_count'];
+
+                // Compléter jusqu'à 6 documents avec les featured puis tous les publiés
+                if ($documents->count() < 6) {
+                    $additionalDocuments = \App\Models\Document::published()
+                        ->whereNotIn('id', $existingIds)
+                        ->where('is_featured', true)
+                        ->with(['category:id,name,slug'])
+                        ->select($docSelect)
+                        ->orderBy('sales_count', 'desc')
+                        ->orderBy('views_count', 'desc')
+                        ->take(6 - $documents->count())
+                        ->get();
+                    $documents = $documents->merge($additionalDocuments);
+                    $existingIds = $documents->pluck('id')->toArray();
+                }
+
+                if ($documents->count() < 6) {
+                    $additionalDocuments = \App\Models\Document::published()
+                        ->whereNotIn('id', $existingIds)
+                        ->with(['category:id,name,slug'])
+                        ->select($docSelect)
+                        ->orderBy('sales_count', 'desc')
+                        ->orderBy('views_count', 'desc')
+                        ->orderBy('created_at', 'desc')
+                        ->take(6 - $documents->count())
+                        ->get();
+                    $documents = $documents->merge($additionalDocuments);
+                }
+
+                return $documents->take(6);
+            });
+        } catch (\Throwable $e) {
+            Log::error('EmploiController::show — relatedDocuments failed', ['id' => $article->id, 'error' => $e->getMessage()]);
+            $relatedDocuments = collect();
+        }
+
+        // Publicités sidebar (30 minutes)
+        try {
+            $sidebarAds = Cache::remember('sidebar_ads_articles', 1800, function () {
+                return Ad::active()
+                    ->forPosition('content')
+                    ->where(function($q) {
+                        $q->whereNull('location')
+                          ->orWhere('location', 'article_sidebar');
+                    })
+                    ->select('id', 'name', 'description', 'image', 'image_type', 'link_url')
+                    ->orderBy('order')
+                    ->get();
+            });
+        } catch (\Throwable $e) {
+            Log::error('EmploiController::show — sidebarAds failed', ['error' => $e->getMessage()]);
+            $sidebarAds = collect();
+        }
+
+        // Derniers commentaires approuvés (15 minutes)
+        try {
+            $latestComments = Cache::remember("article_latest_comments_{$article->id}", 900, function () use ($article) {
+                return Comment::where('commentable_type', 'App\\Models\\JobArticle')
+                    ->where('commentable_id', $article->id)
+                    ->where('status', 'approved')
+                    ->whereNull('parent_id')
+                    ->select('id', 'name', 'email', 'content', 'created_at', 'user_id')
+                    ->orderBy('created_at', 'desc')
+                    ->take(3)
+                    ->get();
+            });
+        } catch (\Throwable $e) {
+            Log::error('EmploiController::show — latestComments failed', ['id' => $article->id, 'error' => $e->getMessage()]);
+            $latestComments = collect();
+        }
+
+        // Commentaires complets (15 minutes)
+        try {
+            $latestCommentIds = $latestComments->pluck('id')->toArray();
+            $comments = Cache::remember("article_comments_{$article->id}", 900, function () use ($article, $latestCommentIds) {
+                $query = Comment::where('commentable_type', 'App\\Models\\JobArticle')
+                    ->where('commentable_id', $article->id)
+                    ->where('status', 'approved')
+                    ->select('id', 'name', 'email', 'content', 'parent_id', 'created_at', 'user_id');
+
+                if (!empty($latestCommentIds)) {
+                    $query->whereNotIn('id', $latestCommentIds);
+                }
+
+                $comments = $query->orderBy('created_at', 'desc')->get();
+
+                $commentIds = $comments->pluck('id')->toArray();
+                if (!empty($commentIds)) {
+                    $replies = Comment::whereIn('parent_id', $commentIds)
+                        ->where('status', 'approved')
+                        ->select('id', 'name', 'email', 'content', 'parent_id', 'created_at', 'user_id')
+                        ->get()
+                        ->groupBy('parent_id');
+
+                    foreach ($comments as $comment) {
+                        $comment->setRelation('replies', $replies->get($comment->id, collect()));
+                    }
+                }
+
+                return $comments;
+            });
+        } catch (\Throwable $e) {
+            Log::error('EmploiController::show — comments failed', ['id' => $article->id, 'error' => $e->getMessage()]);
+            $comments = collect();
+        }
+
         return view('emplois.article', compact('article', 'relatedArticles', 'sidebarAds', 'comments', 'latestComments', 'relatedDocuments'));
     }
 

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\ExerciseProgress;
 use App\Models\UserActivity;
 use App\Http\Controllers\Concerns\LocaleTrait;
+use App\Services\ExerciseService;
 
 class ExerciceController extends Controller
 {
@@ -119,7 +120,7 @@ class ExerciceController extends Controller
         }
         
         if (!$exercise) {
-            abort(404, 'Exercice non trouvé pour le langage: ' . $language . ' et l\'ID: ' . $id);
+            return redirect('/exercices/' . $language, 301);
         }
         
         $totalExercises = count($variedExercises);
@@ -327,29 +328,12 @@ class ExerciceController extends Controller
      */
     private function getExercisesByLanguage($language)
     {
-        // Déléguer temporairement à PageController
-        // TODO: Extraire cette méthode dans un service dédié
-        $pageController = new PageController();
-        $reflection = new \ReflectionClass($pageController);
-        $method = $reflection->getMethod('getExercisesByLanguage');
-        $method->setAccessible(true);
-        return $method->invoke($pageController, $language);
+        return (new ExerciseService())->getExercisesByLanguage($language);
     }
 
-    /**
-     * Obtenir le détail d'un exercice
-     * NOTE: Cette méthode est très longue (~6000 lignes)
-     * TODO: Extraire dans un service ou fichier séparé
-     */
     private function getExerciseDetail($language, $id)
     {
-        // Déléguer temporairement à PageController
-        // TODO: Extraire cette méthode dans un service dédié
-        $pageController = new PageController();
-        $reflection = new \ReflectionClass($pageController);
-        $method = $reflection->getMethod('getExerciseDetail');
-        $method->setAccessible(true);
-        return $method->invoke($pageController, $language, $id);
+        return (new ExerciseService())->getExerciseDetail($language, $id);
     }
 }
 

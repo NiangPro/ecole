@@ -43,6 +43,11 @@
         <input type="number" name="min_downloads" min="0" step="1" value="{{ request('min_downloads') }}"
                placeholder="Téléch. min (ex : 10)"
                class="px-4 py-2 rounded-lg bg-gray-800 border border-gray-600 text-white placeholder-gray-500 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500">
+        <select name="corrige" class="px-4 py-2 rounded-lg bg-gray-800 border border-gray-600 text-white focus:border-cyan-500">
+            <option value="">Tous (corrigé ou non)</option>
+            <option value="1" @selected(request('corrige') === '1')>✅ Avec corrigé</option>
+            <option value="0" @selected(request('corrige') === '0')>❌ Sans corrigé</option>
+        </select>
         <select name="sort" class="px-4 py-2 rounded-lg bg-gray-800 border border-gray-600 text-white focus:border-cyan-500">
             <option value="recent" @selected(request('sort', 'recent') === 'recent')>Tri : plus récents</option>
             <option value="downloads_desc" @selected(request('sort') === 'downloads_desc')>Tri : téléch. décroissant</option>
@@ -62,6 +67,7 @@
                     <th class="pb-3 pr-4 font-semibold">Matière</th>
                     <th class="pb-3 pr-4 font-semibold">Année</th>
                     <th class="pb-3 pr-4 font-semibold">Téléch.</th>
+                    <th class="pb-3 pr-4 font-semibold">Corrigé</th>
                     <th class="pb-3 pr-4 font-semibold">Statut</th>
                     <th class="pb-3 pr-4 font-semibold text-right">Actions</th>
                 </tr>
@@ -77,6 +83,17 @@
                     <td class="py-3 pr-4 text-gray-400">{{ $epreuve->matiere?->name ?? '—' }}</td>
                     <td class="py-3 pr-4 text-gray-400">{{ $epreuve->year ?? '—' }}</td>
                     <td class="py-3 pr-4 text-gray-400">{{ number_format($epreuve->downloads_count, 0, ',', ' ') }}</td>
+                    <td class="py-3 pr-4">
+                        @if($epreuve->hasCorrige())
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                                <i class="fas fa-check-circle"></i> Oui
+                            </span>
+                        @else
+                            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs bg-gray-700/50 text-gray-500 border border-gray-600/30">
+                                <i class="fas fa-times-circle"></i> Non
+                            </span>
+                        @endif
+                    </td>
                     <td class="py-3 pr-4">
                         <form action="{{ route('admin.epreuves.toggle-publish', $epreuve) }}" method="POST" class="inline">
                             @csrf
@@ -100,7 +117,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="7" class="py-8 text-center text-gray-400">
+                    <td colspan="8" class="py-8 text-center text-gray-400">
                         Aucune épreuve pour le moment. <a href="{{ route('admin.epreuves.create') }}" class="text-cyan-400 hover:underline">Ajoutez la première</a>.
                     </td>
                 </tr>
