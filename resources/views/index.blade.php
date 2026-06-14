@@ -201,7 +201,7 @@
 
       <div class="hp-epreuves-grid">
         @foreach($latestEpreuves as $epreuve)
-        <a href="{{ route('epreuves.show', $epreuve->slug) }}" class="hp-epreuve-card">
+        <a href="{{ route('epreuves.show', $epreuve->slug) }}" class="hp-epreuve-card{{ $epreuve->hasCorrige() ? ' hp-epreuve-card--corrige' : '' }}">
           <div class="hp-epreuve-top">
             <span class="hp-epreuve-icon"><i class="fas fa-file-pdf"></i></span>
             <span class="hp-epreuve-badge">{{ $epreuve->exam_label ?? $epreuve->level_label ?? __('homepage.epreuves.eyebrow') }}</span>
@@ -211,6 +211,9 @@
             @if($epreuve->matiere)<span><i class="fas fa-book"></i> {{ $epreuve->matiere->name }}</span>@endif
             @if($epreuve->year)<span><i class="fas fa-calendar"></i> {{ $epreuve->year }}</span>@endif
             <span><i class="fas fa-download"></i> {{ number_format($epreuve->downloads_count, 0, ' ', ' ') }} {{ __('homepage.epreuves.downloads') }}</span>
+            @if($epreuve->hasCorrige())
+            <span class="hp-epreuve-corrige"><i class="fas fa-check-circle"></i> Corrigé</span>
+            @endif
           </div>
         </a>
         @endforeach

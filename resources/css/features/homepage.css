@@ -1171,3 +1171,27 @@
 
     i { color: oklch(55% 0.16 165); margin-inline-end: 0.15rem; }
   }
+
+  .hp-epreuve-corrige {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: oklch(52% 0.16 145);
+    background: oklch(52% 0.16 145 / 10%);
+    border: 1px solid oklch(52% 0.16 145 / 25%);
+    padding: 0.15rem 0.5rem;
+    border-radius: var(--radius-pill);
+
+    i { color: oklch(52% 0.16 145); }
+  }
+
+  .hp-epreuve-card--corrige {
+    border-color: oklch(52% 0.16 145 / 30%);
+
+    &::before {
+      background: linear-gradient(to right, oklch(52% 0.16 145), oklch(58% 0.16 175));
+      opacity: 1;
+    }
+  }
