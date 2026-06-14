@@ -100,7 +100,7 @@
       "@type": "JobPosting",
       "title": {!! $jldTitle !!},
       "description": {!! $jldDesc !!},
-      "datePosted": "{{ ($article->published_at ?? $article->created_at)->toIso8601String() }}",
+      "datePosted": "{{ ($article->published_at ?? $article->created_at)?->toIso8601String() ?? now()->toIso8601String() }}",
       "validThrough": "{{ now()->addMonths(2)->toIso8601String() }}",
       "hiringOrganization": {
         "@type": "Organization",
@@ -121,8 +121,8 @@
     </script>
 
     <!-- Article Meta -->
-    <meta property="article:published_time" content="{{ $article->published_at ? $article->published_at->toIso8601String() : $article->created_at->toIso8601String() }}">
-    <meta property="article:modified_time" content="{{ $article->updated_at->toIso8601String() }}">
+    <meta property="article:published_time" content="{{ ($article->published_at ?? $article->created_at)?->toIso8601String() ?? now()->toIso8601String() }}">
+    <meta property="article:modified_time" content="{{ $article->updated_at?->toIso8601String() ?? now()->toIso8601String() }}">
     <meta property="article:section" content="{{ $article->category->name ?? 'Emploi' }}">
     <meta property="article:author" content="NiangProgrammeur">
     @if($article->category)
