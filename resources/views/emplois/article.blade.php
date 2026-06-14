@@ -91,34 +91,31 @@
     <!-- Schema.org JobPosting -->
     @php
         $jldFlags = JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_UNESCAPED_SLASHES | JSON_INVALID_UTF8_SUBSTITUTE;
-        $jldTitle = json_encode($article->title ?? '', $jldFlags);
-        $jldDesc  = json_encode(strip_tags($article->excerpt ?? substr(strip_tags($article->content ?? ''), 0, 500)), $jldFlags);
+        $jldData  = [
+            '@context'            => 'https://schema.org',
+            '@type'               => 'JobPosting',
+            'title'               => $article->title ?? '',
+            'description'         => strip_tags($article->excerpt ?? substr(strip_tags($article->content ?? ''), 0, 500)),
+            'datePosted'          => ($article->published_at ?? $article->created_at)?->toIso8601String() ?? now()->toIso8601String(),
+            'validThrough'        => now()->addMonths(2)->toIso8601String(),
+            'hiringOrganization'  => [
+                '@type'  => 'Organization',
+                'name'   => 'NiangProgrammeur',
+                'sameAs' => 'https://www.niangprogrammeur.com',
+            ],
+            'jobLocation' => [
+                '@type'   => 'Place',
+                'address' => [
+                    '@type'           => 'PostalAddress',
+                    'addressLocality' => 'Dakar',
+                    'addressCountry'  => 'SN',
+                ],
+            ],
+            'employmentType' => 'FULL_TIME',
+            'url'            => $articleUrl,
+        ];
     @endphp
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "JobPosting",
-      "title": {!! $jldTitle !!},
-      "description": {!! $jldDesc !!},
-      "datePosted": "{{ ($article->published_at ?? $article->created_at)?->toIso8601String() ?? now()->toIso8601String() }}",
-      "validThrough": "{{ now()->addMonths(2)->toIso8601String() }}",
-      "hiringOrganization": {
-        "@type": "Organization",
-        "name": "NiangProgrammeur",
-        "sameAs": "https://www.niangprogrammeur.com"
-      },
-      "jobLocation": {
-        "@type": "Place",
-        "address": {
-          "@type": "PostalAddress",
-          "addressLocality": "Dakar",
-          "addressCountry": "SN"
-        }
-      },
-      "employmentType": "FULL_TIME",
-      "url": "{{ $articleUrl }}"
-    }
-    </script>
+    <script type="application/ld+json">{!! json_encode($jldData, $jldFlags) !!}</script>
 
     <!-- Article Meta -->
     <meta property="article:published_time" content="{{ ($article->published_at ?? $article->created_at)?->toIso8601String() ?? now()->toIso8601String() }}">
