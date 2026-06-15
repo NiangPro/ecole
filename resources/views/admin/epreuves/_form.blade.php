@@ -357,17 +357,25 @@ body.light-mode .ep-cancel:hover { color: #0f172a; border-color: #94a3b8; }
 
                     <div class="grid md:grid-cols-2 gap-4">
                         <div>
-                            <label class="ep-label" for="fieldLevel">Classe / Niveau</label>
+                            <label class="ep-label" for="fieldLevel" id="labelLevel">Classe / Niveau</label>
                             <div class="ep-select-wrap">
                                 <select name="level" id="fieldLevel" class="ep-select">
-                                    <option value="">— Aucune —</option>
-                                    @foreach(\App\Models\Epreuve::LEVELS as $group => $levels)
-                                        <optgroup label="{{ ['primaire' => 'Primaire', 'college' => 'Collège', 'lycee' => 'Lycée'][$group] }}">
+                                    {{-- Options scolaires (primaire / collège / lycée) --}}
+                                    <optgroup label="— Scolaire —" id="optgroupScolaire">
+                                        <option value="">— Aucune —</option>
+                                        @foreach(\App\Models\Epreuve::LEVELS as $group => $levels)
+                                            @if($group === 'concours') @continue @endif
                                             @foreach($levels as $key => $label)
                                                 <option value="{{ $key }}" @selected(old('level', $epreuve?->level) === $key)>{{ $label }}</option>
                                             @endforeach
-                                        </optgroup>
-                                    @endforeach
+                                        @endforeach
+                                    </optgroup>
+                                    {{-- Options concours --}}
+                                    <optgroup label="— Concours —" id="optgroupConcours">
+                                        @foreach(\App\Models\Epreuve::LEVELS['concours'] as $key => $label)
+                                            <option value="{{ $key }}" @selected(old('level', $epreuve?->level) === $key)>{{ $label }}</option>
+                                        @endforeach
+                                    </optgroup>
                                 </select>
                             </div>
                         </div>
@@ -396,18 +404,78 @@ body.light-mode .ep-cancel:hover { color: #0f172a; border-color: #94a3b8; }
                                    placeholder="S2, L1, L'A…" class="ep-input">
                         </div>
                         <div>
-                            <label class="ep-label" for="fieldYear">Année (session)</label>
-                            <input type="number" name="year" id="fieldYear" value="{{ old('year', $epreuve?->year) }}"
-                                   min="1980" max="{{ now()->year + 1 }}" placeholder="{{ now()->year }}" class="ep-input">
+                            <label class="ep-label" for="fieldYear">Année <span class="normal-case font-normal opacity-60">(ou plage)</span></label>
+                            <div style="display:flex;gap:0.5rem;align-items:center;">
+                                <input type="number" name="year" id="fieldYear" value="{{ old('year', $epreuve?->year) }}"
+                                       min="1980" max="{{ now()->year + 1 }}" placeholder="De…" class="ep-input" style="min-width:0;">
+                                <span style="color:#64748b;font-size:0.85rem;flex-shrink:0;">–</span>
+                                <input type="number" name="year_end" id="fieldYearEnd" value="{{ old('year_end', $epreuve?->year_end) }}"
+                                       min="1980" max="{{ now()->year + 1 }}" placeholder="À…" class="ep-input" style="min-width:0;">
+                            </div>
+                            <p class="ep-hint">Pour une annale multi-années : ex. 2018 – 2023. Laisser "À" vide pour une seule année.</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {{-- Étape 4 : Publication --}}
+            {{-- Étape 4 : Tarification --}}
+            <div class="ep-card" id="cardTarif">
+                <div class="ep-card-head">
+                    <div class="ep-step" style="background: linear-gradient(135deg, #f59e0b, #ef4444);">4</div>
+                    <div>
+                        <div class="ep-card-title">Tarification <span style="font-size:0.78rem;font-weight:400;color:#64748b;text-transform:none;">(laisser vide ou 0 = gratuit)</span></div>
+                        <div class="ep-card-sub">Prix en FCFA — le corrigé vide utilise le prix global de l'admin</div>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="ep-label" for="fieldPrice">
+                            <i class="fas fa-file-lines mr-1" style="color:#34d399;"></i>Prix de l'épreuve (FCFA)
+                        </label>
+                        <div style="position:relative;">
+                            <input type="number" name="price" id="fieldPrice"
+                                   value="{{ old('price', $epreuve?->price) }}"
+                                   min="0" step="50" placeholder="0 = gratuit" class="ep-input"
+                                   style="padding-right: 3.5rem;">
+                            <span style="position:absolute;right:1rem;top:50%;transform:translateY(-50%);font-size:0.75rem;color:#64748b;pointer-events:none;">FCFA</span>
+                        </div>
+                        @error('price')<p class="ep-error">{{ $message }}</p>@enderror
+                        <p class="ep-hint">Laisser vide ou 0 pour rendre l'épreuve gratuite.</p>
+                    </div>
+
+                    <div>
+                        <label class="ep-label" for="fieldCorrigePrice">
+                            <i class="fas fa-circle-check mr-1" style="color:#fbbf24;"></i>Prix du corrigé (FCFA)
+                        </label>
+                        <div style="position:relative;">
+                            <input type="number" name="corrige_price" id="fieldCorrigePrice"
+                                   value="{{ old('corrige_price', $epreuve?->corrige_price) }}"
+                                   min="0" step="50" class="ep-input"
+                                   style="padding-right: 3.5rem;"
+                                   placeholder="{{ number_format(\App\Models\Epreuve::globalCorrigePrice(), 0, ',', ' ') }} (global)">
+                            <span style="position:absolute;right:1rem;top:50%;transform:translateY(-50%);font-size:0.75rem;color:#64748b;pointer-events:none;">FCFA</span>
+                        </div>
+                        @error('corrige_price')<p class="ep-error">{{ $message }}</p>@enderror
+                        <p class="ep-hint">Vide = prix global ({{ number_format(\App\Models\Epreuve::globalCorrigePrice(), 0, ',', ' ') }} FCFA). 0 = gratuit.</p>
+                    </div>
+                </div>
+
+                {{-- Badge aperçu prix --}}
+                <div id="tarifPreview" style="display:none; margin-top:1rem; padding:0.75rem 1rem; border-radius:14px; background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.25);">
+                    <div style="font-size:0.78rem; font-weight:700; color:#fbbf24; display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+                        <i class="fas fa-tag"></i>
+                        <span id="tarifEpreuveLabel">Épreuve : Gratuit</span>
+                        <span style="color:#475569;">•</span>
+                        <span id="tarifCorrigeLabel">Corrigé : {{ number_format(\App\Models\Epreuve::globalCorrigePrice(), 0, ',', ' ') }} FCFA (global)</span>
+                    </div>
+                </div>
+            </div>
+
+            {{-- Étape 5 : Publication --}}
             <div class="ep-card">
                 <div class="ep-card-head">
-                    <div class="ep-step">4</div>
+                    <div class="ep-step">5</div>
                     <div>
                         <div class="ep-card-title">Description &amp; publication</div>
                         <div class="ep-card-sub">Texte SEO et visibilité sur le site</div>
@@ -670,7 +738,10 @@ body.light-mode .ep-cancel:hover { color: #0f172a; border-color: #94a3b8; }
         var matiereName = matiereSel.value ? matiereSel.options[matiereSel.selectedIndex].text : $id('fieldMatiereNew').value.trim();
         setPv('pvMatiere', matiereName);
         setPv('pvSerie', $id('fieldSerie').value.trim(), 'Série ');
-        setPv('pvYear', $id('fieldYear').value.trim());
+        var yearVal = $id('fieldYear').value.trim();
+        var yearEndVal = $id('fieldYearEnd') ? $id('fieldYearEnd').value.trim() : '';
+        var yearDisplay = yearVal ? (yearEndVal && yearEndVal > yearVal ? yearVal + '–' + yearEndVal : yearVal) : '';
+        setPv('pvYear', yearDisplay);
 
         var hasCorrige = ($id('fileCorrige').files.length > 0) || {{ ($isEdit && $epreuve->corrige_file_path) ? 'true' : 'false' }}
             || (typeChecked && (typeChecked.value === 'corrige' || typeChecked.value === 'epreuve_corrige'));
@@ -698,7 +769,7 @@ body.light-mode .ep-cancel:hover { color: #0f172a; border-color: #94a3b8; }
     });
     bindDrop('dropCorrige', 'fileCorrige', 'chipCorrige', function () { refreshPreview(); });
 
-    ['fieldTitle', 'fieldSlug', 'fieldSerie', 'fieldYear', 'fieldLevel', 'fieldMatiere', 'fieldMatiereNew'].forEach(function (id) {
+    ['fieldTitle', 'fieldSlug', 'fieldSerie', 'fieldYear', 'fieldYearEnd', 'fieldLevel', 'fieldMatiere', 'fieldMatiereNew'].forEach(function (id) {
         var el = $id(id);
         el.addEventListener('input', refreshPreview);
         el.addEventListener('change', refreshPreview);
@@ -711,6 +782,78 @@ body.light-mode .ep-cancel:hover { color: #0f172a; border-color: #94a3b8; }
     });
 
     refreshPreview();
+
+    /* ---------- Niveau dynamique selon examen ---------- */
+    var CONCOURS_VALUES = @json(array_keys(\App\Models\Epreuve::LEVELS['concours']));
+
+    function updateLevelForExam(examVal) {
+        var label     = $id('labelLevel');
+        var select    = $id('fieldLevel');
+        var ogScolaire  = $id('optgroupScolaire');
+        var ogConcours  = $id('optgroupConcours');
+        if (!select) return;
+
+        var isConcours = (examVal === 'concours');
+
+        // Changer le label
+        if (label) label.textContent = isConcours ? 'Institution / Concours' : 'Classe / Niveau';
+
+        // Masquer/afficher les groupes d'options
+        if (ogScolaire) ogScolaire.style.display = isConcours ? 'none' : '';
+        if (ogConcours) ogConcours.style.display = isConcours ? '' : 'none';
+
+        // Si on bascule et que la valeur actuelle n'appartient pas au bon groupe, réinitialiser
+        var cur = select.value;
+        var isCurConcours = CONCOURS_VALUES.indexOf(cur) !== -1;
+        if (isConcours && cur !== '' && !isCurConcours) { select.value = ''; }
+        if (!isConcours && cur !== '' && isCurConcours) { select.value = ''; }
+    }
+
+    // Init au chargement
+    (function () {
+        var examChecked = document.querySelector('input[name="exam"]:checked');
+        updateLevelForExam(examChecked ? examChecked.value : '');
+    })();
+
+    // Écoute les changements de l'examen
+    document.querySelectorAll('input[name="exam"]').forEach(function (r) {
+        r.addEventListener('change', function () { updateLevelForExam(this.value); });
+    });
+
+    /* ---------- Aperçu tarification ---------- */
+    var GLOBAL_CORRIGE_PRICE = {{ (int) \App\Models\Epreuve::globalCorrigePrice() }};
+
+    function formatFcfa(val) {
+        if (!val || val <= 0) return 'Gratuit';
+        return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' FCFA';
+    }
+
+    function refreshTarif() {
+        var priceVal  = parseInt($id('fieldPrice').value, 10) || 0;
+        var corrigeVal = parseInt($id('fieldCorrigePrice').value, 10);
+        var preview = $id('tarifPreview');
+        var epLabel  = $id('tarifEpreuveLabel');
+        var corLabel = $id('tarifCorrigeLabel');
+
+        if (!preview) return;
+
+        var showPreview = priceVal > 0 || ($id('fieldCorrigePrice').value !== '');
+        preview.style.display = showPreview ? '' : 'none';
+
+        epLabel.textContent  = 'Épreuve : ' + formatFcfa(priceVal);
+
+        if ($id('fieldCorrigePrice').value === '') {
+            corLabel.textContent = 'Corrigé : ' + formatFcfa(GLOBAL_CORRIGE_PRICE) + ' (prix global)';
+        } else {
+            corLabel.textContent = 'Corrigé : ' + formatFcfa(corrigeVal || 0);
+        }
+    }
+
+    var priceEl = $id('fieldPrice'), corrigePriceEl = $id('fieldCorrigePrice');
+    if (priceEl) { priceEl.addEventListener('input', refreshTarif); priceEl.addEventListener('change', refreshTarif); }
+    if (corrigePriceEl) { corrigePriceEl.addEventListener('input', refreshTarif); corrigePriceEl.addEventListener('change', refreshTarif); }
+
+    refreshTarif();
 })();
 </script>
 @endsection

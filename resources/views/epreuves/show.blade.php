@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', $epreuve->title . ' - PDF gratuit - NiangProgrammeur')
-@section('meta_description', ($epreuve->description ? Str::limit(strip_tags($epreuve->description), 150) : $epreuve->title . ' à télécharger gratuitement en PDF.' . ($epreuve->matiere ? ' ' . $epreuve->matiere->name . '.' : '') . ($epreuve->year ? ' Session ' . $epreuve->year . '.' : '') . ' Examens du Sénégal.'))
+@section('meta_description', ($epreuve->description ? Str::limit(strip_tags($epreuve->description), 150) : $epreuve->title . ' à télécharger gratuitement en PDF.' . ($epreuve->matiere ? ' ' . $epreuve->matiere->name . '.' : '') . ($epreuve->year ? ' Session ' . $epreuve->year_label . '.' : '') . ' Examens du Sénégal.'))
 
 @php
     // Données AdSense pour l'interstitiel de téléchargement
@@ -13,8 +13,9 @@
     $adsUnit = \App\Models\AdSenseUnit::getUnitsForPosition('content')->first();
     $adsSlot = $adsUnit?->ad_slot;
     $downloadUrl = route('epreuves.download', ['id' => $epreuve->id]);
-    $showAdGate = !$epreuve->isCorrige() && $adsClientId && $adsSlot;
-    $corrigePrice = $epreuve->hasCorrige() ? \App\Models\Epreuve::corrigePrice() : null;
+    $isPaidEpreuve = !$epreuve->isFree() && !$epreuve->isCorrige();
+    $showAdGate = !$epreuve->isCorrige() && !$isPaidEpreuve && $adsClientId && $adsSlot;
+    $corrigePrice = $epreuve->hasCorrige() ? $epreuve->getCorrigePrice() : null;
 @endphp
 
 @section('styles')
@@ -159,7 +160,11 @@ body.dark-mode .ep2-viewer iframe { background:#0b1120; }
                 @if($epreuve->exam)<span class="ep2-badge ep2-badge--exam">{{ $epreuve->exam_label }}</span>@endif
                 @if($epreuve->level)<span class="ep2-badge ep2-badge--exam">{{ $epreuve->level_label }}</span>@endif
                 <span class="ep2-badge ep2-badge--type">{{ $epreuve->type_label }}</span>
-                @unless($epreuve->isCorrige())<span class="ep2-badge ep2-badge--free">Gratuit</span>@endunless
+                @if($isPaidEpreuve)
+                    <span class="ep2-badge" style="background:rgba(239,68,68,0.12);color:#b91c1c;"><i class="fas fa-tag" style="margin-right:0.3rem;"></i>{{ $epreuve->price_formatted }}</span>
+                @elseif(!$epreuve->isCorrige())
+                    <span class="ep2-badge ep2-badge--free">Gratuit</span>
+                @endif
             </div>
 
             <h1 class="ep2-title">{{ $epreuve->title }}</h1>
@@ -167,7 +172,7 @@ body.dark-mode .ep2-viewer iframe { background:#0b1120; }
             <div class="ep2-stats">
                 @if($epreuve->matiere)<span class="ep2-stat"><i class="fas fa-book"></i>{{ $epreuve->matiere->name }}</span>@endif
                 @if($epreuve->serie)<span class="ep2-stat"><i class="fas fa-layer-group"></i>Série {{ $epreuve->serie }}</span>@endif
-                @if($epreuve->year)<span class="ep2-stat"><i class="fas fa-calendar"></i>Session {{ $epreuve->year }}</span>@endif
+                @if($epreuve->year)<span class="ep2-stat"><i class="fas fa-calendar"></i>Session {{ $epreuve->year_label }}</span>@endif
                 @if($epreuve->file_size_human)<span class="ep2-stat"><i class="fas fa-file-pdf"></i>{{ $epreuve->file_size_human }}</span>@endif
                 <span class="ep2-stat"><i class="fas fa-download"></i>{{ number_format($epreuve->downloads_count, 0, ',', ' ') }} téléch.</span>
             </div>
@@ -182,14 +187,38 @@ body.dark-mode .ep2-viewer iframe { background:#0b1120; }
 
             {{-- Colonne gauche : aperçu PDF --}}
             <main>
-                @unless($epreuve->isCorrige())
+                @if($epreuve->isCorrige())
+                {{-- Corrigé : pas d'aperçu --}}
+                <div class="ep2-card" style="text-align:center; padding:3rem 1.5rem;">
+                    <div class="ep2-dl-ico" style="margin:0 auto 1rem;"><i class="fas fa-lock"></i></div>
+                    <div class="ep2-dl-h" style="font-size:1.15rem;">Document protégé</div>
+                    <p class="ep2-dl-sub" style="margin-top:0.5rem;">Ce corrigé n'est pas consultable en ligne. Il s'obtient via la page de l'épreuve correspondante.</p>
+                </div>
+                @elseif($isPaidEpreuve)
+                {{-- Épreuve payante : aperçu verrouillé --}}
+                <div class="ep2-viewer">
+                    <div class="ep2-viewer-bar">
+                        <span class="dots"><i></i><i></i><i></i></span>
+                        <i class="fas fa-lock" style="color:#ef4444;"></i> Contenu verrouillé
+                        <span class="grow">Accès payant</span>
+                    </div>
+                    <div class="ep2-viewer-poster" style="cursor:default;">
+                        <div class="ep2-poster-inner">
+                            <div class="ep2-poster-ico"><i class="fas fa-lock"></i></div>
+                            <div class="ep2-poster-title">Épreuve payante</div>
+                            <div class="ep2-poster-sub">L'aperçu et le téléchargement sont réservés aux acheteurs.</div>
+                            <span class="ep2-poster-btn" style="background:linear-gradient(135deg,#dc2626,#e11d48);box-shadow:0 8px 22px rgba(220,38,38,0.3);" onclick="document.getElementById('epreuve-pay-modal').classList.add('is-open')"><i class="fas fa-lock-open"></i> Acheter — {{ $epreuve->price_formatted }}</span>
+                        </div>
+                    </div>
+                </div>
+                @else
+                {{-- Épreuve gratuite : aperçu PDF --}}
                 <div class="ep2-viewer">
                     <div class="ep2-viewer-bar">
                         <span class="dots"><i></i><i></i><i></i></span>
                         <i class="fas fa-file-pdf" style="color:#ef4444;"></i> Aperçu du sujet
                         <span class="grow">Lecture seule</span>
                     </div>
-                    {{-- Aperçu chargé au clic (réduit les requêtes par visite, page plus rapide) --}}
                     <div class="ep2-viewer-poster" id="ep2ViewerPoster"
                          data-src="{{ route('epreuves.view', ['id' => $epreuve->id]) }}#toolbar=0&view=FitH"
                          data-title="Aperçu : {{ $epreuve->title }}"
@@ -197,25 +226,40 @@ body.dark-mode .ep2-viewer iframe { background:#0b1120; }
                         <div class="ep2-poster-inner">
                             <div class="ep2-poster-ico"><i class="fas fa-file-pdf"></i></div>
                             <div class="ep2-poster-title">Afficher l'aperçu du sujet</div>
-                            <div class="ep2-poster-sub">{{ $epreuve->matiere?->name }}{{ $epreuve->serie ? ' · Série ' . $epreuve->serie : '' }}{{ $epreuve->year ? ' · ' . $epreuve->year : '' }}</div>
+                            <div class="ep2-poster-sub">{{ $epreuve->matiere?->name }}{{ $epreuve->serie ? ' · Série ' . $epreuve->serie : '' }}{{ $epreuve->year ? ' · ' . $epreuve->year_label : '' }}</div>
                             <span class="ep2-poster-btn"><i class="fas fa-eye"></i> Voir le PDF</span>
                         </div>
                     </div>
                 </div>
-                @else
-                {{-- Corrigé : pas d'aperçu, message --}}
-                <div class="ep2-card" style="text-align:center; padding:3rem 1.5rem;">
-                    <div class="ep2-dl-ico" style="margin:0 auto 1rem;"><i class="fas fa-lock"></i></div>
-                    <div class="ep2-dl-h" style="font-size:1.15rem;">Document protégé</div>
-                    <p class="ep2-dl-sub" style="margin-top:0.5rem;">Ce corrigé n'est pas consultable en ligne. Il s'obtient via la page de l'épreuve correspondante.</p>
-                </div>
-                @endunless
+                @endif
             </main>
 
             {{-- Colonne droite : actions --}}
             <aside class="ep2-side">
 
                 @unless($epreuve->isCorrige())
+                @if($isPaidEpreuve)
+                {{-- CTA achat épreuve payante --}}
+                <div class="ep2-card">
+                    <div class="ep2-dl-head">
+                        <div class="ep2-dl-ico" style="background:linear-gradient(135deg,#dc2626,#e11d48);box-shadow:0 6px 18px rgba(220,38,38,0.35);"><i class="fas fa-lock-open"></i></div>
+                        <div>
+                            <div class="ep2-dl-h">Épreuve payante</div>
+                            <div class="ep2-dl-sub">Achetez pour télécharger le PDF</div>
+                        </div>
+                    </div>
+                    <button type="button" class="ep2-dl-btn" style="background:linear-gradient(135deg,#dc2626,#e11d48);box-shadow:0 10px 26px rgba(220,38,38,0.32);"
+                            onclick="document.getElementById('epreuve-pay-modal').classList.add('is-open')">
+                        <i class="fas fa-lock-open"></i> Acheter — {{ $epreuve->price_formatted }}
+                    </button>
+                    <div class="ep2-trust">
+                        <div><i class="fas fa-check-circle"></i> Paiement Wave sécurisé</div>
+                        <div><i class="fas fa-bolt"></i> Lien de téléchargement immédiat</div>
+                        <div><i class="fas fa-shield-halved"></i> Document officiel du Sénégal</div>
+                    </div>
+                </div>
+                @else
+                {{-- Téléchargement gratuit --}}
                 <div class="ep2-card">
                     <div class="ep2-dl-head">
                         <div class="ep2-dl-ico"><i class="fas fa-cloud-arrow-down"></i></div>
@@ -234,6 +278,7 @@ body.dark-mode .ep2-viewer iframe { background:#0b1120; }
                         <div><i class="fas fa-shield-halved"></i> Sujet officiel du Sénégal</div>
                     </div>
                 </div>
+                @endif
                 @endunless
 
                 {{-- CTA corrigé (rouge, attire l'attention) --}}
@@ -261,7 +306,7 @@ body.dark-mode .ep2-viewer iframe { background:#0b1120; }
                     @endif
                     @if($epreuve->matiere)<div class="ep2-info-row"><span>Matière</span><span>{{ $epreuve->matiere->name }}</span></div>@endif
                     @if($epreuve->serie)<div class="ep2-info-row"><span>Série</span><span>{{ $epreuve->serie }}</span></div>@endif
-                    @if($epreuve->year)<div class="ep2-info-row"><span>Session</span><span>{{ $epreuve->year }}</span></div>@endif
+                    @if($epreuve->year)<div class="ep2-info-row"><span>Session</span><span>{{ $epreuve->year_label }}</span></div>@endif
                     <div class="ep2-info-row"><span>Type</span><span>{{ $epreuve->type_label }}</span></div>
                     <div class="ep2-info-row"><span>Téléchargements</span><span>{{ number_format($epreuve->downloads_count, 0, ',', ' ') }}</span></div>
                 </div>
@@ -279,7 +324,7 @@ body.dark-mode .ep2-viewer iframe { background:#0b1120; }
                         <div class="ep2-related-ico"><i class="fas fa-file-pdf"></i></div>
                         <div class="ep2-related-name">{{ $rel->title }}</div>
                         <div class="ep2-related-meta">
-                            {{ $rel->matiere?->name }}{{ $rel->year ? ' · ' . $rel->year : '' }}{{ $rel->serie ? ' · Série ' . $rel->serie : '' }}
+                            {{ $rel->matiere?->name }}{{ $rel->year ? ' · ' . $rel->year_label : '' }}{{ $rel->serie ? ' · Série ' . $rel->serie : '' }}
                         </div>
                     </a>
                 @endforeach
@@ -330,6 +375,53 @@ body.dark-mode .ep2-viewer iframe { background:#0b1120; }
             </div>
             <button type="submit" class="corrige-modal-submit">
                 <i class="fas fa-lock-open"></i> Payer {{ number_format($corrigePrice, 0, ',', ' ') }} FCFA avec Wave
+            </button>
+            <p class="corrige-modal-secure"><i class="fas fa-shield-halved"></i> Paiement sécurisé · lien valable 30 jours</p>
+        </form>
+    </div>
+</div>
+@endif
+
+{{-- Modale d'achat de l'épreuve payante --}}
+@if($isPaidEpreuve)
+<div class="corrige-modal" id="epreuve-pay-modal">
+    <div class="corrige-modal-backdrop" onclick="document.getElementById('epreuve-pay-modal').classList.remove('is-open')"></div>
+    <div class="corrige-modal-box" role="dialog" aria-modal="true" aria-labelledby="epreuve-pay-modal-title">
+        <button type="button" class="corrige-modal-close" aria-label="Fermer" onclick="document.getElementById('epreuve-pay-modal').classList.remove('is-open')">&times;</button>
+        <div class="corrige-modal-head">
+            <div class="corrige-modal-icon" style="background:rgba(220,38,38,0.12);color:#dc2626;"><i class="fas fa-lock-open"></i></div>
+            <h2 class="corrige-modal-title" id="epreuve-pay-modal-title">Acheter cette épreuve</h2>
+            <p class="corrige-modal-sub">{{ \Illuminate\Support\Str::limit($epreuve->title, 70) }}</p>
+            <div class="corrige-modal-price" style="background:rgba(220,38,38,0.1);color:#b91c1c;">{{ $epreuve->price_formatted }} · paiement Wave</div>
+        </div>
+
+        @if($errors->hasBag('epreuve_pay') || session('paywall'))
+            <div class="corrige-modal-error">{{ session('paywall') ?? $errors->getBag('epreuve_pay')->first() }}</div>
+        @endif
+
+        <form method="POST" action="{{ route('epreuves.pay.checkout', ['id' => $epreuve->id]) }}" class="corrige-modal-form">
+            @csrf
+            <label class="corrige-field">
+                <span>Votre nom (optionnel)</span>
+                <input type="text" name="customer_name" value="{{ old('customer_name') }}" placeholder="Ex : Awa Diop">
+            </label>
+            <p class="corrige-modal-hint">Indiquez un e-mail <strong>ou</strong> un numéro WhatsApp pour recevoir le lien de téléchargement :</p>
+            <label class="corrige-field">
+                <span><i class="fas fa-envelope"></i> E-mail</span>
+                <input type="email" name="customer_email" value="{{ old('customer_email') }}" placeholder="vous@exemple.com">
+            </label>
+            <div class="corrige-field-phone">
+                <label class="corrige-field corrige-field--cc">
+                    <span>Indicatif</span>
+                    <input type="text" name="country_code" value="{{ old('country_code', '+221') }}" placeholder="+221">
+                </label>
+                <label class="corrige-field" style="flex:1;">
+                    <span><i class="fab fa-whatsapp"></i> Téléphone</span>
+                    <input type="tel" name="customer_phone" value="{{ old('customer_phone') }}" placeholder="77 123 45 67">
+                </label>
+            </div>
+            <button type="submit" class="corrige-modal-submit" style="background:linear-gradient(135deg,#dc2626,#e11d48);">
+                <i class="fas fa-lock-open"></i> Payer {{ $epreuve->price_formatted }} avec Wave
             </button>
             <p class="corrige-modal-secure"><i class="fas fa-shield-halved"></i> Paiement sécurisé · lien valable 30 jours</p>
         </form>
@@ -462,15 +554,26 @@ body.dark-mode .dl-ad-go.is-waiting { background: rgba(148,163,184,0.2); color: 
         });
     });
 
-    // Rouvrir la modale corrigé si la validation a échoué, et fermer avec Échap
+    // Rouvrir les modales si validation échouée / paywall, et fermer avec Échap
     document.addEventListener('DOMContentLoaded', function () {
-        var modal = document.getElementById('corrige-modal');
-        if (!modal) return;
-        @if($errors->any())
-            modal.classList.add('is-open');
-        @endif
+        var corrigeModal = document.getElementById('corrige-modal');
+        var payModal = document.getElementById('epreuve-pay-modal');
+
+        if (corrigeModal) {
+            @if($errors->any() && !session('paywall'))
+                corrigeModal.classList.add('is-open');
+            @endif
+        }
+        if (payModal) {
+            @if(session('paywall'))
+                payModal.classList.add('is-open');
+            @endif
+        }
         document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') modal.classList.remove('is-open');
+            if (e.key === 'Escape') {
+                if (corrigeModal) corrigeModal.classList.remove('is-open');
+                if (payModal) payModal.classList.remove('is-open');
+            }
         });
     });
 

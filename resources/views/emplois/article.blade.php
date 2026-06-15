@@ -88,34 +88,42 @@
     <meta name="googlebot" content="index, follow">
     <meta name="bingbot" content="index, follow">
     
-    <!-- Schema.org JobPosting -->
+    <!-- Schema.org JobPosting (offres d'emploi uniquement) -->
     @php
         $jldFlags = JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_UNESCAPED_SLASHES | JSON_INVALID_UTF8_SUBSTITUTE;
-        $jldData  = [
-            '@context'            => 'https://schema.org',
-            '@type'               => 'JobPosting',
-            'title'               => $article->title ?? '',
-            'description'         => strip_tags($article->excerpt ?? substr(strip_tags($article->content ?? ''), 0, 500)),
-            'datePosted'          => ($article->published_at ?? $article->created_at)?->toIso8601String() ?? now()->toIso8601String(),
-            'validThrough'        => now()->addMonths(2)->toIso8601String(),
-            'hiringOrganization'  => [
-                '@type'  => 'Organization',
-                'name'   => 'NiangProgrammeur',
-                'sameAs' => 'https://www.niangprogrammeur.com',
-            ],
-            'jobLocation' => [
-                '@type'   => 'Place',
-                'address' => [
-                    '@type'           => 'PostalAddress',
-                    'addressLocality' => 'Dakar',
-                    'addressCountry'  => 'SN',
+        $jobCategorySlugs = ['offres-emploi', 'candidature-spontanee', 'opportunites-professionnelles'];
+        $isJobPosting = $article->category && in_array($article->category->slug, $jobCategorySlugs, true);
+        if ($isJobPosting) {
+            $jldData = [
+                '@context'           => 'https://schema.org',
+                '@type'              => 'JobPosting',
+                'title'              => $article->title ?? '',
+                'description'        => strip_tags($article->excerpt ?? substr(strip_tags($article->content ?? ''), 0, 500)),
+                'datePosted'         => ($article->published_at ?? $article->created_at)?->toIso8601String() ?? now()->toIso8601String(),
+                'validThrough'       => ($article->published_at ?? $article->created_at)?->addMonths(2)->toIso8601String() ?? now()->addMonths(2)->toIso8601String(),
+                'hiringOrganization' => [
+                    '@type'  => 'Organization',
+                    'name'   => 'Recruteur — via NiangProgrammeur',
+                    'sameAs' => 'https://www.niangprogrammeur.com',
                 ],
-            ],
-            'employmentType' => 'FULL_TIME',
-            'url'            => $articleUrl,
-        ];
+                'jobLocation' => [
+                    '@type'   => 'Place',
+                    'address' => [
+                        '@type'           => 'PostalAddress',
+                        'addressLocality' => 'Dakar',
+                        'addressRegion'   => 'Dakar',
+                        'addressCountry'  => 'SN',
+                    ],
+                ],
+                'employmentType'                 => 'FULL_TIME',
+                'applicantLocationRequirements'  => ['@type' => 'Country', 'name' => 'Sénégal'],
+                'url'                            => $articleUrl,
+            ];
+        }
     @endphp
+    @if($isJobPosting)
     <script type="application/ld+json">{!! json_encode($jldData, $jldFlags) !!}</script>
+    @endif
 
     <!-- Article Meta -->
     <meta property="article:published_time" content="{{ ($article->published_at ?? $article->created_at)?->toIso8601String() ?? now()->toIso8601String() }}">

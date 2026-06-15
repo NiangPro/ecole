@@ -43,7 +43,7 @@ class CorrigeController extends Controller
                 ->with('success', 'Vous avez déjà acheté ce corrigé.');
         }
 
-        $price = Epreuve::corrigePrice();
+        $price = $epreuve->getCorrigePrice();
 
         // WhatsApp activé pour cet achat si un téléphone est fourni et l'option globale active
         $whatsappEnabled = false;

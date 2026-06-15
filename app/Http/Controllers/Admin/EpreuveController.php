@@ -176,9 +176,12 @@ class EpreuveController extends Controller
             'matiere_new' => 'nullable|string|max:100',
             'serie' => 'nullable|string|max:30',
             'year' => 'nullable|integer|min:1980|max:' . (now()->year + 1),
+            'year_end' => 'nullable|integer|min:1980|max:' . (now()->year + 1),
             'description' => 'nullable|string|max:5000',
             'file' => ($epreuve ? 'nullable' : 'required') . '|file|mimes:pdf|max:25600',
             'corrige_file' => 'nullable|file|mimes:pdf|max:25600',
+            'price' => 'nullable|integer|min:0|max:1000000',
+            'corrige_price' => 'nullable|integer|min:0|max:1000000',
             'is_featured' => 'nullable|boolean',
             'status' => 'required|in:draft,published',
         ]);

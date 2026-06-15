@@ -1,7 +1,9 @@
 @extends('layouts.app')
 
 @section('title', ($category ? $category->name : 'Offres d\'Emploi') . ' | NiangProgrammeur')
-@section('meta_description', $category ? ($category->description ?? 'Découvrez les meilleures offres d\'emploi dans la catégorie ' . $category->name . ' au Sénégal.') : 'Consultez les meilleures offres d\'emploi publiées au Sénégal. Nous ne recrutons pas mais publions les offres de recrutement existantes.')
+@section('meta_description', ($category && $category->slug === 'bourses-etudes')
+    ? 'Bourse d\'études Sénégal — toutes les bourses nationales et internationales disponibles : candidature, conditions, délais et montants.'
+    : ($category ? ($category->description ?? 'Découvrez les meilleures ' . $category->name . ' au Sénégal.') : 'Offre emploi Sénégal — consultez les meilleures offres de recrutement publiées chaque jour.'))
 @section('meta_keywords', $category ? ($category->name . ', emploi Sénégal, recrutement, offres d\'emploi') : 'emploi Sénégal, offres d\'emploi, recrutement, opportunités carrière')
 @push('meta')
     <link rel="canonical" href="{{ route('emplois.offres', ['category' => $category->slug ?? null]) }}">
@@ -430,14 +432,26 @@
 <div class="offers-hero" style="background-image: url('{{ $categoryImage }}');">
     <div class="offers-hero-overlay">
         <div class="offers-hero-content">
-            <h1 class="offers-hero-title">💼 {{ $category ? $category->name : 'Offres d\'Emploi' }}</h1>
+            <h1 class="offers-hero-title">
+                @if($category && $category->slug === 'bourses-etudes')
+                    🎓 Bourse d'études Sénégal
+                @else
+                    💼 {{ $category ? $category->name : 'Offre emploi Sénégal' }}
+                @endif
+            </h1>
             <p class="offers-hero-description">Découvrez les meilleures offres d'emploi publiées au Sénégal. Nous ne recrutons pas directement mais publions les offres de recrutement existantes pour vous aider à trouver votre emploi idéal.</p>
         </div>
     </div>
 </div>
 @else
 <div class="offers-hero-fallback">
-    <h1 class="offers-hero-title" style="max-width: 1200px; margin: 0 auto;">💼 {{ $category ? $category->name : 'Offres d\'Emploi' }}</h1>
+    <h1 class="offers-hero-title" style="max-width: 1200px; margin: 0 auto;">
+        @if($category && $category->slug === 'bourses-etudes')
+            🎓 Bourse d'études Sénégal
+        @else
+            💼 {{ $category ? $category->name : 'Offre emploi Sénégal' }}
+        @endif
+    </h1>
     <p class="offers-hero-description" style="max-width: 1200px; margin: 20px auto 0;">Découvrez les meilleures offres d'emploi publiées au Sénégal. Nous ne recrutons pas directement mais publions les offres de recrutement existantes pour vous aider à trouver votre emploi idéal.</p>
 </div>
 @endif

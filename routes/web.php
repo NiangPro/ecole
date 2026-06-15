@@ -314,6 +314,15 @@ Route::get('/epreuves/corrige/succes/{paymentId}', [\App\Http\Controllers\Corrig
     ->whereNumber('paymentId')->name('epreuves.corrige.success');
 Route::get('/epreuves/corrige/telecharger/{token}', [\App\Http\Controllers\CorrigeController::class, 'download'])
     ->middleware('throttle:60,1')->name('epreuves.corrige.download');
+
+// Achat & téléchargement d'une épreuve payante (Wave)
+Route::post('/epreuves/{id}/acheter', [\App\Http\Controllers\EpreuvePaymentController::class, 'checkout'])
+    ->whereNumber('id')->middleware('throttle:10,1')->name('epreuves.pay.checkout');
+Route::get('/epreuves/pay/succes/{paymentId}', [\App\Http\Controllers\EpreuvePaymentController::class, 'success'])
+    ->whereNumber('paymentId')->name('epreuves.pay.success');
+Route::get('/epreuves/pay/telecharger/{token}', [\App\Http\Controllers\EpreuvePaymentController::class, 'download'])
+    ->middleware('throttle:60,1')->name('epreuves.pay.download');
+
 Route::get('/epreuves/{slug}', [EpreuveController::class, 'show'])
     ->where('slug', '^(?!examen|classe)[a-z0-9-]+$')->name('epreuves.show');
 
@@ -766,6 +775,7 @@ Route::redirect('/category/opportunites', '/emplois', 301);
 Route::redirect('/category/recrutement/appel-a-candidatures', '/emplois', 301);
 Route::redirect('/category/sports/football', '/', 301);
 Route::get('/category/{any}', fn() => redirect('/emplois', 301))->where('any', '.*');
+Route::redirect('/bourses-etudes', '/emplois/offres?category=bourses-etudes', 301);
 
 // Tags et auteur WordPress → homepage
 Route::get('/tag/{tag}', fn() => redirect('/', 301))->where('tag', '[^/]+');

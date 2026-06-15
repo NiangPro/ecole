@@ -29,6 +29,9 @@
 }
 .epreuves-exam-pill:hover { border-color: #059669; color: #059669; }
 .epreuves-exam-pill.active { background: linear-gradient(135deg, #059669, #047857); border-color: transparent; color: #fff; }
+.epreuves-exam-pill--concours { border-color: rgba(139,92,246,0.4); color: #7c3aed; }
+.epreuves-exam-pill--concours:hover { border-color: #7c3aed; color: #7c3aed; }
+.epreuves-exam-pill--concours.active { background: linear-gradient(135deg, #7c3aed, #6d28d9); border-color: transparent; color: #fff; }
 .epreuves-filters {
     display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 0.75rem;
     background: rgba(255,255,255,0.95); border: 1px solid rgba(226,232,240,0.9);
@@ -56,8 +59,10 @@
     text-transform: uppercase; letter-spacing: 0.03em;
 }
 .epreuve-badge--exam { background: rgba(5,150,105,0.12); color: #047857; }
+.epreuve-badge--concours { background: rgba(139,92,246,0.12); color: #6d28d9; }
 .epreuve-badge--type { background: rgba(14,165,233,0.12); color: #0369a1; }
 .epreuve-badge--corrige { background: rgba(245,158,11,0.15); color: #b45309; }
+.epreuve-badge--price { background: rgba(239,68,68,0.12); color: #b91c1c; }
 .epreuve-card-title { font-weight: 700; font-size: 1rem; line-height: 1.45; color: #0f172a; }
 .epreuve-card-meta { display: flex; gap: 0.9rem; flex-wrap: wrap; font-size: 0.82rem; color: #64748b; margin-top: auto; }
 .epreuve-card-meta i { margin-right: 0.3rem; color: #059669; }
@@ -79,8 +84,12 @@ body.dark-mode .epreuve-card { background: rgba(15,23,42,0.75); border-color: rg
 body.dark-mode .epreuve-card-title { color: #f1f5f9; }
 body.dark-mode .epreuve-card-meta { color: #94a3b8; }
 body.dark-mode .epreuve-badge--exam { background: rgba(52,211,153,0.15); color: #34d399; }
+body.dark-mode .epreuve-badge--concours { background: rgba(167,139,250,0.15); color: #a78bfa; }
 body.dark-mode .epreuve-badge--type { background: rgba(56,189,248,0.15); color: #38bdf8; }
 body.dark-mode .epreuve-badge--corrige { background: rgba(251,191,36,0.15); color: #fbbf24; }
+body.dark-mode .epreuve-badge--price { background: rgba(248,113,113,0.15); color: #f87171; }
+body.dark-mode .epreuves-exam-pill--concours { border-color: rgba(167,139,250,0.35); color: #a78bfa; }
+body.dark-mode .epreuves-exam-pill--concours:hover { border-color: #a78bfa; color: #a78bfa; }
 </style>
 @endsection
 
@@ -91,8 +100,8 @@ body.dark-mode .epreuve-badge--corrige { background: rgba(251,191,36,0.15); colo
         <div class="epreuves-hero">
             <h1 class="epreuves-title">{{ $heading }}</h1>
             <p class="epreuves-subtitle">
-                Épreuves, examens blancs et corrigés des examens du Sénégal — du CI à la Terminale.
-                Téléchargement gratuit au format PDF.
+                Corrigé BFEM Sénégal, sujets BAC, BTS, CFEE, CAP et corrigés des concours (ENA, Police, Gendarmerie…).
+                Téléchargement PDF gratuit.
             </p>
             <div class="epreuves-stats">
                 <span class="epreuves-stat"><strong>{{ number_format($stats['total'], 0, ',', ' ') }}</strong> documents</span>
@@ -103,21 +112,31 @@ body.dark-mode .epreuve-badge--corrige { background: rgba(251,191,36,0.15); colo
         <div class="epreuves-exam-pills">
             <a href="{{ route('epreuves.index') }}" class="epreuves-exam-pill {{ !$filters['exam'] && !$filters['level'] ? 'active' : '' }}">Tout</a>
             @foreach(\App\Models\Epreuve::EXAMS as $examKey => $examLabel)
-                <a href="{{ route('epreuves.exam', $examKey) }}" class="epreuves-exam-pill {{ $filters['exam'] === $examKey ? 'active' : '' }}">{{ $examLabel }}</a>
+                <a href="{{ route('epreuves.exam', $examKey) }}"
+                   class="epreuves-exam-pill {{ $examKey === 'concours' ? 'epreuves-exam-pill--concours' : '' }} {{ $filters['exam'] === $examKey ? 'active' : '' }}">
+                    @if($examKey === 'concours')<i class="fas fa-award" style="margin-right:0.3rem;font-size:0.85em;"></i>@endif
+                    {{ $examLabel }}
+                </a>
             @endforeach
         </div>
 
         <form class="epreuves-filters" method="GET" action="{{ url()->current() }}">
             @unless($fixedLevel)
-            <select name="level" aria-label="Classe">
-                <option value="">Toutes les classes</option>
-                @foreach(\App\Models\Epreuve::LEVELS as $group => $levels)
-                    <optgroup label="{{ ['primaire' => 'Primaire', 'college' => 'Collège', 'lycee' => 'Lycée'][$group] }}">
+            <select name="level" aria-label="Classe ou Institution">
+                <option value="">Classe / Institution</option>
+                <optgroup label="— Niveaux scolaires —">
+                    @foreach(\App\Models\Epreuve::LEVELS as $group => $levels)
+                        @if($group === 'concours') @continue @endif
                         @foreach($levels as $levelKey => $levelLabel)
                             <option value="{{ $levelKey }}" @selected($filters['level'] === $levelKey)>{{ $levelLabel }}</option>
                         @endforeach
-                    </optgroup>
-                @endforeach
+                    @endforeach
+                </optgroup>
+                <optgroup label="— Concours & Institutions —">
+                    @foreach(\App\Models\Epreuve::LEVELS['concours'] as $levelKey => $levelLabel)
+                        <option value="{{ $levelKey }}" @selected($filters['level'] === $levelKey)>{{ $levelLabel }}</option>
+                    @endforeach
+                </optgroup>
             </select>
             @endunless
             @unless($fixedMatiere)
@@ -154,21 +173,34 @@ body.dark-mode .epreuve-badge--corrige { background: rgba(251,191,36,0.15); colo
                 @foreach($epreuves as $epreuve)
                     <a href="{{ route('epreuves.show', $epreuve->slug) }}" class="epreuve-card">
                         <div class="epreuve-card-badges">
-                            @if($epreuve->exam)
+                            @if($epreuve->exam === 'concours')
+                                @if($epreuve->level)
+                                    <span class="epreuve-badge epreuve-badge--concours"><i class="fas fa-award" style="margin-right:0.3rem;"></i>{{ $epreuve->level_label }}</span>
+                                @else
+                                    <span class="epreuve-badge epreuve-badge--concours"><i class="fas fa-award" style="margin-right:0.3rem;"></i>Concours</span>
+                                @endif
+                            @elseif($epreuve->exam)
                                 <span class="epreuve-badge epreuve-badge--exam">{{ $epreuve->exam_label }}</span>
                             @elseif($epreuve->level)
                                 <span class="epreuve-badge epreuve-badge--exam">{{ $epreuve->level_label }}</span>
                             @endif
                             <span class="epreuve-badge epreuve-badge--type">{{ $epreuve->type_label }}</span>
-                            @if($epreuve->corrige_file_path || $epreuve->type === 'corrige' || $epreuve->type === 'epreuve_corrige')
-                                <span class="epreuve-badge epreuve-badge--corrige">Corrigé inclus</span>
+                            @if($epreuve->hasCorrige() || $epreuve->type === 'corrige' || $epreuve->type === 'epreuve_corrige')
+                                @if($epreuve->exam !== 'concours' && !$epreuve->isCorrigeFree())
+                                    <span class="epreuve-badge epreuve-badge--corrige"><i class="fas fa-tag" style="margin-right:0.25rem;"></i>Corrigé — {{ $epreuve->corrige_price_formatted }}</span>
+                                @else
+                                    <span class="epreuve-badge epreuve-badge--corrige">Corrigé inclus</span>
+                                @endif
+                            @endif
+                            @if($epreuve->exam === 'concours' && !$epreuve->isFree())
+                                <span class="epreuve-badge epreuve-badge--price"><i class="fas fa-tag" style="margin-right:0.25rem;"></i>{{ $epreuve->price_formatted }}</span>
                             @endif
                         </div>
                         <div class="epreuve-card-title">{{ $epreuve->title }}</div>
                         <div class="epreuve-card-meta">
                             @if($epreuve->matiere)<span><i class="fas fa-book"></i>{{ $epreuve->matiere->name }}</span>@endif
                             @if($epreuve->serie)<span><i class="fas fa-layer-group"></i>Série {{ $epreuve->serie }}</span>@endif
-                            @if($epreuve->year)<span><i class="fas fa-calendar"></i>{{ $epreuve->year }}</span>@endif
+                            @if($epreuve->year)<span><i class="fas fa-calendar"></i>{{ $epreuve->year_label }}</span>@endif
                             <span><i class="fas fa-download"></i>{{ number_format($epreuve->downloads_count, 0, ',', ' ') }}</span>
                         </div>
                     </a>

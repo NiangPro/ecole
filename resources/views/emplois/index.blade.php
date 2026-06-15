@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Emplois & Opportunités | NiangProgrammeur')
-@section('meta_description', 'Découvrez les meilleures offres d\'emploi, bourses d\'études, opportunités de carrière et candidatures spontanées au Sénégal.')
+@section('meta_description', 'Offre emploi Sénégal — trouvez les meilleures offres d\'emploi, bourses d\'études, concours et opportunités de carrière publiées chaque jour.')
 @section('meta_keywords', 'emploi Sénégal, offres d\'emploi, bourses d\'études, opportunités carrière, recrutement Sénégal, emploi Dakar')
 @push('meta')
   <link rel="canonical" href="{{ route('emplois') }}">
@@ -21,7 +21,7 @@
       Mis à jour quotidiennement
     </div>
     <h1 class="em-hero__title">
-      Votre avenir<br><span>commence ici</span>
+      Offre emploi<br><span>Sénégal</span>
     </h1>
     <p class="em-hero__sub">
       Offres d'emploi, bourses d'études, concours et opportunités de carrière au Sénégal et à l'international — toutes les infos au même endroit.

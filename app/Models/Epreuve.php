@@ -20,11 +20,14 @@ class Epreuve extends Model
         'matiere_id',
         'serie',
         'year',
+        'year_end',
         'description',
         'file_path',
         'file_name',
         'file_size',
         'corrige_file_path',
+        'price',
+        'corrige_price',
         'downloads_count',
         'views_count',
         'is_featured',
@@ -34,6 +37,9 @@ class Epreuve extends Model
     protected $casts = [
         'is_featured' => 'boolean',
         'year' => 'integer',
+        'year_end' => 'integer',
+        'price' => 'integer',
+        'corrige_price' => 'integer',
         'downloads_count' => 'integer',
         'views_count' => 'integer',
     ];
@@ -42,15 +48,17 @@ class Epreuve extends Model
      * Examens nationaux du Sénégal.
      */
     public const EXAMS = [
-        'cfee' => 'CFEE',
-        'bfem' => 'BFEM',
-        'bac'  => 'BAC',
-        'bts'  => 'BTS',
-        'cap'  => 'CAP',
+        'cfee'     => 'CFEE',
+        'bfem'     => 'BFEM',
+        'bac'      => 'BAC',
+        'bts'      => 'BTS',
+        'cap'      => 'CAP',
+        'concours' => 'Concours',
     ];
 
     /**
      * Niveaux scolaires, groupés par cycle.
+     * Pour exam=concours, utiliser le groupe 'concours'.
      */
     public const LEVELS = [
         'primaire' => [
@@ -61,6 +69,23 @@ class Epreuve extends Model
         ],
         'lycee' => [
             'seconde' => 'Seconde', 'premiere' => 'Première', 'terminale' => 'Terminale',
+        ],
+        'concours' => [
+            'crem'        => 'CREM',
+            'ena'         => 'ENA',
+            'endss'       => 'ENDSS',
+            'cfj'         => 'CFJ',
+            'police'      => 'Police',
+            'esogn'       => 'Gendarmerie (ESOGN/EOGN)',
+            'douanes'     => 'Douanes',
+            'eaux-forets' => 'Eaux et Forêts',
+            'ems'         => 'EMS',
+            'ept'         => 'EPT',
+            'esp'         => 'ESP',
+            'cesti'       => 'CESTI',
+            'ensae'       => 'ENSAE',
+            'isfar'       => 'ISFAR',
+            'eamac'       => 'EAMAC',
         ],
     ];
 
@@ -105,11 +130,71 @@ class Epreuve extends Model
     }
 
     /**
-     * Prix global d'un corrigé (FCFA), défini en admin.
+     * L'épreuve est-elle gratuite ?
+     */
+    public function isFree(): bool
+    {
+        return !$this->price || $this->price <= 0;
+    }
+
+    /**
+     * Le corrigé de cette épreuve est-il gratuit ?
+     */
+    public function isCorrigeFree(): bool
+    {
+        $p = $this->getCorrigePrice();
+        return $p <= 0;
+    }
+
+    /**
+     * Prix du corrigé pour cette épreuve (FCFA).
+     * Utilise le prix spécifique s'il est défini, sinon le prix global.
+     */
+    public function getCorrigePrice(): float
+    {
+        if ($this->corrige_price && $this->corrige_price > 0) {
+            return (float) $this->corrige_price;
+        }
+        return self::globalCorrigePrice();
+    }
+
+    /**
+     * Prix global d'un corrigé (FCFA), défini en admin via SiteSetting.
+     */
+    public static function globalCorrigePrice(): float
+    {
+        return (float) (\App\Models\SiteSetting::get('corrige_price', 500) ?: 500);
+    }
+
+    /**
+     * @deprecated Utiliser getCorrigePrice() pour le prix par épreuve, globalCorrigePrice() pour le global.
      */
     public static function corrigePrice(): float
     {
-        return (float) (\App\Models\SiteSetting::get('corrige_price', 500) ?: 500);
+        return self::globalCorrigePrice();
+    }
+
+    /**
+     * Prix de l'épreuve formaté (ex : "1 500 FCFA").
+     */
+    public function getPriceFormattedAttribute(): string
+    {
+        if ($this->isFree()) {
+            return 'Gratuit';
+        }
+        return number_format($this->price, 0, ',', ' ') . ' FCFA';
+    }
+
+    /**
+     * Prix du corrigé formaté.
+     */
+    public function getCorrigePriceFormattedAttribute(): string
+    {
+        $p = $this->getCorrigePrice();
+        if ($p <= 0) {
+            return 'Gratuit';
+        }
+        return number_format($p, 0, ',', ' ') . ' FCFA';
     }
 
     /**
@@ -130,6 +215,18 @@ class Epreuve extends Model
     public static function flatLevels(): array
     {
         return array_merge(...array_values(self::LEVELS));
+    }
+
+    /**
+     * Affiche l'année ou la plage : "2024" ou "2018–2023".
+     */
+    public function getYearLabelAttribute(): ?string
+    {
+        if (!$this->year) return null;
+        if ($this->year_end && $this->year_end > $this->year) {
+            return $this->year . '–' . $this->year_end;
+        }
+        return (string) $this->year;
     }
 
     public function getExamLabelAttribute(): ?string

@@ -502,8 +502,15 @@ class PaymentController extends Controller
                     $payment->payment_reference,
                     $description
                 );
+            } elseif ($paymentable instanceof \App\Models\EpreuvePurchase) {
+                $description = 'Épreuve : ' . \Illuminate\Support\Str::limit($paymentable->epreuve->title ?? '', 60);
+                $waveLink = WavePaymentService::generatePaymentLink(
+                    (float) $payment->amount,
+                    $payment->payment_reference,
+                    $description
+                );
             }
-            
+
             // Sauvegarder le lien si généré
             if ($waveLink) {
                 $payment->update([
@@ -970,6 +977,9 @@ class PaymentController extends Controller
         } elseif ($paymentable instanceof \App\Models\CorrigePurchase) {
             // Marque complété, génère le token et livre (e-mail + WhatsApp)
             $paymentable->markCompletedAndDeliver();
+        } elseif ($paymentable instanceof \App\Models\EpreuvePurchase) {
+            // Marque complété et génère le token de téléchargement
+            $paymentable->markCompleted();
         } elseif ($paymentable instanceof Donation) {
             $paymentable->update([
                 'status' => 'completed',

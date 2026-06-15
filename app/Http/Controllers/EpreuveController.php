@@ -15,9 +15,9 @@ class EpreuveController extends Controller
     public function index(Request $request)
     {
         return $this->renderListing($request, [
-            'pageTitle' => 'Épreuves & Corrigés - Examens et concours du Sénégal',
-            'metaDescription' => 'Téléchargez gratuitement les épreuves et corrigés des examens du Sénégal : CFEE, BFEM, BAC, BTS, CAP — toutes matières, toutes séries, du CI à la Terminale.',
-            'heading' => 'Épreuves & Corrigés',
+            'pageTitle' => 'Épreuves & Corrigés — CFEE, BFEM, BAC, BTS Sénégal PDF',
+            'metaDescription' => 'Corrigé BFEM Sénégal, sujets BAC, BTS, CFEE et CAP à télécharger gratuitement en PDF. Épreuves officielles et corrigés classés par matière, série et année.',
+            'heading' => 'Épreuves & Corrigés du Sénégal',
         ]);
     }
 
@@ -117,6 +117,12 @@ class EpreuveController extends Controller
         // Un document qui est lui-même un corrigé n'est pas téléchargeable librement.
         abort_if($epreuve->isCorrige(), 403);
 
+        // Une épreuve payante nécessite un achat préalable.
+        if (!$epreuve->isFree()) {
+            return redirect()->route('epreuves.show', $epreuve->slug)
+                ->with('paywall', 'Cette épreuve est payante. Achetez-la pour la télécharger.');
+        }
+
         $path = $epreuve->file_path;
         abort_unless($path && Storage::disk('public')->exists($path), 404);
 
@@ -133,8 +139,9 @@ class EpreuveController extends Controller
     {
         $epreuve = Epreuve::published()->findOrFail($id);
 
-        // Jamais d'aperçu pour un corrigé (document payant).
+        // Jamais d'aperçu pour un corrigé ou une épreuve payante.
         abort_if($epreuve->isCorrige(), 403);
+        abort_if(!$epreuve->isFree(), 403);
 
         $path = $epreuve->file_path;
         abort_unless($path && Storage::disk('public')->exists($path), 404);
@@ -173,7 +180,11 @@ class EpreuveController extends Controller
             $query->where('serie', $serie);
         }
         if ($year > 0) {
-            $query->where('year', $year);
+            // Inclure les annales dont la plage couvre l'année filtrée
+            $query->where('year', '<=', $year)
+                  ->where(function ($q) use ($year) {
+                      $q->whereNull('year_end')->orWhere('year_end', '>=', $year);
+                  });
         }
         if ($type !== '' && isset(Epreuve::TYPES[$type])) {
             $query->where('type', $type);
@@ -191,8 +202,10 @@ class EpreuveController extends Controller
 
         $matieres = EpreuveMatiere::orderBy('order')->orderBy('name')->get();
 
-        $years = Epreuve::published()->whereNotNull('year')
-            ->select('year')->distinct()->orderByDesc('year')->pluck('year');
+        // Collecte toutes les années couvertes (début ET fin des plages d'annales)
+        $startYears = Epreuve::published()->whereNotNull('year')->pluck('year');
+        $endYears   = Epreuve::published()->whereNotNull('year_end')->pluck('year_end');
+        $years = $startYears->merge($endYears)->unique()->sort()->reverse()->values();
 
         $stats = [
             'total' => Epreuve::published()->count(),
