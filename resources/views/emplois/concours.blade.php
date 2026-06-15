@@ -234,11 +234,13 @@
         @foreach($articles as $article)
         <a href="{{ route('emplois.article', $article->slug) }}" class="article-card">
             @if($article->cover_image)
-            <img src="{{ $article->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($article->cover_image) : $article->cover_image }}" 
-                 alt="{{ $article->title }} - {{ $article->category->name }}" 
+            <img src="{{ $article->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($article->cover_image) : $article->cover_image }}"
+                 alt="{{ $article->title }} - {{ $article->category->name }}"
                  class="article-card-image"
+                 width="600" height="400"
                  loading="lazy"
-                 onerror="this.src='https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600&h=400&fit=crop'">
+                 decoding="async"
+                 onerror="this.style.display='none'">
             @else
             <div class="article-card-image" style="display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, rgba(6, 182, 212, 0.3), rgba(20, 184, 166, 0.3));">
                 <i class="fas fa-trophy text-6xl text-cyan-400/50"></i>

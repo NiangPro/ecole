@@ -163,7 +163,7 @@
 
   function updateProgress() {
     const pct = (answered / total) * 100;
-    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressFill').style.transform = 'scaleX(' + (pct / 100) + ')';
     document.getElementById('progressText').textContent = answered + ' / ' + total;
     document.getElementById('answeredCount').textContent = answered;
   }

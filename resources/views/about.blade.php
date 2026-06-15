@@ -58,7 +58,7 @@
       {{-- Right: photo --}}
       <div class="ab-hero__photo-wrap">
         <div class="ab-hero__photo-ring">
-          <img src="{{ asset('images/about.jpg') }}" alt="Bassirou Niang" class="ab-hero__photo">
+          <img src="{{ asset('images/about.jpg') }}" alt="Bassirou Niang" class="ab-hero__photo" width="400" height="400" loading="lazy" decoding="async">
         </div>
         <span class="ab-hero__badge">
           <span class="ab-hero__badge-dot"></span>

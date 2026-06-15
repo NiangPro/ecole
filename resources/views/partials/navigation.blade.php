@@ -134,7 +134,7 @@
             
             <!-- Dropdown Pratique -->
             <li class="navbar-item dropdown">
-                <a href="#" class="navbar-link dropdown-toggle">
+                <a href="{{ route('exercices') }}" class="navbar-link dropdown-toggle">
                     {{ trans('app.nav.practice') }}
                     <i class="fas fa-chevron-down dropdown-icon"></i>
                 </a>
@@ -162,7 +162,7 @@
             
             <!-- Dropdown Emplois -->
             <li class="navbar-item dropdown">
-                <a href="#" class="navbar-link dropdown-toggle">
+                <a href="{{ route('emplois') }}" class="navbar-link dropdown-toggle">
                     {{ trans('app.nav.jobs') }}
                     <i class="fas fa-chevron-down dropdown-icon"></i>
                 </a>
@@ -242,7 +242,7 @@
 
             <!-- Dropdown À propos / Contact -->
             <li class="navbar-item dropdown">
-                <a href="#" class="navbar-link dropdown-toggle {{ request()->routeIs(['about', 'contact', 'monetization.index', 'monetization.affiliates', 'monetization.affiliates.dashboard', 'docs', 'documents.*', 'forum.*', 'admin-docs.*']) ? 'active' : '' }}">
+                <a href="{{ route('about') }}" class="navbar-link dropdown-toggle {{ request()->routeIs(['about', 'contact', 'monetization.index', 'monetization.affiliates', 'monetization.affiliates.dashboard', 'docs', 'documents.*', 'forum.*', 'admin-docs.*']) ? 'active' : '' }}">
                     {{ trans('app.nav.about') }}
                     <i class="fas fa-chevron-down dropdown-icon"></i>
                 </a>
@@ -697,16 +697,17 @@
                 <i class="fas fa-chevron-down dropdown-icon" id="formations-icon"></i>
             </button>
             <div class="mobile-dropdown-content" id="formations-dropdown">
+                <div class="mobile-dropdown-inner">
                 @if($hasPaidCourses)
                     <!-- Formations Payantes Mobile -->
                     <a href="{{ route('monetization.courses') }}" class="mobile-dropdown-item">
                         <i class="fas fa-crown" style="color: #fbbf24;"></i> Formations Payantes <span style="font-size: 0.7rem; color: #fbbf24;">Premium</span>
                     </a>
-                    
+
                     <!-- Séparateur -->
                     <div style="height: 1px; background: rgba(6, 182, 212, 0.2); margin: 8px 0;"></div>
                 @endif
-                
+
                 <a href="{{ route('formations.all') }}" class="mobile-dropdown-item">
                     <i class="fas fa-graduation-cap" style="color: #06b6d4;"></i> {{ trans('app.nav.dropdown.formations.all') }}
                 </a>
@@ -728,6 +729,7 @@
                 <a href="{{ route('formations.java') }}" class="mobile-dropdown-item">
                     <i class="fab fa-java" style="color: #ed8b00;"></i> Java
                 </a>
+                </div>
             </div>
         </li>
         
@@ -738,12 +740,14 @@
                 <i class="fas fa-chevron-down dropdown-icon" id="pratique-icon"></i>
             </button>
             <div class="mobile-dropdown-content" id="pratique-dropdown">
+                <div class="mobile-dropdown-inner">
                 <a href="{{ route('exercices') }}" class="mobile-dropdown-item">
                     <i class="fas fa-laptop-code" style="color: #06b6d4;"></i> {{ trans('app.nav.dropdown.practice.exercices') }}
                 </a>
                 <a href="{{ route('quiz') }}" class="mobile-dropdown-item">
                     <i class="fas fa-question-circle" style="color: #a855f7;"></i> {{ trans('app.nav.dropdown.practice.quiz') }}
                 </a>
+                </div>
             </div>
         </li>
         
@@ -754,6 +758,7 @@
                 <i class="fas fa-chevron-down dropdown-icon" id="emplois-icon"></i>
             </button>
             <div class="mobile-dropdown-content" id="emplois-dropdown">
+                <div class="mobile-dropdown-inner">
                 <a href="{{ route('emplois') }}" class="mobile-dropdown-item">
                     <i class="fas fa-search" style="color: #22c55e;"></i> {{ trans('app.nav.dropdown.jobs.all') }}
                 </a>
@@ -782,14 +787,15 @@
                         <i class="fas fa-star" style="color: #fbbf24;"></i> {{ trans('app.nav.dropdown.jobs.opportunities') }}
                     </a>
                 @endif
+                </div>
             </div>
         </li>
         
         <!-- Recherche (équivalent à l'icône search du desktop) -->
         <li class="mobile-menu-item">
-            <a href="#" class="mobile-menu-link" onclick="closeMobileMenu(); setTimeout(function(){ document.getElementById('searchIcon')?.click(); }, 300); return false;">
+            <button type="button" class="mobile-menu-link" onclick="closeMobileMenu(); setTimeout(function(){ document.getElementById('searchIcon')?.click(); }, 300);">
                 <i class="fas fa-search"></i> {{ trans('app.home.search.button') }}
-            </a>
+            </button>
         </li>
         
         <!-- Panier (visible sur les pages documents, comme le desktop) -->
@@ -818,6 +824,7 @@
                 <i class="fas fa-chevron-down dropdown-icon" id="apropos-icon"></i>
             </button>
             <div class="mobile-dropdown-content" id="apropos-dropdown">
+                <div class="mobile-dropdown-inner">
                 @php
                     $hasActiveSubscriptionPlansMobile = \App\Models\SubscriptionPlan::active()->exists();
                     $hasPublishedDocumentsMobile = \App\Models\Document::published()->active()->exists();
@@ -850,6 +857,7 @@
                 <a href="{{ route('forum.index') }}" class="mobile-dropdown-item">
                     <i class="fas fa-comments" style="color: #a855f7;"></i> Forum
                 </a>
+                </div>
             </div>
         </li>
         
@@ -911,7 +919,7 @@
             $tooltipText = $currentLang === 'fr' ? 'Changer en anglais' : 'Switch to French';
         @endphp
         <li class="mobile-menu-item">
-            <a href="javascript:void(0)" class="mobile-menu-link" onclick="toggleLanguage()" style="background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.3);">
+            <a href="{{ route('language.set', ['locale' => $currentLang === 'fr' ? 'en' : 'fr']) }}?redirect={{ urlencode(request()->url()) }}" class="mobile-menu-link" onclick="toggleLanguage(); return false;" style="background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.3);">
                 @if($currentLang === 'fr')
                 <!-- Drapeau français -->
                 <svg class="mobile-language-flag" viewBox="0 0 640 480" xmlns="http://www.w3.org/2000/svg" style="width: 24px; height: 18px; margin-right: 12px;">
@@ -1315,13 +1323,13 @@
                         const message = notif.message || notif.title || 'Nouvelle notification';
                         const link = notif.link || '/dashboard/notifications';
                         return `
-                            <div class="notification-item" onclick="window.location.href='${link}'">
+                            <a href="${link}" class="notification-item" style="text-decoration:none;color:inherit;">
                                 <div class="notification-icon"><i class="fas ${icon}"></i></div>
                                 <div class="notification-content">
                                     <p>${message}</p>
                                     <span>${time}</span>
                                 </div>
-                            </div>
+                            </a>
                         `;
                     }).join('');
                 }

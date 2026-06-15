@@ -711,6 +711,11 @@
     font-size: 0.9rem;
     transition: background 0.18s var(--ease), color 0.18s var(--ease);
     border: 1px solid transparent;
+    background: none;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    font-family: inherit;
 }
 
 .mobile-menu-link:hover {
@@ -768,14 +773,17 @@
 .mobile-dropdown-toggle.active .dropdown-icon { transform: rotate(180deg); opacity: 1; }
 
 .mobile-dropdown-content {
-    max-height: 0;
+    display: grid;
+    grid-template-rows: 0fr;
     overflow: hidden;
-    transition: max-height 0.35s var(--ease);
+    transition: grid-template-rows 0.35s var(--ease);
     padding-left: 16px;
     margin-top: 3px;
 }
 
-.mobile-dropdown-content.active { max-height: 1200px; }
+.mobile-dropdown-content.active { grid-template-rows: 1fr; }
+
+.mobile-dropdown-inner { min-height: 0; overflow: hidden; }
 
 .mobile-dropdown-item {
     display: flex;

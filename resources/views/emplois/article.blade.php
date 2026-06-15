@@ -749,7 +749,10 @@ body:not(.dark-mode) .comment-form-wrapper textarea {
   <img class="art-hero-bg"
        src="{{ $article->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($article->cover_image) : $article->cover_image }}"
        alt="{{ $article->title }}"
-       loading="eager">
+       width="1200" height="630"
+       loading="eager"
+       fetchpriority="high"
+       decoding="async">
   <div class="art-hero-veil"></div>
 
   <div class="art-fav-wrap">

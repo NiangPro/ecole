@@ -139,7 +139,9 @@
             @if($article->cover_image)
               <img src="{{ $article->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($article->cover_image) : $article->cover_image }}"
                    alt="{{ $article->title }}"
+                   width="600" height="400"
                    loading="lazy"
+                   decoding="async"
                    class="em-art-card__img"
                    onerror="this.parentElement.innerHTML='<div class=\'em-art-card__no-img\'><i class=\'fas fa-newspaper\'></i></div>'">
               <div class="em-art-card__overlay">

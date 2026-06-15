@@ -163,8 +163,11 @@
   height: 100%;
   background: linear-gradient(90deg, oklch(52% 0.18 200), oklch(50% 0.15 178));
   border-radius: 100px;
-  transition: width .4s cubic-bezier(.4, 0, .2, 1);
-  width: 0%;
+  width: 100%;
+  transform-origin: left center;
+  transform: scaleX(0);
+  transition: transform .4s cubic-bezier(.4, 0, .2, 1);
+  will-change: transform;
 }
 
 /* ────────────────────────────────────────────────

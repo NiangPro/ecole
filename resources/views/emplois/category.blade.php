@@ -334,8 +334,10 @@
                 <img src="{{ $article->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($article->cover_image) : $article->cover_image }}"
                      alt="{{ $article->title }}"
                      class="article-card-image"
+                     width="600" height="400"
                      loading="lazy"
-                     onerror="this.src='https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=600&h=400&fit=crop'">
+                     decoding="async"
+                     onerror="this.style.display='none'">
                 @else
                 <div class="article-card-image" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,rgba(6,182,212,.3),rgba(20,184,166,.3));">
                     <i class="fas fa-image" style="font-size:4rem;color:rgba(6,182,212,.5);"></i>

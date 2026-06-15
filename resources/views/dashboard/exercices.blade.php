@@ -13,7 +13,7 @@
 @if(isset($exerciseProgress) && $exerciseProgress->count() > 0)
 <div style="display: grid; gap: 0.75rem;">
     @foreach($exerciseProgress->take(30) as $exercise)
-    <div class="content-card exercise-item" style="padding: 1rem; background: rgba(6, 182, 212, 0.05); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 0; transition: all 0.3s ease; cursor: pointer;" onclick="window.location.href='{{ route('exercices.language', $exercise->language) }}'">
+    <div class="content-card exercise-item" style="padding: 1rem; background: rgba(6, 182, 212, 0.05); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 8px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 0; transition: all 0.3s ease;">
         <div style="display: flex; align-items: center; gap: 1rem; flex: 1;">
             <div class="exercise-icon" style="width: 40px; height: 40px; border-radius: 8px; background: rgba(6, 182, 212, 0.2); display: flex; align-items: center; justify-content: center; color: #06b6d4;">
                 <i class="fas fa-code"></i>
