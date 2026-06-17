@@ -31,6 +31,9 @@ class DatabaseSeeder extends Seeder
 
         // Matières des épreuves & corrigés
         $this->call(EpreuveMatieresSeeder::class);
+
+        // Épreuves CFEE CM2 (2006–2025) — statut brouillon, PDF à uploader
+        $this->call(EpreuveCFEESeeder::class);
         
         // Seeders pour les emplois
         $this->call([

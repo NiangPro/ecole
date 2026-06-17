@@ -73,12 +73,17 @@ class SiteSetting extends Model
     }
 
     /**
-     * Un logo personnalisé a été téléversé.
+     * Un logo personnalisé a été téléversé et est accessible.
      */
     public static function hasCustomLogo(): bool
     {
         try {
-            return (bool) self::get('logo');
+            $logo = self::get('logo');
+            if (!$logo) return false;
+            // Nouveau format : public/logos/
+            if (file_exists(public_path($logo))) return true;
+            // Format legacy : storage/app/public/
+            return \Illuminate\Support\Facades\Storage::disk('public')->exists($logo);
         } catch (\Throwable $e) {
             return false;
         }
@@ -93,7 +98,14 @@ class SiteSetting extends Model
         try {
             $logo = self::get('logo');
             if ($logo) {
-                return \Illuminate\Support\Facades\Storage::disk('public')->url($logo);
+                // Nouveau format : fichier dans public/logos/ → asset() direct, pas de symlink
+                if (file_exists(public_path($logo))) {
+                    return asset($logo);
+                }
+                // Format legacy : fichier dans storage/app/public/ via symlink
+                if (\Illuminate\Support\Facades\Storage::disk('public')->exists($logo)) {
+                    return asset('storage/' . $logo);
+                }
             }
         } catch (\Throwable $e) {
             // Base indisponible (ex. page d'erreur) → on retombe sur le logo par défaut

@@ -635,11 +635,28 @@ class AdminController extends Controller
         // Logo : on ne remplace que si un nouveau fichier est envoyé
         unset($data['logo']);
         if ($request->hasFile('logo')) {
-            // Supprimer l'ancien logo téléversé (pas le logo par défaut dans /public)
-            if ($settings->logo) {
-                \Illuminate\Support\Facades\Storage::disk('public')->delete($settings->logo);
+            $logosDir = public_path('logos');
+            if (!is_dir($logosDir)) {
+                mkdir($logosDir, 0755, true);
             }
-            $data['logo'] = $request->file('logo')->store('logos', 'public');
+            $ext = $request->file('logo')->getClientOriginalExtension();
+            $filename = 'logo_' . uniqid() . '.' . $ext;
+            $moved = $request->file('logo')->move($logosDir, $filename);
+            if ($moved) {
+                // Supprimer l'ancien logo uniquement si le nouveau est bien enregistré
+                if ($settings->logo) {
+                    $oldPath = public_path($settings->logo);
+                    if (file_exists($oldPath) && str_starts_with(realpath($oldPath), realpath(public_path('logos')))) {
+                        unlink($oldPath);
+                    } else {
+                        // Ancien logo encore dans storage (format legacy)
+                        \Illuminate\Support\Facades\Storage::disk('public')->delete($settings->logo);
+                    }
+                }
+                $data['logo'] = 'logos/' . $filename;
+            } else {
+                return back()->withErrors(['logo' => 'Échec de l\'enregistrement du logo sur le serveur. Vérifiez les permissions du dossier public/logos/.']);
+            }
         }
 
         // Si le mot de passe est vide, ne pas le mettre à jour (garder l'ancien)

@@ -293,6 +293,27 @@ Route::get('/papiers-administratifs', [AdministrativeDocumentController::class, 
 Route::get('/papiers-administratifs/{slug}', [AdministrativeDocumentController::class, 'show'])
     ->name('admin-docs.show');
 
+// ── Portails par examen : /cfee  /bfem  /bac  /bts  /cap ────────────────────
+use App\Http\Controllers\ExamPortalController;
+Route::get('/{exam}', [ExamPortalController::class, 'show'])
+    ->where('exam', 'cfee|bfem|bac|bts|cap')
+    ->name('portail.exam');
+Route::get('/epreuves/pack/{exam}/{year}', [ExamPortalController::class, 'pack'])
+    ->where(['exam' => 'cfee|bfem|bac|bts|cap', 'year' => '[0-9]{4}'])
+    ->middleware('throttle:20,1')
+    ->name('epreuves.pack');
+
+// ── Portail Concours : /concours  +  /concours/{institution} ─────────────────
+use App\Http\Controllers\ConcourPortalController;
+Route::get('/concours', [ConcourPortalController::class, 'index'])->name('portail.concours');
+Route::get('/concours/{institution}', [ConcourPortalController::class, 'show'])
+    ->where('institution', implode('|', array_keys(\App\Models\Epreuve::LEVELS['concours'])))
+    ->name('portail.concours.institution');
+Route::get('/concours/pack/{institution}/{year}', [ConcourPortalController::class, 'pack'])
+    ->where(['year' => '[0-9]{4}'])
+    ->middleware('throttle:20,1')
+    ->name('portail.concours.pack');
+
 // Routes Épreuves & Corrigés (examens du Sénégal)
 use App\Http\Controllers\EpreuveController;
 Route::get('/epreuves', [EpreuveController::class, 'index'])->name('epreuves.index');
