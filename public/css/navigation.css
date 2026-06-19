@@ -815,11 +815,25 @@
     .mobile-toggle { display: flex; }
     .navbar-cta { display: none; }
     .navbar-language-widget { display: none !important; }
-    .navbar-container { gap: 8px; }
+    .navbar-container { gap: 8px; align-items: center; justify-content: space-between; }
+    .navbar-search-container {
+        order: 2;
+        margin-left: auto;
+        flex-shrink: 0;
+    }
+    .mobile-toggle {
+        order: 3;
+        margin-left: 0;
+        flex-shrink: 0;
+    }
 }
 
 @media (max-width: 640px) {
-    .navbar-container { padding-inline: 14px; }
+    .navbar-container { padding-inline: 8px; }
+
+    /* Reduce right inset so search and burger can sit nearer the viewport edge */
+    .navbar-search-container { margin-right: 6px; }
+    .mobile-toggle { margin-right: 2px; }
 
     .navbar-search-form {
         position: fixed;
