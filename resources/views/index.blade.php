@@ -187,7 +187,7 @@
        ÉPREUVES & CORRIGÉS RÉCENTS
        ───────────────────────────────────────────────────────── --}}
   @if($latestEpreuves->isNotEmpty())
-  <section class="hp-section">
+  <section class="hp-section hp-section--alt">
     <div class="hp-container">
 
       <div class="hp-section-header" style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
@@ -201,19 +201,37 @@
 
       <div class="hp-epreuves-grid">
         @foreach($latestEpreuves as $epreuve)
-        <a href="{{ route('epreuves.show', $epreuve->slug) }}" class="hp-epreuve-card{{ $epreuve->hasCorrige() ? ' hp-epreuve-card--corrige' : '' }}">
-          <div class="hp-epreuve-top">
-            <span class="hp-epreuve-icon"><i class="fas fa-file-pdf"></i></span>
-            <span class="hp-epreuve-badge">{{ $epreuve->exam_label ?? $epreuve->level_label ?? __('homepage.epreuves.eyebrow') }}</span>
+        <a href="{{ route('epreuves.show', $epreuve->slug) }}" class="epreuve-card">
+          <div class="epreuve-card-badges">
+            @if($epreuve->exam === 'concours')
+              @if($epreuve->level)
+                <span class="epreuve-badge epreuve-badge--concours"><i class="fas fa-award" style="margin-right:0.3rem;"></i>{{ $epreuve->level_label }}</span>
+              @else
+                <span class="epreuve-badge epreuve-badge--concours"><i class="fas fa-award" style="margin-right:0.3rem;"></i>Concours</span>
+              @endif
+            @elseif($epreuve->exam)
+              <span class="epreuve-badge epreuve-badge--exam">{{ $epreuve->exam_label }}</span>
+            @elseif($epreuve->level)
+              <span class="epreuve-badge epreuve-badge--exam">{{ $epreuve->level_label }}</span>
+            @endif
+            <span class="epreuve-badge epreuve-badge--type">{{ $epreuve->type_label }}</span>
+            @if($epreuve->hasCorrige() || $epreuve->type === 'corrige' || $epreuve->type === 'epreuve_corrige')
+              @if($epreuve->exam !== 'concours' && !$epreuve->isCorrigeFree())
+                <span class="epreuve-badge epreuve-badge--corrige"><i class="fas fa-tag" style="margin-right:0.25rem;"></i>Corrigé — {{ $epreuve->corrige_price_formatted }}</span>
+              @else
+                <span class="epreuve-badge epreuve-badge--corrige">Corrigé inclus</span>
+              @endif
+            @endif
+            @if($epreuve->exam === 'concours' && !$epreuve->isFree())
+              <span class="epreuve-badge epreuve-badge--price"><i class="fas fa-tag" style="margin-right:0.25rem;"></i>{{ $epreuve->price_formatted }}</span>
+            @endif
           </div>
-          @if($epreuve->hasCorrige())
-          <span class="hp-epreuve-corrige"><i class="fas fa-check-circle"></i> Corrigé inclus</span>
-          @endif
-          <div class="hp-epreuve-title">{{ \Illuminate\Support\Str::limit($epreuve->title, 70) }}</div>
-          <div class="hp-epreuve-meta">
-            @if($epreuve->matiere)<span><i class="fas fa-book"></i> {{ $epreuve->matiere->name }}</span>@endif
-            @if($epreuve->year)<span><i class="fas fa-calendar"></i> {{ $epreuve->year }}</span>@endif
-            <span><i class="fas fa-download"></i> {{ number_format($epreuve->downloads_count, 0, ' ', ' ') }} {{ __('homepage.epreuves.downloads') }}</span>
+          <div class="epreuve-card-title">{{ $epreuve->title }}</div>
+          <div class="epreuve-card-meta">
+            @if($epreuve->matiere)<span><i class="fas fa-book"></i>{{ $epreuve->matiere->name }}</span>@endif
+            @if($epreuve->serie)<span><i class="fas fa-layer-group"></i>Série {{ $epreuve->serie }}</span>@endif
+            @if($epreuve->year)<span><i class="fas fa-calendar"></i>{{ $epreuve->year_label }}</span>@endif
+            <span><i class="fas fa-download"></i>{{ number_format($epreuve->downloads_count, 0, ',', ' ') }}</span>
           </div>
         </a>
         @endforeach

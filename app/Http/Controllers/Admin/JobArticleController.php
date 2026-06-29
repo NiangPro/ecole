@@ -125,6 +125,9 @@ class JobArticleController extends Controller
             $url = trim($request->input('cover_image_url', ''));
             // Vérifier que c'est une URL valide (commence par http) et pas une base64
             if (!empty($url) && (str_starts_with($url, 'http://') || str_starts_with($url, 'https://'))) {
+                if (self::isUnstableImageUrl($url)) {
+                    return back()->withErrors(['cover_image_url' => 'Les images gstatic.com et googleusercontent.com sont instables. Uploadez l\'image directement ou utilisez une URL hébergée sur votre serveur.'])->withInput();
+                }
                 $validated['cover_image'] = $url;
             } else {
                 // Si l'URL n'est pas valide, ne pas définir cover_image
@@ -273,6 +276,9 @@ class JobArticleController extends Controller
             $newUrl = trim($request->input('cover_image_url', ''));
             // Vérifier que c'est une URL valide (commence par http) et pas une base64
             if (!empty($newUrl) && (str_starts_with($newUrl, 'http://') || str_starts_with($newUrl, 'https://'))) {
+                if (self::isUnstableImageUrl($newUrl)) {
+                    return back()->withErrors(['cover_image_url' => 'Les images gstatic.com et googleusercontent.com sont instables. Uploadez l\'image directement ou utilisez une URL hébergée sur votre serveur.'])->withInput();
+                }
                 if ($newUrl !== $article->cover_image || $article->cover_type !== 'external') {
                     $imageChanged = true;
                     // Supprimer l'ancienne image interne si on passe à externe
@@ -553,5 +559,16 @@ class JobArticleController extends Controller
         
         return redirect()->route('admin.jobs.articles.index')
             ->with('success', "Scores recalculés pour {$updated} article(s)");
+    }
+
+    private static function isUnstableImageUrl(string $url): bool
+    {
+        $unstableDomains = ['gstatic.com', 'googleusercontent.com', 'encrypted-tbn'];
+        foreach ($unstableDomains as $domain) {
+            if (str_contains($url, $domain)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

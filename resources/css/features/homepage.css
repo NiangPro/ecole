@@ -1080,125 +1080,55 @@
   .hp-epreuves-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 1rem;
+    gap: 1.25rem;
 
     @media (width <= 900px) { grid-template-columns: repeat(2, 1fr); }
     @media (width <= 480px) { grid-template-columns: 1fr; }
   }
 
-  .hp-epreuve-card {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    padding: 1.25rem;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-card);
-    text-decoration: none;
-    overflow: hidden;
-    transition:
-      border-color var(--duration-normal) ease,
-      box-shadow   var(--duration-normal) ease,
-      transform    var(--duration-normal) ease;
+/* Cartes identiques à la page /epreuves */
+.epreuve-card {
+  display: flex; flex-direction: column; gap: 0.65rem; padding: 1.25rem;
+  background: #fff; border: 1px solid rgba(226,232,240,0.9); border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(15,23,42,0.05); text-decoration: none; color: inherit;
+  transition: all 0.2s;
+}
+.epreuve-card:hover { transform: translateY(-3px); border-color: rgba(5,150,105,0.5); box-shadow: 0 18px 50px rgba(15,23,42,0.1); }
+.epreuve-card-badges { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+.epreuve-badge {
+  font-size: 0.72rem; font-weight: 700; padding: 0.22rem 0.65rem; border-radius: 999px;
+  text-transform: uppercase; letter-spacing: 0.03em;
+}
+.epreuve-badge--exam    { background: rgba(5,150,105,0.12);  color: #047857; }
+.epreuve-badge--concours{ background: rgba(139,92,246,0.12); color: #6d28d9; }
+.epreuve-badge--type    { background: rgba(14,165,233,0.12); color: #0369a1; }
+.epreuve-badge--corrige { background: rgba(245,158,11,0.15); color: #b45309; }
+.epreuve-badge--price   { background: rgba(239,68,68,0.12);  color: #b91c1c; }
+.epreuve-card-title { font-weight: 700; font-size: 1rem; line-height: 1.45; color: #0f172a; }
+.epreuve-card-meta  { display: flex; gap: 0.9rem; flex-wrap: wrap; font-size: 0.82rem; color: #64748b; margin-top: auto; }
+.epreuve-card-meta i { margin-right: 0.3rem; color: #059669; }
 
-    &::before {
-      content: '';
-      position: absolute;
-      inset-block-start: 0;
-      inset-inline-start: 0;
-      inline-size: 100%;
-      block-size: 3px;
-      background: linear-gradient(to right, oklch(60% 0.15 165), oklch(65% 0.15 195));
-      opacity: 0;
-      transition: opacity var(--duration-normal) ease;
-    }
+body.dark-mode .epreuve-card        { background: rgba(15,23,42,0.75); border-color: rgba(148,163,184,0.15); }
+body.dark-mode .epreuve-card-title  { color: #f1f5f9; }
+body.dark-mode .epreuve-card-meta   { color: #94a3b8; }
+body.dark-mode .epreuve-badge--exam    { background: rgba(52,211,153,0.15);  color: #34d399; }
+body.dark-mode .epreuve-badge--concours{ background: rgba(167,139,250,0.15); color: #a78bfa; }
+body.dark-mode .epreuve-badge--type    { background: rgba(56,189,248,0.15);  color: #38bdf8; }
+body.dark-mode .epreuve-badge--corrige { background: rgba(251,191,36,0.15);  color: #fbbf24; }
+body.dark-mode .epreuve-badge--price   { background: rgba(248,113,113,0.15); color: #f87171; }
 
-    &:hover {
-      border-color: oklch(60% 0.15 165 / 45%);
-      box-shadow: 0 10px 28px oklch(60% 0.15 165 / 12%);
-      transform: translateY(-3px);
+/* ──────────────────────────────────────────
+   MODE CLAIR — overrides section épreuves
+   ────────────────────────────────────────── */
 
-      &::before { opacity: 1; }
-    }
+body:not(.dark-mode) {
+
+  /* Eyebrow & liens "Voir tout" : contraste suffisant sur fond blanc */
+  .hp-section-eyebrow {
+    color: oklch(38% 0.20 200);
   }
 
-  .hp-epreuve-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
+  .hp-section-action {
+    color: oklch(38% 0.20 200);
   }
-
-  .hp-epreuve-icon {
-    flex-shrink: 0;
-    inline-size: 40px;
-    block-size: 40px;
-    border-radius: 10px;
-    background: oklch(60% 0.15 165 / 12%);
-    color: oklch(55% 0.16 165);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.1rem;
-  }
-
-  .hp-epreuve-badge {
-    font-size: 0.7rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-    padding: 0.25rem 0.6rem;
-    border-radius: var(--radius-pill);
-    background: oklch(60% 0.15 165 / 12%);
-    color: oklch(50% 0.16 165);
-  }
-
-  .hp-epreuve-title {
-    font-size: 0.9rem;
-    font-weight: 700;
-    color: var(--text);
-    line-height: 1.4;
-  }
-
-  .hp-epreuve-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem 0.85rem;
-    margin-block-start: auto;
-    font-size: 0.72rem;
-    color: var(--text-muted);
-
-    i { color: oklch(55% 0.16 165); margin-inline-end: 0.15rem; }
-  }
-
-  .hp-epreuve-corrige {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    align-self: flex-start;
-    font-size: 0.72rem;
-    font-weight: 700;
-    color: oklch(38% 0.14 145);
-    background: oklch(52% 0.16 145 / 13%);
-    border: 1px solid oklch(52% 0.16 145 / 35%);
-    padding: 0.2rem 0.65rem;
-    border-radius: var(--radius-pill);
-
-    i { color: oklch(48% 0.16 145); font-size: 0.75rem; }
-
-    .dark-mode & {
-      color: oklch(78% 0.14 145);
-      background: oklch(52% 0.16 145 / 18%);
-      border-color: oklch(52% 0.16 145 / 40%);
-    }
-  }
-
-  .hp-epreuve-card--corrige {
-    border-color: oklch(52% 0.16 145 / 30%);
-
-    &::before {
-      background: linear-gradient(to right, oklch(52% 0.16 145), oklch(58% 0.16 175));
-      opacity: 1;
-    }
-  }
+}
