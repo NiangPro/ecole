@@ -771,6 +771,9 @@
                             <input type="url" name="cover_image_url" id="coverImageUrl" value="{{ old('cover_image_url', (isset($article) && $article->cover_type === 'external' ? $article->cover_image : '')) }}"
                                    class="form-input" placeholder="https://example.com/image.jpg">
                             <div class="form-help">Entrez l'URL complète de l'image</div>
+                            @error('cover_image_url')
+                                <div class="form-error"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
                     <div id="coverPreview" class="mt-4 {{ (isset($article) && $article->cover_image) ? '' : 'hidden' }}" style="text-align: center;">

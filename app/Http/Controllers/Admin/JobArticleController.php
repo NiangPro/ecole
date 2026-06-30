@@ -233,7 +233,7 @@ class JobArticleController extends Controller
             'excerpt' => 'nullable|string',
             'content' => 'required|string',
             'cover_image_file' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120',
-            'cover_image_url' => 'nullable|url|max:500',
+            'cover_image_url' => 'nullable|url|max:2048',
             'cover_type' => 'required|in:internal,external',
             'meta_title' => 'nullable|string|max:255',
             'meta_description' => 'nullable|string|max:500',
@@ -276,10 +276,11 @@ class JobArticleController extends Controller
             $newUrl = trim($request->input('cover_image_url', ''));
             // Vérifier que c'est une URL valide (commence par http) et pas une base64
             if (!empty($newUrl) && (str_starts_with($newUrl, 'http://') || str_starts_with($newUrl, 'https://'))) {
-                if (self::isUnstableImageUrl($newUrl)) {
-                    return back()->withErrors(['cover_image_url' => 'Les images gstatic.com et googleusercontent.com sont instables. Uploadez l\'image directement ou utilisez une URL hébergée sur votre serveur.'])->withInput();
-                }
                 if ($newUrl !== $article->cover_image || $article->cover_type !== 'external') {
+                    // Vérifier l'URL instable uniquement si elle est nouvelle
+                    if (self::isUnstableImageUrl($newUrl)) {
+                        return back()->withErrors(['cover_image_url' => 'Les images gstatic.com et googleusercontent.com sont instables. Uploadez l\'image directement ou utilisez une URL hébergée sur votre serveur.'])->withInput();
+                    }
                     $imageChanged = true;
                     // Supprimer l'ancienne image interne si on passe à externe
                     if ($article->cover_type === 'internal' && $article->cover_image && Storage::disk('public')->exists($article->cover_image)) {
