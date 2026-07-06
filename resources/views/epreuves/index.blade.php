@@ -91,6 +91,7 @@ body.dark-mode .epreuve-badge--price { background: rgba(248,113,113,0.15); color
 body.dark-mode .epreuves-exam-pill--concours { border-color: rgba(167,139,250,0.35); color: #a78bfa; }
 body.dark-mode .epreuves-exam-pill--concours:hover { border-color: #a78bfa; color: #a78bfa; }
 </style>
+@include('epreuves.partials.documents-carousel-styles')
 @endsection
 
 @section('content')
@@ -108,6 +109,8 @@ body.dark-mode .epreuves-exam-pill--concours:hover { border-color: #a78bfa; colo
                 <span class="epreuves-stat"><strong>{{ number_format($stats['downloads'], 0, ',', ' ') }}</strong> téléchargements</span>
             </div>
         </div>
+
+        @include('epreuves.partials.documents-carousel')
 
         <div class="epreuves-exam-pills">
             <a href="{{ route('epreuves.index') }}" class="epreuves-exam-pill {{ !$filters['exam'] && !$filters['level'] ? 'active' : '' }}">Tout</a>
@@ -215,3 +218,7 @@ body.dark-mode .epreuves-exam-pill--concours:hover { border-color: #a78bfa; colo
     </div>
 </div>
 @endsection
+
+@push('scripts')
+@include('epreuves.partials.documents-carousel-script')
+@endpush

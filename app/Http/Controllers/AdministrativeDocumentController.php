@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\AdministrativeDocument;
+use App\Helpers\ContentEnhancer;
 use Illuminate\Http\Request;
 
 class AdministrativeDocumentController extends Controller
@@ -65,7 +66,24 @@ class AdministrativeDocumentController extends Controller
             ->limit(4)
             ->get();
 
-        return view('admin-docs.show', compact('document', 'relatedDocuments'));
+        // ── Contenu expert (Tâche 1 — anti-thin-content) ─────────────────────
+        // Silo 3 — Administration : type fixé à 'administratif'
+        $contentType  = ContentEnhancer::getContentTypeFromSlug($document->category ?? 'administratif');
+        $expertAdvice = ContentEnhancer::generateExpertAdvice(
+            $document->title,
+            $document->location ?? null,
+            $contentType
+        );
+        $documentFaqs = ContentEnhancer::generateFAQs(
+            $document->title,
+            $document->location ?? null,
+            $contentType
+        );
+
+        return view('admin-docs.show', compact(
+            'document', 'relatedDocuments',
+            'expertAdvice', 'documentFaqs', 'contentType'
+        ));
     }
 }
 

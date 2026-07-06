@@ -74,6 +74,9 @@
           url('/images/hero-bg-mobile.webp') type('image/webp'),
           url('/images/hero-bg.png') type('image/png')
         );
+      /* background-attachment:fixed force un repaint continu au scroll sur mobile
+         (contribue au TBT/jank) — désactivé, l'effet parallax n'est utile qu'au desktop */
+      background-attachment: scroll;
     }
   }
 
@@ -1041,6 +1044,17 @@
     border-block-start: 1px solid var(--border);
   }
 
+  /* En mode clair, le fond radial à 12% d'opacité se noie dans le blanc
+     et la section paraît plate à côté du hero (fond sombre, lui, très marqué).
+     On renforce la présence visuelle avec un dégradé plus soutenu et une
+     bordure du haut plus visible. */
+  body:not(.dark-mode) .hp-cta-banner {
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 50%, oklch(65% 0.20 200 / 16%) 0%, transparent 70%),
+      linear-gradient(180deg, oklch(97% 0.01 200) 0%, oklch(93% 0.02 200) 100%);
+    border-block-start: 1px solid oklch(85% 0.02 200);
+  }
+
   .hp-cta-banner__title {
     font-family: var(--font-heading);
     font-size: clamp(1.875rem, 4vw, 3rem);
@@ -1058,6 +1072,45 @@
     margin-inline: auto;
     margin-block-end: 2rem;
     line-height: 1.65;
+  }
+
+  /* Couleurs codées en dur (pas de var()) pour ce titre/sous-titre en mode
+     clair : évite toute dépendance à la résolution de --text/--text-muted
+     qui a pu se comporter de façon incohérente selon le navigateur/cache. */
+  body:not(.dark-mode) .hp-cta-banner__title {
+    color: #000;
+  }
+
+  body:not(.dark-mode) .hp-cta-banner__subtitle {
+    color: #000;
+  }
+
+  /* .hp-btn-secondary est pensée pour le hero (fond sombre fixe) : texte/bordure
+     quasi blancs codés en dur. Sur le fond de la CTA banner, qui suit le thème
+     (var(--surface-muted)), ça devient illisible en mode clair — on retombe
+     ici sur les variables de thème comme le reste de la section. */
+  .hp-cta-banner .hp-btn-secondary.hp-btn-secondary--adaptive {
+    color: var(--text);
+    background: var(--surface);
+    border-color: var(--border);
+
+    &:hover {
+      background: var(--surface-subtle);
+      border-color: var(--text-muted);
+    }
+  }
+
+  /* var(--border) (oklch 90%) sur var(--surface-muted) (oklch 97%) ne fait
+     que 7 points de clarté d'écart : la bordure du bouton devient quasi
+     invisible en mode clair. On la renforce spécifiquement ici. */
+  body:not(.dark-mode) .hp-cta-banner .hp-btn-secondary.hp-btn-secondary--adaptive {
+    border-color: oklch(72% 0.02 200);
+    box-shadow: 0 1px 3px oklch(20% 0 0 / 6%);
+
+    &:hover {
+      border-color: oklch(65% 0.20 200);
+      color: oklch(50% 0.20 200);
+    }
   }
 
   /* Scrollbar globale */
@@ -1131,4 +1184,196 @@ body:not(.dark-mode) {
   .hp-section-action {
     color: oklch(38% 0.20 200);
   }
+}
+
+/* ──────────────────────────────────────────
+   PREUVE SOCIALE — notation et ventes sur les cartes
+   ────────────────────────────────────────── */
+.doc-rating-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: .35rem;
+  margin: .25rem 0 .5rem;
+}
+
+.doc-rating-stars { color: #f59e0b; font-size: .85rem; }
+.doc-rating-val { font-weight: 800; font-size: .85rem; }
+.doc-rating-count { font-size: .75rem; color: #64748b; }
+
+body.dark-mode .doc-rating-count { color: #94a3b8; }
+
+/* ──────────────────────────────────────────
+   AVIS RÉCENTS — preuve sociale (cards glass + note globale)
+   ────────────────────────────────────────── */
+.hp-reviews-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.hp-reviews-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .2rem;
+  padding: 1rem 1.5rem;
+  border-radius: 16px;
+  background: oklch(65% 0.20 200 / 6%);
+  border: 1px solid oklch(65% 0.20 200 / 18%);
+  flex-shrink: 0;
+}
+
+.hp-reviews-stat-score {
+  font-family: var(--font-heading);
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: oklch(38% 0.20 200);
+  line-height: 1;
+}
+
+.hp-reviews-stat-score span { font-size: 1rem; font-weight: 700; opacity: .6; }
+.hp-reviews-stat-stars { color: #f59e0b; font-size: .8rem; }
+.hp-reviews-stat-count { font-size: .75rem; color: #64748b; font-weight: 600; white-space: nowrap; }
+
+.hp-reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.hp-review-card {
+  position: relative;
+  overflow: hidden;
+  background: oklch(100% 0 0 / 70%);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid oklch(65% 0.20 200 / 14%);
+  border-radius: 20px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: .85rem;
+  box-shadow: 0 4px 20px oklch(65% 0.20 200 / 6%);
+  transition: transform 250ms ease-out, box-shadow 250ms ease-out, border-color 250ms ease-out;
+  opacity: 0;
+  animation: hp-review-in 500ms ease-out forwards;
+  animation-delay: calc(var(--stagger, 0) * 80ms);
+}
+
+.hp-review-card:hover {
+  transform: translateY(-4px);
+  border-color: oklch(65% 0.20 200 / 35%);
+  box-shadow: 0 12px 32px oklch(65% 0.20 200 / 14%);
+}
+
+@keyframes hp-review-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hp-review-card { animation: none; opacity: 1; }
+}
+
+.hp-review-quote-icon {
+  position: absolute;
+  top: 1rem;
+  right: 1.25rem;
+  font-size: 2.25rem;
+  color: oklch(65% 0.20 200 / 10%);
+  pointer-events: none;
+}
+
+.hp-review-stars {
+  color: #f59e0b;
+  font-size: .85rem;
+  letter-spacing: .15rem;
+}
+
+.hp-review-comment {
+  font-size: .9375rem;
+  line-height: 1.6;
+  color: #334155;
+  margin: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.hp-review-footer {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  margin-top: auto;
+  padding-top: .85rem;
+  border-top: 1px solid oklch(65% 0.20 200 / 10%);
+}
+
+.hp-review-avatar {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, oklch(65% 0.20 200), oklch(65% 0.18 170));
+  color: #fff;
+  font-weight: 800;
+  font-size: .95rem;
+}
+
+.hp-review-meta {
+  display: flex;
+  flex-direction: column;
+  gap: .2rem;
+  min-width: 0;
+  font-size: .8rem;
+}
+
+.hp-review-author {
+  font-weight: 700;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: .3rem;
+}
+
+.hp-review-verified { color: #10b981; font-size: .8rem; }
+
+.hp-review-doc-link {
+  display: inline-flex;
+  align-items: center;
+  gap: .3rem;
+  color: oklch(38% 0.20 200);
+  text-decoration: none;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hp-review-doc-link i { font-size: .7rem; flex-shrink: 0; }
+.hp-review-doc-link:hover { text-decoration: underline; }
+.hp-review-doc-link:focus-visible { outline: 2px solid oklch(65% 0.20 200); outline-offset: 2px; border-radius: 2px; }
+
+body.dark-mode .hp-reviews-stat { background: oklch(65% 0.20 200 / 10%); border-color: oklch(65% 0.20 200 / 25%); }
+body.dark-mode .hp-reviews-stat-score { color: oklch(75% 0.18 200); }
+body.dark-mode .hp-reviews-stat-count { color: #94a3b8; }
+body.dark-mode .hp-review-card {
+  background: oklch(20% 0.02 230 / 75%);
+  border-color: oklch(65% 0.20 200 / 18%);
+  box-shadow: 0 4px 20px oklch(0% 0 0 / 20%);
+}
+body.dark-mode .hp-review-card:hover { box-shadow: 0 12px 32px oklch(65% 0.20 200 / 18%); }
+body.dark-mode .hp-review-comment { color: #cbd5e1; }
+body.dark-mode .hp-review-author { color: #f1f5f9; }
+body.dark-mode .hp-review-quote-icon { color: oklch(65% 0.20 200 / 15%); }
+
+@media (max-width: 640px) {
+  .hp-reviews-header { align-items: flex-start; }
+  .hp-reviews-stat { width: 100%; }
 }

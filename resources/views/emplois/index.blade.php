@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@push('page_css')
+@vite('resources/css/features/emplois.css')
+@endpush
+
 @section('title', 'Emplois & Opportunités | NiangProgrammeur')
 @section('meta_description', 'Offre emploi Sénégal — trouvez les meilleures offres d\'emploi, bourses d\'études, concours et opportunités de carrière publiées chaque jour.')
 @section('meta_keywords', 'emploi Sénégal, offres d\'emploi, bourses d\'études, opportunités carrière, recrutement Sénégal, emploi Dakar')
@@ -84,7 +88,8 @@
             @if($category->image)
               <img src="{{ $category->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($category->image) : $category->image }}"
                    alt="{{ $category->name }}"
-                   loading="lazy"
+                   width="400" height="180"
+                   loading="lazy" decoding="async"
                    class="em-cat-card__img">
               <div class="em-cat-card__img-overlay"></div>
             @else

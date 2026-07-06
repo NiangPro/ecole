@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@push('page_css')
+@vite('resources/css/features/login.css')
+@endpush
+
 @section('title', trans('app.auth.login.title') . ' | NiangProgrammeur')
 
 @section('content')

@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\Api\ArticleController;
+use App\Http\Controllers\Api\McpController;
+use App\Http\Middleware\VerifyMcpConnectorToken;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -36,4 +38,20 @@ Route::middleware('auth:sanctum')->group(function () {
     // Articles emplois/opportunités
     Route::post('/articles', [ArticleController::class, 'store']);
 
+});
+
+/*
+|--------------------------------------------------------------------------
+| Endpoint MCP (Streamable HTTP, mode JSON — exécuté par requête, sans
+| processus persistant : hébergement mutualisé, pas de daemon possible)
+|--------------------------------------------------------------------------
+| URL à coller dans les réglages de connecteur MCP : https://www.niangprogrammeur.com/api/mcp
+| Authentification : en-tête "Authorization: Bearer <MCP_CONNECTOR_TOKEN>"
+*/
+Route::get('/mcp/health', [McpController::class, 'health']);
+
+Route::middleware(VerifyMcpConnectorToken::class)->group(function () {
+    Route::post('/mcp', [McpController::class, 'handle']);
+    Route::get('/mcp', [McpController::class, 'methodNotAllowed']);
+    Route::delete('/mcp', [McpController::class, 'methodNotAllowed']);
 });

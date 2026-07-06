@@ -195,19 +195,13 @@ class QuizController extends Controller
     }
 
     /**
-     * Obtenir les questions du quiz pour un langage
-     * NOTE: Cette méthode est très longue
-     * TODO: Extraire dans un service ou fichier séparé
-     */
+    * Obtenir les questions du quiz pour un langage
+    * Utilise le QuizService pour récupérer les données
+    */
     private function getQuizQuestions($language)
     {
-        // Déléguer temporairement à PageController
-        // TODO: Extraire cette méthode dans un service dédié
-        $pageController = new \App\Http\Controllers\PageController();
-        $reflection = new \ReflectionClass($pageController);
-        $method = $reflection->getMethod('getQuizQuestions');
-        $method->setAccessible(true);
-        return $method->invoke($pageController, $language);
+       $quizService = new \App\Services\QuizService();
+       return $quizService->getQuizQuestions($language);
     }
 }
 

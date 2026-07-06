@@ -4,12 +4,14 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
 class DocumentBundleItem extends Model
 {
     protected $fillable = [
         'bundle_id',
-        'document_id',
+        'item_type',
+        'item_id',
         'order',
     ];
 
@@ -26,10 +28,10 @@ class DocumentBundleItem extends Model
     }
 
     /**
-     * Relation avec le document
+     * Relation polymorphe vers le contenu du pack (Document ou Epreuve)
      */
-    public function document(): BelongsTo
+    public function itemable(): MorphTo
     {
-        return $this->belongsTo(Document::class);
+        return $this->morphTo('item', 'item_type', 'item_id');
     }
 }

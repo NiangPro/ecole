@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@push('page_css')
+@vite('resources/css/features/emplois.css')
+@endpush
+
 @section('title', $category->name . ' | NiangProgrammeur')
 @section('meta_description', $category->description ?? 'Découvrez les articles dans la catégorie ' . $category->name . ' sur NiangProgrammeur.')
 @section('meta_keywords', $category->name . ', emploi Sénégal, recrutement, opportunités')

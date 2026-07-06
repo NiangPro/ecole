@@ -14,9 +14,16 @@
             </h3>
             <p class="text-gray-400">{{ Str::limit($epreuve->title, 80) }}</p>
         </div>
-        <a href="{{ route('epreuves.show', $epreuve->slug) }}" target="_blank" rel="noopener" class="px-4 py-2 bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 rounded-xl border border-emerald-500/40 transition whitespace-nowrap">
-            <i class="fas fa-eye mr-2"></i>Voir sur le site
-        </a>
+        <div class="flex items-center gap-2">
+            @if($epreuve->file_path)
+                <a href="{{ route('admin.epreuves.download', $epreuve) }}" class="px-4 py-2 bg-cyan-500/15 hover:bg-cyan-500/25 text-cyan-400 rounded-xl border border-cyan-500/40 transition whitespace-nowrap">
+                    <i class="fas fa-download mr-2"></i>Télécharger le PDF
+                </a>
+            @endif
+            <a href="{{ route('epreuves.show', $epreuve->slug) }}" target="_blank" rel="noopener" class="px-4 py-2 bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 rounded-xl border border-emerald-500/40 transition whitespace-nowrap">
+                <i class="fas fa-eye mr-2"></i>Voir sur le site
+            </a>
+        </div>
     </div>
 
     @if(session('success'))

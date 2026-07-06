@@ -1307,10 +1307,25 @@ body.dark-mode .wave-qr-placeholder i {
                                     </div>
                                     <div class="payment-method-info">
                                         <div class="payment-method-name">Wave</div>
-                                        <div class="payment-method-desc">Paiement mobile money (Orange Money, Free Money)</div>
+                                        <div class="payment-method-desc">Paiement mobile money via Wave</div>
                                     </div>
                                 </label>
                             </div>
+
+                            @if(\App\Models\SiteSetting::get('orange_money_enabled'))
+                            <div class="payment-method">
+                                <input type="radio" name="payment_method" value="orange_money" id="orange_money" required {{ old('payment_method') === 'orange_money' ? 'checked' : '' }}>
+                                <label for="orange_money" class="payment-method-label">
+                                    <div class="payment-method-icon">
+                                        <i class="fas fa-mobile-alt"></i>
+                                    </div>
+                                    <div class="payment-method-info">
+                                        <div class="payment-method-name">Orange Money</div>
+                                        <div class="payment-method-desc">Paiement mobile money via Orange Money</div>
+                                    </div>
+                                </label>
+                            </div>
+                            @endif
 
                             <div class="payment-method">
                                 <input type="radio" name="payment_method" value="paypal" id="paypal" required {{ old('payment_method') === 'paypal' ? 'checked' : '' }}>
@@ -1342,7 +1357,12 @@ body.dark-mode .wave-qr-placeholder i {
                     <div class="summary-items">
                         @foreach($cartItems as $item)
                         <div class="summary-item">
-                            <span class="summary-item-name">{{ $item->document->title }}</span>
+                            <span class="summary-item-name">
+                                {{ $item->document->title }}
+                                @if($item->bundle)
+                                    <br><small style="color: #0f766e;"><i class="fas fa-box"></i> Pack : {{ $item->bundle->name }}</small>
+                                @endif
+                            </span>
                             <span class="summary-item-price">{{ number_format($item->subtotal, 0, ',', ' ') }} FCFA</span>
                         </div>
                         @endforeach
@@ -1462,6 +1482,50 @@ body.dark-mode .wave-qr-placeholder i {
     </div>
 </div>
 
+<!-- Modal Orange Money Ultra Moderne -->
+<div id="orange-money-modal" class="wave-modal-overlay" style="display: none;">
+    <div class="wave-modal-container">
+        <div class="wave-modal-header">
+            <div class="wave-modal-icon" style="background: linear-gradient(135deg, #ff7900, #e35d00);">
+                <i class="fas fa-mobile-alt"></i>
+            </div>
+            <h2 class="wave-modal-title">Paiement Orange Money</h2>
+            <button class="wave-modal-close" onclick="closeOrangeMoneyModal()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="wave-modal-body">
+            <p class="wave-modal-description" id="orange-money-instructions">
+                Envoyez le montant via Orange Money au numéro ci-dessous, puis confirmez votre paiement.
+            </p>
+            <div class="wave-modal-amount">
+                <span class="wave-amount-label">Montant à payer :</span>
+                <span class="wave-amount-value" id="orange-money-amount-display">0 FCFA</span>
+            </div>
+
+            <div class="wave-modal-amount" style="margin-top: 1rem;">
+                <span class="wave-amount-label">Numéro Orange Money :</span>
+                <span class="wave-amount-value" id="orange-money-number-display" style="font-family: monospace;">-</span>
+            </div>
+
+            <button type="button" onclick="copyOrangeMoneyNumber()" class="wave-pay-button" style="background: linear-gradient(135deg, #ff7900, #e35d00);">
+                <i class="fas fa-copy"></i>
+                <span>Copier le numéro</span>
+            </button>
+
+            <button type="button" onclick="confirmOrangeMoneyPayment()" class="wave-confirm-button" id="orange-money-confirm-button">
+                <i class="fas fa-check-circle"></i>
+                <span>J'ai effectué le paiement</span>
+            </button>
+
+            <p class="wave-modal-note">
+                <i class="fas fa-info-circle"></i>
+                Après avoir effectué le paiement, cliquez sur "J'ai effectué le paiement" pour confirmer
+            </p>
+        </div>
+    </div>
+</div>
+
 <!-- Modal Wave Ultra Moderne -->
 <div id="wave-modal" class="wave-modal-overlay" style="display: none;">
     <div class="wave-modal-container">
@@ -1507,16 +1571,18 @@ body.dark-mode .wave-qr-placeholder i {
 document.getElementById('checkout-form').addEventListener('submit', function(e) {
     const paymentMethod = document.querySelector('input[name="payment_method"]:checked')?.value;
     
-    // Si Wave ou PayPal est sélectionné, intercepter la soumission
-    if (paymentMethod === 'wave' || paymentMethod === 'paypal') {
+    // Si Wave, Orange Money ou PayPal est sélectionné, intercepter la soumission
+    if (paymentMethod === 'wave' || paymentMethod === 'orange_money' || paymentMethod === 'paypal') {
         e.preventDefault();
-        
+
         const submitBtn = document.getElementById('submit-btn');
         const originalContent = submitBtn.innerHTML;
         submitBtn.disabled = true;
-        submitBtn.innerHTML = paymentMethod === 'wave' 
+        submitBtn.innerHTML = paymentMethod === 'wave'
             ? '<i class="fas fa-spinner fa-spin"></i> Génération du lien Wave...'
-            : '<i class="fas fa-spinner fa-spin"></i> Génération du lien PayPal...';
+            : (paymentMethod === 'orange_money'
+                ? '<i class="fas fa-spinner fa-spin"></i> Préparation du paiement Orange Money...'
+                : '<i class="fas fa-spinner fa-spin"></i> Génération du lien PayPal...');
         
         // Récupérer les données du formulaire
         const formData = new FormData(this);
@@ -1544,6 +1610,20 @@ document.getElementById('checkout-form').addEventListener('submit', function(e) 
                     }
                     
                     openWaveModal();
+                } else if (paymentMethod === 'orange_money' && data.orange_money_number) {
+                    // Afficher le modal Orange Money
+                    document.getElementById('orange-money-number-display').textContent = data.orange_money_number;
+                    document.getElementById('orange-money-amount-display').textContent =
+                        new Intl.NumberFormat('fr-FR').format(data.amount) + ' FCFA';
+                    if (data.orange_money_instructions) {
+                        document.getElementById('orange-money-instructions').textContent = data.orange_money_instructions;
+                    }
+
+                    if (data.payment_id) {
+                        window.currentPaymentId = data.payment_id;
+                    }
+
+                    openOrangeMoneyModal();
                 } else if (paymentMethod === 'paypal' && data.paypal_link) {
                     // Afficher le modal PayPal
                     document.getElementById('paypal-pay-button').href = data.paypal_link;
@@ -1589,6 +1669,24 @@ function openWaveModal() {
 function closeWaveModal() {
     document.getElementById('wave-modal').style.display = 'none';
     document.body.style.overflow = '';
+}
+
+function openOrangeMoneyModal() {
+    document.getElementById('orange-money-modal').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+
+function closeOrangeMoneyModal() {
+    document.getElementById('orange-money-modal').style.display = 'none';
+    document.body.style.overflow = '';
+}
+
+function copyOrangeMoneyNumber() {
+    const number = document.getElementById('orange-money-number-display').textContent.trim();
+    if (!number || number === '-') {
+        return;
+    }
+    navigator.clipboard.writeText(number).catch(() => {});
 }
 
 // Gestion des codes promo
@@ -1700,6 +1798,13 @@ document.getElementById('paypal-modal').addEventListener('click', function(e) {
     }
 });
 
+// Fermer le modal Orange Money en cliquant sur l'overlay
+document.getElementById('orange-money-modal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeOrangeMoneyModal();
+    }
+});
+
 // Fonction pour confirmer le paiement Wave
 function confirmWavePayment() {
     if (!window.currentPaymentId) {
@@ -1712,6 +1817,22 @@ function confirmWavePayment() {
     confirmBtn.disabled = true;
     confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Confirmation en cours...';
     
+    // Rediriger vers la page de confirmation de paiement
+    window.location.href = '/payment/confirm/' + window.currentPaymentId;
+}
+
+// Fonction pour confirmer le paiement Orange Money
+function confirmOrangeMoneyPayment() {
+    if (!window.currentPaymentId) {
+        alert('Erreur: ID de paiement introuvable. Veuillez réessayer.');
+        return;
+    }
+
+    const confirmBtn = document.getElementById('orange-money-confirm-button');
+    const originalContent = confirmBtn.innerHTML;
+    confirmBtn.disabled = true;
+    confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Confirmation en cours...';
+
     // Rediriger vers la page de confirmation de paiement
     window.location.href = '/payment/confirm/' + window.currentPaymentId;
 }

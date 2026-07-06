@@ -877,7 +877,30 @@
                 titleInput.dispatchEvent(new Event('input'));
             }
         }, 500);
-        
+
+        // Synchronisation titre → meta_title (voir edit.blade.php pour le contexte :
+        // ces deux champs indépendants ont déjà divergé sur un article publié, faisant
+        // apparaître un titre SEO périmé). Tant que meta_title n'est pas édité à la main,
+        // il reste calqué sur le titre (tronqué à 60 caractères).
+        (function () {
+            const titleField = document.getElementById('articleTitle');
+            const metaTitleField = document.getElementById('metaTitle');
+            if (!titleField || !metaTitleField) return;
+
+            let metaTitleManuallyEdited = metaTitleField.value.trim().length > 0
+                && metaTitleField.value.trim() !== titleField.value.trim().slice(0, 60);
+
+            metaTitleField.addEventListener('input', function () {
+                metaTitleManuallyEdited = true;
+            });
+
+            titleField.addEventListener('input', function () {
+                if (metaTitleManuallyEdited) return;
+                metaTitleField.value = titleField.value.trim().slice(0, 60);
+                metaTitleField.dispatchEvent(new Event('input'));
+            });
+        })();
+
         // Gérer l'interaction entre le statut et la date de publication
         const statusSelect = document.getElementById('articleStatus');
         const publishedAtInput = document.getElementById('publishedAt');

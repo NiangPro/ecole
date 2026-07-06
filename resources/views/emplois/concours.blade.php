@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@push('page_css')
+@vite('resources/css/features/emplois.css')
+@endpush
+
 @section('title', 'Concours au Sénégal | NiangProgrammeur')
 @section('meta_description', 'Découvrez tous les concours publics et privés au Sénégal : fonction publique, entreprises, écoles, forces de sécurité. Informations complètes et actualisées.')
 @section('meta_keywords', 'concours sénégal, concours fonction publique, concours ENA, concours entreprises publiques, concours police, concours santé')

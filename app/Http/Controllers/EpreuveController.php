@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Epreuve;
 use App\Models\EpreuveMatiere;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 class EpreuveController extends Controller
@@ -14,11 +15,35 @@ class EpreuveController extends Controller
      */
     public function index(Request $request)
     {
-        return $this->renderListing($request, [
+        $view = $this->renderListing($request, [
             'pageTitle' => 'Épreuves & Corrigés — CFEE, BFEM, BAC, BTS Sénégal PDF',
             'metaDescription' => 'Corrigé BFEM Sénégal, sujets BAC, BTS, CFEE et CAP à télécharger gratuitement en PDF. Épreuves officielles et corrigés classés par matière, série et année.',
             'heading' => 'Épreuves & Corrigés du Sénégal',
         ]);
+
+        return $view->with('epreuveDocuments', $this->getEpreuveCategoryDocuments());
+    }
+
+    /**
+     * Documents (catégorie "épreuves") mis en avant dans le carousel affiché
+     * sur le hub /epreuves et sur les fiches épreuve individuelles.
+     */
+    private function getEpreuveCategoryDocuments()
+    {
+        return Cache::remember('epreuve_category_documents', 900, function () {
+            return \App\Models\Document::published()
+                ->active()
+                ->whereHas('category', fn($q) => $q->where('slug', 'epreuves'))
+                ->with(['category:id,name,slug'])
+                ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'price', 'discount_price', 'download_count', 'sales_count', 'views_count', 'is_featured')
+                ->withAvg('approvedReviews as average_rating', 'rating')
+                ->withCount('approvedReviews as reviews_count')
+                ->orderByDesc('is_featured')
+                ->orderByDesc('download_count')
+                ->orderByDesc('views_count')
+                ->take(12)
+                ->get();
+        });
     }
 
     /**
@@ -82,27 +107,41 @@ class EpreuveController extends Controller
      */
     public function show(string $slug)
     {
-        $epreuve = Epreuve::published()->with('matiere')->where('slug', $slug)->firstOrFail();
+        $epreuve = Cache::remember("epreuve_show_{$slug}", 1800, function () use ($slug) {
+            return Epreuve::published()->with('matiere')->where('slug', $slug)->firstOrFail();
+        });
 
-        Epreuve::where('id', $epreuve->id)->increment('views_count');
+        // Incrémenter les vues de façon probabiliste : 1 chance sur 10, on ajoute 10
+        // Évite une écriture DB synchrone à chaque visite
+        if (rand(1, 10) === 1) {
+            Epreuve::where('id', $epreuve->id)->increment('views_count', 10);
+        }
 
-        $related = Epreuve::published()
-            ->where('id', '!=', $epreuve->id)
-            ->where(function ($q) use ($epreuve) {
-                if ($epreuve->matiere_id) {
-                    $q->where('matiere_id', $epreuve->matiere_id);
-                }
-                if ($epreuve->exam) {
-                    $q->orWhere('exam', $epreuve->exam);
-                } elseif ($epreuve->level) {
-                    $q->orWhere('level', $epreuve->level);
-                }
-            })
-            ->orderByDesc('year')
-            ->limit(6)
-            ->get();
+        $related = Cache::remember("epreuve_related_{$epreuve->id}", 3600, function () use ($epreuve) {
+            return Epreuve::published()
+                ->where('id', '!=', $epreuve->id)
+                ->where(function ($q) use ($epreuve) {
+                    if ($epreuve->matiere_id) {
+                        $q->where('matiere_id', $epreuve->matiere_id);
+                    }
+                    if ($epreuve->exam) {
+                        $q->orWhere('exam', $epreuve->exam);
+                    } elseif ($epreuve->level) {
+                        $q->orWhere('level', $epreuve->level);
+                    }
+                })
+                ->orderByDesc('year')
+                ->limit(6)
+                ->get();
+        });
 
-        return view('epreuves.show', compact('epreuve', 'related'));
+        // AdSense cachées ici pour éviter 2 requêtes DB dans la vue
+        $adsSettings = Cache::remember('adsense_settings', 3600, fn() => \App\Models\AdSenseSetting::first());
+        $adsUnit     = Cache::remember('adsense_unit_content', 3600, fn() => \App\Models\AdSenseUnit::getUnitsForPosition('content')->first());
+
+        $epreuveDocuments = $this->getEpreuveCategoryDocuments();
+
+        return view('epreuves.show', compact('epreuve', 'related', 'adsSettings', 'adsUnit', 'epreuveDocuments'));
     }
 
     /**
@@ -174,7 +213,12 @@ class EpreuveController extends Controller
             $query->where('level', $level);
         }
         if ($matiereSlug !== '') {
-            $query->whereHas('matiere', fn ($q) => $q->where('slug', $matiereSlug));
+            $matiereId = Cache::remember("matiere_id_{$matiereSlug}", 3600,
+                fn() => EpreuveMatiere::where('slug', $matiereSlug)->value('id')
+            );
+            if ($matiereId) {
+                $query->where('matiere_id', $matiereId);
+            }
         }
         if ($serie !== '') {
             $query->where('serie', $serie);
@@ -200,17 +244,20 @@ class EpreuveController extends Controller
             ->paginate(18)
             ->appends($request->only('exam', 'level', 'matiere', 'serie', 'year', 'type', 'q'));
 
-        $matieres = EpreuveMatiere::orderBy('order')->orderBy('name')->get();
+        $matieres = Cache::remember('epreuve_matieres', 3600,
+            fn() => EpreuveMatiere::orderBy('order')->orderBy('name')->get()
+        );
 
-        // Collecte toutes les années couvertes (début ET fin des plages d'annales)
-        $startYears = Epreuve::published()->whereNotNull('year')->pluck('year');
-        $endYears   = Epreuve::published()->whereNotNull('year_end')->pluck('year_end');
-        $years = $startYears->merge($endYears)->unique()->sort()->reverse()->values();
+        $years = Cache::remember('epreuve_years', 3600, function () {
+            $startYears = Epreuve::published()->whereNotNull('year')->pluck('year');
+            $endYears   = Epreuve::published()->whereNotNull('year_end')->pluck('year_end');
+            return $startYears->merge($endYears)->unique()->sort()->reverse()->values();
+        });
 
-        $stats = [
-            'total' => Epreuve::published()->count(),
+        $stats = Cache::remember('epreuve_stats', 1800, fn() => [
+            'total'     => Epreuve::published()->count(),
             'downloads' => (int) Epreuve::published()->sum('downloads_count'),
-        ];
+        ]);
 
         return view('epreuves.index', array_merge($seo, [
             'epreuves' => $epreuves,

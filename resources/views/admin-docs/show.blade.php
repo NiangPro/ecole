@@ -495,6 +495,37 @@ body.dark-mode .admin-doc-related-link a:hover {
                 </section>
             @endif
 
+            {{-- TÂCHE 5 : Encadré e-book (seul lien inter-silos autorisé) --}}
+            <x-ebook-promo :type="$contentType ?? 'administratif'" />
+
+            {{-- TÂCHE 1 : Conseil Expert NiangProgrammeur (anti-thin-content) --}}
+            @if(!empty($expertAdvice))
+            <section class="admin-doc-section" style="border-bottom:none;padding-bottom:0;">
+                <div style="
+                    padding:1.25rem 1.5rem;
+                    background:linear-gradient(135deg,rgba(5,150,105,.07),rgba(8,145,178,.07));
+                    border-left:5px solid #059669;
+                    border-radius:0 12px 12px 0;
+                    margin-bottom:1.25rem;
+                ">
+                    <div style="font-size:.75rem;font-weight:800;color:#059669;text-transform:uppercase;
+                                letter-spacing:.07em;margin-bottom:.5rem;display:flex;align-items:center;gap:.4rem;">
+                        <i class="fas fa-lightbulb"></i> Conseil de l'Expert NiangProgrammeur
+                    </div>
+                    <p style="margin:0;font-size:.9rem;line-height:1.7;color:rgba(30,41,59,.8);">
+                        {{ $expertAdvice }}
+                    </p>
+                </div>
+            </section>
+            @endif
+
+            {{-- TÂCHE 3 : FAQ visible dans la fiche + microdata --}}
+            @if(!empty($documentFaqs))
+            <section class="admin-doc-section" style="border-bottom:none;padding-bottom:0;">
+                <x-faq-schema :faqs="$documentFaqs" />
+            </section>
+            @endif
+
             <div class="admin-doc-back-wrap">
                 <a href="{{ route('admin-docs.index') }}" class="admin-doc-back">
                     <i class="fas fa-arrow-left"></i>

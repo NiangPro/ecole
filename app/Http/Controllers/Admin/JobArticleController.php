@@ -128,7 +128,15 @@ class JobArticleController extends Controller
                 if (self::isUnstableImageUrl($url)) {
                     return back()->withErrors(['cover_image_url' => 'Les images gstatic.com et googleusercontent.com sont instables. Uploadez l\'image directement ou utilisez une URL hébergée sur votre serveur.'])->withInput();
                 }
-                $validated['cover_image'] = $url;
+                // Réhéberger systématiquement l'image externe plutôt que de garder l'URL brute
+                // (dépendance à un tiers non maîtrisé — lien mort si la source change/supprime l'image)
+                $rehosted = $this->rehostExternalImage($url);
+                if ($rehosted) {
+                    $validated['cover_image'] = $rehosted;
+                    $validated['cover_type'] = 'internal';
+                } else {
+                    $validated['cover_image'] = $url;
+                }
             } else {
                 // Si l'URL n'est pas valide, ne pas définir cover_image
                 unset($validated['cover_image']);
@@ -165,6 +173,8 @@ class JobArticleController extends Controller
 
         // Logger l'action
         AdminLog::log('create', $article, "Création de l'article \"{$article->title}\"");
+
+        $this->invalidateJobArticleCaches();
 
         // Envoyer les notifications si l'article est publié
         if ($article->status === 'published') {
@@ -249,14 +259,9 @@ class JobArticleController extends Controller
         $validated['is_featured'] = $request->has('is_featured') ? true : false;
 
         if (empty($validated['slug'])) {
-            $baseSlug = Str::slug($validated['title']);
-            $slug = $baseSlug;
-            $counter = 1;
-            while (JobArticle::where('slug', $slug)->where('id', '!=', $id)->exists()) {
-                $slug = $baseSlug . '-' . $counter;
-                $counter++;
-            }
-            $validated['slug'] = $slug;
+            // Conserver le slug existant plutôt que de le régénérer depuis le titre
+            // (évite de changer les URLs des articles lors d'une simple modification)
+            $validated['slug'] = $article->slug;
         }
 
         // Gérer l'upload d'image
@@ -277,16 +282,19 @@ class JobArticleController extends Controller
             // Vérifier que c'est une URL valide (commence par http) et pas une base64
             if (!empty($newUrl) && (str_starts_with($newUrl, 'http://') || str_starts_with($newUrl, 'https://'))) {
                 if ($newUrl !== $article->cover_image || $article->cover_type !== 'external') {
-                    // Vérifier l'URL instable uniquement si elle est nouvelle
-                    if (self::isUnstableImageUrl($newUrl)) {
-                        return back()->withErrors(['cover_image_url' => 'Les images gstatic.com et googleusercontent.com sont instables. Uploadez l\'image directement ou utilisez une URL hébergée sur votre serveur.'])->withInput();
-                    }
+                    // URL différente OU correction du type (internal→external) : mettre à jour
                     $imageChanged = true;
-                    // Supprimer l'ancienne image interne si on passe à externe
                     if ($article->cover_type === 'internal' && $article->cover_image && Storage::disk('public')->exists($article->cover_image)) {
                         Storage::disk('public')->delete($article->cover_image);
                     }
-                    $validated['cover_image'] = $newUrl;
+                    // Réhéberger systématiquement l'image externe plutôt que de garder l'URL brute
+                    $rehosted = $this->rehostExternalImage($newUrl);
+                    if ($rehosted) {
+                        $validated['cover_image'] = $rehosted;
+                        $validated['cover_type'] = 'internal';
+                    } else {
+                        $validated['cover_image'] = $newUrl;
+                    }
                 }
             } elseif (empty($newUrl) && $article->cover_type === 'external' && $article->cover_image) {
                 // URL vide mais on garde l'ancienne URL
@@ -358,9 +366,16 @@ class JobArticleController extends Controller
                 ->withErrors(['slug' => 'Ce slug existe déjà. Veuillez en choisir un autre.']);
         }
 
+        // Invalider les caches home + /emplois pour refléter les changements immédiatement
+        $this->invalidateJobArticleCaches();
+
         // Notifier si l'article vient de passer en publié
         if ($article->status === 'published' && $wasNotPublished) {
-            \App\Services\NotificationService::notifyNewArticle($article);
+            try {
+                \App\Services\NotificationService::notifyNewArticle($article);
+            } catch (\Exception $e) {
+                \Log::error('NotificationService failed for article ' . $article->id . ': ' . $e->getMessage());
+            }
         }
 
         try {
@@ -414,8 +429,31 @@ class JobArticleController extends Controller
 
         $article->delete();
 
+        $this->invalidateJobArticleCaches();
+
         return redirect()->route('admin.jobs.articles.index')
             ->with('success', 'Article supprimé avec succès');
+    }
+
+    /**
+     * Invalide tous les caches affichant des listes/compteurs d'articles d'emploi.
+     *
+     * Root cause du cache obsolète sur /emplois : la home et /emplois utilisent deux
+     * clés de cache distinctes ('homepage_view_v4_*' vs 'recent_job_articles'), et seule
+     * la home était partiellement invalidée ici — via d'anciennes clés 'homepage_view_v2_*'
+     * qui n'existent plus depuis la migration vers v4 (code mort, ne clearait plus rien).
+     * 'recent_job_articles' n'était lui jamais invalidé, ni 'navigation_job_categories'
+     * (compteur de la sidebar), d'où l'écart observé entre les deux pages/compteurs.
+     */
+    private function invalidateJobArticleCaches(): void
+    {
+        $locale = app()->getLocale();
+        \Illuminate\Support\Facades\Cache::forget("homepage_view_v4_{$locale}");
+        \Illuminate\Support\Facades\Cache::forget('homepage_view_v4_fr');
+        \Illuminate\Support\Facades\Cache::forget('homepage_view_v4_en');
+        \Illuminate\Support\Facades\Cache::forget('recent_job_articles');
+        \Illuminate\Support\Facades\Cache::forget('active_categories');
+        \Illuminate\Support\Facades\Cache::forget('navigation_job_categories');
     }
 
     private function calculateSeoScore($data)
@@ -571,5 +609,14 @@ class JobArticleController extends Controller
             }
         }
         return false;
+    }
+
+    /**
+     * Télécharge une image hébergée en externe et la réhéberge localement.
+     * Voir App\Services\ExternalImageRehoster (partagé avec ArticleGeneratorService).
+     */
+    private function rehostExternalImage(string $url): ?string
+    {
+        return \App\Services\ExternalImageRehoster::rehost($url);
     }
 }

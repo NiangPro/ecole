@@ -216,6 +216,12 @@ class Document extends Model
      */
     public function getAverageRatingAttribute(): float
     {
+        // Si withAvg('approvedReviews as average_rating', 'rating') a été utilisé en amont
+        // (listes de documents), on réutilise la valeur déjà chargée pour éviter le N+1.
+        if (array_key_exists('average_rating', $this->attributes)) {
+            return (float) ($this->attributes['average_rating'] ?? 0);
+        }
+
         return $this->approvedReviews()->avg('rating') ?? 0;
     }
 
@@ -224,6 +230,12 @@ class Document extends Model
      */
     public function getReviewsCountAttribute(): int
     {
+        // Si withCount('approvedReviews as reviews_count') a été utilisé en amont
+        // (listes de documents), on réutilise la valeur déjà chargée pour éviter le N+1.
+        if (array_key_exists('reviews_count', $this->attributes)) {
+            return (int) $this->attributes['reviews_count'];
+        }
+
         return $this->approvedReviews()->count();
     }
 

@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@push('page_css')
+@vite('resources/css/features/contact.css')
+@endpush
+
 @section('title', __('contact.title'))
 @section('meta_description', __('contact.meta_description'))
 @section('meta_keywords', __('contact.meta_keywords'))

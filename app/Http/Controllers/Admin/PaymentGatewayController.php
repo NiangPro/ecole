@@ -45,7 +45,12 @@ class PaymentGatewayController extends Controller
             'wave_country_code' => 'nullable|string|size:2',
             'wave_enabled' => 'boolean',
             'wave_qr_code' => 'nullable|string|max:500',
-            
+
+            // Orange Money
+            'orange_money_number' => 'nullable|string|max:255',
+            'orange_money_enabled' => 'boolean',
+            'orange_money_instructions' => 'nullable|string|max:1000',
+
             // PayPal
             'paypal_client_id' => 'nullable|string|max:255',
             'paypal_client_secret' => 'nullable|string|max:255',
@@ -71,6 +76,9 @@ class PaymentGatewayController extends Controller
             'wave_country_code',
             'wave_enabled',
             'wave_qr_code',
+            'orange_money_number',
+            'orange_money_enabled',
+            'orange_money_instructions',
             'paypal_client_id',
             'paypal_client_secret',
             'paypal_mode',
@@ -83,6 +91,7 @@ class PaymentGatewayController extends Controller
         
         // Gérer les checkboxes (si non cochées, elles ne sont pas envoyées)
         $data['wave_enabled'] = $request->has('wave_enabled');
+        $data['orange_money_enabled'] = $request->has('orange_money_enabled');
         $data['paypal_enabled'] = $request->has('paypal_enabled');
         $data['stripe_enabled'] = $request->has('stripe_enabled');
         

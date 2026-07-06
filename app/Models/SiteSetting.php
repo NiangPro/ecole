@@ -36,6 +36,9 @@ class SiteSetting extends Model
         'wave_country_code',
         'wave_enabled',
         'wave_qr_code',
+        'orange_money_number',
+        'orange_money_enabled',
+        'orange_money_instructions',
         'paypal_client_id',
         'paypal_client_secret',
         'paypal_mode',
@@ -48,27 +51,43 @@ class SiteSetting extends Model
         'maintenance_message',
         'maintenance_ends_at',
         'corrige_price',
+        'urgency_banner_enabled',
+        'urgency_banner_text',
+        'urgency_banner_target_date',
+        'urgency_banner_link',
     ];
 
     protected $casts = [
         'maintenance_mode'   => 'boolean',
         'maintenance_ends_at' => 'datetime',
         'wave_enabled'       => 'boolean',
+        'orange_money_enabled' => 'boolean',
         'paypal_enabled'     => 'boolean',
         'stripe_enabled'     => 'boolean',
         'corrige_price'      => 'decimal:2',
+        'urgency_banner_enabled' => 'boolean',
+        'urgency_banner_target_date' => 'datetime',
     ];
+
+    private static ?self $_instance = null;
+
+    public static function instance(): ?self
+    {
+        if (self::$_instance === null) {
+            self::$_instance = \Illuminate\Support\Facades\Cache::remember('site_settings', 3600, fn() => self::first());
+        }
+        return self::$_instance;
+    }
 
     public static function get($key, $default = null)
     {
-        $settings = \Illuminate\Support\Facades\Cache::remember('site_settings', 3600, function () {
-            return self::first();
-        });
+        $settings = self::instance();
         return $settings ? ($settings->$key ?? $default) : $default;
     }
-    
+
     public static function clearCache()
     {
+        self::$_instance = null;
         \Illuminate\Support\Facades\Cache::forget('site_settings');
     }
 

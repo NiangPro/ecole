@@ -24,6 +24,7 @@ class CorrigeController extends Controller
 
         // E-mail OU téléphone obligatoire (au moins un des deux)
         $request->validate([
+            'payment_method' => 'nullable|in:wave,orange_money',
             'customer_name' => 'nullable|string|max:255',
             'customer_email' => 'nullable|email|max:255|required_without:customer_phone',
             'customer_phone' => 'nullable|string|max:20|required_without:customer_email',
@@ -44,6 +45,7 @@ class CorrigeController extends Controller
         }
 
         $price = $epreuve->getCorrigePrice();
+        $paymentMethod = $request->input('payment_method', 'wave');
 
         // WhatsApp activé pour cet achat si un téléphone est fourni et l'option globale active
         $whatsappEnabled = false;
@@ -72,8 +74,8 @@ class CorrigeController extends Controller
             'amount' => $price,
             'currency' => 'XOF',
             'status' => 'pending',
-            'payment_method' => 'wave',
-            'payment_gateway' => 'wave',
+            'payment_method' => $paymentMethod,
+            'payment_gateway' => $paymentMethod,
             'transaction_id' => 'COR-' . Str::upper(Str::random(12)),
             'payment_reference' => 'REF-' . Str::upper(Str::random(10)),
             'payment_details' => array_filter([
@@ -84,6 +86,10 @@ class CorrigeController extends Controller
         ]);
 
         $purchase->update(['payment_id' => $payment->id]);
+
+        if ($paymentMethod === 'orange_money') {
+            return redirect()->route('payment.confirm', $payment->id);
+        }
 
         // Générer le lien de paiement Wave
         $waveLink = WavePaymentService::generatePaymentLink(

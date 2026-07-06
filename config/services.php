@@ -63,4 +63,8 @@ return [
         'subject'     => env('VAPID_SUBJECT', 'mailto:contact@niangprogrammeur.com'),
     ],
 
+    'mcp_connector' => [
+        'token' => env('MCP_CONNECTOR_TOKEN'),
+    ],
+
 ];

@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@push('page_css')
+@vite('resources/css/features/emplois.css')
+@endpush
+
 @section('title', 'Toutes les Opportunités d\'Emploi | NiangProgrammeur')
 @section('meta_description', 'Découvrez toutes les opportunités d\'emploi, bourses, concours et offres professionnelles au Sénégal. Plus de ' . ($stats['total'] ?? 0) . ' opportunités disponibles.')
 @push('meta')
@@ -507,9 +511,9 @@
             <div class="all-article-image">
                 @if($article->cover_image)
                     @if($article->cover_type === 'internal')
-                        <img src="{{ asset('storage/' . $article->cover_image) }}" alt="{{ $article->title }}" loading="lazy">
+                        <img src="{{ asset('storage/' . $article->cover_image) }}" alt="{{ $article->title }}" width="400" height="200" loading="lazy" decoding="async">
                     @else
-                        <img src="{{ $article->cover_image }}" alt="{{ $article->title }}" loading="lazy">
+                        <img src="{{ $article->cover_image }}" alt="{{ $article->title }}" width="400" height="200" loading="lazy" decoding="async">
                     @endif
                 @else
                     <i class="fas fa-briefcase"></i>

@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@push('page_css')
+@vite('resources/css/features/emplois.css')
+@endpush
+
 @section('title', 'Bourses d\'Études | NiangProgrammeur')
 @section('meta_description', 'Découvrez les meilleures opportunités de bourses d\'études disponibles au Sénégal et à l\'étranger pour poursuivre votre formation.')
 

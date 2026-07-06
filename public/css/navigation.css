@@ -815,25 +815,40 @@
     .mobile-toggle { display: flex; }
     .navbar-cta { display: none; }
     .navbar-language-widget { display: none !important; }
-    .navbar-container { gap: 8px; align-items: center; justify-content: space-between; }
+
+    /* Le div #userDropdown reste dans le flux même quand .navbar-cta est masqué
+       → on cache le conteneur entier ; le compte est accessible via le menu mobile. */
+    #userDropdown { display: none !important; }
+
+    /* Stratégie : logo colle à gauche via margin-right:auto,
+       tous les éléments de droite (search, notif, burger) se regroupent
+       naturellement à droite sans dépendre de space-between ni d'order. */
+    .navbar-container {
+        gap: 8px;
+        align-items: center;
+        justify-content: flex-start;
+    }
+    .navbar-logo {
+        margin-right: auto;
+        margin-inline-end: auto;  /* override the base 16px logical-end margin */
+        flex-shrink: 0;
+    }
     .navbar-search-container {
-        order: 2;
-        margin-left: auto;
+        order: unset;
+        margin-left: 0;
         flex-shrink: 0;
     }
     .mobile-toggle {
-        order: 3;
+        order: unset;
         margin-left: 0;
         flex-shrink: 0;
     }
 }
 
 @media (max-width: 640px) {
-    .navbar-container { padding-inline: 8px; }
-
-    /* Reduce right inset so search and burger can sit nearer the viewport edge */
-    .navbar-search-container { margin-right: 6px; }
-    .mobile-toggle { margin-right: 2px; }
+    .navbar-container { padding-inline: 10px; }
+    .navbar-search-container { margin-right: 4px; }
+    .mobile-toggle { margin-right: 0; }
 
     .navbar-search-form {
         position: fixed;

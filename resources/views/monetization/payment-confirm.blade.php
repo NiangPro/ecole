@@ -114,6 +114,25 @@
                 </label>
                             @endif
 
+                <!-- Orange Money -->
+                @if($siteSettings->orange_money_enabled ?? false)
+                <label class="payment-method-card">
+                    <input type="radio" name="payment_method" value="orange_money" {{ $payment->payment_method === 'orange_money' ? 'checked' : '' }} class="method-radio">
+                    <div class="method-content">
+                        <div class="method-icon mobile-money">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <div class="method-info">
+                            <h4 class="method-name">Orange Money</h4>
+                            <p class="method-description">Envoi direct au numéro marchand</p>
+                        </div>
+                        <div class="method-check">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+                </label>
+                @endif
+
                 <!-- PayPal -->
                 @if($siteSettings->paypal_enabled ?? false)
                 <label class="payment-method-card">
@@ -205,6 +224,29 @@
                                 <i class="fas fa-external-link-alt"></i>
                                 Payer avec Wave
                             </a>
+                        </div>
+                    </div>
+                </div>
+                @elseif($payment->payment_method === 'orange_money')
+                <div class="instructions-content">
+                    <div class="instructions-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <div class="instructions-text">
+                        <h4>Paiement via Orange Money</h4>
+                        <p>{{ \App\Services\OrangeMoneyPaymentService::getInstructions() }}</p>
+                        @if(\App\Services\OrangeMoneyPaymentService::getNumber())
+                        <div class="bank-details">
+                            <p><strong>Numéro Orange Money :</strong> {{ \App\Services\OrangeMoneyPaymentService::getNumber() }}</p>
+                            <p><strong>Montant :</strong> {{ number_format($payment->amount, 0, ',', ' ') }} FCFA</p>
+                            <p><strong>Référence :</strong> {{ $payment->payment_reference }}</p>
+                        </div>
+                        @endif
+                        <div class="instructions-actions">
+                            <button type="button" onclick="confirmPayment()" class="confirm-payment-btn">
+                                <i class="fas fa-check"></i>
+                                J'ai effectué le paiement
+                            </button>
                         </div>
                     </div>
                 </div>

@@ -72,8 +72,15 @@ class ArticleGeneratorService
                 // Reformuler l'article avec optimisation SEO
                 $reformulated = $this->reformulateArticle($article, $category);
 
-                // Récupérer une image illustrative
+                // Récupérer une image illustrative et la réhéberger localement plutôt que
+                // de dépendre de la source externe (lien mort si elle change/supprime l'image)
                 $imageUrl = $this->getIllustrativeImage($reformulated['title'], $category);
+                $coverType = 'external';
+                $rehosted = \App\Services\ExternalImageRehoster::rehost($imageUrl);
+                if ($rehosted) {
+                    $imageUrl = $rehosted;
+                    $coverType = 'internal';
+                }
 
                 // Calculer les scores SEO et visibilité
                 $seoScore = $this->calculateSeoScore($reformulated);
@@ -87,7 +94,7 @@ class ArticleGeneratorService
                     'excerpt' => $reformulated['excerpt'],
                     'content' => $reformulated['content'],
                     'cover_image' => $imageUrl,
-                    'cover_type' => 'external',
+                    'cover_type' => $coverType,
                     'meta_title' => $reformulated['meta_title'] ?? $reformulated['title'],
                     'meta_description' => $reformulated['meta_description'] ?? $reformulated['excerpt'],
                     'meta_keywords' => $reformulated['keywords'] ?? [],

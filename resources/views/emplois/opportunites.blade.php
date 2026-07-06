@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@push('page_css')
+@vite('resources/css/features/emplois.css')
+@endpush
+
 @section('title', 'Opportunités | NiangProgrammeur')
 @section('meta_description', 'Découvrez les opportunités de stage, freelance, projets et collaborations dans le domaine du développement web et de la technologie.')
 

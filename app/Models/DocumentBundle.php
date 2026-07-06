@@ -52,21 +52,6 @@ class DocumentBundle extends Model
     }
 
     /**
-     * Relation avec les documents du bundle
-     */
-    public function documents()
-    {
-        return $this->hasManyThrough(
-            Document::class,
-            DocumentBundleItem::class,
-            'bundle_id',
-            'id',
-            'id',
-            'document_id'
-        )->orderBy('document_bundle_items.order');
-    }
-
-    /**
      * Obtenir le prix actuel (avec réduction si applicable)
      */
     public function getCurrentPriceAttribute(): float
@@ -95,12 +80,22 @@ class DocumentBundle extends Model
     }
 
     /**
-     * Calculer le prix total des documents individuels
+     * Calculer le prix total des éléments individuels (documents et/ou épreuves)
      */
     public function getTotalIndividualPriceAttribute(): float
     {
-        return $this->documents->sum(function($document) {
-            return $document->discount_price ?? $document->price;
+        return $this->items->load('itemable')->sum(function ($item) {
+            $itemable = $item->itemable;
+
+            if (!$itemable) {
+                return 0;
+            }
+
+            if ($itemable instanceof Document) {
+                return $itemable->discount_price ?? $itemable->price;
+            }
+
+            return $itemable->price ?? 0;
         });
     }
 

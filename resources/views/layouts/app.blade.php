@@ -112,25 +112,39 @@
     </style>
 
     <!-- CSS critique inline (above the fold — aucun HTTP request) -->
-    <style>*{box-sizing:border-box}html,body{margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;background:#fff;color:#1e293b;overflow-x:hidden}.hero-section{position:relative;z-index:2;width:100%;min-height:65vh;display:flex;align-items:center;justify-content:center;padding:80px 40px 60px;overflow:hidden;background:linear-gradient(135deg,rgba(15,23,42,.85) 0%,rgba(30,41,59,.9) 100%)}.hero-content{max-width:1200px;margin:0 auto;width:100%;text-align:center}.main-title{font-size:clamp(2.5rem,5vw,4rem);font-weight:900;line-height:1.2;margin-bottom:30px;color:#fff}.subtitle{font-size:clamp(1rem,2vw,1.3rem);color:rgba(255,255,255,.9);margin-bottom:40px;line-height:1.6}@media (max-width:768px){.hero-section{min-height:55vh;padding:60px 20px 40px}.main-title{font-size:clamp(1.8rem,4vw,2.2rem);line-height:1.3;margin-bottom:20px}}.container{width:100%!important;margin-left:auto!important;margin-right:auto!important;padding-left:1rem!important;padding-right:1rem!important}@media (min-width:640px){.container{padding-left:1.5rem!important;padding-right:1.5rem!important}}section.relative.min-h-screen>div.container{text-align:center!important}section.relative.min-h-screen>div.container>div{margin-left:auto!important;margin-right:auto!important;text-align:center!important}section.relative.min-h-screen h1,section.relative.min-h-screen p{text-align:center!important;margin-left:auto!important;margin-right:auto!important}.max-w-5xl{max-width:64rem!important;margin-left:auto!important;margin-right:auto!important;display:block!important}.max-w-7xl{max-width:80rem!important;margin-left:auto!important;margin-right:auto!important;display:block!important}.max-w-3xl{max-width:48rem!important;margin-left:auto!important;margin-right:auto!important;display:block!important}</style>
+    <style>*{box-sizing:border-box}html,body{margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;background:#fff;color:#1e293b;overflow-x:hidden}.hero-section{position:relative;z-index:2;width:100%;min-height:65vh;display:flex;align-items:center;justify-content:center;padding:80px 40px 60px;overflow:hidden;background:linear-gradient(135deg,rgba(15,23,42,.85) 0%,rgba(30,41,59,.9) 100%)}.hero-content{max-width:1200px;margin:0 auto;width:100%;text-align:center}.main-title{font-size:clamp(2.5rem,5vw,4rem);font-weight:900;line-height:1.2;margin-bottom:30px;color:#fff}.subtitle{font-size:clamp(1rem,2vw,1.3rem);color:rgba(255,255,255,.9);margin-bottom:40px;line-height:1.6}@media (max-width:768px){.hero-section{min-height:55vh;padding:60px 20px 40px}.main-title{font-size:clamp(1.8rem,4vw,2.2rem);line-height:1.3;margin-bottom:20px}}.container{width:100%!important;margin-left:auto!important;margin-right:auto!important;padding-left:1rem!important;padding-right:1rem!important}@media (min-width:640px){.container{padding-left:1.5rem!important;padding-right:1.5rem!important}}section.relative.min-h-screen>div.container{text-align:center!important}section.relative.min-h-screen>div.container>div{margin-left:auto!important;margin-right:auto!important;text-align:center!important}section.relative.min-h-screen h1,section.relative.min-h-screen p{text-align:center!important;margin-left:auto!important;margin-right:auto!important}.max-w-5xl{max-width:64rem!important;margin-left:auto!important;margin-right:auto!important;display:block!important}.max-w-7xl{max-width:80rem!important;margin-left:auto!important;margin-right:auto!important;display:block!important}.max-w-3xl{max-width:48rem!important;margin-left:auto!important;margin-right:auto!important;display:block!important}
+    /* Critique — hero de la page d'accueil (.hp-hero), élément LCP confirmé par Lighthouse.
+       Peint le texte immédiatement sans attendre app.css/homepage.css (render-blocking). */
+    .hp-hero{position:relative;min-height:60dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:5rem 1.5rem 4rem;overflow:hidden;background:oklch(5% 0.02 230)}
+    .hp-hero>div{position:relative;z-index:1}
+    .hp-hero__eyebrow{display:inline-flex;align-items:center;gap:.5rem;padding:.375rem 1rem;border-radius:999px;border:1px solid oklch(65% 0.20 200/30%);background:oklch(65% 0.20 200/8%);font-size:.8125rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:oklch(65% 0.20 200);margin-bottom:2rem}
+    .hp-hero__title{font-family:Poppins,ui-sans-serif,system-ui,sans-serif;font-size:clamp(2.75rem,6vw,5rem);font-weight:900;line-height:1.08;letter-spacing:-.03em;color:oklch(97% 0 0);max-width:22ch;margin-inline:auto;margin-bottom:1.5rem}
+    .hp-hero__title .accent{background:linear-gradient(135deg,oklch(65% 0.20 200),oklch(65% 0.18 170));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+    .hp-hero__subtitle{font-size:clamp(1.05rem,2vw,1.25rem);font-weight:700;color:oklch(90% 0 0);max-width:55ch;margin-inline:auto;margin-bottom:2.5rem;line-height:1.7}
+    </style>
 
     @php
-        $viteManifest = json_decode(file_get_contents(public_path('build/manifest.json')), true);
+        $viteManifest = \Illuminate\Support\Facades\Cache::remember('vite_manifest', 3600, function () {
+            return json_decode(file_get_contents(public_path('build/manifest.json')), true);
+        });
         $viteCssFile  = $viteManifest['resources/css/app.css']['file'] ?? null;
     @endphp
 
     <!-- Preload hints — démarrer le téléchargement tôt sans différer l'application -->
-    <link rel="preload" href="{{ asset('css/navigation.css') }}" as="style">
+    @php $navCssV = \Illuminate\Support\Facades\Cache::remember('nav_css_mtime', 3600, fn() => filemtime(public_path('css/navigation.css'))); @endphp
+    <link rel="preload" href="{{ asset('css/navigation.css') }}?v={{ $navCssV }}" as="style">
     @if($viteCssFile)
     <link rel="preload" href="{{ asset('build/' . $viteCssFile) }}" as="style">
     @endif
 
     <!-- CSS synchrone (bloquant mais sans CLS — styles appliqués avant le premier paint) -->
-    <link rel="stylesheet" href="{{ asset('css/navigation.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/navigation.css') }}?v={{ $navCssV }}">
     @if($viteCssFile)
     <link rel="stylesheet" href="{{ asset('build/' . $viteCssFile) }}">
     @endif
-    
+    {{-- CSS spécifique à la page (chargé après app.css pour respect des priorités) --}}
+    @stack('page_css')
+
     <!-- reCAPTCHA v3 (invisible) -->
     @php
         $recaptchaSiteKey = config('services.recaptcha.site_key', '');
@@ -185,6 +199,10 @@
     <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"></noscript>
     
+    <!-- Poppins 900 (latin) préchargé directement en woff2 : évite le double aller-retour
+         CSS Google Fonts → fichier woff2 pour le H1 du hero, élément LCP de la home -->
+    <link rel="preload" as="font" type="font/woff2" href="https://fonts.gstatic.com/s/poppins/v24/pxiByp8kv8JHgFVrLBT5Z1xlFd2JQEk.woff2" crossorigin>
+
     <!-- Google Fonts - Chargement asynchrone (Inter + Poppins uniquement) -->
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@700;800;900&display=swap"></noscript>
@@ -223,9 +241,7 @@
     
     <!-- Google Analytics -->
     @php
-        $siteSettings = \Illuminate\Support\Facades\Cache::remember('site_settings', 3600, function () {
-            return \App\Models\SiteSetting::first();
-        });
+        $siteSettings = \Illuminate\Support\Facades\Cache::remember('site_settings', 3600, fn() => \App\Models\SiteSetting::first());
         $gaId = $siteSettings->google_analytics_id ?? config('services.google_analytics.id');
     @endphp
     
@@ -287,6 +303,7 @@
     </div>
     
     @include('partials.navigation')
+    @include('partials.urgency-banner')
 
     @auth
     @if(auth()->user()->isAdmin())
@@ -647,10 +664,25 @@
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-56V4D8K6');</script>
 
-    <!-- AdSense — chargé après le contenu -->
+    <!-- AdSense — chargé en différé après interaction ou 3s pour ne pas bloquer le rendu -->
     @if($adsenseSettings && $adsenseClientId)
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ $adsenseClientId }}"
-            crossorigin="anonymous"></script>
+    <script>
+    (function(){
+        var done=false;
+        function loadAds(){
+            if(done)return; done=true;
+            var s=document.createElement('script');
+            s.async=true;
+            s.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ $adsenseClientId }}';
+            s.crossOrigin='anonymous';
+            document.head.appendChild(s);
+        }
+        window.addEventListener('scroll',loadAds,{once:true,passive:true});
+        window.addEventListener('mousemove',loadAds,{once:true,passive:true});
+        window.addEventListener('touchstart',loadAds,{once:true,passive:true});
+        setTimeout(loadAds,3000);
+    })();
+    </script>
     @elseif($adsenseSettings && !empty($adsenseSettings->adsense_code) && strpos($adsenseSettings->adsense_code, '<script') !== false)
     {!! $adsenseSettings->adsense_code !!}
     @endif

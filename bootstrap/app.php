@@ -35,8 +35,11 @@ return Application::configure(basePath: dirname(__DIR__))
         
         // Alias pour les middlewares
         $middleware->alias([
-            'admin' => \App\Http\Middleware\AdminAuth::class,
-            'rate.limit' => \App\Http\Middleware\AdvancedRateLimiting::class,
+            'admin'               => \App\Http\Middleware\AdminAuth::class,
+            'rate.limit'          => \App\Http\Middleware\AdvancedRateLimiting::class,
+            'download_rate_limit' => \App\Http\Middleware\DownloadRateLimiting::class,
+            'http.cache'          => \App\Http\Middleware\HttpCacheHeaders::class,
+            'page.cache'          => \App\Http\Middleware\PageCache::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -976,6 +976,30 @@
             }
         }, 500);
     });
+
+    // Synchronisation titre → meta_title : ces deux champs sont indépendants en base,
+    // ce qui a déjà causé un titre SEO périmé (sans année) divergeant du H1 affiché
+    // sur un article publié. Tant que l'auteur n'a pas modifié meta_title lui-même,
+    // on le maintient calqué sur le titre (tronqué à 60 caractères) pour éviter
+    // toute nouvelle divergence silencieuse.
+    (function () {
+        const titleField = document.getElementById('articleTitle');
+        const metaTitleField = document.getElementById('metaTitle');
+        if (!titleField || !metaTitleField) return;
+
+        let metaTitleManuallyEdited = metaTitleField.value.trim().length > 0
+            && metaTitleField.value.trim() !== titleField.value.trim().slice(0, 60);
+
+        metaTitleField.addEventListener('input', function () {
+            metaTitleManuallyEdited = true;
+        });
+
+        titleField.addEventListener('input', function () {
+            if (metaTitleManuallyEdited) return;
+            metaTitleField.value = titleField.value.trim().slice(0, 60);
+            metaTitleField.dispatchEvent(new Event('input'));
+        });
+    })();
 </script>
 @endsection
 @endsection

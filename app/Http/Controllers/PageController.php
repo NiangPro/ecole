@@ -23,7 +23,7 @@ class PageController extends Controller
         // Le suffixe de version (v2) garantit qu'un cache écrit par une version
         // antérieure du contrôleur — avec moins de variables — est ignoré après
         // déploiement, au lieu de provoquer une erreur compact()/Undefined variable.
-        $cacheKey = 'homepage_view_v2_' . $locale;
+        $cacheKey = 'homepage_view_v4_' . $locale;
         $cachedView = \Illuminate\Support\Facades\Cache::remember($cacheKey, 900, function () use ($locale) {
             // Cache les 12 derniers articles publiés - Optimisé avec eager loading
             $latestJobs = \App\Models\JobArticle::published()
@@ -107,6 +107,9 @@ class PageController extends Controller
                 ->active()
                 ->with(['category:id,name,slug'])
                 ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'price', 'discount_price', 'download_count', 'sales_count', 'views_count', 'published_at', 'is_featured')
+                ->withAvg('approvedReviews as average_rating', 'rating')
+                ->withCount('approvedReviews as reviews_count')
+                ->orderByRaw("(SELECT CASE WHEN slug = 'epreuves' THEN 0 ELSE 1 END FROM document_categories WHERE document_categories.id = documents.category_id)")
                 ->orderByRaw('CASE WHEN is_featured = 1 THEN 0 ELSE 1 END')
                 ->orderBy('download_count', 'desc')
                 ->orderBy('views_count', 'desc')
@@ -123,7 +126,29 @@ class PageController extends Controller
                 ->take(8)
                 ->get();
 
-            return compact('latestJobs', 'categories', 'sponsoredArticles', 'sidebarAds', 'homepageAds', 'careerAdviceArticles', 'paidCourses', 'featuredArticles', 'featuredDocuments', 'latestEpreuves');
+            // Cache les packs (bundles) vedettes
+            $featuredBundles = \App\Models\DocumentBundle::active()
+                ->with('items.document:id,price,discount_price')
+                ->orderBy('is_featured', 'desc')
+                ->orderBy('sales_count', 'desc')
+                ->take(3)
+                ->get();
+
+            // Cache les avis récents approuvés (preuve sociale, tous documents confondus)
+            $latestReviews = \App\Models\DocumentReview::approved()
+                ->with('document:id,title,slug')
+                ->whereHas('document')
+                ->latest()
+                ->take(6)
+                ->get();
+
+            // Stats globales des avis pour l'en-tête de la section (note moyenne, total)
+            $reviewsStats = [
+                'count' => \App\Models\DocumentReview::approved()->count(),
+                'average' => (float) (\App\Models\DocumentReview::approved()->avg('rating') ?? 0),
+            ];
+
+            return compact('latestJobs', 'categories', 'sponsoredArticles', 'sidebarAds', 'homepageAds', 'careerAdviceArticles', 'paidCourses', 'featuredArticles', 'featuredDocuments', 'latestEpreuves', 'featuredBundles', 'latestReviews', 'reviewsStats');
         });
         
         // Passer directement les données du cache à la vue. On garantit un défaut
@@ -133,7 +158,8 @@ class PageController extends Controller
             'latestJobs' => collect(), 'categories' => collect(), 'sponsoredArticles' => collect(),
             'sidebarAds' => collect(), 'homepageAds' => collect(), 'careerAdviceArticles' => collect(),
             'paidCourses' => collect(), 'featuredArticles' => collect(), 'featuredDocuments' => collect(),
-            'latestEpreuves' => collect(),
+            'latestEpreuves' => collect(), 'featuredBundles' => collect(), 'latestReviews' => collect(),
+            'reviewsStats' => ['count' => 0, 'average' => 0],
         ];
 
         return view('index', array_merge($defaults, $cachedView));

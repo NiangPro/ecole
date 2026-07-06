@@ -10,10 +10,36 @@ use App\Models\Category;
 use App\Models\Comment;
 use App\Models\Ad;
 use App\Http\Controllers\Concerns\LocaleTrait;
+use App\Helpers\ContentEnhancer;
 
+/**
+ * ─── ARCHITECTURE SILO SÉMANTIQUE ───────────────────────────────────────────
+ *
+ * Silo 1 — ÉDUCATION TECH        : formations, quiz, exercices
+ * Silo 2 — CARRIÈRE & RECRUTEMENT: offres-emploi, candidature-spontanee,
+ *                                   opportunites-professionnelles, bourses-etudes
+ * Silo 3 — ADMINISTRATION        : concours, admin-docs
+ *
+ * Règle d'étanchéité :
+ *   • Les "Articles Similaires" restent TOUJOURS dans le même silo (filtre category_id).
+ *   • Le seul lien inter-silos autorisé est l'encadré e-book NiangProgrammeur
+ *     (Le Décodeur de Carrière / Money API) — voir vue emplois/article.blade.php.
+ * ────────────────────────────────────────────────────────────────────────────
+ */
 class EmploiController extends Controller
 {
     use LocaleTrait;
+
+    // Slugs appartenant au silo Carrière & Recrutement
+    private const SILO_CARRIERE = [
+        'offres-emploi',
+        'candidature-spontanee',
+        'opportunites-professionnelles',
+        'bourses-etudes',
+    ];
+
+    // Slugs appartenant au silo Administration
+    private const SILO_ADMIN = ['concours'];
 
     /**
      * Page principale des emplois
@@ -342,7 +368,24 @@ class EmploiController extends Controller
             $comments = collect();
         }
 
-        return view('emplois.article', compact('article', 'relatedArticles', 'sidebarAds', 'comments', 'latestComments', 'relatedDocuments'));
+        // ── Contenu expert (Tâche 1 — anti-thin-content) ─────────────────────
+        $contentType  = ContentEnhancer::getContentTypeFromSlug($article->category?->slug);
+        $expertAdvice = ContentEnhancer::generateExpertAdvice(
+            $article->title,
+            $article->location ?? null,
+            $contentType
+        );
+        $articleFaqs  = ContentEnhancer::generateFAQs(
+            $article->title,
+            $article->location ?? null,
+            $contentType
+        );
+
+        return view('emplois.article', compact(
+            'article', 'relatedArticles', 'sidebarAds', 'comments',
+            'latestComments', 'relatedDocuments',
+            'expertAdvice', 'articleFaqs', 'contentType'
+        ));
     }
 
     /**

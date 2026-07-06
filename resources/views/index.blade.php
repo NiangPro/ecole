@@ -3,9 +3,16 @@
 @section('title', __('homepage.title'))
 @section('meta_description', __('homepage.meta_description'))
 
+@push('page_css')
+@vite('resources/css/features/homepage.css')
+@endpush
+
 @push('preload_images')
 <link rel="preload" as="image" href="{{ asset('images/hero-bg-mobile.webp') }}" type="image/webp" fetchpriority="high" media="(max-width: 768px)">
+@php $heroBgDesktop = public_path('images/hero-bg.webp'); @endphp
+@if(file_exists($heroBgDesktop) && filesize($heroBgDesktop) > 0)
 <link rel="preload" as="image" href="{{ asset('images/hero-bg.webp') }}" type="image/webp" fetchpriority="high" media="(min-width: 769px)">
+@endif
 @endpush
 
 {{-- ─────────────────────────────────────────────────────────
@@ -42,27 +49,6 @@
       </div>
     </div>
   </section>
-
-  {{-- STATS STRIP --}}
-  <div class="hp-stats">
-    <div class="hp-stat-item">
-      <div class="hp-stat-number">10 000+</div>
-      <div class="hp-stat-label">{{ __('homepage.stats.learners') }}</div>
-    </div>
-    <div class="hp-stat-item">
-      <div class="hp-stat-number">{{ $categories->count() }}+</div>
-      <div class="hp-stat-label">{{ __('homepage.stats.technologies') }}</div>
-    </div>
-    <div class="hp-stat-item">
-      <div class="hp-stat-number">{{ $featuredDocuments->count() + 50 }}+</div>
-      <div class="hp-stat-label">{{ __('homepage.stats.resources') }}</div>
-    </div>
-    <div class="hp-stat-item">
-      <div class="hp-stat-number">100%</div>
-      <div class="hp-stat-label">{{ __('homepage.stats.free') }}</div>
-    </div>
-  </div>
-
 
   {{-- ─────────────────────────────────────────────────────────
        DOCUMENTS VEDETTES
@@ -128,9 +114,152 @@
             <a href="{{ route('documents.show', $document->slug) }}" class="hp-doc-title">
               {{ $document->title }}
             </a>
+            @if(($document->reviews_count ?? 0) > 0 || ($document->sales_count ?? 0) > 0)
+            <div class="doc-rating-row">
+              @if(($document->reviews_count ?? 0) > 0)
+              <span class="doc-rating-stars">
+                @for($i = 1; $i <= 5; $i++)
+                  <i class="fas fa-star{{ $i <= round($document->average_rating) ? '' : '-o' }}"></i>
+                @endfor
+              </span>
+              <span class="doc-rating-val">{{ number_format($document->average_rating, 1) }}</span>
+              <span class="doc-rating-count">({{ $document->reviews_count }})</span>
+              @endif
+              @if(($document->sales_count ?? 0) > 0)
+              <span class="doc-rating-count"><i class="fas fa-download"></i> {{ number_format($document->sales_count, 0, ',', ' ') }} ventes</span>
+              @endif
+            </div>
+            @endif
             <div class="hp-doc-footer">
               <span class="hp-doc-category">{{ $document->category?->name ?? __('homepage.docs.general') }}</span>
               <a href="{{ route('documents.show', $document->slug) }}" class="hp-doc-arrow" aria-label="Voir le document">→</a>
+            </div>
+          </div>
+        </article>
+        @endforeach
+      </div>
+
+    </div>
+  </section>
+  @endif
+
+
+  {{-- ─────────────────────────────────────────────────────────
+       PACKS (BUNDLES)
+       ───────────────────────────────────────────────────────── --}}
+  @if($featuredBundles->isNotEmpty())
+  <section class="hp-section hp-section--alt">
+    <div class="hp-container">
+
+      <div class="hp-section-header" style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1rem;">
+        <div>
+          <span class="hp-section-eyebrow">Économisez</span>
+          <h2 class="hp-section-title">Packs de documents</h2>
+          <p class="hp-section-subtitle">Plusieurs documents réunis à prix réduit</p>
+        </div>
+        <a href="{{ route('bundles.index') }}" class="hp-section-action">
+          Voir tous les packs
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <div class="hp-docs-grid">
+        @foreach($featuredBundles as $bundle)
+        <article class="hp-doc-card">
+          <a href="{{ route('bundles.show', $bundle->slug) }}" class="hp-doc-cover">
+            @if($bundle->cover_image)
+              <img src="{{ $bundle->cover_image }}" alt="{{ $bundle->name }}" width="280" height="200" loading="lazy" decoding="async">
+            @else
+              <div class="hp-doc-placeholder">📦</div>
+            @endif
+
+            @if($bundle->savings > 0)
+              <span class="hp-doc-badge">-{{ $bundle->getDiscountPercentage() }}%</span>
+            @endif
+
+            <div class="hp-doc-price">
+              <span class="hp-doc-price-current">{{ number_format($bundle->current_price, 0, ',', ' ') }} FCFA</span>
+              @if($bundle->hasDiscount())
+                <span class="hp-doc-price-old">{{ number_format($bundle->price, 0, ',', ' ') }}</span>
+              @endif
+            </div>
+          </a>
+
+          <div class="hp-doc-body">
+            <a href="{{ route('bundles.show', $bundle->slug) }}" class="hp-doc-title">
+              {{ $bundle->name }}
+            </a>
+            <div class="hp-doc-footer">
+              <span class="hp-doc-category">{{ $bundle->items->count() }} document{{ $bundle->items->count() > 1 ? 's' : '' }}</span>
+              <a href="{{ route('bundles.show', $bundle->slug) }}" class="hp-doc-arrow" aria-label="Voir le pack">→</a>
+            </div>
+          </div>
+        </article>
+        @endforeach
+      </div>
+
+    </div>
+  </section>
+  @endif
+
+
+  {{-- ─────────────────────────────────────────────────────────
+       AVIS RÉCENTS (PREUVE SOCIALE)
+       ───────────────────────────────────────────────────────── --}}
+  @if($latestReviews->isNotEmpty())
+  <section class="hp-section hp-reviews-section">
+    <div class="hp-container">
+
+      <div class="hp-section-header hp-reviews-header">
+        <div>
+          <span class="hp-section-eyebrow">Preuve sociale</span>
+          <h2 class="hp-section-title">Ils ont réussi avec nous</h2>
+          <p class="hp-section-subtitle">Ce que disent les étudiants qui utilisent nos corrigés et documents</p>
+        </div>
+
+        @if($reviewsStats['count'] > 0)
+        <div class="hp-reviews-stat" role="img" aria-label="Note moyenne {{ number_format($reviewsStats['average'], 1) }} sur 5, basée sur {{ $reviewsStats['count'] }} avis vérifiés">
+          <div class="hp-reviews-stat-score">{{ number_format($reviewsStats['average'], 1) }}<span>/5</span></div>
+          <div class="hp-reviews-stat-stars" aria-hidden="true">
+            @for($i = 1; $i <= 5; $i++)
+              <i class="fas fa-star{{ $i <= round($reviewsStats['average']) ? '' : '-o' }}"></i>
+            @endfor
+          </div>
+          <div class="hp-reviews-stat-count">{{ number_format($reviewsStats['count']) }} avis vérifiés</div>
+        </div>
+        @endif
+      </div>
+
+      <div class="hp-reviews-grid">
+        @foreach($latestReviews as $review)
+        <article class="hp-review-card" style="--stagger: {{ $loop->index }};">
+          <i class="fas fa-quote-right hp-review-quote-icon" aria-hidden="true"></i>
+
+          <div class="hp-review-stars" aria-label="Note : {{ $review->rating }} sur 5">
+            @for($i = 1; $i <= 5; $i++)
+              <i class="fas fa-star{{ $i <= $review->rating ? '' : '-o' }}" aria-hidden="true"></i>
+            @endfor
+          </div>
+
+          @if($review->comment)
+          <p class="hp-review-comment">&laquo;&nbsp;{{ \Illuminate\Support\Str::limit($review->comment, 140) }}&nbsp;&raquo;</p>
+          @endif
+
+          <div class="hp-review-footer">
+            <div class="hp-review-avatar" aria-hidden="true">{{ \Illuminate\Support\Str::upper(\Illuminate\Support\Str::substr($review->display_name, 0, 1)) }}</div>
+            <div class="hp-review-meta">
+              <span class="hp-review-author">
+                {{ $review->display_name }}
+                @if($review->is_verified_purchase)
+                <i class="fas fa-check-circle hp-review-verified" title="Achat vérifié" aria-label="Achat vérifié"></i>
+                @endif
+              </span>
+              @if($review->document)
+              <a href="{{ route('documents.show', $review->document->slug) }}" class="hp-review-doc-link">
+                <i class="fas fa-file-alt" aria-hidden="true"></i>
+                {{ \Illuminate\Support\Str::limit($review->document->title, 36) }}
+              </a>
+              @endif
             </div>
           </div>
         </article>
@@ -579,7 +708,7 @@
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
           {{ __('homepage.cta.btn_start') }}
         </a>
-        <a href="{{ route('documents.index') }}" class="hp-btn-secondary" style="border-color:oklch(65% 0.20 200 / 30%);color:oklch(65% 0.20 200);">
+        <a href="{{ route('documents.index') }}" class="hp-btn-secondary hp-btn-secondary--adaptive">
           {{ __('homepage.cta.btn_dl') }}
         </a>
       </div>

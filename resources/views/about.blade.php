@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@push('page_css')
+@vite('resources/css/features/about.css')
+@endpush
+
 @section('title', trans('app.about.meta.title'))
 @section('meta_description', trans('app.about.meta.description'))
 @section('meta_keywords', trans('app.about.meta.keywords'))

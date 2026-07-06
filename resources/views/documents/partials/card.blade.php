@@ -1,3 +1,13 @@
+@once
+@push('styles')
+<style>
+.doc-rating-row { display: flex; align-items: center; flex-wrap: wrap; gap: .35rem; margin: .25rem 0 .5rem; }
+.doc-rating-stars { color: #f59e0b; font-size: .85rem; }
+.doc-rating-val { font-weight: 800; font-size: .85rem; }
+.doc-rating-count { font-size: .75rem; color: #64748b; }
+</style>
+@endpush
+@endonce
 <div class="document-card">
     <!-- Image wrapper -->
     <div class="document-cover-wrapper">
@@ -39,7 +49,27 @@
         @if($document->excerpt)
             <p class="document-excerpt">{{ $document->excerpt }}</p>
         @endif
-        
+
+        <!-- Preuve sociale : note moyenne et ventes -->
+        @if($document->reviews_count > 0 || ($document->sales_count ?? 0) > 0)
+        <div class="doc-rating-row">
+            @if($document->reviews_count > 0)
+            <span class="doc-rating-stars">
+                @for($i = 1; $i <= 5; $i++)
+                    <i class="fas fa-star{{ $i <= round($document->average_rating) ? '' : '-o' }}"></i>
+                @endfor
+            </span>
+            <span class="doc-rating-val">{{ number_format($document->average_rating, 1) }}</span>
+            <span class="doc-rating-count">({{ $document->reviews_count }})</span>
+            @endif
+            @if(($document->sales_count ?? 0) > 0)
+            <span class="doc-rating-count">
+                <i class="fas fa-download"></i> {{ number_format($document->sales_count, 0, ',', ' ') }} ventes
+            </span>
+            @endif
+        </div>
+        @endif
+
         <!-- Footer avec catégorie et bouton -->
         <div class="document-footer">
             <div class="document-category">{{ $document->category->name }}</div>

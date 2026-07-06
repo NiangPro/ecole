@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@push('page_css')
+@vite('resources/css/features/emplois.css')
+@endpush
+
 @section('title', ($category ? $category->name : 'Offres d\'Emploi') . ' | NiangProgrammeur')
 @section('meta_description', ($category && $category->slug === 'bourses-etudes')
     ? 'Bourse d\'études Sénégal — toutes les bourses nationales et internationales disponibles : candidature, conditions, délais et montants.'

@@ -3,6 +3,9 @@
     $hasPaidCourses = \Illuminate\Support\Facades\Cache::remember('nav_has_paid_courses', 1800,
         fn() => \App\Models\PaidCourse::where('status', 'published')->exists()
     );
+    $hasBundles = \Illuminate\Support\Facades\Cache::remember('nav_has_bundles', 1800,
+        fn() => \App\Models\DocumentBundle::active()->exists()
+    );
     $userDocumentsCount = 0;
     if (\Illuminate\Support\Facades\Auth::check()) {
         $userDocumentsCount = \Illuminate\Support\Facades\Cache::remember(
@@ -233,12 +236,87 @@
                 </div>
             </li>
             
-            <!-- Épreuves & Corrigés (menu principal) -->
-            <li class="navbar-item">
-                <a href="{{ route('epreuves.index') }}" class="navbar-link {{ request()->routeIs('epreuves.*') ? 'active' : '' }}">
+            <!-- Épreuves & Corrigés (menu principal, en dropdown) -->
+            <li class="navbar-item dropdown">
+                <a href="{{ route('epreuves.index') }}" class="navbar-link dropdown-toggle {{ request()->routeIs('epreuves.*') ? 'active' : '' }}">
                     Épreuves &amp; Corrigés
+                    <i class="fas fa-chevron-down dropdown-icon"></i>
+                </a>
+                <div class="dropdown-menu">
+                    <a href="{{ route('epreuves.index') }}" class="dropdown-item" data-parent-active="epreuves">
+                        <div class="dropdown-item-icon" style="background: rgba(5, 150, 105, 0.1);">
+                            <i class="fas fa-layer-group" style="color: #059669;"></i>
+                        </div>
+                        <div class="dropdown-item-content">
+                            <div class="dropdown-item-title">Tous les examens</div>
+                            <div class="dropdown-item-desc">Sujets et corrigés classés par matière et année</div>
+                        </div>
+                    </a>
+                    <a href="{{ route('epreuves.exam', 'cfee') }}" class="dropdown-item" data-parent-active="epreuves">
+                        <div class="dropdown-item-icon" style="background: rgba(6, 182, 212, 0.1);">
+                            <i class="fas fa-school" style="color: #06b6d4;"></i>
+                        </div>
+                        <div class="dropdown-item-content">
+                            <div class="dropdown-item-title">CFEE</div>
+                            <div class="dropdown-item-desc">Épreuves et corrigés du CFEE</div>
+                        </div>
+                    </a>
+                    <a href="{{ route('epreuves.exam', 'bfem') }}" class="dropdown-item" data-parent-active="epreuves">
+                        <div class="dropdown-item-icon" style="background: rgba(168, 85, 247, 0.1);">
+                            <i class="fas fa-book-open" style="color: #a855f7;"></i>
+                        </div>
+                        <div class="dropdown-item-content">
+                            <div class="dropdown-item-title">BFEM</div>
+                            <div class="dropdown-item-desc">Épreuves et corrigés du BFEM</div>
+                        </div>
+                    </a>
+                    <a href="{{ route('epreuves.exam', 'bac') }}" class="dropdown-item" data-parent-active="epreuves">
+                        <div class="dropdown-item-icon" style="background: rgba(5, 150, 105, 0.1);">
+                            <i class="fas fa-graduation-cap" style="color: #059669;"></i>
+                        </div>
+                        <div class="dropdown-item-content">
+                            <div class="dropdown-item-title">BAC</div>
+                            <div class="dropdown-item-desc">Sujets et corrigés du Baccalauréat</div>
+                        </div>
+                    </a>
+                    <a href="{{ route('epreuves.exam', 'bts') }}" class="dropdown-item" data-parent-active="epreuves">
+                        <div class="dropdown-item-icon" style="background: rgba(14, 165, 233, 0.1);">
+                            <i class="fas fa-briefcase" style="color: #0ea5e9;"></i>
+                        </div>
+                        <div class="dropdown-item-content">
+                            <div class="dropdown-item-title">BTS</div>
+                            <div class="dropdown-item-desc">Épreuves et corrigés du BTS</div>
+                        </div>
+                    </a>
+                    <a href="{{ route('epreuves.exam', 'cap') }}" class="dropdown-item" data-parent-active="epreuves">
+                        <div class="dropdown-item-icon" style="background: rgba(245, 158, 11, 0.1);">
+                            <i class="fas fa-certificate" style="color: #f59e0b;"></i>
+                        </div>
+                        <div class="dropdown-item-content">
+                            <div class="dropdown-item-title">CAP</div>
+                            <div class="dropdown-item-desc">Épreuves et corrigés du CAP</div>
+                        </div>
+                    </a>
+                    <a href="{{ route('epreuves.exam', 'concours') }}" class="dropdown-item" data-parent-active="epreuves">
+                        <div class="dropdown-item-icon" style="background: rgba(124, 58, 237, 0.1);">
+                            <i class="fas fa-award" style="color: #7c3aed;"></i>
+                        </div>
+                        <div class="dropdown-item-content">
+                            <div class="dropdown-item-title">Concours</div>
+                            <div class="dropdown-item-desc">ENA, Police, Gendarmerie et autres concours</div>
+                        </div>
+                    </a>
+                </div>
+            </li>
+
+            <!-- Packs (menu principal) -->
+            @if($hasBundles)
+            <li class="navbar-item">
+                <a href="{{ route('bundles.index') }}" class="navbar-link {{ request()->routeIs('bundles.*') ? 'active' : '' }}">
+                    Packs
                 </a>
             </li>
+            @endif
 
             <!-- Dropdown À propos / Contact -->
             <li class="navbar-item dropdown">
@@ -663,7 +741,7 @@
         @endauth
         
         <!-- Mobile Toggle -->
-        <button class="mobile-toggle" id="mobileToggle" aria-label="Ouvrir le menu mobile" aria-expanded="false">
+        <button type="button" class="mobile-toggle" id="mobileToggle" aria-label="Ouvrir le menu mobile" aria-expanded="false">
             <span class="mobile-toggle-line" aria-hidden="true"></span>
             <span class="mobile-toggle-line" aria-hidden="true"></span>
             <span class="mobile-toggle-line" aria-hidden="true"></span>
@@ -678,7 +756,7 @@
 <div class="mobile-menu" id="mobileMenu">
     <div class="mobile-menu-header">
         <div class="mobile-menu-title">Menu</div>
-        <button class="mobile-menu-close" onclick="closeMobileMenu()">
+        <button type="button" class="mobile-menu-close" onclick="closeMobileMenu()">
             <i class="fas fa-times"></i>
         </button>
     </div>
@@ -692,7 +770,7 @@
         
         <!-- Mobile Dropdown Formations -->
         <li class="mobile-menu-item">
-            <button class="mobile-dropdown-toggle" onclick="toggleMobileDropdown('formations')">
+            <button type="button" class="mobile-dropdown-toggle" onclick="toggleMobileDropdown(event, 'formations')" aria-expanded="false" aria-controls="formations-dropdown">
                 <span><i class="fas fa-graduation-cap"></i> {{ trans('app.nav.formations') }}</span>
                 <i class="fas fa-chevron-down dropdown-icon" id="formations-icon"></i>
             </button>
@@ -735,7 +813,7 @@
         
         <!-- Mobile Dropdown Pratique -->
         <li class="mobile-menu-item">
-            <button class="mobile-dropdown-toggle" onclick="toggleMobileDropdown('pratique')">
+            <button type="button" class="mobile-dropdown-toggle" onclick="toggleMobileDropdown(event, 'pratique')" aria-expanded="false" aria-controls="pratique-dropdown">
                 <span><i class="fas fa-code"></i> {{ trans('app.nav.practice') }}</span>
                 <i class="fas fa-chevron-down dropdown-icon" id="pratique-icon"></i>
             </button>
@@ -753,7 +831,7 @@
         
         <!-- Mobile Dropdown Emplois -->
         <li class="mobile-menu-item">
-            <button class="mobile-dropdown-toggle" onclick="toggleMobileDropdown('emplois')">
+            <button type="button" class="mobile-dropdown-toggle" onclick="toggleMobileDropdown(event, 'emplois')" aria-expanded="false" aria-controls="emplois-dropdown">
                 <span><i class="fas fa-briefcase"></i> {{ trans('app.nav.jobs') }}</span>
                 <i class="fas fa-chevron-down dropdown-icon" id="emplois-icon"></i>
             </button>
@@ -810,16 +888,51 @@
         </li>
         @endif
         
-        <!-- Épreuves & Corrigés (lien principal mobile) -->
+        <!-- Mobile Dropdown Épreuves & Corrigés -->
         <li class="mobile-menu-item">
-            <a href="{{ route('epreuves.index') }}" class="mobile-menu-link {{ request()->routeIs('epreuves.*') ? 'active' : '' }}">
+            <button type="button" class="mobile-dropdown-toggle" onclick="toggleMobileDropdown(event, 'epreuves')" aria-expanded="false" aria-controls="epreuves-dropdown">
                 <span><i class="fas fa-graduation-cap"></i> Épreuves &amp; Corrigés</span>
+                <i class="fas fa-chevron-down dropdown-icon" id="epreuves-icon"></i>
+            </button>
+            <div class="mobile-dropdown-content" id="epreuves-dropdown">
+                <div class="mobile-dropdown-inner">
+                <a href="{{ route('epreuves.index') }}" class="mobile-dropdown-item">
+                    <i class="fas fa-layer-group" style="color: #059669;"></i> Tous les examens
+                </a>
+                <a href="{{ route('epreuves.exam', 'cfee') }}" class="mobile-dropdown-item">
+                    <i class="fas fa-school" style="color: #06b6d4;"></i> CFEE
+                </a>
+                <a href="{{ route('epreuves.exam', 'bfem') }}" class="mobile-dropdown-item">
+                    <i class="fas fa-book-open" style="color: #a855f7;"></i> BFEM
+                </a>
+                <a href="{{ route('epreuves.exam', 'bac') }}" class="mobile-dropdown-item">
+                    <i class="fas fa-graduation-cap" style="color: #059669;"></i> BAC
+                </a>
+                <a href="{{ route('epreuves.exam', 'bts') }}" class="mobile-dropdown-item">
+                    <i class="fas fa-briefcase" style="color: #0ea5e9;"></i> BTS
+                </a>
+                <a href="{{ route('epreuves.exam', 'cap') }}" class="mobile-dropdown-item">
+                    <i class="fas fa-certificate" style="color: #f59e0b;"></i> CAP
+                </a>
+                <a href="{{ route('epreuves.exam', 'concours') }}" class="mobile-dropdown-item">
+                    <i class="fas fa-award" style="color: #7c3aed;"></i> Concours
+                </a>
+                </div>
+            </div>
+        </li>
+
+        <!-- Packs (lien principal mobile) -->
+        @if($hasBundles)
+        <li class="mobile-menu-item">
+            <a href="{{ route('bundles.index') }}" class="mobile-menu-link {{ request()->routeIs('bundles.*') ? 'active' : '' }}">
+                <span><i class="fas fa-box"></i> Packs</span>
             </a>
         </li>
+        @endif
 
         <!-- Mobile Dropdown À propos (conforme au menu desktop) -->
         <li class="mobile-menu-item">
-            <button class="mobile-dropdown-toggle" onclick="toggleMobileDropdown('apropos')">
+            <button type="button" class="mobile-dropdown-toggle" onclick="toggleMobileDropdown(event, 'apropos')" aria-expanded="false" aria-controls="apropos-dropdown">
                 <span><i class="fas fa-info-circle"></i> {{ trans('app.nav.about') }}</span>
                 <i class="fas fa-chevron-down dropdown-icon" id="apropos-icon"></i>
             </button>
@@ -1005,13 +1118,13 @@
     // Navbar scroll effect
     window.addEventListener('scroll', () => {
         try {
-        const navbar = document.getElementById('navbar');
+            const navbar = document.getElementById('navigation');
             if (navbar && navbar.classList) {
-        if (window.scrollY > 50) {
-            navbar.classList.add('scrolled');
-        } else {
-            navbar.classList.remove('scrolled');
-        }
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
             }
         } catch (error) {
             // Ignorer silencieusement
@@ -1025,6 +1138,7 @@
     
     function openMobileMenu() {
         mobileToggle.classList.add('active');
+        mobileToggle.setAttribute('aria-expanded', 'true');
         mobileMenu.classList.add('active');
         mobileMenuOverlay.classList.add('active');
         document.body.style.overflow = 'hidden';
@@ -1032,9 +1146,16 @@
     
     function closeMobileMenu() {
         mobileToggle.classList.remove('active');
+        mobileToggle.setAttribute('aria-expanded', 'false');
         mobileMenu.classList.remove('active');
         mobileMenuOverlay.classList.remove('active');
         document.body.style.overflow = '';
+
+        document.querySelectorAll('.mobile-dropdown-content.active').forEach(dropdown => dropdown.classList.remove('active'));
+        document.querySelectorAll('.mobile-dropdown-toggle.active').forEach(toggle => {
+            toggle.classList.remove('active');
+            toggle.setAttribute('aria-expanded', 'false');
+        });
     }
     
     mobileToggle.addEventListener('click', () => {
@@ -1048,17 +1169,24 @@
     mobileMenuOverlay.addEventListener('click', closeMobileMenu);
     
     // Mobile dropdown toggle
-    function toggleMobileDropdown(id) {
+    function toggleMobileDropdown(event, id) {
+        event.preventDefault();
+        event.stopPropagation();
         const dropdown = document.getElementById(id + '-dropdown');
         const icon = document.getElementById(id + '-icon');
-        const toggle = event.target.closest('.mobile-dropdown-toggle');
-        
-        dropdown.classList.toggle('active');
+        const toggle = event.currentTarget.closest('.mobile-dropdown-toggle');
+
+        if (!dropdown) {
+            return;
+        }
+
+        const isActive = dropdown.classList.toggle('active');
         if (toggle) {
-            toggle.classList.toggle('active');
+            toggle.classList.toggle('active', isActive);
+            toggle.setAttribute('aria-expanded', isActive ? 'true' : 'false');
         }
         if (icon) {
-        icon.style.transform = dropdown.classList.contains('active') ? 'rotate(180deg)' : 'rotate(0deg)';
+            icon.style.transform = isActive ? 'rotate(180deg)' : 'rotate(0deg)';
         }
     }
     
@@ -1352,9 +1480,11 @@
     
     window.formatNotificationTime = function(dateString) {
         const date = new Date(dateString);
-        // Garde-fou : date non parsable → ne jamais afficher "Invalid Date"
+        // Garde-fou : date non parsable → ne jamais rien afficher plutôt que
+        // "Invalid Date" (l'ancien fallback renvoyait la chaîne brute, ce qui
+        // pouvait littéralement afficher "Invalid Date" à l'utilisateur).
         if (isNaN(date.getTime())) {
-            return typeof dateString === 'string' ? dateString : '';
+            return '';
         }
         const now = new Date();
         const diff = now - date;

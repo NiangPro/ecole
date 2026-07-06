@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@push('page_css')
+@vite('resources/css/features/emplois.css')
+@endpush
+
 @section('title', (app()->getLocale() === 'fr' ? 'Articles Vedettes' : 'Featured Articles') . ' | NiangProgrammeur')
 @section('meta_description', app()->getLocale() === 'fr' ? 'Découvrez tous nos articles vedettes : les articles les plus populaires et les plus pertinents sur les emplois, carrières et opportunités au Sénégal.' : 'Discover all our featured articles: the most popular and relevant articles about jobs, careers and opportunities in Senegal.')
 @section('meta_keywords', app()->getLocale() === 'fr' ? 'articles vedettes, articles populaires, emploi Sénégal, carrières' : 'featured articles, popular articles, jobs Senegal, careers')
@@ -607,16 +611,18 @@
             <div class="featured-image-wrapper">
                 @if($article->cover_image)
                     @if($article->cover_type === 'external')
-                        <img src="{{ $article->cover_image }}" 
-                             alt="{{ $article->title }}" 
+                        <img src="{{ $article->cover_image }}"
+                             alt="{{ $article->title }}"
                              class="featured-article-image"
-                             loading="lazy"
+                             width="400" height="200"
+                             loading="lazy" decoding="async"
                              onerror="this.style.display='none'">
                     @else
-                        <img src="{{ \Illuminate\Support\Facades\Storage::url($article->cover_image) }}" 
-                             alt="{{ $article->title }}" 
+                        <img src="{{ \Illuminate\Support\Facades\Storage::url($article->cover_image) }}"
+                             alt="{{ $article->title }}"
                              class="featured-article-image"
-                             loading="lazy"
+                             width="400" height="200"
+                             loading="lazy" decoding="async"
                              onerror="this.style.display='none'">
                     @endif
                 @else

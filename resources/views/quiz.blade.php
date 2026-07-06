@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@push('page_css')
+@vite('resources/css/features/quiz.css')
+@endpush
+
 @section('title', trans('app.quiz.title') . ' | NiangProgrammeur')
 @section('meta_description', trans('app.quiz.subtitle'))
 @section('meta_keywords', 'quiz programmation, QCM code, quiz HTML, quiz CSS, quiz JavaScript, quiz PHP')

@@ -216,6 +216,48 @@
     body.light-mode .stats-card:hover {
         background: rgba(6, 182, 212, 0.1);
     }
+
+    .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.2s ease;
+        padding: 1rem;
+    }
+
+    .modal-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .modal-container {
+        background: #1e293b;
+        border: 1px solid rgba(6, 182, 212, 0.3);
+        border-radius: 16px;
+        padding: 2rem;
+        max-width: 480px;
+        width: 100%;
+    }
+
+    body.light-mode .modal-container {
+        background: #ffffff;
+    }
+
+    .modal-title {
+        font-size: 1.25rem;
+        font-weight: 800;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-field { margin-bottom: 1rem; }
+    .form-field label { display: block; margin-bottom: 0.375rem; font-size: 0.875rem; font-weight: 600; color: #94a3b8; }
+    body.light-mode .form-field label { color: #475569; }
 </style>
 @endsection
 
@@ -225,6 +267,9 @@
         <h3 class="text-3xl font-bold mb-2">Modération des Avis</h3>
         <p class="text-gray-400">Gérez et approuvez les avis des documents</p>
     </div>
+    <button type="button" onclick="document.getElementById('add-review-modal').classList.add('active')" class="px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-black font-semibold rounded-lg transition">
+        <i class="fas fa-plus mr-2"></i>Ajouter un avis
+    </button>
 </div>
 
 @if(session('success'))
@@ -378,5 +423,62 @@
         </div>
     @endif
 </div>
+
+<!-- Modal Ajouter un avis -->
+<div class="modal-overlay" id="add-review-modal">
+    <div class="modal-container">
+        <h3 class="modal-title"><i class="fas fa-comment-dots mr-2"></i>Ajouter un avis</h3>
+        <form method="POST" action="{{ route('admin.documents.reviews.store') }}">
+            @csrf
+            <div class="form-field">
+                <label for="document_id">Document</label>
+                <select name="document_id" id="document_id" class="input-admin" required>
+                    <option value="">— Choisir un document —</option>
+                    @foreach($documents as $document)
+                        <option value="{{ $document->id }}">{{ $document->title }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="form-field">
+                <label for="user_name">Nom de l'auteur</label>
+                <input type="text" name="user_name" id="user_name" class="input-admin" placeholder="Ex : Awa Diop" required>
+            </div>
+            <div class="form-field">
+                <label for="rating">Note</label>
+                <select name="rating" id="rating" class="input-admin" required>
+                    <option value="5">5 étoiles</option>
+                    <option value="4">4 étoiles</option>
+                    <option value="3">3 étoiles</option>
+                    <option value="2">2 étoiles</option>
+                    <option value="1">1 étoile</option>
+                </select>
+            </div>
+            <div class="form-field">
+                <label for="comment">Commentaire (optionnel)</label>
+                <textarea name="comment" id="comment" class="input-admin" rows="3" maxlength="1000" placeholder="Ex : Corrigé très clair, m'a aidé à réviser rapidement."></textarea>
+            </div>
+            <div class="form-field flex items-center gap-2">
+                <input type="checkbox" name="is_approved" id="is_approved" value="1" checked>
+                <label for="is_approved" class="!mb-0">Publier immédiatement (approuvé)</label>
+            </div>
+            <div class="form-field flex items-center gap-2">
+                <input type="checkbox" name="is_verified_purchase" id="is_verified_purchase" value="1">
+                <label for="is_verified_purchase" class="!mb-0">Marquer comme achat vérifié</label>
+            </div>
+            <div class="flex gap-3 mt-6">
+                <button type="button" onclick="document.getElementById('add-review-modal').classList.remove('active')" class="flex-1 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white font-semibold rounded-lg transition">
+                    Annuler
+                </button>
+                <button type="submit" class="flex-1 px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-black font-semibold rounded-lg transition">
+                    <i class="fas fa-plus mr-2"></i>Ajouter
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@if($errors->any())
+<script>document.getElementById('add-review-modal').classList.add('active');</script>
+@endif
 @endsection
 

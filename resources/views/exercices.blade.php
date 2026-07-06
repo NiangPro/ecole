@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@push('page_css')
+@vite('resources/css/features/exercices.css')
+@endpush
+
 @section('title', trans('app.exercices.title') . ' | NiangProgrammeur')
 @section('meta_description', trans('app.exercices.subtitle'))
 @section('meta_keywords', 'exercices programmation, pratique code, exercices HTML, exercices CSS, exercices JavaScript, exercices PHP')

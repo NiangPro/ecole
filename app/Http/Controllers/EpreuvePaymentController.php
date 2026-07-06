@@ -22,6 +22,7 @@ class EpreuvePaymentController extends Controller
         abort_if($epreuve->isFree(), 404);
 
         $request->validate([
+            'payment_method' => 'nullable|in:wave,orange_money',
             'customer_name'  => 'nullable|string|max:255',
             'customer_email' => 'nullable|email|max:255|required_without:customer_phone',
             'customer_phone' => 'nullable|string|max:20|required_without:customer_email',
@@ -42,6 +43,7 @@ class EpreuvePaymentController extends Controller
         }
 
         $price = (float) $epreuve->price;
+        $paymentMethod = $request->input('payment_method', 'wave');
 
         $purchase = EpreuvePurchase::create([
             'epreuve_id'     => $epreuve->id,
@@ -62,8 +64,8 @@ class EpreuvePaymentController extends Controller
             'amount'             => $price,
             'currency'           => 'XOF',
             'status'             => 'pending',
-            'payment_method'     => 'wave',
-            'payment_gateway'    => 'wave',
+            'payment_method'     => $paymentMethod,
+            'payment_gateway'    => $paymentMethod,
             'transaction_id'     => 'EPR-' . Str::upper(Str::random(12)),
             'payment_reference'  => 'REF-' . Str::upper(Str::random(10)),
             'payment_details'    => array_filter([
@@ -74,6 +76,10 @@ class EpreuvePaymentController extends Controller
         ]);
 
         $purchase->update(['payment_id' => $payment->id]);
+
+        if ($paymentMethod === 'orange_money') {
+            return redirect()->route('payment.confirm', $payment->id);
+        }
 
         $waveLink = WavePaymentService::generatePaymentLink(
             $price,

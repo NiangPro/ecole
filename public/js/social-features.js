@@ -304,7 +304,7 @@
                             <div class="notification-content">
                                 <div class="notification-title">${this.escapeHtml(notif.title)}</div>
                                 <div class="notification-message">${this.escapeHtml(notif.message)}</div>
-                                <div class="notification-time">${this.formatTime(notif.created_at)}</div>
+                                <div class="notification-time">${this.formatTime(notif.created_at_iso)}</div>
                             </div>
                             ${notif.link ? `<a href="${notif.link}" class="notification-link"></a>` : ''}
                         </div>
@@ -335,6 +335,11 @@
 
         formatTime(dateString) {
             const date = new Date(dateString);
+            // Garde-fou : date non parsable (ex: si created_at_iso est absent) →
+            // ne jamais afficher "Invalid Date".
+            if (isNaN(date.getTime())) {
+                return '';
+            }
             const now = new Date();
             const diff = now - date;
             const minutes = Math.floor(diff / 60000);

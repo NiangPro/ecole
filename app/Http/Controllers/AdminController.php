@@ -369,6 +369,81 @@ class AdminController extends Controller
             return Statistic::getWeeklyStatsForCurrentMonth();
         });
         
+        // KPIs business (revenu, ventes, utilisateurs, affiliation...) - Cache 5 minutes
+        $businessStats = Cache::remember('business_stats_kpis', 300, function () {
+            $channelLabels = [
+                'App\\Models\\DocumentPurchase' => 'Documents',
+                'App\\Models\\EpreuvePurchase' => 'Épreuves',
+                'App\\Models\\CorrigePurchase' => 'Corrigés',
+                'App\\Models\\CoursePurchase' => 'Cours payants',
+                'App\\Models\\Donation' => 'Dons',
+                'App\\Models\\Subscription' => 'Abonnements',
+            ];
+
+            $revenueByChannelRaw = \App\Models\Payment::where('status', 'completed')
+                ->select('paymentable_type', \Illuminate\Support\Facades\DB::raw('SUM(amount) as total'), \Illuminate\Support\Facades\DB::raw('COUNT(*) as count'))
+                ->groupBy('paymentable_type')
+                ->get();
+
+            $revenueByChannel = $revenueByChannelRaw->map(function ($row) use ($channelLabels) {
+                return [
+                    'label' => $channelLabels[$row->paymentable_type] ?? $row->paymentable_type,
+                    'total' => (float) $row->total,
+                    'count' => (int) $row->count,
+                ];
+            })->sortByDesc('total')->values();
+
+            $totalRevenue = (float) $revenueByChannelRaw->sum('total');
+            $totalSales = (int) $revenueByChannelRaw->sum('count');
+
+            $now = Carbon::now();
+            $revenueThisMonth = (float) \App\Models\Payment::where('status', 'completed')
+                ->whereYear('created_at', $now->year)
+                ->whereMonth('created_at', $now->month)
+                ->sum('amount');
+            $lastMonth = $now->copy()->subMonth();
+            $revenueLastMonth = (float) \App\Models\Payment::where('status', 'completed')
+                ->whereYear('created_at', $lastMonth->year)
+                ->whereMonth('created_at', $lastMonth->month)
+                ->sum('amount');
+            $revenueGrowth = $revenueLastMonth > 0
+                ? round((($revenueThisMonth - $revenueLastMonth) / $revenueLastMonth) * 100, 1)
+                : 0;
+
+            $revenueByMonthChart = \App\Models\Payment::where('status', 'completed')
+                ->where('created_at', '>=', $now->copy()->subMonths(11)->startOfMonth())
+                ->selectRaw('DATE_FORMAT(created_at, "%Y-%m") as month, SUM(amount) as total')
+                ->groupBy('month')
+                ->orderBy('month', 'asc')
+                ->get();
+
+            $bundlesSold = (int) \App\Models\DocumentBundle::sum('sales_count');
+            $bundlesRevenue = (float) \App\Models\DocumentBundle::selectRaw('SUM(sales_count * COALESCE(discount_price, price)) as total')->value('total');
+
+            return [
+                'totalRevenue' => $totalRevenue,
+                'revenueThisMonth' => $revenueThisMonth,
+                'revenueLastMonth' => $revenueLastMonth,
+                'revenueGrowth' => $revenueGrowth,
+                'revenueByChannel' => $revenueByChannel,
+                'revenueByMonthChart' => $revenueByMonthChart,
+                'totalSales' => $totalSales,
+                'avgOrderValue' => $totalSales > 0 ? $totalRevenue / $totalSales : 0,
+                'pendingPaymentsCount' => \App\Models\Payment::where('status', 'pending')->count(),
+                'bundlesSold' => $bundlesSold,
+                'bundlesRevenue' => $bundlesRevenue,
+                'couponsUsed' => (int) \App\Models\DocumentCoupon::sum('usage_count'),
+                'totalUsers' => User::count(),
+                'newUsersThisMonth' => User::whereYear('created_at', $now->year)->whereMonth('created_at', $now->month)->count(),
+                'premiumUsers' => User::where('is_premium', true)->count(),
+                'newsletterActive' => \App\Models\Newsletter::where('is_active', true)->count(),
+                'affiliateCommissionsPending' => (float) \App\Models\Affiliate::sum('pending_earnings'),
+                'affiliateCommissionsPaid' => (float) \App\Models\Affiliate::sum('paid_earnings'),
+                'forumTopicsCount' => \App\Models\ForumTopic::count(),
+                'forumRepliesCount' => \App\Models\ForumReply::count(),
+            ];
+        });
+
         return view('admin.statistics', compact(
             'filter',
             'year',
@@ -386,7 +461,8 @@ class AdminController extends Controller
             'browsersStats',
             'sourcesStats',
             'devicesStats',
-            'weeklyStats'
+            'weeklyStats',
+            'businessStats'
         ));
     }
     
@@ -416,6 +492,7 @@ class AdminController extends Controller
             'weekly_stats_current_month',
             "year_total_visits_{$year}",
             'statistics_available_years',
+            'business_stats_kpis',
         ];
 
         foreach ($keys as $key) {
@@ -622,6 +699,9 @@ class AdminController extends Controller
             'maintenance_message' => 'nullable|string|max:1000',
             'maintenance_ends_at' => 'nullable|date',
             'corrige_price' => 'nullable|numeric|min:0|max:1000000',
+            'urgency_banner_text' => 'nullable|string|max:255',
+            'urgency_banner_target_date' => 'nullable|date',
+            'urgency_banner_link' => 'nullable|string|max:255',
         ]);
 
         $settings = SiteSetting::first();
@@ -639,10 +719,17 @@ class AdminController extends Controller
             if (!is_dir($logosDir)) {
                 mkdir($logosDir, 0755, true);
             }
-            $ext = $request->file('logo')->getClientOriginalExtension();
+            $ext = strtolower($request->file('logo')->getClientOriginalExtension());
             $filename = 'logo_' . uniqid() . '.' . $ext;
             $moved = $request->file('logo')->move($logosDir, $filename);
             if ($moved) {
+                // Redimensionner/recompresser les logos matriciels : le logo n'est jamais
+                // affiché à plus de 44x44px sur le site, or un upload direct peut peser
+                // plusieurs centaines de Ko (déjà constaté : 293 Ko pour 523x477px sur un
+                // logo custom) — un poids inutile chargé sur CHAQUE page du site.
+                if (in_array($ext, ['png', 'jpg', 'jpeg', 'webp']) && function_exists('imagecreatefromstring')) {
+                    $this->resizeLogoIfNeeded($logosDir . '/' . $filename, $ext);
+                }
                 // Supprimer l'ancien logo uniquement si le nouveau est bien enregistré
                 if ($settings->logo) {
                     $oldPath = public_path($settings->logo);
@@ -666,10 +753,14 @@ class AdminController extends Controller
 
         // Checkbox non-cochée = absent du POST, on force à false
         $data['maintenance_mode'] = $request->boolean('maintenance_mode');
+        $data['urgency_banner_enabled'] = $request->boolean('urgency_banner_enabled');
 
         // Date vide → null
         if (empty($data['maintenance_ends_at'])) {
             $data['maintenance_ends_at'] = null;
+        }
+        if (empty($data['urgency_banner_target_date'])) {
+            $data['urgency_banner_target_date'] = null;
         }
 
         $settings->fill($data);
@@ -712,6 +803,55 @@ class AdminController extends Controller
         }
         if ($settings->mail_from_name) {
             config(['mail.from.name' => $settings->mail_from_name]);
+        }
+    }
+
+    /**
+     * Redimensionne un logo matriciel trop volumineux (le logo n'est jamais affiché
+     * à plus de 44x44px sur le site) et le recompresse, via GD (aucune dépendance
+     * supplémentaire). Ne fait rien si l'image est déjà raisonnable.
+     */
+    private function resizeLogoIfNeeded(string $path, string $ext): void
+    {
+        $maxDimension = 200; // marge confortable pour affichage @2x/@3x d'un logo 44px
+
+        try {
+            [$width, $height] = getimagesize($path) ?: [0, 0];
+            if ($width <= 0 || $height <= 0 || max($width, $height) <= $maxDimension) {
+                return;
+            }
+
+            $source = match ($ext) {
+                'png' => imagecreatefrompng($path),
+                'jpg', 'jpeg' => imagecreatefromjpeg($path),
+                'webp' => imagecreatefromwebp($path),
+                default => null,
+            };
+            if (!$source) {
+                return;
+            }
+
+            $ratio = $maxDimension / max($width, $height);
+            $newWidth = (int) round($width * $ratio);
+            $newHeight = (int) round($height * $ratio);
+
+            $resized = imagecreatetruecolor($newWidth, $newHeight);
+            imagealphablending($resized, false);
+            imagesavealpha($resized, true);
+            imagecopyresampled($resized, $source, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+
+            match ($ext) {
+                'png' => imagepng($resized, $path, 8),
+                'jpg', 'jpeg' => imagejpeg($resized, $path, 85),
+                'webp' => imagewebp($resized, $path, 85),
+                default => null,
+            };
+
+            imagedestroy($source);
+            imagedestroy($resized);
+        } catch (\Throwable $e) {
+            // Ne jamais bloquer l'enregistrement des paramètres pour un souci de redimensionnement
+            \Log::warning("Échec du redimensionnement du logo {$path}: " . $e->getMessage());
         }
     }
 

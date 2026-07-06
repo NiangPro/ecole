@@ -21,7 +21,9 @@ class DocumentController extends Controller
     {
         $this->ensureLocale();
         
-        $query = Document::published()->active()->with(['category', 'author']);
+        $query = Document::published()->active()->with(['category', 'author'])
+            ->withAvg('approvedReviews as average_rating', 'rating')
+            ->withCount('approvedReviews as reviews_count');
 
         // Filtres
         if ($request->filled('category')) {
@@ -59,6 +61,8 @@ class DocumentController extends Controller
         $categories = DocumentCategory::active()->ordered()->get();
         $featuredDocuments = Document::published()->active()->featured()
             ->with(['category'])
+            ->withAvg('approvedReviews as average_rating', 'rating')
+            ->withCount('approvedReviews as reviews_count')
             ->orderBy('published_at', 'desc')
             ->take(6)
             ->get();
@@ -77,7 +81,9 @@ class DocumentController extends Controller
         
         $query = Document::published()->active()
             ->where('category_id', $category->id)
-            ->with(['category', 'author']);
+            ->with(['category', 'author'])
+            ->withAvg('approvedReviews as average_rating', 'rating')
+            ->withCount('approvedReviews as reviews_count');
 
         $documents = $query->orderBy('published_at', 'desc')->paginate(12);
         $categories = DocumentCategory::active()->ordered()->get();

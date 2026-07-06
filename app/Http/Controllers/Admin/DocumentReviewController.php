@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Document;
 use App\Models\DocumentReview;
 use Illuminate\Http\Request;
 
@@ -35,7 +36,35 @@ class DocumentReviewController extends Controller
             'approved' => DocumentReview::where('is_approved', true)->count(),
         ];
 
-        return view('admin.documents.reviews.index', compact('reviews', 'stats'));
+        $documents = Document::orderBy('title')->get(['id', 'title']);
+
+        return view('admin.documents.reviews.index', compact('reviews', 'stats', 'documents'));
+    }
+
+    /**
+     * Crée un avis manuellement (ex : retour reçu par WhatsApp/email).
+     */
+    public function store(Request $request)
+    {
+        $request->validate([
+            'document_id' => 'required|exists:documents,id',
+            'user_name' => 'required|string|max:255',
+            'rating' => 'required|integer|min:1|max:5',
+            'comment' => 'nullable|string|max:1000',
+            'is_approved' => 'nullable|boolean',
+            'is_verified_purchase' => 'nullable|boolean',
+        ]);
+
+        DocumentReview::create([
+            'document_id' => $request->document_id,
+            'user_name' => $request->user_name,
+            'rating' => $request->rating,
+            'comment' => $request->comment,
+            'is_approved' => $request->boolean('is_approved'),
+            'is_verified_purchase' => $request->boolean('is_verified_purchase'),
+        ]);
+
+        return back()->with('success', 'Avis ajouté avec succès.');
     }
 
     /**

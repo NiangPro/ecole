@@ -239,13 +239,13 @@ class DocumentCartController extends Controller
         // Validation selon si l'utilisateur est connecté ou non
         if (Auth::check()) {
             $request->validate([
-                'payment_method' => 'required|in:wave,paypal',
+                'payment_method' => 'required|in:wave,paypal,orange_money',
                 'customer_phone' => 'nullable|string|max:20',
                 'country_code' => 'nullable|string|max:5',
             ]);
         } else {
             $request->validate([
-                'payment_method' => 'required|in:wave,paypal',
+                'payment_method' => 'required|in:wave,paypal,orange_money',
                 'customer_email' => 'required|email|max:255',
                 'customer_name' => 'required|string|max:255',
                 'customer_phone' => 'nullable|string|max:20',
@@ -475,6 +475,31 @@ class DocumentCartController extends Controller
             }
         }
         
+        // Si Orange Money est sélectionné, afficher le numéro marchand et les instructions
+        if ($request->payment_method === 'orange_money') {
+            $orangeMoneyPayload = \App\Services\OrangeMoneyPaymentService::buildPaymentPayload(
+                (float) $totalAmount,
+                $firstPayment->payment_reference
+            );
+
+            $firstPayment->update([
+                'payment_details' => array_merge(
+                    $firstPayment->payment_details ?? [],
+                    ['orange_money_number' => $orangeMoneyPayload['number']]
+                )
+            ]);
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'orange_money_number' => $orangeMoneyPayload['number'],
+                    'orange_money_instructions' => $orangeMoneyPayload['instructions'],
+                    'payment_id' => $firstPayment->id,
+                    'amount' => $totalAmount
+                ]);
+            }
+        }
+
         // Si PayPal est sélectionné, générer le lien PayPal
         if ($request->payment_method === 'paypal') {
             try {

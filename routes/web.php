@@ -82,7 +82,7 @@ Route::get('/sitemap-documents.xml', [\App\Http\Controllers\SitemapController::c
 Route::get('/sitemap-administrative-documents.xml', [\App\Http\Controllers\SitemapController::class, 'administrativeDocuments'])->name('sitemap.administrative-documents');
 Route::get('/sitemap-epreuves.xml', [\App\Http\Controllers\SitemapController::class, 'epreuves'])->name('sitemap.epreuves');
 
-Route::get('/', [PageController::class, 'index'])->name('home');
+Route::get('/', [PageController::class, 'index'])->middleware(['http.cache:list', 'page.cache:600'])->name('home');
 Route::get('/maintenance', [PageController::class, 'maintenance'])->name('maintenance');
 // Route Recherche - Utiliser SearchController
 use App\Http\Controllers\SearchController;
@@ -115,10 +115,10 @@ Route::prefix('forum')->name('forum.')->group(function () {
 });
 Route::post('/contact', [PageController::class, 'sendContact'])->middleware('throttle:5,1')->name('contact.send');
 Route::post('/newsletter/subscribe', [PageController::class, 'newsletterSubscribe'])->middleware('throttle:10,1')->name('newsletter.subscribe');
-Route::get('/about', [PageController::class, 'about'])->name('about');
-Route::get('/contact', [PageController::class, 'contact'])->name('contact');
-Route::get('/docs', [PageController::class, 'docs'])->name('docs');
-Route::get('/faq', [PageController::class, 'faq'])->name('faq');
+Route::get('/about', [PageController::class, 'about'])->middleware('http.cache:article')->name('about');
+Route::get('/contact', [PageController::class, 'contact'])->middleware('http.cache:article')->name('contact');
+Route::get('/docs', [PageController::class, 'docs'])->middleware('http.cache:article')->name('docs');
+Route::get('/faq', [PageController::class, 'faq'])->middleware('http.cache:article')->name('faq');
 // Routes Exercices - Utiliser ExerciceController
 use App\Http\Controllers\ExerciceController;
 Route::get('/exercices', [ExerciceController::class, 'index'])->name('exercices');
@@ -148,7 +148,9 @@ use App\Http\Controllers\DocumentCartController;
 // Routes spécifiques AVANT les routes avec paramètres pour éviter les conflits
 Route::get('/documents', [DocumentController::class, 'index'])->name('documents.index');
 Route::get('/documents/category/{slug}', [DocumentController::class, 'category'])->name('documents.category');
-Route::get('/documents/download/{token}', [DocumentController::class, 'downloadByToken'])->name('documents.download.token');
+Route::get('/documents/download/{token}', [DocumentController::class, 'downloadByToken'])
+    ->middleware('download_rate_limit')
+    ->name('documents.download.token');
 Route::get('/documents/my-documents', [DocumentController::class, 'myDocumentsByEmail'])->name('documents.my-documents-email');
 
 // Routes Panier Documents (doivent être AVANT /documents/{slug})
@@ -163,7 +165,9 @@ Route::post('/documents/checkout/process', [DocumentCartController::class, 'proc
 Route::get('/documents/guest-success/{paymentId}', [DocumentCartController::class, 'guestSuccess'])->name('documents.guest-success');
 
 // Route téléchargement gratuit (avant /documents/{slug})
-Route::get('/documents/{id}/download-free', [DocumentController::class, 'downloadFree'])->name('documents.download-free');
+Route::get('/documents/{id}/download-free', [DocumentController::class, 'downloadFree'])
+    ->middleware('download_rate_limit')
+    ->name('documents.download-free');
 
 // Routes avis/commentaires
 use App\Http\Controllers\DocumentReviewController;
@@ -201,6 +205,8 @@ Route::get('/bundles', [DocumentBundleController::class, 'index'])
     ->name('bundles.index');
 Route::get('/bundles/{slug}', [DocumentBundleController::class, 'show'])
     ->name('bundles.show');
+Route::post('/bundles/{slug}/add-to-cart', [DocumentBundleController::class, 'addToCart'])
+    ->name('bundles.add-to-cart');
 
 // Route avec paramètre en DERNIER pour éviter les conflits
 Route::get('/documents/{slug}', [DocumentController::class, 'show'])->name('documents.show');
@@ -284,19 +290,23 @@ Route::get('/articles/vedettes', [EmploiController::class, 'featured'])->name('a
 // Route avec paramètre - exclut "articles-recents" pour éviter les conflits
 Route::get('/emplois/article/{slug}', [EmploiController::class, 'show'])
     ->where('slug', '^(?!articles-recents$).+')
+    ->middleware(['http.cache:article', 'page.cache:300'])
     ->name('emplois.article');
 
 // Routes Documents Administratifs (papiers)
 use App\Http\Controllers\AdministrativeDocumentController;
 Route::get('/papiers-administratifs', [AdministrativeDocumentController::class, 'index'])
+    ->middleware('http.cache:list')
     ->name('admin-docs.index');
 Route::get('/papiers-administratifs/{slug}', [AdministrativeDocumentController::class, 'show'])
+    ->middleware('http.cache:article')
     ->name('admin-docs.show');
 
 // ── Portails par examen : /cfee  /bfem  /bac  /bts  /cap ────────────────────
 use App\Http\Controllers\ExamPortalController;
 Route::get('/{exam}', [ExamPortalController::class, 'show'])
     ->where('exam', 'cfee|bfem|bac|bts|cap')
+    ->middleware(['http.cache:article', 'page.cache:600'])
     ->name('portail.exam');
 Route::get('/epreuves/pack/{exam}/{year}', [ExamPortalController::class, 'pack'])
     ->where(['exam' => 'cfee|bfem|bac|bts|cap', 'year' => '[0-9]{4}'])
@@ -316,36 +326,44 @@ Route::get('/concours/pack/{institution}/{year}', [ConcourPortalController::clas
 
 // Routes Épreuves & Corrigés (examens du Sénégal)
 use App\Http\Controllers\EpreuveController;
-Route::get('/epreuves', [EpreuveController::class, 'index'])->name('epreuves.index');
-Route::get('/epreuves/examen/{exam}/{matiereSlug?}', [EpreuveController::class, 'exam'])->name('epreuves.exam');
-Route::get('/epreuves/classe/{level}/{matiereSlug?}', [EpreuveController::class, 'level'])->name('epreuves.level');
+Route::get('/epreuves', [EpreuveController::class, 'index'])->middleware(['http.cache:list', 'page.cache:180'])->name('epreuves.index');
+Route::get('/epreuves/examen/{exam}/{matiereSlug?}', [EpreuveController::class, 'exam'])->middleware(['http.cache:list', 'page.cache:180'])->name('epreuves.exam');
+Route::get('/epreuves/classe/{level}/{matiereSlug?}', [EpreuveController::class, 'level'])->middleware(['http.cache:list', 'page.cache:180'])->name('epreuves.level');
 Route::get('/epreuves/{id}/telecharger', [EpreuveController::class, 'download'])
-    ->whereNumber('id')->middleware('throttle:120,1')->name('epreuves.download');
-// Pas de throttle serré sur l'aperçu : la visionneuse PDF du navigateur émet
-// plusieurs requêtes de plage (range) pour un seul affichage ; une limite par
-// minute provoquerait des 429 en lecture normale. La route ne fait que streamer
-// un fichier existant. On garde une limite très haute comme simple garde-fou.
+    ->whereNumber('id')
+    ->middleware('download_rate_limit')
+    ->name('epreuves.download');
+
+// Aperçu PDF: rate limiting élevé pour les requêtes de plage du navigateur
 Route::get('/epreuves/{id}/apercu', [EpreuveController::class, 'view'])
     ->whereNumber('id')->middleware('throttle:600,1')->name('epreuves.view');
 
-// Achat & téléchargement du corrigé (payant, Wave, e-mail OU téléphone)
+// Téléchargement de corrigé payant
+Route::get('/epreuves/corrige/telecharger/{token}', [\App\Http\Controllers\CorrigeController::class, 'download'])
+    ->middleware('download_rate_limit')
+    ->name('epreuves.corrige.download');
+
+// Achat du corrigé
 Route::post('/epreuves/{id}/corrige/acheter', [\App\Http\Controllers\CorrigeController::class, 'checkout'])
     ->whereNumber('id')->middleware('throttle:10,1')->name('epreuves.corrige.checkout');
 Route::get('/epreuves/corrige/succes/{paymentId}', [\App\Http\Controllers\CorrigeController::class, 'success'])
     ->whereNumber('paymentId')->name('epreuves.corrige.success');
-Route::get('/epreuves/corrige/telecharger/{token}', [\App\Http\Controllers\CorrigeController::class, 'download'])
-    ->middleware('throttle:60,1')->name('epreuves.corrige.download');
 
-// Achat & téléchargement d'une épreuve payante (Wave)
+// Téléchargement d'épreuve payante
+Route::get('/epreuves/pay/telecharger/{token}', [\App\Http\Controllers\EpreuvePaymentController::class, 'download'])
+    ->middleware('download_rate_limit')
+    ->name('epreuves.pay.download');
+
+// Achat d'épreuve payante
 Route::post('/epreuves/{id}/acheter', [\App\Http\Controllers\EpreuvePaymentController::class, 'checkout'])
     ->whereNumber('id')->middleware('throttle:10,1')->name('epreuves.pay.checkout');
 Route::get('/epreuves/pay/succes/{paymentId}', [\App\Http\Controllers\EpreuvePaymentController::class, 'success'])
     ->whereNumber('paymentId')->name('epreuves.pay.success');
-Route::get('/epreuves/pay/telecharger/{token}', [\App\Http\Controllers\EpreuvePaymentController::class, 'download'])
-    ->middleware('throttle:60,1')->name('epreuves.pay.download');
 
 Route::get('/epreuves/{slug}', [EpreuveController::class, 'show'])
-    ->where('slug', '^(?!examen|classe)[a-z0-9-]+$')->name('epreuves.show');
+    ->where('slug', '^(?!examen|classe)[a-z0-9-]+$')
+    ->middleware(['http.cache:article', 'page.cache:300'])
+    ->name('epreuves.show');
 
 // Commentaires (publiques - avec rate limiting)
 Route::post('/comments', [\App\Http\Controllers\CommentController::class, 'store'])->middleware('throttle:5,15')->name('comments.store');
@@ -387,7 +405,9 @@ Route::middleware('auth')->prefix('dashboard')->name('dashboard.')->group(functi
     // Certificats
     Route::get('/certificates', [App\Http\Controllers\CertificateController::class, 'index'])->name('certificates');
     Route::get('/certificates/{id}', [App\Http\Controllers\CertificateController::class, 'show'])->name('certificates.show');
-    Route::get('/certificates/{id}/download', [App\Http\Controllers\CertificateController::class, 'download'])->name('certificates.download');
+    Route::get('/certificates/{id}/download', [App\Http\Controllers\CertificateController::class, 'download'])
+        ->middleware('download_rate_limit')
+        ->name('certificates.download');
     Route::post('/certificates/generate/{formationSlug}', [App\Http\Controllers\CertificateController::class, 'generate'])->name('certificates.generate');
     // Page principale (redirige vers overview)
     Route::get('/', [\App\Http\Controllers\ProfileController::class, 'overview'])->name('index');
@@ -465,6 +485,11 @@ Route::get('/administrative-document-cover/{id}', [\App\Http\Controllers\Admin\A
     ->middleware('signed')
     ->name('admin-docs.cover.signed');
 
+// Image de couverture pack (même logique que /documents)
+Route::get('/bundle-cover/{id}', [\App\Http\Controllers\Admin\DocumentBundleController::class, 'serveCover'])
+    ->middleware('signed')
+    ->name('bundle.cover.signed');
+
 // Routes protégées par middleware admin
 Route::middleware(['admin'])->group(function () {
     Route::get('/admin/dashboard', [App\Http\Controllers\AdminController::class, 'dashboard'])->name('admin.dashboard');
@@ -473,6 +498,13 @@ Route::middleware(['admin'])->group(function () {
     Route::get('/admin/statistics', [App\Http\Controllers\AdminController::class, 'statistics'])->name('admin.statistics');
     Route::post('/admin/statistics/truncate', [App\Http\Controllers\AdminController::class, 'truncateStatistics'])->name('admin.statistics.truncate');
     Route::post('/admin/statistics/clear-cache', [App\Http\Controllers\AdminController::class, 'clearStatisticsCache'])->name('admin.statistics.clear-cache');
+    
+    // Routes pour le monitoring des téléchargements
+    Route::get('/admin/downloads', [\App\Http\Controllers\Admin\DownloadMonitoringController::class, 'index'])->name('admin.downloads.index');
+    Route::post('/admin/downloads/unblock/{hash}', [\App\Http\Controllers\Admin\DownloadMonitoringController::class, 'unblock'])->name('admin.downloads.unblock');
+    Route::post('/admin/downloads/clear-logs', [\App\Http\Controllers\Admin\DownloadMonitoringController::class, 'clearLogs'])->name('admin.downloads.clear-logs');
+    Route::get('/admin/downloads/export', [\App\Http\Controllers\Admin\DownloadMonitoringController::class, 'export'])->name('admin.downloads.export');
+    
     Route::get('/admin/adsense', [App\Http\Controllers\AdminController::class, 'adsense'])->name('admin.adsense');
     Route::post('/admin/adsense', [App\Http\Controllers\AdminController::class, 'updateAdsense'])->name('admin.adsense.update');
     Route::get('/admin/adsense/check', [App\Http\Controllers\AdminController::class, 'adsenseCheck'])->name('admin.adsense.check');
@@ -700,6 +732,7 @@ Route::middleware(['admin'])->group(function () {
         // Modération avis
         Route::prefix('reviews')->name('reviews.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Admin\DocumentReviewController::class, 'index'])->name('index');
+            Route::post('/', [\App\Http\Controllers\Admin\DocumentReviewController::class, 'store'])->name('store');
             Route::post('/{reviewId}/approve', [\App\Http\Controllers\Admin\DocumentReviewController::class, 'approve'])->name('approve');
             Route::delete('/{reviewId}', [\App\Http\Controllers\Admin\DocumentReviewController::class, 'destroy'])->name('destroy');
         });
@@ -722,6 +755,7 @@ Route::middleware(['admin'])->group(function () {
         Route::get('/create', [\App\Http\Controllers\Admin\EpreuveController::class, 'create'])->name('create');
         Route::post('/', [\App\Http\Controllers\Admin\EpreuveController::class, 'store'])->name('store');
         Route::get('/{epreuve}/edit', [\App\Http\Controllers\Admin\EpreuveController::class, 'edit'])->name('edit');
+        Route::get('/{epreuve}/telecharger', [\App\Http\Controllers\Admin\EpreuveController::class, 'download'])->name('download');
         Route::match(['put', 'patch'], '/{epreuve}', [\App\Http\Controllers\Admin\EpreuveController::class, 'update'])->name('update');
         Route::delete('/{epreuve}', [\App\Http\Controllers\Admin\EpreuveController::class, 'destroy'])->name('destroy');
         Route::post('/{epreuve}/toggle-publish', [\App\Http\Controllers\Admin\EpreuveController::class, 'togglePublish'])->name('toggle-publish');

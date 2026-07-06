@@ -384,18 +384,9 @@
 }
 
 /* ─────────────────────────────────────────────────────────
-   7. FEATURES — Imports des fonctionnalités
+   7. FEATURES — Commun seulement (widgets + dark-mode)
+   Les styles de pages (homepage, about, login…) sont chargés
+   séparément via Vite par chaque Blade page (@push / @vite).
    ───────────────────────────────────────────────────────── */
 @import './features/widgets.css';
 @import './features/dark-mode.css';
-@import './features/homepage.css';
-@import './features/about.css';
-@import './features/login.css';
-@import './features/exercices.css';
-@import './features/quiz.css';
-@import './features/quiz-language.css';
-@import './features/quiz-result.css';
-@import './features/exercices-language.css';
-@import './features/exercice-detail.css';
-@import './features/contact.css';
-@import './features/emplois.css';

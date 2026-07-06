@@ -1,7 +1,28 @@
 @extends('layouts.app')
 
-@section('title', $article->meta_title ?? $article->title . ' | NiangProgrammeur')
-@section('meta_description', $article->meta_description ?? $article->excerpt ?? substr(strip_tags($article->content), 0, 160))
+@push('page_css')
+@vite('resources/css/features/emplois.css')
+@endpush
+
+@section('title', $article->meta_title ?: ($article->title . ' | NiangProgrammeur'))
+
+@php
+    // Construire une meta description de qualité (120-160 chars)
+    // ?: couvre null ET chaîne vide, contrairement à ??
+    $metaDesc = $article->meta_description ?: $article->excerpt ?: null;
+    if (empty($metaDesc)) {
+        // Fallback : premier 160 chars du contenu, nettoyé et coupé au dernier espace
+        $rawText  = preg_replace('/\s+/', ' ', trim(strip_tags($article->content ?? '')));
+        if (strlen($rawText) > 155) {
+            $cut      = substr($rawText, 0, 152);
+            $lastSpace = strrpos($cut, ' ');
+            $metaDesc = ($lastSpace > 80 ? substr($cut, 0, $lastSpace) : $cut) . '…';
+        } else {
+            $metaDesc = $rawText;
+        }
+    }
+@endphp
+@section('meta_description', $metaDesc)
 
 @php
     // Générer l'URL absolue de l'image pour les réseaux sociaux
@@ -143,6 +164,28 @@
     <meta property="article:author" content="NiangProgrammeur">
     @if($article->category)
     <meta property="article:tag" content="{{ $article->category->name }}">
+    @endif
+
+    @if(!empty($articleFaqs))
+    @php
+        // Les clés '@context'/'@type' sont construites par concaténation plutôt
+        // qu'écrites en toutes lettres : un token "@context" littéral dans ce
+        // fichier .blade.php est parfois capturé par le compilateur de directives
+        // Blade (même à l'intérieur d'un tableau PHP), ce qui corrompait la clé
+        // "@context" en code PHP compilé fuité dans le JSON-LD produit.
+        $ldContextKey = '@' . 'context';
+        $ldTypeKey = '@' . 'type';
+        $faqSchema = [
+            $ldContextKey => 'https://schema.org',
+            $ldTypeKey    => 'FAQPage',
+            'mainEntity'  => array_map(fn($faq) => [
+                $ldTypeKey       => 'Question',
+                'name'           => $faq['question'],
+                'acceptedAnswer' => [$ldTypeKey => 'Answer', 'text' => $faq['answer']],
+            ], $articleFaqs),
+        ];
+    @endphp
+    <script type="application/ld+json">{!! json_encode($faqSchema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG) !!}</script>
     @endif
 @endpush
 
@@ -526,9 +569,11 @@ body.dark-mode .art-sidebar-ad {
 }
 .art-ad-imgwrap {
   position: relative; width: 100%; overflow: hidden;
+  aspect-ratio: 4 / 3;
 }
 .art-ad-imgwrap img {
-  width: 100%; height: auto; display: block;
+  width: 100%; height: 100%; display: block;
+  object-fit: cover;
   transition: transform .5s ease;
 }
 .art-sidebar-ad:hover .art-ad-imgwrap img { transform: scale(1.05); }
@@ -752,7 +797,29 @@ body:not(.dark-mode) .comment-form-wrapper textarea {
 @section('content')
 <div id="art-progress"></div>
 
-@php $wordCount = str_word_count(strip_tags($article->content)); $readingTime = max(1, ceil($wordCount / 200)); @endphp
+@php
+    $wordCount   = str_word_count(strip_tags($article->content));
+    $readingTime = max(1, ceil($wordCount / 200));
+
+    // ── TÂCHE 5 : Découpe du contenu pour injection de l'e-book ──────────────
+    // On convertit le markdown d'abord, puis on découpe au 3e </p>
+    $renderedContent = markdown_to_html($article->content ?? '');
+    // Le H1 de la page est dans le hero — tout H1 dans le corps devient H2
+    $renderedContent = preg_replace('/<h1(\b[^>]*)>/i', '<h2$1>', $renderedContent);
+    $renderedContent = preg_replace('/<\/h1>/i', '</h2>', $renderedContent);
+    // Corriger l'ancienne URL /ebooks/decodeur-carriere (route supprimée) → document réel
+    $decodeurPath    = '/documents/le-decodeur-de-carriere-guide-ultime-pour-decrocher-un-emploi';
+    $renderedContent = str_replace(
+        ['/ebooks/decodeur-carriere', 'niangprogrammeur.com/ebooks/decodeur-carriere'],
+        [$decodeurPath,               'niangprogrammeur.com' . $decodeurPath],
+        $renderedContent
+    );
+    $cParts          = explode('</p>', $renderedContent);
+    $cSplitAt        = min(3, max(0, count($cParts) - 1));
+    $cBefore         = implode('</p>', array_slice($cParts, 0, $cSplitAt))
+                       . ($cSplitAt > 0 ? '</p>' : '');
+    $cAfter          = implode('</p>', array_slice($cParts, $cSplitAt));
+@endphp
 
 {{-- ── HERO ── --}}
 @if($article->cover_image)
@@ -840,8 +907,51 @@ body:not(.dark-mode) .comment-form-wrapper textarea {
         </div>
       </div>
 
+      {{-- ── TÂCHE 1+5 : Contenu + injection E-book au 3e paragraphe ── --}}
       <div class="art-body">
-        {!! markdown_to_html($article->content) !!}
+        {!! $cBefore !!}
+        @if($cSplitAt > 0)
+          {{-- TÂCHE 5 : Encadré e-book natif (seul lien inter-silos autorisé) --}}
+          <x-ebook-promo :type="$contentType" />
+        @endif
+        {!! $cAfter !!}
+
+        {{-- TÂCHE 1 : Bloc Conseil Expert NiangProgrammeur (anti-thin-content) --}}
+        @if(!empty($expertAdvice))
+        <div class="np-expert-box" role="complementary" aria-label="Conseil Expert NiangProgrammeur">
+        <style>
+        .np-expert-box{
+            margin:2rem 0 0;
+            padding:1.4rem 1.6rem;
+            background:linear-gradient(135deg,rgba(5,150,105,.07),rgba(8,145,178,.07));
+            border-left:5px solid #059669;
+            border-radius:0 12px 12px 0;
+        }
+        .np-expert-box-hd{
+            display:flex;align-items:center;gap:.55rem;
+            font-size:.78rem;font-weight:800;
+            color:#059669;text-transform:uppercase;letter-spacing:.07em;
+            margin-bottom:.6rem;
+        }
+        body.dark-mode .np-expert-box-hd{color:#34d399;}
+        .np-expert-box p{
+            margin:0;font-size:.9rem;line-height:1.7;
+            color:rgba(30,41,59,.8);
+        }
+        body.dark-mode .np-expert-box p{color:rgba(255,255,255,.75);}
+        body.dark-mode .np-expert-box{background:rgba(5,150,105,.09);}
+        </style>
+            <div class="np-expert-box-hd">
+                <i class="fas fa-lightbulb"></i> Conseil de l'Expert NiangProgrammeur
+            </div>
+            <p>{{ $expertAdvice }}</p>
+        </div>
+        @endif
+
+        {{-- TÂCHE 3 : FAQ visible dans l'article + balisage microdata --}}
+        @if(!empty($articleFaqs))
+          <x-faq-schema :faqs="$articleFaqs" />
+        @endif
       </div>
 
       <div class="art-share">
@@ -920,7 +1030,8 @@ body:not(.dark-mode) .comment-form-wrapper textarea {
           @if($document->cover_image)
           <img class="art-doc-thumb"
                src="{{ $document->cover_type === 'internal' ? \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $document->id]) : $document->cover_image }}"
-               alt="{{ $document->title }}" loading="lazy"
+               alt="{{ $document->title }}" width="68" height="68"
+               loading="lazy" decoding="async"
                onerror="this.style.display='none'">
           @endif
           <div class="art-doc-info">
@@ -963,7 +1074,8 @@ body:not(.dark-mode) .comment-form-wrapper textarea {
           @if($related->cover_image)
           <img class="art-rel-img"
                src="{{ $related->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($related->cover_image) : $related->cover_image }}"
-               alt="{{ $related->title }}" loading="lazy"
+               alt="{{ $related->title }}" width="352" height="198"
+               loading="lazy" decoding="async"
                onerror="this.parentElement.style.background='linear-gradient(135deg,rgba(6,182,212,.18),rgba(20,184,166,.18))'">
           @endif
           <div class="art-rel-overlay"><span>Lire l'article <i class="fas fa-arrow-right"></i></span></div>

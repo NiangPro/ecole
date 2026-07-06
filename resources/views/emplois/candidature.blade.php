@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@push('page_css')
+@vite('resources/css/features/emplois.css')
+@endpush
+
 @section('title', 'Candidature Spontanée | NiangProgrammeur')
 @section('meta_description', 'Envoyez votre candidature spontanée aux entreprises et startups à la recherche de talents en développement web et technologie.')
 

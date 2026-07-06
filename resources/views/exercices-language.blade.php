@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@push('page_css')
+@vite('resources/css/features/exercices-language.css')
+@endpush
+
 @php
   $langMap = [
     'html5'        => ['icon' => 'fab fa-html5',       'color' => 'orange', 'bg' => '#fff7ed', 'fg' => '#ea580c'],

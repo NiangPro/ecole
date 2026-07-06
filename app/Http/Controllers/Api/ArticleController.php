@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Category;
-use App\Models\JobArticle;
+use App\Services\JobArticlePublisher;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 
 class ArticleController extends Controller
 {
@@ -20,75 +20,59 @@ class ArticleController extends Controller
      *
      * Corps JSON attendu :
      *   title            (string, requis)      – Titre de l'article
+     *   slug             (string, optionnel)   – Slug personnalisé, sinon généré depuis le titre
      *   content          (string, requis)      – Contenu HTML complet
      *   excerpt          (string, optionnel)   – Résumé affiché sur les cartes
      *   category_id      (int,    requis)      – ID de la catégorie (table job_categories)
-     *   status           (string, optionnel)   – "draft" (défaut) | "published"
+     *   status           (string, optionnel)   – "draft" (défaut) | "published" | "archived"
      *   cover_image_url  (string, optionnel)   – URL de l'image de couverture externe
      *   cover_type       (string, optionnel)   – "external" (défaut si cover_image_url fourni)
      *   meta_title       (string, optionnel)   – Titre SEO (max 70 car.)
      *   meta_description (string, optionnel)   – Description SEO (max 160 car.)
-     *   meta_keywords    (array,  optionnel)   – Tableau de mots-clés ex: ["emploi","sénégal"]
+     *   meta_keywords    (string ou array, optionnel) – "mot1, mot2" ou ["mot1","mot2"]
+     *   is_sponsored     (bool,   optionnel)   – défaut false
+     *   is_featured      (bool,   optionnel)   – défaut false
      *   published_at     (string, optionnel)   – Date ISO 8601, défaut = now() si status=published
      */
-    public function store(Request $request): JsonResponse
+    public function store(Request $request, JobArticlePublisher $publisher): JsonResponse
     {
         $validator = Validator::make($request->all(), [
             'title'            => ['required', 'string', 'max:255'],
+            'slug'             => ['nullable', 'string', 'max:255', 'unique:job_articles,slug'],
             'content'          => ['required', 'string'],
             'excerpt'          => ['nullable', 'string', 'max:500'],
             'category_id'      => ['required', 'integer', 'exists:job_categories,id'],
-            'status'           => ['nullable', 'string', 'in:draft,published'],
+            'status'           => ['nullable', 'string', 'in:draft,published,archived'],
             'cover_image_url'  => ['nullable', 'url', 'max:2048'],
             'cover_type'       => ['nullable', 'string', 'in:internal,external'],
             'meta_title'       => ['nullable', 'string', 'max:70'],
             'meta_description' => ['nullable', 'string', 'max:160'],
-            'meta_keywords'    => ['nullable', 'array'],
+            'meta_keywords'    => ['nullable'],
             'meta_keywords.*'  => ['string', 'max:50'],
+            'is_sponsored'     => ['nullable', 'boolean'],
+            'is_featured'      => ['nullable', 'boolean'],
             'published_at'     => ['nullable', 'date'],
         ]);
 
         if ($validator->fails()) {
             return response()->json([
+                'success' => false,
                 'message' => 'Les données fournies sont invalides.',
                 'errors'  => $validator->errors(),
             ], 422);
         }
 
-        $data   = $validator->validated();
-        $status = $data['status'] ?? 'draft';
-
-        // Slug unique généré depuis le titre
-        $slug = $this->uniqueSlug($data['title']);
-
-        // Image de couverture externe
-        $coverImage = $data['cover_image_url'] ?? null;
-        $coverType  = $coverImage ? 'external' : ($data['cover_type'] ?? 'external');
-
-        // published_at automatique si on publie maintenant
-        $publishedAt = null;
-        if ($status === 'published') {
-            $publishedAt = isset($data['published_at'])
-                ? \Carbon\Carbon::parse($data['published_at'])
-                : now();
+        try {
+            $article = $publisher->publish($validator->validated());
+        } catch (UniqueConstraintViolationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ce slug existe déjà. Veuillez en choisir un autre.',
+            ], 422);
         }
 
-        $article = JobArticle::create([
-            'title'            => $data['title'],
-            'slug'             => $slug,
-            'content'          => $data['content'],
-            'excerpt'          => $data['excerpt'] ?? null,
-            'category_id'      => $data['category_id'],
-            'status'           => $status,
-            'cover_image'      => $coverImage,
-            'cover_type'       => $coverType,
-            'meta_title'       => $data['meta_title'] ?? null,
-            'meta_description' => $data['meta_description'] ?? null,
-            'meta_keywords'    => $data['meta_keywords'] ?? null,
-            'published_at'     => $publishedAt,
-        ]);
-
         return response()->json([
+            'success' => true,
             'message' => 'Article créé avec succès.',
             'article' => [
                 'id'           => $article->id,
@@ -102,19 +86,5 @@ class ArticleController extends Controller
                     : null,
             ],
         ], 201);
-    }
-
-    private function uniqueSlug(string $title): string
-    {
-        $base = Str::slug($title);
-        $slug = $base;
-        $i    = 1;
-
-        while (JobArticle::where('slug', $slug)->exists()) {
-            $slug = "{$base}-{$i}";
-            $i++;
-        }
-
-        return $slug;
     }
 }

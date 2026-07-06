@@ -764,10 +764,37 @@
                 <span>Statistiques</span>
             </a>
             
-            <a href="{{ route('admin.analytics.index') }}" class="sidebar-item {{ request()->routeIs('admin.analytics.*') ? 'active' : '' }}">
-                <i class="fas fa-chart-line text-xl"></i>
-                <span>Analytics</span>
-            </a>
+            @endif
+            @endauth
+
+            @auth
+            @if(Auth::user()->isAdmin())
+            <!-- Menu Dropdown Outils -->
+            <div class="sidebar-dropdown {{ request()->routeIs('admin.downloads.*') || request()->routeIs('admin.analytics.*') || request()->routeIs('admin.ads.*') || request()->routeIs('admin.achievements.*') ? 'active' : '' }}">
+                <button class="sidebar-item sidebar-dropdown-toggle" onclick="toggleSidebarDropdown('tools')">
+                    <i class="fas fa-toolbox text-xl"></i>
+                    <span>Outils</span>
+                    <i class="fas fa-chevron-down dropdown-icon ml-auto" id="tools-icon"></i>
+                </button>
+                <div class="sidebar-dropdown-menu" id="tools-dropdown" style="display: {{ request()->routeIs('admin.downloads.*') || request()->routeIs('admin.analytics.*') || request()->routeIs('admin.ads.*') || request()->routeIs('admin.achievements.*') ? 'block' : 'none' }};">
+                    <a href="{{ route('admin.downloads.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.downloads.*') ? 'active' : '' }}">
+                        <i class="fas fa-download"></i>
+                        <span>Téléchargements</span>
+                    </a>
+                    <a href="{{ route('admin.analytics.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.analytics.*') ? 'active' : '' }}">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Analytics</span>
+                    </a>
+                    <a href="{{ route('admin.ads.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.ads.*') ? 'active' : '' }}">
+                        <i class="fas fa-ad"></i>
+                        <span>Publicités</span>
+                    </a>
+                    <a href="{{ route('admin.achievements.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.achievements.*') ? 'active' : '' }}">
+                        <i class="fas fa-trophy"></i>
+                        <span>Réalisations</span>
+                    </a>
+                </div>
+            </div>
             @endif
             @endauth
             
@@ -841,6 +868,14 @@
                         <i class="fas fa-shopping-cart"></i>
                         <span>Achats</span>
                     </a>
+                    <a href="{{ route('admin.documents.bundles.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.documents.bundles.*') ? 'active' : '' }}">
+                        <i class="fas fa-box"></i>
+                        <span>Packs</span>
+                    </a>
+                    <a href="{{ route('admin.documents.coupons.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.documents.coupons.*') ? 'active' : '' }}">
+                        <i class="fas fa-tags"></i>
+                        <span>Codes promo</span>
+                    </a>
                     <a href="{{ route('admin.documents.reviews.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.documents.reviews.*') ? 'active' : '' }}">
                         <i class="fas fa-comments"></i>
                         <span>Modération Avis</span>
@@ -901,10 +936,6 @@
             
             @auth
             @if(Auth::user()->isAdmin())
-            <a href="{{ route('admin.ads.index') }}" class="sidebar-item {{ request()->routeIs('admin.ads.*') ? 'active' : '' }}">
-                <i class="fas fa-ad text-xl"></i>
-                <span>Publicités</span>
-            </a>
             <a href="{{ route('admin.users') }}" class="sidebar-item {{ request()->routeIs('admin.users') ? 'active' : '' }}">
                 <i class="fas fa-users text-xl"></i>
                 <span>Utilisateurs</span>
@@ -919,11 +950,6 @@
                     <span class="ml-auto px-2 py-1 bg-blue-500 text-white text-xs rounded-full">{{ $unreadNewsletters }}</span>
                 @endif
             </a>
-            <a href="{{ route('admin.achievements.index') }}" class="sidebar-item {{ request()->routeIs('admin.achievements.*') ? 'active' : '' }}">
-                <i class="fas fa-trophy text-xl"></i>
-                <span>Réalisations</span>
-            </a>
-            
             <!-- Dropdown Monétisation -->
             <div class="sidebar-dropdown {{ request()->routeIs('admin.monetization.*') ? 'active' : '' }}">
                 <button class="sidebar-item sidebar-dropdown-toggle" onclick="toggleSidebarDropdown('monetization')">

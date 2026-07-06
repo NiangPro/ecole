@@ -190,6 +190,54 @@
             </div>
         </div>
         
+        <!-- Configuration Orange Money -->
+        <div class="content-section mb-6">
+            <h4 class="text-xl font-bold mb-6 flex items-center gap-2">
+                <i class="fas fa-mobile-alt text-orange-400"></i>
+                Orange Money
+                <label class="ml-auto flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" name="orange_money_enabled" value="1" {{ old('orange_money_enabled', $settings->orange_money_enabled ?? false) ? 'checked' : '' }} class="w-5 h-5">
+                    <span class="text-gray-300 font-semibold">Activé</span>
+                </label>
+            </h4>
+
+            <div class="bg-blue-500/10 border border-blue-500/30 rounded-lg p-4 mb-6">
+                <div class="flex items-start gap-3">
+                    <i class="fas fa-info-circle text-blue-400 text-xl mt-1"></i>
+                    <div>
+                        <p class="font-semibold text-blue-400 mb-2">Configuration Orange Money</p>
+                        <p class="text-sm text-gray-300">
+                            Orange Money n'ayant pas de lien de paiement automatisé sans contrat marchand, l'acheteur envoie l'argent au numéro indiqué puis confirme manuellement — comme pour Wave.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid md:grid-cols-1 gap-6">
+                <div>
+                    <label class="block text-gray-300 mb-2 font-semibold">
+                        <i class="fas fa-phone mr-2"></i>Numéro marchand Orange Money
+                    </label>
+                    <input type="text" name="orange_money_number" value="{{ old('orange_money_number', $settings->orange_money_number ?? '') }}"
+                           class="input-admin" placeholder="77 XXX XX XX">
+                    @error('orange_money_number')
+                    <p class="text-red-400 text-sm mt-2">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label class="block text-gray-300 mb-2 font-semibold">
+                        <i class="fas fa-list-ol mr-2"></i>Instructions affichées à l'acheteur
+                    </label>
+                    <textarea name="orange_money_instructions" class="input-admin" rows="3"
+                              placeholder="Ex : Envoyez le montant via Orange Money au numéro ci-dessus, puis cliquez sur « J'ai payé ».">{{ old('orange_money_instructions', $settings->orange_money_instructions ?? '') }}</textarea>
+                    @error('orange_money_instructions')
+                    <p class="text-red-400 text-sm mt-2">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+        </div>
+
         <!-- Configuration PayPal -->
         <div class="content-section mb-6">
             <h4 class="text-xl font-bold mb-6 flex items-center gap-2">

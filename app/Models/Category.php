@@ -43,19 +43,26 @@ class Category extends Model
     {
         parent::boot();
 
-        // Invalider le cache lors de la création, mise à jour ou suppression
+        // Invalider le cache lors de la création, mise à jour ou suppression.
+        // 'navigation_job_categories' (compteur affiché dans le menu) est invalidé ici
+        // en plus de 'active_categories' (compteur affiché sur /emplois) : ces deux
+        // caches représentent la même donnée mais divergeaient faute d'invalidation
+        // commune, d'où l'écart de compteur observé entre le menu et /emplois.
         static::created(function ($category) {
             Cache::forget('active_categories');
+            Cache::forget('navigation_job_categories');
             Cache::forget("category_{$category->slug}");
         });
 
         static::updated(function ($category) {
             Cache::forget('active_categories');
+            Cache::forget('navigation_job_categories');
             Cache::forget("category_{$category->slug}");
         });
 
         static::deleted(function ($category) {
             Cache::forget('active_categories');
+            Cache::forget('navigation_job_categories');
             Cache::forget("category_{$category->slug}");
         });
     }

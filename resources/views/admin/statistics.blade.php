@@ -36,6 +36,173 @@
         </div>
     </div>
 
+    <!-- KPIs Business -->
+    <h2 class="business-section-title"><i class="fas fa-chart-pie"></i>Vue d'ensemble business</h2>
+    <div class="statistics-stats">
+        <div class="stat-card stat-revenue">
+            <div class="stat-icon-wrapper"><div class="stat-icon"><i class="fas fa-sack-dollar"></i></div></div>
+            <div class="stat-content">
+                <div class="stat-value">
+                    {{ number_format($businessStats['totalRevenue'], 0, ',', ' ') }} FCFA
+                    @if($businessStats['revenueGrowth'] != 0)
+                    <span class="stat-growth-badge {{ $businessStats['revenueGrowth'] > 0 ? 'positive' : 'negative' }}">
+                        {{ $businessStats['revenueGrowth'] > 0 ? '+' : '' }}{{ $businessStats['revenueGrowth'] }}%
+                    </span>
+                    @endif
+                </div>
+                <div class="stat-label">Chiffre d'affaires total</div>
+                <div class="stat-period">{{ number_format($businessStats['revenueThisMonth'], 0, ',', ' ') }} FCFA ce mois-ci</div>
+            </div>
+        </div>
+
+        <div class="stat-card stat-sales">
+            <div class="stat-icon-wrapper"><div class="stat-icon"><i class="fas fa-receipt"></i></div></div>
+            <div class="stat-content">
+                <div class="stat-value">{{ number_format($businessStats['totalSales']) }}</div>
+                <div class="stat-label">Ventes totales</div>
+                <div class="stat-period">Tous canaux confondus</div>
+            </div>
+        </div>
+
+        <div class="stat-card stat-avgorder">
+            <div class="stat-icon-wrapper"><div class="stat-icon"><i class="fas fa-calculator"></i></div></div>
+            <div class="stat-content">
+                <div class="stat-value">{{ number_format($businessStats['avgOrderValue'], 0, ',', ' ') }} FCFA</div>
+                <div class="stat-label">Panier moyen</div>
+                <div class="stat-period">Par vente</div>
+            </div>
+        </div>
+
+        <div class="stat-card stat-pending">
+            <div class="stat-icon-wrapper"><div class="stat-icon"><i class="fas fa-hourglass-half"></i></div></div>
+            <div class="stat-content">
+                <div class="stat-value">{{ number_format($businessStats['pendingPaymentsCount']) }}</div>
+                <div class="stat-label">Paiements en attente</div>
+                <div class="stat-period">À confirmer</div>
+            </div>
+        </div>
+
+        <div class="stat-card stat-unique">
+            <div class="stat-icon-wrapper"><div class="stat-icon"><i class="fas fa-user-friends"></i></div></div>
+            <div class="stat-content">
+                <div class="stat-value">{{ number_format($businessStats['totalUsers']) }}</div>
+                <div class="stat-label">Utilisateurs totaux</div>
+                <div class="stat-period">Depuis le lancement</div>
+            </div>
+        </div>
+
+        <div class="stat-card stat-newusers">
+            <div class="stat-icon-wrapper"><div class="stat-icon"><i class="fas fa-user-plus"></i></div></div>
+            <div class="stat-content">
+                <div class="stat-value">{{ number_format($businessStats['newUsersThisMonth']) }}</div>
+                <div class="stat-label">Nouveaux utilisateurs</div>
+                <div class="stat-period">Ce mois-ci</div>
+            </div>
+        </div>
+
+        <div class="stat-card stat-premium">
+            <div class="stat-icon-wrapper"><div class="stat-icon"><i class="fas fa-crown"></i></div></div>
+            <div class="stat-content">
+                <div class="stat-value">{{ number_format($businessStats['premiumUsers']) }}</div>
+                <div class="stat-label">Utilisateurs Premium</div>
+                <div class="stat-period">Comptes premium actifs</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Section: Revenu mensuel -->
+    <div class="charts-section">
+        <div class="chart-card">
+            <div class="chart-header">
+                <div class="chart-header-left">
+                    <div class="chart-icon"><i class="fas fa-chart-line"></i></div>
+                    <div>
+                        <h3 class="chart-title">Revenu mensuel (12 derniers mois)</h3>
+                        <p class="chart-subtitle">Chiffre d'affaires cumulé, tous canaux confondus</p>
+                    </div>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="revenueChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analytics Grid: ventilation business -->
+    <div class="analytics-grid">
+        <div class="analytics-card">
+            <div class="analytics-header">
+                <div class="analytics-icon"><i class="fas fa-layer-group"></i></div>
+                <h3 class="analytics-title">Revenu par canal</h3>
+            </div>
+            <div class="analytics-list">
+                @forelse($businessStats['revenueByChannel'] as $channel)
+                <div class="analytics-item">
+                    <div class="analytics-item-left">
+                        <i class="fas fa-circle-dot"></i>
+                        <span class="analytics-item-label">{{ $channel['label'] }} ({{ $channel['count'] }})</span>
+                    </div>
+                    <span class="analytics-item-value">{{ number_format($channel['total'], 0, ',', ' ') }} FCFA</span>
+                </div>
+                @empty
+                <div class="analytics-empty"><i class="fas fa-inbox"></i><span>Aucune donnée</span></div>
+                @endforelse
+            </div>
+        </div>
+
+        <div class="analytics-card">
+            <div class="analytics-header">
+                <div class="analytics-icon"><i class="fas fa-boxes-stacked"></i></div>
+                <h3 class="analytics-title">Packs &amp; coupons</h3>
+            </div>
+            <div class="analytics-list">
+                <div class="analytics-item">
+                    <div class="analytics-item-left"><i class="fas fa-box"></i><span class="analytics-item-label">Packs vendus</span></div>
+                    <span class="analytics-item-value">{{ number_format($businessStats['bundlesSold']) }}</span>
+                </div>
+                <div class="analytics-item">
+                    <div class="analytics-item-left"><i class="fas fa-coins"></i><span class="analytics-item-label">Revenu des packs</span></div>
+                    <span class="analytics-item-value">{{ number_format($businessStats['bundlesRevenue'], 0, ',', ' ') }} FCFA</span>
+                </div>
+                <div class="analytics-item">
+                    <div class="analytics-item-left"><i class="fas fa-tags"></i><span class="analytics-item-label">Coupons utilisés</span></div>
+                    <span class="analytics-item-value">{{ number_format($businessStats['couponsUsed']) }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="analytics-card">
+            <div class="analytics-header">
+                <div class="analytics-icon"><i class="fas fa-handshake"></i></div>
+                <h3 class="analytics-title">Affiliation &amp; communauté</h3>
+            </div>
+            <div class="analytics-list">
+                <div class="analytics-item">
+                    <div class="analytics-item-left"><i class="fas fa-hand-holding-dollar"></i><span class="analytics-item-label">Commissions payées</span></div>
+                    <span class="analytics-item-value">{{ number_format($businessStats['affiliateCommissionsPaid'], 0, ',', ' ') }} FCFA</span>
+                </div>
+                <div class="analytics-item">
+                    <div class="analytics-item-left"><i class="fas fa-clock"></i><span class="analytics-item-label">Commissions en attente</span></div>
+                    <span class="analytics-item-value">{{ number_format($businessStats['affiliateCommissionsPending'], 0, ',', ' ') }} FCFA</span>
+                </div>
+                <div class="analytics-item">
+                    <div class="analytics-item-left"><i class="fas fa-envelope"></i><span class="analytics-item-label">Abonnés newsletter actifs</span></div>
+                    <span class="analytics-item-value">{{ number_format($businessStats['newsletterActive']) }}</span>
+                </div>
+                <div class="analytics-item">
+                    <div class="analytics-item-left"><i class="fas fa-comments"></i><span class="analytics-item-label">Sujets forum</span></div>
+                    <span class="analytics-item-value">{{ number_format($businessStats['forumTopicsCount']) }}</span>
+                </div>
+                <div class="analytics-item">
+                    <div class="analytics-item-left"><i class="fas fa-reply"></i><span class="analytics-item-label">Réponses forum</span></div>
+                    <span class="analytics-item-value">{{ number_format($businessStats['forumRepliesCount']) }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="business-section-title"><i class="fas fa-globe"></i>Trafic du site</h2>
+
     <!-- Filters Section -->
     <div class="filters-section">
         <div class="filters-header">
@@ -742,6 +909,41 @@ body.light-mode .filter-select option {
     color: #ec4899;
 }
 
+/* KPIs Business — variantes de couleur dédiées */
+.stat-revenue::before { background: linear-gradient(180deg, #22c55e, #16a34a); }
+.stat-sales::before { background: linear-gradient(180deg, #6366f1, #4f46e5); }
+.stat-avgorder::before { background: linear-gradient(180deg, #14b8a6, #0d9488); }
+.stat-pending::before { background: linear-gradient(180deg, #ef4444, #dc2626); }
+.stat-newusers::before { background: linear-gradient(180deg, #0ea5e9, #0284c7); }
+.stat-premium::before { background: linear-gradient(180deg, #a855f7, #9333ea); }
+
+.stat-revenue .stat-icon { background: linear-gradient(135deg, rgba(34, 197, 94, 0.2), rgba(22, 163, 74, 0.2)); color: #22c55e; }
+.stat-sales .stat-icon { background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(79, 70, 229, 0.2)); color: #6366f1; }
+.stat-avgorder .stat-icon { background: linear-gradient(135deg, rgba(20, 184, 166, 0.2), rgba(13, 148, 136, 0.2)); color: #14b8a6; }
+.stat-pending .stat-icon { background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.2)); color: #ef4444; }
+.stat-newusers .stat-icon { background: linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(2, 132, 199, 0.2)); color: #0ea5e9; }
+.stat-premium .stat-icon { background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(147, 51, 234, 0.2)); color: #a855f7; }
+
+.stat-growth-badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.125rem 0.5rem;
+    border-radius: 999px;
+    margin-left: 0.5rem;
+}
+.stat-growth-badge.positive { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
+.stat-growth-badge.negative { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+
+.business-section-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    margin: 2rem 0 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+}
+.business-section-title i { color: #22c55e; }
+
 .stat-content {
     flex: 1;
     position: relative;
@@ -1385,12 +1587,13 @@ body.light-mode .empty-state-text {
     });
     
     const weeklyCtx = document.getElementById('weeklyChart');
+    let weeklyChart = null;
     if (weeklyCtx) {
         const weeklyStats = @json($weeklyStats);
         const weeklyLabels = weeklyStats.map(stat => stat.label);
         const weeklyData = weeklyStats.map(stat => stat.visits);
-        
-        const weeklyChart = new Chart(weeklyCtx.getContext('2d'), {
+
+        weeklyChart = new Chart(weeklyCtx.getContext('2d'), {
             type: 'bar',
             data: {
                 labels: weeklyLabels,
@@ -1443,43 +1646,102 @@ body.light-mode .empty-state-text {
                 }
             }
         });
-        
-        const darkModeToggle = document.getElementById('dark-mode-toggle');
-        if (darkModeToggle) {
-            darkModeToggle.addEventListener('click', function() {
-                setTimeout(function() {
-                    const isLight = document.body && document.body.classList.contains('light-mode');
-                        const newTextColor = isLight ? '#64748b' : '#9ca3af';
-                        const newGridColor = isLight ? 'rgba(100, 116, 139, 0.2)' : 'rgba(156, 163, 175, 0.1)';
-                        const newTooltipBg = isLight ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 0, 0, 0.8)';
-                        const newTooltipTextColor = isLight ? '#1e293b' : '#fff';
-                        const newBgColor = isLight ? 'rgba(6, 182, 212, 0.15)' : 'rgba(6, 182, 212, 0.1)';
-                        const newBarBg = isLight ? 'rgba(6, 182, 212, 0.7)' : 'rgba(6, 182, 212, 0.6)';
-                        
-                        if (visitsChart) {
-                            visitsChart.data.datasets[0].backgroundColor = newBgColor;
-                            visitsChart.options.scales.y.ticks.color = newTextColor;
-                            visitsChart.options.scales.x.ticks.color = newTextColor;
-                            visitsChart.options.scales.y.grid.color = newGridColor;
-                            visitsChart.options.scales.x.grid.color = newGridColor;
-                            visitsChart.options.plugins.tooltip.backgroundColor = newTooltipBg;
-                            visitsChart.options.plugins.tooltip.bodyColor = newTooltipTextColor;
-                            visitsChart.update();
+    }
+
+    const revenueCtx = document.getElementById('revenueChart');
+    if (revenueCtx) {
+        const revenueByMonth = @json($businessStats['revenueByMonthChart']);
+        const revenueLabels = revenueByMonth.map(row => {
+            const [y, m] = row.month.split('-');
+            const monthNames = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sep', 'Oct', 'Nov', 'Déc'];
+            return monthNames[parseInt(m, 10) - 1] + ' ' + y;
+        });
+        const revenueData = revenueByMonth.map(row => parseFloat(row.total));
+
+        new Chart(revenueCtx.getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: revenueLabels,
+                datasets: [{
+                    label: 'Revenu (FCFA)',
+                    data: revenueData,
+                    backgroundColor: isLightMode ? 'rgba(34, 197, 94, 0.7)' : 'rgba(34, 197, 94, 0.6)',
+                    borderColor: '#22c55e',
+                    borderWidth: 2,
+                    borderRadius: 8,
+                    borderSkipped: false,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: tooltipBg,
+                        titleColor: '#22c55e',
+                        bodyColor: tooltipTextColor,
+                        borderColor: '#22c55e',
+                        borderWidth: 1,
+                        padding: 12,
+                        displayColors: false,
+                        callbacks: {
+                            label: function(context) {
+                                return new Intl.NumberFormat('fr-FR').format(context.parsed.y) + ' FCFA';
+                            }
                         }
-                        
-                        if (weeklyChart) {
-                            weeklyChart.data.datasets[0].backgroundColor = newBarBg;
-                            weeklyChart.options.scales.y.ticks.color = newTextColor;
-                            weeklyChart.options.scales.x.ticks.color = newTextColor;
-                            weeklyChart.options.scales.y.grid.color = newGridColor;
-                            weeklyChart.options.plugins.tooltip.backgroundColor = newTooltipBg;
-                            weeklyChart.options.plugins.tooltip.bodyColor = newTooltipTextColor;
-                            weeklyChart.update();
-                        }
-                    }, 100);
-                });
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { color: textColor },
+                        grid: { color: gridColor }
+                    },
+                    x: {
+                        ticks: { color: textColor },
+                        grid: { display: false }
+                    }
+                }
             }
-        }
-    });
+        });
+    }
+
+    const darkModeToggle = document.getElementById('dark-mode-toggle');
+    if (darkModeToggle) {
+        darkModeToggle.addEventListener('click', function() {
+            setTimeout(function() {
+                const isLight = document.body && document.body.classList.contains('light-mode');
+                    const newTextColor = isLight ? '#64748b' : '#9ca3af';
+                    const newGridColor = isLight ? 'rgba(100, 116, 139, 0.2)' : 'rgba(156, 163, 175, 0.1)';
+                    const newTooltipBg = isLight ? 'rgba(255, 255, 255, 0.95)' : 'rgba(0, 0, 0, 0.8)';
+                    const newTooltipTextColor = isLight ? '#1e293b' : '#fff';
+                    const newBgColor = isLight ? 'rgba(6, 182, 212, 0.15)' : 'rgba(6, 182, 212, 0.1)';
+                    const newBarBg = isLight ? 'rgba(6, 182, 212, 0.7)' : 'rgba(6, 182, 212, 0.6)';
+
+                    if (visitsChart) {
+                        visitsChart.data.datasets[0].backgroundColor = newBgColor;
+                        visitsChart.options.scales.y.ticks.color = newTextColor;
+                        visitsChart.options.scales.x.ticks.color = newTextColor;
+                        visitsChart.options.scales.y.grid.color = newGridColor;
+                        visitsChart.options.scales.x.grid.color = newGridColor;
+                        visitsChart.options.plugins.tooltip.backgroundColor = newTooltipBg;
+                        visitsChart.options.plugins.tooltip.bodyColor = newTooltipTextColor;
+                        visitsChart.update();
+                    }
+
+                    if (weeklyChart) {
+                        weeklyChart.data.datasets[0].backgroundColor = newBarBg;
+                        weeklyChart.options.scales.y.ticks.color = newTextColor;
+                        weeklyChart.options.scales.x.ticks.color = newTextColor;
+                        weeklyChart.options.scales.y.grid.color = newGridColor;
+                        weeklyChart.options.plugins.tooltip.backgroundColor = newTooltipBg;
+                        weeklyChart.options.plugins.tooltip.bodyColor = newTooltipTextColor;
+                        weeklyChart.update();
+                    }
+                }, 100);
+        });
+    }
+});
 </script>
 @endsection

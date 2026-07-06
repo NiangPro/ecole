@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Cache;
 use App\Models\Category;
+use App\Helpers\ContentEnhancer;
 
 class JobArticle extends Model
 {
@@ -17,6 +18,7 @@ class JobArticle extends Model
         'slug',
         'excerpt',
         'content',
+        'location',
         'cover_image',
         'cover_type',
         'meta_title',
@@ -28,6 +30,7 @@ class JobArticle extends Model
         'is_sponsored',
         'is_featured',
         'views',
+        'expert_content_added',
         'published_at'
     ];
 
@@ -37,6 +40,7 @@ class JobArticle extends Model
         'readability_score' => 'integer',
         'is_sponsored' => 'boolean',
         'is_featured' => 'boolean',
+        'expert_content_added' => 'boolean',
         'views' => 'integer',
         'published_at' => 'datetime'
     ];
@@ -143,13 +147,19 @@ class JobArticle extends Model
             }
         });
 
-        // Invalider le cache lors de la création, mise à jour ou suppression
+        // Invalider le cache lors de la création, mise à jour ou suppression.
+        // 'homepage_view_v4_*' (et non v2 : la clé de PageController a été renommée
+        // depuis, l'ancienne référence ne vidait plus rien) et 'navigation_job_categories'
+        // (compteur du menu, jusqu'ici jamais invalidé ici) sont alignés sur les 3 hooks
+        // pour éviter toute désynchronisation entre home / /emplois / menu.
         static::created(function ($article) {
             Cache::forget('latest_jobs');
             Cache::forget('recent_job_articles');
             Cache::forget('sponsored_articles');
             Cache::forget('career_advice_articles');
             Cache::forget('featured_articles');
+            Cache::forget('homepage_view_v4_fr');
+            Cache::forget('homepage_view_v4_en');
             // Invalider le cache des articles les plus vus (sidebar)
             Cache::forget('top_viewed_articles_sidebar');
             // Invalider le cache du sitemap pour forcer sa régénération
@@ -162,6 +172,9 @@ class JobArticle extends Model
                     Cache::forget("category_{$category->slug}");
                 }
             }
+            // Invalider les caches des compteurs de catégories (menu + /emplois)
+            Cache::forget('active_categories');
+            Cache::forget('navigation_job_categories');
         });
 
         static::updated(function ($article) {
@@ -172,10 +185,8 @@ class JobArticle extends Model
             Cache::forget('sponsored_articles');
             Cache::forget('career_advice_articles');
             Cache::forget('featured_articles');
-            // Clé alignée sur PageController (homepage_view_v2_) — l'ancienne
-            // clé (sans v2) ne vidait plus rien depuis le changement de version.
-            Cache::forget('homepage_view_v2_fr');
-            Cache::forget('homepage_view_v2_en');
+            Cache::forget('homepage_view_v4_fr');
+            Cache::forget('homepage_view_v4_en');
             // Invalider le cache des articles les plus vus (sidebar)
             Cache::forget('top_viewed_articles_sidebar');
             // Invalider le cache du sitemap pour forcer sa régénération
@@ -188,8 +199,9 @@ class JobArticle extends Model
                     Cache::forget("category_{$category->slug}");
                 }
             }
-            // Invalider les caches des catégories
+            // Invalider les caches des compteurs de catégories (menu + /emplois)
             Cache::forget('active_categories');
+            Cache::forget('navigation_job_categories');
         });
 
         static::deleted(function ($article) {
@@ -199,6 +211,8 @@ class JobArticle extends Model
             Cache::forget("related_articles_{$article->id}");
             Cache::forget('career_advice_articles');
             Cache::forget('featured_articles');
+            Cache::forget('homepage_view_v4_fr');
+            Cache::forget('homepage_view_v4_en');
             // Invalider le cache des articles les plus vus (sidebar)
             Cache::forget('top_viewed_articles_sidebar');
             // Invalider le cache du sitemap pour forcer sa régénération
@@ -211,8 +225,9 @@ class JobArticle extends Model
                     Cache::forget("category_{$category->slug}");
                 }
             }
-            // Invalider les caches des catégories
+            // Invalider les caches des compteurs de catégories (menu + /emplois)
             Cache::forget('active_categories');
+            Cache::forget('navigation_job_categories');
         });
     }
 }

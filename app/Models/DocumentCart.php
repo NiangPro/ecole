@@ -12,6 +12,7 @@ class DocumentCart extends Model
         'user_id',
         'session_id',
         'document_id',
+        'bundle_id',
         'quantity',
         'price'
     ];
@@ -35,6 +36,14 @@ class DocumentCart extends Model
     public function document(): BelongsTo
     {
         return $this->belongsTo(Document::class, 'document_id');
+    }
+
+    /**
+     * Relation avec le pack (si l'item provient d'un achat groupé)
+     */
+    public function bundle(): BelongsTo
+    {
+        return $this->belongsTo(DocumentBundle::class, 'bundle_id');
     }
 
     /**

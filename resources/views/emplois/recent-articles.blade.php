@@ -1,5 +1,9 @@
 @extends('layouts.app')
 
+@push('page_css')
+@vite('resources/css/features/emplois.css')
+@endpush
+
 @section('title', '70 Articles les Plus Récents - Emplois & Opportunités | NiangProgrammeur')
 @section('meta_description', 'Découvrez les 70 articles les plus récents sur les emplois, bourses d\'études, opportunités de carrière et candidatures spontanées au Sénégal. URLs optimisées SEO et conformes aux exigences Google AdSense.')
 @section('meta_keywords', 'articles emploi Sénégal, offres d\'emploi récentes, bourses d\'études, opportunités carrière, recrutement Sénégal, emploi Dakar, articles SEO')

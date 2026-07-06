@@ -106,6 +106,24 @@ class EpreuveController extends Controller
         return view('admin.epreuves.edit', compact('epreuve', 'matieres'));
     }
 
+    /**
+     * Téléchargement du PDF depuis l'admin, sans les restrictions de la route
+     * publique (statut publié, gratuité, type non-corrigé) : un admin doit
+     * pouvoir consulter un brouillon ou un corrigé pour le classer.
+     */
+    public function download(Epreuve $epreuve)
+    {
+        abort_unless(
+            $epreuve->file_path && Storage::disk('public')->exists($epreuve->file_path),
+            404
+        );
+
+        return Storage::disk('public')->download(
+            $epreuve->file_path,
+            $epreuve->file_name ?? ($epreuve->slug . '.pdf')
+        );
+    }
+
     public function update(Request $request, Epreuve $epreuve)
     {
         $data = $this->validateData($request, $epreuve);
@@ -132,8 +150,16 @@ class EpreuveController extends Controller
             unset($data['slug']);
         }
 
+        $oldSlug = $epreuve->slug;
         $epreuve->update($data);
         Epreuve::clearHomepageCache();
+        // Invalider le cache page de cette épreuve
+        \App\Http\Middleware\PageCache::forget(route('epreuves.show', $oldSlug));
+        if ($epreuve->slug !== $oldSlug) {
+            \App\Http\Middleware\PageCache::forget(route('epreuves.show', $epreuve->slug));
+        }
+        \Illuminate\Support\Facades\Cache::forget("epreuve_show_{$oldSlug}");
+        \Illuminate\Support\Facades\Cache::forget("epreuve_related_{$epreuve->id}");
 
         return redirect()->route('admin.epreuves.edit', $epreuve)
             ->with('success', 'Épreuve mise à jour.');

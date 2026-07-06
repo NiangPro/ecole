@@ -600,6 +600,58 @@
         </div>
     </div>
 
+    <!-- Bannière d'urgence (calendrier examens) -->
+    <div class="content-section mb-6">
+        <h4 class="text-xl font-bold mb-2 flex items-center gap-2">
+            <i class="fas fa-bullhorn text-orange-400"></i>
+            Bannière d'urgence (calendrier examens)
+        </h4>
+        <p class="text-sm text-gray-400 mb-6">Barre affichée en haut du site avec un compte à rebours, à activer en période de révisions BAC/BFEM.</p>
+        <div class="grid md:grid-cols-2 gap-6">
+            <div class="md:col-span-2">
+                <label class="inline-flex items-center gap-3 cursor-pointer">
+                    <input type="checkbox" name="urgency_banner_enabled" value="1"
+                           class="w-5 h-5"
+                           {{ old('urgency_banner_enabled', $settings->urgency_banner_enabled ?? false) ? 'checked' : '' }}>
+                    <span class="font-semibold text-gray-300">Activer la bannière</span>
+                </label>
+            </div>
+            <div class="md:col-span-2">
+                <label class="block text-gray-300 mb-2 font-semibold">
+                    <i class="fas fa-comment-alt mr-2"></i>Texte affiché
+                </label>
+                <input type="text" name="urgency_banner_text"
+                       value="{{ old('urgency_banner_text', $settings->urgency_banner_text ?? '') }}"
+                       class="input-admin" placeholder="Ex : Plus que quelques jours avant le BAC — téléchargez vos corrigés maintenant !">
+                @error('urgency_banner_text')
+                    <p class="text-red-400 text-sm mt-2">{{ $message }}</p>
+                @enderror
+            </div>
+            <div>
+                <label class="block text-gray-300 mb-2 font-semibold">
+                    <i class="fas fa-calendar-alt mr-2"></i>Date cible (fin du compte à rebours)
+                </label>
+                <input type="datetime-local" name="urgency_banner_target_date"
+                       value="{{ ($settings->urgency_banner_target_date ?? null) ? \Carbon\Carbon::parse($settings->urgency_banner_target_date)->format('Y-m-d\TH:i') : old('urgency_banner_target_date') }}"
+                       class="input-admin">
+                @error('urgency_banner_target_date')
+                    <p class="text-red-400 text-sm mt-2">{{ $message }}</p>
+                @enderror
+            </div>
+            <div>
+                <label class="block text-gray-300 mb-2 font-semibold">
+                    <i class="fas fa-link mr-2"></i>Lien (optionnel)
+                </label>
+                <input type="text" name="urgency_banner_link"
+                       value="{{ old('urgency_banner_link', $settings->urgency_banner_link ?? '') }}"
+                       class="input-admin" placeholder="/documents ou /bundles">
+                @error('urgency_banner_link')
+                    <p class="text-red-400 text-sm mt-2">{{ $message }}</p>
+                @enderror
+            </div>
+        </div>
+    </div>
+
     <!-- Bouton submit du formulaire principal -->
     <div class="flex gap-4 mt-6 mb-8">
         <button type="submit" class="btn-primary">

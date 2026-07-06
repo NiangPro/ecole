@@ -880,6 +880,11 @@ body.dark-mode .modal-btn-cancel:hover {
                             </a>
                         </h3>
                         <span class="cart-item-category">{{ $item->document->category->name }}</span>
+                        @if($item->bundle)
+                        <span class="cart-item-category" style="background: rgba(20, 184, 166, 0.15); color: #0f766e;">
+                            <i class="fas fa-box"></i> Pack : {{ $item->bundle->name }}
+                        </span>
+                        @endif
 
                         <div class="cart-item-footer">
                             <div class="cart-item-price" data-item-price="{{ $item->price }}">
@@ -887,6 +892,7 @@ body.dark-mode .modal-btn-cancel:hover {
                             </div>
 
                             <div class="cart-item-actions">
+                                @if(!$item->bundle)
                                 <form action="{{ route('documents.cart.update', $item->id) }}" method="POST" class="quantity-form" data-item-id="{{ $item->id }}">
                                     @csrf
                                     @method('PUT')
@@ -900,6 +906,7 @@ body.dark-mode .modal-btn-cancel:hover {
                                         </button>
                                     </div>
                                 </form>
+                                @endif
 
                                 <form action="{{ route('documents.cart.remove', $item->id) }}" method="POST" style="display: inline;" class="remove-item-form" data-item-id="{{ $item->id }}">
                                     @csrf
