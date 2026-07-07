@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 /**
@@ -40,7 +40,13 @@ class ExternalImageRehoster
             };
 
             $filename = $folder . '/' . Str::random(20) . '.' . $extension;
-            Storage::disk('public')->put($filename, $response->body());
+
+            // Écrit directement dans public/storage (pas storage/app/public) : sur Infomaniak,
+            // le PHP servant les requêtes web a un open_basedir restreint au webroot public/,
+            // donc un fichier sous storage/ n'y est pas lisible même avec le lien symbolique.
+            $destination = public_path('storage/' . $filename);
+            File::ensureDirectoryExists(dirname($destination));
+            File::put($destination, $response->body());
 
             return $filename;
         } catch (\Throwable $e) {
