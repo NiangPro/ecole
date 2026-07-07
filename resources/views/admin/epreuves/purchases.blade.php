@@ -92,13 +92,18 @@
                         @elseif($p->status === 'completed' && $p->download_token)
                             @php
                                 $downloadLink = route('epreuves.corrige.download', ['token' => $p->download_token]);
+                                $shareText = "Bonjour " . ($p->customer_name ?? '') . ", voici votre corrigé : " . ($p->epreuve?->title ?? '') . "\n\nLien de téléchargement (valable 30 jours) :\n" . $downloadLink;
                             @endphp
+                            @if($p->customer_email)
+                                <a href="mailto:{{ $p->customer_email }}?subject={{ rawurlencode('Votre corrigé - ' . ($p->epreuve?->title ?? '')) }}&body={{ rawurlencode($shareText) }}" class="inline-flex items-center px-3 py-1.5 bg-blue-500/20 hover:bg-blue-500/30 text-blue-400 rounded text-sm transition mr-1">
+                                    <i class="fas fa-envelope mr-1"></i>Email
+                                </a>
+                            @endif
                             @if($p->customer_phone)
                                 @php
                                     $waNum = preg_replace('/[^0-9]/', '', ($p->country_code ?? '') . $p->customer_phone);
-                                    $waMsg = rawurlencode("Bonjour " . ($p->customer_name ?? '') . ", voici votre corrigé : " . ($p->epreuve?->title ?? '') . "\n\nLien de téléchargement (valable 30 jours) :\n" . $downloadLink);
                                 @endphp
-                                <a href="https://wa.me/{{ $waNum }}?text={{ $waMsg }}" target="_blank" rel="noopener" class="inline-flex items-center px-3 py-1.5 bg-green-500/20 hover:bg-green-500/30 text-green-400 rounded text-sm transition mr-1">
+                                <a href="https://wa.me/{{ $waNum }}?text={{ rawurlencode($shareText) }}" target="_blank" rel="noopener" class="inline-flex items-center px-3 py-1.5 bg-green-500/20 hover:bg-green-500/30 text-green-400 rounded text-sm transition mr-1">
                                     <i class="fab fa-whatsapp mr-1"></i>Partager
                                 </a>
                             @endif
