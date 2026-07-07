@@ -7,12 +7,12 @@
 <!-- Structured Data Course pour SEO -->
 <script type="application/ld+json">
 {
-    "@context": "https://schema.org",
-    "@type": "Course",
+    "@@context": "https://schema.org",
+    "@@type": "Course",
     "name": "{{ addslashes($course->localized_title) }}",
     "description": "{{ addslashes($course->localized_description ?? '') }}",
     "provider": {
-        "@type": "Organization",
+        "@@type": "Organization",
         "name": "NiangProgrammeur",
         "url": "{{ url('/') }}",
         "logo": "{{ asset('images/logo.png') }}"
@@ -21,13 +21,13 @@
     "courseCode": "{{ $course->slug }}",
     "educationalCredentialAwarded": "Certificate",
     "hasCourseInstance": {
-        "@type": "CourseInstance",
+        "@@type": "CourseInstance",
         "courseMode": "online",
         "duration": "PT{{ $course->duration_hours ?? 0 }}H"
     },
     @if($course->rating > 0)
     "aggregateRating": {
-        "@type": "AggregateRating",
+        "@@type": "AggregateRating",
         "ratingValue": "{{ $course->rating }}",
         "bestRating": "5",
         "worstRating": "1",
@@ -35,13 +35,13 @@
     },
     @endif
     "offers": {
-        "@type": "Offer",
+        "@@type": "Offer",
         "price": "{{ $course->current_price }}",
         "priceCurrency": "{{ $course->currency ?? 'XOF' }}",
         "availability": "https://schema.org/InStock",
         "url": "{{ route('monetization.course.show', $course->slug) }}",
         "seller": {
-            "@type": "Organization",
+            "@@type": "Organization",
             "name": "NiangProgrammeur"
         }
     }

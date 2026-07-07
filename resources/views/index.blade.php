@@ -471,6 +471,7 @@
           $displayPrice = $isOnSale ? $course->discount_price : $course->price;
         @endphp
         <article class="hp-course-card">
+          <a href="{{ route('monetization.course.show', $course->slug) }}" class="hp-course-card-link" aria-label="{{ $course->title }}"></a>
           <div class="hp-course-cover">
             @if($course->cover_image)
               @if(($course->cover_type ?? 'internal') === 'internal')
@@ -513,7 +514,10 @@
                 @endif
                 <span class="hp-course-price">{{ number_format($displayPrice, 0, ',', ' ') }} {{ $course->currency ?? 'FCFA' }}</span>
               </div>
-              <a href="{{ route('monetization.index') }}" class="hp-course-cta">{{ __('homepage.courses.enroll') }}</a>
+              <span class="hp-course-cta">
+                {{ __('homepage.courses.enroll') }}
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+              </span>
             </div>
           </div>
         </article>
