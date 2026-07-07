@@ -386,10 +386,11 @@
        BASE
        ============================================ */
     .payment-confirm-page {
-        min-height: 100vh;
-        background: white;
-        padding: 40px 20px;
         position: relative;
+        min-block-size: 100vh;
+        background: var(--surface);
+        padding-block: 48px;
+        padding-inline: 20px;
         overflow-x: hidden;
     }
 
@@ -397,17 +398,16 @@
         content: '';
         position: fixed;
         inset: 0;
-        background: 
-            radial-gradient(circle at 20% 30%, rgba(6, 182, 212, 0.05) 0%, transparent 50%),
-            radial-gradient(circle at 80% 70%, rgba(20, 184, 166, 0.05) 0%, transparent 50%);
         pointer-events: none;
         z-index: 0;
-        opacity: 0.5;
+        background:
+            radial-gradient(circle at 15% 20%, oklch(65% 0.20 200 / 6%) 0%, transparent 45%),
+            radial-gradient(circle at 85% 75%, oklch(65% 0.18 170 / 6%) 0%, transparent 45%);
     }
 
     .payment-container {
-        max-width: 900px;
-        margin: 0 auto;
+        max-inline-size: 860px;
+        margin-inline: auto;
         position: relative;
         z-index: 1;
     }
@@ -417,804 +417,464 @@
        ============================================ */
     .payment-header {
         text-align: center;
-        margin-bottom: 40px;
-        animation: fadeInDown 0.6s ease;
+        margin-block-end: 36px;
+        animation: fade-in-down 0.5s var(--ease-out);
     }
 
     .payment-status-icon {
-        width: 100px;
-        height: 100px;
+        inline-size: 88px;
+        block-size: 88px;
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin: 0 auto 30px;
-        font-size: 3rem;
-        position: relative;
+        margin: 0 auto 24px;
+        font-size: 2.5rem;
     }
 
     .payment-status-icon.pending {
-        background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(245, 158, 11, 0.2));
-        color: #fbbf24;
-        border: 3px solid #fbbf24;
+        background: oklch(78% 0.15 85 / 15%);
+        color: oklch(68% 0.17 55);
+        border: 3px solid oklch(78% 0.15 85 / 60%);
         animation: pulse 2s ease infinite;
     }
 
     .payment-status-icon.success {
-        background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(5, 150, 105, 0.2));
-        color: #10b981;
-        border: 3px solid #10b981;
+        background: oklch(72% 0.17 145 / 15%);
+        color: oklch(55% 0.16 150);
+        border: 3px solid oklch(72% 0.17 145 / 60%);
     }
 
     .payment-status-icon.failed {
-        background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.2));
-        color: #ef4444;
-        border: 3px solid #ef4444;
-    }
-
-    @keyframes pulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.05); }
+        background: oklch(65% 0.22 25 / 15%);
+        color: oklch(55% 0.20 25);
+        border: 3px solid oklch(65% 0.22 25 / 60%);
     }
 
     .payment-title {
-        font-size: clamp(2rem, 4vw, 3rem);
-        font-weight: 900;
-        color: rgba(30, 41, 59, 0.95);
-        margin-bottom: 15px;
+        font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: var(--text);
+        margin-block-end: 10px;
     }
 
     .payment-subtitle {
-        font-size: 1.2rem;
-        color: rgba(30, 41, 59, 0.7);
+        font-size: 1.0625rem;
+        color: var(--text-muted);
     }
 
     /* ============================================
-       DETAILS CARD
+       CARDS (détails, méthodes, succès)
        ============================================ */
-    .payment-details-card {
-        background: white;
-        border: 2px solid rgba(6, 182, 212, 0.2);
-        border-radius: 24px;
-        padding: 35px;
-        margin-bottom: 40px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-        animation: fadeInUp 0.8s ease;
+    .payment-details-card,
+    .payment-methods-section,
+    .payment-success-card {
+        position: relative;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 32px;
+        margin-block-end: 28px;
+        box-shadow: 0 20px 48px oklch(0% 0 0 / 6%);
+        animation: fade-in-up 0.5s var(--ease-out);
+        overflow: hidden;
+
+        &::before {
+            content: '';
+            position: absolute;
+            inset-block-start: 0;
+            inset-inline: 0;
+            block-size: 3px;
+            background: linear-gradient(90deg, var(--color-brand-500), var(--color-teal-500));
+        }
     }
 
-    .details-title {
-        font-size: 1.5rem;
+    .payment-success-card::before { background: linear-gradient(90deg, oklch(72% 0.17 145), oklch(60% 0.15 165)); }
+
+    .details-title,
+    .methods-title {
+        font-size: 1.25rem;
         font-weight: 800;
-        color: rgba(30, 41, 59, 0.95);
-        margin-bottom: 25px;
+        color: var(--text);
+        margin-block-end: 22px;
         display: flex;
         align-items: center;
-        gap: 12px;
-    }
+        gap: 0.625rem;
 
-    .details-title i {
-        color: #06b6d4;
+        & i { color: var(--color-brand-500); }
     }
 
     .details-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 20px;
+        grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+        gap: 16px;
     }
 
     .detail-item {
         display: flex;
         flex-direction: column;
-        gap: 8px;
-        padding: 20px;
-        background: #f8fafc;
-        border-radius: 12px;
-        border: 1px solid rgba(6, 182, 212, 0.2);
+        gap: 6px;
+        padding: 18px;
+        background: var(--surface-muted);
+        border: 1px solid var(--border);
+        border-radius: 14px;
     }
 
     .detail-label {
-        font-size: 0.9rem;
-        color: rgba(30, 41, 59, 0.6);
+        font-size: 0.8125rem;
+        color: var(--text-muted);
         font-weight: 600;
     }
 
     .detail-value {
-        font-size: 1.1rem;
-        color: rgba(30, 41, 59, 0.95);
+        font-size: 1.0625rem;
+        color: var(--text);
         font-weight: 700;
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 6px;
     }
 
     .detail-value.amount {
-        font-size: 1.5rem;
-        color: #06b6d4;
+        font-size: 1.375rem;
+        background: linear-gradient(135deg, var(--color-brand-500), var(--color-teal-500));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
     }
 
     .detail-value.reference {
-        font-family: monospace;
-        font-size: 1rem;
+        font-family: var(--font-mono);
+        font-size: 0.9375rem;
     }
 
     .status-badge {
         display: inline-block;
-        padding: 6px 14px;
-        border-radius: 20px;
-        font-size: 0.9rem;
+        padding-block: 0.25rem;
+        padding-inline: 0.75rem;
+        border-radius: var(--radius-pill);
+        font-size: 0.8125rem;
         font-weight: 700;
     }
 
     .status-badge.pending {
-        background: rgba(251, 191, 36, 0.2);
-        color: #fbbf24;
-        border: 1px solid #fbbf24;
+        background: oklch(78% 0.15 85 / 18%);
+        color: oklch(58% 0.16 65);
+        border: 1px solid oklch(78% 0.15 85 / 45%);
     }
 
     /* ============================================
-       PAYMENT METHODS
+       MÉTHODES DE PAIEMENT
        ============================================ */
-    .payment-methods-section {
-        background: white;
-        border: 2px solid rgba(6, 182, 212, 0.2);
-        border-radius: 24px;
-        padding: 35px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-        animation: fadeInUp 1s ease;
-    }
-
-    .methods-title {
-        font-size: 1.5rem;
-        font-weight: 800;
-        color: rgba(30, 41, 59, 0.95);
-        margin-bottom: 30px;
-        display: flex;
-        align-items: center;
-        gap: 12px;
-    }
-
-    .methods-title i {
-        color: #06b6d4;
-    }
-
     .payment-methods-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 20px;
-        margin-bottom: 40px;
+        grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+        gap: 16px;
+        margin-block-end: 32px;
     }
 
-    .payment-method-card {
-        position: relative;
-        cursor: pointer;
-    }
+    .payment-method-card { position: relative; cursor: pointer; }
 
-    .method-radio {
-        position: absolute;
-        opacity: 0;
-        pointer-events: none;
-    }
+    .method-radio { position: absolute; opacity: 0; pointer-events: none; }
 
     .method-content {
+        position: relative;
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 15px;
-        padding: 30px 20px;
-        background: #f8fafc;
-        border: 2px solid rgba(6, 182, 212, 0.2);
+        gap: 12px;
+        padding-block: 24px;
+        padding-inline: 16px;
+        background: var(--surface-muted);
+        border: 1px solid var(--border);
         border-radius: 16px;
-        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        position: relative;
-        overflow: hidden;
-    }
-
-    .method-content::before {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(20, 184, 166, 0.1));
-        opacity: 0;
-        transition: opacity 0.3s ease;
+        transition: transform var(--duration-normal) var(--ease-spring), border-color var(--duration-normal) ease, background var(--duration-normal) ease;
     }
 
     .method-radio:checked + .method-content {
-        border-color: #06b6d4;
-        background: rgba(6, 182, 212, 0.15);
-        transform: translateY(-5px);
-        box-shadow: 0 10px 30px rgba(6, 182, 212, 0.3);
+        border-color: var(--color-brand-500);
+        background: oklch(65% 0.20 200 / 10%);
+        transform: translateY(-4px);
+        box-shadow: 0 14px 32px oklch(65% 0.20 200 / 22%);
+
+        & .method-check { opacity: 1; transform: scale(1); }
     }
 
-    .method-radio:checked + .method-content::before {
-        opacity: 1;
-    }
-
-    .method-radio:checked + .method-content .method-check {
-        opacity: 1;
-        transform: scale(1);
+    .method-radio:focus-visible + .method-content {
+        outline: 2px solid var(--color-brand-500);
+        outline-offset: 2px;
     }
 
     .method-icon {
-        width: 70px;
-        height: 70px;
-        border-radius: 16px;
+        inline-size: 56px;
+        block-size: 56px;
+        border-radius: 14px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 2rem;
-        color: white;
+        font-size: 1.5rem;
+        color: oklch(100% 0 0);
     }
 
-    .method-icon.mobile-money {
-        background: linear-gradient(135deg, #10b981, #059669);
-    }
+    .method-icon.mobile-money  { background: linear-gradient(135deg, oklch(72% 0.17 145), oklch(60% 0.15 165)); }
+    .method-icon.bank-transfer { background: linear-gradient(135deg, oklch(62% 0.19 275), oklch(52% 0.20 280)); }
+    .method-icon.wave          { background: linear-gradient(135deg, var(--color-brand-500), var(--color-brand-600)); }
+    .method-icon.paypal        { background: linear-gradient(135deg, oklch(35% 0.15 260), oklch(60% 0.16 235)); }
+    .method-icon.stripe        { background: linear-gradient(135deg, oklch(58% 0.22 275), oklch(50% 0.20 290)); }
 
-    .method-icon.bank-transfer {
-        background: linear-gradient(135deg, #6366f1, #4f46e5);
-    }
-
-    .method-icon.wave {
-        background: linear-gradient(135deg, #06b6d4, #0891b2);
-    }
-
-    .method-icon.paypal {
-        background: linear-gradient(135deg, #003087, #009cde);
-    }
-
-    .method-icon.stripe {
-        background: linear-gradient(135deg, #635bff, #7c3aed);
-    }
-
-    .method-info {
-        text-align: center;
-    }
+    .method-info { text-align: center; }
 
     .method-name {
-        font-size: 1.1rem;
+        font-size: 1rem;
         font-weight: 700;
-        color: rgba(30, 41, 59, 0.95);
-        margin-bottom: 5px;
+        color: var(--text);
+        margin-block-end: 4px;
     }
 
-    .method-description {
-        font-size: 0.85rem;
-        color: rgba(30, 41, 59, 0.6);
-    }
+    .method-description { font-size: 0.8125rem; color: var(--text-muted); }
 
     .method-check {
         position: absolute;
-        top: 15px;
-        right: 15px;
-        width: 30px;
-        height: 30px;
-        background: linear-gradient(135deg, #06b6d4, #14b8a6);
+        inset-block-start: 12px;
+        inset-inline-end: 12px;
+        inline-size: 26px;
+        block-size: 26px;
+        background: linear-gradient(135deg, var(--color-brand-500), var(--color-teal-500));
         border-radius: 50%;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: white;
+        color: oklch(100% 0 0);
+        font-size: 0.75rem;
         opacity: 0;
         transform: scale(0);
-        transition: all 0.3s ease;
+        transition: transform var(--duration-normal) var(--ease-spring), opacity var(--duration-normal) ease;
     }
 
     /* ============================================
        INSTRUCTIONS
        ============================================ */
-    .payment-instructions {
-        margin-top: 40px;
-        animation: fadeInUp 1.2s ease;
-    }
+    .payment-instructions { margin-block-start: 32px; }
 
     .instructions-content {
         display: flex;
-        gap: 20px;
-        padding: 30px;
-        background: rgba(6, 182, 212, 0.05);
-        border: 2px solid rgba(6, 182, 212, 0.2);
+        gap: 18px;
+        padding: 26px;
+        background: var(--surface-muted);
+        border: 1px solid var(--border);
         border-radius: 16px;
     }
 
     .instructions-icon {
-        width: 60px;
-        height: 60px;
-        border-radius: 12px;
-        background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2));
+        inline-size: 52px;
+        block-size: 52px;
+        border-radius: 14px;
+        background: oklch(65% 0.20 200 / 14%);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.8rem;
-        color: #06b6d4;
+        font-size: 1.5rem;
+        color: var(--color-brand-500);
         flex-shrink: 0;
     }
 
-    .instructions-text {
-        flex: 1;
-    }
+    .instructions-text { flex: 1; min-inline-size: 0; }
 
     .instructions-text h4 {
-        font-size: 1.3rem;
+        font-size: 1.125rem;
         font-weight: 800;
-        color: rgba(30, 41, 59, 0.95);
-        margin-bottom: 12px;
+        color: var(--text);
+        margin-block-end: 10px;
     }
 
     .instructions-text p {
-        color: rgba(30, 41, 59, 0.8);
+        color: var(--text-muted);
         line-height: 1.7;
-        margin-bottom: 20px;
+        margin-block-end: 16px;
     }
 
     .bank-details {
-        background: #f8fafc;
-        padding: 20px;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        padding: 18px;
         border-radius: 12px;
-        margin-bottom: 20px;
-        border: 1px solid rgba(6, 182, 212, 0.2);
+        margin-block-end: 16px;
     }
 
-    .bank-details p {
-        margin: 8px 0;
-        color: rgba(30, 41, 59, 0.9);
-    }
+    .bank-details p { margin: 6px 0; color: var(--text); }
 
-    .instructions-actions {
-        margin-top: 20px;
-    }
+    .instructions-actions { margin-block-start: 16px; }
 
     .confirm-payment-btn {
         display: inline-flex;
         align-items: center;
-        gap: 12px;
-        padding: 16px 32px;
-        background: linear-gradient(135deg, #06b6d4, #14b8a6);
+        gap: 0.625rem;
+        padding-block: 0.875rem;
+        padding-inline: 1.75rem;
+        background: linear-gradient(135deg, var(--color-brand-500), var(--color-teal-500));
         border: none;
-        border-radius: 12px;
-        color: white;
-        font-size: 1.1rem;
-        font-weight: 700;
+        border-radius: var(--radius-pill);
+        color: oklch(10% 0 0);
+        font-size: 1rem;
+        font-weight: 800;
         text-decoration: none;
         cursor: pointer;
-        transition: all 0.3s ease;
-        box-shadow: 0 8px 25px rgba(6, 182, 212, 0.4);
+        transition: transform var(--duration-normal) var(--ease-spring), box-shadow var(--duration-normal) ease;
+        box-shadow: 0 10px 26px oklch(65% 0.20 200 / 30%);
+
+        &:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 14px 34px oklch(65% 0.20 200 / 42%);
+        }
     }
 
-    .confirm-payment-btn:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 12px 35px rgba(6, 182, 212, 0.6);
-    }
-
-    .confirm-payment-btn.wave-btn {
-        background: linear-gradient(135deg, #06b6d4, #0891b2);
-    }
-
-    .confirm-payment-btn.paypal-btn {
-        background: linear-gradient(135deg, #003087, #009cde);
-    }
-
-    .confirm-payment-btn.stripe-btn {
-        background: linear-gradient(135deg, #635bff, #7c3aed);
-    }
+    .confirm-payment-btn.wave-btn   { background: linear-gradient(135deg, var(--color-brand-500), var(--color-brand-600)); color: oklch(100% 0 0); }
+    .confirm-payment-btn.paypal-btn { background: linear-gradient(135deg, oklch(35% 0.15 260), oklch(60% 0.16 235)); color: oklch(100% 0 0); }
+    .confirm-payment-btn.stripe-btn { background: linear-gradient(135deg, oklch(58% 0.22 275), oklch(50% 0.20 290)); color: oklch(100% 0 0); }
 
     /* ============================================
        ACTIONS
        ============================================ */
     .payment-actions {
         display: flex;
-        gap: 15px;
+        gap: 12px;
         justify-content: center;
         flex-wrap: wrap;
-        margin-top: 40px;
+        margin-block-start: 32px;
     }
 
     .action-btn {
         display: inline-flex;
         align-items: center;
-        gap: 10px;
-        padding: 14px 28px;
-        border-radius: 12px;
+        gap: 0.5rem;
+        padding-block: 0.75rem;
+        padding-inline: 1.5rem;
+        border-radius: var(--radius-pill);
         font-weight: 700;
+        font-size: 0.9375rem;
         text-decoration: none;
-        transition: all 0.3s ease;
+        transition: transform var(--duration-fast) ease, box-shadow var(--duration-fast) ease, background var(--duration-fast) ease;
     }
 
     .action-btn.primary {
-        background: linear-gradient(135deg, #06b6d4, #14b8a6);
-        color: white;
-        box-shadow: 0 8px 25px rgba(6, 182, 212, 0.4);
-    }
+        background: linear-gradient(135deg, var(--color-brand-500), var(--color-teal-500));
+        color: oklch(10% 0 0);
+        box-shadow: 0 10px 26px oklch(65% 0.20 200 / 30%);
 
-    .action-btn.primary:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 12px 35px rgba(6, 182, 212, 0.6);
+        &:hover { transform: translateY(-2px); box-shadow: 0 14px 34px oklch(65% 0.20 200 / 42%); }
     }
 
     .action-btn.secondary {
-        background: rgba(6, 182, 212, 0.2);
-        color: #06b6d4;
-        border: 2px solid #06b6d4;
-    }
+        background: var(--surface-muted);
+        color: var(--text);
+        border: 1px solid var(--border);
 
-    .action-btn.secondary:hover {
-        background: rgba(6, 182, 212, 0.3);
+        &:hover { border-color: oklch(65% 0.20 200 / 45%); }
     }
 
     /* ============================================
-       SUCCESS CARD
+       CARD DE SUCCÈS
        ============================================ */
-    .payment-success-card {
-        background: white;
-        border: 2px solid rgba(16, 185, 129, 0.2);
-        border-radius: 24px;
-        padding: 40px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-        animation: fadeInUp 0.8s ease;
-    }
-
     .success-details {
         display: grid;
-        gap: 20px;
-        margin-bottom: 30px;
+        gap: 14px;
+        margin-block-end: 26px;
     }
 
     .success-item {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 20px;
-        background: #f8fafc;
-        border-radius: 12px;
-        border: 1px solid rgba(16, 185, 129, 0.2);
+        padding: 18px;
+        background: var(--surface-muted);
+        border-radius: 14px;
+        border: 1px solid var(--border);
     }
 
-    .success-label {
-        color: rgba(30, 41, 59, 0.7);
-        font-weight: 600;
-    }
+    .success-label { color: var(--text-muted); font-weight: 600; }
 
-    .success-value {
-        color: rgba(30, 41, 59, 0.95);
-        font-weight: 700;
-        font-size: 1.2rem;
-    }
+    .success-value { color: var(--text); font-weight: 700; font-size: 1.0625rem; }
 
-    .success-actions {
-        display: flex;
-        gap: 15px;
-        flex-wrap: wrap;
-    }
+    .success-actions { display: flex; gap: 12px; flex-wrap: wrap; }
 
     .success-btn {
         flex: 1;
-        min-width: 200px;
+        min-inline-size: 200px;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        gap: 10px;
-        padding: 16px 32px;
-        background: linear-gradient(135deg, #06b6d4, #14b8a6);
-        border-radius: 12px;
-        color: white;
-        font-weight: 700;
+        gap: 0.625rem;
+        padding-block: 0.875rem;
+        padding-inline: 1.75rem;
+        background: linear-gradient(135deg, oklch(72% 0.17 145), oklch(60% 0.15 165));
+        border-radius: var(--radius-pill);
+        color: oklch(10% 0 0);
+        font-weight: 800;
         text-decoration: none;
-        transition: all 0.3s ease;
-        box-shadow: 0 8px 25px rgba(6, 182, 212, 0.4);
-    }
+        transition: transform var(--duration-normal) var(--ease-spring), box-shadow var(--duration-normal) ease;
+        box-shadow: 0 10px 26px oklch(72% 0.17 145 / 28%);
 
-    .success-btn:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 12px 35px rgba(6, 182, 212, 0.6);
+        &:hover { transform: translateY(-2px); box-shadow: 0 14px 34px oklch(72% 0.17 145 / 38%); }
     }
 
     .success-btn.secondary {
-        background: rgba(6, 182, 212, 0.2);
-        border: 2px solid #06b6d4;
+        background: var(--surface-muted);
+        color: var(--text);
+        border: 1px solid var(--border);
         box-shadow: none;
+
+        &:hover { transform: none; border-color: oklch(65% 0.20 200 / 45%); }
     }
 
     /* ============================================
-       ERROR CARD
+       CARD D'ERREUR
        ============================================ */
     .payment-error-card {
-        background: rgba(239, 68, 68, 0.05);
-        border: 2px solid rgba(239, 68, 68, 0.2);
+        background: oklch(65% 0.22 25 / 8%);
+        border: 1px solid oklch(65% 0.22 25 / 30%);
         border-radius: 16px;
-        padding: 25px;
-        margin-bottom: 30px;
-        animation: fadeInUp 0.8s ease;
+        padding: 22px;
+        margin-block-end: 26px;
+        animation: fade-in-up 0.5s var(--ease-out);
     }
 
-    .error-content {
-        display: flex;
-        gap: 15px;
-        align-items: start;
-    }
+    .error-content { display: flex; gap: 14px; align-items: flex-start; }
 
-    .error-content i {
-        font-size: 2rem;
-        color: #ef4444;
-        flex-shrink: 0;
-    }
+    .error-content i { font-size: 1.75rem; color: oklch(55% 0.20 25); flex-shrink: 0; }
 
-    .error-content h4 {
-        color: rgba(30, 41, 59, 0.95);
-        font-weight: 700;
-        margin-bottom: 8px;
-    }
+    .error-content h4 { color: var(--text); font-weight: 700; margin-block-end: 6px; }
 
-    .error-content p {
-        color: rgba(30, 41, 59, 0.8);
-    }
+    .error-content p { color: var(--text-muted); }
 
     /* ============================================
        ANIMATIONS
        ============================================ */
-    @keyframes fadeInDown {
-        from {
-            opacity: 0;
-            transform: translateY(-30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+    @keyframes fade-in-down {
+        from { opacity: 0; transform: translateY(-16px); }
+        to   { opacity: 1; transform: translateY(0); }
     }
 
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+    @keyframes fade-in-up {
+        from { opacity: 0; transform: translateY(20px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50%      { transform: scale(1.05); }
     }
 
     /* ============================================
        RESPONSIVE
        ============================================ */
-    @media (max-width: 768px) {
-        .payment-methods-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .details-grid {
-            grid-template-columns: 1fr;
-        }
-
-        .instructions-content {
-            flex-direction: column;
-        }
-
-        .payment-actions {
-            flex-direction: column;
-        }
-
+    @media (width <= 768px) {
+        .payment-methods-grid { grid-template-columns: 1fr; }
+        .details-grid { grid-template-columns: 1fr; }
+        .instructions-content { flex-direction: column; }
+        .payment-actions { flex-direction: column; }
         .action-btn,
-        .success-btn {
-            width: 100%;
-        }
-    }
-
-    /* ============================================
-       DARK MODE
-       ============================================ */
-    body.dark-mode .payment-confirm-page {
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%) !important;
-    }
-
-    body.dark-mode .payment-confirm-page::before {
-        opacity: 1;
-        background: 
-            radial-gradient(circle at 20% 30%, rgba(6, 182, 212, 0.1) 0%, transparent 50%),
-            radial-gradient(circle at 80% 70%, rgba(20, 184, 166, 0.1) 0%, transparent 50%);
-    }
-
-    body.dark-mode .payment-title {
-        color: white !important;
-    }
-
-    body.dark-mode .payment-subtitle {
-        color: rgba(255, 255, 255, 0.7) !important;
-    }
-
-    body.dark-mode .payment-details-card,
-    body.dark-mode .payment-methods-section,
-    body.dark-mode .payment-success-card {
-        background: rgba(30, 41, 59, 0.8) !important;
-        border-color: rgba(6, 182, 212, 0.3) !important;
-        backdrop-filter: blur(20px);
-    }
-
-    body.dark-mode .detail-item {
-        background: rgba(15, 23, 42, 0.6) !important;
-        border-color: rgba(6, 182, 212, 0.2) !important;
-    }
-
-    body.dark-mode .detail-label {
-        color: rgba(255, 255, 255, 0.6) !important;
-    }
-
-    body.dark-mode .detail-value {
-        color: white !important;
-    }
-
-    body.dark-mode .details-title {
-        color: white !important;
-    }
-
-    body.dark-mode .methods-title {
-        color: white !important;
-    }
-
-    body.dark-mode .method-content {
-        background: rgba(15, 23, 42, 0.6) !important;
-        border-color: rgba(6, 182, 212, 0.3) !important;
-    }
-
-    body.dark-mode .method-name {
-        color: white !important;
-    }
-
-    body.dark-mode .method-description {
-        color: rgba(255, 255, 255, 0.6) !important;
-    }
-
-    body.dark-mode .instructions-content {
-        background: rgba(6, 182, 212, 0.1) !important;
-        border-color: rgba(6, 182, 212, 0.3) !important;
-    }
-
-    body.dark-mode .instructions-text h4 {
-        color: white !important;
-    }
-
-    body.dark-mode .instructions-text p {
-        color: rgba(255, 255, 255, 0.8) !important;
-    }
-
-    body.dark-mode .bank-details {
-        background: rgba(15, 23, 42, 0.6) !important;
-        border-color: rgba(6, 182, 212, 0.2) !important;
-    }
-
-    body.dark-mode .bank-details p {
-        color: rgba(255, 255, 255, 0.9) !important;
-    }
-
-    body.dark-mode .success-item {
-        background: rgba(15, 23, 42, 0.6) !important;
-        border-color: rgba(16, 185, 129, 0.2) !important;
-    }
-
-    body.dark-mode .success-label {
-        color: rgba(255, 255, 255, 0.7) !important;
-    }
-
-    body.dark-mode .success-value {
-        color: white !important;
-    }
-
-    body.dark-mode .payment-error-card {
-        background: rgba(239, 68, 68, 0.1) !important;
-        border-color: rgba(239, 68, 68, 0.3) !important;
-    }
-
-    body.dark-mode .error-content h4 {
-        color: white !important;
-    }
-
-    body.dark-mode .error-content p {
-        color: rgba(255, 255, 255, 0.8) !important;
-    }
-
-    /* ============================================
-       LIGHT MODE
-       ============================================ */
-    body.light-mode .payment-confirm-page {
-        background: white !important;
-    }
-
-    body.light-mode .payment-confirm-page::before {
-        opacity: 0.5;
-    }
-
-    body.light-mode .payment-title {
-        color: rgba(30, 41, 59, 0.95) !important;
-    }
-
-    body.light-mode .payment-subtitle {
-        color: rgba(30, 41, 59, 0.7) !important;
-    }
-
-    body.light-mode .payment-details-card,
-    body.light-mode .payment-methods-section,
-    body.light-mode .payment-success-card {
-        background: white !important;
-        border-color: rgba(6, 182, 212, 0.2) !important;
-    }
-
-    body.light-mode .detail-item {
-        background: #f8fafc !important;
-        border-color: rgba(6, 182, 212, 0.2) !important;
-    }
-
-    body.light-mode .detail-label {
-        color: rgba(30, 41, 59, 0.6) !important;
-    }
-
-    body.light-mode .detail-value {
-        color: rgba(30, 41, 59, 0.95) !important;
-    }
-
-    body.light-mode .details-title {
-        color: rgba(30, 41, 59, 0.95) !important;
-    }
-
-    body.light-mode .methods-title {
-        color: rgba(30, 41, 59, 0.95) !important;
-    }
-
-    body.light-mode .method-content {
-        background: #f8fafc !important;
-        border-color: rgba(6, 182, 212, 0.2) !important;
-    }
-
-    body.light-mode .method-name {
-        color: rgba(30, 41, 59, 0.95) !important;
-    }
-
-    body.light-mode .method-description {
-        color: rgba(30, 41, 59, 0.6) !important;
-    }
-
-    body.light-mode .instructions-content {
-        background: rgba(6, 182, 212, 0.05) !important;
-        border-color: rgba(6, 182, 212, 0.2) !important;
-    }
-
-    body.light-mode .instructions-text h4 {
-        color: rgba(30, 41, 59, 0.95) !important;
-    }
-
-    body.light-mode .instructions-text p {
-        color: rgba(30, 41, 59, 0.8) !important;
-    }
-
-    body.light-mode .bank-details {
-        background: #f8fafc !important;
-        border-color: rgba(6, 182, 212, 0.2) !important;
-    }
-
-    body.light-mode .bank-details p {
-        color: rgba(30, 41, 59, 0.9) !important;
-    }
-
-    body.light-mode .success-item {
-        background: #f8fafc !important;
-        border-color: rgba(16, 185, 129, 0.2) !important;
-    }
-
-    body.light-mode .success-label {
-        color: rgba(30, 41, 59, 0.7) !important;
-    }
-
-    body.light-mode .success-value {
-        color: rgba(30, 41, 59, 0.95) !important;
-    }
-
-    body.light-mode .payment-error-card {
-        background: rgba(239, 68, 68, 0.05) !important;
-        border-color: rgba(239, 68, 68, 0.2) !important;
-    }
-
-    body.light-mode .error-content h4 {
-        color: rgba(30, 41, 59, 0.95) !important;
-    }
-
-    body.light-mode .error-content p {
-        color: rgba(30, 41, 59, 0.8) !important;
+        .success-btn { inline-size: 100%; }
     }
 </style>
 

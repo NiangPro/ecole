@@ -219,6 +219,7 @@ Route::get('/donations', [MonetizationController::class, 'donations'])->name('mo
 Route::get('/faire-un-don', [MonetizationController::class, 'donations'])->name('monetization.donations.alias');
 Route::get('/courses', [MonetizationController::class, 'courses'])->name('monetization.courses');
 Route::get('/courses/{slug}', [MonetizationController::class, 'showCourse'])->name('monetization.course.show');
+Route::get('/courses/{slug}/enroll-free', [PaymentController::class, 'enrollFreeCourse'])->middleware('auth')->name('courses.enroll-free');
 Route::get('/affiliates', [MonetizationController::class, 'affiliates'])->name('monetization.affiliates');
 Route::post('/affiliates/become', [MonetizationController::class, 'becomeAffiliate'])->middleware('auth')->name('monetization.affiliates.become');
 Route::get('/affiliates/dashboard', function() {

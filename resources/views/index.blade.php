@@ -455,7 +455,7 @@
           <h2 class="hp-section-title">{{ __('homepage.courses.title') }}</h2>
           <p class="hp-section-subtitle">{{ __('homepage.courses.subtitle') }}</p>
         </div>
-        <a href="{{ route('formations.all') }}" class="hp-section-action">
+        <a href="{{ route('monetization.courses') }}" class="hp-section-action">
           {{ __('homepage.courses.view_all') }}
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </a>

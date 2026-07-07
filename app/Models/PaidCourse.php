@@ -74,6 +74,11 @@ class PaidCourse extends Model
         return $this->price;
     }
 
+    public function isFree(): bool
+    {
+        return $this->current_price <= 0;
+    }
+
     public function hasDiscount(): bool
     {
         if (!$this->discount_price || !$this->discount_start || !$this->discount_end) {

@@ -93,6 +93,11 @@ class PaymentController extends Controller
                 ->with('info', 'Vous avez déjà acheté ce cours.');
         }
 
+        // Les cours gratuits passent par l'inscription directe, pas par le paiement
+        if ($course->isFree()) {
+            return redirect()->route('courses.enroll-free', $course->slug);
+        }
+
         $request->validate([
             'payment_method' => 'required|in:mobile_money,bank_transfer,wave,stripe,paypal',
         ]);
@@ -164,6 +169,41 @@ class PaymentController extends Controller
 
         return redirect()->route('payment.confirm', $payment->id)
             ->with('success', 'Votre achat a été créé. Veuillez compléter le paiement.');
+    }
+
+    /**
+     * Inscrire un utilisateur connecté à un cours gratuit, sans passer par le paiement.
+     * Protégée par le middleware 'auth' : un invité est d'abord redirigé vers /login,
+     * puis automatiquement renvoyé ici (URL "intended" de Laravel) une fois connecté.
+     */
+    public function enrollFreeCourse($slug)
+    {
+        $course = \App\Models\PaidCourse::where('slug', $slug)
+            ->where('status', 'published')
+            ->firstOrFail();
+
+        if (!$course->isFree()) {
+            return redirect()->route('monetization.course.show', $course->slug)
+                ->with('error', 'Ce cours n\'est pas gratuit, veuillez utiliser le formulaire d\'achat.');
+        }
+
+        $user = Auth::user();
+
+        if (!$user->hasPurchasedCourse($course->id)) {
+            CoursePurchase::updateOrCreate(
+                ['user_id' => $user->id, 'paid_course_id' => $course->id],
+                [
+                    'amount_paid' => 0,
+                    'currency' => $course->currency ?? 'XOF',
+                    'status' => 'completed',
+                    'payment_method' => 'free',
+                    'purchased_at' => now(),
+                ]
+            );
+        }
+
+        return redirect()->route('dashboard.paid-courses.show', $course->id)
+            ->with('success', 'Vous êtes inscrit(e) à ce cours gratuit !');
     }
 
     /**
