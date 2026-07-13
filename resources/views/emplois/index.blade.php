@@ -138,7 +138,32 @@
 
       <div class="em-articles-grid">
         @foreach($recentArticles as $article)
-        <a href="{{ route('emplois.article', $article->slug) }}" class="em-art-card">
+        @php $recentArticleUrl = route('emplois.article', $article->slug); @endphp
+        <div class="em-art-card">
+          <a href="{{ $recentArticleUrl }}" class="em-art-card__link" aria-label="{{ $article->title }}"></a>
+
+          <div class="em-art-card__share" data-share-card>
+            <button type="button" class="em-art-card__share-toggle" data-share-toggle aria-haspopup="true" aria-expanded="false" aria-label="Partager cet article">
+              <i class="fas fa-share-alt"></i>
+            </button>
+            <div class="em-art-card__share-menu" data-share-menu>
+              <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode($recentArticleUrl) }}" target="_blank" rel="noopener noreferrer">
+                <i class="fab fa-facebook-f"></i> Facebook
+              </a>
+              <a href="https://twitter.com/intent/tweet?url={{ urlencode($recentArticleUrl) }}&text={{ urlencode($article->title) }}" target="_blank" rel="noopener noreferrer">
+                <i class="fab fa-twitter"></i> X (Twitter)
+              </a>
+              <a href="https://wa.me/?text={{ urlencode($article->title . ' ' . $recentArticleUrl) }}" target="_blank" rel="noopener noreferrer">
+                <i class="fab fa-whatsapp"></i> WhatsApp
+              </a>
+              <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ urlencode($recentArticleUrl) }}&title={{ urlencode($article->title) }}" target="_blank" rel="noopener noreferrer">
+                <i class="fab fa-linkedin-in"></i> LinkedIn
+              </a>
+              <button type="button" data-copy-link="{{ $recentArticleUrl }}">
+                <i class="fas fa-link"></i> Copier le lien
+              </button>
+            </div>
+          </div>
 
           <div class="em-art-card__img-wrap">
             @if($article->cover_image)
@@ -183,7 +208,7 @@
             </div>
           </div>
 
-        </a>
+        </div>
         @endforeach
       </div>
       @endif
@@ -192,4 +217,67 @@
   </div>
 
 </div>
+
+<script>
+(function () {
+    document.addEventListener('click', function (e) {
+        const toggle = e.target.closest('[data-share-toggle]');
+        const copyBtn = e.target.closest('[data-copy-link]');
+
+        if (copyBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            const url = copyBtn.getAttribute('data-copy-link');
+            const finish = () => {
+                const original = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<i class="fas fa-check"></i> Lien copié !';
+                setTimeout(() => { copyBtn.innerHTML = original; }, 1800);
+            };
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(url).then(finish).catch(finish);
+            } else {
+                const ta = document.createElement('textarea');
+                ta.value = url;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                finish();
+            }
+            return;
+        }
+
+        if (toggle) {
+            e.preventDefault();
+            e.stopPropagation();
+            const wrapper = toggle.closest('[data-share-card]');
+            const isOpen = wrapper.classList.contains('is-open');
+            document.querySelectorAll('[data-share-card].is-open').forEach(function (el) {
+                el.classList.remove('is-open');
+                el.querySelector('[data-share-toggle]').setAttribute('aria-expanded', 'false');
+            });
+            if (!isOpen) {
+                wrapper.classList.add('is-open');
+                toggle.setAttribute('aria-expanded', 'true');
+            }
+            return;
+        }
+
+        if (!e.target.closest('[data-share-menu]')) {
+            document.querySelectorAll('[data-share-card].is-open').forEach(function (el) {
+                el.classList.remove('is-open');
+                el.querySelector('[data-share-toggle]').setAttribute('aria-expanded', 'false');
+            });
+        }
+    });
+
+    document.querySelectorAll('[data-share-menu]').forEach(function (menu) {
+        menu.addEventListener('click', function (e) {
+            if (e.target.closest('a')) {
+                e.stopPropagation();
+            }
+        });
+    });
+})();
+</script>
 @endsection

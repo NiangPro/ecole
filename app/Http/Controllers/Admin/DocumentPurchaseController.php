@@ -4,10 +4,12 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Concerns\LocaleTrait;
+use App\Mail\DocumentPurchaseConfirmation;
 use App\Models\DocumentPurchase;
 use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 
 class DocumentPurchaseController extends Controller
 {
@@ -76,6 +78,51 @@ class DocumentPurchaseController extends Controller
 
         return redirect()->back()
             ->with('success', 'Achat approuvé avec succès');
+    }
+
+    public function sendEmail(Request $request, $id)
+    {
+        $this->ensureLocale();
+
+        $purchase = DocumentPurchase::with(['user', 'document'])->findOrFail($id);
+
+        if ($purchase->status !== 'completed' || !$purchase->download_token) {
+            return redirect()->back()
+                ->with('error', "Ce document ne peut pas être partagé par email (achat non complété ou lien de téléchargement indisponible).");
+        }
+
+        $request->validate([
+            'email' => 'nullable|email',
+        ]);
+
+        $email = $request->filled('email')
+            ? $request->input('email')
+            : ($purchase->customer_email ?? ($purchase->user ? $purchase->user->email : null));
+
+        if (!$email) {
+            return redirect()->back()
+                ->with('error', "Aucune adresse email disponible pour cet achat.");
+        }
+
+        Mail::to($email)->send(new DocumentPurchaseConfirmation($purchase));
+
+        return redirect()->back()
+            ->with('success', "Document envoyé par email à {$email}.");
+    }
+
+    public function updateDownloadLimit(Request $request, $id)
+    {
+        $this->ensureLocale();
+        $purchase = DocumentPurchase::findOrFail($id);
+
+        $request->validate([
+            'download_limit' => 'required|integer|min:0|max:100',
+        ]);
+
+        $purchase->update(['download_limit' => $request->input('download_limit')]);
+
+        return redirect()->back()
+            ->with('success', "Limite de téléchargement mise à jour ({$purchase->download_limit}).");
     }
 
     public function cancel($id)

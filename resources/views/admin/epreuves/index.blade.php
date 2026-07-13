@@ -20,6 +20,12 @@
             {{ session('success') }}
         </div>
     @endif
+    @if(session('error'))
+        <div class="mb-4 p-4 bg-red-500/20 border border-red-500/50 rounded-lg text-red-400 flex items-center gap-2">
+            <i class="fas fa-exclamation-circle"></i>
+            {{ session('error') }}
+        </div>
+    @endif
 
     <form method="GET" action="{{ route('admin.epreuves.index') }}" class="grid md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
         <input type="text" name="q" value="{{ request('q') }}" placeholder="Recherche (titre…)" class="px-4 py-2 rounded-lg bg-gray-800 border border-gray-600 text-white placeholder-gray-500 focus:border-cyan-500 focus:ring-1 focus:ring-cyan-500 lg:col-span-2">
@@ -58,10 +64,27 @@
         </button>
     </form>
 
+    <form id="bulk-action-form" method="POST" action="{{ route('admin.epreuves.bulk-destroy') }}" onsubmit="return confirm(document.querySelectorAll('.row-checkbox:checked').length + ' épreuve(s) et leurs fichiers PDF seront supprimés. Confirmer ?');">
+        @csrf
+        @method('DELETE')
+    </form>
+
+    <div class="content-section mb-4 flex items-center justify-between gap-4" id="bulk-actions-bar" style="display:none;">
+        <div class="flex items-center gap-2 text-sm text-gray-300">
+            <span id="selected-count">0 sélectionnée(s)</span>
+        </div>
+        <button type="submit" form="bulk-action-form" class="inline-flex items-center px-3 py-1.5 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded text-sm transition">
+            <i class="fas fa-trash mr-1"></i>Supprimer la sélection
+        </button>
+    </div>
+
     <div class="content-section overflow-x-auto">
         <table class="w-full text-left">
             <thead>
                 <tr class="border-b border-cyan-500/30">
+                    <th class="pb-3 pr-4 font-semibold w-8">
+                        <input type="checkbox" id="select-all" onchange="toggleSelectAllEpreuves(this)">
+                    </th>
                     <th class="pb-3 pr-4 font-semibold">Titre</th>
                     <th class="pb-3 pr-4 font-semibold">Examen / Classe</th>
                     <th class="pb-3 pr-4 font-semibold">Matière</th>
@@ -75,6 +98,9 @@
             <tbody>
                 @forelse($epreuves as $epreuve)
                 <tr class="border-b border-gray-700/50 hover:bg-gray-800/30 transition">
+                    <td class="py-3 pr-4">
+                        <input type="checkbox" name="ids[]" value="{{ $epreuve->id }}" form="bulk-action-form" class="row-checkbox" onchange="updateSelectedEpreuvesCount()">
+                    </td>
                     <td class="py-3 pr-4">
                         <a href="{{ route('epreuves.show', $epreuve->slug) }}" target="_blank" rel="noopener" class="text-cyan-400 hover:underline font-medium">{{ Str::limit($epreuve->title, 60) }}</a>
                         <div class="text-xs text-gray-500 mt-0.5">{{ $epreuve->type_label }}{{ $epreuve->serie ? ' · Série ' . $epreuve->serie : '' }}</div>
@@ -117,7 +143,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="8" class="py-8 text-center text-gray-400">
+                    <td colspan="9" class="py-8 text-center text-gray-400">
                         Aucune épreuve pour le moment. <a href="{{ route('admin.epreuves.create') }}" class="text-cyan-400 hover:underline">Ajoutez la première</a>.
                     </td>
                 </tr>
@@ -130,4 +156,25 @@
         {{ $epreuves->links() }}
     </div>
 </div>
+
+<script>
+function toggleSelectAllEpreuves(source) {
+    document.querySelectorAll('.row-checkbox').forEach(cb => cb.checked = source.checked);
+    updateSelectedEpreuvesCount();
+}
+
+function updateSelectedEpreuvesCount() {
+    const checked = document.querySelectorAll('.row-checkbox:checked');
+    const bar = document.getElementById('bulk-actions-bar');
+    const countEl = document.getElementById('selected-count');
+    const all = document.querySelectorAll('.row-checkbox');
+    const selectAll = document.getElementById('select-all');
+
+    countEl.textContent = checked.length + ' sélectionnée(s)';
+    bar.style.display = checked.length > 0 ? 'flex' : 'none';
+    if (selectAll) {
+        selectAll.checked = all.length > 0 && checked.length === all.length;
+    }
+}
+</script>
 @endsection

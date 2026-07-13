@@ -110,6 +110,19 @@
                             <a href="{{ $downloadLink }}" target="_blank" rel="noopener" class="inline-flex items-center px-3 py-1.5 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-400 rounded text-sm transition">
                                 <i class="fas fa-download mr-1"></i>Lien
                             </a>
+                        @elseif($p->status === 'failed' && $p->customer_phone)
+                            @php
+                                $waNum = preg_replace('/[^0-9]/', '', ($p->country_code ?? '') . $p->customer_phone);
+                                $epreuveLink = $p->epreuve?->slug ? route('epreuves.show', $p->epreuve->slug) : null;
+                                $relanceText = "Bonjour " . ($p->customer_name ?? '') . ",\n\n"
+                                    . "Nous avons remarqué que votre paiement pour le corrigé de \"" . ($p->epreuve?->title ?? '') . "\" n'a pas abouti.\n\n"
+                                    . "Ce corrigé peut vraiment vous aider à mieux préparer votre examen. Souhaitez-vous qu'on vous accompagne pour finaliser votre achat ? "
+                                    . "C'est rapide et sécurisé."
+                                    . ($epreuveLink ? "\n\n" . $epreuveLink : "");
+                            @endphp
+                            <a href="https://wa.me/{{ $waNum }}?text={{ rawurlencode($relanceText) }}" target="_blank" rel="noopener" class="inline-flex items-center px-3 py-1.5 bg-green-500/20 hover:bg-green-500/30 text-green-400 rounded text-sm transition">
+                                <i class="fab fa-whatsapp mr-1"></i>Relancer
+                            </a>
                         @else
                             <span class="text-gray-600">—</span>
                         @endif

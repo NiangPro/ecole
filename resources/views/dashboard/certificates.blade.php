@@ -34,7 +34,7 @@
             <div style="flex: 1;">
                 <h3 class="dashboard-text-primary" style="font-size: 1.25rem; font-weight: 600; margin-bottom: 0.5rem;">
                     <i class="fas fa-graduation-cap mr-2" style="color: #06b6d4;"></i>
-                    {{ ucfirst(str_replace('-', ' ', $certificate->formation_slug)) }}
+                    {{ $certificate->display_name }}
                 </h3>
                 <div class="dashboard-text-secondary" style="font-size: 0.9rem; margin-bottom: 0.5rem;">
                     <i class="fas fa-hashtag mr-2"></i>

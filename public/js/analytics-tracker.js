@@ -111,29 +111,29 @@ class AnalyticsTracker {
 
     /**
      * Tracker le scroll
+     *
+     * IMPORTANT : n'envoie qu'un seul événement par palier (25/50/75/100%), et
+     * n'attache JAMAIS de listener ici (voir trackHeatmap ci-dessous — bug
+     * corrigé qui empilait des centaines de listeners 'click' pendant un scroll).
      */
     trackScroll() {
-        let maxScroll = 0;
-        let scrollTracked = false;
-        
+        const thresholds = [25, 50, 75, 100];
+        const tracked = new Set();
+
         window.addEventListener('scroll', () => {
             const scrollPercent = Math.round(
                 (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100
             );
-            
-            if (scrollPercent > maxScroll) {
-                maxScroll = scrollPercent;
-            }
-            
-            // Tracker à 25%, 50%, 75%, 100%
-            if (!scrollTracked && (scrollPercent >= 25 || scrollPercent >= 50 || scrollPercent >= 75 || scrollPercent >= 100)) {
-                this.trackHeatmap({
-                    interaction_type: 'scroll',
-                    scroll_depth: scrollPercent
-                });
-                
-                if (scrollPercent >= 100) {
-                    scrollTracked = true;
+
+            for (const threshold of thresholds) {
+                if (scrollPercent >= threshold && !tracked.has(threshold)) {
+                    tracked.add(threshold);
+                    this.sendHeatmap({
+                        page_url: window.location.href,
+                        page_title: document.title,
+                        interaction_type: 'scroll',
+                        scroll_depth: threshold
+                    });
                 }
             }
         }, { passive: true });
@@ -141,10 +141,17 @@ class AnalyticsTracker {
 
     /**
      * Tracker les heatmaps (clics)
+     *
+     * Attache le listener 'click' UNE SEULE FOIS (appelé une seule fois depuis
+     * init()). Avant correction, trackScroll() appelait trackHeatmap() à chaque
+     * tick de scroll une fois 25% dépassé, ce qui ré-enregistrait un nouveau
+     * listener 'click' en phase de capture à chaque frame de scroll — des
+     * centaines de listeners dupliqués s'accumulaient sur une session normale,
+     * chacun forçant un reflow synchrone (getBoundingClientRect) au clic suivant.
+     * C'était la cause principale de l'INP élevé (>500ms) mesuré par CrUX.
      */
-    trackHeatmap(additionalData = {}) {
+    trackHeatmap() {
         document.addEventListener('click', (e) => {
-            const rect = e.target.getBoundingClientRect();
             const data = {
                 page_url: window.location.href,
                 page_title: document.title,
@@ -154,12 +161,12 @@ class AnalyticsTracker {
                 viewport_height: window.innerHeight,
                 element_selector: this.getElementSelector(e.target),
                 element_type: e.target.tagName.toLowerCase(),
-                interaction_type: additionalData.interaction_type || 'click',
-                scroll_depth: additionalData.scroll_depth || Math.round(
+                interaction_type: 'click',
+                scroll_depth: Math.round(
                     (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100
                 ),
             };
-            
+
             this.sendHeatmap(data);
         }, true);
     }

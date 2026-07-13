@@ -179,6 +179,32 @@ class EpreuveController extends Controller
             ->with('success', 'Épreuve supprimée.');
     }
 
+    public function bulkDestroy(Request $request)
+    {
+        $ids = $request->input('ids', []);
+
+        if (empty($ids)) {
+            return redirect()->route('admin.epreuves.index')
+                ->with('error', 'Aucune épreuve sélectionnée.');
+        }
+
+        $epreuves = Epreuve::whereIn('id', $ids)->get();
+
+        foreach ($epreuves as $epreuve) {
+            foreach ([$epreuve->file_path, $epreuve->corrige_file_path] as $path) {
+                if ($path) {
+                    Storage::disk('public')->delete($path);
+                }
+            }
+            $epreuve->delete();
+        }
+
+        Epreuve::clearHomepageCache();
+
+        return redirect()->route('admin.epreuves.index')
+            ->with('success', count($epreuves) . ' épreuve(s) supprimée(s).');
+    }
+
     public function togglePublish(Epreuve $epreuve)
     {
         $epreuve->update(['status' => $epreuve->status === 'published' ? 'draft' : 'published']);

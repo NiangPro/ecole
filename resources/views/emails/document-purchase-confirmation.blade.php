@@ -133,7 +133,7 @@
                 </div>
                 <div class="info-row">
                     <span class="info-label">Date d'achat :</span>
-                    <span class="info-value">{{ $purchase->purchased_at->format('d/m/Y à H:i') }}</span>
+                    <span class="info-value">{{ ($purchase->purchased_at ?? $purchase->created_at)->format('d/m/Y à H:i') }}</span>
                 </div>
                 <div class="info-row">
                     <span class="info-label">Téléchargements restants :</span>

@@ -490,6 +490,20 @@ body.dark-mode .art-body code { color: var(--c); }
   border-radius: var(--rs);
   margin: 24px 0; display: block;
   box-shadow: 0 8px 28px rgba(0,0,0,.1);
+  /* Les images collées dans le contenu par les auteurs n'ont pas d'attributs
+     width/height (contrairement à la cover et aux vignettes) : le navigateur
+     ne peut donc pas réserver leur espace avant chargement → CLS. On force un
+     ratio 16/9 par défaut (recadré via object-fit) pour réserver la place ;
+     ce n'est qu'un compromis — le vrai correctif est d'ajouter width/height
+     à la source quand un article est rédigé. */
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+/* Si l'attribut HTML width/height est présent sur l'image, le navigateur
+   calcule déjà le bon ratio intrinsèque : ne pas l'écraser avec 16/9. */
+.art-body img[width][height] {
+  aspect-ratio: auto;
+  object-fit: initial;
 }
 
 .art-body table {
@@ -675,9 +689,10 @@ body.dark-mode .badge-price { color: var(--c); }
   display: grid; grid-template-columns: repeat(3,1fr); gap: 24px;
 }
 .art-rel-card {
+  position: relative;
   background: #fff;
   border: 1.5px solid rgba(6,182,212,.12);
-  border-radius: var(--r); overflow: hidden;
+  border-radius: var(--r); overflow: visible;
   text-decoration: none; transition: var(--tr);
   box-shadow: 0 4px 18px rgba(6,182,212,.05);
 }
@@ -691,10 +706,15 @@ body.dark-mode .art-rel-card {
   border-color: var(--c);
   box-shadow: 0 22px 52px rgba(6,182,212,.18);
 }
+.art-rel-card-link {
+  position: absolute; inset: 0; z-index: 1; border-radius: inherit;
+}
 .art-rel-img-wrap {
   position: relative; height: 198px; overflow: hidden;
+  border-radius: var(--r) var(--r) 0 0;
   background: linear-gradient(135deg, rgba(6,182,212,.18), rgba(20,184,166,.18));
 }
+.art-rel-img-wrap img { pointer-events: none; }
 .art-rel-img {
   width: 100%; height: 100%; object-fit: cover;
   transition: transform .4s ease;
@@ -729,6 +749,55 @@ body.dark-mode .art-rel-ttl { color: rgba(255,255,255,.9); }
   font-size: .76rem; color: rgba(30,41,59,.48);
 }
 body.dark-mode .art-rel-meta { color: rgba(255,255,255,.43); }
+
+/* ── Related article — share button ── */
+.art-rel-share { position: absolute; top: 12px; right: 12px; z-index: 3; }
+.art-rel-share-toggle {
+  width: 36px; height: 36px; border: none; outline: none; box-shadow: none;
+  -webkit-appearance: none; appearance: none; padding: 0;
+  background: transparent;
+  color: #fff; text-shadow: 0 2px 6px rgba(0,0,0,.5);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: var(--tr); font-size: 1.05rem;
+}
+.art-rel-share-toggle:focus,
+.art-rel-share-toggle:focus-visible { outline: none; box-shadow: none; }
+.art-rel-share-toggle:hover,
+.art-rel-share.is-open .art-rel-share-toggle {
+  color: var(--c); transform: scale(1.15);
+}
+.art-rel-share-menu {
+  position: absolute; top: 44px; right: 0;
+  display: flex; flex-direction: column; gap: 6px; padding: 10px;
+  border-radius: var(--rs); background: #fff;
+  border: 1px solid rgba(6,182,212,.2);
+  box-shadow: 0 18px 45px rgba(15,23,42,.18);
+  opacity: 0; visibility: hidden; transform: translateY(-8px) scale(.95);
+  transition: all .22s ease; min-width: 168px;
+}
+body.dark-mode .art-rel-share-menu {
+  background: rgba(15,23,42,.97); border-color: rgba(6,182,212,.3);
+  box-shadow: 0 18px 45px rgba(0,0,0,.45);
+}
+.art-rel-share.is-open .art-rel-share-menu {
+  opacity: 1; visibility: visible; transform: translateY(0) scale(1);
+}
+.art-rel-share-menu a, .art-rel-share-menu button {
+  display: flex; align-items: center; gap: 10px; padding: 8px 10px;
+  border-radius: 10px; border: none; background: transparent;
+  color: #334155; font-size: .83rem; font-weight: 600;
+  text-decoration: none; cursor: pointer; text-align: left; width: 100%;
+}
+body.dark-mode .art-rel-share-menu a,
+body.dark-mode .art-rel-share-menu button { color: #cbd5e1; }
+.art-rel-share-menu a:hover, .art-rel-share-menu button:hover {
+  background: rgba(6,182,212,.15); color: var(--c);
+}
+.art-rel-share-menu i { width: 16px; text-align: center; }
+.art-rel-share-menu i.fa-facebook-f { color: #1877f2; }
+.art-rel-share-menu i.fa-whatsapp { color: #25d366; }
+.art-rel-share-menu i.fa-linkedin-in { color: #0a66c2; }
+.art-rel-share-menu i.fa-link { color: var(--c); }
 
 /* ── Responsive ── */
 @media (max-width: 1100px) {
@@ -1069,7 +1138,31 @@ body:not(.dark-mode) .comment-form-wrapper textarea {
     </div>
     <div class="art-related-grid">
       @foreach($relatedArticles as $related)
-      <a href="{{ route('emplois.article', $related->slug) }}" class="art-rel-card">
+      @php $relatedUrl = route('emplois.article', $related->slug); @endphp
+      <div class="art-rel-card">
+        <a href="{{ $relatedUrl }}" class="art-rel-card-link" aria-label="{{ $related->title }}"></a>
+        <div class="art-rel-share" data-share-card>
+          <button type="button" class="art-rel-share-toggle" data-share-toggle aria-haspopup="true" aria-expanded="false" aria-label="Partager cet article">
+            <i class="fas fa-share-alt"></i>
+          </button>
+          <div class="art-rel-share-menu" data-share-menu>
+            <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode($relatedUrl) }}" target="_blank" rel="noopener noreferrer">
+              <i class="fab fa-facebook-f"></i> Facebook
+            </a>
+            <a href="https://twitter.com/intent/tweet?url={{ urlencode($relatedUrl) }}&text={{ urlencode($related->title) }}" target="_blank" rel="noopener noreferrer">
+              <i class="fab fa-twitter"></i> X (Twitter)
+            </a>
+            <a href="https://wa.me/?text={{ urlencode($related->title . ' ' . $relatedUrl) }}" target="_blank" rel="noopener noreferrer">
+              <i class="fab fa-whatsapp"></i> WhatsApp
+            </a>
+            <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ urlencode($relatedUrl) }}&title={{ urlencode($related->title) }}" target="_blank" rel="noopener noreferrer">
+              <i class="fab fa-linkedin-in"></i> LinkedIn
+            </a>
+            <button type="button" data-copy-link="{{ $relatedUrl }}">
+              <i class="fas fa-link"></i> Copier le lien
+            </button>
+          </div>
+        </div>
         <div class="art-rel-img-wrap">
           @if($related->cover_image)
           <img class="art-rel-img"
@@ -1092,7 +1185,7 @@ body:not(.dark-mode) .comment-form-wrapper textarea {
             <span><i class="fas fa-eye"></i> {{ $related->featured_display_views }}</span>
           </div>
         </div>
-      </a>
+      </div>
       @endforeach
     </div>
   </div>
@@ -1111,6 +1204,69 @@ body:not(.dark-mode) .comment-form-wrapper textarea {
       bar.style.width = total > 0 ? Math.min(100, (scrolled / total) * 100) + '%' : '0%';
     }, { passive: true });
   })();
+</script>
+
+<script>
+(function () {
+    document.addEventListener('click', function (e) {
+        const toggle = e.target.closest('[data-share-toggle]');
+        const copyBtn = e.target.closest('[data-copy-link]');
+
+        if (copyBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            const url = copyBtn.getAttribute('data-copy-link');
+            const finish = () => {
+                const original = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<i class="fas fa-check"></i> Lien copié !';
+                setTimeout(() => { copyBtn.innerHTML = original; }, 1800);
+            };
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(url).then(finish).catch(finish);
+            } else {
+                const ta = document.createElement('textarea');
+                ta.value = url;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                finish();
+            }
+            return;
+        }
+
+        if (toggle) {
+            e.preventDefault();
+            e.stopPropagation();
+            const wrapper = toggle.closest('[data-share-card]');
+            const isOpen = wrapper.classList.contains('is-open');
+            document.querySelectorAll('[data-share-card].is-open').forEach(function (el) {
+                el.classList.remove('is-open');
+                el.querySelector('[data-share-toggle]').setAttribute('aria-expanded', 'false');
+            });
+            if (!isOpen) {
+                wrapper.classList.add('is-open');
+                toggle.setAttribute('aria-expanded', 'true');
+            }
+            return;
+        }
+
+        if (!e.target.closest('[data-share-menu]')) {
+            document.querySelectorAll('[data-share-card].is-open').forEach(function (el) {
+                el.classList.remove('is-open');
+                el.querySelector('[data-share-toggle]').setAttribute('aria-expanded', 'false');
+            });
+        }
+    });
+
+    document.querySelectorAll('[data-share-menu]').forEach(function (menu) {
+        menu.addEventListener('click', function (e) {
+            if (e.target.closest('a')) {
+                e.stopPropagation();
+            }
+        });
+    });
+})();
 </script>
 
 <script>

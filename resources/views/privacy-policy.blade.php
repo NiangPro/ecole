@@ -1,6 +1,10 @@
 @extends('layouts.app')
 
 @section('title', 'Politique de Confidentialité | NiangProgrammeur')
+@section('meta_description', 'Politique de confidentialité de NiangProgrammeur : données collectées, cookies, Google AdSense, vos droits RGPD et coordonnées de contact.')
+@push('meta')
+    <link rel="canonical" href="{{ route('privacy-policy') }}">
+@endpush
 
 @section('styles')
 <style>
@@ -106,12 +110,50 @@
         color: rgba(30, 41, 59, 0.7) !important;
     }
     
+    /* ── Quick nav ────────────────────────────────────────── */
+    .privacy-toc {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 30px 20px 0;
+        position: relative;
+        z-index: 1;
+    }
+
+    .privacy-toc a {
+        padding: 9px 18px;
+        border-radius: 999px;
+        background: rgba(6, 182, 212, 0.1);
+        border: 1px solid rgba(6, 182, 212, 0.25);
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.25s ease;
+        white-space: nowrap;
+    }
+
+    body:not(.dark-mode) .privacy-toc a {
+        color: rgba(30, 41, 59, 0.8) !important;
+        background: rgba(6, 182, 212, 0.06);
+    }
+
+    .privacy-toc a:hover {
+        background: #06b6d4;
+        border-color: #06b6d4;
+        color: #04141a !important;
+        transform: translateY(-2px);
+    }
+
     .privacy-section {
-        padding: 80px 20px;
+        padding: 60px 20px 80px;
         max-width: 1000px;
         margin: 0 auto;
     }
-    
+
     .privacy-card {
         background: rgba(15, 23, 42, 0.7);
         backdrop-filter: blur(20px);
@@ -122,6 +164,7 @@
         transition: all 0.3s ease;
         position: relative;
         overflow: hidden;
+        scroll-margin-top: 100px;
     }
     
     body:not(.dark-mode) .privacy-card {
@@ -341,6 +384,13 @@
 @endsection
 
 @section('content')
+@php
+    $siteSettings = \App\Models\SiteSetting::instance();
+    $contactEmail = $siteSettings->contact_email ?? 'NiangProgrammeur@gmail.com';
+    $contactPhone = $siteSettings->contact_phone ?? '+221 78 312 36 57';
+    $contactAddress = $siteSettings->contact_address ?? 'Dakar, Sénégal';
+    $phoneDigits = preg_replace('/[^0-9]/', '', $contactPhone);
+@endphp
 <!-- Hero Section -->
 <section class="privacy-hero">
     <div class="privacy-hero-content">
@@ -352,13 +402,26 @@
         <h1>Politique de Confidentialité</h1>
         <p>Protection de vos données personnelles sur NiangProgrammeur</p>
     </div>
+    <nav class="privacy-toc" aria-label="Sommaire de la politique de confidentialité">
+        <a href="#section-1">1. Introduction</a>
+        <a href="#section-2">2. Informations collectées</a>
+        <a href="#section-3">3. Utilisation</a>
+        <a href="#section-4">4. Cookies</a>
+        <a href="#section-5">5. Google AdSense</a>
+        <a href="#section-6">6. Partage</a>
+        <a href="#section-7">7. Sécurité</a>
+        <a href="#section-8">8. Vos droits (RGPD)</a>
+        <a href="#section-9">9. Liens externes</a>
+        <a href="#section-10">10. Modifications</a>
+        <a href="#section-11">11. Contact</a>
+    </nav>
 </section>
 
 <!-- Privacy Policy Content -->
 <section class="privacy-section">
-    <div class="privacy-card">
+    <div class="privacy-card" id="section-1">
         <p class="privacy-update">Dernière mise à jour : {{ date('d/m/Y') }}</p>
-        
+
         <h2 class="privacy-section-title">
             <i class="fas fa-info-circle"></i>
             1. Introduction
@@ -371,7 +434,7 @@
         </p>
     </div>
 
-    <div class="privacy-card">
+    <div class="privacy-card" id="section-2">
         <h2 class="privacy-section-title">
             <i class="fas fa-database"></i>
             2. Informations que nous collectons
@@ -407,7 +470,7 @@
         </p>
     </div>
 
-    <div class="privacy-card">
+    <div class="privacy-card" id="section-3">
         <h2 class="privacy-section-title">
             <i class="fas fa-cogs"></i>
             3. Utilisation de vos informations
@@ -423,7 +486,7 @@
         </ul>
     </div>
 
-    <div class="privacy-card">
+    <div class="privacy-card" id="section-4">
         <h2 class="privacy-section-title">
             <i class="fas fa-cookie-bite"></i>
             4. Cookies et technologies similaires
@@ -455,7 +518,7 @@
         </p>
     </div>
 
-    <div class="privacy-card">
+    <div class="privacy-card" id="section-5">
         <h2 class="privacy-section-title">
             <i class="fas fa-ad"></i>
             5. Google AdSense et Publicités
@@ -507,7 +570,7 @@
         </p>
     </div>
 
-    <div class="privacy-card">
+    <div class="privacy-card" id="section-6">
         <h2 class="privacy-section-title">
             <i class="fas fa-share-alt"></i>
             6. Partage de vos informations
@@ -523,7 +586,7 @@
         </ul>
     </div>
 
-    <div class="privacy-card">
+    <div class="privacy-card" id="section-7">
         <h2 class="privacy-section-title">
             <i class="fas fa-lock"></i>
             7. Sécurité de vos données
@@ -543,7 +606,7 @@
         </p>
     </div>
 
-    <div class="privacy-card">
+    <div class="privacy-card" id="section-8">
         <h2 class="privacy-section-title">
             <i class="fas fa-user-shield"></i>
             8. Vos droits (RGPD)
@@ -589,14 +652,14 @@
         
         <h3 class="privacy-subtitle">8.8 Exercer vos droits</h3>
         <p class="privacy-text">
-            Pour exercer l'un de ces droits, veuillez nous contacter à l'adresse : <a href="mailto:NiangProgrammeur@gmail.com" class="privacy-link">NiangProgrammeur@gmail.com</a> ou via notre formulaire de contact. Nous répondrons à votre demande dans un délai d'un mois (peut être étendu à deux mois dans certains cas complexes).
+            Pour exercer l'un de ces droits, veuillez nous contacter à l'adresse : <a href="mailto:{{ $contactEmail }}" class="privacy-link">{{ $contactEmail }}</a> ou via notre formulaire de contact. Nous répondrons à votre demande dans un délai d'un mois (peut être étendu à deux mois dans certains cas complexes).
         </p>
         <p class="privacy-text">
             Vous avez également le droit de déposer une plainte auprès de l'autorité de contrôle compétente si vous estimez que le traitement de vos données personnelles constitue une violation du RGPD.
         </p>
     </div>
 
-    <div class="privacy-card">
+    <div class="privacy-card" id="section-9">
         <h2 class="privacy-section-title">
             <i class="fas fa-link"></i>
             9. Liens vers d'autres sites
@@ -609,7 +672,7 @@
         </p>
     </div>
 
-    <div class="privacy-card">
+    <div class="privacy-card" id="section-10">
         <h2 class="privacy-section-title">
             <i class="fas fa-edit"></i>
             10. Modifications de cette politique
@@ -625,7 +688,7 @@
         </p>
     </div>
 
-    <div class="privacy-card">
+    <div class="privacy-card" id="section-11">
         <h2 class="privacy-section-title">
             <i class="fas fa-envelope"></i>
             11. Nous contacter
@@ -639,28 +702,28 @@
                 <div class="privacy-contact-item">
                     <i class="fas fa-envelope"></i>
                     <div>
-                        <strong>Email :</strong> 
-                        <a href="mailto:NiangProgrammeur@gmail.com" class="privacy-link">NiangProgrammeur@gmail.com</a>
+                        <strong>Email :</strong>
+                        <a href="mailto:{{ $contactEmail }}" class="privacy-link">{{ $contactEmail }}</a>
                     </div>
                 </div>
                 <div class="privacy-contact-item">
                     <i class="fas fa-phone"></i>
                     <div>
-                        <strong>Téléphone :</strong> 
-                        <a href="tel:+221783123657" class="privacy-link">+221 78 312 36 57</a>
+                        <strong>Téléphone :</strong>
+                        <a href="tel:+{{ $phoneDigits }}" class="privacy-link">{{ $contactPhone }}</a>
                     </div>
                 </div>
                 <div class="privacy-contact-item">
                     <i class="fab fa-whatsapp"></i>
                     <div>
-                        <strong>WhatsApp :</strong> 
-                        <a href="https://wa.me/221783123657" target="_blank" class="privacy-link">+221 78 312 36 57</a>
+                        <strong>WhatsApp :</strong>
+                        <a href="https://wa.me/{{ $phoneDigits }}" target="_blank" class="privacy-link">{{ $contactPhone }}</a>
                     </div>
                 </div>
                 <div class="privacy-contact-item">
                     <i class="fas fa-map-marker-alt"></i>
                     <div>
-                        <strong>Adresse :</strong> Dakar, Sénégal
+                        <strong>Adresse :</strong> {{ $contactAddress }}
                     </div>
                 </div>
                 <div class="privacy-contact-item">

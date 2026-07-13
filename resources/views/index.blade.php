@@ -63,13 +63,17 @@
           <h2 class="hp-section-title">{{ __('homepage.docs.title') }}</h2>
           <p class="hp-section-subtitle">{{ __('homepage.docs.subtitle') }}</p>
         </div>
-        <a href="{{ route('documents.index') }}" class="hp-section-action">
-          {{ __('homepage.docs.view_all') }}
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </a>
+        <div class="hp-docs-carousel-actions">
+          <button type="button" class="hp-docs-nav" id="hpDocsPrev" aria-label="Précédent"><i class="fas fa-chevron-left"></i></button>
+          <button type="button" class="hp-docs-nav" id="hpDocsNext" aria-label="Suivant"><i class="fas fa-chevron-right"></i></button>
+          <a href="{{ route('documents.index') }}" class="hp-section-action">
+            {{ __('homepage.docs.view_all') }}
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+        </div>
       </div>
 
-      <div class="hp-docs-grid">
+      <div class="hp-docs-carousel" id="hpDocsViewport">
         @foreach($featuredDocuments as $document)
         <article class="hp-doc-card">
           <a href="{{ route('documents.show', $document->slug) }}" class="hp-doc-cover">
@@ -141,6 +145,40 @@
 
     </div>
   </section>
+
+  @push('scripts')
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+      var viewport = document.getElementById('hpDocsViewport');
+      if (!viewport) return;
+
+      var prevBtn = document.getElementById('hpDocsPrev');
+      var nextBtn = document.getElementById('hpDocsNext');
+
+      function step() {
+          var card = viewport.querySelector('.hp-doc-card');
+          var gap = 20;
+          return card ? card.getBoundingClientRect().width + gap : viewport.clientWidth * 0.8;
+      }
+
+      function updateNavState() {
+          var max = viewport.scrollWidth - viewport.clientWidth - 2;
+          prevBtn.disabled = viewport.scrollLeft <= 0;
+          nextBtn.disabled = viewport.scrollLeft >= max;
+      }
+
+      prevBtn.addEventListener('click', function () {
+          viewport.scrollBy({ left: -step(), behavior: 'smooth' });
+      });
+      nextBtn.addEventListener('click', function () {
+          viewport.scrollBy({ left: step(), behavior: 'smooth' });
+      });
+      viewport.addEventListener('scroll', updateNavState, { passive: true });
+      window.addEventListener('resize', updateNavState);
+      updateNavState();
+  });
+  </script>
+  @endpush
   @endif
 
 
@@ -395,7 +433,10 @@
         <div class="hp-articles-grid">
           @php $articlesList = $featuredArticles->isNotEmpty() ? $featuredArticles : $latestJobs->take(4); @endphp
           @foreach($articlesList as $article)
-          <a href="{{ route('emplois.article', $article->slug) }}" class="hp-article-card">
+          @php $hpArticleUrl = route('emplois.article', $article->slug); @endphp
+          <div class="hp-article-card">
+            <a href="{{ $hpArticleUrl }}" class="hp-article-card-link" aria-label="{{ $article->title }}"></a>
+            @include('partials.hp-article-share', ['shareUrl' => $hpArticleUrl, 'shareTitle' => $article->title])
             @if($article->cover_image)
             <div class="hp-article-img">
               @if($article->cover_type === 'external')
@@ -414,7 +455,7 @@
                 <span>{{ $article->featured_display_views }} {{ __('homepage.featured.views') }}</span>
               </div>
             </div>
-          </a>
+          </div>
           @endforeach
         </div>
 
@@ -580,7 +621,10 @@
 
       <div class="hp-articles-grid--3col">
         @foreach($sponsoredArticles->take(3) as $article)
-        <a href="{{ route('emplois.article', $article->slug) }}" class="hp-article-card">
+        @php $hpArticleUrl = route('emplois.article', $article->slug); @endphp
+        <div class="hp-article-card">
+          <a href="{{ $hpArticleUrl }}" class="hp-article-card-link" aria-label="{{ $article->title }}"></a>
+          @include('partials.hp-article-share', ['shareUrl' => $hpArticleUrl, 'shareTitle' => $article->title])
           @if($article->cover_image)
           <div class="hp-article-img">
             @if($article->cover_type === 'external')
@@ -602,7 +646,7 @@
               <span>{{ $article->published_at ? \Carbon\Carbon::parse($article->published_at)->diffForHumans() : __('homepage.featured.recently') }}</span>
             </div>
           </div>
-        </a>
+        </div>
         @endforeach
       </div>
 
@@ -631,7 +675,10 @@
 
       <div class="hp-articles-grid--4col">
         @foreach($latestJobs->take(8) as $article)
-        <a href="{{ route('emplois.article', $article->slug) }}" class="hp-article-card">
+        @php $hpArticleUrl = route('emplois.article', $article->slug); @endphp
+        <div class="hp-article-card">
+          <a href="{{ $hpArticleUrl }}" class="hp-article-card-link" aria-label="{{ $article->title }}"></a>
+          @include('partials.hp-article-share', ['shareUrl' => $hpArticleUrl, 'shareTitle' => $article->title])
           @if($article->cover_image)
           <div class="hp-article-img">
             @if($article->cover_type === 'external')
@@ -650,7 +697,7 @@
               <span>{{ $article->featured_display_views }} {{ __('homepage.latest.views') }}</span>
             </div>
           </div>
-        </a>
+        </div>
         @endforeach
       </div>
 
@@ -719,4 +766,66 @@
     </div>
   </div>
 
+<script>
+(function () {
+    document.addEventListener('click', function (e) {
+        const toggle = e.target.closest('[data-share-toggle]');
+        const copyBtn = e.target.closest('[data-copy-link]');
+
+        if (copyBtn) {
+            e.preventDefault();
+            e.stopPropagation();
+            const url = copyBtn.getAttribute('data-copy-link');
+            const finish = () => {
+                const original = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<i class="fas fa-check"></i> Lien copié !';
+                setTimeout(() => { copyBtn.innerHTML = original; }, 1800);
+            };
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(url).then(finish).catch(finish);
+            } else {
+                const ta = document.createElement('textarea');
+                ta.value = url;
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                finish();
+            }
+            return;
+        }
+
+        if (toggle) {
+            e.preventDefault();
+            e.stopPropagation();
+            const wrapper = toggle.closest('[data-share-card]');
+            const isOpen = wrapper.classList.contains('is-open');
+            document.querySelectorAll('[data-share-card].is-open').forEach(function (el) {
+                el.classList.remove('is-open');
+                el.querySelector('[data-share-toggle]').setAttribute('aria-expanded', 'false');
+            });
+            if (!isOpen) {
+                wrapper.classList.add('is-open');
+                toggle.setAttribute('aria-expanded', 'true');
+            }
+            return;
+        }
+
+        if (!e.target.closest('[data-share-menu]')) {
+            document.querySelectorAll('[data-share-card].is-open').forEach(function (el) {
+                el.classList.remove('is-open');
+                el.querySelector('[data-share-toggle]').setAttribute('aria-expanded', 'false');
+            });
+        }
+    });
+
+    document.querySelectorAll('[data-share-menu]').forEach(function (menu) {
+        menu.addEventListener('click', function (e) {
+            if (e.target.closest('a')) {
+                e.stopPropagation();
+            }
+        });
+    });
+})();
+</script>
 @endsection

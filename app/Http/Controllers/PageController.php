@@ -102,18 +102,17 @@ class PageController extends Controller
                 ->take(4)
                 ->get();
             
-            // Cache les documents vedettes - Optimisé avec une seule requête combinée
+            // Cache les 10 derniers documents de la catégorie Épreuves
             $featuredDocuments = \App\Models\Document::published()
                 ->active()
                 ->with(['category:id,name,slug'])
+                ->whereHas('category', fn($q) => $q->where('slug', 'epreuves'))
                 ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'price', 'discount_price', 'download_count', 'sales_count', 'views_count', 'published_at', 'is_featured')
                 ->withAvg('approvedReviews as average_rating', 'rating')
                 ->withCount('approvedReviews as reviews_count')
-                ->orderByRaw("(SELECT CASE WHEN slug = 'epreuves' THEN 0 ELSE 1 END FROM document_categories WHERE document_categories.id = documents.category_id)")
-                ->orderByRaw('CASE WHEN is_featured = 1 THEN 0 ELSE 1 END')
-                ->orderBy('download_count', 'desc')
-                ->orderBy('views_count', 'desc')
-                ->take(4)
+                ->orderBy('published_at', 'desc')
+                ->orderBy('created_at', 'desc')
+                ->take(10)
                 ->get();
             
             // Cache les épreuves récentes (BAC, BFEM…) — en vedette d'abord, puis les plus récentes

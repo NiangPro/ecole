@@ -138,6 +138,12 @@
         }
     }
 
+    .flash-message-error {
+        background: rgba(239, 68, 68, 0.15);
+        border-color: rgba(239, 68, 68, 0.3);
+        color: #ef4444;
+    }
+
     /* Main Grid */
     .main-content-grid {
         display: grid;
@@ -242,6 +248,34 @@
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
+    }
+
+    .download-limit-form {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-top: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .download-limit-input {
+        width: 80px;
+        padding: 0.6rem 0.75rem;
+        background: rgba(15, 23, 42, 0.4);
+        border: 2px solid rgba(6, 182, 212, 0.25);
+        border-radius: 10px;
+        color: var(--text-primary);
+        font-size: 0.9375rem;
+    }
+
+    .download-limit-input:focus {
+        outline: none;
+        border-color: #06b6d4;
+    }
+
+    .download-limit-form .btn-action {
+        padding: 0.6rem 1.1rem;
+        font-size: 0.875rem;
     }
 
     /* Status Badge */
@@ -364,6 +398,18 @@
         box-shadow: 0 8px 24px rgba(37, 211, 102, 0.5);
     }
 
+    .btn-action.email {
+        background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+        color: white;
+        box-shadow: 0 4px 16px rgba(139, 92, 246, 0.4);
+        white-space: nowrap;
+    }
+
+    .btn-action.email:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(139, 92, 246, 0.5);
+    }
+
     /* Downloads History */
     .downloads-list {
         display: flex;
@@ -480,6 +526,13 @@
     <div class="flash-message">
         <i class="fas fa-check-circle"></i>
         <span>{{ session('success') }}</span>
+    </div>
+    @endif
+
+    @if(session('error'))
+    <div class="flash-message flash-message-error">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>{{ session('error') }}</span>
     </div>
     @endif
 
@@ -601,6 +654,20 @@
             <div class="info-item">
                 <span class="info-label">Téléchargements</span>
                 <div class="info-value">{{ $purchase->download_count }}/{{ $purchase->download_limit }}</div>
+                <form action="{{ route('admin.documents.purchases.download-limit', $purchase->id) }}" method="POST" class="download-limit-form">
+                    @csrf
+                    <input type="number"
+                           name="download_limit"
+                           class="download-limit-input"
+                           value="{{ $purchase->download_limit }}"
+                           min="0"
+                           max="100"
+                           required>
+                    <button type="submit" class="btn-action copy">
+                        <i class="fas fa-check"></i>
+                        <span>Modifier la limite</span>
+                    </button>
+                </form>
             </div>
             @if($purchase->expires_at)
             <div class="info-item">
@@ -663,6 +730,13 @@
                     <i class="fab fa-whatsapp"></i>
                     <span>Partager via WhatsApp</span>
                 </a>
+
+                @if($customerEmail)
+                <a href="mailto:{{ $customerEmail }}?subject={{ rawurlencode('Votre document - ' . $purchase->document->title) }}&body={{ rawurlencode($whatsappMessage) }}" class="btn-action email">
+                    <i class="fas fa-envelope"></i>
+                    <span>Envoyer par email</span>
+                </a>
+                @endif
             </div>
         </div>
         @endif

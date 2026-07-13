@@ -132,8 +132,106 @@
             <!-- Contenu Principal - Sections Gauche/Droite -->
             <main class="course-main-content">
                 <div class="course-sections-layout">
-                    <!-- Colonne de Gauche -->
+                    <!-- Colonne de Gauche - Programme -->
                     <div class="course-sections-left">
+                        <section class="course-section-modern program-section">
+                            <div class="section-modern-header">
+                                <div class="section-modern-icon-wrapper">
+                                    <div class="section-modern-icon program-icon">
+                                        <i class="fas fa-list-ul"></i>
+                                    </div>
+                                </div>
+                                <h2 class="section-modern-title">Programme du cours</h2>
+                                <p class="section-modern-subtitle">Structure de la formation</p>
+                            </div>
+                            <div class="section-modern-content">
+                                @if($course->chapters && $course->chapters->count() > 0)
+                                <div class="program-timeline">
+                                    @foreach($course->chapters as $index => $chapter)
+                                    <div class="program-module" data-chapter-id="{{ $chapter->id }}">
+                                        <div class="program-module-number">{{ $index + 1 }}</div>
+                                        <div class="program-module-content">
+                                            <h3 class="program-module-title">{{ $chapter->title }}</h3>
+                                            @if($chapter->description)
+                                            <p class="program-module-description">{{ $chapter->description }}</p>
+                                            @endif
+                                            <div class="program-module-meta">
+                                                @if($chapter->duration_minutes)
+                                                <span class="program-module-duration">
+                                                    <i class="fas fa-clock"></i>
+                                                    {{ $chapter->duration_minutes }} min
+                                                </span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @endforeach
+                                </div>
+                                @else
+                                <div class="course-empty-state-modern">
+                                    <div class="empty-state-icon">
+                                        <i class="fas fa-list-ul"></i>
+                                    </div>
+                                    <h3>Programme en préparation</h3>
+                                    <p>Le programme détaillé du cours sera disponible prochainement.</p>
+                                </div>
+                                @endif
+                            </div>
+                        </section>
+
+                        <!-- Formations Payantes Recommandées -->
+                        @if(isset($relatedCourses) && $relatedCourses->count() > 0)
+                        <section class="course-section-modern related-courses-section">
+                            <div class="section-modern-header">
+                                <div class="section-modern-icon-wrapper">
+                                    <div class="section-modern-icon related-icon">
+                                        <i class="fas fa-graduation-cap"></i>
+                                    </div>
+                                </div>
+                                <h2 class="section-modern-title">Autres formations</h2>
+                                <p class="section-modern-subtitle">Découvrez nos autres cours</p>
+                            </div>
+                            <div class="section-modern-content">
+                                <div class="related-courses-list">
+                                    @foreach($relatedCourses as $index => $relatedCourse)
+                                    <a href="{{ route('monetization.course.show', $relatedCourse->slug) }}" class="related-course-item">
+                                        <div class="related-course-thumbnail">
+                                            @if($relatedCourse->cover_image)
+                                                @if(($relatedCourse->cover_type ?? 'internal') === 'internal')
+                                                    <img src="{{ asset('storage/' . $relatedCourse->cover_image) }}" alt="{{ $relatedCourse->title }}" class="related-course-thumbnail-image" onerror="this.parentElement.innerHTML='<div class=\'related-course-thumbnail-placeholder\'><i class=\'fas fa-graduation-cap\'></i></div><div class=\'related-course-number\'>{{ $index + 1 }}</div>'">
+                                                @else
+                                                    <img src="{{ $relatedCourse->cover_image }}" alt="{{ $relatedCourse->title }}" class="related-course-thumbnail-image" onerror="this.parentElement.innerHTML='<div class=\'related-course-thumbnail-placeholder\'><i class=\'fas fa-graduation-cap\'></i></div><div class=\'related-course-number\'>{{ $index + 1 }}</div>'">
+                                                @endif
+                                            @else
+                                                <div class="related-course-thumbnail-placeholder">
+                                                    <i class="fas fa-graduation-cap"></i>
+                                                </div>
+                                            @endif
+                                            <div class="related-course-number">{{ $index + 1 }}</div>
+                                        </div>
+                                        <div class="related-course-info">
+                                            <h3 class="related-course-info-title">{{ $relatedCourse->title }}</h3>
+                                            <div class="related-course-info-meta">
+                                                @if($relatedCourse->duration_hours)
+                                                <span class="related-course-info-duration">{{ $relatedCourse->duration_hours }}h</span>
+                                                @endif
+                                                @if($relatedCourse->hasDiscount())
+                                                <span class="related-course-info-price">{{ number_format($relatedCourse->current_price, 0, ',', ' ') }} FCFA</span>
+                                                @else
+                                                <span class="related-course-info-price">{{ number_format($relatedCourse->price, 0, ',', ' ') }} FCFA</span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </a>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </section>
+                        @endif
+                    </div>
+
+                    <!-- Colonne de Droite -->
+                    <div class="course-sections-right">
                         <!-- Card d'Achat -->
                         <div class="course-purchase-card">
                             @if($hasPurchased || $isPremium)
@@ -286,118 +384,6 @@
                         </section>
                         @endif
 
-                    </div>
-
-                    <!-- Colonne de Droite - Programme -->
-                    <div class="course-sections-right">
-                        <section class="course-section-modern program-section">
-                            <div class="section-modern-header">
-                                <div class="section-modern-icon-wrapper">
-                                    <div class="section-modern-icon program-icon">
-                                        <i class="fas fa-list-ul"></i>
-                                    </div>
-                                </div>
-                                <h2 class="section-modern-title">Programme du cours</h2>
-                                <p class="section-modern-subtitle">Structure de la formation</p>
-                            </div>
-                            <div class="section-modern-content">
-                                @if($course->chapters && $course->chapters->count() > 0)
-                                <div class="program-timeline">
-                                    @foreach($course->chapters as $index => $chapter)
-                                    <div class="program-module" data-chapter-id="{{ $chapter->id }}">
-                                        <div class="program-module-number">{{ $index + 1 }}</div>
-                                        <div class="program-module-content">
-                                            <h3 class="program-module-title">{{ $chapter->title }}</h3>
-                                            @if($chapter->description)
-                                            <p class="program-module-description">{{ $chapter->description }}</p>
-                                            @endif
-                                            <div class="program-module-meta">
-                                                @if($chapter->duration_minutes)
-                                                <span class="program-module-duration">
-                                                    <i class="fas fa-clock"></i>
-                                                    {{ $chapter->duration_minutes }} min
-                                                </span>
-                                                @endif
-                                            </div>
-                                            @if($chapter->content)
-                                            <div class="program-module-content-toggle" onclick="toggleChapterContent({{ $chapter->id }})">
-                                                <i class="fas fa-chevron-down"></i>
-                                                <span>Voir le contenu</span>
-                                            </div>
-                                            <div class="program-module-full-content" id="chapter-content-{{ $chapter->id }}" style="display: none;">
-                                                <div class="program-module-full-content-inner">
-                                                    {!! nl2br(e($chapter->content)) !!}
-                                                </div>
-                                            </div>
-                                            @endif
-                                        </div>
-                                        <div class="program-module-arrow">
-                                            <i class="fas fa-chevron-right"></i>
-                                        </div>
-                                    </div>
-                                    @endforeach
-                                </div>
-                                @else
-                                <div class="course-empty-state-modern">
-                                    <div class="empty-state-icon">
-                                        <i class="fas fa-list-ul"></i>
-                                    </div>
-                                    <h3>Programme en préparation</h3>
-                                    <p>Le programme détaillé du cours sera disponible prochainement.</p>
-                                </div>
-                                @endif
-                            </div>
-                        </section>
-
-                        <!-- Formations Payantes Recommandées -->
-                        @if(isset($relatedCourses) && $relatedCourses->count() > 0)
-                        <section class="course-section-modern related-courses-section">
-                            <div class="section-modern-header">
-                                <div class="section-modern-icon-wrapper">
-                                    <div class="section-modern-icon related-icon">
-                                        <i class="fas fa-graduation-cap"></i>
-                                    </div>
-                                </div>
-                                <h2 class="section-modern-title">Autres formations</h2>
-                                <p class="section-modern-subtitle">Découvrez nos autres cours</p>
-                            </div>
-                            <div class="section-modern-content">
-                                <div class="related-courses-list">
-                                    @foreach($relatedCourses as $index => $relatedCourse)
-                                    <a href="{{ route('monetization.course.show', $relatedCourse->slug) }}" class="related-course-item">
-                                        <div class="related-course-thumbnail">
-                                            @if($relatedCourse->cover_image)
-                                                @if(($relatedCourse->cover_type ?? 'internal') === 'internal')
-                                                    <img src="{{ asset('storage/' . $relatedCourse->cover_image) }}" alt="{{ $relatedCourse->title }}" class="related-course-thumbnail-image" onerror="this.parentElement.innerHTML='<div class=\'related-course-thumbnail-placeholder\'><i class=\'fas fa-graduation-cap\'></i></div><div class=\'related-course-number\'>{{ $index + 1 }}</div>'">
-                                                @else
-                                                    <img src="{{ $relatedCourse->cover_image }}" alt="{{ $relatedCourse->title }}" class="related-course-thumbnail-image" onerror="this.parentElement.innerHTML='<div class=\'related-course-thumbnail-placeholder\'><i class=\'fas fa-graduation-cap\'></i></div><div class=\'related-course-number\'>{{ $index + 1 }}</div>'">
-                                                @endif
-                                            @else
-                                                <div class="related-course-thumbnail-placeholder">
-                                                    <i class="fas fa-graduation-cap"></i>
-                                                </div>
-                                            @endif
-                                            <div class="related-course-number">{{ $index + 1 }}</div>
-                                        </div>
-                                        <div class="related-course-info">
-                                            <h3 class="related-course-info-title">{{ $relatedCourse->title }}</h3>
-                                            <div class="related-course-info-meta">
-                                                @if($relatedCourse->duration_hours)
-                                                <span class="related-course-info-duration">{{ $relatedCourse->duration_hours }}h</span>
-                                                @endif
-                                                @if($relatedCourse->hasDiscount())
-                                                <span class="related-course-info-price">{{ number_format($relatedCourse->current_price, 0, ',', ' ') }} FCFA</span>
-                                                @else
-                                                <span class="related-course-info-price">{{ number_format($relatedCourse->price, 0, ',', ' ') }} FCFA</span>
-                                                @endif
-                                            </div>
-                                        </div>
-                                    </a>
-                                    @endforeach
-                                </div>
-                            </div>
-                        </section>
-                        @endif
                     </div>
                 </div>
             </main>
@@ -915,49 +901,47 @@
 
     .program-module {
         display: flex;
-        align-items: center;
-        gap: 18px;
-        padding: 20px;
-        background: var(--surface-muted);
-        border: 1px solid var(--border);
-        border-radius: 16px;
-        transition: transform var(--duration-fast) ease, border-color var(--duration-fast) ease, background var(--duration-fast) ease;
+        align-items: flex-start;
+        gap: 16px;
+        padding-block: 18px;
+        padding-inline: 12px;
+        border-radius: 12px;
+        border-block-end: 1px solid var(--border);
+        transition: background var(--duration-fast) ease;
 
-        &:hover {
-            transform: translateX(6px);
-            border-color: oklch(65% 0.20 200 / 40%);
-            background: oklch(65% 0.20 200 / 6%);
-        }
+        &:last-child { border-block-end: none; }
+        &:hover { background: var(--surface-muted); }
     }
 
     .program-module-number {
-        inline-size: 42px;
-        block-size: 42px;
-        border-radius: 12px;
-        background: linear-gradient(135deg, var(--color-brand-500), var(--color-teal-500));
-        color: oklch(100% 0 0);
+        inline-size: 32px;
+        block-size: 32px;
+        border-radius: 50%;
+        border: 1.5px solid var(--color-brand-500);
+        color: var(--color-brand-500);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.25rem;
-        font-weight: 800;
+        font-size: 0.875rem;
+        font-weight: 700;
         flex-shrink: 0;
+        margin-block-start: 2px;
     }
 
     .program-module-content { flex: 1; min-inline-size: 0; }
 
     .program-module-title {
-        font-size: 1.0625rem;
+        font-size: 1rem;
         font-weight: 700;
         color: var(--text);
-        margin-block-end: 6px;
+        margin-block-end: 4px;
     }
 
     .program-module-description {
         font-size: 0.875rem;
         color: var(--text-muted);
         line-height: 1.6;
-        margin-block-end: 10px;
+        margin-block-end: 8px;
     }
 
     .program-module-meta { display: flex; gap: 16px; flex-wrap: wrap; }
@@ -974,47 +958,29 @@
         & i { color: var(--color-brand-500); }
     }
 
-    .program-module-arrow {
-        color: var(--text-muted);
-        font-size: 1.0625rem;
-        transition: transform var(--duration-fast) ease, color var(--duration-fast) ease;
-    }
-
-    .program-module:hover .program-module-arrow {
-        color: var(--color-brand-500);
-        transform: translateX(4px);
-    }
-
     .program-module-content-toggle {
         display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
-        margin-block-start: 12px;
-        padding-block: 0.5rem;
-        padding-inline: 0.875rem;
-        background: oklch(65% 0.20 200 / 10%);
-        border: 1px solid oklch(65% 0.20 200 / 30%);
-        border-radius: var(--radius-pill);
+        gap: 0.375rem;
+        margin-block-start: 10px;
         color: var(--color-brand-500);
         font-weight: 600;
         font-size: 0.8125rem;
         cursor: pointer;
-        transition: background var(--duration-fast) ease;
         user-select: none;
 
-        &:hover { background: oklch(65% 0.20 200 / 18%); }
+        &:hover { text-decoration: underline; }
 
-        & i { transition: transform var(--duration-fast) ease; }
+        & i { font-size: 0.75rem; transition: transform var(--duration-fast) ease; }
 
         &.active i { transform: rotate(180deg); }
     }
 
     .program-module-full-content {
         margin-block-start: 12px;
-        padding: 16px;
-        background: var(--surface);
-        border: 1px solid var(--border);
-        border-radius: 12px;
+        padding: 14px 16px;
+        background: var(--surface-muted);
+        border-radius: 10px;
         animation: fade-in-down 0.3s var(--ease-out);
     }
 
@@ -1205,8 +1171,6 @@
         .course-hero-stats { flex-direction: column; }
         .course-stat-item { inline-size: 100%; justify-content: center; }
         .course-section-modern { padding: 22px 18px; }
-        .program-module { flex-direction: column; align-items: flex-start; }
-        .program-module-number { align-self: flex-start; }
         .course-main-container { padding-inline: 15px; padding-block-end: 40px; }
     }
 </style>

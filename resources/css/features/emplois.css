@@ -402,10 +402,11 @@
 }
 
 .em-art-card {
+  position: relative;
   background: var(--em-surface);
   border: 1.5px solid var(--em-border);
   border-radius: 18px;
-  overflow: hidden;
+  overflow: visible;
   text-decoration: none;
   display: flex;
   flex-direction: column;
@@ -419,10 +420,13 @@
   transform: translateY(-3px);
 }
 
+.em-art-card__link { position: absolute; inset: 0; z-index: 1; border-radius: inherit; }
+
 .em-art-card__img-wrap {
   position: relative;
   block-size: 180px;
   overflow: hidden;
+  border-radius: 18px 18px 0 0;
   background: oklch(52% 0.18 200 / 8%);
   flex-shrink: 0;
 }
@@ -431,6 +435,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  pointer-events: none;
   transition: transform .4s ease;
 }
 
@@ -505,6 +510,49 @@
 }
 
 .em-art-card__meta i { color: var(--em-accent); }
+
+/* ── Article card — share button ── */
+.em-art-card__share { position: absolute; top: 12px; right: 12px; z-index: 3; }
+.em-art-card__share-toggle {
+  width: 36px; height: 36px; border: none; outline: none; box-shadow: none;
+  -webkit-appearance: none; appearance: none; padding: 0;
+  background: transparent;
+  color: #fff; text-shadow: 0 2px 6px rgba(0,0,0,.5);
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all .3s ease; font-size: 1.05rem;
+}
+.em-art-card__share-toggle:focus,
+.em-art-card__share-toggle:focus-visible { outline: none; box-shadow: none; }
+.em-art-card__share-toggle:hover,
+.em-art-card__share.is-open .em-art-card__share-toggle {
+  color: var(--em-accent); transform: scale(1.15);
+}
+.em-art-card__share-menu {
+  position: absolute; top: 44px; right: 0;
+  display: flex; flex-direction: column; gap: 6px; padding: 10px;
+  border-radius: 14px; background: var(--em-surface);
+  border: 1px solid var(--em-border);
+  box-shadow: 0 18px 45px rgba(15,23,42,.18);
+  opacity: 0; visibility: hidden; transform: translateY(-8px) scale(.95);
+  transition: all .22s ease; min-width: 168px;
+}
+.em-art-card__share.is-open .em-art-card__share-menu {
+  opacity: 1; visibility: visible; transform: translateY(0) scale(1);
+}
+.em-art-card__share-menu a, .em-art-card__share-menu button {
+  display: flex; align-items: center; gap: 10px; padding: 8px 10px;
+  border-radius: 10px; border: none; background: transparent;
+  color: var(--em-text); font-size: .83rem; font-weight: 600;
+  text-decoration: none; cursor: pointer; text-align: left; width: 100%;
+}
+.em-art-card__share-menu a:hover, .em-art-card__share-menu button:hover {
+  background: oklch(52% 0.18 200 / 12%); color: var(--em-accent);
+}
+.em-art-card__share-menu i { width: 16px; text-align: center; }
+.em-art-card__share-menu i.fa-facebook-f { color: #1877f2; }
+.em-art-card__share-menu i.fa-whatsapp { color: #25d366; }
+.em-art-card__share-menu i.fa-linkedin-in { color: #0a66c2; }
+.em-art-card__share-menu i.fa-link { color: var(--em-accent); }
 
 /* ────────────────────────────────────────────────
    RESPONSIVE

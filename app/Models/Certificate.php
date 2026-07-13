@@ -11,6 +11,7 @@ class Certificate extends Model
     protected $fillable = [
         'user_id',
         'formation_slug',
+        'paid_course_id',
         'certificate_number',
         'completed_date',
         'score',
@@ -30,6 +31,26 @@ class Certificate extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Relation avec le cours payant (si le certificat concerne un cours payant)
+     */
+    public function paidCourse(): BelongsTo
+    {
+        return $this->belongsTo(PaidCourse::class, 'paid_course_id');
+    }
+
+    /**
+     * Nom lisible de la formation/cours pour affichage (liste, PDF, ...)
+     */
+    public function getDisplayNameAttribute(): string
+    {
+        if ($this->paid_course_id && $this->paidCourse) {
+            return $this->paidCourse->title;
+        }
+
+        return ucfirst(str_replace('-', ' ', $this->formation_slug));
     }
 
     /**
@@ -60,6 +81,6 @@ class Certificate extends Model
         if (!$this->pdf_path) {
             return null;
         }
-        return route('certificates.download', $this->id);
+        return route('dashboard.certificates.download', $this->id);
     }
 }

@@ -410,6 +410,7 @@ Route::middleware('auth')->prefix('dashboard')->name('dashboard.')->group(functi
         ->middleware('download_rate_limit')
         ->name('certificates.download');
     Route::post('/certificates/generate/{formationSlug}', [App\Http\Controllers\CertificateController::class, 'generate'])->name('certificates.generate');
+    Route::post('/certificates/generate-paid-course/{courseId}', [App\Http\Controllers\CertificateController::class, 'generatePaidCourse'])->name('certificates.generate-paid-course');
     // Page principale (redirige vers overview)
     Route::get('/', [\App\Http\Controllers\ProfileController::class, 'overview'])->name('index');
     
@@ -454,6 +455,7 @@ Route::middleware('auth')->prefix('dashboard')->name('dashboard.')->group(functi
     // Cours Payants
     Route::get('/paid-courses', [\App\Http\Controllers\ProfileController::class, 'paidCourses'])->name('paid-courses');
     Route::get('/paid-courses/{courseId}', [\App\Http\Controllers\ProfileController::class, 'showPaidCourse'])->name('paid-courses.show');
+    Route::post('/paid-courses/{courseId}/chapters/{chapterId}/complete', [\App\Http\Controllers\ProfileController::class, 'markPaidCourseChapterComplete'])->name('paid-courses.chapter.complete');
     
     // Routes pour les objectifs (API)
     Route::post('/goals', [\App\Http\Controllers\UserGoalController::class, 'store'])->name('goals.store');
@@ -728,6 +730,8 @@ Route::middleware(['admin'])->group(function () {
             Route::get('/{id}', [\App\Http\Controllers\Admin\DocumentPurchaseController::class, 'show'])->name('show');
             Route::post('/{id}/approve', [\App\Http\Controllers\Admin\DocumentPurchaseController::class, 'approve'])->name('approve');
             Route::post('/{id}/cancel', [\App\Http\Controllers\Admin\DocumentPurchaseController::class, 'cancel'])->name('cancel');
+            Route::post('/{id}/send-email', [\App\Http\Controllers\Admin\DocumentPurchaseController::class, 'sendEmail'])->name('send-email');
+            Route::post('/{id}/download-limit', [\App\Http\Controllers\Admin\DocumentPurchaseController::class, 'updateDownloadLimit'])->name('download-limit');
         });
         
         // Modération avis
@@ -755,6 +759,7 @@ Route::middleware(['admin'])->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\EpreuveController::class, 'index'])->name('index');
         Route::get('/create', [\App\Http\Controllers\Admin\EpreuveController::class, 'create'])->name('create');
         Route::post('/', [\App\Http\Controllers\Admin\EpreuveController::class, 'store'])->name('store');
+        Route::delete('/bulk-destroy', [\App\Http\Controllers\Admin\EpreuveController::class, 'bulkDestroy'])->name('bulk-destroy');
         Route::get('/{epreuve}/edit', [\App\Http\Controllers\Admin\EpreuveController::class, 'edit'])->name('edit');
         Route::get('/{epreuve}/telecharger', [\App\Http\Controllers\Admin\EpreuveController::class, 'download'])->name('download');
         Route::match(['put', 'patch'], '/{epreuve}', [\App\Http\Controllers\Admin\EpreuveController::class, 'update'])->name('update');

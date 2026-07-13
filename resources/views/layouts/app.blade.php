@@ -664,8 +664,13 @@
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-56V4D8K6');</script>
 
-    <!-- AdSense — chargé en différé après interaction ou 3s pour ne pas bloquer le rendu -->
-    @if($adsenseSettings && $adsenseClientId)
+    <!-- AdSense — chargé en différé après interaction ou 3s pour ne pas bloquer le rendu.
+         Anchor ads et vignette (interstitiel) désactivés explicitement : ce sont les deux
+         formats Auto ads qui insèrent/retirent un bloc plein écran ou une bannière collante
+         APRÈS le premier rendu, sans espace réservé au préalable — cause directe du
+         CLS > 0.25 mesuré par CrUX sur la quasi-totalité des pages (Auto ads géré par Google
+         côté serveur, donc impossible à corriger avec un simple width/height côté HTML). -->
+    @if(!($hideAds ?? false) && $adsenseSettings && $adsenseClientId)
     <script>
     (function(){
         var done=false;
@@ -675,6 +680,15 @@
             s.async=true;
             s.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ $adsenseClientId }}';
             s.crossOrigin='anonymous';
+            s.onload=function(){
+                try{
+                    (window.adsbygoogle = window.adsbygoogle || []).push({
+                        google_ad_client: '{{ $adsenseClientId }}',
+                        enable_page_level_ads: true,
+                        overlays: {bottom: false}
+                    });
+                }catch(e){}
+            };
             document.head.appendChild(s);
         }
         window.addEventListener('scroll',loadAds,{once:true,passive:true});
@@ -683,7 +697,7 @@
         setTimeout(loadAds,3000);
     })();
     </script>
-    @elseif($adsenseSettings && !empty($adsenseSettings->adsense_code) && strpos($adsenseSettings->adsense_code, '<script') !== false)
+    @elseif(!($hideAds ?? false) && $adsenseSettings && !empty($adsenseSettings->adsense_code) && strpos($adsenseSettings->adsense_code, '<script') !== false)
     {!! $adsenseSettings->adsense_code !!}
     @endif
 

@@ -47,35 +47,34 @@ class EmploiController extends Controller
     public function index()
     {
         // Cache les catégories actives avec sélection optimisée (15 minutes)
+        //
+        // withCount('publishedArticles') — même relation que NavigationComposer (menu de nav) —
+        // au lieu de withCount(['articles' => fn($q) => $q->published()]) + un count() manuel de
+        // repli. Les deux formulations sont censées être équivalentes, mais utiliser la même
+        // relation nommée des deux côtés élimine tout risque de divergence entre le compteur du
+        // menu et celui de /emplois (c'était la source du décalage constaté, ex. "561" vs "549").
         $categories = Cache::remember('active_categories', 900, function () {
-            $categories = Category::where('is_active', true)
-                ->withCount([
-                    'articles' => function($query) {
-                        $query->published();
-                    }
-                ])
+            // select() DOIT précéder withCount() : select() remplace toute la liste de colonnes
+            // (y compris la sous-requête de comptage ajoutée par withCount) s'il est appelé après.
+            return Category::where('is_active', true)
                 ->select('id', 'name', 'slug', 'description', 'icon', 'image', 'image_type', 'order')
+                ->withCount('publishedArticles')
                 ->orderBy('order')
                 ->get();
-            
-            foreach ($categories as $category) {
-                if (!isset($category->articles_count)) {
-                    $category->articles_count = JobArticle::where('category_id', $category->id)
-                        ->published()
-                        ->count();
-                }
-                $category->published_articles_count = $category->articles_count ?? 0;
-            }
-            
-            return $categories;
         });
         
         // Cache les 6 derniers articles avec sélection optimisée (15 minutes) - Optimisé avec eager loading
+        //
+        // Tri par created_at (et non published_at) pour être cohérent avec la page d'accueil
+        // (PageController::index(), $latestJobs). published_at peut être antidaté (import,
+        // planification) : trier par ce champ faisait apparaître comme "récents" des articles
+        // publiés il y a plusieurs jours, alors que created_at reflète le moment réel où
+        // l'article a été ajouté — c'était la cause du décalage avec l'accueil, pas le cache.
         $recentArticles = Cache::remember('recent_job_articles', 900, function () {
             return JobArticle::published()
                 ->with(['category:id,name,slug']) // Eager loading optimisé
-                ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')
-                ->orderBy('published_at', 'desc')
+                ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'created_at', 'views')
+                ->orderBy('created_at', 'desc')
                 ->take(6)
                 ->get();
         });
@@ -103,23 +102,26 @@ class EmploiController extends Controller
         }
         
         // Cache optimisé avec eager loading (15 minutes)
-        $cacheKey = $category ? "job_articles_category_{$category->id}_page_{$page}" : "job_articles_all_page_{$page}";
-        
+        $cacheKey = $category ? "job_articles_category_{$category->id}_page_{$page}_v2" : "job_articles_all_page_{$page}_v2";
+
         $articles = Cache::remember($cacheKey, 900, function () use ($category) {
             $query = JobArticle::published()
-                ->with(['category:id,name,slug']) // Eager loading optimisé
+                ->with(['category:id,name,slug,icon']) // Eager loading optimisé
                 ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views', 'created_at', 'updated_at');
-            
+
             if ($category) {
                 $query->where('category_id', $category->id);
             }
-            
+
             return $query->orderBy('published_at', 'desc')
                 ->orderBy('updated_at', 'desc')
                 ->orderBy('created_at', 'desc')
-                ->paginate(12);
+                ->paginate(20); // 20 offres par page
         });
-        
+
+        // Préserve les paramètres de requête (ex: ?category=) dans les liens de pagination
+        $articles->appends($request->except('page'));
+
         return view('emplois.offres', compact('articles', 'category'));
     }
 

@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Certificate;
 use App\Models\FormationProgress;
+use App\Models\PaidCourse;
+use App\Models\PaidCourseProgress;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class CertificateController extends Controller
@@ -60,7 +62,49 @@ class CertificateController extends Controller
             $this->generatePdf($certificate);
         }
 
-        return redirect()->route('certificates.show', $certificate->id);
+        return redirect()->route('dashboard.certificates.show', $certificate->id);
+    }
+
+    /**
+     * Générer un certificat pour un cours payant complété à 100%
+     */
+    public function generatePaidCourse($courseId)
+    {
+        $user = Auth::user();
+
+        $progress = PaidCourseProgress::where('user_id', $user->id)
+            ->where('paid_course_id', $courseId)
+            ->where('progress_percentage', 100)
+            ->first();
+
+        if (!$progress) {
+            return redirect()->route('dashboard.paid-courses.show', $courseId)
+                ->with('error', 'Vous devez terminer tous les chapitres du cours pour obtenir un certificat.');
+        }
+
+        $course = PaidCourse::findOrFail($courseId);
+        $slug = 'paid-course-' . $course->id;
+
+        $certificate = Certificate::where('user_id', $user->id)
+            ->where('formation_slug', $slug)
+            ->first();
+
+        if (!$certificate) {
+            $certificate = Certificate::create([
+                'user_id' => $user->id,
+                'formation_slug' => $slug,
+                'paid_course_id' => $course->id,
+                'certificate_number' => Certificate::generateCertificateNumber(),
+                'completed_date' => $progress->completed_at ?? now(),
+                'score' => 100,
+            ]);
+        }
+
+        if (!$certificate->pdf_path || !$certificate->hasPdf()) {
+            $this->generatePdf($certificate);
+        }
+
+        return redirect()->route('dashboard.certificates.show', $certificate->id);
     }
 
     /**
@@ -98,13 +142,13 @@ class CertificateController extends Controller
     protected function generatePdf(Certificate $certificate)
     {
         $user = $certificate->user;
-        $formationName = ucfirst(str_replace('-', ' ', $certificate->formation_slug));
+        $formationName = $certificate->display_name;
 
         $pdf = Pdf::loadView('certificates.pdf', [
             'certificate' => $certificate,
             'user' => $user,
             'formationName' => $formationName,
-        ]);
+        ])->setPaper('a4', 'landscape');
 
         $pdfPath = 'certificates/' . $certificate->id . '.pdf';
         \Storage::put($pdfPath, $pdf->output());

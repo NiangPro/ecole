@@ -14,6 +14,8 @@ use App\Models\UserActivity;
 use App\Models\UserGoal;
 use App\Models\CoursePurchase;
 use App\Models\PaidCourse;
+use App\Models\PaidCourseProgress;
+use App\Models\Certificate;
 use App\Models\Affiliate;
 use App\Models\DocumentPurchase;
 use Illuminate\Support\Facades\DB;
@@ -926,11 +928,11 @@ class ProfileController extends Controller
     /**
      * Afficher un cours payant avec ses chapitres
      */
-    public function showPaidCourse($courseId)
+    public function showPaidCourse(Request $request, $courseId)
     {
         $this->ensureLocale();
         $user = Auth::user();
-        
+
         // Vérifier que l'utilisateur a acheté ce cours ou a un abonnement premium
         $purchase = CoursePurchase::where('user_id', $user->id)
             ->where('paid_course_id', $courseId)
@@ -952,7 +954,7 @@ class ProfileController extends Controller
             // Traiter le contenu localisé
             $contentField = 'content_' . $locale;
             $fallbackField = 'content_fr';
-            
+
             $contentToProcess = null;
             if (!empty($chapter->$contentField)) {
                 $contentToProcess = $chapter->$contentField;
@@ -961,21 +963,73 @@ class ProfileController extends Controller
             } elseif (!empty($chapter->content)) {
                 $contentToProcess = $chapter->content;
             }
-            
+
             if ($contentToProcess) {
                 $processedContent = $this->processMarkdownContent($contentToProcess);
+                // Convertir le reste (titres, listes, gras, séparateurs, callouts, quiz) en HTML
+                $processedContent = format_course_chapter_content($processedContent);
                 // Stocker le contenu traité dans un attribut temporaire pour la vue
                 $chapter->processed_content = $processedContent;
             }
         }
 
+        $currentChapterId = (int) $request->query('chapter', $course->chapters->first()->id ?? 0);
+        $currentChapter = $course->chapters->firstWhere('id', $currentChapterId) ?? $course->chapters->first();
+
+        // Progression de l'utilisateur sur ce cours
+        $progress = PaidCourseProgress::getOrCreate($user->id, $course->id);
+        if ($currentChapter && $progress->last_chapter_id !== $currentChapter->id) {
+            $progress->last_chapter_id = $currentChapter->id;
+            $progress->save();
+        }
+
+        $certificate = Certificate::where('user_id', $user->id)
+            ->where('paid_course_id', $course->id)
+            ->first();
+
         $pageTitle = $course->title;
         $pageDescription = 'Suivez votre progression dans ce cours';
 
-        return view('dashboard.paid-course-show', compact('course', 'purchase', 'pageTitle', 'pageDescription'))
+        return view('dashboard.paid-course-show', compact('course', 'purchase', 'pageTitle', 'pageDescription', 'currentChapter', 'progress', 'certificate'))
             ->with('layout', 'dashboard.layout');
     }
-    
+
+    /**
+     * Marquer un chapitre de cours payant comme terminé (AJAX)
+     */
+    public function markPaidCourseChapterComplete($courseId, $chapterId)
+    {
+        $user = Auth::user();
+
+        $purchase = CoursePurchase::where('user_id', $user->id)
+            ->where('paid_course_id', $courseId)
+            ->where('status', 'completed')
+            ->first();
+
+        if (!$purchase && !$user->hasActivePremium()) {
+            abort(403, 'Vous devez acheter ce cours ou avoir un abonnement premium pour y accéder.');
+        }
+
+        $course = PaidCourse::with(['chapters' => function($query) {
+            $query->orderBy('order');
+        }])->findOrFail($courseId);
+
+        $chapter = $course->chapters->firstWhere('id', (int) $chapterId);
+        if (!$chapter) {
+            abort(404);
+        }
+
+        $progress = PaidCourseProgress::getOrCreate($user->id, $course->id);
+        $progress->last_chapter_id = $chapter->id;
+        $progress->markChapterCompleted($chapter->id, $course->chapters->count());
+
+        return response()->json([
+            'completed_chapters' => $progress->completed_chapters,
+            'progress_percentage' => $progress->progress_percentage,
+            'is_course_completed' => $progress->progress_percentage >= 100,
+        ]);
+    }
+
     /**
      * Afficher les abonnements de l'utilisateur
      */
