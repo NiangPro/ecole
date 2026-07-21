@@ -75,6 +75,12 @@
     $articleUrl = str_contains(config('app.url'), 'niangprogrammeur.com') 
         ? 'https://www.niangprogrammeur.com/emplois/article/' . $article->slug
         : url(route('emplois.article', $article->slug));
+
+    $breadcrumbs = [
+        ['name' => 'Accueil', 'url' => url('/')],
+        ['name' => trans('app.nav.jobs'), 'url' => route('emplois')],
+        ['name' => $article->title, 'url' => $articleUrl],
+    ];
 @endphp
 
 @push('meta')
@@ -920,7 +926,7 @@ body:not(.dark-mode) .comment-form-wrapper textarea {
     <h1 class="art-hero-title">{{ $article->title }}</h1>
     <div class="art-meta-row">
       @if($article->published_at)
-      <span class="art-chip"><i class="fas fa-calendar"></i> {{ $article->published_at->format('d F Y') }}</span>
+      <time class="art-chip" datetime="{{ $article->published_at->toIso8601String() }}"><i class="fas fa-calendar"></i> {{ $article->published_at->translatedFormat('d F Y') }}</time>
       @endif
       <span class="art-chip"><i class="fas fa-eye"></i> {{ $article->featured_display_views }}</span>
       <span class="art-chip"><i class="fas fa-clock"></i> {{ $readingTime }} min de lecture</span>
@@ -947,10 +953,11 @@ body:not(.dark-mode) .comment-form-wrapper textarea {
     <h1 class="art-hero-title">{{ $article->title }}</h1>
     <div class="art-meta-row">
       @if($article->published_at)
-      <span class="art-chip"><i class="fas fa-calendar"></i> {{ $article->published_at->format('d F Y') }}</span>
+      <time class="art-chip" datetime="{{ $article->published_at->toIso8601String() }}"><i class="fas fa-calendar"></i> {{ $article->published_at->translatedFormat('d F Y') }}</time>
       @endif
       <span class="art-chip"><i class="fas fa-eye"></i> {{ $article->featured_display_views }}</span>
       <span class="art-chip"><i class="fas fa-clock"></i> {{ $readingTime }} min de lecture</span>
+      <span class="art-chip"><i class="fas fa-user"></i> NiangProgrammeur</span>
     </div>
   </div>
 </div>

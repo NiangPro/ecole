@@ -2,6 +2,18 @@
 
 @section('title', trans('app.formations.css3.title') . ' | NiangProgrammeur')
 
+@push('head')
+<x-course-schema slug="css3" />
+@endpush
+
+@php
+    $breadcrumbs = [
+        ['name' => 'Accueil', 'url' => url('/')],
+        ['name' => 'Formations', 'url' => url('/formations')],
+        ['name' => trans('app.formations.css3.title'), 'url' => url()->current()],
+    ];
+@endphp
+
 @section('styles')
 <style>
     * {

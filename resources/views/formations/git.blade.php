@@ -2,6 +2,18 @@
 
 @section('title', trans('app.formations.git.title') . ' | NiangProgrammeur')
 
+@push('head')
+<x-course-schema slug="git" />
+@endpush
+
+@php
+    $breadcrumbs = [
+        ['name' => 'Accueil', 'url' => url('/')],
+        ['name' => 'Formations', 'url' => url('/formations')],
+        ['name' => trans('app.formations.git.title'), 'url' => url()->current()],
+    ];
+@endphp
+
 @section('styles')
 <style>
     * {

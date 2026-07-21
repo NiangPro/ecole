@@ -78,7 +78,7 @@ try {
             if (!empty($articleUrl) && !empty($articleTitle)) {
                 $articleSchema = [
                     '@context' => 'https://schema.org',
-                    '@type' => 'Article',
+                    '@type' => 'NewsArticle',
                     'headline' => $articleTitle,
                     'description' => $articleDesc,
                     'image' => $articleImage,

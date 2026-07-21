@@ -14,6 +14,15 @@
     $isPaidEpreuve = !$epreuve->isFree() && !$epreuve->isCorrige();
     $showAdGate = !$epreuve->isCorrige() && !$isPaidEpreuve && $adsClientId && $adsSlot;
     $corrigePrice = $epreuve->hasCorrige() ? $epreuve->getCorrigePrice() : null;
+
+    $breadcrumbs = [
+        ['name' => 'Accueil', 'url' => route('home')],
+        ['name' => 'Épreuves', 'url' => route('epreuves.index')],
+    ];
+    if ($epreuve->exam) {
+        $breadcrumbs[] = ['name' => $epreuve->exam_label, 'url' => route('epreuves.exam', $epreuve->exam)];
+    }
+    $breadcrumbs[] = ['name' => $epreuve->title, 'url' => url()->current()];
 @endphp
 
 @push('page_css')

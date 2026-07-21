@@ -2,6 +2,18 @@
 
 @section('title', trans('app.formations.rust.title') . ' | NiangProgrammeur')
 
+@push('head')
+<x-course-schema slug="rust" />
+@endpush
+
+@php
+    $breadcrumbs = [
+        ['name' => 'Accueil', 'url' => url('/')],
+        ['name' => 'Formations', 'url' => url('/formations')],
+        ['name' => trans('app.formations.rust.title'), 'url' => url()->current()],
+    ];
+@endphp
+
 @section('styles')
 <!-- Prism.js pour la coloration syntaxique -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
