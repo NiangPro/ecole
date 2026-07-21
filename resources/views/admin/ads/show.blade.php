@@ -769,7 +769,7 @@
                 </div>
                 
                 <div class="preview-container">
-                    <img src="{{ $ad->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($ad->image) : $ad->image }}" 
+                    <img loading="lazy" src="{{ $ad->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($ad->image) : $ad->image }}" 
                          alt="{{ $ad->name }}" 
                          class="preview-image"
                          onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">

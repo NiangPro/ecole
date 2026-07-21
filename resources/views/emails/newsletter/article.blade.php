@@ -124,7 +124,7 @@
         
         <div class="email-body">
             @if($coverImage)
-            <img src="{{ $coverImage }}" alt="{{ $article->title }}" class="article-image" />
+            <img loading="lazy" src="{{ $coverImage }}" alt="{{ $article->title }}" class="article-image" />
             @endif
             
             <h2 class="article-title">{{ $article->title }}</h2>

@@ -174,7 +174,7 @@
                 @if($settings->wave_qr_code)
                     <div class="mt-3">
                         <p class="text-gray-400 text-sm mb-2">Aperçu du QR Code actuel :</p>
-                        <img src="{{ $settings->wave_qr_code }}" alt="QR Code Wave" 
+                        <img loading="lazy" src="{{ $settings->wave_qr_code }}" alt="QR Code Wave" 
                              class="max-w-xs border border-gray-600 rounded-lg p-2 bg-white" 
                              style="max-height: 200px; object-fit: contain;"
                              onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">

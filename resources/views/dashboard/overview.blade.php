@@ -97,9 +97,9 @@
             <div style="width: 100%; height: 150px; border-radius: 8px; overflow: hidden; margin-bottom: 1rem; background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(20, 184, 166, 0.1)); display: flex; align-items: center; justify-content: center;">
                 @if($purchase->document && $purchase->document->cover_image)
                     @if($purchase->document->cover_type === 'internal')
-                        <img src="/storage/{{ $purchase->document->cover_image }}" alt="{{ $purchase->document->title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img loading="lazy" src="/storage/{{ $purchase->document->cover_image }}" alt="{{ $purchase->document->title }}" style="width: 100%; height: 100%; object-fit: cover;">
                     @else
-                        <img src="{{ $purchase->document->cover_image }}" alt="{{ $purchase->document->title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                        <img loading="lazy" src="{{ $purchase->document->cover_image }}" alt="{{ $purchase->document->title }}" style="width: 100%; height: 100%; object-fit: cover;">
                     @endif
                 @else
                     <i class="fas fa-file-pdf" style="font-size: 3rem; color: #06b6d4; opacity: 0.5;"></i>

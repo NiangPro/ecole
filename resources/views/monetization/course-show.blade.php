@@ -198,9 +198,9 @@
                                         <div class="related-course-thumbnail">
                                             @if($relatedCourse->cover_image)
                                                 @if(($relatedCourse->cover_type ?? 'internal') === 'internal')
-                                                    <img src="{{ asset('storage/' . $relatedCourse->cover_image) }}" alt="{{ $relatedCourse->title }}" class="related-course-thumbnail-image" onerror="this.parentElement.innerHTML='<div class=\'related-course-thumbnail-placeholder\'><i class=\'fas fa-graduation-cap\'></i></div><div class=\'related-course-number\'>{{ $index + 1 }}</div>'">
+                                                    <img loading="lazy" src="{{ asset('storage/' . $relatedCourse->cover_image) }}" alt="{{ $relatedCourse->title }}" class="related-course-thumbnail-image" width="128" height="92" onerror="this.parentElement.innerHTML='<div class=\'related-course-thumbnail-placeholder\'><i class=\'fas fa-graduation-cap\'></i></div><div class=\'related-course-number\'>{{ $index + 1 }}</div>'">
                                                 @else
-                                                    <img src="{{ $relatedCourse->cover_image }}" alt="{{ $relatedCourse->title }}" class="related-course-thumbnail-image" onerror="this.parentElement.innerHTML='<div class=\'related-course-thumbnail-placeholder\'><i class=\'fas fa-graduation-cap\'></i></div><div class=\'related-course-number\'>{{ $index + 1 }}</div>'">
+                                                    <img loading="lazy" src="{{ $relatedCourse->cover_image }}" alt="{{ $relatedCourse->title }}" class="related-course-thumbnail-image" width="128" height="92" onerror="this.parentElement.innerHTML='<div class=\'related-course-thumbnail-placeholder\'><i class=\'fas fa-graduation-cap\'></i></div><div class=\'related-course-number\'>{{ $index + 1 }}</div>'">
                                                 @endif
                                             @else
                                                 <div class="related-course-thumbnail-placeholder">

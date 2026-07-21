@@ -158,7 +158,7 @@
                 <tr class="border-b border-cyan-500/10 hover:bg-cyan-500/5 transition">
                     <td class="p-4">
                         @if($achievement->image)
-                            <img src="{{ $achievement->image_url }}" 
+                            <img loading="lazy" src="{{ $achievement->image_url }}" 
                                  alt="{{ $achievement->title }}" 
                                  class="w-16 h-16 rounded-lg object-cover border-2 border-cyan-500/30"
                                  style="min-width: 64px; min-height: 64px;"

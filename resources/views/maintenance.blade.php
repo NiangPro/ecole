@@ -286,7 +286,7 @@
 
   {{-- Logo --}}
   <a href="{{ route('home') }}" class="logo">
-    <img src="{{ \App\Models\SiteSetting::logoUrl() }}" alt="Logo">
+    <img loading="lazy" src="{{ \App\Models\SiteSetting::logoUrl() }}" alt="Logo">
     <span>NiangProgrammeur</span>
   </a>
 

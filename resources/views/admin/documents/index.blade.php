@@ -177,7 +177,7 @@ use Illuminate\Support\Str;
                         <td class="p-4">
                             @if($document->cover_image)
                                 <div class="document-thumbnail">
-                                    <img src="{{ $document->cover_type === 'internal' ? route('admin.documents.documents.cover', $document->id) : $document->cover_image }}" 
+                                    <img loading="lazy" src="{{ $document->cover_type === 'internal' ? route('admin.documents.documents.cover', $document->id) : $document->cover_image }}" 
                                          alt="{{ $document->title }}"
                                          onerror="this.onerror=null; this.style.display='none'; this.parentElement.innerHTML='<i class=\'fas fa-file-alt text-cyan-400\'></i>';">
                                 </div>

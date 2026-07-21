@@ -115,7 +115,7 @@
                     <label class="block text-cyan-400 mb-2 font-semibold">Image de couverture</label>
                     @if($document->cover_image)
                         <div class="cover-wrapper-edit mb-4">
-                            <img src="{{ $document->cover_type === 'internal' ? \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $document->id]) : $document->cover_image }}" 
+                            <img loading="lazy" src="{{ $document->cover_type === 'internal' ? \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $document->id]) : $document->cover_image }}" 
                                  alt="{{ $document->title }}">
                         </div>
                     @endif
@@ -127,7 +127,7 @@
                         <input type="file" name="cover_image_file" id="coverImageFile" accept="image/*" class="input-admin">
                         <div id="coverUploadPreview" class="mt-3 hidden">
                             <p class="text-cyan-400 text-sm mb-2">Aperçu :</p>
-                            <img id="coverPreviewImg" src="" alt="Aperçu" class="w-40 h-40 object-cover rounded-lg border border-cyan-500/20">
+                            <img loading="lazy" id="coverPreviewImg" src="" alt="Aperçu" class="w-40 h-40 object-cover rounded-lg border border-cyan-500/20">
                         </div>
                     </div>
                     <div id="coverExternal" style="display: {{ old('cover_type', $document->cover_type) === 'external' ? 'block' : 'none' }};">

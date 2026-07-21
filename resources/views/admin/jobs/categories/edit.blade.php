@@ -517,7 +517,7 @@
                 </div>
                 
                 <div id="categoryImagePreview" class="image-preview-wrapper {{ $category->image ? '' : 'hidden' }}">
-                    <img id="categoryPreviewImg" src="{{ $category->image ? ($category->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($category->image) : $category->image) : '' }}" alt="Aperçu">
+                    <img loading="lazy" id="categoryPreviewImg" src="{{ $category->image ? ($category->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($category->image) : $category->image) : '' }}" alt="Aperçu">
                 </div>
 
                 <div class="form-group">

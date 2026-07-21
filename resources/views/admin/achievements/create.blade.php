@@ -65,7 +65,7 @@
                         <p class="text-gray-400 text-sm mt-1">Entrez l'URL complète de l'image</p>
                     </div>
                     <div id="achievementImagePreview" class="mt-4 hidden">
-                        <img id="achievementPreviewImg" src="" alt="Aperçu" class="w-full max-w-xs rounded-lg border border-cyan-500/20">
+                        <img loading="lazy" id="achievementPreviewImg" src="" alt="Aperçu" class="w-full max-w-xs rounded-lg border border-cyan-500/20">
                     </div>
                 </div>
 

@@ -114,7 +114,7 @@
         <!-- Image de couverture -->
         @if($article->cover_image)
         <div class="content-section p-0 overflow-hidden">
-            <img src="{{ $article->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($article->cover_image) : $article->cover_image }}" 
+            <img loading="lazy" src="{{ $article->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($article->cover_image) : $article->cover_image }}" 
                  alt="{{ $article->title }}" 
                  class="w-full h-64 object-cover">
         </div>

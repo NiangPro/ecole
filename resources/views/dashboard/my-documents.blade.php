@@ -295,9 +295,9 @@ body.dark-mode .empty-state p {
             <div class="document-image-wrapper">
                 @if($purchase->document && $purchase->document->cover_image)
                     @if($purchase->document->cover_type === 'internal')
-                        <img src="/storage/{{ $purchase->document->cover_image }}" alt="{{ $purchase->document->title }}">
+                        <img loading="lazy" src="/storage/{{ $purchase->document->cover_image }}" alt="{{ $purchase->document->title }}">
                     @else
-                        <img src="{{ $purchase->document->cover_image }}" alt="{{ $purchase->document->title }}">
+                        <img loading="lazy" src="{{ $purchase->document->cover_image }}" alt="{{ $purchase->document->title }}">
                     @endif
                 @else
                     <div class="document-image-placeholder">

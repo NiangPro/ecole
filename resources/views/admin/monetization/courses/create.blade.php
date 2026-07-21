@@ -295,7 +295,7 @@
                             <label class="cf-label">Aperçu</label>
                             <div class="cf-preview-img rounded-xl overflow-hidden">
                                 <template x-if="previewSrc">
-                                    <img :src="previewSrc" class="w-full h-full object-cover" alt="Aperçu">
+                                    <img loading="lazy" :src="previewSrc" class="w-full h-full object-cover" alt="Aperçu">
                                 </template>
                                 <template x-if="!previewSrc">
                                     <i class="fas fa-image text-4xl"></i>
@@ -420,7 +420,7 @@
                     <div class="cf-preview-card">
                         <div class="cf-preview-img">
                             <template x-if="previewSrc">
-                                <img :src="previewSrc" class="w-full h-full object-cover" alt="Aperçu du cours">
+                                <img loading="lazy" :src="previewSrc" class="w-full h-full object-cover" alt="Aperçu du cours">
                             </template>
                             <template x-if="!previewSrc">
                                 <i class="fas fa-graduation-cap text-4xl"></i>

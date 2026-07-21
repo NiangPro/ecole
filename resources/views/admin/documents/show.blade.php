@@ -679,9 +679,9 @@ use Illuminate\Support\Facades\Storage;
                     </div>
                     <div class="cover-wrapper">
                         @if($document->cover_type === 'internal')
-                            <img src="{{ route('admin.documents.documents.cover', $document->id) }}" alt="{{ $document->title }}">
+                            <img loading="lazy" src="{{ route('admin.documents.documents.cover', $document->id) }}" alt="{{ $document->title }}">
                         @else
-                            <img src="{{ $document->cover_image }}" alt="{{ $document->title }}">
+                            <img loading="lazy" src="{{ $document->cover_image }}" alt="{{ $document->title }}">
                         @endif
                     </div>
                 </div>

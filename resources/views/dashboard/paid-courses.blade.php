@@ -11,9 +11,9 @@
                 <div class="course-image-wrapper">
                     @if($course->cover_image)
                         @if(($course->cover_type ?? 'internal') === 'internal')
-                            <img src="{{ asset('storage/' . $course->cover_image) }}" alt="{{ $course->title }}" class="course-image">
+                            <img loading="lazy" src="{{ asset('storage/' . $course->cover_image) }}" alt="{{ $course->title }}" class="course-image">
                         @else
-                            <img src="{{ $course->cover_image }}" alt="{{ $course->title }}" class="course-image" onerror="this.src='{{ asset('images/default-course.jpg') }}'">
+                            <img loading="lazy" src="{{ $course->cover_image }}" alt="{{ $course->title }}" class="course-image" onerror="this.src='{{ asset('images/default-course.jpg') }}'">
                         @endif
                     @else
                         <div class="course-image-placeholder">

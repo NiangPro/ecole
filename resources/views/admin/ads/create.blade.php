@@ -601,7 +601,7 @@
                     </div>
                     
                     <div id="adImagePreview" class="image-preview-box hidden">
-                        <img id="adPreviewImg" src="" alt="Aperçu">
+                        <img loading="lazy" id="adPreviewImg" src="" alt="Aperçu">
                     </div>
                 </div>
             </div>

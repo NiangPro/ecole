@@ -192,9 +192,9 @@
                 @if($course->cover_image)
                 <div style="margin-bottom:1.5rem;">
                     @if(($course->cover_type ?? 'internal') === 'internal')
-                        <img src="{{ asset('storage/' . $course->cover_image) }}" alt="{{ $course->title }}" style="width:100%; max-height:320px; object-fit:cover; border-radius:1rem;">
+                        <img loading="lazy" src="{{ asset('storage/' . $course->cover_image) }}" alt="{{ $course->title }}" style="width:100%; max-height:320px; object-fit:cover; border-radius:1rem;">
                     @else
-                        <img src="{{ $course->cover_image }}" alt="{{ $course->title }}" style="width:100%; max-height:320px; object-fit:cover; border-radius:1rem;" onerror="this.style.display='none'">
+                        <img loading="lazy" src="{{ $course->cover_image }}" alt="{{ $course->title }}" style="width:100%; max-height:320px; object-fit:cover; border-radius:1rem;" onerror="this.style.display='none'">
                     @endif
                 </div>
                 @endif

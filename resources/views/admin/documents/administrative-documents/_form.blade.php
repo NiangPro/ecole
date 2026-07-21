@@ -97,7 +97,7 @@
             @error('cover_image_file')<p class="text-red-400 text-sm mt-1">{{ $message }}</p>@enderror
             @if($document && $document->cover_type === 'internal' && $document->cover_image)
                 <p class="text-sm text-gray-400 mt-2">Image actuelle :</p>
-                <img src="{{ asset('storage/' . $document->cover_image) }}" alt="" class="mt-1 w-20 h-20 object-cover rounded-lg border border-gray-700">
+                <img loading="lazy" src="{{ asset('storage/' . $document->cover_image) }}" alt="" class="mt-1 w-20 h-20 object-cover rounded-lg border border-gray-700">
             @endif
         </div>
         <div id="coverExternal" style="display: {{ old('cover_type', $document ? $document->cover_type : '') === 'external' ? 'block' : 'none' }};">

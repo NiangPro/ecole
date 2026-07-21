@@ -111,9 +111,9 @@
                     @if($ad->image)
                     <div class="ad-image-wrapper">
                         @if($ad->image_type === 'internal')
-                            <img src="{{ asset('storage/' . $ad->image) }}" alt="{{ $ad->name }}" class="ad-image">
+                            <img loading="lazy" src="{{ asset('storage/' . $ad->image) }}" alt="{{ $ad->name }}" class="ad-image">
                         @else
-                            <img src="{{ $ad->image }}" alt="{{ $ad->name }}" class="ad-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                            <img loading="lazy" src="{{ $ad->image }}" alt="{{ $ad->name }}" class="ad-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                             <div class="ad-image-placeholder" style="display: none;">
                                 <i class="fas fa-ad"></i>
                             </div>

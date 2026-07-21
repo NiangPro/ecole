@@ -777,7 +777,7 @@
                         </div>
                     </div>
                     <div id="coverPreview" class="mt-4 {{ (isset($article) && $article->cover_image) ? '' : 'hidden' }}" style="text-align: center;">
-                        <img id="previewImg" src="{{ isset($article) && $article->cover_image ? ($article->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($article->cover_image) : $article->cover_image) : '' }}" alt="Aperçu" style="max-width: 100%; border-radius: 12px; border: 2px solid rgba(6, 182, 212, 0.3);">
+                        <img loading="lazy" id="previewImg" src="{{ isset($article) && $article->cover_image ? ($article->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($article->cover_image) : $article->cover_image) : '' }}" alt="Aperçu" style="max-width: 100%; border-radius: 12px; border: 2px solid rgba(6, 182, 212, 0.3);">
                     </div>
                 </div>
 

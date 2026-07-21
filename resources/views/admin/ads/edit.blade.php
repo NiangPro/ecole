@@ -679,7 +679,7 @@
                     </div>
                     
                     <div id="adImagePreview" class="image-preview-box {{ $ad->image ? '' : 'hidden' }}">
-                        <img id="adPreviewImg" src="{{ $ad->image ? ($ad->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($ad->image) : $ad->image) : '' }}" alt="Aperçu">
+                        <img loading="lazy" id="adPreviewImg" src="{{ $ad->image ? ($ad->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($ad->image) : $ad->image) : '' }}" alt="Aperçu">
                     </div>
                 </div>
             </div>

@@ -253,7 +253,7 @@
                             <div id="internalImage" style="display: {{ old('cover_type', $course->cover_type ?? 'internal') === 'internal' ? 'block' : 'none' }};">
                                 @if($course->cover_image && ($course->cover_type ?? 'internal') === 'internal')
                                 <div style="margin-bottom: 15px; padding: 15px; background: rgba(15, 23, 42, 0.6); border-radius: 8px;">
-                                    <img src="{{ asset('storage/' . $course->cover_image) }}" alt="Image actuelle" style="max-width: 200px; max-height: 200px; border-radius: 8px; margin-bottom: 10px;">
+                                    <img loading="lazy" src="{{ asset('storage/' . $course->cover_image) }}" alt="Image actuelle" style="max-width: 200px; max-height: 200px; border-radius: 8px; margin-bottom: 10px;">
                                     <div>
                                         <label style="display: flex; align-items: center; gap: 8px; color: rgba(255, 255, 255, 0.8); cursor: pointer;">
                                             <input type="checkbox" name="delete_image" value="1" style="cursor: pointer;">
@@ -273,7 +273,7 @@
                                 <input type="url" name="cover_image_url" id="coverImageUrl" value="{{ old('cover_image_url', ($course->cover_type ?? 'internal') === 'external' ? $course->cover_image : '') }}" placeholder="https://example.com/image.jpg" style="width: 100%; padding: 12px; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(6, 182, 212, 0.3); border-radius: 8px; color: white; font-size: 1rem;">
                                 @if($course->cover_image && ($course->cover_type ?? 'internal') === 'external')
                                 <div style="margin-top: 15px; padding: 15px; background: rgba(15, 23, 42, 0.6); border-radius: 8px;">
-                                    <img src="{{ $course->cover_image }}" alt="Image actuelle" style="max-width: 200px; max-height: 200px; border-radius: 8px; margin-bottom: 10px;" onerror="this.style.display='none'">
+                                    <img loading="lazy" src="{{ $course->cover_image }}" alt="Image actuelle" style="max-width: 200px; max-height: 200px; border-radius: 8px; margin-bottom: 10px;" onerror="this.style.display='none'">
                                 </div>
                                 @endif
                                 <p style="color: rgba(255, 255, 255, 0.6); font-size: 0.85rem; margin-top: 5px;">Entrez l'URL complète de l'image (commençant par http:// ou https://).</p>

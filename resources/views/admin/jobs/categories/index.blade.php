@@ -114,7 +114,7 @@
                 <div class="category-header-left">
                     @if($category->image)
                     <div class="category-image-wrapper">
-                        <img src="{{ $category->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($category->image) : $category->image }}" 
+                        <img loading="lazy" src="{{ $category->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($category->image) : $category->image }}" 
                              alt="{{ $category->name }}" 
                              class="category-image"
                              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">

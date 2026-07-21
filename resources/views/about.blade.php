@@ -316,7 +316,7 @@
         <div class="ab-achiev-card">
           <div class="ab-achiev-card__bg">
             @if($achievement->image)
-              <img src="{{ $achievement->image_url }}" alt="{{ $achievement->title }}" class="ab-achiev-card__img">
+              <img loading="lazy" src="{{ $achievement->image_url }}" alt="{{ $achievement->title }}" class="ab-achiev-card__img">
             @else
               <div class="ab-achiev-card__placeholder"></div>
             @endif

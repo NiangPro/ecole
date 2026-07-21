@@ -802,7 +802,7 @@
                     <td class="p-4">
                         @if($article->cover_image)
                             <div class="article-thumbnail {{ $article->is_sponsored ? 'sponsored' : '' }}">
-                                <img src="{{ $article->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($article->cover_image) : $article->cover_image }}" 
+                                <img loading="lazy" src="{{ $article->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($article->cover_image) : $article->cover_image }}" 
                                      alt="{{ $article->title }}"
                                      class="article-thumbnail-img"
                                      onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
@@ -969,7 +969,7 @@
         </div>
         <div class="share-modal-preview">
             <div class="share-preview-card">
-                <img id="sharePreviewImage" src="" alt="Preview" class="share-preview-image">
+                <img loading="lazy" id="sharePreviewImage" src="" alt="Preview" class="share-preview-image">
                 <div class="share-preview-content">
                     <div id="sharePreviewTitle" class="share-preview-title"></div>
                     <div id="sharePreviewDescription" class="share-preview-description"></div>

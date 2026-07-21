@@ -862,9 +862,9 @@ body.dark-mode .modal-btn-cancel:hover {
                     <div class="cart-item-image-wrapper">
 @if($item->document->cover_image)
                                 @if($item->document->cover_type === 'internal')
-                                <img src="{{ \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $item->document->id]) }}" alt="{{ $item->document->title }}" class="cart-item-image">
+                                <img loading="lazy" src="{{ \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $item->document->id]) }}" alt="{{ $item->document->title }}" class="cart-item-image">
                                 @else
-                                <img src="{{ $item->document->cover_image }}" alt="{{ $item->document->title }}" class="cart-item-image">
+                                <img loading="lazy" src="{{ $item->document->cover_image }}" alt="{{ $item->document->title }}" class="cart-item-image">
                                 @endif
                         @else
                             <div class="cart-item-image-placeholder">

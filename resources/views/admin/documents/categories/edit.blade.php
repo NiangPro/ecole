@@ -71,7 +71,7 @@ use Illuminate\Support\Facades\Storage;
                     <label class="block text-cyan-400 mb-2 font-semibold">Image de la catégorie</label>
                     @if($category->image)
                         <div class="mb-3">
-                            <img src="{{ $category->image_type === 'internal' ? Storage::url($category->image) : $category->image }}" 
+                            <img loading="lazy" src="{{ $category->image_type === 'internal' ? Storage::url($category->image) : $category->image }}" 
                                  alt="{{ $category->name }}" 
                                  class="w-32 h-32 object-cover rounded-lg border border-cyan-500/20">
                         </div>
