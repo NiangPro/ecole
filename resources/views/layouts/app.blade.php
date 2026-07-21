@@ -60,23 +60,43 @@
     <link rel="alternate" hreflang="x-default" href="{{ url('/') }}">
     
     <!-- Open Graph / Facebook -->
+    @php
+        // Pages qui poussent déjà leur propre og:image/twitter:image via @push('meta')
+        // (image de couverture réelle : document, article emploi, annonce...).
+        // On évite d'émettre une balise par défaut en doublon pour elles.
+        $ogOverrideRoutes = ['documents.show', 'emplois.article', 'emplois.offres', 'emplois.category', 'admin-docs.show'];
+        $hasCustomOgImage = in_array(optional(request()->route())->getName(), $ogOverrideRoutes, true);
+
+        $defaultOgImage = asset('images/og-homepage.jpg');
+        if (request()->routeIs('epreuves.*')) {
+            $defaultOgImage = asset('images/og-epreuves.jpg');
+        } elseif (request()->routeIs('formations.*')) {
+            $defaultOgImage = asset('images/og-formations.jpg');
+        } elseif (request()->routeIs('emplois')) {
+            $defaultOgImage = asset('images/og-emplois.jpg');
+        }
+    @endphp
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:title" content="@yield('title', 'NiangProgrammeur - Formation Gratuite en Développement Web')">
     <meta property="og:description" content="@yield('meta_description', 'Plateforme de formation gratuite en développement web. Apprenez HTML5, CSS3, JavaScript, PHP et plus encore.')">
-    <meta property="og:image" content="{{ asset('images/logo.png') }}">
+    @if(!$hasCustomOgImage)
+    <meta property="og:image" content="{{ $defaultOgImage }}">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
+    @endif
     <meta property="og:site_name" content="NiangProgrammeur">
     <meta property="og:locale" content="fr_FR">
-    
+
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="{{ url()->current() }}">
     <meta name="twitter:title" content="@yield('title', 'NiangProgrammeur - Formation Gratuite en Développement Web')">
     <meta name="twitter:description" content="@yield('meta_description', 'Plateforme de formation gratuite en développement web.')">
-    <meta name="twitter:image" content="{{ asset('images/logo.png') }}">
-    
+    @if(!$hasCustomOgImage)
+    <meta name="twitter:image" content="{{ $defaultOgImage }}">
+    @endif
+
 
     <!-- PWA Manifest -->
     <link rel="manifest" href="{{ asset('manifest.json') }}">
