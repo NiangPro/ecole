@@ -195,6 +195,12 @@
     @endif
 @endpush
 
+@if($article->cover_image)
+@push('preload_images')
+<link rel="preload" as="image" href="{{ $article->cover_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($article->cover_image) : $article->cover_image }}" fetchpriority="high">
+@endpush
+@endif
+
 @section('styles')
 <style>
 /* ═══════════════════════════════════════════

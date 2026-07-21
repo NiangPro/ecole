@@ -76,10 +76,20 @@
             "url" => $documentUrl,
             "priceCurrency" => $documentCurrency,
             "price" => (string) ($documentPrice ?? 0),
+            "validFrom" => ($document->published_at ?? $document->created_at)->format('Y-m-d'),
             "priceValidUntil" => now()->addYear()->format('Y-m-d'),
             "availability" => "https://schema.org/InStock",
             "seller" => ["@type" => "Organization", "name" => "NiangProgrammeur"],
-            "shippingDetails" => ["@type" => "OfferShippingDetails", "doesNotShip" => true],
+            "shippingDetails" => [
+                "@type" => "OfferShippingDetails",
+                "shippingRate" => ["@type" => "MonetaryAmount", "value" => "0", "currency" => $documentCurrency],
+                "shippingDestination" => ["@type" => "DefinedRegion", "addressCountry" => "SN"],
+                "deliveryTime" => [
+                    "@type" => "ShippingDeliveryTime",
+                    "handlingTime" => ["@type" => "QuantitativeValue", "minValue" => 0, "maxValue" => 0, "unitCode" => "DAY"],
+                    "transitTime" => ["@type" => "QuantitativeValue", "minValue" => 0, "maxValue" => 0, "unitCode" => "DAY"]
+                ]
+            ],
             "hasMerchantReturnPolicy" => ["@type" => "MerchantReturnPolicy", "applicableCountry" => "SN", "returnPolicyCategory" => "https://schema.org/MerchantReturnNotPermitted"]
         ];
     }
@@ -106,6 +116,12 @@
 <script type="application/ld+json">{!! json_encode($bookSchema, JSON_UNESCAPED_UNICODE | JSON_HEX_QUOT | JSON_PRETTY_PRINT) !!}</script>
 @endif
 @endpush
+
+@if($document->cover_image)
+@push('preload_images')
+<link rel="preload" as="image" href="{{ $documentImage }}" fetchpriority="high">
+@endpush
+@endif
 
 @push('styles')
 <style>
@@ -951,15 +967,9 @@ body.dark-mode .flash-close   { color: rgba(255,255,255,.5); }
 
             {{-- Cover --}}
             @if($document->cover_image)
-                @if($document->cover_type === 'internal')
-                    <img src="{{ \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $document->id]) }}"
-                         alt="{{ $document->title }}" class="document-cover-large"
-                         width="800" height="360" loading="eager" fetchpriority="high" decoding="async">
-                @else
-                    <img src="{{ $document->cover_image }}" alt="{{ $document->title }}"
-                         class="document-cover-large"
-                         width="800" height="360" loading="eager" fetchpriority="high" decoding="async">
-                @endif
+                <img src="{{ $documentImage }}"
+                     alt="{{ $document->title }}" class="document-cover-large"
+                     width="800" height="360" loading="eager" fetchpriority="high" decoding="async">
             @else
                 <div class="document-cover-large doc-placeholder">
                     <i class="fas fa-file-{{ $document->file_extension === 'pdf' ? 'pdf' : ($document->file_extension === 'doc' || $document->file_extension === 'docx' ? 'word' : 'alt') }}"></i>
