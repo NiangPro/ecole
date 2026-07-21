@@ -2,9 +2,7 @@
 
 @section('title', $query ? "« {$query} » — Recherche | NiangProgrammeur" : 'Recherche | NiangProgrammeur')
 @section('meta_description', 'Recherchez parmi nos formations, articles emploi et ressources pour développeurs.')
-@push('meta')
-<link rel="canonical" href="{{ route('search', ['q' => $query]) }}">
-@endpush
+@section('canonical', route('search', ['q' => $query]))
 
 @section('styles')
 <style>

@@ -6,8 +6,8 @@
 
 @section('title', 'Toutes les Opportunités d\'Emploi | NiangProgrammeur')
 @section('meta_description', 'Découvrez toutes les opportunités d\'emploi, bourses, concours et offres professionnelles au Sénégal. Plus de ' . ($stats['total'] ?? 0) . ' opportunités disponibles.')
+@section('canonical', route('emplois.all-articles'))
 @push('meta')
-    <link rel="canonical" href="{{ route('emplois.all-articles') }}">
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ route('emplois.all-articles') }}">
     <meta property="og:title" content="Toutes les Opportunités d'Emploi | NiangProgrammeur">

@@ -83,10 +83,9 @@
     ];
 @endphp
 
+@section('canonical', $articleUrl)
+
 @push('meta')
-    <!-- Canonical URL -->
-    <link rel="canonical" href="{{ $articleUrl }}">
-    
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="article">
     <meta property="og:url" content="{{ $articleUrl }}">

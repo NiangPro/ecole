@@ -9,8 +9,8 @@
     ? 'Bourse d\'études Sénégal — toutes les bourses nationales et internationales disponibles : candidature, conditions, délais et montants.'
     : ($category ? ($category->description ?? 'Découvrez les meilleures ' . $category->name . ' au Sénégal.') : 'Offre emploi Sénégal — consultez les meilleures offres de recrutement publiées chaque jour.'))
 @section('meta_keywords', $category ? ($category->name . ', emploi Sénégal, recrutement, offres d\'emploi') : 'emploi Sénégal, offres d\'emploi, recrutement, opportunités carrière')
+@section('canonical', route('emplois.offres', ['category' => $category->slug ?? null]))
 @push('meta')
-    <link rel="canonical" href="{{ route('emplois.offres', ['category' => $category->slug ?? null]) }}">
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ route('emplois.offres', ['category' => $category->slug ?? null]) }}">
     <meta property="og:title" content="{{ ($category ? $category->name : 'Offres d\'Emploi') . ' | NiangProgrammeur' }}">

@@ -2,9 +2,7 @@
 
 @section('title', 'Mentions Légales | NiangProgrammeur')
 @section('meta_description', 'Mentions légales de NiangProgrammeur : éditeur du site, hébergement, propriété intellectuelle, droit applicable et coordonnées de contact.')
-@push('meta')
-    <link rel="canonical" href="{{ route('legal') }}">
-@endpush
+@section('canonical', route('legal'))
 
 @section('styles')
 <style>

@@ -2,9 +2,7 @@
 
 @section('title', 'Politique de Confidentialité | NiangProgrammeur')
 @section('meta_description', 'Politique de confidentialité de NiangProgrammeur : données collectées, cookies, Google AdSense, vos droits RGPD et coordonnées de contact.')
-@push('meta')
-    <link rel="canonical" href="{{ route('privacy-policy') }}">
-@endpush
+@section('canonical', route('privacy-policy'))
 
 @section('styles')
 <style>

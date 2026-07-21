@@ -7,8 +7,8 @@
 @section('title', $category->name . ' | NiangProgrammeur')
 @section('meta_description', $category->description ?? 'Découvrez les articles dans la catégorie ' . $category->name . ' sur NiangProgrammeur.')
 @section('meta_keywords', $category->name . ', emploi Sénégal, recrutement, opportunités')
+@section('canonical', route('emplois.category', $category->slug))
 @push('meta')
-    <link rel="canonical" href="{{ route('emplois.category', $category->slug) }}">
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ route('emplois.category', $category->slug) }}">
     <meta property="og:title" content="{{ $category->name . ' | NiangProgrammeur' }}">

@@ -3,9 +3,9 @@
 @section('title', 'Tous les Liens - Formations, Exercices et Quiz | NiangProgrammeur')
 @section('meta_description', 'Liste complète de tous les liens des formations, exercices et quiz disponibles sur NiangProgrammeur. Copiez tous les liens d\'un coup pour faciliter votre navigation.')
 @section('meta_keywords', 'liens formations, liens exercices, liens quiz, HTML5, CSS3, JavaScript, PHP, Python, Bootstrap, Git, WordPress, IA')
+@section('canonical', route('all.links'))
 
 @push('meta')
-    <link rel="canonical" href="{{ route('all.links') }}">
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ route('all.links') }}">
     <meta property="og:title" content="Tous les Liens - Formations, Exercices et Quiz | NiangProgrammeur">

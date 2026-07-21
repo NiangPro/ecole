@@ -2,9 +2,7 @@
 
 @section('title', 'Conditions d\'Utilisation | NiangProgrammeur')
 @section('meta_description', 'Conditions d\'utilisation de NiangProgrammeur : règles d\'usage du site, propriété intellectuelle, responsabilité et coordonnées de contact.')
-@push('meta')
-    <link rel="canonical" href="{{ route('terms') }}">
-@endpush
+@section('canonical', route('terms'))
 
 @section('styles')
 <style>

@@ -7,8 +7,8 @@
 @section('title', (app()->getLocale() === 'fr' ? 'Articles Vedettes' : 'Featured Articles') . ' | NiangProgrammeur')
 @section('meta_description', app()->getLocale() === 'fr' ? 'Découvrez tous nos articles vedettes : les articles les plus populaires et les plus pertinents sur les emplois, carrières et opportunités au Sénégal.' : 'Discover all our featured articles: the most popular and relevant articles about jobs, careers and opportunities in Senegal.')
 @section('meta_keywords', app()->getLocale() === 'fr' ? 'articles vedettes, articles populaires, emploi Sénégal, carrières' : 'featured articles, popular articles, jobs Senegal, careers')
+@section('canonical', route('articles.vedettes'))
 @push('meta')
-    <link rel="canonical" href="{{ route('articles.vedettes') }}">
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ route('articles.vedettes') }}">
     <meta property="og:title" content="{{ (app()->getLocale() === 'fr' ? 'Articles Vedettes' : 'Featured Articles') . ' | NiangProgrammeur' }}">

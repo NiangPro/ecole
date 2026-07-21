@@ -20,10 +20,11 @@
     $documentCurrency = 'XOF';
 @endphp
 
+@section('canonical', $documentUrl)
+
 @if($document->meta_keywords)
 <meta name="keywords" content="{{ is_array($document->meta_keywords) ? implode(', ', $document->meta_keywords) : $document->meta_keywords }}">
 @endif
-<link rel="canonical" href="{{ $documentUrl }}">
 <meta property="og:type" content="product">
 <meta property="og:url" content="{{ $documentUrl }}">
 <meta property="og:title" content="{{ $documentTitle }}">
