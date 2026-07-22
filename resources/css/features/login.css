@@ -456,6 +456,34 @@
 
 .lg-submit:active { transform: translateY(0); }
 
+/* Google button */
+.lg-google-btn {
+  width: 100%;
+  padding: .85rem;
+  background: #fff;
+  color: var(--lg-text);
+  border: 1px solid var(--lg-border);
+  border-radius: 11px;
+  font-weight: 600;
+  font-size: .92rem;
+  font-family: 'Inter', system-ui, sans-serif;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .6rem;
+  text-decoration: none;
+  transition: background .2s, box-shadow .2s, transform .2s;
+}
+
+.lg-google-btn:hover {
+  background: var(--lg-panel);
+  box-shadow: var(--lg-shadow);
+  transform: translateY(-1px);
+}
+
+.lg-google-btn:active { transform: translateY(0); }
+
 /* Divider */
 .lg-divider {
   display: flex;

@@ -398,6 +398,10 @@ Route::get('/register', [\App\Http\Controllers\Auth\RegisterController::class, '
 Route::post('/register', [\App\Http\Controllers\Auth\RegisterController::class, 'register'])->name('register.post');
 Route::post('/logout', [\App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
 
+// Connexion / inscription via Google
+Route::get('/auth/google/redirect', [\App\Http\Controllers\Auth\SocialAuthController::class, 'redirectToGoogle'])->name('auth.google.redirect');
+Route::get('/auth/google/callback', [\App\Http\Controllers\Auth\SocialAuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
+
 // Routes utilisateur authentifié - Dashboard
 Route::middleware('auth')->prefix('dashboard')->name('dashboard.')->group(function () {
     // Badges
