@@ -44,6 +44,29 @@
                     linear-gradient(135deg, #0f172a 0%, #1e293b 55%, #0f172a 100%);
     }
 
+    .jobs-hero-media {
+        position: absolute;
+        inset: 0;
+        background-size: cover;
+        background-position: center;
+        z-index: 0;
+    }
+
+    .jobs-hero-media-overlay {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        background: radial-gradient(circle at 15% 20%, rgba(6, 182, 212, 0.35), transparent 55%),
+                    radial-gradient(circle at 85% 80%, rgba(139, 92, 246, 0.30), transparent 55%),
+                    linear-gradient(135deg, rgba(11, 17, 32, 0.85) 0%, rgba(17, 24, 39, 0.8) 55%, rgba(11, 17, 32, 0.85) 100%);
+    }
+
+    body:not(.dark-mode) .jobs-hero-media-overlay {
+        background: radial-gradient(circle at 15% 20%, rgba(6, 182, 212, 0.18), transparent 55%),
+                    radial-gradient(circle at 85% 80%, rgba(139, 92, 246, 0.16), transparent 55%),
+                    linear-gradient(135deg, rgba(15, 23, 42, 0.82) 0%, rgba(30, 41, 59, 0.75) 55%, rgba(15, 23, 42, 0.82) 100%);
+    }
+
     .jobs-hero::after {
         content: '';
         position: absolute;
@@ -482,6 +505,10 @@
 
 <!-- Hero Section -->
 <section class="jobs-hero">
+    @if($categoryImage)
+        <div class="jobs-hero-media" style="background-image: url('{{ $categoryImage }}');"></div>
+        <div class="jobs-hero-media-overlay"></div>
+    @endif
     <div class="jobs-hero-inner">
         <span class="jobs-hero-eyebrow"><i class="fas fa-bolt"></i> Mis à jour chaque jour</span>
         <h1 class="jobs-hero-title">

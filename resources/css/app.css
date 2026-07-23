@@ -24,8 +24,8 @@
    ───────────────────────────────────────────────────────── */
 @theme {
   /* Typographie */
-  --font-sans:    'Inter', ui-sans-serif, system-ui, sans-serif;
-  --font-heading: 'Poppins', ui-sans-serif, system-ui, sans-serif;
+  --font-sans:    'Inter', 'Inter Fallback', ui-sans-serif, system-ui, sans-serif;
+  --font-heading: 'Poppins', 'Poppins Fallback', ui-sans-serif, system-ui, sans-serif;
   --font-mono:    ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, monospace;
   --font-brand:   'Orbitron', sans-serif;
 
@@ -176,6 +176,42 @@
   @font-face { font-family: 'Inter';    font-display: swap; }
   @font-face { font-family: 'Poppins';  font-display: swap; }
   @font-face { font-family: 'Orbitron'; font-display: swap; }
+
+  /*
+   * Polices de repli à métriques ajustées — CLS du web font swap.
+   *
+   * font-display:swap affiche le texte immédiatement avec la police système
+   * (bien — pas de texte invisible), mais Inter/Poppins ont des métriques
+   * (largeur moyenne des caractères, hauteur de ligne) différentes de la
+   * police système de repli. Quand le vrai fichier woff2 arrive et remplace
+   * la police de repli, tout le texte concerné change de largeur → reflow
+   * en cascade sur toute la page (CLS). ascent-override/descent-override/
+   * line-gap-override/size-adjust forcent la police système à occuper EXACTEMENT
+   * la même boîte que la police finale, donc le swap ne bouge plus rien.
+   *
+   * Valeurs Inter : métriques Arial ajustées, issues des mêmes calculs que
+   * next/font/google (Vercel) pour Inter — fiables, largement republiées.
+   * Valeurs Poppins : approximation raisonnable (police géométrique proche
+   * d'Arial en proportions) — à affiner avec un outil de mesure dédié
+   * (ex. Capsize, fontaine, ou https://screenspan.net) si un alignement
+   * pixel-perfect est nécessaire.
+   */
+  @font-face {
+    font-family: 'Inter Fallback';
+    src: local('Arial');
+    ascent-override: 90.44%;
+    descent-override: 22.52%;
+    line-gap-override: 0%;
+    size-adjust: 107.12%;
+  }
+  @font-face {
+    font-family: 'Poppins Fallback';
+    src: local('Arial');
+    ascent-override: 92%;
+    descent-override: 24%;
+    line-gap-override: 0%;
+    size-adjust: 104%;
+  }
 }
 
 /* ─────────────────────────────────────────────────────────

@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use ZipArchive;
 
 class CorrigeController extends Controller
 {
@@ -66,6 +67,15 @@ class CorrigeController extends Controller
             'currency' => 'XOF',
             'status' => 'pending',
         ]);
+
+        \App\Models\Notification::notifyAdmins(
+            'corrige_purchase',
+            'Nouvel achat de corrigé',
+            ($request->customer_name ?: $email ?: $phone) . ' souhaite acheter le corrigé : ' . Str::limit($epreuve->title, 60),
+            route('admin.epreuves.purchases'),
+            'fa-file-invoice-dollar',
+            '#f59e0b'
+        );
 
         $payment = Payment::create([
             'user_id' => Auth::id(),
@@ -128,11 +138,29 @@ class CorrigeController extends Controller
         abort_unless($purchase->isTokenValid($token), 403, 'Lien de téléchargement invalide ou expiré.');
 
         $epreuve = $purchase->epreuve;
-        $path = $epreuve?->corrige_file_path;
-        abort_unless($path && Storage::disk('public')->exists($path), 404);
+        $corrigePath = $epreuve?->corrige_file_path;
+        abort_unless($corrigePath && Storage::disk('public')->exists($corrigePath), 404);
 
         $purchase->increment('download_count');
 
-        return Storage::disk('public')->download($path, Str::slug($epreuve->title) . '-corrige.pdf');
+        $slug = Str::slug($epreuve->title);
+
+        // Le sujet de l'épreuve est livré avec le corrigé quand le fichier existe (l'acheteur
+        // n'a alors qu'un seul lien à récupérer au lieu de devoir chercher l'épreuve à part).
+        $epreuvePath = $epreuve->file_path;
+        if ($epreuvePath && Storage::disk('public')->exists($epreuvePath)) {
+            $tmpFile = tempnam(sys_get_temp_dir(), 'corrige_pack_');
+            $zip = new ZipArchive();
+            $zip->open($tmpFile, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+            $zip->addFile(Storage::disk('public')->path($epreuvePath), $slug . '-epreuve.pdf');
+            $zip->addFile(Storage::disk('public')->path($corrigePath), $slug . '-corrige.pdf');
+            $zip->close();
+
+            return response()
+                ->download($tmpFile, $slug . '-epreuve-et-corrige.zip', ['Content-Type' => 'application/zip'])
+                ->deleteFileAfterSend(true);
+        }
+
+        return Storage::disk('public')->download($corrigePath, $slug . '-corrige.pdf');
     }
 }

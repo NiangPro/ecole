@@ -359,11 +359,12 @@ body.light-mode .ep-cancel:hover { color: #0f172a; border-color: #94a3b8; }
                         <div>
                             <label class="ep-label" for="fieldLevel" id="labelLevel">Classe / Niveau</label>
                             <div class="ep-select-wrap">
+                                @php($allLevels = \App\Models\Epreuve::allLevels())
                                 <select name="level" id="fieldLevel" class="ep-select">
                                     {{-- Options scolaires (primaire / collège / lycée) --}}
                                     <optgroup label="— Scolaire —" id="optgroupScolaire">
                                         <option value="">— Aucune —</option>
-                                        @foreach(\App\Models\Epreuve::LEVELS as $group => $levels)
+                                        @foreach($allLevels as $group => $levels)
                                             @if($group === 'concours') @continue @endif
                                             @foreach($levels as $key => $label)
                                                 <option value="{{ $key }}" @selected(old('level', $epreuve?->level) === $key)>{{ $label }}</option>
@@ -372,7 +373,7 @@ body.light-mode .ep-cancel:hover { color: #0f172a; border-color: #94a3b8; }
                                     </optgroup>
                                     {{-- Options concours --}}
                                     <optgroup label="— Concours —" id="optgroupConcours">
-                                        @foreach(\App\Models\Epreuve::LEVELS['concours'] as $key => $label)
+                                        @foreach($allLevels['concours'] as $key => $label)
                                             <option value="{{ $key }}" @selected(old('level', $epreuve?->level) === $key)>{{ $label }}</option>
                                         @endforeach
                                     </optgroup>
@@ -389,6 +390,23 @@ body.light-mode .ep-cancel:hover { color: #0f172a; border-color: #94a3b8; }
                                     @endforeach
                                 </select>
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="ep-label" for="fieldLevelNew">Ou nouveau niveau/classe</label>
+                            <div style="display:flex;gap:.5rem;">
+                                <input type="text" name="level_new" id="fieldLevelNew" value="{{ old('level_new') }}"
+                                       placeholder="ex : ENOA, Licence 3…" class="ep-input" style="flex:1;min-width:0;">
+                                <select name="level_new_group" id="fieldLevelNewGroup" class="ep-select" style="max-width:160px;">
+                                    <option value="concours">Concours</option>
+                                    <option value="primaire">Primaire</option>
+                                    <option value="college">Collège</option>
+                                    <option value="lycee">Lycée</option>
+                                </select>
+                            </div>
+                            <p class="ep-hint">Le nouveau niveau sera disponible pour toutes les prochaines épreuves.</p>
                         </div>
                     </div>
 
@@ -769,7 +787,7 @@ body.light-mode .ep-cancel:hover { color: #0f172a; border-color: #94a3b8; }
     });
     bindDrop('dropCorrige', 'fileCorrige', 'chipCorrige', function () { refreshPreview(); });
 
-    ['fieldTitle', 'fieldSlug', 'fieldSerie', 'fieldYear', 'fieldYearEnd', 'fieldLevel', 'fieldMatiere', 'fieldMatiereNew'].forEach(function (id) {
+    ['fieldTitle', 'fieldSlug', 'fieldSerie', 'fieldYear', 'fieldYearEnd', 'fieldLevel', 'fieldLevelNew', 'fieldMatiere', 'fieldMatiereNew'].forEach(function (id) {
         var el = $id(id);
         el.addEventListener('input', refreshPreview);
         el.addEventListener('change', refreshPreview);
@@ -784,7 +802,7 @@ body.light-mode .ep-cancel:hover { color: #0f172a; border-color: #94a3b8; }
     refreshPreview();
 
     /* ---------- Niveau dynamique selon examen ---------- */
-    var CONCOURS_VALUES = @json(array_keys(\App\Models\Epreuve::LEVELS['concours']));
+    var CONCOURS_VALUES = @json(array_keys(\App\Models\Epreuve::allLevels()['concours']));
 
     function updateLevelForExam(examVal) {
         var label     = $id('labelLevel');

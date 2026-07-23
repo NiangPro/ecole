@@ -32,6 +32,9 @@ class DocumentBundleItem extends Model
      */
     public function itemable(): MorphTo
     {
-        return $this->morphTo('item', 'item_type', 'item_id');
+        // Le 1er argument doit être le nom de la relation (= nom de la méthode) et non
+        // le préfixe des colonnes : sinon l'eager loading matche sous une mauvaise clé
+        // ("item" au lieu de "itemable") et $item->itemable reste toujours null.
+        return $this->morphTo('itemable', 'item_type', 'item_id');
     }
 }

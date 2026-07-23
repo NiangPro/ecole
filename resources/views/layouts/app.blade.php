@@ -138,7 +138,7 @@
     .hp-hero{position:relative;min-height:60dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:5rem 1.5rem 4rem;overflow:hidden;background:oklch(5% 0.02 230)}
     .hp-hero>div{position:relative;z-index:1}
     .hp-hero__eyebrow{display:inline-flex;align-items:center;gap:.5rem;padding:.375rem 1rem;border-radius:999px;border:1px solid oklch(65% 0.20 200/30%);background:oklch(65% 0.20 200/8%);font-size:.8125rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:oklch(65% 0.20 200);margin-bottom:2rem}
-    .hp-hero__title{font-family:Poppins,ui-sans-serif,system-ui,sans-serif;font-size:clamp(2.75rem,6vw,5rem);font-weight:900;line-height:1.08;letter-spacing:-.03em;color:oklch(97% 0 0);max-width:22ch;margin-inline:auto;margin-bottom:1.5rem}
+    .hp-hero__title{font-family:Poppins,'Poppins Fallback',ui-sans-serif,system-ui,sans-serif;font-size:clamp(2.75rem,6vw,5rem);font-weight:900;line-height:1.08;letter-spacing:-.03em;color:oklch(97% 0 0);max-width:22ch;margin-inline:auto;margin-bottom:1.5rem}
     .hp-hero__title .accent{background:linear-gradient(135deg,oklch(65% 0.20 200),oklch(65% 0.18 170));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
     .hp-hero__subtitle{font-size:clamp(1.05rem,2vw,1.25rem);font-weight:700;color:oklch(90% 0 0);max-width:55ch;margin-inline:auto;margin-bottom:2.5rem;line-height:1.7}
     </style>
@@ -323,7 +323,6 @@
     </div>
     
     @include('partials.navigation')
-    @include('partials.urgency-banner')
 
     @auth
     @if(auth()->user()->isAdmin())
@@ -609,19 +608,31 @@
     </script>
     
     <!-- Scripts JS - Chargement différé avec requestIdleCallback -->
+    @php
+        // public/js/*.js n'est pas construit par Vite : ces fichiers étaient servis en clair
+        // (commentaires, noms de variables complets) sur CHAQUE page publique. `npm run build`
+        // génère désormais les .min.js correspondants (scripts/minify-js.js) ; on les sert en
+        // production uniquement, avec repli automatique sur le fichier source si le .min.js
+        // n'a pas encore été généré (évite tout 404 si le build n'a pas encore tourné).
+        $__jsMin = function (string $name) {
+            $isProd = app()->environment('production');
+            $minExists = file_exists(public_path("js/{$name}.min.js"));
+            return ($isProd && $minExists) ? asset("js/{$name}.min.js") : asset("js/{$name}.js");
+        };
+    @endphp
     <script>
         // Charger les scripts JS de manière non-bloquante
         (function() {
             function loadScripts() {
                 const scripts = [
-                    '{{ asset("js/performance.js") }}',
-                    '{{ asset("js/intelligent-prefetch.js") }}',
-                    '{{ asset("js/lazy-loading.js") }}',
-                    '{{ asset("js/pwa-manager.js") }}',
-                    '{{ asset("js/analytics-tracker.js") }}',
-                    '{{ asset("js/main.js") }}',
-                    '{{ asset("js/ux-improvements.js") }}?v=2.2',
-                    '{{ asset("js/social-features.js") }}'
+                    '{{ $__jsMin('performance') }}',
+                    '{{ $__jsMin('intelligent-prefetch') }}',
+                    '{{ $__jsMin('lazy-loading') }}',
+                    '{{ $__jsMin('pwa-manager') }}',
+                    '{{ $__jsMin('analytics-tracker') }}',
+                    '{{ $__jsMin('main') }}',
+                    '{{ $__jsMin('ux-improvements') }}?v=2.2',
+                    '{{ $__jsMin('social-features') }}'
                 ];
                 
                 scripts.forEach(function(src) {

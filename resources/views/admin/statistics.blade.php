@@ -43,7 +43,7 @@
             <div class="stat-icon-wrapper"><div class="stat-icon"><i class="fas fa-sack-dollar"></i></div></div>
             <div class="stat-content">
                 <div class="stat-value">
-                    {{ number_format($businessStats['totalRevenue'], 0, ',', ' ') }} FCFA
+                    {{ format_compact_number($businessStats['totalRevenue']) }} FCFA
                     @if($businessStats['revenueGrowth'] != 0)
                     <span class="stat-growth-badge {{ $businessStats['revenueGrowth'] > 0 ? 'positive' : 'negative' }}">
                         {{ $businessStats['revenueGrowth'] > 0 ? '+' : '' }}{{ $businessStats['revenueGrowth'] }}%
@@ -58,7 +58,7 @@
         <div class="stat-card stat-sales">
             <div class="stat-icon-wrapper"><div class="stat-icon"><i class="fas fa-receipt"></i></div></div>
             <div class="stat-content">
-                <div class="stat-value">{{ number_format($businessStats['totalSales']) }}</div>
+                <div class="stat-value">{{ format_compact_number($businessStats['totalSales']) }}</div>
                 <div class="stat-label">Ventes totales</div>
                 <div class="stat-period">Tous canaux confondus</div>
             </div>
@@ -67,7 +67,7 @@
         <div class="stat-card stat-avgorder">
             <div class="stat-icon-wrapper"><div class="stat-icon"><i class="fas fa-calculator"></i></div></div>
             <div class="stat-content">
-                <div class="stat-value">{{ number_format($businessStats['avgOrderValue'], 0, ',', ' ') }} FCFA</div>
+                <div class="stat-value">{{ format_compact_number($businessStats['avgOrderValue']) }} FCFA</div>
                 <div class="stat-label">Panier moyen</div>
                 <div class="stat-period">Par vente</div>
             </div>
@@ -76,7 +76,7 @@
         <div class="stat-card stat-pending">
             <div class="stat-icon-wrapper"><div class="stat-icon"><i class="fas fa-hourglass-half"></i></div></div>
             <div class="stat-content">
-                <div class="stat-value">{{ number_format($businessStats['pendingPaymentsCount']) }}</div>
+                <div class="stat-value">{{ format_compact_number($businessStats['pendingPaymentsCount']) }}</div>
                 <div class="stat-label">Paiements en attente</div>
                 <div class="stat-period">À confirmer</div>
             </div>
@@ -85,7 +85,7 @@
         <div class="stat-card stat-unique">
             <div class="stat-icon-wrapper"><div class="stat-icon"><i class="fas fa-user-friends"></i></div></div>
             <div class="stat-content">
-                <div class="stat-value">{{ number_format($businessStats['totalUsers']) }}</div>
+                <div class="stat-value">{{ format_compact_number($businessStats['totalUsers']) }}</div>
                 <div class="stat-label">Utilisateurs totaux</div>
                 <div class="stat-period">Depuis le lancement</div>
             </div>
@@ -94,7 +94,7 @@
         <div class="stat-card stat-newusers">
             <div class="stat-icon-wrapper"><div class="stat-icon"><i class="fas fa-user-plus"></i></div></div>
             <div class="stat-content">
-                <div class="stat-value">{{ number_format($businessStats['newUsersThisMonth']) }}</div>
+                <div class="stat-value">{{ format_compact_number($businessStats['newUsersThisMonth']) }}</div>
                 <div class="stat-label">Nouveaux utilisateurs</div>
                 <div class="stat-period">Ce mois-ci</div>
             </div>
@@ -103,7 +103,7 @@
         <div class="stat-card stat-premium">
             <div class="stat-icon-wrapper"><div class="stat-icon"><i class="fas fa-crown"></i></div></div>
             <div class="stat-content">
-                <div class="stat-value">{{ number_format($businessStats['premiumUsers']) }}</div>
+                <div class="stat-value">{{ format_compact_number($businessStats['premiumUsers']) }}</div>
                 <div class="stat-label">Utilisateurs Premium</div>
                 <div class="stat-period">Comptes premium actifs</div>
             </div>
@@ -282,7 +282,7 @@
                 </div>
             </div>
             <div class="stat-content">
-                <div class="stat-value">{{ number_format($totalVisits) }}</div>
+                <div class="stat-value">{{ format_compact_number($totalVisits) }}</div>
                 <div class="stat-label">Visites totales</div>
                 <div class="stat-period">
                     @if($filter == 'day') Aujourd'hui
@@ -300,7 +300,7 @@
                 </div>
             </div>
             <div class="stat-content">
-                <div class="stat-value">{{ number_format($uniqueVisitors) }}</div>
+                <div class="stat-value">{{ format_compact_number($uniqueVisitors) }}</div>
                 <div class="stat-label">Visiteurs uniques</div>
                 <div class="stat-period">Basé sur IP</div>
             </div>
@@ -313,7 +313,7 @@
                 </div>
             </div>
             <div class="stat-content">
-                <div class="stat-value">{{ number_format($totalPages) }}</div>
+                <div class="stat-value">{{ format_compact_number($totalPages) }}</div>
                 <div class="stat-label">Pages vues</div>
                 <div class="stat-period">Pages différentes</div>
             </div>
@@ -326,7 +326,7 @@
                 </div>
             </div>
             <div class="stat-content">
-                <div class="stat-value">{{ $avgPerDay }}</div>
+                <div class="stat-value">{{ format_compact_number($avgPerDay) }}</div>
                 <div class="stat-label">Moyenne / jour</div>
                 <div class="stat-period">Visites quotidiennes</div>
             </div>
@@ -339,7 +339,7 @@
                 </div>
             </div>
             <div class="stat-content">
-                <div class="stat-value">{{ number_format($avgPerMonth ?? 0) }}</div>
+                <div class="stat-value">{{ format_compact_number($avgPerMonth ?? 0) }}</div>
                 <div class="stat-label">Moyenne / mois</div>
                 <div class="stat-period">Visites mensuelles</div>
             </div>
@@ -352,7 +352,7 @@
                 </div>
             </div>
             <div class="stat-content">
-                <div class="stat-value">{{ number_format($avgPerYear ?? 0) }}</div>
+                <div class="stat-value">{{ format_compact_number($avgPerYear ?? 0) }}</div>
                 <div class="stat-label">Moyenne / an</div>
                 <div class="stat-period">Visites annuelles</div>
             </div>
@@ -951,11 +951,15 @@ body.light-mode .filter-select option {
 }
 
 .stat-value {
-    font-size: 2rem;
+    font-size: 1.5rem;
     font-weight: 800;
     color: white;
     line-height: 1;
     margin-bottom: 0.25rem;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
 }
 
 body.light-mode .stat-value {

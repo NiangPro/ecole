@@ -50,6 +50,8 @@
     </div>
   </section>
 
+  @include('partials.urgency-banner')
+
   {{-- ─────────────────────────────────────────────────────────
        DOCUMENTS VEDETTES
        ───────────────────────────────────────────────────────── --}}
@@ -582,9 +584,9 @@
         @if($ad->image)
         <div class="hp-native-ad__img-wrap">
           @if(($ad->image_type ?? 'internal') === 'internal')
-            <img src="{{ asset('storage/' . $ad->image) }}" alt="{{ $ad->name }}" loading="lazy" decoding="async">
+            <img src="{{ asset('storage/' . $ad->image) }}" alt="{{ $ad->name }}" width="640" height="360" loading="lazy" decoding="async">
           @else
-            <img src="{{ $ad->image }}" alt="{{ $ad->name }}" loading="lazy" decoding="async">
+            <img src="{{ $ad->image }}" alt="{{ $ad->name }}" width="640" height="360" loading="lazy" decoding="async">
           @endif
         </div>
         @endif
@@ -721,9 +723,9 @@
         @if($ad->image)
         <div class="hp-native-ad__img-wrap">
           @if(($ad->image_type ?? 'internal') === 'internal')
-            <img src="{{ asset('storage/' . $ad->image) }}" alt="{{ $ad->name }}" loading="lazy" decoding="async">
+            <img src="{{ asset('storage/' . $ad->image) }}" alt="{{ $ad->name }}" width="640" height="360" loading="lazy" decoding="async">
           @else
-            <img src="{{ $ad->image }}" alt="{{ $ad->name }}" loading="lazy" decoding="async">
+            <img src="{{ $ad->image }}" alt="{{ $ad->name }}" width="640" height="360" loading="lazy" decoding="async">
           @endif
         </div>
         @endif

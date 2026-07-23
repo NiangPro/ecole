@@ -12,7 +12,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Chargement direct (indépendant de `composer dump-autoload`, qui n'est pas
+        // toujours relancé après un déploiement manuel — voir NumberHelper.php).
+        require_once app_path('Helpers/NumberHelper.php');
     }
 
     /**

@@ -7,27 +7,27 @@
 <div class="courses-page">
     <!-- Hero Section avec recherche -->
     <div class="courses-hero">
+        <div class="courses-hero-badge">
+            <i class="fas fa-graduation-cap"></i>
+            <span>{{ trans('app.monetization.courses_page.hero_badge') }}</span>
+        </div>
+        <h1 class="courses-hero-title">
+            {!! str_replace(':courses_payants', '<span class="gradient-text">' . trans('app.monetization.courses_page.hero_title_courses') . '</span>', trans('app.monetization.courses_page.hero_title')) !!}
+        </h1>
         <div class="courses-hero-content">
-            <div class="courses-hero-badge">
-                <i class="fas fa-graduation-cap"></i>
-                <span>{{ trans('app.monetization.courses_page.hero_badge') }}</span>
-            </div>
-            <h1 class="courses-hero-title">
-                {!! str_replace(':courses_payants', '<span class="gradient-text">' . trans('app.monetization.courses_page.hero_title_courses') . '</span>', trans('app.monetization.courses_page.hero_title')) !!}
-            </h1>
             <p class="courses-hero-subtitle">
                 {{ trans('app.monetization.courses_page.hero_subtitle') }}
             </p>
-            
+
             <!-- Barre de recherche -->
             <form method="GET" action="{{ route('monetization.courses') }}" class="courses-search-form">
                 <div class="courses-search-wrapper">
                     <i class="fas fa-search courses-search-icon"></i>
-                    <input 
-                        type="text" 
-                        name="search" 
+                    <input
+                        type="text"
+                        name="search"
                         value="{{ request('search') }}"
-                        placeholder="{{ trans('app.monetization.courses_page.search_placeholder') }}" 
+                        placeholder="{{ trans('app.monetization.courses_page.search_placeholder') }}"
                         class="courses-search-input"
                     >
                     <button type="submit" class="courses-search-btn">
@@ -37,7 +37,7 @@
                 </div>
             </form>
         </div>
-        </div>
+    </div>
 
     <div class="courses-container">
         <!-- Sidebar Filtres -->
@@ -366,11 +366,12 @@
     }
 
     .courses-hero-title {
-        font-size: clamp(2.5rem, 5vw, 4rem);
+        width: 100%;
+        font-size: clamp(1.6rem, 3vw, 2.5rem);
         font-weight: 900;
         color: rgba(30, 41, 59, 0.95);
         margin-bottom: 20px;
-        line-height: 1.2;
+        line-height: 1.25;
         animation: fadeInUp 0.8s ease;
     }
 
@@ -479,8 +480,8 @@
         height: fit-content;
         background: white;
         border: 1px solid rgba(6, 182, 212, 0.2);
-        border-radius: 20px;
-        padding: 25px;
+        border-radius: 16px;
+        padding: 16px;
         max-width: 100%;
         box-sizing: border-box;
         overflow: hidden;
@@ -491,34 +492,35 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 30px;
-        padding-bottom: 20px;
+        margin-bottom: 18px;
+        padding-bottom: 14px;
         border-bottom: 1px solid rgba(6, 182, 212, 0.2);
     }
 
     .filters-header h3 {
-        font-size: 1.5rem;
+        font-size: 1.05rem;
         font-weight: 800;
         color: rgba(30, 41, 59, 0.95);
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 8px;
     }
 
     .filters-header h3 i {
         color: #06b6d4;
+        font-size: 0.95rem;
     }
 
     .filters-reset-btn {
         display: flex;
         align-items: center;
-        gap: 6px;
-        padding: 8px 16px;
+        gap: 5px;
+        padding: 6px 11px;
         background: rgba(239, 68, 68, 0.2);
         border: 1px solid rgba(239, 68, 68, 0.4);
-        border-radius: 8px;
+        border-radius: 7px;
         color: #ef4444;
-        font-size: 0.9rem;
+        font-size: 0.75rem;
         font-weight: 600;
         cursor: pointer;
         transition: all 0.3s ease;
@@ -530,41 +532,41 @@
     }
 
     .filter-group {
-        margin-bottom: 30px;
+        margin-bottom: 18px;
     }
 
     .filter-label {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 8px;
         font-weight: 700;
         color: rgba(30, 41, 59, 0.95);
-        margin-bottom: 15px;
-        font-size: 1rem;
+        margin-bottom: 10px;
+        font-size: 0.85rem;
     }
 
     .filter-label i {
         color: #06b6d4;
-        font-size: 1.1rem;
+        font-size: 0.9rem;
     }
 
     .price-range-inputs,
     .duration-range-inputs {
         display: flex;
         flex-direction: column;
-        gap: 12px;
-        margin-bottom: 15px;
+        gap: 8px;
+        margin-bottom: 10px;
     }
 
     .price-input,
     .duration-input {
         width: 100%;
-        padding: 12px 16px;
+        padding: 8px 10px;
         background: #f8fafc;
         border: 1px solid rgba(6, 182, 212, 0.3);
-        border-radius: 10px;
+        border-radius: 8px;
         color: rgba(30, 41, 59, 0.95);
-        font-size: 1rem;
+        font-size: 0.85rem;
         outline: none;
         transition: all 0.3s ease;
         box-sizing: border-box;
@@ -584,7 +586,7 @@
     .range-slider,
     .rating-slider {
         width: 100%;
-        height: 6px;
+        height: 4px;
         background: #e2e8f0;
         border-radius: 10px;
         outline: none;
@@ -594,8 +596,8 @@
     .range-slider::-webkit-slider-thumb,
     .rating-slider::-webkit-slider-thumb {
         -webkit-appearance: none;
-        width: 20px;
-        height: 20px;
+        width: 15px;
+        height: 15px;
         background: linear-gradient(135deg, #06b6d4, #14b8a6);
         border-radius: 50%;
         cursor: pointer;
@@ -609,33 +611,33 @@
     }
 
     .rating-filter {
-        margin-top: 15px;
+        margin-top: 10px;
     }
 
     .rating-display {
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-top: 15px;
-        padding: 15px;
+        margin-top: 10px;
+        padding: 10px;
         background: #f8fafc;
-        border-radius: 12px;
+        border-radius: 10px;
     }
 
     .rating-display span {
-        font-size: 1.5rem;
+        font-size: 1.1rem;
         font-weight: 800;
         color: #fbbf24;
     }
 
     .rating-stars {
         display: flex;
-        gap: 5px;
+        gap: 3px;
     }
 
     .rating-stars i {
         color: rgba(30, 41, 59, 0.2);
-        font-size: 1.2rem;
+        font-size: 0.9rem;
         transition: all 0.3s ease;
     }
 
@@ -646,11 +648,11 @@
     .filter-checkbox-label {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 8px;
         cursor: pointer;
-        padding: 15px;
+        padding: 10px;
         background: #f8fafc;
-        border-radius: 12px;
+        border-radius: 10px;
         transition: all 0.3s ease;
     }
 
@@ -663,12 +665,13 @@
     }
 
     .filter-checkbox-custom {
-        width: 24px;
-        height: 24px;
+        width: 18px;
+        height: 18px;
         border: 2px solid rgba(6, 182, 212, 0.5);
-        border-radius: 6px;
+        border-radius: 5px;
         position: relative;
         transition: all 0.3s ease;
+        flex-shrink: 0;
     }
 
     .filter-checkbox:checked + .filter-checkbox-custom {
@@ -684,15 +687,16 @@
         transform: translate(-50%, -50%);
         color: white;
         font-weight: 900;
-        font-size: 0.9rem;
+        font-size: 0.7rem;
     }
 
     .filter-checkbox-text {
         color: rgba(30, 41, 59, 0.95);
         font-weight: 600;
+        font-size: 0.85rem;
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 6px;
     }
 
     .filter-checkbox-text i {
@@ -701,20 +705,20 @@
 
     .filters-apply-btn {
         width: 100%;
-        padding: 16px;
+        padding: 11px;
         background: linear-gradient(135deg, #06b6d4, #14b8a6);
         border: none;
-        border-radius: 12px;
+        border-radius: 10px;
         color: white;
         font-weight: 700;
-        font-size: 1.1rem;
+        font-size: 0.9rem;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 10px;
+        gap: 8px;
         transition: all 0.3s ease;
-        margin-top: 20px;
+        margin-top: 14px;
     }
 
     .filters-apply-btn:hover {
@@ -1179,7 +1183,7 @@
         }
 
         .courses-hero-title {
-            font-size: 2rem;
+            font-size: 1.5rem;
         }
 
         .courses-search-wrapper {

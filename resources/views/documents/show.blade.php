@@ -402,6 +402,143 @@
 }
 
 /* ═══════════════════════════════════════════
+   AVIS / REVIEWS
+   ═══════════════════════════════════════════ */
+.doc-reviews-section {
+  margin-top: 2.25rem;
+  padding-top: 1.75rem;
+  border-top: 1px solid var(--doc-glass-border);
+}
+.doc-reviews-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--doc-text);
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+.doc-reviews-title i { color: var(--doc-amber); }
+
+.doc-review-item {
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--doc-glass-border);
+}
+.doc-review-item:last-child { border-bottom: none; }
+.doc-review-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem;
+  flex-wrap: wrap;
+  margin-bottom: .35rem;
+}
+.doc-review-author {
+  font-weight: 700;
+  color: var(--doc-text);
+  font-size: .92rem;
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+}
+.doc-review-verified {
+  font-size: .68rem;
+  font-weight: 700;
+  color: var(--doc-green);
+  background: rgba(16,185,129,.1);
+  border: 1px solid rgba(16,185,129,.25);
+  border-radius: 50px;
+  padding: .1rem .55rem;
+}
+.doc-review-stars { color: var(--doc-amber); font-size: .78rem; }
+.doc-review-date { font-size: .75rem; color: var(--doc-muted); }
+.doc-review-comment { font-size: .9rem; color: var(--doc-text); line-height: 1.6; }
+.doc-reviews-empty {
+  font-size: .9rem;
+  color: var(--doc-muted);
+  padding: .5rem 0 1.25rem;
+}
+
+/* Formulaire d'avis */
+.doc-review-form {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, rgba(6,182,212,.04), rgba(20,184,166,.04));
+  border: 1px solid var(--doc-glass-border);
+  border-radius: 14px;
+}
+.doc-review-form-title {
+  font-weight: 700;
+  color: var(--doc-text);
+  margin-bottom: 1rem;
+  font-size: .95rem;
+}
+.star-rating-container {
+  display: flex;
+  gap: .3rem;
+  margin-bottom: 1.1rem;
+}
+.rating-star {
+  cursor: pointer;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: #e2e8f0;
+  transition: transform .15s ease, color .15s ease;
+}
+.rating-radio { position: absolute; opacity: 0; pointer-events: none; }
+.doc-review-form textarea {
+  width: 100%;
+  border: 1px solid var(--doc-glass-border);
+  border-radius: 10px;
+  padding: .75rem 1rem;
+  font-size: .9rem;
+  font-family: inherit;
+  color: var(--doc-text);
+  background: #fff;
+  resize: vertical;
+  min-height: 90px;
+  margin-bottom: .85rem;
+}
+.doc-review-form input[type="text"],
+.doc-review-form input[type="email"] {
+  width: 100%;
+  border: 1px solid var(--doc-glass-border);
+  border-radius: 10px;
+  padding: .65rem 1rem;
+  font-size: .88rem;
+  font-family: inherit;
+  color: var(--doc-text);
+  background: #fff;
+  margin-bottom: .85rem;
+}
+.doc-review-guest-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .85rem;
+}
+@media (max-width: 560px) {
+  .doc-review-guest-fields { grid-template-columns: 1fr; }
+}
+.doc-review-submit {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .7rem 1.5rem;
+  background: linear-gradient(135deg, var(--doc-cyan), var(--doc-teal));
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: .88rem;
+  cursor: pointer;
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.doc-review-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(6,182,212,.3);
+}
+
+/* ═══════════════════════════════════════════
    SIDEBAR
    ═══════════════════════════════════════════ */
 .document-sidebar {
@@ -1026,6 +1163,75 @@ body.dark-mode .flash-close   { color: rgba(255,255,255,.5); }
                         </div>
                     </div>
                 @endif
+
+                {{-- Avis --}}
+                <div class="doc-reviews-section">
+                    <h2 class="doc-reviews-title">
+                        <i class="fas fa-star"></i>
+                        Avis
+                        @if(isset($reviews) && $reviews->total() > 0)
+                            ({{ $reviews->total() }})
+                        @endif
+                    </h2>
+
+                    @if(isset($reviews) && $reviews->count() > 0)
+                        @foreach($reviews as $review)
+                            <div class="doc-review-item">
+                                <div class="doc-review-head">
+                                    <span class="doc-review-author">
+                                        {{ $review->display_name }}
+                                        @if($review->is_verified_purchase)
+                                            <span class="doc-review-verified"><i class="fas fa-check-circle"></i> Achat vérifié</span>
+                                        @endif
+                                    </span>
+                                    <span class="doc-review-date">{{ $review->created_at->diffForHumans() }}</span>
+                                </div>
+                                <div class="doc-review-stars">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        <i class="fas fa-star{{ $i <= $review->rating ? '' : '-o' }}"></i>
+                                    @endfor
+                                </div>
+                                @if($review->comment)
+                                    <p class="doc-review-comment">{{ $review->comment }}</p>
+                                @endif
+                            </div>
+                        @endforeach
+                        <div style="margin-top: 1rem;">
+                            {{ $reviews->links() }}
+                        </div>
+                    @else
+                        <p class="doc-reviews-empty">Aucun avis pour le moment. Soyez le premier à donner votre avis !</p>
+                    @endif
+
+                    @auth
+                    <form action="{{ route('documents.reviews.store', $document->id) }}" method="POST" class="doc-review-form">
+                        @csrf
+                        <p class="doc-review-form-title">Laisser un avis</p>
+
+                        <div class="star-rating-container" data-rating="0">
+                            @for($i = 1; $i <= 5; $i++)
+                                <label class="rating-star" data-rating="{{ $i }}" data-for="rating-star-{{ $i }}">
+                                    <i class="far fa-star"></i>
+                                </label>
+                                <input type="radio" class="rating-radio" id="rating-star-{{ $i }}" name="rating" value="{{ $i }}" required>
+                            @endfor
+                        </div>
+
+                        <textarea name="comment" placeholder="Votre commentaire (facultatif)"></textarea>
+
+                        <button type="submit" class="doc-review-submit">
+                            <i class="fas fa-paper-plane"></i> Envoyer mon avis
+                        </button>
+                    </form>
+                    @else
+                    <div class="doc-review-form" style="text-align:center;">
+                        <p class="doc-review-form-title" style="margin-bottom:.5rem;">Connectez-vous pour laisser un avis</p>
+                        <a href="{{ route('login') }}" class="doc-review-submit" style="text-decoration:none;">
+                            <i class="fas fa-sign-in-alt"></i> Se connecter
+                        </a>
+                    </div>
+                    @endauth
+                </div>
             </div>
         </div>
 

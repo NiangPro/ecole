@@ -19,18 +19,31 @@
                         <td style="padding:28px 32px;">
                             <p style="margin:0 0 12px;font-size:15px;">Bonjour {{ $purchase->customer_name ?: '' }},</p>
                             <p style="margin:0 0 16px;font-size:15px;line-height:1.6;">
-                                Votre corrigé est prêt :
+                                @if($includesEpreuve ?? false)
+                                    Votre épreuve et son corrigé sont prêts :
+                                @else
+                                    Votre corrigé est prêt :
+                                @endif
                                 <strong>{{ $purchase->epreuve->title }}</strong>.
                             </p>
                             <table role="presentation" cellpadding="0" cellspacing="0" style="margin:0 auto 20px;">
                                 <tr>
                                     <td align="center" style="border-radius:12px;background:linear-gradient(135deg,#059669,#0891b2);">
                                         <a href="{{ $downloadUrl }}" style="display:inline-block;padding:14px 28px;color:#ffffff;text-decoration:none;font-weight:bold;font-size:15px;">
-                                            📄 Télécharger le corrigé
+                                            @if($includesEpreuve ?? false)
+                                                📄 Télécharger l'épreuve + le corrigé
+                                            @else
+                                                📄 Télécharger le corrigé
+                                            @endif
                                         </a>
                                     </td>
                                 </tr>
                             </table>
+                            @if($includesEpreuve ?? false)
+                            <p style="margin:0 0 16px;font-size:13px;color:#64748b;line-height:1.6;">
+                                Le lien télécharge une archive .zip contenant le sujet de l'épreuve et son corrigé.
+                            </p>
+                            @endif
                             <p style="margin:0 0 8px;font-size:13px;color:#64748b;line-height:1.6;">
                                 Ce lien est personnel et valable <strong>30 jours</strong>.
                                 Si le bouton ne fonctionne pas, copiez ce lien :

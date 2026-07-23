@@ -141,7 +141,13 @@ class EpreuveController extends Controller
 
         $epreuveDocuments = $this->getEpreuveCategoryDocuments();
 
-        return view('epreuves.show', compact('epreuve', 'related', 'adsSettings', 'adsUnit', 'epreuveDocuments'));
+        // Avis approuvés
+        $reviews = $epreuve->approvedReviews()
+            ->with('user')
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        return view('epreuves.show', compact('epreuve', 'related', 'adsSettings', 'adsUnit', 'epreuveDocuments', 'reviews'));
     }
 
     /**
@@ -241,7 +247,7 @@ class EpreuveController extends Controller
             ->orderByDesc('is_featured')
             ->orderByDesc('year')
             ->orderByDesc('created_at')
-            ->paginate(18)
+            ->paginate(30)
             ->appends($request->only('exam', 'level', 'matiere', 'serie', 'year', 'type', 'q'));
 
         $matieres = Cache::remember('epreuve_matieres', 3600,

@@ -266,38 +266,32 @@
     .stat-card-header {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        margin-bottom: 12px;
-    }
-    
-    .stat-card-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+        gap: 0.85rem;
+        justify-content: flex-start;
         margin-bottom: 1rem;
     }
-    
+
     .stat-card-icon {
-        width: 60px;
-        height: 60px;
-        border-radius: 16px;
+        width: 48px;
+        height: 48px;
+        min-width: 48px;
+        border-radius: 14px;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 1.5rem;
+        font-size: 1.2rem;
         background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2));
         border: 1px solid rgba(6, 182, 212, 0.3);
         position: relative;
         z-index: 1;
     }
-    
+
     .stat-card-number {
         font-family: 'Poppins', sans-serif;
-        font-size: 2rem;
+        font-size: 1.4rem;
         font-weight: 800;
         color: white;
         line-height: 1;
-        margin-bottom: 0.5rem;
         position: relative;
         z-index: 1;
     }
@@ -742,8 +736,8 @@
             <div class="stat-card-icon" style="color: #14b8a6;">
                 <i class="fas fa-eye"></i>
             </div>
+            <div class="stat-card-number">{{ format_compact_number($stats['today']['visits']) }}</div>
         </div>
-        <div class="stat-card-number">{{ number_format($stats['today']['visits']) }}</div>
         <div class="stat-card-label">Visites aujourd'hui</div>
         <div class="stat-card-subtext">
             @if($stats['visitsGrowth'] > 0)
@@ -755,14 +749,14 @@
             @endif
         </div>
     </div>
-    
+
     <div class="stat-card-modern">
         <div class="stat-card-header">
             <div class="stat-card-icon" style="color: #a855f7;">
                 <i class="fas fa-chart-line"></i>
             </div>
+            <div class="stat-card-number">{{ format_compact_number($stats['thisMonth']['visits']) }}</div>
         </div>
-        <div class="stat-card-number">{{ number_format($stats['thisMonth']['visits']) }}</div>
         <div class="stat-card-label">Visites ce mois</div>
         <div class="stat-card-subtext">
             @if($stats['monthGrowth'] > 0)
@@ -774,81 +768,81 @@
             @endif
         </div>
     </div>
-    
+
     <div class="stat-card-modern">
         <div class="stat-card-header">
             <div class="stat-card-icon" style="color: #22c55e;">
                 <i class="fas fa-users"></i>
             </div>
+            <div class="stat-card-number">{{ format_compact_number($stats['totalUsers']) }}</div>
         </div>
-        <div class="stat-card-number">{{ number_format($stats['totalUsers']) }}</div>
         <div class="stat-card-label">Utilisateurs</div>
-        <div class="stat-card-subtext">{{ number_format($stats['activeUsers']) }} actifs</div>
+        <div class="stat-card-subtext">{{ format_compact_number($stats['activeUsers']) }} actifs</div>
     </div>
-    
+
     <div class="stat-card-modern">
         <div class="stat-card-header">
             <div class="stat-card-icon" style="color: #3b82f6;">
                 <i class="fas fa-envelope"></i>
             </div>
+            <div class="stat-card-number">{{ format_compact_number($stats['totalNewsletter']) }}</div>
         </div>
-        <div class="stat-card-number">{{ number_format($stats['totalNewsletter']) }}</div>
         <div class="stat-card-label">Newsletter</div>
-        <div class="stat-card-subtext">{{ number_format($stats['activeNewsletter']) }} actifs</div>
+        <div class="stat-card-subtext">{{ format_compact_number($stats['activeNewsletter']) }} actifs</div>
     </div>
-    
+
     <div class="stat-card-modern">
         <div class="stat-card-header">
             <div class="stat-card-icon" style="color: #f59e0b;">
                 <i class="fas fa-ad"></i>
             </div>
+            <div class="stat-card-number">{{ format_compact_number($stats['activeAds']) }}</div>
         </div>
-        <div class="stat-card-number">{{ number_format($stats['activeAds']) }}</div>
         <div class="stat-card-label">Publicités actives</div>
-        <div class="stat-card-subtext">{{ number_format($stats['totalAds']) }} au total</div>
+        <div class="stat-card-subtext">{{ format_compact_number($stats['totalAds']) }} au total</div>
     </div>
-    
+
     <div class="stat-card-modern">
         <div class="stat-card-header">
             <div class="stat-card-icon" style="color: #ec4899;">
                 <i class="fas fa-file-alt"></i>
             </div>
+            <div class="stat-card-number">{{ format_compact_number($stats['publishedArticles']) }}</div>
         </div>
-        <div class="stat-card-number">{{ number_format($stats['publishedArticles']) }}</div>
         <div class="stat-card-label">Articles publiés</div>
-        <div class="stat-card-subtext">{{ number_format($stats['draftArticles']) }} brouillons</div>
+        <div class="stat-card-subtext">{{ format_compact_number($stats['draftArticles']) }} brouillons</div>
     </div>
-    
+
     <div class="stat-card-modern">
         <div class="stat-card-header">
             <div class="stat-card-icon" style="color: #10b981;">
                 <i class="fas fa-folder"></i>
             </div>
+            <div class="stat-card-number">{{ format_compact_number($stats['totalCategories']) }}</div>
         </div>
-        <div class="stat-card-number">{{ number_format($stats['totalCategories']) }}</div>
         <div class="stat-card-label">Catégories actives</div>
         <div class="stat-card-subtext">Catégories disponibles</div>
     </div>
-    
+
     <div class="stat-card-modern">
         <div class="stat-card-header">
             <div class="stat-card-icon" style="color: #8b5cf6;">
                 <i class="fas fa-book"></i>
             </div>
+            <div class="stat-card-number">{{ format_compact_number($stats['totalPaidCourses'] ?? 0) }}</div>
         </div>
-        <div class="stat-card-number">{{ number_format($stats['totalPaidCourses'] ?? 0) }}</div>
         <div class="stat-card-label">Cours payants</div>
-        <div class="stat-card-subtext">{{ number_format($stats['publishedPaidCourses'] ?? 0) }} publiés</div>
+        <div class="stat-card-subtext">{{ format_compact_number($stats['publishedPaidCourses'] ?? 0) }} publiés</div>
     </div>
-    
+
     @if($stats['unreadMessages'] > 0)
     <div class="stat-card-modern" style="border: 2px solid rgba(239, 68, 68, 0.4); background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1));">
         <div class="stat-card-header">
             <div class="stat-card-icon" style="color: #ef4444;">
                 <i class="fas fa-envelope-open-text"></i>
             </div>
+            <div class="stat-card-number">{{ format_compact_number($stats['unreadMessages']) }}</div>
         </div>
-        <div class="stat-card-number">{{ number_format($stats['unreadMessages']) }}</div>
         <div class="stat-card-label">Messages non lus</div>
         <div class="stat-card-subtext">
             <a href="{{ route('admin.messages') }}" style="color: #06b6d4; text-decoration: none;">Voir les messages</a>

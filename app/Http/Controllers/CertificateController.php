@@ -131,8 +131,13 @@ class CertificateController extends Controller
         }
 
         return response()->download(
-            storage_path('app/' . $certificate->pdf_path),
-            'certificat-' . $certificate->formation_slug . '.pdf'
+            \Storage::path($certificate->pdf_path),
+            'certificat-' . $certificate->formation_slug . '.pdf',
+            [
+                'Cache-Control' => 'no-cache, no-store, must-revalidate',
+                'Pragma' => 'no-cache',
+                'Expires' => '0',
+            ]
         );
     }
 

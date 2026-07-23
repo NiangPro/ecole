@@ -70,7 +70,7 @@ class Certificate extends Model
      */
     public function hasPdf(): bool
     {
-        return $this->pdf_path && file_exists(storage_path('app/' . $this->pdf_path));
+        return $this->pdf_path && \Storage::exists($this->pdf_path);
     }
 
     /**

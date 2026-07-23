@@ -309,18 +309,9 @@
                 </div>
             </li>
 
-            <!-- Packs (menu principal) -->
-            @if($hasBundles)
-            <li class="navbar-item">
-                <a href="{{ route('bundles.index') }}" class="navbar-link {{ request()->routeIs('bundles.*') ? 'active' : '' }}">
-                    Packs
-                </a>
-            </li>
-            @endif
-
             <!-- Dropdown À propos / Contact -->
             <li class="navbar-item dropdown">
-                <a href="{{ route('about') }}" class="navbar-link dropdown-toggle {{ request()->routeIs(['about', 'contact', 'monetization.index', 'monetization.affiliates', 'monetization.affiliates.dashboard', 'docs', 'documents.*', 'forum.*', 'admin-docs.*']) ? 'active' : '' }}">
+                <a href="{{ route('about') }}" class="navbar-link dropdown-toggle {{ request()->routeIs(['about', 'contact', 'monetization.index', 'monetization.affiliates', 'monetization.affiliates.dashboard', 'docs', 'documents.*', 'forum.*', 'admin-docs.*', 'bundles.*']) ? 'active' : '' }}">
                     {{ trans('app.nav.about') }}
                     <i class="fas fa-chevron-down dropdown-icon"></i>
                 </a>
@@ -346,6 +337,17 @@
                         <div class="dropdown-item-content">
                             <div class="dropdown-item-title">Documents</div>
                             <div class="dropdown-item-desc">Guides, tutoriels et ressources</div>
+                        </div>
+                    </a>
+                    @endif
+                    @if($hasBundles)
+                    <a href="{{ route('bundles.index') }}" class="dropdown-item" data-parent-active="bundles">
+                        <div class="dropdown-item-icon" style="background: rgba(6, 182, 212, 0.1);">
+                            <i class="fas fa-box" style="color: #06b6d4;"></i>
+                        </div>
+                        <div class="dropdown-item-content">
+                            <div class="dropdown-item-title">Packs</div>
+                            <div class="dropdown-item-desc">Documents et épreuves à prix réduit</div>
                         </div>
                     </a>
                     @endif
@@ -921,15 +923,6 @@
             </div>
         </li>
 
-        <!-- Packs (lien principal mobile) -->
-        @if($hasBundles)
-        <li class="mobile-menu-item">
-            <a href="{{ route('bundles.index') }}" class="mobile-menu-link {{ request()->routeIs('bundles.*') ? 'active' : '' }}">
-                <span><i class="fas fa-box"></i> Packs</span>
-            </a>
-        </li>
-        @endif
-
         <!-- Mobile Dropdown À propos (conforme au menu desktop) -->
         <li class="mobile-menu-item">
             <button type="button" class="mobile-dropdown-toggle" onclick="toggleMobileDropdown(event, 'apropos')" aria-expanded="false" aria-controls="apropos-dropdown">
@@ -948,6 +941,11 @@
                 @if($hasPublishedDocumentsMobile)
                 <a href="{{ route('documents.index') }}" class="mobile-dropdown-item">
                     <i class="fas fa-file-alt" style="color: #06b6d4;"></i> Documents
+                </a>
+                @endif
+                @if($hasBundles)
+                <a href="{{ route('bundles.index') }}" class="mobile-dropdown-item">
+                    <i class="fas fa-box" style="color: #06b6d4;"></i> Packs
                 </a>
                 @endif
                 @if($hasActiveSubscriptionPlansMobile)

@@ -20,12 +20,21 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'name',
+        'first_name',
+        'last_name',
         'email',
         'password',
         'google_id',
         'avatar',
         'role',
         'phone',
+        'bio',
+        'country',
+        'region',
+        'city',
+        'gender',
+        'date_of_birth',
+        'occupation',
         'is_active',
         'is_premium',
         'premium_until',
@@ -55,7 +64,89 @@ class User extends Authenticatable
             'is_active' => 'boolean',
             'is_premium' => 'boolean',
             'premium_until' => 'datetime',
+            'date_of_birth' => 'date',
         ];
+    }
+
+    /**
+     * Prénom, avec repli sur le premier mot de `name` pour les comptes existants
+     * créés avant l'ajout des colonnes first_name/last_name.
+     */
+    public function getFirstNameAttribute(): ?string
+    {
+        $value = $this->attributes['first_name'] ?? null;
+        if ($value) {
+            return $value;
+        }
+
+        return $this->name ? trim(explode(' ', trim($this->name), 2)[0]) : null;
+    }
+
+    /**
+     * Nom de famille, avec repli sur le reste de `name` pour les comptes existants.
+     */
+    public function getLastNameAttribute(): ?string
+    {
+        $value = $this->attributes['last_name'] ?? null;
+        if ($value) {
+            return $value;
+        }
+
+        if (!$this->name) {
+            return null;
+        }
+
+        $parts = explode(' ', trim($this->name), 2);
+        return $parts[1] ?? null;
+    }
+
+    /**
+     * Champs obligatoires pour accéder aux certificats et cours payants
+     * ("Informations personnelles" + "Informations complémentaires", bio exclue).
+     * On lit les colonnes brutes (pas les accesseurs avec repli) pour forcer
+     * une confirmation explicite de l'utilisateur, même sur les anciens comptes.
+     */
+    public function missingRequiredProfileFields(): array
+    {
+        $required = [
+            'first_name' => $this->attributes['first_name'] ?? null,
+            'last_name' => $this->attributes['last_name'] ?? null,
+            'phone' => $this->phone,
+            'occupation' => $this->occupation,
+            'date_of_birth' => $this->date_of_birth,
+            'gender' => $this->gender,
+        ];
+
+        return array_keys(array_filter($required, fn ($value) => $value === null || $value === ''));
+    }
+
+    public function hasCompletedRequiredProfile(): bool
+    {
+        return empty($this->missingRequiredProfileFields());
+    }
+
+    /**
+     * Pourcentage de complétion du profil (champs facultatifs pris en compte).
+     */
+    public function getProfileCompletionAttribute(): int
+    {
+        $fields = [
+            $this->name,
+            $this->email,
+            $this->phone,
+            $this->avatar,
+            $this->bio,
+            $this->country,
+            $this->region,
+            $this->city,
+            $this->gender,
+            $this->date_of_birth,
+            $this->occupation,
+        ];
+
+        $filled = count(array_filter($fields, fn ($value) => !is_null($value) && $value !== ''));
+
+        return (int) round(($filled / count($fields)) * 100);
     }
 
     public function isAdmin()

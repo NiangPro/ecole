@@ -127,7 +127,7 @@ class PageController extends Controller
 
             // Cache les packs (bundles) vedettes
             $featuredBundles = \App\Models\DocumentBundle::active()
-                ->with('items.document:id,price,discount_price')
+                ->with('items.itemable')
                 ->orderBy('is_featured', 'desc')
                 ->orderBy('sales_count', 'desc')
                 ->take(3)
@@ -404,6 +404,386 @@ class PageController extends Controller
         
         // Sinon, rediriger vers la page précédente ou la page d'accueil
         return redirect()->back()->with('language_changed', true);
+    }
+
+    /**
+     * Exécuter du code utilisateur dans un bac à sable (sandbox) et renvoyer le résultat.
+     * Supporte PHP nativement (sandboxé via php-cli) ; les autres langages sont exécutés
+     * si l'interpréteur/compilateur correspondant est disponible sur le serveur.
+     */
+    public function runCode(Request $request, $language)
+    {
+        $code = (string) $request->input('code', '');
+        $language = strtolower(trim($language));
+
+        if (trim($code) === '') {
+            return response()->json(['error' => 'Aucun code à exécuter.']);
+        }
+
+        if (mb_strlen($code) > 20000) {
+            return response()->json(['error' => 'Le code est trop long.']);
+        }
+
+        $timeoutSeconds = 5;
+
+        try {
+            switch ($language) {
+                case 'php':
+                    $result = $this->runPhpCode($code, $timeoutSeconds);
+                    break;
+                case 'python':
+                    $result = $this->runPythonCode($code, $timeoutSeconds);
+                    break;
+                case 'java':
+                    $result = $this->runJavaCode($code, $timeoutSeconds);
+                    break;
+                case 'c':
+                    $result = $this->runCompiledCCode($code, 'c', $timeoutSeconds);
+                    break;
+                case 'cpp':
+                case 'c++':
+                    $result = $this->runCompiledCCode($code, 'cpp', $timeoutSeconds);
+                    break;
+                case 'dart':
+                    $result = $this->runDartCode($code, $timeoutSeconds + 5);
+                    break;
+                case 'csharp':
+                case 'c#':
+                    $result = ['error' => "L'exécution C# n'est pas disponible sur ce serveur pour le moment."];
+                    break;
+                default:
+                    $result = ['error' => "Langage non supporté pour l'exécution : {$language}"];
+            }
+        } catch (\Throwable $e) {
+            report($e);
+            $result = ['error' => "Une erreur interne est survenue lors de l'exécution du code."];
+        }
+
+        return response()->json($result);
+    }
+
+    /**
+     * Exécute du code PHP dans un sous-processus php-cli restreint :
+     * fonctions réseau/processus désactivées, accès fichiers limité à un dossier temporaire.
+     */
+    private function runPhpCode(string $code, int $timeoutSeconds): array
+    {
+        $phpBinary = $this->locatePhpBinary();
+        if (!$phpBinary) {
+            return ['error' => "L'exécution PHP n'est pas disponible sur ce serveur."];
+        }
+
+        // Les exercices fournissent parfois un template HTML complet avec du PHP
+        // deja embarque dans des balises : dans ce cas on n'ajoute rien. Sinon on
+        // encapsule le code brut dans des balises PHP.
+        if (!str_contains($code, '<?php') && !str_contains($code, '<?=')) {
+            $code = "<?php\n" . $code;
+        }
+
+        $tmpDir = storage_path('app/code-sandbox');
+        if (!is_dir($tmpDir)) {
+            mkdir($tmpDir, 0700, true);
+        }
+
+        $filePath = $tmpDir . '/exec_' . bin2hex(random_bytes(8)) . '.php';
+        file_put_contents($filePath, $code);
+
+        $disabledFunctions = implode(',', [
+            'exec', 'shell_exec', 'system', 'passthru', 'popen',
+            'proc_open', 'proc_close', 'proc_terminate', 'proc_nice',
+            'pcntl_exec', 'pcntl_fork', 'dl', 'putenv',
+            'mail', 'syslog', 'symlink', 'link',
+            'curl_exec', 'curl_multi_exec',
+            'fsockopen', 'pfsockopen', 'stream_socket_client', 'stream_socket_server',
+            'socket_create', 'socket_connect',
+        ]);
+
+        $command = [
+            $phpBinary,
+            '-d', 'disable_functions=' . $disabledFunctions,
+            '-d', 'allow_url_fopen=0',
+            '-d', 'allow_url_include=0',
+            '-d', 'max_execution_time=' . $timeoutSeconds,
+            '-d', 'memory_limit=64M',
+            '-d', 'display_errors=1',
+            '-d', 'open_basedir=' . $tmpDir,
+            $filePath,
+        ];
+
+        $result = $this->runProcessWithTimeout($command, $tmpDir, $timeoutSeconds);
+        @unlink($filePath);
+
+        return $this->formatSandboxResult($result, $timeoutSeconds, $filePath);
+    }
+
+    /**
+     * Exécute du code Python via python3, si disponible.
+     */
+    private function runPythonCode(string $code, int $timeoutSeconds): array
+    {
+        $binary = $this->locateBinary('python3') ?: $this->locateBinary('python');
+        if (!$binary) {
+            return ['error' => "L'exécution Python n'est pas disponible sur ce serveur."];
+        }
+
+        $tmpDir = storage_path('app/code-sandbox');
+        if (!is_dir($tmpDir)) {
+            mkdir($tmpDir, 0700, true);
+        }
+
+        $filePath = $tmpDir . '/exec_' . bin2hex(random_bytes(8)) . '.py';
+        file_put_contents($filePath, $code);
+
+        $result = $this->runProcessWithTimeout([$binary, '-I', '-B', $filePath], $tmpDir, $timeoutSeconds);
+        @unlink($filePath);
+
+        return $this->formatSandboxResult($result, $timeoutSeconds, $filePath);
+    }
+
+    /**
+     * Compile et exécute du code Java (javac + java), si le JDK est disponible.
+     */
+    private function runJavaCode(string $code, int $timeoutSeconds): array
+    {
+        $javac = $this->locateBinary('javac');
+        $java = $this->locateBinary('java');
+        if (!$javac || !$java) {
+            return ['error' => "L'exécution Java n'est pas disponible sur ce serveur."];
+        }
+
+        if (preg_match('/public\s+class\s+([A-Za-z_][A-Za-z0-9_]*)/', $code, $m)) {
+            $className = $m[1];
+        } elseif (!str_contains($code, 'class ')) {
+            $className = 'Main';
+            $code = "public class Main {\n    public static void main(String[] args) throws Exception {\n" . $code . "\n    }\n}\n";
+        } else {
+            $className = 'Main';
+            $code = preg_replace('/\bclass\s+([A-Za-z_][A-Za-z0-9_]*)/', 'class Main', $code, 1);
+        }
+
+        $tmpDir = storage_path('app/code-sandbox/java_' . bin2hex(random_bytes(6)));
+        mkdir($tmpDir, 0700, true);
+        file_put_contents($tmpDir . "/{$className}.java", $code);
+
+        $compile = $this->runProcessWithTimeout([$javac, "{$className}.java"], $tmpDir, $timeoutSeconds);
+        if ($compile['exitCode'] !== 0) {
+            $message = trim($compile['error'] ?: $compile['output']) ?: 'Erreur de compilation Java.';
+            $this->cleanupDir($tmpDir);
+            return ['error' => $message];
+        }
+
+        $run = $this->runProcessWithTimeout([$java, $className], $tmpDir, $timeoutSeconds);
+        $this->cleanupDir($tmpDir);
+
+        return $this->formatSandboxResult($run, $timeoutSeconds, $tmpDir);
+    }
+
+    /**
+     * Compile et exécute du code C/C++ (gcc/g++), si disponible.
+     */
+    private function runCompiledCCode(string $code, string $variant, int $timeoutSeconds): array
+    {
+        $compilerBin = $variant === 'cpp'
+            ? ($this->locateBinary('g++') ?: $this->locateBinary('clang++'))
+            : ($this->locateBinary('gcc') ?: $this->locateBinary('clang'));
+
+        if (!$compilerBin) {
+            return ['error' => ($variant === 'cpp' ? "L'exécution C++" : "L'exécution C") . " n'est pas disponible sur ce serveur."];
+        }
+
+        $tmpDir = storage_path('app/code-sandbox/c_' . bin2hex(random_bytes(6)));
+        mkdir($tmpDir, 0700, true);
+
+        $ext = $variant === 'cpp' ? 'cpp' : 'c';
+        $srcPath = $tmpDir . "/main.{$ext}";
+        file_put_contents($srcPath, $code);
+        $binPath = $tmpDir . '/program';
+
+        $compile = $this->runProcessWithTimeout([$compilerBin, $srcPath, '-O0', '-o', $binPath], $tmpDir, $timeoutSeconds);
+        if ($compile['exitCode'] !== 0 || !is_file($binPath)) {
+            $message = trim($compile['error'] ?: $compile['output']) ?: 'Erreur de compilation.';
+            $this->cleanupDir($tmpDir);
+            return ['error' => $message];
+        }
+
+        $run = $this->runProcessWithTimeout([$binPath], $tmpDir, $timeoutSeconds);
+        $this->cleanupDir($tmpDir);
+
+        return $this->formatSandboxResult($run, $timeoutSeconds, $tmpDir);
+    }
+
+    /**
+     * Exécute du code Dart via `dart run`, si le SDK Dart est disponible.
+     */
+    private function runDartCode(string $code, int $timeoutSeconds): array
+    {
+        $binary = $this->locateBinary('dart');
+        if (!$binary) {
+            return ['error' => "L'exécution Dart n'est pas disponible sur ce serveur."];
+        }
+
+        $tmpDir = storage_path('app/code-sandbox');
+        if (!is_dir($tmpDir)) {
+            mkdir($tmpDir, 0700, true);
+        }
+
+        $filePath = $tmpDir . '/exec_' . bin2hex(random_bytes(8)) . '.dart';
+        file_put_contents($filePath, $code);
+
+        $result = $this->runProcessWithTimeout([$binary, 'run', $filePath], $tmpDir, $timeoutSeconds);
+        @unlink($filePath);
+
+        return $this->formatSandboxResult($result, $timeoutSeconds, $filePath);
+    }
+
+    /**
+     * Résout le chemin absolu d'un exécutable PHP CLI utilisable en sous-processus
+     * (PHP_BINARY pointe parfois vers php-fpm/apache, qui ne convient pas ici).
+     */
+    private function locatePhpBinary(): ?string
+    {
+        if (defined('PHP_BINARY') && PHP_BINARY !== ''
+            && str_contains(PHP_BINARY, 'php')
+            && !str_contains($binaryLower = strtolower(PHP_BINARY), 'fpm')
+            && !str_contains($binaryLower, 'apache')) {
+            return PHP_BINARY;
+        }
+
+        return $this->locateBinary('php');
+    }
+
+    /**
+     * Résout le chemin absolu d'un exécutable via `command -v` (mise en cache par requête).
+     * $name est toujours une valeur fixe choisie dans le code, jamais une entrée utilisateur.
+     */
+    private function locateBinary(string $name): ?string
+    {
+        static $cache = [];
+
+        if (array_key_exists($name, $cache)) {
+            return $cache[$name];
+        }
+
+        $path = trim((string) @shell_exec('command -v ' . escapeshellarg($name) . ' 2>/dev/null'));
+
+        return $cache[$name] = ($path !== '' ? $path : null);
+    }
+
+    /**
+     * Lance un sous-processus avec un dossier de travail dédié et applique un timeout
+     * (arrêt forcé du processus si dépassé) sans dépendre d'un binaire `timeout` externe.
+     */
+    private function runProcessWithTimeout(array $command, string $cwd, int $timeoutSeconds): array
+    {
+        $descriptorSpec = [
+            0 => ['pipe', 'r'],
+            1 => ['pipe', 'w'],
+            2 => ['pipe', 'w'],
+        ];
+
+        $process = proc_open($command, $descriptorSpec, $pipes, $cwd, null);
+
+        if (!is_resource($process)) {
+            return ['output' => '', 'error' => "Impossible de démarrer le processus d'exécution.", 'exitCode' => -1, 'timedOut' => false];
+        }
+
+        fclose($pipes[0]);
+        stream_set_blocking($pipes[1], false);
+        stream_set_blocking($pipes[2], false);
+
+        $stdout = '';
+        $stderr = '';
+        $start = microtime(true);
+        $timedOut = false;
+
+        while (true) {
+            $status = proc_get_status($process);
+
+            $stdout .= stream_get_contents($pipes[1]);
+            $stderr .= stream_get_contents($pipes[2]);
+
+            if (!$status['running']) {
+                break;
+            }
+
+            if ((microtime(true) - $start) > $timeoutSeconds) {
+                $timedOut = true;
+                proc_terminate($process, 9);
+                usleep(100000);
+                break;
+            }
+
+            usleep(20000);
+        }
+
+        $stdout .= stream_get_contents($pipes[1]);
+        $stderr .= stream_get_contents($pipes[2]);
+
+        fclose($pipes[1]);
+        fclose($pipes[2]);
+        $exitCode = proc_close($process);
+
+        return ['output' => $stdout, 'error' => $stderr, 'exitCode' => $exitCode, 'timedOut' => $timedOut];
+    }
+
+    /**
+     * Normalise le résultat d'exécution en réponse JSON attendue par le frontend
+     * ({output} en cas de succès, {error} sinon), en masquant les chemins serveur.
+     */
+    private function formatSandboxResult(array $result, int $timeoutSeconds, ?string $sourcePath = null): array
+    {
+        if ($result['timedOut']) {
+            return ['error' => "Temps d'exécution dépassé ({$timeoutSeconds}s). Vérifiez les boucles infinies."];
+        }
+
+        if ($result['exitCode'] !== 0) {
+            $message = trim($result['output'] . "\n" . $result['error']);
+            $message = $message !== '' ? $this->hideSandboxPaths($message, $sourcePath) : 'Erreur lors de l\'exécution du code.';
+            return ['error' => $message];
+        }
+
+        $output = $result['output'];
+        if (trim($result['error']) !== '') {
+            $output .= ($output !== '' ? "\n" : '') . $result['error'];
+        }
+
+        return ['output' => $this->hideSandboxPaths($output, $sourcePath)];
+    }
+
+    /**
+     * Remplace les chemins absolus du serveur (dossier de sandbox, fichier source)
+     * par des repères neutres avant de renvoyer un message à l'utilisateur.
+     */
+    private function hideSandboxPaths(string $text, ?string $sourcePath = null): string
+    {
+        if ($sourcePath) {
+            $text = str_replace($sourcePath, basename($sourcePath), $text);
+        }
+
+        $sandboxRoot = storage_path('app/code-sandbox');
+        $text = str_replace($sandboxRoot . '/', '', $text);
+
+        return $text;
+    }
+
+    /**
+     * Supprime récursivement un dossier temporaire de sandbox.
+     */
+    private function cleanupDir(string $dir): void
+    {
+        if (!is_dir($dir)) {
+            return;
+        }
+
+        foreach (scandir($dir) ?: [] as $item) {
+            if ($item === '.' || $item === '..') {
+                continue;
+            }
+            $path = $dir . '/' . $item;
+            is_dir($path) ? $this->cleanupDir($path) : @unlink($path);
+        }
+
+        @rmdir($dir);
     }
 
 }

@@ -224,6 +224,8 @@ class EpreuveController extends Controller
             'type' => 'required|in:' . implode(',', array_keys(Epreuve::TYPES)),
             'exam' => 'nullable|in:' . implode(',', array_keys(Epreuve::EXAMS)),
             'level' => 'nullable|in:' . implode(',', array_keys(Epreuve::flatLevels())),
+            'level_new' => 'nullable|string|max:100',
+            'level_new_group' => 'nullable|in:primaire,college,lycee,concours',
             'matiere_id' => 'nullable|exists:epreuve_matieres,id',
             'matiere_new' => 'nullable|string|max:100',
             'serie' => 'nullable|string|max:30',
@@ -246,7 +248,18 @@ class EpreuveController extends Controller
             );
             $data['matiere_id'] = $matiere->id;
         }
-        unset($data['matiere_new'], $data['file'], $data['corrige_file']);
+
+        // Création de niveau/classe à la volée
+        if (!empty($data['level_new'])) {
+            $level = \App\Models\EpreuveLevel::firstOrCreate(
+                ['slug' => Str::slug($data['level_new'])],
+                ['name' => $data['level_new'], 'group' => $data['level_new_group'] ?? 'concours', 'order' => 99]
+            );
+            $data['level'] = $level->slug;
+            \Illuminate\Support\Facades\Cache::forget('epreuve_levels_all');
+        }
+
+        unset($data['matiere_new'], $data['level_new'], $data['level_new_group'], $data['file'], $data['corrige_file']);
 
         $data['is_featured'] = $request->boolean('is_featured');
 

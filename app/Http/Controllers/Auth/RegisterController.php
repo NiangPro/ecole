@@ -57,7 +57,8 @@ class RegisterController extends Controller
         $this->ensureLocale();
         
         $request->validate([
-            'name' => 'required|string|max:255',
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6|confirmed',
             'phone' => 'nullable|string|max:20',
@@ -65,9 +66,11 @@ class RegisterController extends Controller
 
         // Utiliser phone_full si disponible, sinon phone
         $phone = $request->input('phone_full') ?: $request->phone;
-        
+
         $user = User::create([
-            'name' => $request->name,
+            'name' => trim($request->first_name . ' ' . $request->last_name),
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'phone' => $phone,

@@ -32,12 +32,14 @@
         display: flex;
         gap: 20px;
         padding: 20px;
+        padding-top: 100px;
         width: 100%;
         margin: 0;
         align-items: flex-start;
         position: relative;
+        min-height: calc(100vh + 30px);
     }
-    
+
     /* Sidebar - Solution garantie avec sticky + fallback fixed */
     .dashboard-sidebar {
         width: 280px;
@@ -47,10 +49,10 @@
         border-radius: 15px;
         position: -webkit-sticky;
         position: sticky;
-        top: 80px; /* 60px navbar (body padding-top) + 20px content-wrapper padding */
+        top: 100px; /* 60px navbar + 40px de marge de confort */
         align-self: flex-start;
-        height: calc(100vh - 80px);
-        max-height: calc(100vh - 80px);
+        height: calc(100vh - 100px);
+        max-height: calc(100vh - 100px);
         overflow-y: auto;
         overflow-x: hidden;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
@@ -737,7 +739,7 @@
             
             // ÉTAPE 4 : Forcer sticky sur sidebar (SANS fallback fixed)
             const navbarHeight = 60;
-            const contentPadding = 20;
+            const contentPadding = 40;
             const topValue = navbarHeight + contentPadding;
             
             // Retirer toute position fixed qui pourrait avoir été appliquée

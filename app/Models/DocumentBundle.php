@@ -95,7 +95,14 @@ class DocumentBundle extends Model
                 return $itemable->discount_price ?? $itemable->price;
             }
 
-            return $itemable->price ?? 0;
+            // Une épreuve avec corrigé est livrée avec son corrigé dans le pack (voir
+            // BundlePaymentController::download) : sa valeur individuelle inclut donc les deux.
+            $price = $itemable->price ?? 0;
+            if ($itemable->hasCorrige()) {
+                $price += $itemable->getCorrigePrice();
+            }
+
+            return $price;
         });
     }
 

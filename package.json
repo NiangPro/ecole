@@ -3,7 +3,7 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "vite build --mode production",
+        "build": "vite build --mode production && npm run minify:js",
         "dev": "vite",
         "build:minify": "vite build --mode production",
         "minify:js": "node scripts/minify-js.js"

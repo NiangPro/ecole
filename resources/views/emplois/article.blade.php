@@ -1086,7 +1086,7 @@ body:not(.dark-mode) .comment-form-wrapper textarea {
             @if($ad->image)
             <div class="art-ad-imgwrap">
               <img src="{{ $ad->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($ad->image) : $ad->image }}"
-                   alt="{{ $ad->name }}" loading="lazy"
+                   alt="{{ $ad->name }}" width="400" height="300" loading="lazy"
                    onerror="this.style.display='none'">
               <div class="art-ad-veil">
                 <div class="art-ad-info">

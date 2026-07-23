@@ -397,19 +397,28 @@
         padding: 40px 32px;
         transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         cursor: pointer;
-        overflow: hidden;
+        overflow: visible;
         box-shadow: var(--shadow-md);
         text-decoration: none;
         display: block;
         color: inherit;
         transform-style: preserve-3d;
     }
-    
+
     body.dark-mode .formation-card {
         background: rgba(15, 23, 42, 0.9);
         border-color: rgba(6, 182, 212, 0.3);
     }
-    
+
+    /* Lien invisible qui recouvre toute la card — le bouton de partage (z-index
+       supérieur) reste cliquable indépendamment grâce à sa propre pile d'empilement. */
+    .formation-card-link {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        border-radius: inherit;
+    }
+
     .formation-card::before {
         content: '';
         position: absolute;
@@ -421,12 +430,14 @@
         opacity: 0;
         transition: opacity 0.5s ease;
         z-index: 0;
+        border-radius: inherit;
+        pointer-events: none;
     }
-    
+
     .formation-card:hover::before {
         opacity: 0.05;
     }
-    
+
     .formation-card::after {
         content: '';
         position: absolute;
@@ -438,27 +449,30 @@
         opacity: 0;
         transition: opacity 0.5s ease;
         pointer-events: none;
+        border-radius: inherit;
+        overflow: hidden;
     }
-    
+
     .formation-card:hover::after {
         opacity: 1;
     }
-    
+
     .formation-card:hover {
         transform: translateY(-12px) scale(1.02);
         border-color: rgba(6, 182, 212, 0.5);
         box-shadow: var(--shadow-xl);
     }
-    
+
     .formation-card-content {
         position: relative;
         z-index: 1;
+        pointer-events: none;
     }
-    
+
     .formation-badge {
         position: absolute;
         top: 20px;
-        right: 20px;
+        left: 20px;
         background: var(--secondary-gradient);
         color: white;
         padding: 8px 16px;
@@ -470,7 +484,105 @@
         display: flex;
         align-items: center;
         gap: 6px;
+        pointer-events: none;
     }
+
+    /* ── Bouton de partage — icône seule, sans fond ni bordure ── */
+    .formation-share {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        z-index: 3;
+    }
+    .formation-share-toggle {
+        width: 36px;
+        height: 36px;
+        border: none;
+        outline: none;
+        box-shadow: none;
+        -webkit-appearance: none;
+        appearance: none;
+        padding: 0;
+        background: transparent;
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 1.05rem;
+        transition: all 0.25s ease;
+    }
+    body.dark-mode .formation-share-toggle {
+        color: rgba(255, 255, 255, 0.6);
+    }
+    .formation-share-toggle:hover,
+    .formation-share-toggle:focus,
+    .formation-share-toggle:focus-visible,
+    .formation-share.is-open .formation-share-toggle {
+        color: #06b6d4;
+        outline: none;
+        box-shadow: none;
+        transform: scale(1.15);
+    }
+    .formation-share-menu {
+        position: absolute;
+        top: 42px;
+        right: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        padding: 10px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.98);
+        border: 1px solid rgba(6, 182, 212, 0.2);
+        box-shadow: var(--shadow-lg);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-8px) scale(0.95);
+        transition: all 0.22s ease;
+        min-width: 168px;
+    }
+    body.dark-mode .formation-share-menu {
+        background: rgba(15, 23, 42, 0.98);
+        border-color: rgba(6, 182, 212, 0.3);
+    }
+    .formation-share.is-open .formation-share-menu {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0) scale(1);
+    }
+    .formation-share-menu a,
+    .formation-share-menu button {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 10px;
+        border-radius: 10px;
+        border: none;
+        background: transparent;
+        color: var(--text-primary);
+        font-size: 0.83rem;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        text-align: left;
+        width: 100%;
+    }
+    body.dark-mode .formation-share-menu a,
+    body.dark-mode .formation-share-menu button {
+        color: rgba(255, 255, 255, 0.85);
+    }
+    .formation-share-menu a:hover,
+    .formation-share-menu button:hover {
+        background: rgba(6, 182, 212, 0.12);
+        color: #06b6d4;
+    }
+    .formation-share-menu i { width: 16px; text-align: center; }
+    .formation-share-menu i.fa-facebook-f { color: #1877f2; }
+    .formation-share-menu i.fa-twitter { color: #1da1f2; }
+    .formation-share-menu i.fa-whatsapp { color: #25d366; }
+    .formation-share-menu i.fa-linkedin-in { color: #0a66c2; }
+    .formation-share-menu i.fa-link { color: #06b6d4; }
     
     .formation-icon-wrapper {
         width: 80px;
@@ -783,17 +895,44 @@
 <div class="formations-container">
     <div class="formations-grid" id="formationsGrid">
         @foreach($formations as $index => $formation)
-        <a 
-            href="{{ $formation['route'] }}" 
-            class="formation-card" 
+        @php $shareTitle = urlencode('Formation ' . $formation['name'] . ' gratuite sur NiangProgrammeur'); @endphp
+        <div
+            class="formation-card"
             data-name="{{ strtolower($formation['name']) }}"
             data-description="{{ strtolower($formation['description']) }}"
             data-category="{{ $formation['category'] ?? 'all' }}"
+            data-slug="{{ $formation['slug'] }}"
             style="animation-delay: {{ $index * 0.1 }}s;"
         >
+            <a href="{{ $formation['route'] }}" class="formation-card-link" aria-label="{{ $formation['name'] }}"></a>
+
             <div class="formation-badge">
                 <i class="fas fa-star"></i> {{ trans('app.formations.available') }}
             </div>
+
+            <div class="formation-share" data-share-card>
+                <button type="button" class="formation-share-toggle" data-share-toggle aria-haspopup="true" aria-expanded="false" aria-label="Partager cette formation">
+                    <i class="fas fa-share-alt"></i>
+                </button>
+                <div class="formation-share-menu" data-share-menu>
+                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode($formation['route']) }}" target="_blank" rel="noopener noreferrer">
+                        <i class="fab fa-facebook-f"></i> Facebook
+                    </a>
+                    <a href="https://twitter.com/intent/tweet?url={{ urlencode($formation['route']) }}&text={{ $shareTitle }}" target="_blank" rel="noopener noreferrer">
+                        <i class="fab fa-twitter"></i> X (Twitter)
+                    </a>
+                    <a href="https://wa.me/?text={{ urlencode('Formation ' . $formation['name'] . ' gratuite : ' . $formation['route']) }}" target="_blank" rel="noopener noreferrer">
+                        <i class="fab fa-whatsapp"></i> WhatsApp
+                    </a>
+                    <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ urlencode($formation['route']) }}" target="_blank" rel="noopener noreferrer">
+                        <i class="fab fa-linkedin-in"></i> LinkedIn
+                    </a>
+                    <button type="button" data-copy-link="{{ $formation['route'] }}">
+                        <i class="fas fa-link"></i> Copier le lien
+                    </button>
+                </div>
+            </div>
+
             <div class="formation-card-content">
                 <div class="formation-icon-wrapper">
                     <i class="{{ $formation['icon'] }} formation-icon" style="color: {{ $formation['color'] }};"></i>
@@ -805,7 +944,7 @@
                     <i class="fas fa-arrow-right"></i>
                 </span>
             </div>
-        </a>
+        </div>
         @endforeach
     </div>
     
@@ -864,8 +1003,10 @@
         };
         
         // Add category data to cards
+        // (la card est un <div> depuis l'ajout du bouton de partage — plus de href
+        // direct dessus, on lit le slug via data-slug au lieu du lien imbriqué)
         formationCards.forEach(card => {
-            const slug = card.getAttribute('href').split('/').pop();
+            const slug = card.getAttribute('data-slug') || '';
             const category = categoryMap[slug] || 'all';
             card.setAttribute('data-category', category);
         });
@@ -957,6 +1098,68 @@
         // Initialize
         filterFormations();
     });
+
+    // Bouton de partage sur les cards formation
+    (function () {
+        document.addEventListener('click', function (e) {
+            const toggle = e.target.closest('[data-share-toggle]');
+            const copyBtn = e.target.closest('[data-copy-link]');
+
+            if (copyBtn) {
+                e.preventDefault();
+                e.stopPropagation();
+                const url = copyBtn.getAttribute('data-copy-link');
+                const finish = () => {
+                    const original = copyBtn.innerHTML;
+                    copyBtn.innerHTML = '<i class="fas fa-check"></i> Lien copié !';
+                    setTimeout(() => { copyBtn.innerHTML = original; }, 1800);
+                };
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(url).then(finish).catch(finish);
+                } else {
+                    const ta = document.createElement('textarea');
+                    ta.value = url;
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
+                    finish();
+                }
+                return;
+            }
+
+            if (toggle) {
+                e.preventDefault();
+                e.stopPropagation();
+                const wrapper = toggle.closest('[data-share-card]');
+                const isOpen = wrapper.classList.contains('is-open');
+                document.querySelectorAll('[data-share-card].is-open').forEach(function (el) {
+                    el.classList.remove('is-open');
+                    el.querySelector('[data-share-toggle]').setAttribute('aria-expanded', 'false');
+                });
+                if (!isOpen) {
+                    wrapper.classList.add('is-open');
+                    toggle.setAttribute('aria-expanded', 'true');
+                }
+                return;
+            }
+
+            if (!e.target.closest('[data-share-menu]')) {
+                document.querySelectorAll('[data-share-card].is-open').forEach(function (el) {
+                    el.classList.remove('is-open');
+                    el.querySelector('[data-share-toggle]').setAttribute('aria-expanded', 'false');
+                });
+            }
+        });
+
+        document.querySelectorAll('[data-share-menu]').forEach(function (menu) {
+            menu.addEventListener('click', function (e) {
+                if (e.target.closest('a')) {
+                    e.stopPropagation();
+                }
+            });
+        });
+    })();
 </script>
 
 <!-- Structured Data for SEO -->

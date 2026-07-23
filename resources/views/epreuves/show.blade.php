@@ -235,6 +235,70 @@
         </section>
         @endif
 
+        {{-- Avis --}}
+        <section class="ep2-reviews">
+            <h2 class="ep2-reviews-title">
+                <i class="fas fa-star"></i>
+                Avis
+                @if(isset($reviews) && $reviews->total() > 0)
+                    ({{ $reviews->total() }})
+                @endif
+            </h2>
+
+            @if(isset($reviews) && $reviews->count() > 0)
+                @foreach($reviews as $review)
+                    <div class="ep2-review-item">
+                        <div class="ep2-review-head">
+                            <span class="ep2-review-author">{{ $review->display_name }}</span>
+                            <span class="ep2-review-date">{{ $review->created_at->diffForHumans() }}</span>
+                        </div>
+                        <div class="ep2-review-stars">
+                            @for($i = 1; $i <= 5; $i++)
+                                <i class="fas fa-star{{ $i <= $review->rating ? '' : '-o' }}"></i>
+                            @endfor
+                        </div>
+                        @if($review->comment)
+                            <p class="ep2-review-comment">{{ $review->comment }}</p>
+                        @endif
+                    </div>
+                @endforeach
+                <div style="margin-top: 1rem;">
+                    {{ $reviews->links() }}
+                </div>
+            @else
+                <p class="ep2-reviews-empty">Aucun avis pour le moment. Soyez le premier à donner votre avis !</p>
+            @endif
+
+            @auth
+            <form action="{{ route('epreuves.reviews.store', $epreuve->id) }}" method="POST" class="ep2-review-form">
+                @csrf
+                <p class="ep2-review-form-title">Laisser un avis</p>
+
+                <div class="ep2-star-rating" data-rating="0">
+                    @for($i = 1; $i <= 5; $i++)
+                        <label class="ep2-rating-star" data-rating="{{ $i }}" data-for="ep2-rating-star-{{ $i }}">
+                            <i class="far fa-star"></i>
+                        </label>
+                        <input type="radio" class="ep2-rating-radio" id="ep2-rating-star-{{ $i }}" name="rating" value="{{ $i }}" required>
+                    @endfor
+                </div>
+
+                <textarea name="comment" placeholder="Votre commentaire (facultatif)"></textarea>
+
+                <button type="submit" class="ep2-review-submit">
+                    <i class="fas fa-paper-plane"></i> Envoyer mon avis
+                </button>
+            </form>
+            @else
+            <div class="ep2-review-form" style="text-align:center;">
+                <p class="ep2-review-form-title" style="margin-bottom:.5rem;">Connectez-vous pour laisser un avis</p>
+                <a href="{{ route('login') }}" class="ep2-review-submit">
+                    <i class="fas fa-sign-in-alt"></i> Se connecter
+                </a>
+            </div>
+            @endauth
+        </section>
+
     </div>
 </div>
 
@@ -516,5 +580,52 @@
             if (e.key === 'Escape') closeModal();
         });
     });
+
+    // Système de notation étoiles (avis)
+    (function() {
+        function initEp2StarRating() {
+            document.querySelectorAll('.ep2-star-rating').forEach(function(container) {
+                if (container.dataset.initialized === 'true') return;
+                container.dataset.initialized = 'true';
+                const stars = container.querySelectorAll('.ep2-rating-star');
+                const radios = container.querySelectorAll('.ep2-rating-radio');
+                if (!stars.length || !radios.length) return;
+                let selectedRating = 0, hoverRating = 0;
+                function updateDisplay() {
+                    const r = hoverRating || selectedRating;
+                    stars.forEach(function(star) {
+                        const v = parseInt(star.dataset.rating);
+                        const icon = star.querySelector('i');
+                        star.style.color = v <= r ? '#f59e0b' : '#e2e8f0';
+                        star.style.transform = v <= r ? 'scale(1.15)' : 'scale(1)';
+                        if (icon) icon.className = v <= r ? 'fas fa-star' : 'far fa-star';
+                    });
+                }
+                stars.forEach(function(star) {
+                    const v = parseInt(star.dataset.rating);
+                    const radio = document.getElementById(star.dataset.for);
+                    if (!radio) return;
+                    star.addEventListener('click', function(e) {
+                        e.preventDefault(); e.stopPropagation();
+                        radio.checked = true; selectedRating = v; hoverRating = 0;
+                        container.dataset.rating = selectedRating; updateDisplay();
+                        radio.dispatchEvent(new Event('change', { bubbles: true }));
+                    });
+                    star.addEventListener('mouseenter', function() { hoverRating = v; updateDisplay(); });
+                    star.addEventListener('mouseleave', function() { hoverRating = 0; updateDisplay(); });
+                });
+                radios.forEach(function(radio) {
+                    radio.addEventListener('change', function() {
+                        selectedRating = parseInt(this.value); hoverRating = 0;
+                        container.dataset.rating = selectedRating; updateDisplay();
+                    });
+                });
+                updateDisplay();
+            });
+        }
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initEp2StarRating);
+        else initEp2StarRating();
+        setTimeout(initEp2StarRating, 500);
+    })();
 </script>
 @endpush

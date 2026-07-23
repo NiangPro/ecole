@@ -178,6 +178,14 @@ Route::delete('/documents/reviews/{reviewId}', [DocumentReviewController::class,
     ->middleware('auth')
     ->name('documents.reviews.destroy');
 
+use App\Http\Controllers\EpreuveReviewController;
+Route::post('/epreuves/{epreuveId}/reviews', [EpreuveReviewController::class, 'store'])
+    ->middleware('auth')
+    ->name('epreuves.reviews.store');
+Route::delete('/epreuves/reviews/{reviewId}', [EpreuveReviewController::class, 'destroy'])
+    ->middleware('auth')
+    ->name('epreuves.reviews.destroy');
+
 // Routes wishlist
 use App\Http\Controllers\DocumentWishlistController;
 Route::get('/dashboard/wishlist', [DocumentWishlistController::class, 'index'])
@@ -201,8 +209,18 @@ Route::post('/coupons/remove', [DocumentCouponController::class, 'remove'])
 
 // Routes bundles
 use App\Http\Controllers\DocumentBundleController;
+use App\Http\Controllers\BundlePaymentController;
 Route::get('/bundles', [DocumentBundleController::class, 'index'])
     ->name('bundles.index');
+
+// Paiement d'un pack (Wave) : routes spécifiques AVANT le wildcard /bundles/{slug}
+Route::get('/bundles/payment/download/{token}', [BundlePaymentController::class, 'download'])
+    ->name('bundles.payment.download');
+Route::get('/bundles/payment/success/{paymentId}', [BundlePaymentController::class, 'success'])
+    ->whereNumber('paymentId')->name('bundles.payment.success');
+Route::post('/bundles/{slug}/checkout', [BundlePaymentController::class, 'checkout'])
+    ->name('bundles.payment.checkout');
+
 Route::get('/bundles/{slug}', [DocumentBundleController::class, 'show'])
     ->name('bundles.show');
 Route::post('/bundles/{slug}/add-to-cart', [DocumentBundleController::class, 'addToCart'])
@@ -408,10 +426,10 @@ Route::middleware('auth')->prefix('dashboard')->name('dashboard.')->group(functi
     Route::get('/badges', [App\Http\Controllers\BadgeController::class, 'index'])->name('badges');
     
     // Certificats
-    Route::get('/certificates', [App\Http\Controllers\CertificateController::class, 'index'])->name('certificates');
-    Route::get('/certificates/{id}', [App\Http\Controllers\CertificateController::class, 'show'])->name('certificates.show');
+    Route::get('/certificates', [App\Http\Controllers\CertificateController::class, 'index'])->middleware('profile.complete')->name('certificates');
+    Route::get('/certificates/{id}', [App\Http\Controllers\CertificateController::class, 'show'])->middleware('profile.complete')->name('certificates.show');
     Route::get('/certificates/{id}/download', [App\Http\Controllers\CertificateController::class, 'download'])
-        ->middleware('download_rate_limit')
+        ->middleware(['download_rate_limit', 'profile.complete'])
         ->name('certificates.download');
     Route::post('/certificates/generate/{formationSlug}', [App\Http\Controllers\CertificateController::class, 'generate'])->name('certificates.generate');
     Route::post('/certificates/generate-paid-course/{courseId}', [App\Http\Controllers\CertificateController::class, 'generatePaidCourse'])->name('certificates.generate-paid-course');
@@ -458,7 +476,7 @@ Route::middleware('auth')->prefix('dashboard')->name('dashboard.')->group(functi
     
     // Cours Payants
     Route::get('/paid-courses', [\App\Http\Controllers\ProfileController::class, 'paidCourses'])->name('paid-courses');
-    Route::get('/paid-courses/{courseId}', [\App\Http\Controllers\ProfileController::class, 'showPaidCourse'])->name('paid-courses.show');
+    Route::get('/paid-courses/{courseId}', [\App\Http\Controllers\ProfileController::class, 'showPaidCourse'])->middleware('profile.complete')->name('paid-courses.show');
     Route::post('/paid-courses/{courseId}/chapters/{chapterId}/complete', [\App\Http\Controllers\ProfileController::class, 'markPaidCourseChapterComplete'])->name('paid-courses.chapter.complete');
     
     // Routes pour les objectifs (API)
@@ -758,6 +776,13 @@ Route::middleware(['admin'])->group(function () {
             ->names('administrative-documents');
     });
 
+    // Achats de packs (validation manuelle, comme les documents/épreuves)
+    Route::prefix('admin/bundles/purchases')->name('admin.bundles.purchases.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\BundlePurchaseController::class, 'index'])->name('index');
+        Route::post('/{id}/approve', [\App\Http\Controllers\Admin\BundlePurchaseController::class, 'approve'])->name('approve');
+        Route::post('/{id}/cancel', [\App\Http\Controllers\Admin\BundlePurchaseController::class, 'cancel'])->name('cancel');
+    });
+
     // Routes Épreuves & Corrigés Admin
     Route::prefix('admin/epreuves')->name('admin.epreuves.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\EpreuveController::class, 'index'])->name('index');
@@ -774,6 +799,13 @@ Route::middleware(['admin'])->group(function () {
         Route::get('/achats/liste', [\App\Http\Controllers\Admin\CorrigePurchaseController::class, 'index'])->name('purchases');
         Route::post('/achats/{id}/valider', [\App\Http\Controllers\Admin\CorrigePurchaseController::class, 'approve'])->name('purchases.approve');
         Route::post('/achats/{id}/annuler', [\App\Http\Controllers\Admin\CorrigePurchaseController::class, 'cancel'])->name('purchases.cancel');
+
+        // Modération avis
+        Route::prefix('reviews')->name('reviews.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\EpreuveReviewController::class, 'index'])->name('index');
+            Route::post('/{reviewId}/approve', [\App\Http\Controllers\Admin\EpreuveReviewController::class, 'approve'])->name('approve');
+            Route::delete('/{reviewId}', [\App\Http\Controllers\Admin\EpreuveReviewController::class, 'destroy'])->name('destroy');
+        });
     });
 
     // Routes Publicités Admin

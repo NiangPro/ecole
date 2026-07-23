@@ -6,6 +6,7 @@
     <style>
         @page {
             margin: 0;
+            size: 297mm 210mm;
         }
 
         * {
@@ -13,144 +14,250 @@
             font-family: 'DejaVu Sans', sans-serif;
         }
 
-        body {
+        html, body {
             margin: 0;
             padding: 0;
+            width: 297mm;
+            height: 210mm;
             color: #1e293b;
         }
 
-        .certificate-page {
-            width: 100%;
-            height: 100%;
-            padding: 24px;
+        .cert-page {
+            width: 297mm;
+            padding: 12mm;
+            overflow: hidden;
         }
 
-        .certificate-border {
-            border: 3px solid #04AA6D;
-            padding: 6px;
+        .cert-card {
+            position: relative;
+            width: 273mm;
+            height: 160mm;
+            background-color: #036b46;
+            background-image: linear-gradient(135deg, #052e21, #036b46 55%, #052e21);
+            border-radius: 14px;
+            padding: 12px;
+            page-break-inside: avoid;
         }
 
-        .certificate-inner {
-            border: 1px solid #06b6d4;
-            padding: 46px 60px;
+        .cert-corner-tl,
+        .cert-corner-br {
+            position: absolute;
+            width: 0;
+            height: 0;
+        }
+
+        .cert-corner-tl {
+            top: 0;
+            left: 0;
+            border-style: solid;
+            border-width: 54px 54px 0 0;
+            border-color: #d4af37 transparent transparent transparent;
+        }
+
+        .cert-corner-br {
+            bottom: 0;
+            right: 0;
+            border-style: solid;
+            border-width: 0 0 54px 54px;
+            border-color: transparent transparent #d4af37 transparent;
+        }
+
+        .cert-inner {
+            position: relative;
+            background: #fdfcf8;
+            border-radius: 10px;
+            border: 2px solid #d4af37;
+            padding: 42px 56px 34px;
             text-align: center;
         }
 
-        .certificate-brand {
-            font-size: 13px;
+        .cert-badge {
+            width: 46px;
+            height: 46px;
+            margin: 0 auto 12px;
+            border-radius: 50%;
+            background-color: #d4af37;
+            background-image: linear-gradient(135deg, #f3d98a, #d4af37 55%, #a9791f);
+            border: 3px solid #052e21;
+            text-align: center;
+            line-height: 40px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #052e21;
+        }
+
+        .cert-brand {
+            font-size: 12px;
             letter-spacing: 4px;
             text-transform: uppercase;
-            color: #06b6d4;
+            color: #036b46;
             font-weight: bold;
-            margin-bottom: 6px;
-        }
-
-        .certificate-kicker {
-            font-size: 15px;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            color: #64748b;
-            margin-bottom: 18px;
-        }
-
-        .certificate-title {
-            font-size: 34px;
-            font-weight: bold;
-            color: #1e293b;
-            margin: 0 0 22px 0;
-        }
-
-        .certificate-lead {
-            font-size: 14px;
-            color: #475569;
             margin-bottom: 8px;
         }
 
-        .certificate-name {
-            font-size: 30px;
+        .cert-title {
+            font-size: 40px;
             font-weight: bold;
-            color: #04AA6D;
-            margin: 6px 0 22px 0;
-            padding-bottom: 14px;
-            border-bottom: 2px solid #e2e8f0;
-            display: inline-block;
-            min-width: 420px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #1e293b;
+            margin: 0;
         }
 
-        .certificate-lead-2 {
+        .cert-subtitle {
+            font-size: 15px;
+            font-weight: bold;
+            letter-spacing: 7px;
+            text-transform: uppercase;
+            color: #a9791f;
+            margin-top: 8px;
+        }
+
+        .cert-divider {
+            width: 260px;
+            margin: 18px auto;
+            border-top: 2px solid #d4af37;
+            position: relative;
+        }
+
+        .cert-divider-dot {
+            position: absolute;
+            top: -5px;
+            left: 50%;
+            margin-left: -5px;
+            width: 9px;
+            height: 9px;
+            background: #d4af37;
+            transform: rotate(45deg);
+        }
+
+        .cert-presented-to {
+            font-size: 12px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: bold;
+            color: #475569;
+            margin: 0 0 14px 0;
+        }
+
+        .cert-name {
+            font-size: 28px;
+            font-weight: bold;
+            font-style: italic;
+            color: #04AA6D;
+            display: inline-block;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #d4af37;
+            min-width: 380px;
+            margin-bottom: 18px;
+        }
+
+        .cert-body {
             font-size: 14px;
             color: #475569;
-            margin-bottom: 10px;
+            line-height: 1.6;
+            margin-bottom: 6px;
         }
 
-        .certificate-course {
-            font-size: 22px;
-            font-weight: bold;
+        .cert-body strong {
             color: #1e293b;
-            margin: 4px 0 30px 0;
         }
 
-        .certificate-footer-table {
+        .cert-ornament {
+            width: 200px;
+            margin: 14px auto 4px;
+            border-top: 1px solid #d4af37;
+            position: relative;
+            height: 1px;
+        }
+
+        .cert-ornament-dot {
+            position: absolute;
+            top: -4px;
+            width: 7px;
+            height: 7px;
+            background: #d4af37;
+            transform: rotate(45deg);
+        }
+
+        .cert-ornament-dot-1 { left: 10px; }
+        .cert-ornament-dot-2 { left: 50%; margin-left: -3.5px; width: 9px; height: 9px; top: -5px; }
+        .cert-ornament-dot-3 { right: 10px; }
+
+        .cert-footer-table {
             width: 100%;
-            margin-top: 30px;
+            margin-top: 20px;
         }
 
-        .certificate-footer-table td {
-            width: 33%;
+        .cert-footer-table td {
+            width: 50%;
             text-align: center;
-            font-size: 11px;
-            color: #64748b;
             vertical-align: top;
         }
 
-        .certificate-footer-table strong {
-            display: block;
-            font-size: 13px;
+        .cert-footer-value {
+            font-size: 14px;
+            font-weight: bold;
             color: #1e293b;
-            margin-bottom: 3px;
+            margin-bottom: 6px;
         }
 
-        .certificate-seal {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            border: 3px solid #04AA6D;
-            display: inline-block;
-            line-height: 64px;
-            font-size: 26px;
-            font-weight: bold;
-            color: #04AA6D;
-            text-align: center;
+        .cert-footer-line {
+            border-top: 1px dashed #a9791f;
+            margin-bottom: 6px;
+        }
+
+        .cert-footer-label {
+            font-size: 10px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #64748b;
         }
     </style>
 </head>
 <body>
-    <div class="certificate-page">
-        <div class="certificate-border">
-            <div class="certificate-inner">
-                <div class="certificate-brand">NiangProgrammeur</div>
-                <div class="certificate-kicker">Certificat de r&eacute;ussite</div>
+    <div class="cert-page">
+        <div class="cert-card">
+            <div class="cert-corner-tl"></div>
+            <div class="cert-corner-br"></div>
 
-                <div class="certificate-title">CERTIFICAT</div>
+            <div class="cert-inner">
+                <div class="cert-badge">&#10003;</div>
+                <div class="cert-brand">NiangProgrammeur</div>
 
-                <div class="certificate-lead">Ce certificat est fi&egrave;rement d&eacute;cern&eacute; &agrave;</div>
-                <div class="certificate-name">{{ $user->name ?? 'Etudiant' }}</div>
+                <div class="cert-title">Certificat</div>
+                <div class="cert-subtitle">De R&eacute;ussite</div>
 
-                <div class="certificate-lead-2">pour avoir termin&eacute; avec succ&egrave;s la formation</div>
-                <div class="certificate-course">{{ $formationName }}</div>
+                <div class="cert-divider"><div class="cert-divider-dot"></div></div>
 
-                <table class="certificate-footer-table">
+                <div class="cert-presented-to">Ce certificat est fi&egrave;rement d&eacute;cern&eacute; &agrave;</div>
+                <div class="cert-name">{{ $user->name ?? 'Etudiant' }}</div>
+
+                <div class="cert-body">
+                    Pour avoir termin&eacute; avec succ&egrave;s la formation<br>
+                    <strong>{{ $formationName }}</strong>
+                    @if(!is_null($certificate->score ?? null))
+                        avec un score de <strong>{{ $certificate->score }}%</strong>
+                    @endif
+                </div>
+
+                <div class="cert-ornament">
+                    <div class="cert-ornament-dot cert-ornament-dot-1"></div>
+                    <div class="cert-ornament-dot cert-ornament-dot-2"></div>
+                    <div class="cert-ornament-dot cert-ornament-dot-3"></div>
+                </div>
+
+                <table class="cert-footer-table">
                     <tr>
                         <td>
-                            <strong>{{ $certificate->completed_date ? $certificate->completed_date->format('d/m/Y') : now()->format('d/m/Y') }}</strong>
-                            Date d'obtention
+                            <div class="cert-footer-value">{{ $certificate->completed_date ? $certificate->completed_date->format('d/m/Y') : now()->format('d/m/Y') }}</div>
+                            <div class="cert-footer-line"></div>
+                            <div class="cert-footer-label">Date d'obtention</div>
                         </td>
                         <td>
-                            <div class="certificate-seal">&#10003;</div>
-                        </td>
-                        <td>
-                            <strong>{{ $certificate->certificate_number }}</strong>
-                            Num&eacute;ro de certificat
+                            <div class="cert-footer-value">{{ $certificate->certificate_number }}</div>
+                            <div class="cert-footer-line"></div>
+                            <div class="cert-footer-label">Num&eacute;ro de certificat</div>
                         </td>
                     </tr>
                 </table>

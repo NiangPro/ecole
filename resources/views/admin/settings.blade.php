@@ -220,7 +220,7 @@
             </label>
             <div class="flex items-center gap-4 flex-wrap">
                 <div style="width:72px;height:72px;border-radius:14px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);display:grid;place-items:center;overflow:hidden;flex-shrink:0;">
-                    <img src="{{ \App\Models\SiteSetting::logoUrl() }}" alt="Logo actuel" style="max-width:100%;max-height:100%;object-fit:contain;">
+                    <img loading="lazy" src="{{ \App\Models\SiteSetting::logoUrl() }}" alt="Logo actuel" style="max-width:100%;max-height:100%;object-fit:contain;">
                 </div>
                 <div class="flex-1" style="min-width:240px;">
                     <input type="file" name="logo" accept="image/png,image/jpeg,image/webp,image/svg+xml"
@@ -610,11 +610,22 @@
         <div class="grid md:grid-cols-2 gap-6">
             <div class="md:col-span-2">
                 <label class="inline-flex items-center gap-3 cursor-pointer">
-                    <input type="checkbox" name="urgency_banner_enabled" value="1"
+                    <input type="checkbox" name="urgency_banner_enabled" value="1" id="urgencyBannerEnabled"
                            class="w-5 h-5"
                            {{ old('urgency_banner_enabled', $settings->urgency_banner_enabled ?? false) ? 'checked' : '' }}>
                     <span class="font-semibold text-gray-300">Activer la bannière</span>
                 </label>
+                @if(($settings->urgency_banner_enabled ?? false) && empty($settings->urgency_banner_target_date))
+                <p class="text-yellow-400 text-sm mt-2">
+                    <i class="fas fa-triangle-exclamation mr-1"></i>
+                    La bannière est activée mais aucune date cible n'est définie : elle ne s'affiche donc pas sur le site.
+                </p>
+                @elseif(($settings->urgency_banner_enabled ?? false) && $settings->urgency_banner_target_date && !\Carbon\Carbon::parse($settings->urgency_banner_target_date)->isFuture())
+                <p class="text-yellow-400 text-sm mt-2">
+                    <i class="fas fa-triangle-exclamation mr-1"></i>
+                    La date cible est déjà passée : la bannière ne s'affiche donc pas sur le site.
+                </p>
+                @endif
             </div>
             <div class="md:col-span-2">
                 <label class="block text-gray-300 mb-2 font-semibold">
@@ -630,10 +641,12 @@
             <div>
                 <label class="block text-gray-300 mb-2 font-semibold">
                     <i class="fas fa-calendar-alt mr-2"></i>Date cible (fin du compte à rebours)
+                    <span class="text-red-400" title="Obligatoire pour afficher la bannière">*</span>
                 </label>
-                <input type="datetime-local" name="urgency_banner_target_date"
+                <input type="datetime-local" name="urgency_banner_target_date" id="urgencyBannerTargetDate"
                        value="{{ ($settings->urgency_banner_target_date ?? null) ? \Carbon\Carbon::parse($settings->urgency_banner_target_date)->format('Y-m-d\TH:i') : old('urgency_banner_target_date') }}"
                        class="input-admin">
+                <p class="text-xs text-gray-500 mt-1">Obligatoire et doit être dans le futur pour que la bannière s'affiche.</p>
                 @error('urgency_banner_target_date')
                     <p class="text-red-400 text-sm mt-2">{{ $message }}</p>
                 @enderror
@@ -744,6 +757,17 @@
 
 @section('scripts')
 <script>
+(function () {
+    var checkbox = document.getElementById('urgencyBannerEnabled');
+    var dateInput = document.getElementById('urgencyBannerTargetDate');
+    if (!checkbox || !dateInput) return;
+    function syncRequired() {
+        dateInput.required = checkbox.checked;
+    }
+    checkbox.addEventListener('change', syncRequired);
+    syncRequired();
+})();
+
 async function saveMaintenance() {
     const btn     = document.getElementById('maint-save-btn');
     const active  = document.getElementById('maintenance_toggle').checked;

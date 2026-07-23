@@ -4,16 +4,16 @@
 @vite('resources/css/features/emplois.css')
 @endpush
 
-@section('title', '70 Articles les Plus Récents - Emplois & Opportunités | NiangProgrammeur')
-@section('meta_description', 'Découvrez les 70 articles les plus récents sur les emplois, bourses d\'études, opportunités de carrière et candidatures spontanées au Sénégal. URLs optimisées SEO et conformes aux exigences Google AdSense.')
+@section('title', 'Articles les Plus Récents - Emplois & Opportunités | NiangProgrammeur')
+@section('meta_description', 'Découvrez les articles les plus récents sur les emplois, bourses d\'études, opportunités de carrière et candidatures spontanées au Sénégal. URLs optimisées SEO et conformes aux exigences Google AdSense.')
 @section('meta_keywords', 'articles emploi Sénégal, offres d\'emploi récentes, bourses d\'études, opportunités carrière, recrutement Sénégal, emploi Dakar, articles SEO')
+@section('canonical', route('emplois.recent-articles'))
 
 @push('meta')
-    <link rel="canonical" href="{{ route('emplois.recent-articles') }}">
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ route('emplois.recent-articles') }}">
-    <meta property="og:title" content="70 Articles les Plus Récents - Emplois & Opportunités | NiangProgrammeur">
-    <meta property="og:description" content="Découvrez les 70 articles les plus récents sur les emplois, bourses d'études, opportunités de carrière et candidatures spontanées au Sénégal.">
+    <meta property="og:title" content="Articles les Plus Récents - Emplois & Opportunités | NiangProgrammeur">
+    <meta property="og:description" content="Découvrez les articles les plus récents sur les emplois, bourses d'études, opportunités de carrière et candidatures spontanées au Sénégal.">
     <meta name="robots" content="index, follow">
     <meta name="googlebot" content="index, follow">
 @endpush
@@ -390,8 +390,8 @@
 <!-- Hero Section -->
 <div class="recent-articles-hero">
     <div class="articles-container">
-        <h1><i class="fas fa-newspaper mr-3"></i>70 Articles les Plus Récents</h1>
-        <p>Découvrez notre sélection des 70 articles les plus récents sur les emplois, bourses d'études, opportunités de carrière et candidatures spontanées au Sénégal. Tous nos articles sont optimisés pour le SEO et conformes aux exigences Google AdSense.</p>
+        <h1><i class="fas fa-newspaper mr-3"></i>Articles les Plus Récents</h1>
+        <p>Découvrez notre sélection des articles les plus récents sur les emplois, bourses d'études, opportunités de carrière et candidatures spontanées au Sénégal. Tous nos articles sont optimisés pour le SEO et conformes aux exigences Google AdSense.</p>
     </div>
 </div>
 
@@ -400,7 +400,7 @@
     <!-- Introduction -->
     <div class="articles-intro">
         <h2><i class="fas fa-info-circle mr-2"></i>Articles Optimisés SEO</h2>
-        <p>Cette page présente les 70 articles les plus récents publiés sur notre plateforme. Chaque article dispose d'une URL optimisée pour les moteurs de recherche, d'une meta description et d'un contenu de qualité conforme aux exigences Google AdSense. Tous les articles sont régulièrement mis à jour pour garantir la pertinence et l'actualité des informations.</p>
+        <p>Cette page présente les articles les plus récents publiés sur notre plateforme. Chaque article dispose d'une URL optimisée pour les moteurs de recherche, d'une meta description et d'un contenu de qualité conforme aux exigences Google AdSense. Tous les articles sont régulièrement mis à jour pour garantir la pertinence et l'actualité des informations.</p>
     </div>
     
     <!-- Articles List -->
@@ -491,7 +491,13 @@
         </div>
         @endforelse
     </div>
-    
+
+    @if($recentArticles->hasPages())
+    <div style="margin-top: 40px;">
+        {{ $recentArticles->links() }}
+    </div>
+    @endif
+
     <!-- SEO Information Box -->
     <div class="seo-info-box">
         <h3>

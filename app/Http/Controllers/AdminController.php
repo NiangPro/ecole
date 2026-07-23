@@ -375,6 +375,7 @@ class AdminController extends Controller
                 'App\\Models\\DocumentPurchase' => 'Documents',
                 'App\\Models\\EpreuvePurchase' => 'Épreuves',
                 'App\\Models\\CorrigePurchase' => 'Corrigés',
+                'App\\Models\\BundlePurchase' => 'Packs',
                 'App\\Models\\CoursePurchase' => 'Cours payants',
                 'App\\Models\\Donation' => 'Dons',
                 'App\\Models\\Subscription' => 'Abonnements',
@@ -700,8 +701,11 @@ class AdminController extends Controller
             'maintenance_ends_at' => 'nullable|date',
             'corrige_price' => 'nullable|numeric|min:0|max:1000000',
             'urgency_banner_text' => 'nullable|string|max:255',
-            'urgency_banner_target_date' => 'nullable|date',
+            'urgency_banner_target_date' => 'nullable|date|required_if:urgency_banner_enabled,1|after:now',
             'urgency_banner_link' => 'nullable|string|max:255',
+        ], [
+            'urgency_banner_target_date.required_if' => 'La date cible est obligatoire pour afficher la bannière d\'urgence.',
+            'urgency_banner_target_date.after' => 'La date cible doit être dans le futur, sinon la bannière ne s\'affichera jamais.',
         ]);
 
         $settings = SiteSetting::first();

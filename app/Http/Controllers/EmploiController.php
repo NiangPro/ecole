@@ -393,17 +393,19 @@ class EmploiController extends Controller
     /**
      * Articles récents
      */
-    public function recent()
+    public function recent(Request $request)
     {
-        // Cache les 70 articles les plus récents avec optimisation SEO (15 minutes) - Optimisé avec eager loading
-        $recentArticles = Cache::remember('recent_articles_70_seo', 900, function () {
+        // Paginé (20/page) au lieu d'un take(70) rendu d'un bloc : 70 cartes complètes sur
+        // une seule page poussaient le DOM de cette page bien au-delà du seuil "DOM excessif"
+        // de Lighthouse (chaque carte = header + badge + titre + URL + 4 métadonnées + bouton).
+        $page = $request->get('page', 1);
+        $recentArticles = Cache::remember("recent_articles_seo_page_{$page}", 900, function () {
             return JobArticle::published()
                 ->with(['category:id,name,slug']) // Eager loading optimisé
                 ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views', 'meta_title', 'meta_description', 'created_at')
                 ->orderBy('published_at', 'desc')
                 ->orderBy('created_at', 'desc')
-                ->take(70)
-                ->get();
+                ->paginate(20);
         });
         
         return view('emplois.recent-articles', compact('recentArticles'));

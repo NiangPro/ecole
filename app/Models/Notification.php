@@ -135,6 +135,23 @@ class Notification extends Model
     }
 
     /**
+     * Notifier tous les administrateurs (ex: nouvel achat à valider).
+     * Crée une notification par admin — chacun a son propre badge/état lu-non-lu.
+     */
+    public static function notifyAdmins(
+        string $type,
+        string $title,
+        string $message,
+        ?string $link = null,
+        ?string $icon = null,
+        ?string $color = null
+    ): void {
+        \App\Models\User::where('role', 'admin')->pluck('id')->each(function ($adminId) use ($type, $title, $message, $link, $icon, $color) {
+            self::createNotification($adminId, $type, $title, $message, $link, $icon, $color);
+        });
+    }
+
+    /**
      * Obtenir les notifications non lues
      */
     public static function getUnread($userId, $limit = 10)

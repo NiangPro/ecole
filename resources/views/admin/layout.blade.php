@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Dashboard Admin - NiangProgrammeur')</title>
     <link rel="icon" type="image/png" href="{{ \App\Models\SiteSetting::logoUrl() }}">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -709,7 +710,149 @@
         body.light-mode .dark-mode-toggle-btn:hover {
             background: rgba(6, 182, 212, 0.2);
         }
-        
+
+        /* Notifications Admin */
+        .admin-notif {
+            position: relative;
+            z-index: 100;
+        }
+
+        .admin-notif-btn {
+            position: relative;
+        }
+
+        .admin-notif-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            min-width: 18px;
+            height: 18px;
+            padding: 0 4px;
+            border-radius: 9px;
+            background: #ef4444;
+            color: #fff;
+            font-size: 0.65rem;
+            font-weight: 700;
+            line-height: 18px;
+            text-align: center;
+        }
+
+        .admin-notif-dropdown {
+            position: absolute;
+            top: calc(100% + 0.5rem);
+            right: 0;
+            width: 340px;
+            max-width: 90vw;
+            background: rgba(10, 10, 26, 0.98);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            border-radius: 12px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 9999;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+            overflow: hidden;
+        }
+
+        .admin-notif.active .admin-notif-dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        body.light-mode .admin-notif-dropdown {
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .admin-notif-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.85rem 1rem;
+            border-bottom: 1px solid rgba(6, 182, 212, 0.2);
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .admin-notif-markall {
+            background: none;
+            border: none;
+            color: #06b6d4;
+            font-size: 0.75rem;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .admin-notif-markall:hover {
+            text-decoration: underline;
+        }
+
+        .admin-notif-list {
+            max-height: 360px;
+            overflow-y: auto;
+        }
+
+        .admin-notif-empty {
+            padding: 2rem 1rem;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.85rem;
+        }
+
+        .admin-notif-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            text-decoration: none;
+            color: inherit;
+            border-bottom: 1px solid rgba(6, 182, 212, 0.08);
+            transition: background 0.2s ease;
+        }
+
+        .admin-notif-item:hover {
+            background: rgba(6, 182, 212, 0.08);
+        }
+
+        .admin-notif-item:last-child {
+            border-bottom: none;
+        }
+
+        .admin-notif-item-icon {
+            width: 34px;
+            height: 34px;
+            min-width: 34px;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .admin-notif-item-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin: 0 0 0.15rem;
+        }
+
+        .admin-notif-item-message {
+            font-size: 0.78rem;
+            color: #94a3b8;
+            margin: 0 0 0.2rem;
+        }
+
+        .admin-notif-item-time {
+            font-size: 0.7rem;
+            color: #64748b;
+        }
+
+        body.light-mode .admin-notif-item-message {
+            color: #64748b;
+        }
+
         @media (max-width: 768px) {
             .header-admin {
                 flex-direction: row;
@@ -745,7 +888,7 @@
     <aside class="sidebar" id="sidebar">
         <div class="logo-admin">
             <div class="flex items-center gap-3 mb-2">
-                <img src="{{ \App\Models\SiteSetting::logoUrl() }}" alt="Logo" class="h-10 w-10 rounded-lg" style="filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.8));">
+                <img loading="lazy" src="{{ \App\Models\SiteSetting::logoUrl() }}" alt="Logo" class="h-10 w-10 rounded-lg" style="filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.8));">
                 <h1 class="text-xl">ADMIN PANEL</h1>
             </div>
             <p class="text-sm text-gray-400">NiangProgrammeur</p>
@@ -828,7 +971,13 @@
             </div>
             
             <!-- Menu Dropdown Documents -->
-            <div class="sidebar-dropdown {{ request()->routeIs('admin.documents.*') || request()->routeIs('admin.documents.administrative-documents.*') ? 'active' : '' }}">
+            @php
+                $documentsDropdownActive = request()->routeIs('admin.documents.*')
+                    || request()->routeIs('admin.documents.administrative-documents.*')
+                    || request()->routeIs('admin.epreuves.*')
+                    || request()->routeIs('admin.bundles.*');
+            @endphp
+            <div class="sidebar-dropdown {{ $documentsDropdownActive ? 'active' : '' }}">
                 <button class="sidebar-item sidebar-dropdown-toggle" onclick="toggleSidebarDropdown('documents')">
                     <i class="fas fa-file-alt text-xl"></i>
                     <span>Documents</span>
@@ -840,7 +989,7 @@
                     @endif
                     <i class="fas fa-chevron-down text-sm dropdown-icon" id="documents-icon" style="margin-left: auto;"></i>
                 </button>
-                <div class="sidebar-dropdown-menu" id="documents-dropdown" style="display: {{ request()->routeIs('admin.documents.*') ? 'block' : 'none' }};">
+                <div class="sidebar-dropdown-menu" id="documents-dropdown" style="display: {{ $documentsDropdownActive ? 'block' : 'none' }};">
                     <a href="{{ route('admin.documents.documents.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.documents.documents.*') ? 'active' : '' }}">
                         <i class="fas fa-file"></i>
                         <span>Documents</span>
@@ -860,6 +1009,13 @@
                             @if($pendingCorriges > 0)<span class="sidebar-badge">{{ $pendingCorriges }}</span>@endif
                         </span>
                     </a>
+                    <a href="{{ route('admin.epreuves.reviews.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.epreuves.reviews.*') ? 'active' : '' }}">
+                        <i class="fas fa-comments"></i>
+                        <span>Avis épreuves
+                            @php $pendingEpreuveReviews = \App\Models\EpreuveReview::where('is_approved', false)->count(); @endphp
+                            @if($pendingEpreuveReviews > 0)<span class="sidebar-badge">{{ $pendingEpreuveReviews }}</span>@endif
+                        </span>
+                    </a>
                     <a href="{{ route('admin.documents.categories.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.documents.categories.*') ? 'active' : '' }}">
                         <i class="fas fa-folder"></i>
                         <span>Catégories</span>
@@ -871,6 +1027,13 @@
                     <a href="{{ route('admin.documents.bundles.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.documents.bundles.*') ? 'active' : '' }}">
                         <i class="fas fa-box"></i>
                         <span>Packs</span>
+                    </a>
+                    <a href="{{ route('admin.bundles.purchases.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.bundles.purchases.*') ? 'active' : '' }}">
+                        <i class="fas fa-box-open"></i>
+                        <span>Achats de packs
+                            @php $pendingBundlePurchases = \App\Models\BundlePurchase::where('status', 'pending')->count(); @endphp
+                            @if($pendingBundlePurchases > 0)<span class="sidebar-badge">{{ $pendingBundlePurchases }}</span>@endif
+                        </span>
                     </a>
                     <a href="{{ route('admin.documents.coupons.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.documents.coupons.*') ? 'active' : '' }}">
                         <i class="fas fa-tags"></i>
@@ -893,32 +1056,67 @@
                 </div>
             </div>
             
-            @auth
-            @if(Auth::user()->isAdmin())
-            <a href="{{ route('admin.messages') }}" class="sidebar-item {{ request()->routeIs('admin.messages') ? 'active' : '' }}">
-                <i class="fas fa-envelope text-xl"></i>
-                <span>Messages</span>
-                @php
-                    $unreadCount = \App\Models\ContactMessage::unread()->count();
-                @endphp
-                @if($unreadCount > 0)
-                    <span class="ml-auto px-2 py-1 bg-red-500 text-white text-xs rounded-full">{{ $unreadCount }}</span>
-                @endif
-            </a>
-            @endif
-            @endauth
-            
-            <a href="{{ route('admin.comments.index') }}" class="sidebar-item {{ request()->routeIs('admin.comments.*') ? 'active' : '' }}">
-                <i class="fas fa-comments text-xl"></i>
-                <span>Commentaires</span>
-                @php
-                    $pendingComments = \App\Models\Comment::where('status', 'pending')->count();
-                @endphp
-                @if($pendingComments > 0)
-                    <span class="ml-auto px-2 py-1 bg-yellow-500 text-white text-xs rounded-full">{{ $pendingComments }}</span>
-                @endif
-            </a>
-            
+            <!-- Dropdown Communication (Messages, Commentaires, Utilisateurs, Newsletter) -->
+            @php
+                $communicationActive = request()->routeIs('admin.messages')
+                    || request()->routeIs('admin.comments.*')
+                    || request()->routeIs('admin.users')
+                    || request()->routeIs('admin.newsletter.*');
+            @endphp
+            <div class="sidebar-dropdown {{ $communicationActive ? 'active' : '' }}">
+                <button class="sidebar-item sidebar-dropdown-toggle" onclick="toggleSidebarDropdown('communication')">
+                    <i class="fas fa-comment-dots text-xl"></i>
+                    <span>Communication</span>
+                    <i class="fas fa-chevron-down dropdown-icon ml-auto" id="communication-icon"></i>
+                </button>
+                <div class="sidebar-dropdown-menu" id="communication-dropdown" style="display: {{ $communicationActive ? 'block' : 'none' }};">
+                    @auth
+                    @if(Auth::user()->isAdmin())
+                    <a href="{{ route('admin.messages') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.messages') ? 'active' : '' }}">
+                        <i class="fas fa-envelope"></i>
+                        <span>Messages</span>
+                        @php
+                            $unreadCount = \App\Models\ContactMessage::unread()->count();
+                        @endphp
+                        @if($unreadCount > 0)
+                            <span class="ml-auto px-2 py-1 bg-red-500 text-white text-xs rounded-full">{{ $unreadCount }}</span>
+                        @endif
+                    </a>
+                    @endif
+                    @endauth
+
+                    <a href="{{ route('admin.comments.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.comments.*') ? 'active' : '' }}">
+                        <i class="fas fa-comments"></i>
+                        <span>Commentaires</span>
+                        @php
+                            $pendingComments = \App\Models\Comment::where('status', 'pending')->count();
+                        @endphp
+                        @if($pendingComments > 0)
+                            <span class="ml-auto px-2 py-1 bg-yellow-500 text-white text-xs rounded-full">{{ $pendingComments }}</span>
+                        @endif
+                    </a>
+
+                    @auth
+                    @if(Auth::user()->isAdmin())
+                    <a href="{{ route('admin.users') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.users') ? 'active' : '' }}">
+                        <i class="fas fa-users"></i>
+                        <span>Utilisateurs</span>
+                    </a>
+                    <a href="{{ route('admin.newsletter.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.newsletter.*') ? 'active' : '' }}">
+                        <i class="fas fa-envelope-open-text"></i>
+                        <span>Newsletter</span>
+                        @php
+                            $unreadNewsletters = \App\Models\Newsletter::unread()->where('is_active', true)->count();
+                        @endphp
+                        @if($unreadNewsletters > 0)
+                            <span class="ml-auto px-2 py-1 bg-blue-500 text-white text-xs rounded-full">{{ $unreadNewsletters }}</span>
+                        @endif
+                    </a>
+                    @endif
+                    @endauth
+                </div>
+            </div>
+
             <!-- Menu Dropdown Forum -->
             <div class="sidebar-dropdown {{ request()->routeIs('admin.forum.*') ? 'active' : '' }}">
                 <button class="sidebar-item sidebar-dropdown-toggle" onclick="toggleSidebarDropdown('forum')">
@@ -933,23 +1131,9 @@
                     </a>
                 </div>
             </div>
-            
+
             @auth
             @if(Auth::user()->isAdmin())
-            <a href="{{ route('admin.users') }}" class="sidebar-item {{ request()->routeIs('admin.users') ? 'active' : '' }}">
-                <i class="fas fa-users text-xl"></i>
-                <span>Utilisateurs</span>
-            </a>
-            <a href="{{ route('admin.newsletter.index') }}" class="sidebar-item {{ request()->routeIs('admin.newsletter.*') ? 'active' : '' }}">
-                <i class="fas fa-envelope-open-text text-xl"></i>
-                <span>Newsletter</span>
-                @php
-                    $unreadNewsletters = \App\Models\Newsletter::unread()->where('is_active', true)->count();
-                @endphp
-                @if($unreadNewsletters > 0)
-                    <span class="ml-auto px-2 py-1 bg-blue-500 text-white text-xs rounded-full">{{ $unreadNewsletters }}</span>
-                @endif
-            </a>
             <!-- Dropdown Monétisation -->
             <div class="sidebar-dropdown {{ request()->routeIs('admin.monetization.*') ? 'active' : '' }}">
                 <button class="sidebar-item sidebar-dropdown-toggle" onclick="toggleSidebarDropdown('monetization')">
@@ -1025,7 +1209,7 @@
             </div>
             @endif
             @endauth
-            
+
             <a href="{{ route('admin.logout') }}" class="sidebar-item" style="margin-top: 2rem; color: #ef4444;">
                 <i class="fas fa-sign-out-alt text-xl"></i>
                 <span>Déconnexion</span>
@@ -1047,7 +1231,25 @@
                 <button id="dark-mode-toggle" class="dark-mode-toggle-btn" onclick="toggleDarkMode()" title="Basculer le mode sombre">
                     <i class="fas fa-moon" id="dark-mode-icon"></i>
                 </button>
-                
+
+                <!-- Notifications Admin -->
+                <div class="admin-notif" id="adminNotif">
+                    <button id="admin-notif-toggle" class="dark-mode-toggle-btn admin-notif-btn" onclick="toggleAdminNotifDropdown()" title="Notifications">
+                        <i class="fas fa-bell"></i>
+                        <span class="admin-notif-badge" id="adminNotifBadge" style="display:none;">0</span>
+                    </button>
+
+                    <div class="admin-notif-dropdown" id="adminNotifDropdown">
+                        <div class="admin-notif-header">
+                            <span>Notifications</span>
+                            <button type="button" class="admin-notif-markall" onclick="markAllAdminNotifsAsRead()">Tout marquer comme lu</button>
+                        </div>
+                        <div class="admin-notif-list" id="adminNotifList">
+                            <div class="admin-notif-empty">Chargement...</div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="user-dropdown" id="userDropdown">
                     <div class="user-btn" onclick="toggleDropdown()">
                         <div class="user-avatar">
@@ -1101,7 +1303,111 @@
             const dropdown = document.getElementById('userDropdown');
             dropdown.classList.toggle('active');
         }
-        
+
+        // Notifications Admin
+        function toggleAdminNotifDropdown() {
+            const wrapper = document.getElementById('adminNotif');
+            const wasActive = wrapper.classList.contains('active');
+            wrapper.classList.toggle('active');
+            if (!wasActive) {
+                loadAdminNotifs();
+            }
+        }
+
+        function getAdminNotifIcon(icon) {
+            return icon || 'fa-bell';
+        }
+
+        function renderAdminNotifs(notifications) {
+            const list = document.getElementById('adminNotifList');
+            if (!notifications || notifications.length === 0) {
+                list.innerHTML = '<div class="admin-notif-empty">Aucune nouvelle notification</div>';
+                return;
+            }
+            list.innerHTML = notifications.map(function(n) {
+                const link = n.link || '#';
+                const color = n.color || '#64748b';
+                return '<a href="' + link + '" class="admin-notif-item" data-id="' + n.id + '" onclick="markAdminNotifRead(' + n.id + ')">'
+                    + '<div class="admin-notif-item-icon" style="background:' + color + '22;color:' + color + ';">'
+                    + '<i class="fas ' + getAdminNotifIcon(n.icon) + '"></i>'
+                    + '</div>'
+                    + '<div>'
+                    + '<p class="admin-notif-item-title">' + n.title + '</p>'
+                    + '<p class="admin-notif-item-message">' + n.message + '</p>'
+                    + '<p class="admin-notif-item-time">' + n.created_at + '</p>'
+                    + '</div>'
+                    + '</a>';
+            }).join('');
+        }
+
+        function updateAdminNotifBadge(count) {
+            const badge = document.getElementById('adminNotifBadge');
+            if (count > 0) {
+                badge.textContent = count > 99 ? '99+' : count;
+                badge.style.display = 'block';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
+        function loadAdminNotifs() {
+            fetch('{{ route("api.notifications.unread") }}', {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+                .then(function(res) { return res.json(); })
+                .then(function(data) {
+                    renderAdminNotifs(data.notifications);
+                    updateAdminNotifBadge(data.count);
+                })
+                .catch(function() {
+                    document.getElementById('adminNotifList').innerHTML = '<div class="admin-notif-empty">Erreur de chargement</div>';
+                });
+        }
+
+        function markAdminNotifRead(id) {
+            fetch('/api/notifications/' + id + '/read', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+        }
+
+        function markAllAdminNotifsAsRead() {
+            fetch('{{ route("api.notifications.read-all") }}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            }).then(function() {
+                loadAdminNotifs();
+            });
+        }
+
+        // Rafraîchir le badge périodiquement
+        function refreshAdminNotifBadge() {
+            fetch('{{ route("api.notifications.unread") }}', {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+                .then(function(res) { return res.json(); })
+                .then(function(data) { updateAdminNotifBadge(data.count); })
+                .catch(function() {});
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            refreshAdminNotifBadge();
+            setInterval(refreshAdminNotifBadge, 60000);
+        });
+
+        document.addEventListener('click', function(event) {
+            const wrapper = document.getElementById('adminNotif');
+            if (wrapper && !wrapper.contains(event.target)) {
+                wrapper.classList.remove('active');
+            }
+        });
+
         function toggleSidebarDropdown(id) {
             const dropdown = document.getElementById(id + '-dropdown');
             const icon = document.getElementById(id + '-icon');

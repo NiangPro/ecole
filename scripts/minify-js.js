@@ -9,7 +9,18 @@ const __dirname = path.dirname(__filename);
 
 const jsDir = path.join(__dirname, '..', 'public', 'js');
 const filesToMinify = [
+    // Chargés sur TOUTES les pages publiques via layouts/app.blade.php (loadScripts()) —
+    // servis jusqu'ici en clair (commentaires + noms de variables complets), alors que
+    // layouts/app.blade.php référence bien les .min.js une fois ce script exécuté.
+    'performance.js',
+    'intelligent-prefetch.js',
+    'lazy-loading.js',
+    'pwa-manager.js',
+    'analytics-tracker.js',
     'main.js',
+    'ux-improvements.js',
+    'social-features.js',
+    // Admin uniquement, mais autant les garder à jour.
     'article-editor.js',
     'sidebar-navigation.js',
     'sidebar-sticky.js'

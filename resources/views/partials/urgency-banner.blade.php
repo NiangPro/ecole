@@ -12,15 +12,38 @@
     $__urgencyDismissed = $__urgencyCookieName && request()->cookie($__urgencyCookieName);
 @endphp
 @if($__urgencyActive && !$__urgencyDismissed)
-<div id="urgency-banner" data-target="{{ $__urgencyTargetIso }}" data-cookie="{{ $__urgencyCookieName }}" style="position:relative;z-index:1000;background:linear-gradient(90deg,#dc2626,#ea580c);color:#fff;padding:.6rem 1rem;text-align:center;font-weight:700;font-size:.9rem;">
-    <div style="max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:.6rem;">
-        <span>{{ $__urgency->urgency_banner_text ?? 'Les examens approchent — préparez-vous dès maintenant !' }}</span>
-        <span id="urgency-countdown" style="background:rgba(0,0,0,.2);padding:.2rem .6rem;border-radius:999px;font-variant-numeric:tabular-nums;"></span>
-        @if($__urgency->urgency_banner_link)
-        <a href="{{ $__urgency->urgency_banner_link }}" style="color:#fff;text-decoration:underline;">Voir les documents →</a>
-        @endif
+@php
+    $__urgencyText = $__urgency->urgency_banner_text ?? 'Les examens approchent — préparez-vous dès maintenant !';
+@endphp
+<style>
+    #urgency-banner { position: relative; overflow: hidden; background: linear-gradient(90deg,#dc2626,#ea580c); color: #fff; padding: .65rem 0; font-weight: 700; font-size: .9rem; }
+    #urgency-banner .urgency-marquee-track { display: flex; width: max-content; animation: urgency-marquee 22s linear infinite; }
+    #urgency-banner .urgency-marquee-item { display: flex; align-items: center; gap: .6rem; padding-inline-end: 4rem; flex-shrink: 0; white-space: nowrap; }
+    #urgency-banner .urgency-marquee-item a { color: #fff; text-decoration: underline; }
+    #urgency-banner .urgency-countdown-slot { background: rgba(0,0,0,.2); padding: .15rem .6rem; border-radius: 999px; font-variant-numeric: tabular-nums; }
+    #urgency-banner:hover .urgency-marquee-track { animation-play-state: paused; }
+    #urgency-banner-close { position: absolute; top: 50%; right: .75rem; transform: translateY(-50%); width: 26px; height: 26px; border-radius: 50%; background: rgba(0,0,0,.18); border: none; color: #fff; font-size: 1.1rem; cursor: pointer; line-height: 1; display: flex; align-items: center; justify-content: center; z-index: 2; }
+    @keyframes urgency-marquee {
+        from { transform: translateX(0); }
+        to   { transform: translateX(-50%); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+        #urgency-banner .urgency-marquee-track { animation: none; }
+    }
+</style>
+<div id="urgency-banner" data-target="{{ $__urgencyTargetIso }}" data-cookie="{{ $__urgencyCookieName }}">
+    <div class="urgency-marquee-track">
+        @for($i = 0; $i < 2; $i++)
+        <span class="urgency-marquee-item" @if($i > 0) aria-hidden="true" @endif>
+            <span>{{ $__urgencyText }}</span>
+            <span class="urgency-countdown-slot" data-countdown-slot></span>
+            @if($__urgency->urgency_banner_link)
+            <a href="{{ $__urgency->urgency_banner_link }}">Voir les documents →</a>
+            @endif
+        </span>
+        @endfor
     </div>
-    <button onclick="dismissUrgencyBanner()" aria-label="Fermer" style="position:absolute;top:50%;right:.75rem;transform:translateY(-50%);background:none;border:none;color:#fff;font-size:1.1rem;cursor:pointer;line-height:1;">&times;</button>
+    <button type="button" id="urgency-banner-close" onclick="dismissUrgencyBanner()" aria-label="Fermer">&times;</button>
 </div>
 <script>
 (function () {
@@ -28,8 +51,8 @@
     if (!banner) return;
     var target = new Date(banner.dataset.target).getTime();
     var cookieName = banner.dataset.cookie;
+    var countdownSlots = banner.querySelectorAll('[data-countdown-slot]');
 
-    var countdownEl = document.getElementById('urgency-countdown');
     function tick() {
         var diff = target - Date.now();
         if (diff <= 0) {
@@ -40,9 +63,12 @@
         var days = Math.floor(diff / 86400000);
         var hours = Math.floor((diff % 86400000) / 3600000);
         var minutes = Math.floor((diff % 3600000) / 60000);
-        countdownEl.textContent = days > 0
+        var text = days > 0
             ? days + 'j ' + hours + 'h restants'
             : hours + 'h ' + minutes + 'min restants';
+        countdownSlots.forEach(function (el) {
+            el.textContent = text;
+        });
     }
     tick();
     var timer = setInterval(tick, 60000);

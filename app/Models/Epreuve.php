@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 class Epreuve extends Model
@@ -114,6 +115,44 @@ class Epreuve extends Model
     }
 
     /**
+     * Relation avec les avis
+     */
+    public function reviews(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(EpreuveReview::class);
+    }
+
+    /**
+     * Relation avec les avis approuvés
+     */
+    public function approvedReviews(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->reviews()->where('is_approved', true);
+    }
+
+    /**
+     * Obtenir la note moyenne des avis approuvés
+     */
+    public function getAverageRatingAttribute(): float
+    {
+        if (array_key_exists('average_rating', $this->attributes)) {
+            return (float) ($this->attributes['average_rating'] ?? 0);
+        }
+        return (float) ($this->approvedReviews()->avg('rating') ?? 0);
+    }
+
+    /**
+     * Obtenir le nombre total d'avis approuvés
+     */
+    public function getReviewsCountAttribute(): int
+    {
+        if (array_key_exists('reviews_count', $this->attributes)) {
+            return (int) $this->attributes['reviews_count'];
+        }
+        return $this->approvedReviews()->count();
+    }
+
+    /**
      * Un corrigé payant est disponible pour cette épreuve.
      */
     public function hasCorrige(): bool
@@ -210,11 +249,26 @@ class Epreuve extends Model
     }
 
     /**
+     * Niveaux groupés (primaire/college/lycee/concours), constante LEVELS
+     * fusionnée avec les niveaux ajoutés dynamiquement depuis l'admin.
+     */
+    public static function allLevels(): array
+    {
+        return Cache::remember('epreuve_levels_all', 300, function () {
+            $groups = self::LEVELS;
+            foreach (EpreuveLevel::orderBy('order')->orderBy('name')->get() as $level) {
+                $groups[$level->group][$level->slug] = $level->name;
+            }
+            return $groups;
+        });
+    }
+
+    /**
      * Liste plate des niveaux (slug => label), sans les groupes.
      */
     public static function flatLevels(): array
     {
-        return array_merge(...array_values(self::LEVELS));
+        return array_merge(...array_values(self::allLevels()));
     }
 
     /**

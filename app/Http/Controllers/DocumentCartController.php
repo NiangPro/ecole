@@ -393,9 +393,18 @@ class DocumentCartController extends Controller
             }
             
             $purchase = DocumentPurchase::create($purchaseData);
-            
+
             // Générer le token de téléchargement immédiatement
             $purchase->generateDownloadToken();
+
+            \App\Models\Notification::notifyAdmins(
+                'document_purchase',
+                'Nouvel achat de document',
+                ($user->name ?? $request->customer_name ?? $request->customer_email ?? 'Un client') . ' souhaite acheter : ' . \Illuminate\Support\Str::limit($item->document->title ?? '', 60),
+                route('admin.documents.purchases.show', $purchase->id),
+                'fa-file-invoice-dollar',
+                '#f59e0b'
+            );
             
             // Créer le paiement
             $payment = Payment::create([

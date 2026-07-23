@@ -11,71 +11,84 @@
 @endphp
 
 <!-- Stats Grid - Design Éducatif -->
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2.5rem;">
+<div class="dashboard-stats-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2.5rem;">
     <!-- Heures d'apprentissage -->
     <div class="content-card" style="margin-bottom: 0;">
-        <div style="display: flex; align-items: center; gap: 1.25rem; margin-bottom: 1.5rem;">
-            <div style="width: 70px; height: 70px; border-radius: 15px; background: linear-gradient(135deg, rgba(4, 170, 109, 0.15), rgba(4, 170, 109, 0.05)); display: flex; align-items: center; justify-content: center; color: #04AA6D; flex-shrink: 0;">
-                <i class="fas fa-clock" style="font-size: 2rem;"></i>
+        <div style="display: flex; align-items: center; gap: 0.85rem; margin-bottom: 0.75rem;">
+            <div style="width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, rgba(4, 170, 109, 0.15), rgba(4, 170, 109, 0.05)); display: flex; align-items: center; justify-content: center; color: #04AA6D; flex-shrink: 0;">
+                <i class="fas fa-clock" style="font-size: 1.25rem;"></i>
             </div>
-            <div style="flex: 1;">
-                <div style="font-size: 2.5rem; font-weight: 800; color: #2c3e50; margin-bottom: 0.25rem; line-height: 1;">
-                    {{ $stats['total_time_hours'] ?? 0 }}<span style="font-size: 1.5rem; color: #04AA6D;">h</span>
+            <div style="flex: 1; min-width: 0;">
+                <div style="font-size: 1.6rem; font-weight: 800; color: #2c3e50; margin-bottom: 0.15rem; line-height: 1;">
+                    {{ $stats['total_time_hours'] ?? 0 }}<span style="font-size: 1rem; color: #04AA6D;">h</span>
                 </div>
-                <div style="color: #64748b; font-size: 0.95rem; font-weight: 500;" class="dashboard-text-secondary">{{ trans('app.profile.dashboard.overview.hours_learning') }}</div>
-                <div style="color: #94a3b8; font-size: 0.85rem; margin-top: 0.25rem;" class="dashboard-text-tertiary">{{ $stats['total_time_minutes'] ?? 0 }} {{ trans('app.profile.dashboard.overview.minutes') }}</div>
+                <div style="color: #64748b; font-size: 0.8rem; font-weight: 500;" class="dashboard-text-secondary">{{ trans('app.profile.dashboard.overview.hours_learning') }}</div>
+                <div style="color: #94a3b8; font-size: 0.75rem; margin-top: 0.15rem;" class="dashboard-text-tertiary">{{ $stats['total_time_minutes'] ?? 0 }} {{ trans('app.profile.dashboard.overview.minutes') }}</div>
             </div>
         </div>
     </div>
-    
+
     <!-- Formations complétées -->
     <div class="content-card" style="margin-bottom: 0;">
-        <div style="display: flex; align-items: center; gap: 1.25rem; margin-bottom: 1.5rem;">
-            <div style="width: 70px; height: 70px; border-radius: 15px; background: linear-gradient(135deg, rgba(4, 170, 109, 0.15), rgba(4, 170, 109, 0.05)); display: flex; align-items: center; justify-content: center; color: #04AA6D; flex-shrink: 0;">
-                <i class="fas fa-graduation-cap" style="font-size: 2rem;"></i>
+        <div style="display: flex; align-items: center; gap: 0.85rem; margin-bottom: 0.75rem;">
+            <div style="width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, rgba(4, 170, 109, 0.15), rgba(4, 170, 109, 0.05)); display: flex; align-items: center; justify-content: center; color: #04AA6D; flex-shrink: 0;">
+                <i class="fas fa-graduation-cap" style="font-size: 1.25rem;"></i>
             </div>
-            <div style="flex: 1;">
-                <div style="font-size: 2.5rem; font-weight: 800; color: #2c3e50; margin-bottom: 0.25rem; line-height: 1;">
+            <div style="flex: 1; min-width: 0;">
+                <div style="font-size: 1.6rem; font-weight: 800; color: #2c3e50; margin-bottom: 0.15rem; line-height: 1;">
                     {{ $stats['completed_formations'] ?? 0 }}
                 </div>
-                <div style="color: #64748b; font-size: 0.95rem; font-weight: 500;" class="dashboard-text-secondary">{{ trans('app.profile.dashboard.overview.completed_formations') }}</div>
-                <div style="color: #94a3b8; font-size: 0.85rem; margin-top: 0.25rem;" class="dashboard-text-tertiary">{{ $formationProgress->count() ?? 0 }} {{ trans('app.profile.dashboard.overview.total') }}</div>
+                <div style="color: #64748b; font-size: 0.8rem; font-weight: 500;" class="dashboard-text-secondary">{{ trans('app.profile.dashboard.overview.completed_formations') }}</div>
+                <div style="color: #94a3b8; font-size: 0.75rem; margin-top: 0.15rem;" class="dashboard-text-tertiary">{{ $formationProgress->count() ?? 0 }} {{ trans('app.profile.dashboard.overview.total') }}</div>
             </div>
         </div>
     </div>
-    
+
     <!-- Exercices complétés -->
     <div class="content-card" style="margin-bottom: 0;">
-        <div style="display: flex; align-items: center; gap: 1.25rem; margin-bottom: 1.5rem;">
-            <div style="width: 70px; height: 70px; border-radius: 15px; background: linear-gradient(135deg, rgba(4, 170, 109, 0.15), rgba(4, 170, 109, 0.05)); display: flex; align-items: center; justify-content: center; color: #04AA6D; flex-shrink: 0;">
-                <i class="fas fa-code" style="font-size: 2rem;"></i>
+        <div style="display: flex; align-items: center; gap: 0.85rem; margin-bottom: 0.75rem;">
+            <div style="width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, rgba(4, 170, 109, 0.15), rgba(4, 170, 109, 0.05)); display: flex; align-items: center; justify-content: center; color: #04AA6D; flex-shrink: 0;">
+                <i class="fas fa-code" style="font-size: 1.25rem;"></i>
             </div>
-            <div style="flex: 1;">
-                <div style="font-size: 2.5rem; font-weight: 800; color: #2c3e50; margin-bottom: 0.25rem; line-height: 1;">
+            <div style="flex: 1; min-width: 0;">
+                <div style="font-size: 1.6rem; font-weight: 800; color: #2c3e50; margin-bottom: 0.15rem; line-height: 1;">
                     {{ $stats['completed_exercises'] ?? 0 }}
                 </div>
-                <div style="color: #64748b; font-size: 0.95rem; font-weight: 500;" class="dashboard-text-secondary">{{ trans('app.profile.dashboard.overview.completed_exercises') }}</div>
-                <div style="color: #94a3b8; font-size: 0.85rem; margin-top: 0.25rem;" class="dashboard-text-tertiary">{{ $exerciseProgress->count() ?? 0 }} {{ trans('app.profile.dashboard.overview.total') }}</div>
+                <div style="color: #64748b; font-size: 0.8rem; font-weight: 500;" class="dashboard-text-secondary">{{ trans('app.profile.dashboard.overview.completed_exercises') }}</div>
+                <div style="color: #94a3b8; font-size: 0.75rem; margin-top: 0.15rem;" class="dashboard-text-tertiary">{{ $exerciseProgress->count() ?? 0 }} {{ trans('app.profile.dashboard.overview.total') }}</div>
             </div>
         </div>
     </div>
-    
+
     <!-- Quiz passés -->
     <div class="content-card" style="margin-bottom: 0;">
-        <div style="display: flex; align-items: center; gap: 1.25rem; margin-bottom: 1.5rem;">
-            <div style="width: 70px; height: 70px; border-radius: 15px; background: linear-gradient(135deg, rgba(4, 170, 109, 0.15), rgba(4, 170, 109, 0.05)); display: flex; align-items: center; justify-content: center; color: #04AA6D; flex-shrink: 0;">
-                <i class="fas fa-question-circle" style="font-size: 2rem;"></i>
+        <div style="display: flex; align-items: center; gap: 0.85rem; margin-bottom: 0.75rem;">
+            <div style="width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, rgba(4, 170, 109, 0.15), rgba(4, 170, 109, 0.05)); display: flex; align-items: center; justify-content: center; color: #04AA6D; flex-shrink: 0;">
+                <i class="fas fa-question-circle" style="font-size: 1.25rem;"></i>
             </div>
-            <div style="flex: 1;">
-                <div style="font-size: 2.5rem; font-weight: 800; color: #2c3e50; margin-bottom: 0.25rem; line-height: 1;">
+            <div style="flex: 1; min-width: 0;">
+                <div style="font-size: 1.6rem; font-weight: 800; color: #2c3e50; margin-bottom: 0.15rem; line-height: 1;">
                     {{ $stats['quiz_count'] ?? 0 }}
                 </div>
-                <div style="color: #64748b; font-size: 0.95rem; font-weight: 500;" class="dashboard-text-secondary">{{ trans('app.profile.dashboard.overview.quiz_passed') }}</div>
-                <div style="color: #94a3b8; font-size: 0.85rem; margin-top: 0.25rem;" class="dashboard-text-tertiary">{{ trans('app.profile.dashboard.overview.average_score') }}: {{ $stats['average_quiz_score'] ?? 0 }}%</div>
+                <div style="color: #64748b; font-size: 0.8rem; font-weight: 500;" class="dashboard-text-secondary">{{ trans('app.profile.dashboard.overview.quiz_passed') }}</div>
+                <div style="color: #94a3b8; font-size: 0.75rem; margin-top: 0.15rem;" class="dashboard-text-tertiary">{{ trans('app.profile.dashboard.overview.average_score') }}: {{ $stats['average_quiz_score'] ?? 0 }}%</div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    @media (max-width: 900px) {
+        .dashboard-stats-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+        }
+    }
+    @media (max-width: 480px) {
+        .dashboard-stats-grid {
+            grid-template-columns: 1fr !important;
+        }
+    }
+</style>
 
 <!-- Mes Documents Achetés -->
 @if(isset($purchasedDocuments) && $purchasedDocuments->count() > 0)

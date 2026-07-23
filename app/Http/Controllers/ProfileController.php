@@ -485,19 +485,32 @@ class ProfileController extends Controller
         
         // Sinon, mise à jour des informations personnelles
         $request->validate([
-            'name' => 'required|string|max:255',
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:users,email,' . $user->id,
             'phone' => 'nullable|string|max:30',
             'phone_country' => 'nullable|string|max:2',
+            'bio' => 'nullable|string|max:1000',
+            'country' => 'nullable|string|max:100',
+            'region' => 'nullable|string|max:100',
+            'city' => 'nullable|string|max:100',
+            'gender' => 'nullable|in:male,female,other',
+            'date_of_birth' => 'nullable|date|before:today',
+            'occupation' => 'nullable|string|max:100',
         ]);
-        
-        $user->name = $request->name;
+
+        $user->first_name = $request->first_name;
+        $user->last_name = $request->last_name;
+        $user->name = trim($request->first_name . ' ' . $request->last_name);
         $user->email = $request->email;
-        if ($request->filled('phone')) {
-            $user->phone = $request->phone;
-        } else {
-            $user->phone = null;
-        }
+        $user->phone = $request->filled('phone') ? $request->phone : null;
+        $user->bio = $request->filled('bio') ? $request->bio : null;
+        $user->country = $request->filled('country') ? $request->country : null;
+        $user->region = $request->filled('region') ? $request->region : null;
+        $user->city = $request->filled('city') ? $request->city : null;
+        $user->gender = $request->filled('gender') ? $request->gender : null;
+        $user->date_of_birth = $request->filled('date_of_birth') ? $request->date_of_birth : null;
+        $user->occupation = $request->filled('occupation') ? $request->occupation : null;
         $user->save();
         
         // Invalider le cache

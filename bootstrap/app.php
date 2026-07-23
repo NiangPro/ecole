@@ -40,6 +40,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'download_rate_limit' => \App\Http\Middleware\DownloadRateLimiting::class,
             'http.cache'          => \App\Http\Middleware\HttpCacheHeaders::class,
             'page.cache'          => \App\Http\Middleware\PageCache::class,
+            'profile.complete'    => \App\Http\Middleware\EnsureProfileComplete::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

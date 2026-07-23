@@ -35,7 +35,9 @@
             "app/Helpers/CdnHelper.php",
             "app/Helpers/MarkdownHelper.php",
             "app/Helpers/ImageOptimizer.php",
-            "app/Helpers/SettingsHelper.php"
+            "app/Helpers/SettingsHelper.php",
+            "app/Helpers/NumberHelper.php",
+            "app/Helpers/CountryHelper.php"
         ]
     },
     "autoload-dev": {

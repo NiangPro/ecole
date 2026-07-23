@@ -6,6 +6,7 @@ use App\Models\WhatsAppSettings;
 use App\Models\DocumentPurchase;
 use App\Models\CorrigePurchase;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 class WhatsAppService
 {
@@ -27,9 +28,19 @@ class WhatsAppService
         }
 
         $link = route('epreuves.corrige.download', ['token' => $purchase->download_token]);
+        // CorrigeController::download() livre un zip épreuve + corrigé quand le fichier de
+        // l'épreuve existe : on adapte le message en conséquence.
+        $epreuveFilePath = $purchase->epreuve?->file_path;
+        $includesEpreuve = $epreuveFilePath && Storage::disk('public')->exists($epreuveFilePath);
+
         $message = "Bonjour " . ($purchase->customer_name ?? '') . ",\n\n";
-        $message .= "Merci pour votre achat du corrigé :\n*" . $purchase->epreuve->title . "*\n\n";
-        $message .= "Lien de téléchargement (valide 30 jours) :\n" . $link . "\n\n";
+        if ($includesEpreuve) {
+            $message .= "Merci pour votre achat :\n*" . $purchase->epreuve->title . "*\n\n";
+            $message .= "Lien de téléchargement (épreuve + corrigé en .zip, valide 30 jours) :\n" . $link . "\n\n";
+        } else {
+            $message .= "Merci pour votre achat du corrigé :\n*" . $purchase->epreuve->title . "*\n\n";
+            $message .= "Lien de téléchargement (valide 30 jours) :\n" . $link . "\n\n";
+        }
         $message .= "Cordialement,\nNiangProgrammeur";
 
         try {
