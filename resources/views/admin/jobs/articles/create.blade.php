@@ -773,9 +773,16 @@
                     <div id="externalImage" style="display: {{ old('cover_type', $article->cover_type ?? '') === 'external' ? 'block' : 'none' }};">
                         <div class="form-group">
                             <label class="form-label">URL de l'image</label>
-                            <input type="url" name="cover_image_url" id="coverImageUrl" value="{{ old('cover_image', $article->cover_image ?? '') }}"
-                                   class="form-input" placeholder="https://example.com/image.jpg">
-                            <div class="form-help">Entrez l'URL complète de l'image</div>
+                            {{-- type="text" (et non "url") : voir edit.blade.php — un chemin relatif existant
+                                 (ex. /images/articles/article-87-....jpg) est une valeur légitime pour ce champ,
+                                 que la validation HTML5 native de type="url" rejette. Validation souple en JS
+                                 ci-dessous via setCustomValidity. --}}
+                            <input type="text" inputmode="url" name="cover_image_url" id="coverImageUrl" value="{{ old('cover_image', $article->cover_image ?? '') }}"
+                                   class="form-input" placeholder="https://example.com/image.jpg ou /images/articles/exemple.jpg">
+                            <div class="form-help">URL absolue (https://...) ou chemin relatif existant sur le serveur (ex : /images/articles/article-87.jpg)</div>
+                            @error('cover_image_url')
+                                <div class="form-error"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
+                            @enderror
                         </div>
                     </div>
                     <div id="coverPreview" class="mt-4 {{ (isset($article) && $article->cover_image) ? '' : 'hidden' }}" style="text-align: center;">
@@ -877,6 +884,41 @@
                 titleInput.dispatchEvent(new Event('input'));
             }
         }, 500);
+
+        // Validation souple de l'URL de couverture (voir edit.blade.php pour le contexte :
+        // type="text" côté vue car un chemin relatif existant, ex. /images/articles/....jpg,
+        // est une valeur légitime que la validation HTML5 de type="url" rejetterait). La
+        // preview elle-même est déjà gérée sans souci par article-editor.js (aucun filtre sur
+        // http/https) ; ce bloc ajoute seulement le signalement souple d'une valeur invalide.
+        (function () {
+            const coverImageUrl = document.getElementById('coverImageUrl');
+            const coverTypeSelect = document.getElementById('coverType');
+            if (!coverImageUrl) return;
+
+            function isAcceptableCoverUrl(value) {
+                return value.startsWith('/') || value.startsWith('http://') || value.startsWith('https://');
+            }
+
+            coverImageUrl.addEventListener('input', function () {
+                const url = this.value.trim();
+                this.setCustomValidity(
+                    url && !isAcceptableCoverUrl(url)
+                        ? "Entrez une URL absolue (http:// ou https://) ou un chemin commençant par /"
+                        : ''
+                );
+            });
+
+            // article-editor.js vide coverImageUrl.value au changement de type sans déclencher
+            // d'événement 'input' : sans ce reset, un message d'erreur resterait affiché sur un
+            // champ redevenu vide/masqué.
+            if (coverTypeSelect) {
+                coverTypeSelect.addEventListener('change', function () {
+                    if (this.value === 'internal') {
+                        coverImageUrl.setCustomValidity('');
+                    }
+                });
+            }
+        })();
 
         // Synchronisation titre → meta_title (voir edit.blade.php pour le contexte :
         // ces deux champs indépendants ont déjà divergé sur un article publié, faisant

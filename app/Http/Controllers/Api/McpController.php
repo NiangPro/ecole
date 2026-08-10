@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Exceptions\DuplicateArticleException;
 use App\Http\Controllers\Controller;
+use App\Services\ArticlePublishingHealthCheck;
 use App\Services\JobArticlePublisher;
 use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\JsonResponse;
@@ -56,9 +58,21 @@ class McpController extends Controller
         ], 405);
     }
 
-    public function health(): JsonResponse
+    /**
+     * Vérifie que job_articles/job_categories sont réellement accessibles en
+     * écriture avant qu'une session de publication automatisée ne démarre.
+     *
+     * Ajouté suite à l'incident du 27/07/2026 : une écriture impossible dans
+     * job_articles (500) n'avait été découverte qu'en plein milieu d'une session
+     * de publication sur "Bourses d'études", laissant 3 articles bloqués.
+     * L'agent externe (MCP) doit appeler ce endpoint avant de publier un lot
+     * d'articles et s'arrêter si "ok" est false.
+     */
+    public function health(ArticlePublishingHealthCheck $healthCheck): JsonResponse
     {
-        return response()->json(['ok' => true]);
+        $result = $healthCheck->run();
+
+        return response()->json($result, $result['ok'] ? 200 : 500);
     }
 
     private function toolDefinition(): array
@@ -79,6 +93,7 @@ class McpController extends Controller
                     'meta_description' => ['type' => 'string', 'description' => 'Description SEO (max 160 caractères)'],
                     'meta_keywords'    => ['type' => 'string', 'description' => 'Mots-clés séparés par des virgules, ex: "emploi, sénégal"'],
                     'status'           => ['type' => 'string', 'enum' => ['draft', 'published', 'archived'], 'default' => 'published'],
+                    'allow_duplicate'  => ['type' => 'boolean', 'description' => "Forcer la publication même si un article très similaire (même catégorie, titre proche) existe déjà. Par défaut false : l'outil refuse et indique l'article existant.", 'default' => false],
                 ],
                 'required' => ['category_id', 'title', 'content'],
             ],
@@ -103,6 +118,7 @@ class McpController extends Controller
             'meta_description' => ['nullable', 'string', 'max:160'],
             'meta_keywords'    => ['nullable', 'string'],
             'status'           => ['nullable', 'string', 'in:draft,published,archived'],
+            'allow_duplicate'  => ['nullable', 'boolean'],
         ]);
 
         if ($validator->fails()) {
@@ -114,6 +130,9 @@ class McpController extends Controller
 
         try {
             $article = $publisher->publish($data);
+        } catch (DuplicateArticleException $e) {
+            $existingUrl = route('emplois.article', $e->existingArticle->slug);
+            return $this->toolError($id, $e->getMessage() . " URL existante : {$existingUrl}. Pour publier quand même, rappeler l'outil avec \"allow_duplicate\": true.");
         } catch (UniqueConstraintViolationException $e) {
             return $this->toolError($id, 'Ce slug existe déjà.');
         }

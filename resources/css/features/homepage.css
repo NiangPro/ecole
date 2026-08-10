@@ -517,6 +517,45 @@
     text-decoration: line-through;
   }
 
+  /* Prix étiquette oblique sur l'image, alignée sur le style de /documents */
+  .document-price-overlay {
+    position: absolute;
+    inset-block-start: 20px;
+    inset-inline-end: -40px;
+    background: #06b6d4;
+    color: white;
+    padding: 0.625rem 3rem;
+    font-size: 1rem;
+    font-weight: 700;
+    z-index: 10;
+    transform: rotate(45deg);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.125rem;
+    min-width: 180px;
+    text-align: center;
+    line-height: 1.2;
+  }
+
+  .document-price-overlay .document-price-old {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: line-through;
+    font-weight: 500;
+    display: block;
+  }
+
+  .document-price-overlay .document-price-current {
+    font-size: 1rem;
+    font-weight: 700;
+    color: white;
+    white-space: nowrap;
+    display: block;
+  }
+
   .hp-doc-body {
     padding: 1rem;
     flex: 1;
@@ -1471,16 +1510,95 @@ body.dark-mode .doc-rating-count { color: #94a3b8; }
 .hp-reviews-stat-stars { color: #f59e0b; font-size: .8rem; }
 .hp-reviews-stat-count { font-size: .75rem; color: #64748b; font-weight: 600; white-space: nowrap; }
 
-.hp-reviews-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.5rem;
+.hp-reviews-header-side {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-shrink: 0;
+}
+
+.hp-docs-nav-group {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+}
+
+@media (width <= 640px) {
+  .hp-docs-nav-group { display: none; }
+}
+
+/* ── Carousel (scroll-snap natif, cohérent avec .hp-docs-carousel) ── */
+.hp-reviews-carousel-wrap {
+  position: relative;
   margin-top: 2rem;
+}
+
+.hp-reviews-carousel-wrap::before,
+.hp-reviews-carousel-wrap::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 48px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.hp-reviews-carousel-wrap::before {
+  inset-inline-start: 0;
+  background: linear-gradient(to right, var(--surface), transparent);
+}
+
+.hp-reviews-carousel-wrap::after {
+  inset-inline-end: 0;
+  background: linear-gradient(to left, var(--surface), transparent);
+}
+
+.hp-reviews-carousel {
+  display: flex;
+  gap: 1.5rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  padding-block: .4rem 1rem;
+  padding-inline: .2rem;
+  scrollbar-width: none;
+}
+
+.hp-reviews-carousel::-webkit-scrollbar { display: none; }
+
+.hp-reviews-dots {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  margin-top: .5rem;
+}
+
+.hp-reviews-dot {
+  inline-size: 8px;
+  block-size: 8px;
+  border-radius: 999px;
+  border: none;
+  padding: 0;
+  background: oklch(65% 0.20 200 / 25%);
+  cursor: pointer;
+  transition: inline-size var(--duration-normal) ease, background var(--duration-normal) ease;
+}
+
+.hp-reviews-dot:hover { background: oklch(65% 0.20 200 / 55%); }
+
+.hp-reviews-dot.is-active {
+  inline-size: 26px;
+  background: oklch(65% 0.20 200);
 }
 
 .hp-review-card {
   position: relative;
   overflow: hidden;
+  flex: 0 0 340px;
+  scroll-snap-align: start;
   background: oklch(100% 0 0 / 70%);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -1495,6 +1613,10 @@ body.dark-mode .doc-rating-count { color: #94a3b8; }
   opacity: 0;
   animation: hp-review-in 500ms ease-out forwards;
   animation-delay: calc(var(--stagger, 0) * 80ms);
+}
+
+@media (width <= 560px) {
+  .hp-review-card { flex-basis: 82vw; }
 }
 
 .hp-review-card:hover {

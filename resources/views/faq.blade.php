@@ -1,37 +1,29 @@
 @extends('layouts.app')
 
 @section('title', 'FAQ - Questions Fréquentes | NiangProgrammeur')
+@section('meta_description', 'Toutes les réponses sur les formations gratuites, documents, épreuves, cours payants, certificats, badges, forum et emplois de NiangProgrammeur.')
 
 @section('styles')
 <style>
-    /* Fonts chargées via preload dans layouts.app - pas de @import bloquant */
-    
-    body {
-        overflow-x: hidden;
-    }
-    
-    /* Body background for FAQ page */
-    body:not(.dark-mode) {
-        background: #ffffff !important;
-    }
-    
-    body.dark-mode {
-        background: #0a0a0f !important;
-    }
-    
+    body { overflow-x: hidden; }
+
+    body:not(.dark-mode) { background: #ffffff !important; }
+    body.dark-mode { background: #0a0a0f !important; }
+
+    /* ---------- Hero ---------- */
     .faq-hero {
         background: linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(20, 184, 166, 0.1) 100%);
         border-bottom: 2px solid rgba(6, 182, 212, 0.2);
-        padding: 120px 20px 80px;
+        padding: 110px 20px 60px;
         text-align: center;
         position: relative;
         overflow: hidden;
     }
-    
+
     body:not(.dark-mode) .faq-hero {
         background: linear-gradient(135deg, rgba(6, 182, 212, 0.05) 0%, rgba(20, 184, 166, 0.05) 100%) !important;
     }
-    
+
     .faq-hero::before {
         content: '';
         position: absolute;
@@ -40,484 +32,645 @@
         width: 200%;
         height: 200%;
         background: radial-gradient(circle, rgba(6, 182, 212, 0.1) 0%, transparent 70%);
-        animation: rotate 20s linear infinite;
+        animation: faqRotate 20s linear infinite;
     }
-    
-    @keyframes rotate {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-    }
-    
-    .faq-hero-content {
-        position: relative;
-        z-index: 1;
-        max-width: 800px;
-        margin: 0 auto;
-    }
-    
-    .faq-icon-wrapper {
-        display: inline-block;
-        margin-bottom: 30px;
-        animation: float 3s ease-in-out infinite;
-    }
-    
-    @keyframes float {
-        0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(-10px); }
-    }
-    
+
+    @keyframes faqRotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+    @keyframes faqFloat { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+    @keyframes faqShimmer { to { background-position: 200% center; } }
+
+    .faq-hero-content { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; }
+
+    .faq-icon-wrapper { display: inline-block; margin-bottom: 25px; animation: faqFloat 3s ease-in-out infinite; }
+
     .faq-icon {
-        width: 100px;
-        height: 100px;
+        width: 90px; height: 90px;
         background: linear-gradient(135deg, #06b6d4, #14b8a6);
         border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 3rem;
-        color: #000;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 2.6rem; color: #000;
         box-shadow: 0 10px 40px rgba(6, 182, 212, 0.3);
     }
-    
+
     .faq-hero h1 {
         font-family: 'Poppins', sans-serif;
-        font-size: 3.5rem;
+        font-size: 3.2rem;
         font-weight: 900;
         background: linear-gradient(135deg, #06b6d4 0%, #14b8a6 50%, #06b6d4 100%);
         background-size: 200% auto;
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        animation: shimmer 3s linear infinite;
-        margin-bottom: 20px;
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        animation: faqShimmer 3s linear infinite;
+        margin-bottom: 16px;
     }
-    
-    @keyframes shimmer {
-        to { background-position: 200% center; }
-    }
-    
+
     .faq-hero p {
-        font-size: 1.2rem;
+        font-size: 1.15rem;
         color: rgba(255, 255, 255, 0.8);
         font-weight: 400;
+        margin-bottom: 35px;
     }
-    
-    body:not(.dark-mode) .faq-hero p {
+
+    body:not(.dark-mode) .faq-hero p { color: rgba(30, 41, 59, 0.7) !important; }
+
+    /* ---------- Search ---------- */
+    .faq-search-wrap { position: relative; max-width: 520px; margin: 0 auto; }
+
+    .faq-search-wrap i.fa-search {
+        position: absolute; left: 20px; top: 50%; transform: translateY(-50%);
+        color: rgba(6, 182, 212, 0.7); font-size: 1rem;
+    }
+
+    #faqSearchInput {
+        width: 100%;
+        padding: 15px 20px 15px 50px;
+        border-radius: 16px;
+        border: 2px solid rgba(6, 182, 212, 0.3);
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(20px);
+        color: #fff;
+        font-size: 1rem;
+        font-family: 'Inter', sans-serif;
+        transition: all 0.25s ease;
+    }
+
+    #faqSearchInput:focus { outline: none; border-color: #06b6d4; box-shadow: 0 0 0 5px rgba(6, 182, 212, 0.15); }
+    #faqSearchInput::placeholder { color: rgba(255, 255, 255, 0.4); }
+
+    body:not(.dark-mode) #faqSearchInput {
+        background: rgba(255, 255, 255, 0.95) !important;
+        color: #1e293b !important;
+        border-color: rgba(6, 182, 212, 0.35) !important;
+    }
+
+    body:not(.dark-mode) #faqSearchInput::placeholder { color: rgba(30, 41, 59, 0.4) !important; }
+
+    /* ---------- Category pills ---------- */
+    .faq-categories {
+        display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;
+        max-width: 1000px; margin: 35px auto 0; padding: 0 20px;
+    }
+
+    .faq-cat-pill {
+        display: inline-flex; align-items: center; gap: 7px;
+        padding: 9px 18px;
+        border-radius: 999px;
+        font-size: 0.85rem; font-weight: 600;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1.5px solid rgba(6, 182, 212, 0.25);
+        color: rgba(255, 255, 255, 0.7);
+        cursor: pointer;
+        transition: all 0.2s ease;
+        user-select: none;
+    }
+
+    .faq-cat-pill:hover { border-color: rgba(6, 182, 212, 0.6); color: #06b6d4; }
+
+    .faq-cat-pill.is-active {
+        background: linear-gradient(135deg, #06b6d4, #14b8a6);
+        border-color: transparent;
+        color: #000;
+    }
+
+    body:not(.dark-mode) .faq-cat-pill {
+        background: rgba(255, 255, 255, 0.7) !important;
         color: rgba(30, 41, 59, 0.7) !important;
+        border-color: rgba(6, 182, 212, 0.3) !important;
     }
-    
-    .faq-section {
-        padding: 80px 20px;
-        max-width: 1000px;
-        margin: 0 auto;
+
+    body:not(.dark-mode) .faq-cat-pill.is-active {
+        background: linear-gradient(135deg, #06b6d4, #14b8a6) !important;
+        color: #000 !important;
     }
-    
+
+    /* ---------- Section ---------- */
+    .faq-section { padding: 60px 20px 80px; max-width: 900px; margin: 0 auto; }
+
+    .faq-results-count {
+        text-align: center;
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.4);
+        margin-bottom: 25px;
+    }
+
+    body:not(.dark-mode) .faq-results-count { color: rgba(30, 41, 59, 0.5) !important; }
+
+    .faq-no-results {
+        display: none;
+        text-align: center;
+        padding: 50px 20px;
+        color: rgba(255, 255, 255, 0.45);
+        font-size: 1rem;
+    }
+
+    body:not(.dark-mode) .faq-no-results { color: rgba(30, 41, 59, 0.55) !important; }
+
+    /* ---------- Item (accordion) ---------- */
     .faq-item {
         background: rgba(15, 23, 42, 0.7);
         backdrop-filter: blur(20px);
         border: 2px solid rgba(6, 182, 212, 0.2);
-        border-radius: 20px;
-        padding: 30px;
-        margin-bottom: 25px;
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        position: relative;
+        border-radius: 18px;
+        margin-bottom: 16px;
+        transition: all 0.3s ease;
         overflow: hidden;
+    }
+
+    body:not(.dark-mode) .faq-item { background: rgba(255, 255, 255, 0.9) !important; border-color: rgba(6, 182, 212, 0.25) !important; }
+
+    .faq-item:hover { border-color: rgba(6, 182, 212, 0.45); }
+    .faq-item.is-open { border-color: rgba(6, 182, 212, 0.6); box-shadow: 0 10px 30px rgba(6, 182, 212, 0.12); }
+
+    .faq-question {
+        display: flex; align-items: center; gap: 15px;
+        padding: 22px 26px;
         cursor: pointer;
     }
-    
-    body:not(.dark-mode) .faq-item {
-        background: rgba(255, 255, 255, 0.9) !important;
-        border-color: rgba(6, 182, 212, 0.25) !important;
-    }
-    
-    .faq-item::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(6, 182, 212, 0.1), transparent);
-        transition: left 0.6s;
-    }
-    
-    .faq-item:hover::before {
-        left: 100%;
-    }
-    
-    .faq-item:hover {
-        border-color: rgba(6, 182, 212, 0.5);
-        box-shadow: 0 15px 40px rgba(6, 182, 212, 0.2);
-        transform: translateY(-5px);
-    }
-    
-    .faq-question {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        margin-bottom: 15px;
-    }
-    
+
     .faq-question-icon {
-        width: 40px;
-        height: 40px;
+        width: 38px; height: 38px; flex-shrink: 0;
         background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(20, 184, 166, 0.2));
         border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.2rem;
-        color: #06b6d4;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.1rem; color: #06b6d4;
         border: 1px solid rgba(6, 182, 212, 0.3);
-        flex-shrink: 0;
     }
-    
+
+    body:not(.dark-mode) .faq-question-icon {
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(20, 184, 166, 0.15)) !important;
+    }
+
     .faq-question h3 {
         font-family: 'Poppins', sans-serif;
-        font-size: 1.5rem;
-        font-weight: 700;
+        font-size: 1.15rem; font-weight: 700;
         color: #06b6d4;
-        margin: 0;
-        flex: 1;
+        margin: 0; flex: 1;
     }
-    
+
+    body:not(.dark-mode) .faq-question h3 { color: rgba(30, 41, 59, 0.95) !important; }
+
+    .faq-chevron { color: rgba(6, 182, 212, 0.6); transition: transform 0.3s ease; flex-shrink: 0; }
+    .faq-item.is-open .faq-chevron { transform: rotate(180deg); }
+
+    .faq-answer-wrap { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
+    .faq-item.is-open .faq-answer-wrap { max-height: 600px; }
+
     .faq-answer {
         color: rgba(255, 255, 255, 0.8);
-        line-height: 1.8;
-        font-size: 1rem;
-        padding-left: 55px;
-        transition: all 0.3s ease;
+        line-height: 1.75;
+        font-size: 0.97rem;
+        padding: 0 26px 24px 79px;
     }
-    
-    body:not(.dark-mode) .faq-answer {
-        color: rgba(30, 41, 59, 0.7) !important;
-    }
-    
+
+    body:not(.dark-mode) .faq-answer { color: rgba(30, 41, 59, 0.8) !important; }
+
+    .faq-answer a { color: #06b6d4; font-weight: 600; }
+
+    /* ---------- CTA ---------- */
     .faq-cta {
         background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(20, 184, 166, 0.1));
         border: 2px solid rgba(6, 182, 212, 0.3);
         border-radius: 24px;
         padding: 50px;
         text-align: center;
-        margin-top: 60px;
+        margin-top: 50px;
         position: relative;
         overflow: hidden;
     }
-    
+
     body:not(.dark-mode) .faq-cta {
         background: linear-gradient(135deg, rgba(6, 182, 212, 0.05), rgba(20, 184, 166, 0.05)) !important;
         border-color: rgba(6, 182, 212, 0.25) !important;
     }
-    
+
     .faq-cta::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        right: -50%;
-        width: 200%;
-        height: 200%;
+        content: ''; position: absolute; top: -50%; right: -50%; width: 200%; height: 200%;
         background: radial-gradient(circle, rgba(6, 182, 212, 0.1) 0%, transparent 70%);
-        animation: rotate 15s linear infinite;
+        animation: faqRotate 15s linear infinite;
     }
-    
-    .faq-cta-content {
-        position: relative;
-        z-index: 1;
-    }
-    
+
+    .faq-cta-content { position: relative; z-index: 1; }
+
     .faq-cta h3 {
         font-family: 'Poppins', sans-serif;
-        font-size: 2rem;
-        font-weight: 700;
+        font-size: 1.9rem; font-weight: 700;
         color: #06b6d4;
-        margin-bottom: 15px;
+        margin-bottom: 12px;
     }
-    
-    .faq-cta p {
-        color: rgba(255, 255, 255, 0.7);
-        font-size: 1.1rem;
-        margin-bottom: 30px;
-    }
-    
-    body:not(.dark-mode) .faq-cta p {
-        color: rgba(30, 41, 59, 0.7) !important;
-    }
-    
-    /* Force text colors in light mode */
-    body:not(.dark-mode) .faq-question h3 {
-        color: rgba(30, 41, 59, 0.95) !important;
-    }
-    
-    body:not(.dark-mode) h1,
-    body:not(.dark-mode) h2,
-    body:not(.dark-mode) h3,
-    body:not(.dark-mode) p {
-        color: rgba(30, 41, 59, 0.9) !important;
-    }
-    
-    body:not(.dark-mode) .faq-cta h3 {
-        color: rgba(30, 41, 59, 0.95) !important;
-    }
-    
-    body:not(.dark-mode) .faq-answer {
-        color: rgba(30, 41, 59, 0.85) !important;
-    }
-    
-    body:not(.dark-mode) .faq-question-icon {
-        background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(20, 184, 166, 0.15)) !important;
-        border-color: rgba(6, 182, 212, 0.3) !important;
-    }
-    
+
+    body:not(.dark-mode) .faq-cta h3 { color: rgba(30, 41, 59, 0.95) !important; }
+
+    .faq-cta p { color: rgba(255, 255, 255, 0.7); font-size: 1.05rem; margin-bottom: 28px; }
+    body:not(.dark-mode) .faq-cta p { color: rgba(30, 41, 59, 0.7) !important; }
+
+    .faq-cta-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+
     .faq-cta-button {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        padding: 16px 32px;
+        display: inline-flex; align-items: center; gap: 10px;
+        padding: 15px 30px;
         background: linear-gradient(135deg, #06b6d4, #14b8a6);
-        color: #000;
-        font-weight: 700;
-        font-size: 1.1rem;
-        border-radius: 12px;
-        text-decoration: none;
+        color: #000; font-weight: 700; font-size: 1.05rem;
+        border-radius: 12px; text-decoration: none;
         transition: all 0.3s ease;
         box-shadow: 0 4px 20px rgba(6, 182, 212, 0.3);
     }
-    
-    body:not(.dark-mode) .faq-cta-button {
-        background: linear-gradient(135deg, #06b6d4, #14b8a6) !important;
-        color: #ffffff !important;
-        box-shadow: 0 4px 20px rgba(6, 182, 212, 0.4) !important;
+
+    body:not(.dark-mode) .faq-cta-button { color: #ffffff !important; box-shadow: 0 4px 20px rgba(6, 182, 212, 0.4) !important; }
+
+    .faq-cta-button:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(6, 182, 212, 0.5); }
+    body:not(.dark-mode) .faq-cta-button:hover { box-shadow: 0 8px 30px rgba(6, 182, 212, 0.6) !important; background: linear-gradient(135deg, #0891b2, #0d9488) !important; }
+
+    .faq-cta-button.is-secondary {
+        background: rgba(255, 255, 255, 0.06);
+        border: 1.5px solid rgba(6, 182, 212, 0.4);
+        color: #06b6d4;
+        box-shadow: none;
     }
-    
-    .faq-cta-button:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 8px 30px rgba(6, 182, 212, 0.5);
+
+    body:not(.dark-mode) .faq-cta-button.is-secondary {
+        background: rgba(255, 255, 255, 0.8) !important;
+        color: #06b6d4 !important;
+        box-shadow: none !important;
     }
-    
-    body:not(.dark-mode) .faq-cta-button:hover {
-        box-shadow: 0 8px 30px rgba(6, 182, 212, 0.6) !important;
-        background: linear-gradient(135deg, #0891b2, #0d9488) !important;
+
+    body:not(.dark-mode) h1, body:not(.dark-mode) h2, body:not(.dark-mode) h3, body:not(.dark-mode) p {
+        color: rgba(30, 41, 59, 0.9) !important;
     }
-    
+
     @media (max-width: 768px) {
-        .faq-hero {
-            padding: 100px 20px 60px;
-        }
-        
-        .faq-hero h1 {
-            font-size: 2.5rem;
-        }
-        
-        .faq-hero p {
-            font-size: 1rem;
-        }
-        
-        .faq-item {
-            padding: 20px;
-        }
-        
-        .faq-question h3 {
-            font-size: 1.2rem;
-        }
-        
-        .faq-answer {
-            padding-left: 0;
-            margin-top: 15px;
-        }
-        
-        .faq-cta {
-            padding: 30px 20px;
-        }
-        
-        .faq-cta h3 {
-            font-size: 1.5rem;
-        }
+        .faq-hero { padding: 90px 20px 45px; }
+        .faq-hero h1 { font-size: 2.3rem; }
+        .faq-hero p { font-size: 1rem; }
+        .faq-question { padding: 18px 18px; }
+        .faq-question h3 { font-size: 1.02rem; }
+        .faq-answer { padding: 0 18px 20px 63px; }
+        .faq-cta { padding: 32px 20px; }
+        .faq-cta h3 { font-size: 1.5rem; }
     }
 </style>
 @endsection
 
 @section('content')
-<!-- Hero Section -->
+<!-- Hero -->
 <section class="faq-hero">
     <div class="faq-hero-content">
         <div class="faq-icon-wrapper">
-            <div class="faq-icon">
-                <i class="fas fa-question-circle"></i>
-            </div>
+            <div class="faq-icon"><i class="fas fa-question-circle"></i></div>
         </div>
         <h1>Foire Aux Questions</h1>
-        <p>Trouvez rapidement les réponses à vos questions sur NiangProgrammeur</p>
+        <p>Formations, documents, épreuves, cours payants, certificats, forum, emplois… trouvez rapidement votre réponse.</p>
+
+        <div class="faq-search-wrap">
+            <i class="fas fa-search"></i>
+            <input type="text" id="faqSearchInput" placeholder="Rechercher une question (ex : certificat, Google, épreuve...)">
+        </div>
     </div>
 </section>
 
+<!-- Category pills -->
+<div class="faq-categories" id="faqCategories">
+    <span class="faq-cat-pill is-active" data-cat="all">Toutes</span>
+    <span class="faq-cat-pill" data-cat="formations"><i class="fas fa-graduation-cap"></i> Formations</span>
+    <span class="faq-cat-pill" data-cat="documents"><i class="fas fa-file-alt"></i> Documents & Épreuves</span>
+    <span class="faq-cat-pill" data-cat="payant"><i class="fas fa-crown"></i> Cours payants & Dons</span>
+    <span class="faq-cat-pill" data-cat="certificats"><i class="fas fa-award"></i> Certificats & Badges</span>
+    <span class="faq-cat-pill" data-cat="compte"><i class="fas fa-user"></i> Compte & Connexion</span>
+    <span class="faq-cat-pill" data-cat="communaute"><i class="fas fa-users"></i> Communauté & Emplois</span>
+    <span class="faq-cat-pill" data-cat="support"><i class="fas fa-headset"></i> Support</span>
+</div>
+
 <!-- FAQ Content -->
 <section class="faq-section">
-    <!-- Question 1 -->
-    <div class="faq-item">
-        <div class="faq-question">
-            <div class="faq-question-icon">
-                <i class="fas fa-graduation-cap"></i>
+    <p class="faq-results-count" id="faqResultsCount"></p>
+
+    <div id="faqList">
+
+        {{-- ===== FORMATIONS ===== --}}
+        <div class="faq-item" data-cat="formations" data-search="prérequis formations débutant niveau">
+            <div class="faq-question">
+                <div class="faq-question-icon"><i class="fas fa-graduation-cap"></i></div>
+                <h3>Quels sont les prérequis pour suivre vos formations ?</h3>
+                <i class="fas fa-chevron-down faq-chevron"></i>
             </div>
-            <h3>Quels sont les prérequis pour suivre vos formations sur NiangProgrammeur ?</h3>
+            <div class="faq-answer-wrap">
+                <div class="faq-answer">
+                    Aucun prérequis pour les formations de base (HTML5, CSS3) : vous pouvez commencer même sans avoir jamais codé. Pour les formations avancées (JavaScript, PHP, Laravel, Data Science...), une base en HTML/CSS est recommandée. Chaque formation indique clairement son niveau. Notre conseil pour débuter : HTML5 → CSS3 → JavaScript → PHP.
+                </div>
+            </div>
         </div>
-        <div class="faq-answer">
-            Nos formations sont conçues pour tous les niveaux, du débutant à l'expert. Pour les formations de base (HTML, CSS), aucun prérequis n'est nécessaire - vous pouvez commencer dès aujourd'hui même si vous n'avez jamais écrit une ligne de code. Pour les formations avancées (PHP, JavaScript, Laravel), une connaissance de base en HTML/CSS est recommandée pour une meilleure compréhension. Chaque formation indique clairement son niveau de difficulté et les prérequis nécessaires dans la description détaillée. Nous proposons également des parcours d'apprentissage progressifs qui vous guident étape par étape, de la découverte des bases jusqu'à la maîtrise des concepts avancés. Si vous êtes débutant, nous vous recommandons de commencer par HTML5, puis CSS3, avant de passer à JavaScript et PHP.
+
+        <div class="faq-item" data-cat="formations" data-search="gratuit prix formations gratuites">
+            <div class="faq-question">
+                <div class="faq-question-icon"><i class="fas fa-gift"></i></div>
+                <h3>Les formations sont-elles vraiment gratuites ?</h3>
+                <i class="fas fa-chevron-down faq-chevron"></i>
+            </div>
+            <div class="faq-answer-wrap">
+                <div class="faq-answer">
+                    Oui, tout notre catalogue de formations (plus de 20 technologies), les exercices pratiques et les quiz sont 100% gratuits et accessibles sans inscription payante. Nous proposons en complément des <strong>cours payants avancés</strong> et un <strong>abonnement Premium</strong> pour ceux qui veulent aller plus loin — voir la catégorie « Cours payants & Dons ».
+                </div>
+            </div>
         </div>
+
+        <div class="faq-item" data-cat="formations" data-search="technologies langages java python c++ typescript go rust exercices quiz">
+            <div class="faq-question">
+                <div class="faq-question-icon"><i class="fas fa-laptop-code"></i></div>
+                <h3>Quelles technologies puis-je apprendre sur NiangProgrammeur ?</h3>
+                <i class="fas fa-chevron-down faq-chevron"></i>
+            </div>
+            <div class="faq-answer-wrap">
+                <div class="faq-answer">
+                    Plus de 20 technologies : HTML5, CSS3, JavaScript, TypeScript, PHP, Python, Java, C, C++, C#, SQL, Git, Bootstrap, WordPress, Go, Rust, Ruby, Swift, Dart, Perl, ainsi que des parcours Cybersécurité, Data Science, Big Data et Intelligence Artificielle. Chaque formation est accompagnée d'<a href="{{ route('exercices') }}">exercices pratiques interactifs</a> et de <a href="{{ route('quiz') }}">quiz</a> pour valider vos acquis.
+                </div>
+            </div>
+        </div>
+
+        <div class="faq-item" data-cat="formations" data-search="durée temps rythme apprentissage">
+            <div class="faq-question">
+                <div class="faq-question-icon"><i class="fas fa-clock"></i></div>
+                <h3>Combien de temps faut-il pour terminer une formation ?</h3>
+                <i class="fas fa-chevron-down faq-chevron"></i>
+            </div>
+            <div class="faq-answer-wrap">
+                <div class="faq-answer">
+                    En moyenne 1 à 2 semaines pour une formation de base, 4 à 8 semaines pour une formation avancée, à raison de 2-3h par semaine. Vous apprenez à votre rythme, sans limite de temps, et pouvez y revenir à volonté.
+                </div>
+            </div>
+        </div>
+
+        {{-- ===== DOCUMENTS & ÉPREUVES ===== --}}
+        <div class="faq-item" data-cat="documents" data-search="documents téléchargeables pdf fiches cours prix panier paiement wave orange money">
+            <div class="faq-question">
+                <div class="faq-question-icon"><i class="fas fa-file-alt"></i></div>
+                <h3>Qu'est-ce que la section « Documents » et sont-ils gratuits ?</h3>
+                <i class="fas fa-chevron-down faq-chevron"></i>
+            </div>
+            <div class="faq-answer-wrap">
+                <div class="faq-answer">
+                    Notre <a href="{{ route('documents.index') }}">catalogue de documents</a> propose des fiches de cours, supports PDF et papiers administratifs. Certains sont gratuits, d'autres payants (avec panier et paiement sécurisé via Wave, Orange Money ou carte bancaire selon disponibilité). Après achat, le document est disponible immédiatement en téléchargement depuis votre espace.
+                </div>
+            </div>
+        </div>
+
+        <div class="faq-item" data-cat="documents" data-search="packs bundles réduction prix réduit">
+            <div class="faq-question">
+                <div class="faq-question-icon"><i class="fas fa-box-open"></i></div>
+                <h3>Comment fonctionnent les packs (bundles) de documents ?</h3>
+                <i class="fas fa-chevron-down faq-chevron"></i>
+            </div>
+            <div class="faq-answer-wrap">
+                <div class="faq-answer">
+                    Un <a href="{{ route('bundles.index') }}">pack</a> regroupe plusieurs documents liés à un même thème à un prix réduit par rapport à un achat séparé. C'est la manière la plus économique d'obtenir un ensemble complet de ressources sur un sujet.
+                </div>
+            </div>
+        </div>
+
+        <div class="faq-item" data-cat="documents" data-search="épreuves corrigés examens cfee bac bfem papiers administratifs">
+            <div class="faq-question">
+                <div class="faq-question-icon"><i class="fas fa-file-signature"></i></div>
+                <h3>Proposez-vous des épreuves et corrigés d'examens ?</h3>
+                <i class="fas fa-chevron-down faq-chevron"></i>
+            </div>
+            <div class="faq-answer-wrap">
+                <div class="faq-answer">
+                    Oui, la section <a href="{{ route('epreuves.index') }}">Épreuves</a> regroupe des sujets d'examens classés par niveau et par matière, avec leurs corrigés (certains gratuits, d'autres payants). Nous proposons également des <a href="{{ route('admin-docs.index') }}">papiers administratifs</a> (formulaires, modèles de documents officiels) prêts à télécharger.
+                </div>
+            </div>
+        </div>
+
+        {{-- ===== COURS PAYANTS & DONS ===== --}}
+        <div class="faq-item" data-cat="payant" data-search="cours payants abonnement premium différence gratuit">
+            <div class="faq-question">
+                <div class="faq-question-icon"><i class="fas fa-crown"></i></div>
+                <h3>Quelle est la différence entre formations gratuites, cours payants et abonnement Premium ?</h3>
+                <i class="fas fa-chevron-down faq-chevron"></i>
+            </div>
+            <div class="faq-answer-wrap">
+                <div class="faq-answer">
+                    Les <strong>formations gratuites</strong> couvrent l'essentiel de chaque technologie et restent accessibles à tous. Les <strong>cours payants</strong> approfondissent des sujets spécifiques avec un contenu premium et donnent accès à un <strong>certificat</strong> à la complétion. L'<strong>abonnement Premium</strong> donne un accès élargi à l'ensemble des cours payants pour un tarif mensuel/annuel. Retrouvez le détail sur la page <a href="{{ route('monetization.courses') }}">Cours payants</a>.
+                </div>
+            </div>
+        </div>
+
+        <div class="faq-item" data-cat="payant" data-search="don faire un don affiliation programme affilié">
+            <div class="faq-question">
+                <div class="faq-question-icon"><i class="fas fa-hand-holding-heart"></i></div>
+                <h3>Puis-je faire un don ou devenir affilié ?</h3>
+                <i class="fas fa-chevron-down faq-chevron"></i>
+            </div>
+            <div class="faq-answer-wrap">
+                <div class="faq-answer">
+                    Oui. Vous pouvez soutenir la plateforme via la page <a href="{{ route('monetization.donations') }}">Dons</a>, ce qui nous aide à maintenir la gratuité des formations. Vous pouvez aussi rejoindre notre <a href="{{ route('monetization.affiliates') }}">programme d'affiliation</a> et toucher une commission en recommandant nos cours payants.
+                </div>
+            </div>
+        </div>
+
+        {{-- ===== CERTIFICATS & BADGES ===== --}}
+        <div class="faq-item" data-cat="certificats" data-search="certificat badge récompense profil complet">
+            <div class="faq-question">
+                <div class="faq-question-icon"><i class="fas fa-award"></i></div>
+                <h3>Puis-je obtenir un certificat ou un badge ?</h3>
+                <i class="fas fa-chevron-down faq-chevron"></i>
+            </div>
+            <div class="faq-answer-wrap">
+                <div class="faq-answer">
+                    Oui ! En complétant un <a href="{{ route('monetization.courses') }}">cours payant</a>, vous débloquez un <a href="{{ route('dashboard.certificates') }}">certificat</a> téléchargeable (votre profil doit être complété au préalable). Vous gagnez aussi des <a href="{{ route('dashboard.badges') }}">badges</a> en progressant sur la plateforme (exercices, quiz, assiduité...), à afficher fièrement sur votre profil ou LinkedIn.
+                </div>
+            </div>
+        </div>
+
+        {{-- ===== COMPTE & CONNEXION ===== --}}
+        <div class="faq-item" data-cat="compte" data-search="compte inscription connexion google github facebook oauth">
+            <div class="faq-question">
+                <div class="faq-question-icon"><i class="fas fa-user-plus"></i></div>
+                <h3>Comment créer un compte ? Puis-je me connecter avec Google ?</h3>
+                <i class="fas fa-chevron-down faq-chevron"></i>
+            </div>
+            <div class="faq-answer-wrap">
+                <div class="faq-answer">
+                    L'inscription est gratuite et se fait en quelques secondes via email/mot de passe, ou en un clic avec votre compte <strong>Google</strong>, <strong>GitHub</strong> ou <strong>Facebook</strong> — aucun formulaire à remplir dans ce cas, votre profil est créé automatiquement.
+                </div>
+            </div>
+        </div>
+
+        <div class="faq-item" data-cat="compte" data-search="mot de passe oublié réinitialiser">
+            <div class="faq-question">
+                <div class="faq-question-icon"><i class="fas fa-key"></i></div>
+                <h3>J'ai oublié mon mot de passe, que faire ?</h3>
+                <i class="fas fa-chevron-down faq-chevron"></i>
+            </div>
+            <div class="faq-answer-wrap">
+                <div class="faq-answer">
+                    Cliquez sur « Mot de passe oublié » depuis la page de connexion, saisissez votre email et suivez le lien de réinitialisation reçu. Si vous vous êtes inscrit via Google/GitHub/Facebook, connectez-vous simplement avec ce même bouton, aucun mot de passe n'est nécessaire.
+                </div>
+            </div>
+        </div>
+
+        {{-- ===== COMMUNAUTÉ & EMPLOIS ===== --}}
+        <div class="faq-item" data-cat="communaute" data-search="forum communauté discussion entraide">
+            <div class="faq-question">
+                <div class="faq-question-icon"><i class="fas fa-comments"></i></div>
+                <h3>À quoi sert le forum NiangProgrammeur ?</h3>
+                <i class="fas fa-chevron-down faq-chevron"></i>
+            </div>
+            <div class="faq-answer-wrap">
+                <div class="faq-answer">
+                    Le <a href="{{ route('forum.index') }}">forum</a> est notre espace d'entraide communautaire : posez vos questions techniques, partagez vos projets, aidez d'autres apprenants et échangez avec la communauté de développeurs NiangProgrammeur, classé par catégories.
+                </div>
+            </div>
+        </div>
+
+        <div class="faq-item" data-cat="communaute" data-search="emploi stage offre opportunité candidature">
+            <div class="faq-question">
+                <div class="faq-question-icon"><i class="fas fa-briefcase"></i></div>
+                <h3>Proposez-vous des offres d'emploi ou de stage ?</h3>
+                <i class="fas fa-chevron-down faq-chevron"></i>
+            </div>
+            <div class="faq-answer-wrap">
+                <div class="faq-answer">
+                    Oui, la section <a href="{{ route('emplois') }}">Emplois</a> publie régulièrement des offres d'emploi, de stage, des bourses et des concours dans le développement web. Un portfolio solide construit avec vos projets de formation est votre meilleur atout pour candidater.
+                </div>
+            </div>
+        </div>
+
+        <div class="faq-item" data-cat="communaute" data-search="partager amis réseaux sociaux">
+            <div class="faq-question">
+                <div class="faq-question-icon"><i class="fas fa-share-alt"></i></div>
+                <h3>Puis-je partager les formations avec mes amis ?</h3>
+                <i class="fas fa-chevron-down faq-chevron"></i>
+            </div>
+            <div class="faq-answer-wrap">
+                <div class="faq-answer">
+                    Absolument, nous vous y encourageons ! Plus la connaissance circule, plus la communauté de développeurs grandit — n'hésitez pas à partager nos liens sur les réseaux sociaux ou dans vos groupes.
+                </div>
+            </div>
+        </div>
+
+        {{-- ===== SUPPORT ===== --}}
+        <div class="faq-item" data-cat="support" data-search="contact aide support whatsapp email">
+            <div class="faq-question">
+                <div class="faq-question-icon"><i class="fas fa-headset"></i></div>
+                <h3>Proposez-vous un support ou de l'aide ?</h3>
+                <i class="fas fa-chevron-down faq-chevron"></i>
+            </div>
+            <div class="faq-answer-wrap">
+                <div class="faq-answer">
+                    Oui ! WhatsApp (+221 78 312 36 57) pour une réponse rapide, email (NiangProgrammeur@gmail.com) pour les questions détaillées, ou notre <a href="{{ route('contact') }}">formulaire de contact</a>. Réponse sous 24-48h en général. Le <a href="{{ route('forum.index') }}">forum</a> reste aussi une excellente option pour l'entraide entre apprenants.
+                </div>
+            </div>
+        </div>
+
+        <div class="faq-item" data-cat="support" data-search="newsletter nouveautés informé réseaux sociaux">
+            <div class="faq-question">
+                <div class="faq-question-icon"><i class="fas fa-bell"></i></div>
+                <h3>Comment rester informé des nouveautés ?</h3>
+                <i class="fas fa-chevron-down faq-chevron"></i>
+            </div>
+            <div class="faq-answer-wrap">
+                <div class="faq-answer">
+                    Abonnez-vous à notre newsletter, suivez-nous sur Facebook, LinkedIn et TikTok, ou activez les notifications sur notre chaîne YouTube. Nous publions régulièrement de nouvelles formations, documents et offres d'emploi.
+                </div>
+            </div>
+        </div>
+
+        <div class="faq-item" data-cat="support" data-search="mobile smartphone tablette responsive">
+            <div class="faq-question">
+                <div class="faq-question-icon"><i class="fas fa-mobile-alt"></i></div>
+                <h3>Puis-je accéder au site depuis mon mobile ?</h3>
+                <i class="fas fa-chevron-down faq-chevron"></i>
+            </div>
+            <div class="faq-answer-wrap">
+                <div class="faq-answer">
+                    Oui, le site est entièrement responsive (mobile, tablette, ordinateur). Pour coder confortablement, un ordinateur reste préférable ; le mobile est parfait pour suivre les cours théoriques en déplacement.
+                </div>
+            </div>
+        </div>
+
+        <div class="faq-item" data-cat="support" data-search="mise à jour contenu actualisé usage commercial">
+            <div class="faq-question">
+                <div class="faq-question-icon"><i class="fas fa-sync-alt"></i></div>
+                <h3>Les contenus sont-ils régulièrement mis à jour ?</h3>
+                <i class="fas fa-chevron-down faq-chevron"></i>
+            </div>
+            <div class="faq-answer-wrap">
+                <div class="faq-answer">
+                    Oui, nous révisons nos formations régulièrement pour suivre les dernières versions des langages et frameworks. Les projets que vous créez avec vos connaissances vous appartiennent entièrement ; seule la redistribution commerciale du contenu des formations lui-même nécessite notre accord écrit.
+                </div>
+            </div>
+        </div>
+
     </div>
 
-    <!-- Question 2 -->
-    <div class="faq-item">
-        <div class="faq-question">
-            <div class="faq-question-icon">
-                <i class="fas fa-gift"></i>
-            </div>
-            <h3>Les formations sont-elles vraiment gratuites sur NiangProgrammeur ?</h3>
-        </div>
-        <div class="faq-answer">
-            Oui, absolument ! Tous nos cours en ligne sont entièrement gratuits et accessibles à tous, sans conditions. Notre mission est de démocratiser l'apprentissage du développement web et de rendre la programmation accessible à tous, notamment en Afrique. Aucun paiement, aucun abonnement, aucun frais caché. Nous croyons fermement que l'éducation devrait être accessible à tous, indépendamment de la situation financière. C'est pourquoi nous avons créé cette plateforme entièrement gratuite, financée par des partenariats et des dons, pour permettre à chacun d'apprendre les compétences essentielles du développement web moderne. Vous avez accès à tous nos contenus : formations complètes, exercices pratiques, quiz interactifs, et même des opportunités d'emploi, le tout sans débourser un seul franc.
-        </div>
-    </div>
-
-    <!-- Question 3 -->
-    <div class="faq-item">
-        <div class="faq-question">
-            <div class="faq-question-icon">
-                <i class="fas fa-certificate"></i>
-            </div>
-            <h3>Puis-je obtenir un certificat à la fin de la formation sur NiangProgrammeur ?</h3>
-        </div>
-        <div class="faq-answer">
-            Actuellement, nous ne délivrons pas de certificats officiels. Cependant, vous pouvez créer un portfolio avec les projets réalisés pendant les formations pour démontrer vos compétences à vos futurs employeurs ou clients. Un portfolio bien construit avec des projets concrets est souvent plus valorisant qu'un simple certificat, car il montre vos compétences pratiques et votre capacité à résoudre des problèmes réels. Nous travaillons activement sur un système de badges de compétences numériques qui seront disponibles prochainement. Ces badges pourront être partagés sur LinkedIn et autres réseaux professionnels pour attester de vos compétences acquises. En attendant, nous vous encourageons à documenter vos projets, à contribuer à des projets open source, et à partager votre parcours d'apprentissage sur les réseaux sociaux pour construire votre réputation en tant que développeur.
-        </div>
-    </div>
-
-    <!-- Question 4 -->
-    <div class="faq-item">
-        <div class="faq-question">
-            <div class="faq-question-icon">
-                <i class="fas fa-clock"></i>
-            </div>
-            <h3>Combien de temps faut-il pour terminer une formation sur NiangProgrammeur ?</h3>
-        </div>
-        <div class="faq-answer">
-            La durée varie selon la formation et votre rythme d'apprentissage. En moyenne, comptez 2 à 4 semaines pour une formation complète en y consacrant 2 à 3 heures par semaine. Les formations de base (HTML5, CSS3) peuvent être complétées en 1 à 2 semaines, tandis que les formations avancées (JavaScript, PHP, Laravel) peuvent nécessiter 4 à 8 semaines selon votre niveau initial. Vous pouvez apprendre à votre propre rythme, à tout moment, depuis n'importe où. Il n'y a pas de limite de temps pour terminer une formation - vous pouvez y revenir autant de fois que nécessaire. Nous recommandons de suivre les formations de manière régulière (même 30 minutes par jour) plutôt que de tout faire en une seule session, car cela améliore la rétention des connaissances. Chaque formation comprend des exercices pratiques et des quiz pour renforcer votre apprentissage.
-        </div>
-    </div>
-
-    <!-- Question 5 -->
-    <div class="faq-item">
-        <div class="faq-question">
-            <div class="faq-question-icon">
-                <i class="fas fa-headset"></i>
-            </div>
-            <h3>Proposez-vous un support ou de l'aide sur NiangProgrammeur ?</h3>
-        </div>
-        <div class="faq-answer">
-            Oui, nous offrons un support complet et personnalisé ! Vous pouvez nous contacter via WhatsApp (+221 78 312 36 57) pour une assistance rapide, par email (NiangProgrammeur@gmail.com) pour des questions détaillées, ou via notre formulaire de contact sur le site pour toute demande générale. Nous nous efforçons de répondre dans les 24-48 heures, souvent même plus rapidement pour les questions urgentes. Nous organisons également des sessions de questions-réponses en direct sur nos réseaux sociaux (Facebook, LinkedIn, TikTok) où vous pouvez poser vos questions et obtenir des réponses en temps réel. Pour les problèmes techniques ou les questions sur le code, nous avons également une communauté active d'apprenants qui s'entraident mutuellement. N'hésitez pas à nous contacter, nous sommes là pour vous accompagner dans votre parcours d'apprentissage !
-        </div>
-    </div>
-
-    <!-- Question 6 -->
-    <div class="faq-item">
-        <div class="faq-question">
-            <div class="faq-question-icon">
-                <i class="fas fa-sync-alt"></i>
-            </div>
-            <h3>Les contenus sont-ils régulièrement mis à jour sur NiangProgrammeur ?</h3>
-        </div>
-        <div class="faq-answer">
-            Oui, nous mettons à jour nos formations régulièrement pour refléter les dernières technologies, frameworks et meilleures pratiques du développement web. Le monde du développement web évolue rapidement, et nous nous engageons à maintenir nos contenus à jour avec les dernières versions des langages (PHP 8.x, JavaScript ES6+, HTML5, CSS3), les nouveaux frameworks populaires (Laravel, React, Vue.js), et les meilleures pratiques de l'industrie. Nous suivons de près les évolutions des langages de programmation et des outils modernes pour vous offrir un contenu toujours à jour et pertinent. Chaque trimestre, nous révisons nos formations pour intégrer les nouvelles fonctionnalités, corriger les informations obsolètes, et ajouter des exemples pratiques basés sur les projets réels. Nous surveillons également les tendances du marché pour vous préparer aux compétences les plus demandées par les employeurs.
-        </div>
-    </div>
-
-    <!-- Question 7 -->
-    <div class="faq-item">
-        <div class="faq-question">
-            <div class="faq-question-icon">
-                <i class="fas fa-briefcase"></i>
-            </div>
-            <h3>Puis-je utiliser le contenu de NiangProgrammeur pour un usage commercial ?</h3>
-        </div>
-        <div class="faq-answer">
-            Le contenu des formations est destiné à un usage personnel et éducatif. Vous pouvez utiliser les connaissances acquises pour créer vos propres projets commerciaux, développer des sites web pour vos clients, ou même créer votre propre entreprise de développement. C'est exactement l'objectif de nos formations : vous donner les compétences nécessaires pour réussir professionnellement. Cependant, la reproduction ou la redistribution du contenu des formations (textes, vidéos, exercices) à des fins commerciales nécessite une autorisation écrite de notre part. Si vous souhaitez utiliser nos contenus pour créer votre propre plateforme de formation, nous serions ravis de discuter d'un partenariat. Les projets que vous créez en utilisant les connaissances acquises vous appartiennent entièrement - nous encourageons même nos apprenants à partager leurs réalisations avec la communauté !
-        </div>
-    </div>
-
-    <!-- Question 8 -->
-    <div class="faq-item">
-        <div class="faq-question">
-            <div class="faq-question-icon">
-                <i class="fas fa-bell"></i>
-            </div>
-            <h3>Comment puis-je rester informé des nouvelles formations sur NiangProgrammeur ?</h3>
-        </div>
-        <div class="faq-answer">
-            Pour rester informé de toutes nos nouveautés, formations et opportunités, nous vous proposons plusieurs moyens : (1) vous abonner à notre newsletter sur le site - vous recevrez un email hebdomadaire avec les dernières formations, articles et offres d'emploi, (2) nous suivre sur nos réseaux sociaux (Facebook, LinkedIn, TikTok) où nous partageons quotidiennement des astuces, des tutoriels courts, et des actualités du développement web, (3) activer les notifications sur notre chaîne YouTube pour être alerté dès qu'une nouvelle vidéo est publiée, ou (4) nous contacter directement pour être ajouté à notre liste de diffusion prioritaire. Nous publions généralement 2 à 3 nouvelles formations par mois, ainsi que des articles réguliers sur les tendances du développement web, les opportunités d'emploi, et les conseils de carrière. En vous abonnant, vous ne manquerez aucune opportunité d'apprentissage ou professionnelle !
-        </div>
-    </div>
-
-    <!-- Question 9 -->
-    <div class="faq-item">
-        <div class="faq-question">
-            <div class="faq-question-icon">
-                <i class="fas fa-laptop-code"></i>
-            </div>
-            <h3>Quelles technologies sont enseignées sur NiangProgrammeur ?</h3>
-        </div>
-        <div class="faq-answer">
-            Nous enseignons un large éventail de technologies web modernes et essentielles pour devenir un développeur web complet. Nos formations couvrent : HTML5 (structure et sémantique), CSS3 (styles, animations, responsive design), JavaScript (ES6+, DOM, async/await, modules), PHP (syntaxe, OOP, frameworks), Bootstrap (grilles, composants, responsive), Git (versioning, branches, collaboration), WordPress (thèmes, plugins, personnalisation), Laravel (framework PHP moderne), Python (programmation et applications web), et bien plus encore. Nous couvrons également les concepts d'Intelligence Artificielle appliqués au développement web, ainsi que les outils modernes comme les API REST, les bases de données (MySQL, PostgreSQL), et les pratiques DevOps. Nos formations vont des bases absolues (pour les débutants complets) aux concepts avancés (pour les développeurs expérimentés souhaitant se perfectionner). Chaque technologie est enseignée avec des exemples pratiques, des projets réels, et des exercices interactifs pour une meilleure compréhension.
-        </div>
-    </div>
-
-    <!-- Question 10 -->
-    <div class="faq-item">
-        <div class="faq-question">
-            <div class="faq-question-icon">
-                <i class="fas fa-users"></i>
-            </div>
-            <h3>Puis-je partager les formations de NiangProgrammeur avec mes amis ?</h3>
-        </div>
-        <div class="faq-answer">
-            Absolument ! Nous encourageons vivement le partage de nos formations avec vos amis, collègues, famille et toute personne intéressée par l'apprentissage du développement web. Le partage de connaissances est au cœur de notre mission - plus il y a de personnes qui apprennent, plus la communauté de développeurs grandit et s'enrichit. N'hésitez pas à partager nos liens sur les réseaux sociaux, dans vos groupes WhatsApp, ou par email. Vous pouvez également recommander nos formations à vos professeurs, vos mentors, ou dans votre entreprise si vous souhaitez que vos collègues se forment également. Chaque partage nous aide à toucher plus de personnes et à démocratiser l'accès à l'éducation en développement web, notamment en Afrique où les ressources éducatives de qualité sont parfois limitées. Ensemble, nous construisons une communauté forte de développeurs talentueux !
-        </div>
-    </div>
-
-    <!-- Question 11 -->
-    <div class="faq-item">
-        <div class="faq-question">
-            <div class="faq-question-icon">
-                <i class="fas fa-mobile-alt"></i>
-            </div>
-            <h3>Puis-je accéder aux formations de NiangProgrammeur sur mobile ?</h3>
-        </div>
-        <div class="faq-answer">
-            Oui, notre site est entièrement responsive et optimisé pour mobile, tablette et desktop. Vous pouvez accéder à toutes nos formations depuis n'importe quel appareil - smartphone Android ou iOS, tablette, ou ordinateur. L'interface s'adapte automatiquement à la taille de votre écran pour une expérience optimale. Vous pouvez même télécharger nos pages pour une consultation hors ligne. Cependant, pour une meilleure expérience d'apprentissage, nous recommandons fortement l'utilisation d'un ordinateur (laptop ou desktop) pour le codage pratique, car cela vous permet d'avoir un écran plus grand, un clavier complet pour écrire du code efficacement, et la possibilité d'utiliser plusieurs fenêtres simultanément (éditeur de code, navigateur, documentation). Pour la consultation des cours et la lecture des contenus théoriques, le mobile est parfaitement adapté et vous permet d'apprendre pendant vos trajets ou vos moments libres.
-        </div>
-    </div>
-
-    <!-- Question 12 -->
-    <div class="faq-item">
-        <div class="faq-question">
-            <div class="faq-question-icon">
-                <i class="fas fa-gift"></i>
-            </div>
-            <h3>NiangProgrammeur propose-t-il des opportunités d'emploi ou de stage ?</h3>
-        </div>
-        <div class="faq-answer">
-            Oui, absolument ! En plus de nos formations gratuites, nous publions régulièrement des offres d'emploi et de stage dans le domaine du développement web sur notre section "Emplois". Ces offres proviennent d'entreprises locales et internationales à la recherche de développeurs talentueux. Nous mettons également en relation les apprenants talentueux avec des entreprises partenaires à la recherche de développeurs compétents. Si vous avez complété plusieurs formations avec succès et que vous avez construit un portfolio solide, n'hésitez pas à nous contacter - nous pouvons vous recommander auprès de nos partenaires. Nous organisons également des événements de networking, des webinaires avec des recruteurs, et des sessions de coaching pour vous aider à préparer vos entretiens d'embauche. Notre objectif est non seulement de vous former, mais aussi de vous aider à décrocher votre premier emploi ou à faire évoluer votre carrière dans le développement web.
-        </div>
-    </div>
+    <p class="faq-no-results" id="faqNoResults">
+        <i class="fas fa-search" style="display:block; font-size:2rem; margin-bottom:12px; opacity:0.5;"></i>
+        Aucune question ne correspond à votre recherche. <a href="{{ route('contact') }}" style="color:#06b6d4;">Contactez-nous directement</a>.
+    </p>
 
     <!-- CTA -->
     <div class="faq-cta">
         <div class="faq-cta-content">
             <h3>Vous avez d'autres questions ?</h3>
-            <p>Notre équipe est là pour vous aider ! Contactez-nous et nous vous répondrons dans les plus brefs délais.</p>
-            <a href="{{ route('contact') }}" class="faq-cta-button">
-                <i class="fas fa-envelope"></i>
-                Nous contacter
-            </a>
+            <p>Notre équipe et la communauté sont là pour vous aider.</p>
+            <div class="faq-cta-actions">
+                <a href="{{ route('contact') }}" class="faq-cta-button">
+                    <i class="fas fa-envelope"></i> Nous contacter
+                </a>
+                <a href="{{ route('forum.index') }}" class="faq-cta-button is-secondary">
+                    <i class="fas fa-comments"></i> Rejoindre le forum
+                </a>
+            </div>
         </div>
     </div>
 </section>
 @endsection
+
+@push('scripts')
+<script>
+(function () {
+    const items = Array.from(document.querySelectorAll('.faq-item'));
+    const pills = Array.from(document.querySelectorAll('.faq-cat-pill'));
+    const searchInput = document.getElementById('faqSearchInput');
+    const resultsCount = document.getElementById('faqResultsCount');
+    const noResults = document.getElementById('faqNoResults');
+
+    let activeCategory = 'all';
+
+    // Accordéon : un seul item ouvert à la fois
+    items.forEach(item => {
+        item.querySelector('.faq-question').addEventListener('click', () => {
+            const wasOpen = item.classList.contains('is-open');
+            items.forEach(i => i.classList.remove('is-open'));
+            if (!wasOpen) item.classList.add('is-open');
+        });
+    });
+
+    pills.forEach(pill => {
+        pill.addEventListener('click', () => {
+            pills.forEach(p => p.classList.remove('is-active'));
+            pill.classList.add('is-active');
+            activeCategory = pill.dataset.cat;
+            applyFilters();
+        });
+    });
+
+    searchInput.addEventListener('input', applyFilters);
+
+    function applyFilters() {
+        const query = searchInput.value.trim().toLowerCase();
+        let visibleCount = 0;
+
+        items.forEach(item => {
+            const matchesCategory = activeCategory === 'all' || item.dataset.cat === activeCategory;
+            const haystack = (item.querySelector('h3').textContent + ' ' + (item.dataset.search || '')).toLowerCase();
+            const matchesSearch = !query || haystack.includes(query);
+            const visible = matchesCategory && matchesSearch;
+
+            item.style.display = visible ? '' : 'none';
+            if (visible) visibleCount++;
+        });
+
+        noResults.style.display = visibleCount === 0 ? 'block' : 'none';
+        resultsCount.textContent = query ? `${visibleCount} question${visibleCount > 1 ? 's' : ''} trouvée${visibleCount > 1 ? 's' : ''}` : '';
+    }
+})();
+</script>
+@endpush

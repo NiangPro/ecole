@@ -40,7 +40,10 @@
         $containerStyle = $containerStyle ?? 'margin: 20px 0; text-align: center;';
     }
     
-    $adStyle = $adStyle ?? 'display:block';
+    // Réserve la hauteur de l'unité pour éviter le décalage (CLS) au moment où
+    // AdSense gonfle le <ins> de 0 à sa hauteur réelle. min-height plancher pour
+    // un format in-content responsive ; l'unité peut dépasser sans provoquer de shift.
+    $adStyle = $adStyle ?? 'display:block; min-height:280px';
 @endphp
 
 @if($clientId && $adSlot)

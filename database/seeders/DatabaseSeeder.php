@@ -66,5 +66,8 @@ class DatabaseSeeder extends Seeder
         
         // Seeder pour les catégories de forum
         $this->call(ForumCategorySeeder::class);
+
+        // Seeder pour le module finances (catégories + taux de change par défaut)
+        $this->call(FinanceCategorySeeder::class);
     }
 }

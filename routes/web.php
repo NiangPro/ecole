@@ -306,6 +306,30 @@ Route::get('/emplois/categorie/{slug}', [EmploiController::class, 'category'])->
 // Route spécifique avant la route avec paramètre pour éviter les conflits
 Route::get('/emplois/articles-recents', [EmploiController::class, 'recent'])->name('emplois.recent-articles');
 Route::get('/articles/vedettes', [EmploiController::class, 'featured'])->name('articles.vedettes');
+// Consolidation SEO — cluster de 9 articles quasi identiques sur "candidature
+// spontanée chez Sonatel" publiés entre le 16/06/2026 et le 21/07/2026 par le
+// pipeline de publication automatisée (cannibalisation signalée les 20/07 et
+// 27/07). Conservé : le plus ancien (candidature-spontanee-sonatel-2026-postulez-au-senegal,
+// 16/06/2026), qui a eu le plus de temps pour accumuler indexation/backlinks —
+// à confirmer/ajuster via Search Console si un autre article performe mieux.
+// Les fiches "Service Manager à Dakar" et "Recrutement Sonatel 2025" ne sont PAS
+// des doublons (offres d'emploi concrètes distinctes) et ne sont pas redirigées.
+// Placées AVANT la route {slug} pour être servies en 301 plutôt que retourner
+// le contenu de l'article encore en base (le nettoyage des lignes dupliquées en
+// base nécessite un accès à la base de production, non disponible ici).
+foreach ([
+    'comment-postuler-a-sonatel-orange-senegal-en-2026-1',
+    'comment-postuler-a-la-sonatel-en-2026',
+    'comment-postuler-a-sonatel-orange-senegal-en-2026',
+    'sonatel-recrute-candidature-spontanee-2026',
+    'deposer-une-candidature-spontanee-chez-sonatel-2026',
+    'candidature-spontanee-sonatel-orange-senegal-2026-2',
+    'candidature-spontanee-sonatel-comment-postuler-en-2026',
+    'comment-postuler-a-la-sonatel-orange-senegal-2026',
+] as $duplicateSlug) {
+    Route::redirect('/emplois/article/' . $duplicateSlug, '/emplois/article/candidature-spontanee-sonatel-2026-postulez-au-senegal', 301);
+}
+
 // Route avec paramètre - exclut "articles-recents" pour éviter les conflits
 Route::get('/emplois/article/{slug}', [EmploiController::class, 'show'])
     ->where('slug', '^(?!articles-recents$).+')
@@ -416,9 +440,23 @@ Route::get('/register', [\App\Http\Controllers\Auth\RegisterController::class, '
 Route::post('/register', [\App\Http\Controllers\Auth\RegisterController::class, 'register'])->name('register.post');
 Route::post('/logout', [\App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
 
+// Mot de passe oublié — vérification par code OTP envoyé par e-mail
+Route::get('/mot-de-passe-oublie', [\App\Http\Controllers\Auth\ForgotPasswordController::class, 'showRequestForm'])->name('password.request');
+Route::post('/mot-de-passe-oublie', [\App\Http\Controllers\Auth\ForgotPasswordController::class, 'sendOtp'])->middleware('throttle:5,1')->name('password.otp.send');
+Route::get('/mot-de-passe-oublie/verifier', [\App\Http\Controllers\Auth\ForgotPasswordController::class, 'showVerifyForm'])->name('password.otp.verify.form');
+Route::post('/mot-de-passe-oublie/verifier', [\App\Http\Controllers\Auth\ForgotPasswordController::class, 'resetPassword'])->middleware('throttle:10,1')->name('password.otp.verify');
+
 // Connexion / inscription via Google
 Route::get('/auth/google/redirect', [\App\Http\Controllers\Auth\SocialAuthController::class, 'redirectToGoogle'])->name('auth.google.redirect');
 Route::get('/auth/google/callback', [\App\Http\Controllers\Auth\SocialAuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
+
+// Connexion / inscription via GitHub
+Route::get('/auth/github/redirect', [\App\Http\Controllers\Auth\SocialAuthController::class, 'redirectToGithub'])->name('auth.github.redirect');
+Route::get('/auth/github/callback', [\App\Http\Controllers\Auth\SocialAuthController::class, 'handleGithubCallback'])->name('auth.github.callback');
+
+// Connexion / inscription via Facebook
+Route::get('/auth/facebook/redirect', [\App\Http\Controllers\Auth\SocialAuthController::class, 'redirectToFacebook'])->name('auth.facebook.redirect');
+Route::get('/auth/facebook/callback', [\App\Http\Controllers\Auth\SocialAuthController::class, 'handleFacebookCallback'])->name('auth.facebook.callback');
 
 // Routes utilisateur authentifié - Dashboard
 Route::middleware('auth')->prefix('dashboard')->name('dashboard.')->group(function () {
@@ -616,6 +654,32 @@ Route::middleware(['admin'])->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\SecurityAuditController::class, 'index'])->name('index');
         Route::get('/{audit}', [\App\Http\Controllers\Admin\SecurityAuditController::class, 'show'])->name('show');
         Route::get('/export/csv', [\App\Http\Controllers\Admin\SecurityAuditController::class, 'export'])->name('export');
+    });
+
+    // Routes Module Finances Admin
+    Route::prefix('admin/finances')->name('admin.finances.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\Admin\FinanceController::class, 'dashboard'])->name('dashboard');
+        Route::get('/reports', [\App\Http\Controllers\Admin\FinanceController::class, 'reports'])->name('reports');
+        Route::get('/reports/export-pdf', [\App\Http\Controllers\Admin\FinanceController::class, 'exportReportPdf'])->name('reports.export-pdf');
+        Route::get('/api/chart-data', [\App\Http\Controllers\Admin\FinanceController::class, 'chartData'])->name('api.chart');
+        Route::get('/api/donut-data', [\App\Http\Controllers\Admin\FinanceController::class, 'donutData'])->name('api.donut');
+        Route::get('/api/dashboard-data', [\App\Http\Controllers\Admin\FinanceController::class, 'dashboardData'])->name('api.dashboard');
+
+        Route::post('/transactions/quick-add', [\App\Http\Controllers\Admin\FinanceTransactionController::class, 'quickStore'])->name('transactions.quick-store');
+        Route::get('/transactions/export', [\App\Http\Controllers\Admin\FinanceTransactionController::class, 'export'])->name('transactions.export');
+        Route::resource('transactions', \App\Http\Controllers\Admin\FinanceTransactionController::class)->except(['show']);
+
+        Route::patch('/recurring/{recurring}/toggle', [\App\Http\Controllers\Admin\FinanceRecurringController::class, 'toggle'])->name('recurring.toggle');
+        Route::resource('recurring', \App\Http\Controllers\Admin\FinanceRecurringController::class)->except(['show']);
+
+        Route::resource('categories', \App\Http\Controllers\Admin\FinanceCategoryController::class)->except(['show']);
+
+        Route::get('/notifications', [\App\Http\Controllers\Admin\FinanceNotificationController::class, 'index'])->name('notifications.index');
+        Route::patch('/notifications/read-all', [\App\Http\Controllers\Admin\FinanceNotificationController::class, 'markAllRead'])->name('notifications.read-all');
+        Route::patch('/notifications/{notification}/read', [\App\Http\Controllers\Admin\FinanceNotificationController::class, 'markRead'])->name('notifications.read');
+
+        Route::get('/exchange-rates', [\App\Http\Controllers\Admin\FinanceExchangeRateController::class, 'index'])->name('exchange-rates.index');
+        Route::post('/exchange-rates', [\App\Http\Controllers\Admin\FinanceExchangeRateController::class, 'store'])->name('exchange-rates.store');
     });
 
     // Routes Monétisation Admin

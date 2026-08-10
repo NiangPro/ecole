@@ -9,6 +9,7 @@ use App\Models\DocumentCategory;
 use App\Models\DocumentPurchase;
 use App\Models\DocumentDownload;
 use App\Rules\ValidDocumentFile;
+use App\Support\ImageOptimizer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
@@ -108,9 +109,7 @@ class DocumentController extends Controller
 
         // Gérer l'upload de l'image de couverture
         if ($validated['cover_type'] === 'internal' && $request->hasFile('cover_image_file')) {
-            $image = $request->file('cover_image_file');
-            $imageName = time() . '_' . Str::random(10) . '.' . $image->getClientOriginalExtension();
-            $imagePath = $image->storeAs('document-covers', $imageName, 'public');
+            $imagePath = ImageOptimizer::storeResized($request->file('cover_image_file'), 'document-covers', 560, 400);
             $validated['cover_image'] = $imagePath;
         } elseif ($validated['cover_type'] === 'external' && $request->has('cover_image_url')) {
             $url = trim($request->input('cover_image_url', ''));
@@ -279,9 +278,7 @@ class DocumentController extends Controller
             if ($document->cover_image && $document->cover_type === 'internal' && Storage::disk('public')->exists($document->cover_image)) {
                 Storage::disk('public')->delete($document->cover_image);
             }
-            $image = $request->file('cover_image_file');
-            $imageName = time() . '_' . Str::random(10) . '.' . $image->getClientOriginalExtension();
-            $imagePath = $image->storeAs('document-covers', $imageName, 'public');
+            $imagePath = ImageOptimizer::storeResized($request->file('cover_image_file'), 'document-covers', 560, 400);
             $validated['cover_image'] = $imagePath;
         } elseif ($validated['cover_type'] === 'external' && $request->has('cover_image_url')) {
             $url = trim($request->input('cover_image_url', ''));

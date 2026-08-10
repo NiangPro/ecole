@@ -50,10 +50,9 @@
             <p class="document-excerpt">{{ $document->excerpt }}</p>
         @endif
 
-        <!-- Preuve sociale : note moyenne et ventes -->
-        @if($document->reviews_count > 0 || ($document->sales_count ?? 0) > 0)
+        <!-- Preuve sociale : note moyenne -->
+        @if($document->reviews_count > 0)
         <div class="doc-rating-row">
-            @if($document->reviews_count > 0)
             <span class="doc-rating-stars">
                 @for($i = 1; $i <= 5; $i++)
                     <i class="fas fa-star{{ $i <= round($document->average_rating) ? '' : '-o' }}"></i>
@@ -61,12 +60,6 @@
             </span>
             <span class="doc-rating-val">{{ number_format($document->average_rating, 1) }}</span>
             <span class="doc-rating-count">({{ $document->reviews_count }})</span>
-            @endif
-            @if(($document->sales_count ?? 0) > 0)
-            <span class="doc-rating-count">
-                <i class="fas fa-download"></i> {{ number_format($document->sales_count, 0, ',', ' ') }} ventes
-            </span>
-            @endif
         </div>
         @endif
 

@@ -120,6 +120,8 @@ class JobArticleController extends Controller
         // Gérer l'upload d'image si c'est une image interne
         if ($validated['cover_type'] === 'internal' && $request->hasFile('cover_image_file')) {
             $path = $request->file('cover_image_file')->store('job-covers', 'public');
+            // Recompresse en place l'image uploadée par l'admin (voir ImageOptimizer)
+            \App\Services\ImageOptimizer::optimize(Storage::disk('public')->path($path));
             $validated['cover_image'] = $path;
         } elseif ($validated['cover_type'] === 'external' && $request->has('cover_image_url')) {
             $url = trim($request->input('cover_image_url', ''));
@@ -275,6 +277,8 @@ class JobArticleController extends Controller
                 Storage::disk('public')->delete($article->cover_image);
             }
             $path = $request->file('cover_image_file')->store('job-covers', 'public');
+            // Recompresse en place l'image uploadée par l'admin (voir ImageOptimizer)
+            \App\Services\ImageOptimizer::optimize(Storage::disk('public')->path($path));
             $validated['cover_image'] = $path;
         } elseif ($validated['cover_type'] === 'external' && $request->has('cover_image_url')) {
             // Nouvelle URL externe fournie

@@ -906,24 +906,31 @@
                 <i class="fas fa-chart-bar text-xl"></i>
                 <span>Statistiques</span>
             </a>
-            
+
+            @php
+                $financeUnreadCount = \App\Models\FinanceNotification::where('is_read', false)->count();
+            @endphp
+            <a href="{{ route('admin.finances.dashboard') }}" class="sidebar-item {{ request()->routeIs('admin.finances.*') ? 'active' : '' }}">
+                <i class="fas fa-wallet text-xl"></i>
+                <span>Finances</span>
+                @if($financeUnreadCount > 0)
+                <span class="sidebar-badge">{{ $financeUnreadCount }}</span>
+                @endif
+            </a>
+
             @endif
             @endauth
 
             @auth
             @if(Auth::user()->isAdmin())
             <!-- Menu Dropdown Outils -->
-            <div class="sidebar-dropdown {{ request()->routeIs('admin.downloads.*') || request()->routeIs('admin.analytics.*') || request()->routeIs('admin.ads.*') || request()->routeIs('admin.achievements.*') ? 'active' : '' }}">
+            <div class="sidebar-dropdown {{ request()->routeIs('admin.analytics.*') || request()->routeIs('admin.ads.*') || request()->routeIs('admin.achievements.*') ? 'active' : '' }}">
                 <button class="sidebar-item sidebar-dropdown-toggle" onclick="toggleSidebarDropdown('tools')">
                     <i class="fas fa-toolbox text-xl"></i>
                     <span>Outils</span>
                     <i class="fas fa-chevron-down dropdown-icon ml-auto" id="tools-icon"></i>
                 </button>
-                <div class="sidebar-dropdown-menu" id="tools-dropdown" style="display: {{ request()->routeIs('admin.downloads.*') || request()->routeIs('admin.analytics.*') || request()->routeIs('admin.ads.*') || request()->routeIs('admin.achievements.*') ? 'block' : 'none' }};">
-                    <a href="{{ route('admin.downloads.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.downloads.*') ? 'active' : '' }}">
-                        <i class="fas fa-download"></i>
-                        <span>Téléchargements</span>
-                    </a>
+                <div class="sidebar-dropdown-menu" id="tools-dropdown" style="display: {{ request()->routeIs('admin.analytics.*') || request()->routeIs('admin.ads.*') || request()->routeIs('admin.achievements.*') ? 'block' : 'none' }};">
                     <a href="{{ route('admin.analytics.index') }}" class="sidebar-dropdown-item {{ request()->routeIs('admin.analytics.*') ? 'active' : '' }}">
                         <i class="fas fa-chart-line"></i>
                         <span>Analytics</span>
@@ -1434,7 +1441,7 @@
             
             // Sauvegarder la préférence
             localStorage.setItem('adminDarkMode', isLight ? 'light' : 'dark');
-            
+
             // Mettre à jour l'icône
             if (isLight) {
                 icon.classList.remove('fa-moon');
@@ -1443,6 +1450,10 @@
                 icon.classList.remove('fa-sun');
                 icon.classList.add('fa-moon');
             }
+
+            // Permet aux pages avec des graphiques (Chart.js, etc.) de se
+            // redessiner avec des couleurs adaptées sans recharger la page.
+            window.dispatchEvent(new CustomEvent('admin:theme-changed', { detail: { light: isLight } }));
         }
         
         // Initialiser le dark mode au chargement

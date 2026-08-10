@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Exceptions\DuplicateArticleException;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Services\JobArticlePublisher;
@@ -33,6 +34,7 @@ class ArticleController extends Controller
      *   is_sponsored     (bool,   optionnel)   – défaut false
      *   is_featured      (bool,   optionnel)   – défaut false
      *   published_at     (string, optionnel)   – Date ISO 8601, défaut = now() si status=published
+     *   allow_duplicate  (bool,   optionnel)   – défaut false, voir réponse 409
      */
     public function store(Request $request, JobArticlePublisher $publisher): JsonResponse
     {
@@ -52,6 +54,7 @@ class ArticleController extends Controller
             'is_sponsored'     => ['nullable', 'boolean'],
             'is_featured'      => ['nullable', 'boolean'],
             'published_at'     => ['nullable', 'date'],
+            'allow_duplicate'  => ['nullable', 'boolean'],
         ]);
 
         if ($validator->fails()) {
@@ -64,6 +67,17 @@ class ArticleController extends Controller
 
         try {
             $article = $publisher->publish($validator->validated());
+        } catch (DuplicateArticleException $e) {
+            return response()->json([
+                'success'          => false,
+                'message'          => $e->getMessage(),
+                'existing_article' => [
+                    'id'   => $e->existingArticle->id,
+                    'slug' => $e->existingArticle->slug,
+                    'url'  => route('emplois.article', $e->existingArticle->slug),
+                ],
+                'hint' => 'Pour publier quand même, renvoyez la requête avec "allow_duplicate": true.',
+            ], 409);
         } catch (UniqueConstraintViolationException $e) {
             return response()->json([
                 'success' => false,

@@ -132,7 +132,7 @@
     </style>
 
     <!-- CSS critique inline (above the fold — aucun HTTP request) -->
-    <style>*{box-sizing:border-box}html,body{margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;background:#fff;color:#1e293b;overflow-x:hidden}.hero-section{position:relative;z-index:2;width:100%;min-height:65vh;display:flex;align-items:center;justify-content:center;padding:80px 40px 60px;overflow:hidden;background:linear-gradient(135deg,rgba(15,23,42,.85) 0%,rgba(30,41,59,.9) 100%)}.hero-content{max-width:1200px;margin:0 auto;width:100%;text-align:center}.main-title{font-size:clamp(2.5rem,5vw,4rem);font-weight:900;line-height:1.2;margin-bottom:30px;color:#fff}.subtitle{font-size:clamp(1rem,2vw,1.3rem);color:rgba(255,255,255,.9);margin-bottom:40px;line-height:1.6}@media (max-width:768px){.hero-section{min-height:55vh;padding:60px 20px 40px}.main-title{font-size:clamp(1.8rem,4vw,2.2rem);line-height:1.3;margin-bottom:20px}}.container{width:100%!important;margin-left:auto!important;margin-right:auto!important;padding-left:1rem!important;padding-right:1rem!important}@media (min-width:640px){.container{padding-left:1.5rem!important;padding-right:1.5rem!important}}section.relative.min-h-screen>div.container{text-align:center!important}section.relative.min-h-screen>div.container>div{margin-left:auto!important;margin-right:auto!important;text-align:center!important}section.relative.min-h-screen h1,section.relative.min-h-screen p{text-align:center!important;margin-left:auto!important;margin-right:auto!important}.max-w-5xl{max-width:64rem!important;margin-left:auto!important;margin-right:auto!important;display:block!important}.max-w-7xl{max-width:80rem!important;margin-left:auto!important;margin-right:auto!important;display:block!important}.max-w-3xl{max-width:48rem!important;margin-left:auto!important;margin-right:auto!important;display:block!important}
+    <style>*{box-sizing:border-box}html,body{margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;background:#fff;color:#1e293b;overflow-x:hidden}body.dark-mode{background:#0a0f1c;color:#e5e5e5}.hero-section{position:relative;z-index:2;width:100%;min-height:65vh;display:flex;align-items:center;justify-content:center;padding:80px 40px 60px;overflow:hidden;background:linear-gradient(135deg,rgba(15,23,42,.85) 0%,rgba(30,41,59,.9) 100%)}.hero-content{max-width:1200px;margin:0 auto;width:100%;text-align:center}.main-title{font-size:clamp(2.5rem,5vw,4rem);font-weight:900;line-height:1.2;margin-bottom:30px;color:#fff}.subtitle{font-size:clamp(1rem,2vw,1.3rem);color:rgba(255,255,255,.9);margin-bottom:40px;line-height:1.6}@media (max-width:768px){.hero-section{min-height:55vh;padding:60px 20px 40px}.main-title{font-size:clamp(1.8rem,4vw,2.2rem);line-height:1.3;margin-bottom:20px}}.container{width:100%!important;margin-left:auto!important;margin-right:auto!important;padding-left:1rem!important;padding-right:1rem!important}@media (min-width:640px){.container{padding-left:1.5rem!important;padding-right:1.5rem!important}}section.relative.min-h-screen>div.container{text-align:center!important}section.relative.min-h-screen>div.container>div{margin-left:auto!important;margin-right:auto!important;text-align:center!important}section.relative.min-h-screen h1,section.relative.min-h-screen p{text-align:center!important;margin-left:auto!important;margin-right:auto!important}.max-w-5xl{max-width:64rem!important;margin-left:auto!important;margin-right:auto!important;display:block!important}.max-w-7xl{max-width:80rem!important;margin-left:auto!important;margin-right:auto!important;display:block!important}.max-w-3xl{max-width:48rem!important;margin-left:auto!important;margin-right:auto!important;display:block!important}
     /* Critique — hero de la page d'accueil (.hp-hero), élément LCP confirmé par Lighthouse.
        Peint le texte immédiatement sans attendre app.css/homepage.css (render-blocking). */
     .hp-hero{position:relative;min-height:60dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:5rem 1.5rem 4rem;overflow:hidden;background:oklch(5% 0.02 230)}
@@ -313,7 +313,7 @@
     
     @yield('styles')
 </head>
-<body class="bg-white text-gray-900 light-mode-forced" lang="{{ app()->getLocale() }}">
+<body class="light-mode-forced" lang="{{ app()->getLocale() }}">
 
     <!-- Skip Links pour l'accessibilité -->
     <div class="skip-links">
@@ -696,11 +696,17 @@
     })(window,document,'script','dataLayer','GTM-56V4D8K6');</script>
 
     <!-- AdSense — chargé en différé après interaction ou 3s pour ne pas bloquer le rendu.
-         Anchor ads et vignette (interstitiel) désactivés explicitement : ce sont les deux
-         formats Auto ads qui insèrent/retirent un bloc plein écran ou une bannière collante
-         APRÈS le premier rendu, sans espace réservé au préalable — cause directe du
-         CLS > 0.25 mesuré par CrUX sur la quasi-totalité des pages (Auto ads géré par Google
-         côté serveur, donc impossible à corriger avec un simple width/height côté HTML). -->
+         Le push page-level "enable_page_level_ads" (Auto ads legacy) a été RETIRÉ : il
+         injectait ~24 blocs in-content sans espace réservé (mesuré via PerformanceObserver
+         sur les pages articles), cause principale du CLS ~0,38-0,43 mobile. Le script reste
+         chargé uniquement pour les unités MANUELLES (<ins>) qui, elles, réservent leur
+         hauteur (voir components/adsense-unit.blade.php, epreuves dl-ad-slot).
+         ⚠️ IMPORTANT : les Auto ads modernes sont pilotées côté tableau de bord AdSense,
+         pas par ce flag. Pour couper réellement l'auto-injection, il faut AUSSI les
+         désactiver dans AdSense → Annonces → par site → Auto ads (ou n'y garder que les
+         formats à espace réservé). Ce code seul ne suffit pas si elles sont ON côté compte.
+         Pour réactiver un jour les Auto ads page-level de façon contrôlée : remettre le
+         push { enable_page_level_ads:true } dans s.onload ci-dessous. -->
     @if(!($hideAds ?? false) && $adsenseSettings && $adsenseClientId)
     <script>
     (function(){
@@ -711,15 +717,8 @@
             s.async=true;
             s.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ $adsenseClientId }}';
             s.crossOrigin='anonymous';
-            s.onload=function(){
-                try{
-                    (window.adsbygoogle = window.adsbygoogle || []).push({
-                        google_ad_client: '{{ $adsenseClientId }}',
-                        enable_page_level_ads: true,
-                        overlays: {bottom: false}
-                    });
-                }catch(e){}
-            };
+            // Pas de push page-level ici : seules les unités manuelles <ins> (avec min-height
+            // réservé) pushent {} de leur côté. Évite l'injection in-content sans espace réservé.
             document.head.appendChild(s);
         }
         window.addEventListener('scroll',loadAds,{once:true,passive:true});

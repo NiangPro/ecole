@@ -134,6 +134,8 @@ class PaidCourseController extends Controller
             $image = $request->file('cover_image_file');
             $imageName = time() . '_' . Str::random(10) . '.' . $image->getClientOriginalExtension();
             $imagePath = $image->storeAs('courses', $imageName, 'public');
+            // Recompresse en place l'image uploadée par l'admin (voir ImageOptimizer)
+            \App\Services\ImageOptimizer::optimize(Storage::disk('public')->path($imagePath));
             $data['cover_image'] = $imagePath;
         } elseif ($data['cover_type'] === 'external' && $request->has('cover_image_url')) {
             $url = trim($request->input('cover_image_url', ''));
@@ -267,6 +269,8 @@ class PaidCourseController extends Controller
             $image = $request->file('cover_image_file');
             $imageName = time() . '_' . Str::random(10) . '.' . $image->getClientOriginalExtension();
             $imagePath = $image->storeAs('courses', $imageName, 'public');
+            // Recompresse en place l'image uploadée par l'admin (voir ImageOptimizer)
+            \App\Services\ImageOptimizer::optimize(Storage::disk('public')->path($imagePath));
             $data['cover_image'] = $imagePath;
         } elseif ($data['cover_type'] === 'external' && $request->has('cover_image_url')) {
             // Nouvelle URL externe fournie

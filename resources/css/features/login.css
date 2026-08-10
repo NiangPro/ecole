@@ -456,7 +456,35 @@
 
 .lg-submit:active { transform: translateY(0); }
 
-/* Google button */
+/* Boutons de connexion sociale */
+.lg-social-group {
+  display: flex;
+  flex-direction: row;
+  gap: .6rem;
+}
+
+.lg-social-btn {
+  flex: 1;
+  padding: .85rem;
+  background: #fff;
+  border: 1px solid var(--lg-border);
+  border-radius: 11px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: background .2s, box-shadow .2s, transform .2s;
+}
+
+.lg-social-btn:hover {
+  background: var(--lg-panel);
+  box-shadow: var(--lg-shadow);
+  transform: translateY(-1px);
+}
+
+.lg-social-btn:active { transform: translateY(0); }
+
 .lg-google-btn {
   width: 100%;
   padding: .85rem;
@@ -537,3 +565,98 @@
 }
 
 .lg-back a:hover { color: var(--lg-text); }
+
+/* ============================================================
+   DARK MODE — Ultra moderne
+   ============================================================ */
+body.dark-mode .lg-page {
+  --lg-bg:      #0a0f1c;
+  --lg-panel:   rgba(255,255,255,.045);
+  --lg-border:  rgba(255,255,255,.1);
+  --lg-text:    rgba(255,255,255,.94);
+  --lg-muted:   rgba(255,255,255,.58);
+  --lg-shadow:  0 1px 3px rgba(0,0,0,.4), 0 8px 28px rgba(0,0,0,.4);
+}
+
+body.dark-mode .lg-brand {
+  background: linear-gradient(160deg, #0a0f1c 0%, #101a2e 100%);
+  border-inline-end-color: rgba(255,255,255,.08);
+}
+
+body.dark-mode .lg-brand::before {
+  background: radial-gradient(circle, oklch(55% 0.18 200 / 20%) 0%, transparent 70%);
+}
+
+body.dark-mode .lg-brand::after {
+  background: radial-gradient(circle, oklch(52% 0.15 178 / 16%) 0%, transparent 70%);
+}
+
+body.dark-mode .lg-feature {
+  background: rgba(255,255,255,.035);
+  border-color: rgba(255,255,255,.08);
+}
+
+body.dark-mode .lg-feature:hover {
+  border-color: oklch(65% 0.18 200 / 55%);
+  box-shadow: 0 4px 22px oklch(55% 0.18 200 / 22%);
+}
+
+body.dark-mode .lg-alert--success {
+  background: rgba(34,197,94,.12);
+  border-color: rgba(34,197,94,.3);
+  color: #4ade80;
+}
+
+body.dark-mode .lg-alert--error {
+  background: rgba(220,38,38,.14);
+  border-color: rgba(248,113,113,.35);
+  color: #f87171;
+}
+
+body.dark-mode .lg-label { color: rgba(255,255,255,.85); }
+
+body.dark-mode .lg-input-icon { color: rgba(255,255,255,.35); }
+
+body.dark-mode .lg-input {
+  background: rgba(255,255,255,.04);
+  border-color: rgba(255,255,255,.12);
+}
+
+body.dark-mode .lg-input:focus {
+  background: rgba(255,255,255,.06);
+  border-color: oklch(65% 0.18 200 / 75%);
+  box-shadow: 0 0 0 3px oklch(65% 0.18 200 / 18%);
+}
+
+body.dark-mode .lg-input::placeholder { color: rgba(255,255,255,.28); }
+
+body.dark-mode .lg-pwd-toggle { color: rgba(255,255,255,.4); }
+body.dark-mode .lg-pwd-toggle:hover { color: var(--lg-accent); }
+
+body.dark-mode .lg-remember__box {
+  background: rgba(255,255,255,.05);
+  border-color: rgba(255,255,255,.22);
+}
+
+body.dark-mode .lg-social-btn,
+body.dark-mode .lg-google-btn {
+  background: rgba(255,255,255,.045);
+  border-color: rgba(255,255,255,.12);
+  color: rgba(255,255,255,.92);
+}
+
+body.dark-mode .lg-social-btn:hover,
+body.dark-mode .lg-google-btn:hover {
+  background: rgba(255,255,255,.09);
+  box-shadow: 0 4px 16px rgba(0,0,0,.35);
+}
+
+body.dark-mode .social-icon-github { color: #fff; }
+body.dark-mode .social-icon-facebook { color: #4993ff; }
+
+body.dark-mode .lg-divider { color: rgba(255,255,255,.22); }
+
+body.dark-mode .lg-back a { color: rgba(255,255,255,.4); }
+body.dark-mode .lg-back a:hover { color: rgba(255,255,255,.9); }
+
+body.dark-mode .lg-mobile-logo__name { color: rgba(255,255,255,.94); }

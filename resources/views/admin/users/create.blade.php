@@ -328,6 +328,71 @@
         transform: translateY(-2px);
     }
     
+    /* Mode clair — le panel admin bascule via body.light-mode (cf. admin/layout.blade.php).
+       Sans ces overrides, cette page reste calée sur les couleurs sombres codées en dur
+       ci-dessus (fond quasi-noir, texte blanc) quel que soit le thème choisi. */
+    body.light-mode .form-hero {
+        background: linear-gradient(135deg, rgba(6, 182, 212, 0.08) 0%, rgba(20, 184, 166, 0.08) 100%);
+        border-color: rgba(6, 182, 212, 0.25);
+    }
+
+    body.light-mode .form-hero p {
+        color: rgba(30, 41, 59, 0.7);
+    }
+
+    body.light-mode .form-card {
+        background: rgba(255, 255, 255, 0.85);
+        border-color: rgba(6, 182, 212, 0.25);
+    }
+
+    body.light-mode .field-input,
+    body.light-mode .field-select {
+        background: rgba(255, 255, 255, 0.9);
+        border-color: rgba(6, 182, 212, 0.3);
+        color: #1e293b;
+    }
+
+    body.light-mode .field-input:focus,
+    body.light-mode .field-select:focus {
+        background: rgba(255, 255, 255, 1);
+    }
+
+    body.light-mode .field-input::placeholder {
+        color: rgba(30, 41, 59, 0.35);
+    }
+
+    body.light-mode .field-select option {
+        background: #ffffff;
+        color: #1e293b;
+    }
+
+    body.light-mode .checkbox-group {
+        background: rgba(255, 255, 255, 0.7);
+        border-color: rgba(6, 182, 212, 0.25);
+    }
+
+    body.light-mode .checkbox-group:hover {
+        background: rgba(255, 255, 255, 0.95);
+    }
+
+    body.light-mode .checkbox-title {
+        color: #1e293b;
+    }
+
+    body.light-mode .checkbox-desc {
+        color: rgba(30, 41, 59, 0.6);
+    }
+
+    body.light-mode .btn-cancel {
+        background: rgba(100, 116, 139, 0.1);
+        border-color: rgba(100, 116, 139, 0.25);
+        color: #1e293b;
+    }
+
+    body.light-mode .btn-cancel:hover {
+        background: rgba(100, 116, 139, 0.18);
+    }
+
     @media (max-width: 1200px) {
         .form-grid {
             grid-template-columns: 1fr;

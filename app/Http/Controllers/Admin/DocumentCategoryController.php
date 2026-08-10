@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Concerns\LocaleTrait;
 use App\Models\DocumentCategory;
+use App\Support\ImageOptimizer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -52,7 +53,7 @@ class DocumentCategoryController extends Controller
 
         // Gérer l'upload d'image si c'est une image interne
         if ($validated['image_type'] === 'internal' && $request->hasFile('image_file')) {
-            $path = $request->file('image_file')->store('document-category-images', 'public');
+            $path = ImageOptimizer::storeResized($request->file('image_file'), 'document-category-images', 88, 88);
             $validated['image'] = $path;
         }
 
@@ -103,7 +104,7 @@ class DocumentCategoryController extends Controller
                 if ($category->image && $category->image_type === 'internal' && Storage::disk('public')->exists($category->image)) {
                     Storage::disk('public')->delete($category->image);
                 }
-                $path = $request->file('image_file')->store('document-category-images', 'public');
+                $path = ImageOptimizer::storeResized($request->file('image_file'), 'document-category-images', 88, 88);
                 $validated['image'] = $path;
             }
         }

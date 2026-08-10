@@ -34,6 +34,15 @@
     RewriteCond %{HTTPS} off
     RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 
+    # Anciennes URLs indexées sous la forme /index.php/xxx (audit SEO juillet 2026 C
+    # - canonical en conflit) : rediriger en 301 vers l'URL propre équivalente plutôt
+    # que de compter uniquement sur <link rel="canonical">.
+    RewriteCond %{THE_REQUEST} \s/+index\.php/([^\s?]*) [NC]
+    RewriteRule ^ /%1 [R=301,L,QSA]
+
+    RewriteCond %{THE_REQUEST} \s/+index\.php[\s?] [NC]
+    RewriteRule ^ / [R=301,L,QSA]
+
     # Bloquer les anciennes URLs WordPress avec 410 Gone (pas 404)
     RewriteRule ^wp-content/ - [R=410,L]
     RewriteRule ^wp-admin/ - [R=410,L]

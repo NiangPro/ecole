@@ -768,9 +768,14 @@
                     <div id="externalImage" style="display: {{ old('cover_type', $article->cover_type ?? '') === 'external' ? 'block' : 'none' }};">
                         <div class="form-group">
                             <label class="form-label">URL de l'image</label>
-                            <input type="url" name="cover_image_url" id="coverImageUrl" value="{{ old('cover_image_url', (isset($article) && $article->cover_type === 'external' ? $article->cover_image : '')) }}"
-                                   class="form-input" placeholder="https://example.com/image.jpg">
-                            <div class="form-help">Entrez l'URL complète de l'image</div>
+                            {{-- type="text" (et non "url") : certains articles historiques stockent un chemin
+                                 relatif existant (ex. /images/articles/article-87-....jpg) dans ce champ, que la
+                                 validation HTML5 native de type="url" rejette (elle exige un schéma absolu) et qui
+                                 bloquait silencieusement la soumission du formulaire. La validation souple (relatif
+                                 "/..." ou URL absolue http(s)) est faite en JS ci-dessous via setCustomValidity. --}}
+                            <input type="text" inputmode="url" name="cover_image_url" id="coverImageUrl" value="{{ old('cover_image_url', (isset($article) && $article->cover_type === 'external' ? $article->cover_image : '')) }}"
+                                   class="form-input" placeholder="https://example.com/image.jpg ou /images/articles/exemple.jpg">
+                            <div class="form-help">URL absolue (https://...) ou chemin relatif existant sur le serveur (ex : /images/articles/article-87.jpg)</div>
                             @error('cover_image_url')
                                 <div class="form-error"><i class="fas fa-exclamation-circle"></i> {{ $message }}</div>
                             @enderror
@@ -865,7 +870,10 @@
                 if (this.value === 'internal') {
                     if (internalDiv) internalDiv.style.display = 'block';
                     if (externalDiv) externalDiv.style.display = 'none';
-                    if (coverImageUrl) coverImageUrl.value = '';
+                    if (coverImageUrl) {
+                        coverImageUrl.value = '';
+                        coverImageUrl.setCustomValidity(''); // évite un message d'erreur qui persisterait sur un champ vidé/masqué
+                    }
                 } else {
                     if (internalDiv) internalDiv.style.display = 'none';
                     if (externalDiv) externalDiv.style.display = 'block';
@@ -895,11 +903,28 @@
             });
         }
         
-        // Aperçu pour URL externe
+        // Un chemin relatif existant ("/images/articles/...") est une valeur légitime pour
+        // des articles historiques, au même titre qu'une URL absolue http(s) — cf. commentaire
+        // sur l'input plus haut. article-editor.js gère aussi cet input mais sans jamais
+        // masquer l'aperçu ; ce listener-ci ajoute une vérification que l'image charge bien.
+        function isAcceptableCoverUrl(value) {
+            return value.startsWith('/') || value.startsWith('http://') || value.startsWith('https://');
+        }
+
+        // Aperçu pour URL externe (accepte aussi les chemins relatifs)
         if (coverImageUrl) {
             coverImageUrl.addEventListener('input', function() {
                 const url = this.value.trim();
-                if (url && (url.startsWith('http://') || url.startsWith('https://'))) {
+
+                // Validation souple : ne bloque pas la saisie, signale juste une valeur qui
+                // n'est ni un chemin relatif ni une URL absolue (typo probable).
+                this.setCustomValidity(
+                    url && !isAcceptableCoverUrl(url)
+                        ? "Entrez une URL absolue (http:// ou https://) ou un chemin commençant par /"
+                        : ''
+                );
+
+                if (url && isAcceptableCoverUrl(url)) {
                     if (previewImg) {
                         previewImg.src = url;
                         previewImg.onload = function() {

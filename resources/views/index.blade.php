@@ -102,27 +102,26 @@
               <span class="hp-doc-badge">{{ __('homepage.docs.featured') }}</span>
             @endif
 
-            <div class="hp-doc-price">
-              @if($document->price && $document->price > 0)
-                <span class="hp-doc-price-current">
-                  {{ $document->discount_price ? number_format($document->discount_price, 0, ',', ' ') : number_format($document->price, 0, ',', ' ') }} FCFA
-                </span>
-                @if($document->discount_price && $document->discount_price < $document->price)
-                  <span class="hp-doc-price-old">{{ number_format($document->price, 0, ',', ' ') }}</span>
+            @if($document->price && $document->price > 0)
+              <div class="document-price-overlay">
+                @if($document->hasDiscount())
+                  <span class="document-price-old">{{ number_format($document->price, 0, ',', ' ') }} FCFA</span>
                 @endif
-              @else
+                <span class="document-price-current">{{ number_format($document->hasDiscount() ? $document->discount_price : $document->price, 0, ',', ' ') }} FCFA</span>
+              </div>
+            @else
+              <div class="hp-doc-price">
                 <span class="hp-doc-price-current">{{ __('homepage.docs.free') }}</span>
-              @endif
-            </div>
+              </div>
+            @endif
           </a>
 
           <div class="hp-doc-body">
             <a href="{{ route('documents.show', $document->slug) }}" class="hp-doc-title">
               {{ $document->title }}
             </a>
-            @if(($document->reviews_count ?? 0) > 0 || ($document->sales_count ?? 0) > 0)
+            @if(($document->reviews_count ?? 0) > 0)
             <div class="doc-rating-row">
-              @if(($document->reviews_count ?? 0) > 0)
               <span class="doc-rating-stars">
                 @for($i = 1; $i <= 5; $i++)
                   <i class="fas fa-star{{ $i <= round($document->average_rating) ? '' : '-o' }}"></i>
@@ -130,10 +129,6 @@
               </span>
               <span class="doc-rating-val">{{ number_format($document->average_rating, 1) }}</span>
               <span class="doc-rating-count">({{ $document->reviews_count }})</span>
-              @endif
-              @if(($document->sales_count ?? 0) > 0)
-              <span class="doc-rating-count"><i class="fas fa-download"></i> {{ number_format($document->sales_count, 0, ',', ' ') }} ventes</span>
-              @endif
             </div>
             @endif
             <div class="hp-doc-footer">
@@ -257,57 +252,161 @@
           <p class="hp-section-subtitle">Ce que disent les étudiants qui utilisent nos corrigés et documents</p>
         </div>
 
-        @if($reviewsStats['count'] > 0)
-        <div class="hp-reviews-stat" role="img" aria-label="Note moyenne {{ number_format($reviewsStats['average'], 1) }} sur 5, basée sur {{ $reviewsStats['count'] }} avis vérifiés">
-          <div class="hp-reviews-stat-score">{{ number_format($reviewsStats['average'], 1) }}<span>/5</span></div>
-          <div class="hp-reviews-stat-stars" aria-hidden="true">
-            @for($i = 1; $i <= 5; $i++)
-              <i class="fas fa-star{{ $i <= round($reviewsStats['average']) ? '' : '-o' }}"></i>
-            @endfor
+        <div class="hp-reviews-header-side">
+          @if($reviewsStats['count'] > 0)
+          <div class="hp-reviews-stat" role="img" aria-label="Note moyenne {{ number_format($reviewsStats['average'], 1) }} sur 5, basée sur {{ $reviewsStats['count'] }} avis vérifiés">
+            <div class="hp-reviews-stat-score">{{ number_format($reviewsStats['average'], 1) }}<span>/5</span></div>
+            <div class="hp-reviews-stat-stars" aria-hidden="true">
+              @for($i = 1; $i <= 5; $i++)
+                <i class="fas fa-star{{ $i <= round($reviewsStats['average']) ? '' : '-o' }}"></i>
+              @endfor
+            </div>
+            <div class="hp-reviews-stat-count">{{ number_format($reviewsStats['count']) }} avis vérifiés</div>
           </div>
-          <div class="hp-reviews-stat-count">{{ number_format($reviewsStats['count']) }} avis vérifiés</div>
+          @endif
+          <div class="hp-docs-nav-group">
+            <button type="button" class="hp-docs-nav" id="hpReviewsPrev" aria-label="Témoignage précédent"><i class="fas fa-chevron-left"></i></button>
+            <button type="button" class="hp-docs-nav" id="hpReviewsNext" aria-label="Témoignage suivant"><i class="fas fa-chevron-right"></i></button>
+          </div>
         </div>
-        @endif
       </div>
 
-      <div class="hp-reviews-grid">
-        @foreach($latestReviews as $review)
-        <article class="hp-review-card" style="--stagger: {{ $loop->index }};">
-          <i class="fas fa-quote-right hp-review-quote-icon" aria-hidden="true"></i>
+      <div class="hp-reviews-carousel-wrap">
+        <div class="hp-reviews-carousel" id="hpReviewsViewport">
+          @foreach($latestReviews as $review)
+          <article class="hp-review-card" style="--stagger: {{ $loop->index }};">
+            <i class="fas fa-quote-right hp-review-quote-icon" aria-hidden="true"></i>
 
-          <div class="hp-review-stars" aria-label="Note : {{ $review->rating }} sur 5">
-            @for($i = 1; $i <= 5; $i++)
-              <i class="fas fa-star{{ $i <= $review->rating ? '' : '-o' }}" aria-hidden="true"></i>
-            @endfor
-          </div>
-
-          @if($review->comment)
-          <p class="hp-review-comment">&laquo;&nbsp;{{ \Illuminate\Support\Str::limit($review->comment, 140) }}&nbsp;&raquo;</p>
-          @endif
-
-          <div class="hp-review-footer">
-            <div class="hp-review-avatar" aria-hidden="true">{{ \Illuminate\Support\Str::upper(\Illuminate\Support\Str::substr($review->display_name, 0, 1)) }}</div>
-            <div class="hp-review-meta">
-              <span class="hp-review-author">
-                {{ $review->display_name }}
-                @if($review->is_verified_purchase)
-                <i class="fas fa-check-circle hp-review-verified" title="Achat vérifié" aria-label="Achat vérifié"></i>
-                @endif
-              </span>
-              @if($review->document)
-              <a href="{{ route('documents.show', $review->document->slug) }}" class="hp-review-doc-link">
-                <i class="fas fa-file-alt" aria-hidden="true"></i>
-                {{ \Illuminate\Support\Str::limit($review->document->title, 36) }}
-              </a>
-              @endif
+            <div class="hp-review-stars" aria-label="Note : {{ $review->rating }} sur 5">
+              @for($i = 1; $i <= 5; $i++)
+                <i class="fas fa-star{{ $i <= $review->rating ? '' : '-o' }}" aria-hidden="true"></i>
+              @endfor
             </div>
-          </div>
-        </article>
+
+            @if($review->comment)
+            <p class="hp-review-comment">&laquo;&nbsp;{{ \Illuminate\Support\Str::limit($review->comment, 140) }}&nbsp;&raquo;</p>
+            @endif
+
+            <div class="hp-review-footer">
+              <div class="hp-review-avatar" aria-hidden="true">{{ \Illuminate\Support\Str::upper(\Illuminate\Support\Str::substr($review->display_name, 0, 1)) }}</div>
+              <div class="hp-review-meta">
+                <span class="hp-review-author">
+                  {{ $review->display_name }}
+                  @if($review->is_verified_purchase)
+                  <i class="fas fa-check-circle hp-review-verified" title="Achat vérifié" aria-label="Achat vérifié"></i>
+                  @endif
+                </span>
+                @if($review->document)
+                <a href="{{ route('documents.show', $review->document->slug) }}" class="hp-review-doc-link">
+                  <i class="fas fa-file-alt" aria-hidden="true"></i>
+                  {{ \Illuminate\Support\Str::limit($review->document->title, 36) }}
+                </a>
+                @endif
+              </div>
+            </div>
+          </article>
+          @endforeach
+        </div>
+      </div>
+
+      <div class="hp-reviews-dots" id="hpReviewsDots" role="tablist" aria-label="Navigation des témoignages">
+        @foreach($latestReviews as $review)
+        <button type="button" class="hp-reviews-dot" role="tab" aria-label="Témoignage {{ $loop->iteration }}"></button>
         @endforeach
       </div>
 
     </div>
   </section>
+
+  @push('scripts')
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+      var viewport = document.getElementById('hpReviewsViewport');
+      if (!viewport) return;
+
+      var prevBtn = document.getElementById('hpReviewsPrev');
+      var nextBtn = document.getElementById('hpReviewsNext');
+      var dotsWrap = document.getElementById('hpReviewsDots');
+      var dots = dotsWrap ? Array.from(dotsWrap.querySelectorAll('.hp-reviews-dot')) : [];
+      var cards = Array.from(viewport.querySelectorAll('.hp-review-card'));
+      var autoplayMs = 5000;
+      var autoplayTimer = null;
+      var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      function cardStep() {
+          var card = viewport.querySelector('.hp-review-card');
+          var gap = 24;
+          return card ? card.getBoundingClientRect().width + gap : viewport.clientWidth * 0.85;
+      }
+
+      function activeIndex() {
+          var pos = viewport.scrollLeft;
+          var step = cardStep();
+          return step ? Math.round(pos / step) : 0;
+      }
+
+      function updateState() {
+          var max = viewport.scrollWidth - viewport.clientWidth - 2;
+          if (prevBtn) prevBtn.disabled = viewport.scrollLeft <= 0;
+          if (nextBtn) nextBtn.disabled = viewport.scrollLeft >= max;
+
+          var idx = activeIndex();
+          dots.forEach(function (dot, i) {
+              dot.classList.toggle('is-active', i === idx);
+          });
+      }
+
+      function goTo(index) {
+          var clamped = Math.max(0, Math.min(index, cards.length - 1));
+          viewport.scrollTo({ left: clamped * cardStep(), behavior: 'smooth' });
+      }
+
+      function stopAutoplay() {
+          if (autoplayTimer) {
+              clearInterval(autoplayTimer);
+              autoplayTimer = null;
+          }
+      }
+
+      function startAutoplay() {
+          if (reducedMotion || cards.length <= 1) return;
+          stopAutoplay();
+          autoplayTimer = setInterval(function () {
+              var max = viewport.scrollWidth - viewport.clientWidth - 2;
+              if (viewport.scrollLeft >= max) {
+                  viewport.scrollTo({ left: 0, behavior: 'smooth' });
+              } else {
+                  viewport.scrollBy({ left: cardStep(), behavior: 'smooth' });
+              }
+          }, autoplayMs);
+      }
+
+      if (prevBtn) prevBtn.addEventListener('click', function () {
+          stopAutoplay();
+          viewport.scrollBy({ left: -cardStep(), behavior: 'smooth' });
+      });
+      if (nextBtn) nextBtn.addEventListener('click', function () {
+          stopAutoplay();
+          viewport.scrollBy({ left: cardStep(), behavior: 'smooth' });
+      });
+      dots.forEach(function (dot, i) {
+          dot.addEventListener('click', function () {
+              stopAutoplay();
+              goTo(i);
+          });
+      });
+
+      viewport.addEventListener('scroll', updateState, { passive: true });
+      viewport.addEventListener('mouseenter', stopAutoplay);
+      viewport.addEventListener('mouseleave', startAutoplay);
+      viewport.addEventListener('touchstart', stopAutoplay, { passive: true });
+      window.addEventListener('resize', updateState);
+
+      updateState();
+      startAutoplay();
+  });
+  </script>
+  @endpush
   @endif
 
 
@@ -331,7 +430,7 @@
         <a href="{{ route('emplois.category', $category->slug) }}" class="hp-tech-card">
           <div class="hp-tech-icon">
             @if($category->image)
-              <img src="{{ $category->image }}" alt="{{ $category->name }}" loading="lazy" width="44" height="44">
+              <img src="{{ $category->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($category->image) : $category->image }}" alt="{{ $category->name }}" loading="lazy" width="44" height="44">
             @else
               💻
             @endif

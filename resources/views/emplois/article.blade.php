@@ -331,6 +331,16 @@ body:not(.dark-mode) .art-hero-veil {
   color: #fff; margin-bottom: 18px;
 }
 
+/* Font Awesome se charge en asynchrone : avant son arrivée, les <i> du hero sont
+   des glyphes vides (largeur 0). Réserver leur largeur évite le reflow du badge et
+   des chips au chargement de FA — source de CLS mesurée sur .art-badge / .art-hero-inner. */
+.art-badge i, .art-chip i, .art-fav-btn i, .art-meta-row i {
+  display: inline-block;
+  width: 1em;
+  text-align: center;
+  font-style: normal;
+}
+
 /* Titre hero */
 .art-hero-title {
   font-size: clamp(1.9rem, 4.2vw, 3.6rem);
@@ -1086,7 +1096,7 @@ body:not(.dark-mode) .comment-form-wrapper textarea {
             @if($ad->image)
             <div class="art-ad-imgwrap">
               <img src="{{ $ad->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($ad->image) : $ad->image }}"
-                   alt="{{ $ad->name }}" width="400" height="300" loading="lazy"
+                   alt="{{ $ad->name }}" width="400" height="300" loading="lazy" decoding="async"
                    onerror="this.style.display='none'">
               <div class="art-ad-veil">
                 <div class="art-ad-info">
@@ -1192,7 +1202,7 @@ body:not(.dark-mode) .comment-form-wrapper textarea {
           <div class="art-rel-ttl">{{ $related->title }}</div>
           <div class="art-rel-meta">
             @if($related->published_at)
-            <span><i class="fas fa-calendar"></i> {{ $related->published_at->format('d/m/Y') }}</span>
+            <time datetime="{{ $related->published_at->toIso8601String() }}"><i class="fas fa-calendar"></i> {{ $related->published_at->format('d/m/Y') }}</time>
             @endif
             <span><i class="fas fa-eye"></i> {{ $related->featured_display_views }}</span>
           </div>

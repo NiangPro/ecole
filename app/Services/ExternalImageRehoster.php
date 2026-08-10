@@ -48,6 +48,10 @@ class ExternalImageRehoster
             File::ensureDirectoryExists(dirname($destination));
             File::put($destination, $response->body());
 
+            // Recompresse en place (même fichier, même extension) — évite d'accumuler
+            // des couvertures de plusieurs centaines de Ko à chaque article auto-publié.
+            ImageOptimizer::optimize($destination);
+
             return $filename;
         } catch (\Throwable $e) {
             \Log::warning("Échec du réhébergement de l'image externe {$url}: " . $e->getMessage());

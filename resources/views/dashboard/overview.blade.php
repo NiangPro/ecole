@@ -144,7 +144,7 @@
                     Voir
                 </a>
                 @if($purchase->downloads->count() < $purchase->download_limit)
-                <a href="{{ route('documents.download', $purchase->document->slug) }}" style="flex: 1; padding: 0.625rem; background: linear-gradient(135deg, #06b6d4, #0891b2); border: none; border-radius: 8px; color: white; text-decoration: none; text-align: center; font-weight: 500; font-size: 0.85rem; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(6, 182, 212, 0.3);">
+                <a href="{{ route('documents.download.token', ['token' => $purchase->download_token, 'email' => $user->email]) }}" style="flex: 1; padding: 0.625rem; background: linear-gradient(135deg, #06b6d4, #0891b2); border: none; border-radius: 8px; color: white; text-decoration: none; text-align: center; font-weight: 500; font-size: 0.85rem; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(6, 182, 212, 0.3);">
                     <i class="fas fa-download" style="margin-right: 0.5rem;"></i>
                     Télécharger
                 </a>

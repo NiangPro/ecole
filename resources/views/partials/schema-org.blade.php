@@ -99,37 +99,10 @@ try {
         }
     }
     
-    // Course Schema (if formation page)
+    // Course Schema : géré exclusivement par le composant <x-course-schema> (bloc complet)
+    // inclus dans chaque vue de formation. Ne pas dupliquer ici (JSON-LD Course en double).
     $formationJson = null;
-    if (request()->routeIs('formations.*')) {
-        $formationName = '';
-        $formationUrl = url()->current();
-        
-        if (request()->routeIs('formations.html5')) $formationName = 'Formation HTML5';
-        elseif (request()->routeIs('formations.css3')) $formationName = 'Formation CSS3';
-        elseif (request()->routeIs('formations.javascript')) $formationName = 'Formation JavaScript';
-        elseif (request()->routeIs('formations.php')) $formationName = 'Formation PHP';
-        elseif (request()->routeIs('formations.laravel')) $formationName = 'Formation Laravel';
-        elseif (request()->routeIs('formations.bootstrap')) $formationName = 'Formation Bootstrap';
-        elseif (request()->routeIs('formations.git')) $formationName = 'Formation Git';
-        elseif (request()->routeIs('formations.wordpress')) $formationName = 'Formation WordPress';
-        elseif (request()->routeIs('formations.ia')) $formationName = 'Formation Intelligence Artificielle';
-        
-        if (!empty($formationName)) {
-            $formationSchema = [
-                '@context' => 'https://schema.org',
-                '@type' => 'Course',
-                'name' => $formationName,
-                'description' => 'Formation complète et gratuite en ' . $formationName,
-                'provider' => ['@type' => 'Organization', 'name' => $siteName, 'url' => $siteUrl],
-                'url' => $formationUrl,
-                'educationalLevel' => 'beginner',
-                'courseMode' => 'online'
-            ];
-            $formationJson = json_encode($formationSchema, JSON_UNESCAPED_SLASHES | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_PRETTY_PRINT);
-        }
-    }
-    
+
     // FAQPage Schema (if FAQ page)
     $faqJson = null;
     if (request()->routeIs('faq')) {
@@ -232,11 +205,6 @@ try {
 @php if (!empty($articleJson)) { @endphp
 <script type="application/ld+json">
 {!! $articleJson !!}
-</script>
-@php } @endphp
-@php if (!empty($formationJson)) { @endphp
-<script type="application/ld+json">
-{!! $formationJson !!}
 </script>
 @php } @endphp
 @php if (!empty($faqJson)) { @endphp

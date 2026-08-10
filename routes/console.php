@@ -38,3 +38,6 @@ Schedule::command('queue:work --stop-when-empty --max-time=55 --tries=3 --quiet'
 
 // Optionnel : Créer des articles toutes les 6 heures (4 fois par jour)
 // Schedule::command('articles:seed --count=2 --days=1')->everySixHours()->withoutOverlapping();
+
+// Planifier la vérification des rappels de dépenses/revenus récurrents (module Finances)
+Schedule::command('finance:check-reminders')->dailyAt('07:00')->withoutOverlapping();
