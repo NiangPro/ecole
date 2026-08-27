@@ -21,6 +21,21 @@
     
     <!-- Toastr CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+    <style>
+        /* Toast de succès plus visible : les confirmations de sauvegarde (ex. édition d'article)
+           passent facilement inaperçues en petit format standard toastr. */
+        #toast-container > .toast-success {
+            font-size: 1rem;
+            padding: 18px 20px 18px 55px;
+            border-left: 5px solid #22c55e;
+            box-shadow: 0 8px 30px rgba(34, 197, 94, 0.4);
+        }
+
+        #toast-container > .toast-success .toast-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+        }
+    </style>
     <script>
         // Appliquer le mode immédiatement pour éviter le flash
         (function() {
@@ -871,6 +886,20 @@
             .main-content {
                 padding-top: calc(1rem + 70px);
             }
+
+            /* Le dropdown notifications (position:absolute; right:0; width:340px)
+               est ancré au bouton cloche, pas au viewport — sur mobile, la cloche
+               n'est pas au bord droit du header (dark-mode-toggle + user-dropdown
+               la suivent), donc le panneau peut déborder à gauche de l'écran. */
+            .admin-notif-dropdown {
+                position: fixed;
+                top: 70px;
+                left: 8px;
+                right: 8px;
+                width: auto;
+                max-width: none;
+                max-height: calc(100dvh - 86px);
+            }
         }
     </style>
     @yield('styles')
@@ -1506,7 +1535,7 @@
 
         // Afficher les messages de succès
         @if(session('success'))
-            toastr.success('{{ session('success') }}', 'Succès');
+            toastr.success('{{ session('success') }}', 'Succès', { timeOut: 7000, extendedTimeOut: 2000 });
         @endif
 
         // Afficher les messages d'erreur

@@ -32,7 +32,18 @@ class PageCache
             return $next($request);
         }
 
-        $cacheKey = 'pcache_' . md5($request->fullUrl());
+        // La locale effective (session 'language', paramètre `lang`) est déterminée par
+        // LocaleTrait::ensureLocale() dans le contrôleur, APRÈS ce middleware. On la
+        // déduit ici avec la même règle pour que la clé de cache en tienne compte —
+        // sinon une réponse rendue en anglais peut être mise en cache sous l'URL
+        // canonique et servie à tous les visiteurs suivants (dont Googlebot) jusqu'à
+        // expiration du TTL, quelle que soit leur propre locale.
+        $locale = $request->get('lang', session('language', 'fr'));
+        if (!in_array($locale, ['fr', 'en'], true)) {
+            $locale = 'fr';
+        }
+
+        $cacheKey = 'pcache_' . $locale . '_' . md5($request->fullUrl());
 
         // Servir depuis le cache si disponible
         if (Cache::has($cacheKey)) {
@@ -68,11 +79,14 @@ class PageCache
     }
 
     /**
-     * Vider le cache d'une URL spécifique.
+     * Vider le cache d'une URL spécifique (toutes locales confondues, cf. clé
+     * préfixée par la locale dans handle()).
      */
     public static function forget(string $url): void
     {
-        Cache::forget('pcache_' . md5($url));
+        foreach (['fr', 'en'] as $locale) {
+            Cache::forget('pcache_' . $locale . '_' . md5($url));
+        }
     }
 
     /**

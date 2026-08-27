@@ -7,8 +7,10 @@ use App\Models\Document;
 use App\Models\DocumentCategory;
 use App\Models\DocumentPurchase;
 use App\Models\DocumentDownload;
+use App\Models\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class DocumentController extends Controller
 {
@@ -143,13 +145,107 @@ class DocumentController extends Controller
         $recommendations = $this->getPersonalizedRecommendations($document);
 
         return view('documents.show', compact(
-            'document', 
-            'relatedDocuments', 
+            'document',
+            'relatedDocuments',
             'userHasPurchased',
             'reviews',
             'inWishlist',
             'recommendations'
         ));
+    }
+
+    /**
+     * Paiement Wave direct depuis la page du document (sans passer par le panier).
+     * Enregistre l'achat + le paiement au statut "en attente" et renvoie le lien Wave (QR).
+     */
+    public function waveDirectPurchase(Request $request, $documentId)
+    {
+        $this->ensureLocale();
+
+        $validated = $request->validate([
+            'customer_name'  => 'required|string|max:255',
+            'customer_email' => 'required|email|max:255',
+            'customer_phone' => 'required|string|max:30',
+        ]);
+
+        $document = Document::published()->active()->findOrFail($documentId);
+
+        if ($document->isFree()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ce document est gratuit et ne nécessite aucun paiement.',
+            ], 422);
+        }
+
+        $amount = (float) $document->current_price;
+
+        $user = Auth::user();
+
+        // Créer l'achat au statut "en attente"
+        $purchase = DocumentPurchase::create([
+            'user_id'        => $user?->id,
+            'document_id'    => $document->id,
+            'customer_name'  => $validated['customer_name'],
+            'customer_email' => $validated['customer_email'],
+            'customer_phone' => $validated['customer_phone'],
+            'amount_paid'    => $amount,
+            'currency'       => 'XOF',
+            'status'         => 'pending',
+            'download_limit' => 2,
+        ]);
+
+        // Générer immédiatement le token de téléchargement
+        $purchase->generateDownloadToken();
+
+        // Notifier les administrateurs
+        \App\Models\Notification::notifyAdmins(
+            'document_purchase',
+            'Nouvel achat de document (Wave)',
+            $validated['customer_name'] . ' souhaite acheter : ' . Str::limit($document->title ?? '', 60),
+            route('admin.documents.purchases.show', $purchase->id),
+            'fa-file-invoice-dollar',
+            '#f59e0b'
+        );
+
+        // Créer le paiement au statut "en attente"
+        $payment = Payment::create([
+            'user_id'           => $user?->id,
+            'paymentable_type'  => DocumentPurchase::class,
+            'paymentable_id'    => $purchase->id,
+            'amount'            => $amount,
+            'currency'          => 'XOF',
+            'status'            => 'pending',
+            'payment_method'    => 'wave',
+            'payment_gateway'   => 'wave',
+            'transaction_id'    => 'DOC-' . Str::upper(Str::random(12)),
+            'payment_reference' => 'REF-' . Str::upper(Str::random(10)),
+        ]);
+
+        // Générer le lien de paiement Wave (page Wave affichant le QR code)
+        $waveLink = \App\Services\WavePaymentService::generatePaymentLink(
+            $amount,
+            $payment->payment_reference,
+            'Achat: ' . $document->title
+        );
+
+        $payment->update([
+            'payment_details' => [
+                'customer_name'  => $validated['customer_name'],
+                'customer_email' => $validated['customer_email'],
+                'customer_phone' => $validated['customer_phone'],
+                'wave_link'      => $waveLink,
+            ],
+        ]);
+
+        $purchase->update(['payment_id' => $payment->id]);
+
+        return response()->json([
+            'success'       => true,
+            'wave_link'     => $waveLink,
+            'payment_id'    => $payment->id,
+            'amount'        => $amount,
+            'contact_phone' => \App\Models\SiteSetting::get('contact_phone', '+221783123657'),
+        ]);
     }
 
     /**

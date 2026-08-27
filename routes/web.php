@@ -169,6 +169,10 @@ Route::get('/documents/{id}/download-free', [DocumentController::class, 'downloa
     ->middleware('download_rate_limit')
     ->name('documents.download-free');
 
+// Paiement Wave direct depuis la page document (avant /documents/{slug})
+Route::post('/documents/{documentId}/wave-direct', [DocumentController::class, 'waveDirectPurchase'])
+    ->name('documents.wave-direct');
+
 // Routes avis/commentaires
 use App\Http\Controllers\DocumentReviewController;
 Route::post('/documents/{documentId}/reviews', [DocumentReviewController::class, 'store'])

@@ -9,7 +9,9 @@
     const metaDescTextarea = document.getElementById('metaDescription');
     const wordCountSpan = document.getElementById('wordCount');
     const wordLabel = document.getElementById('wordLabel');
-    
+    const wordCountHint = document.getElementById('wordCountHint');
+    const SEO_WORD_THRESHOLD = 300;
+
     // Fonction pour compter les mots (identique au serveur avec str_word_count)
     function countWords(text) {
         if (!text) return 0;
@@ -19,6 +21,35 @@
         // str_word_count compte les séquences de lettres et chiffres séparées par des espaces/punctuation
         const words = cleanText.match(/[\p{L}\p{N}]+/gu);
         return words ? words.length : 0;
+    }
+
+    // Suggestion d'étoffement : combien de mots manquent pour atteindre le seuil SEO (≥300 mots, cf. calculateSeoScore)
+    function updateWordCountHint(wordCount) {
+        if (!wordCountHint) return;
+
+        if (wordCount === 0) {
+            wordCountHint.textContent = '';
+            wordCountHint.className = 'word-count-hint';
+            return;
+        }
+
+        if (wordCount >= SEO_WORD_THRESHOLD) {
+            wordCountHint.textContent = '✓ Seuil SEO atteint';
+            wordCountHint.className = 'word-count-hint hint-ok';
+        } else {
+            const missing = SEO_WORD_THRESHOLD - wordCount;
+            wordCountHint.textContent = `— ${missing} mot${missing > 1 ? 's' : ''} manquant${missing > 1 ? 's' : ''} pour le seuil SEO (${SEO_WORD_THRESHOLD})`;
+            wordCountHint.className = 'word-count-hint ' + (wordCount >= 150 ? 'hint-warning' : 'hint-danger');
+        }
+    }
+
+    // Rafraîchit le compteur de mots + la suggestion d'étoffement (remplace les mises à jour dupliquées ci-dessous)
+    function refreshWordCount() {
+        if (!contentTextarea) return;
+        const wordCount = countWords(contentTextarea.value);
+        if (wordCountSpan) wordCountSpan.textContent = wordCount;
+        if (wordLabel) wordLabel.textContent = wordCount <= 1 ? 'mot' : 'mots';
+        updateWordCountHint(wordCount);
     }
     
     // Fonction pour calculer le score SEO
@@ -166,15 +197,9 @@
         const readabilityBarEl = document.getElementById('readabilityBar');
         if (readabilityScoreEl) readabilityScoreEl.textContent = readabilityScore;
         if (readabilityBarEl) readabilityBarEl.style.width = readabilityScore + '%';
-        
+
         // Mettre à jour le compteur de mots en temps réel
-        if (wordCountSpan && contentTextarea) {
-            const wordCount = countWords(contentTextarea.value);
-            wordCountSpan.textContent = wordCount;
-            if (wordLabel) {
-                wordLabel.textContent = wordCount <= 1 ? 'mot' : 'mots';
-            }
-        }
+        refreshWordCount();
     }
     
     // Fonction pour mettre à jour les longueurs de meta
@@ -212,14 +237,6 @@
         contentTextarea.addEventListener('input', () => {
             updateScores();
             updateDetailedScores();
-            // Mettre à jour le compteur de mots en temps réel
-            if (wordCountSpan) {
-                const wordCount = countWords(contentTextarea.value);
-                wordCountSpan.textContent = wordCount;
-                if (wordLabel) {
-                    wordLabel.textContent = wordCount <= 1 ? 'mot' : 'mots';
-                }
-            }
         });
     }
     
@@ -519,16 +536,10 @@
         updateScores();
         updateMetaLengths();
         updateDetailedScores();
-        
+
         // Mettre à jour le compteur de mots au chargement
-        if (wordCountSpan && contentTextarea) {
-            const wordCount = countWords(contentTextarea.value);
-            wordCountSpan.textContent = wordCount;
-            if (wordLabel) {
-                wordLabel.textContent = wordCount <= 1 ? 'mot' : 'mots';
-            }
-        }
-        
+        refreshWordCount();
+
         // Réinitialiser le handler du type d'image au cas où
         initCoverTypeHandler();
     }
@@ -573,16 +584,8 @@
         contentTextarea.setSelectionRange(start + (formattedText.length - selectedText.length), start + formattedText.length);
         updateScores();
         updateDetailedScores();
-        // Mettre à jour le compteur de mots
-        if (wordCountSpan) {
-            const wordCount = countWords(contentTextarea.value);
-            wordCountSpan.textContent = wordCount;
-            if (wordLabel) {
-                wordLabel.textContent = wordCount <= 1 ? 'mot' : 'mots';
-            }
-        }
     };
-    
+
     window.insertLink = function() {
         if (!contentTextarea) return;
         const url = prompt('Entrez l\'URL du lien:');
@@ -595,17 +598,9 @@
             contentTextarea.focus();
             updateScores();
             updateDetailedScores();
-            // Mettre à jour le compteur de mots
-            if (wordCountSpan) {
-                const wordCount = countWords(contentTextarea.value);
-                wordCountSpan.textContent = wordCount;
-                if (wordLabel) {
-                    wordLabel.textContent = wordCount <= 1 ? 'mot' : 'mots';
-                }
-            }
         }
     };
-    
+
     window.insertList = function(type) {
         if (!contentTextarea) return;
         const start = contentTextarea.selectionStart;
@@ -615,14 +610,6 @@
         contentTextarea.setSelectionRange(start + listItem.length, start + listItem.length);
         updateScores();
         updateDetailedScores();
-        // Mettre à jour le compteur de mots
-        if (wordCountSpan) {
-            const wordCount = countWords(contentTextarea.value);
-            wordCountSpan.textContent = wordCount;
-            if (wordLabel) {
-                wordLabel.textContent = wordCount <= 1 ? 'mot' : 'mots';
-            }
-        }
     };
 })();
 

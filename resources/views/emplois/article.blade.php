@@ -48,12 +48,20 @@
         } else {
             // Image externe : s'assurer que c'est une URL absolue
             $externalImage = trim($article->cover_image);
-            
-            // Si l'URL ne commence pas par http:// ou https://, ajouter https://
-            if (!preg_match('/^https?:\/\//i', $externalImage)) {
+
+            if (preg_match('/^https?:\/\//i', $externalImage)) {
+                // Déjà une URL absolue
+            } elseif (str_starts_with($externalImage, '//')) {
+                // URL protocol-relative
+                $externalImage = 'https:' . $externalImage;
+            } elseif (preg_match('/^[a-z0-9.-]+\.[a-z]{2,}(\/|$)/i', $externalImage)) {
+                // Ressemble à un vrai nom de domaine (ex. "cdn.example.com/img.jpg")
                 $externalImage = 'https://' . ltrim($externalImage, '/');
+            } else {
+                // Chemin relatif au site (ex. "images/articles/xxx.jpg") : préfixer par le domaine
+                $externalImage = rtrim($baseUrl, '/') . '/' . ltrim($externalImage, '/');
             }
-            
+
             $articleImage = $externalImage;
         }
     } else {

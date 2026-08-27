@@ -141,7 +141,13 @@ body.dark-mode [data-favorite]:hover {
 }
 
 body.dark-mode .notification-dropdown {
-    background: #1e293b;
+    /* !important nécessaire : le conteneur a "background: white" en style inline
+       (navigation.blade.php) — une règle de classe externe sans !important ne peut
+       jamais l'emporter sur un style inline, quel que soit l'ordre de chargement.
+       Sans lui, le fond restait blanc en dark mode alors que le texte passait en
+       blanc (règles body.dark-mode .notification-title/-message/-time plus bas),
+       rendant le contenu illisible. */
+    background: #1e293b !important;
     border: 1px solid rgba(6, 182, 212, 0.3);
 }
 

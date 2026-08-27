@@ -872,6 +872,21 @@
     .search-wrapper { flex-direction: column; }
     .search-input { width: 100%; padding: 15px 16px; font-size: 1rem; }
     .search-button { width: 100%; justify-content: center; padding: 15px; }
+
+    /* Le dropdown notifications est en position:absolute + width:380px fixe
+       (inline dans navigation.blade.php) — ancré au bouton cloche, il déborde
+       hors écran sur mobile. On le repasse en panneau plein-largeur ancré au
+       viewport, sous la navbar. !important nécessaire pour passer au-dessus
+       du style inline. */
+    .navbar-notification-dropdown {
+        position: fixed !important;
+        top: calc(var(--nav-h) + 8px) !important;
+        left: 8px !important;
+        right: 8px !important;
+        width: auto !important;
+        max-width: none !important;
+        max-height: calc(100dvh - var(--nav-h) - 24px) !important;
+    }
 }
 
 @media (max-width: 400px) {

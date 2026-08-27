@@ -97,7 +97,18 @@ class JobArticlePublisher
         $attributes['seo_score']         = $this->calculateSeoScore($attributes);
         $attributes['readability_score'] = $this->calculateReadabilityScore($attributes['content']);
 
-        return JobArticle::create($attributes);
+        $article = JobArticle::create($attributes);
+
+        // Invalide les mêmes clés qu'Admin\JobArticleController::invalidateJobArticleCaches() :
+        // ce service (API Sanctum /api/articles, connecteur MCP) ne passait par aucune
+        // invalidation, contrairement à l'admin — cause du décalage /emplois vs accueil.
+        \Illuminate\Support\Facades\Cache::forget('recent_job_articles');
+        \Illuminate\Support\Facades\Cache::forget('homepage_view_v4_fr');
+        \Illuminate\Support\Facades\Cache::forget('homepage_view_v4_en');
+        \Illuminate\Support\Facades\Cache::forget('active_categories');
+        \Illuminate\Support\Facades\Cache::forget('navigation_job_categories');
+
+        return $article;
     }
 
     /**

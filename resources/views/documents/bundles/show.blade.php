@@ -258,16 +258,9 @@ body.dark-mode .bnd-buy-form input { background: rgba(2,6,23,0.6); border-color:
           <div class="bnd-error">{{ $errors->first() }}</div>
         @endif
 
-        <form action="{{ route('bundles.payment.checkout', $bundle->slug) }}" method="POST" class="bnd-buy-form">
-            @csrf
-            <input type="text" name="customer_name" value="{{ old('customer_name') }}" placeholder="Votre nom (optionnel)">
-            <input type="email" name="customer_email" value="{{ old('customer_email') }}" placeholder="Votre e-mail">
-            <div class="bnd-or">ou</div>
-            <input type="tel" name="customer_phone" value="{{ old('customer_phone') }}" placeholder="Votre numéro WhatsApp">
-            <button type="submit" class="bnd-buy-btn">
-                <i class="fas fa-lock-open"></i> Acheter le pack — {{ number_format($bundle->current_price, 0, ',', ' ') }} FCFA
-            </button>
-        </form>
+        <button type="button" class="bnd-buy-btn" onclick="openWaveDirectModal()">
+            <i class="fas fa-lock-open"></i> Acheter le pack — {{ number_format($bundle->current_price, 0, ',', ' ') }} FCFA
+        </button>
 
         <div class="bnd-trust">
           <div><i class="fas fa-check-circle"></i> Paiement Wave sécurisé</div>
@@ -314,4 +307,222 @@ body.dark-mode .bnd-buy-form input { background: rgba(2,6,23,0.6); border-color:
 
   </div>
 </div>
+
+{{-- ══════════ MODAL PAIEMENT WAVE DIRECT (PACK) ══════════ --}}
+<div id="wave-direct-modal" class="wd-overlay" style="display:none;">
+    <div class="wd-modal">
+        <div class="wd-head">
+            <div class="wd-head-icon"><i class="fas fa-wave-square"></i></div>
+            <h2 class="wd-title">Paiement Wave</h2>
+            <button type="button" class="wd-close" onclick="closeWaveDirectModal()" aria-label="Fermer">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="wd-body">
+            {{-- ÉTAPE 1 : Formulaire --}}
+            <div id="wd-step-form">
+                <p class="wd-desc">Renseignez vos informations pour recevoir votre pack.</p>
+                <div class="wd-amount">
+                    <span>Montant à payer</span>
+                    <strong>{{ number_format($bundle->current_price, 0, ',', ' ') }} FCFA</strong>
+                </div>
+
+                <form id="wd-form" onsubmit="return false;">
+                    @csrf
+                    <div class="wd-field">
+                        <label for="wd-name">Nom complet <span>*</span></label>
+                        <input type="text" id="wd-name" name="customer_name" required placeholder="Votre nom complet" autocomplete="name">
+                    </div>
+                    <div class="wd-field">
+                        <label for="wd-email">Email <span>*</span></label>
+                        <input type="email" id="wd-email" name="customer_email" required placeholder="votre@email.com" autocomplete="email">
+                    </div>
+                    <div class="wd-field">
+                        <label for="wd-phone">Numéro de téléphone <span>*</span></label>
+                        <input type="tel" id="wd-phone" name="customer_phone" required placeholder="+221 77 000 00 00" autocomplete="tel">
+                    </div>
+                    <p class="wd-error" id="wd-error" style="display:none;"></p>
+                    <button type="button" class="wd-confirm-btn" id="wd-confirm-btn" onclick="confirmWaveDirect()">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Confirmer et payer avec Wave</span>
+                    </button>
+                </form>
+            </div>
+
+            {{-- ÉTAPE 2 : Confirmation / infos --}}
+            <div id="wd-step-success" style="display:none;">
+                <div class="wd-success-icon"><i class="fas fa-clock"></i></div>
+                <h3 class="wd-success-title">Paiement enregistré (en attente)</h3>
+                <p class="wd-success-text">
+                    Un nouvel onglet Wave s'est ouvert avec le <strong>QR code à payer</strong>.
+                    Une fois le paiement effectué, votre pack vous sera envoyé par email.
+                </p>
+                <div class="wd-info-box">
+                    <i class="fas fa-hourglass-half"></i>
+                    <div>
+                        L'envoi du document prend généralement <strong>jusqu'à 4 heures</strong>.
+                        Si c'est urgent, appelez-nous directement :
+                        <a href="tel:{{ $siteSettings->contact_phone ?? '+221783123657' }}" class="wd-phone-link">
+                            <i class="fas fa-phone"></i> {{ $siteSettings->contact_phone ?? '+221 78 312 36 57' }}
+                        </a>
+                    </div>
+                </div>
+                <a href="#" id="wd-reopen-wave" target="_blank" rel="noopener" class="wd-reopen-btn">
+                    <i class="fas fa-mobile-alt"></i> Rouvrir la page de paiement Wave
+                </a>
+                <button type="button" class="wd-done-btn" onclick="closeWaveDirectModal()">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.wd-overlay{position:fixed;inset:0;z-index:10000;display:flex;align-items:center;justify-content:center;padding:1rem;background:rgba(15,23,42,.65);backdrop-filter:blur(4px);animation:wdFade .2s ease;}
+@keyframes wdFade{from{opacity:0}to{opacity:1}}
+.wd-modal{width:100%;max-width:440px;max-height:92vh;overflow:hidden;display:flex;flex-direction:column;background:#fff;border-radius:20px;box-shadow:0 25px 80px rgba(0,0,0,.35);animation:wdPop .25s cubic-bezier(.16,1,.3,1);}
+@keyframes wdPop{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:none}}
+.wd-head{position:relative;display:flex;flex-direction:column;align-items:center;gap:.6rem;padding:1.6rem 1.5rem 1.2rem;border-bottom:1px solid #eef2f7;}
+.wd-head-icon{width:54px;height:54px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:#fff;background:linear-gradient(135deg,#06b6d4,#0891b2);box-shadow:0 8px 20px rgba(6,182,212,.35);}
+.wd-title{margin:0;font-size:1.25rem;font-weight:800;color:#0f172a;}
+.wd-close{position:absolute;top:1rem;right:1rem;width:34px;height:34px;border:none;border-radius:50%;background:#f1f5f9;color:#64748b;cursor:pointer;font-size:.9rem;transition:.2s;}
+.wd-close:hover{background:#e2e8f0;color:#0f172a;}
+.wd-body{padding:1.4rem 1.5rem 1.6rem;overflow-y:auto;}
+.wd-desc{margin:0 0 1rem;color:#64748b;font-size:.92rem;text-align:center;}
+.wd-amount{display:flex;align-items:center;justify-content:space-between;padding:.85rem 1.1rem;margin-bottom:1.2rem;border-radius:14px;background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.2);}
+.wd-amount span{color:#475569;font-size:.9rem;}
+.wd-amount strong{color:#0891b2;font-size:1.25rem;font-weight:800;}
+.wd-field{margin-bottom:1rem;}
+.wd-field label{display:block;margin-bottom:.4rem;font-size:.85rem;font-weight:600;color:#334155;}
+.wd-field label span{color:#ef4444;}
+.wd-field input{width:100%;padding:.8rem 1rem;border:1.5px solid #e2e8f0;border-radius:12px;font-size:.95rem;color:#0f172a;background:#fff;transition:.2s;box-sizing:border-box;}
+.wd-field input:focus{outline:none;border-color:#06b6d4;box-shadow:0 0 0 3px rgba(6,182,212,.12);}
+.wd-error{margin:.2rem 0 .8rem;padding:.6rem .8rem;border-radius:10px;background:#fef2f2;color:#dc2626;font-size:.85rem;}
+.wd-confirm-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:.6rem;padding:.95rem;margin-top:.4rem;border:none;border-radius:14px;font-size:1rem;font-weight:700;color:#fff;cursor:pointer;background:linear-gradient(135deg,#06b6d4,#0891b2);box-shadow:0 8px 22px rgba(6,182,212,.35);transition:.2s;}
+.wd-confirm-btn:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(6,182,212,.45);}
+.wd-confirm-btn:disabled{opacity:.7;cursor:not-allowed;transform:none;}
+.wd-success-icon{width:64px;height:64px;margin:.2rem auto 1rem;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.7rem;color:#f59e0b;background:rgba(245,158,11,.12);}
+.wd-success-title{margin:0 0 .6rem;text-align:center;font-size:1.15rem;font-weight:800;color:#0f172a;}
+.wd-success-text{margin:0 0 1.2rem;text-align:center;color:#64748b;font-size:.92rem;line-height:1.5;}
+.wd-info-box{display:flex;gap:.8rem;padding:1rem;margin-bottom:1.2rem;border-radius:14px;background:rgba(245,158,11,.08);border-left:3px solid #f59e0b;color:#475569;font-size:.9rem;line-height:1.5;}
+.wd-info-box>i{color:#f59e0b;font-size:1.1rem;margin-top:.15rem;}
+.wd-phone-link{display:inline-flex;align-items:center;gap:.4rem;margin-top:.5rem;padding:.5rem .9rem;border-radius:10px;background:#0f172a;color:#fff !important;font-weight:700;text-decoration:none;font-size:.95rem;}
+.wd-phone-link:hover{background:#1e293b;}
+.wd-reopen-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:.6rem;padding:.85rem;margin-bottom:.7rem;border-radius:12px;font-weight:700;text-decoration:none;color:#0891b2;background:rgba(6,182,212,.08);border:1.5px solid rgba(6,182,212,.3);transition:.2s;}
+.wd-reopen-btn:hover{background:rgba(6,182,212,.15);}
+.wd-done-btn{width:100%;padding:.8rem;border:none;border-radius:12px;background:#f1f5f9;color:#475569;font-weight:600;cursor:pointer;transition:.2s;}
+.wd-done-btn:hover{background:#e2e8f0;}
+body.dark-mode .wd-modal{background:#1e293b;}
+body.dark-mode .wd-head{border-bottom-color:rgba(255,255,255,.08);}
+body.dark-mode .wd-title,body.dark-mode .wd-success-title{color:#f1f5f9;}
+body.dark-mode .wd-field label{color:#cbd5e1;}
+body.dark-mode .wd-field input{background:#0f172a;border-color:#334155;color:#f1f5f9;}
+body.dark-mode .wd-close{background:#334155;color:#cbd5e1;}
+body.dark-mode .wd-done-btn{background:#334155;color:#cbd5e1;}
+</style>
 @endsection
+
+@push('scripts')
+<script>
+    const WD_CHECKOUT_URL = '{{ route('bundles.payment.checkout', $bundle->slug) }}';
+
+    function openWaveDirectModal() {
+        const modal = document.getElementById('wave-direct-modal');
+        if (!modal) return;
+        document.getElementById('wd-step-form').style.display = 'block';
+        document.getElementById('wd-step-success').style.display = 'none';
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeWaveDirectModal() {
+        const modal = document.getElementById('wave-direct-modal');
+        if (!modal) return;
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
+    }
+
+    function confirmWaveDirect() {
+        const name  = document.getElementById('wd-name').value.trim();
+        const email = document.getElementById('wd-email').value.trim();
+        const phone = document.getElementById('wd-phone').value.trim();
+        const errorEl = document.getElementById('wd-error');
+        const btn = document.getElementById('wd-confirm-btn');
+
+        errorEl.style.display = 'none';
+
+        if (!name || !email || !phone) {
+            errorEl.textContent = 'Merci de remplir tous les champs.';
+            errorEl.style.display = 'block';
+            return;
+        }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            errorEl.textContent = 'Merci de saisir une adresse email valide.';
+            errorEl.style.display = 'block';
+            return;
+        }
+
+        const originalContent = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Traitement en cours...</span>';
+
+        // Ouvrir l'onglet immédiatement (évite le blocage popup) puis le rediriger vers Wave
+        const waveTab = window.open('', '_blank');
+
+        const fd = new FormData();
+        fd.append('_token', '{{ csrf_token() }}');
+        fd.append('payment_method', 'wave');
+        fd.append('customer_name', name);
+        fd.append('customer_email', email);
+        fd.append('customer_phone', phone);
+
+        fetch(WD_CHECKOUT_URL, {
+            method: 'POST',
+            body: fd,
+            headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+        })
+        .then(r => r.json().then(data => ({ ok: r.ok, data })))
+        .then(({ ok, data }) => {
+            if (ok && data.success && data.already_purchased && data.download_url) {
+                // Déjà acheté → rediriger vers le téléchargement
+                if (waveTab) waveTab.close();
+                window.location.href = data.download_url;
+                return;
+            }
+            if (ok && data.success && data.wave_link) {
+                if (waveTab) {
+                    waveTab.location.href = data.wave_link;
+                } else {
+                    window.open(data.wave_link, '_blank');
+                }
+                const reopen = document.getElementById('wd-reopen-wave');
+                if (reopen) reopen.href = data.wave_link;
+                document.getElementById('wd-step-form').style.display = 'none';
+                document.getElementById('wd-step-success').style.display = 'block';
+            } else {
+                if (waveTab) waveTab.close();
+                errorEl.textContent = data.message || 'Une erreur est survenue. Veuillez réessayer.';
+                errorEl.style.display = 'block';
+                btn.disabled = false;
+                btn.innerHTML = originalContent;
+            }
+        })
+        .catch(() => {
+            if (waveTab) waveTab.close();
+            errorEl.textContent = 'Une erreur réseau est survenue. Veuillez réessayer.';
+            errorEl.style.display = 'block';
+            btn.disabled = false;
+            btn.innerHTML = originalContent;
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const wdOverlay = document.getElementById('wave-direct-modal');
+        if (wdOverlay) {
+            wdOverlay.addEventListener('click', function(e) {
+                if (e.target === this) closeWaveDirectModal();
+            });
+        }
+    });
+</script>
+@endpush

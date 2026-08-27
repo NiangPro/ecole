@@ -318,10 +318,31 @@
         color: rgba(255, 255, 255, 0.6);
         font-weight: 600;
         transition: color 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
     }
-    
+
     body.light-mode .word-count {
         color: rgba(30, 41, 59, 0.7);
+    }
+
+    .word-count-hint {
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .word-count-hint.hint-danger {
+        color: #ef4444;
+    }
+
+    .word-count-hint.hint-warning {
+        color: #f59e0b;
+    }
+
+    .word-count-hint.hint-ok {
+        color: #22c55e;
     }
     
     .seo-card {
@@ -460,6 +481,12 @@
         transform: translateY(-2px);
         box-shadow: 0 8px 25px rgba(6, 182, 212, 0.5);
     }
+
+    .btn-submit:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+        transform: none;
+    }
     
     @media (max-width: 1200px) {
         .form-grid {
@@ -566,6 +593,7 @@
                         </div>
                         <div class="word-count">
                             <span id="wordCount">0</span> <span id="wordLabel">mots</span>
+                            <span id="wordCountHint" class="word-count-hint"></span>
                         </div>
                     </div>
                     <textarea name="content" id="articleContent" required
@@ -1023,6 +1051,25 @@
             if (metaTitleManuallyEdited) return;
             metaTitleField.value = titleField.value.trim().slice(0, 60);
             metaTitleField.dispatchEvent(new Event('input'));
+        });
+    })();
+
+    // État de chargement sur "Enregistrer" : évite les doubles soumissions (upload d'image compris)
+    // et donne une confirmation immédiate pendant que le POST classique navigue vers la page suivante.
+    (function () {
+        const form = document.getElementById('articleForm');
+        const submitBtn = form ? form.querySelector('.btn-submit') : null;
+        if (!form || !submitBtn) return;
+
+        form.addEventListener('submit', function () {
+            if (submitBtn.disabled) return; // navigateur déjà en train de soumettre
+
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Enregistrement...</span>';
+
+            if (window.toastr) {
+                toastr.info('Enregistrement en cours, merci de patienter...', '', { timeOut: 4000 });
+            }
         });
     })();
 </script>

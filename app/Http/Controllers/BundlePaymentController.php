@@ -37,11 +37,19 @@ class BundlePaymentController extends Controller
         $email = $request->filled('customer_email') ? trim($request->customer_email) : null;
         $phone = $request->filled('customer_phone') ? trim($request->customer_phone) : null;
 
-        // Déjà acheté ? → renvoyer directement vers le lien de téléchargement
-        $existing = BundlePurchase::findCompletedFor($bundle->id, $email, $phone);
-        if ($existing && $existing->download_token) {
-            return redirect()->route('bundles.payment.download', ['token' => $existing->download_token])
-                ->with('success', 'Vous avez déjà acheté ce pack.');
+        // Déjà acheté ? (uniquement pour le formulaire classique, PAS le modal Wave AJAX)
+        // Le modal doit toujours enregistrer un paiement en attente et afficher le QR Wave.
+        if (!$request->ajax()) {
+            $existing = BundlePurchase::findCompletedFor($bundle->id, $email, $phone);
+            if ($existing) {
+                // Régénérer un token si absent ou expiré, sinon le lien renverrait un 403
+                if (!$existing->download_token || !$existing->isTokenValid($existing->download_token)) {
+                    $existing->generateDownloadToken();
+                    $existing->refresh();
+                }
+                $downloadUrl = route('bundles.payment.download', ['token' => $existing->download_token]);
+                return redirect($downloadUrl)->with('success', 'Vous avez déjà acheté ce pack.');
+            }
         }
 
         $price = (float) $bundle->current_price;
@@ -100,6 +108,16 @@ class BundlePaymentController extends Controller
         $payment->update([
             'payment_details' => array_merge($payment->payment_details ?? [], ['wave_link' => $waveLink]),
         ]);
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'wave_link' => $waveLink,
+                'payment_id' => $payment->id,
+                'amount' => $price,
+                'contact_phone' => \App\Models\SiteSetting::get('contact_phone', '+221783123657'),
+            ]);
+        }
 
         return redirect()->route('payment.wave', $payment->id)
             ->with('wave_link', $waveLink);
