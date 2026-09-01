@@ -518,11 +518,14 @@
   }
 
   /* Prix étiquette oblique sur l'image, alignée sur le style de /documents */
+  /* Fond #0e7490 (cyan-700) plutôt que #06b6d4 : le texte blanc dessus passe
+     de 2.43:1 à 5.36:1 de contraste — sous le seuil WCAG AA (4.5:1) sinon
+     (audit Lighthouse 31/08/2026, color-contrast). */
   .document-price-overlay {
     position: absolute;
     inset-block-start: 20px;
     inset-inline-end: -40px;
-    background: #06b6d4;
+    background: #0e7490;
     color: white;
     padding: 0.625rem 3rem;
     font-size: 1rem;
@@ -1572,25 +1575,41 @@ body.dark-mode .doc-rating-count { color: #94a3b8; }
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: .5rem;
+  gap: .1rem;
   margin-top: .5rem;
 }
 
+/* Cible tactile 24x24 (WCAG target-size) autour d'un point visuel de 8px, agrandi
+   à l'état actif via transform (compositor-only) plutôt qu'en animant inline-size
+   (déclenchait un reflow à chaque transition — Lighthouse non-composited-animations
+   + cls-culprits-insight, audit 31/08/2026). */
 .hp-reviews-dot {
-  inline-size: 8px;
-  block-size: 8px;
+  inline-size: 24px;
+  block-size: 24px;
   border-radius: 999px;
   border: none;
   padding: 0;
-  background: oklch(65% 0.20 200 / 25%);
+  background: transparent;
   cursor: pointer;
-  transition: inline-size var(--duration-normal) ease, background var(--duration-normal) ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.hp-reviews-dot:hover { background: oklch(65% 0.20 200 / 55%); }
+.hp-reviews-dot::before {
+  content: '';
+  inline-size: 8px;
+  block-size: 8px;
+  border-radius: 999px;
+  background: oklch(65% 0.20 200 / 25%);
+  transform: scaleX(1);
+  transition: transform var(--duration-normal) ease, background var(--duration-normal) ease;
+}
 
-.hp-reviews-dot.is-active {
-  inline-size: 26px;
+.hp-reviews-dot:hover::before { background: oklch(65% 0.20 200 / 55%); }
+
+.hp-reviews-dot.is-active::before {
+  transform: scaleX(3.25);
   background: oklch(65% 0.20 200);
 }
 

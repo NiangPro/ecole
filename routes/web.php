@@ -880,6 +880,7 @@ Route::middleware(['admin'])->group(function () {
     Route::prefix('admin/ads')->name('admin.ads.')->group(function () {
         Route::get('/', [\App\Http\Controllers\Admin\AdController::class, 'index'])->name('index');
         Route::get('/create', [\App\Http\Controllers\Admin\AdController::class, 'create'])->name('create');
+        Route::post('/youtube-preview', [\App\Http\Controllers\Admin\AdController::class, 'youtubePreview'])->name('youtube-preview');
         Route::post('/', [\App\Http\Controllers\Admin\AdController::class, 'store'])->name('store');
         Route::get('/{ad}', [\App\Http\Controllers\Admin\AdController::class, 'show'])->name('show');
         Route::get('/{ad}/edit', [\App\Http\Controllers\Admin\AdController::class, 'edit'])->name('edit');

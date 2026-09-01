@@ -30,6 +30,10 @@ class FinanceController extends Controller
 
         $balance = $monthIncome - $monthExpense;
 
+        $totalIncome = FinanceTransaction::where('type', 'income')->sum('amount_xof');
+        $totalExpense = FinanceTransaction::where('type', 'expense')->sum('amount_xof');
+        $currentBalance = $totalIncome - $totalExpense;
+
         $yearIncome = FinanceTransaction::where('type', 'income')
             ->whereYear('transaction_date', $currentYear)->sum('amount_xof');
         $yearExpense = FinanceTransaction::where('type', 'expense')
@@ -72,6 +76,7 @@ class FinanceController extends Controller
 
         return view('admin.finances.dashboard', compact(
             'monthIncome', 'monthExpense', 'balance',
+            'currentBalance',
             'yearIncome', 'yearExpense',
             'budgetAlerts', 'upcomingRecurrings',
             'unreadNotifications', 'recentTransactions',

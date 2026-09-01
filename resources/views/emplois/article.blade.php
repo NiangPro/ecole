@@ -594,11 +594,15 @@ body.dark-mode .art-share-lbl { color: rgba(255,255,255,.4); }
 
 /* Ad card */
 .art-sidebar-ad {
+  position: relative;
   background: #fff;
   border: 1.5px solid rgba(6,182,212,.18);
   border-radius: var(--r); overflow: hidden;
   transition: var(--tr);
   box-shadow: 0 6px 28px rgba(6,182,212,.07);
+}
+.art-sidebar-ad a {
+  display: block; text-decoration: none; color: inherit;
 }
 body.dark-mode .art-sidebar-ad {
   background: rgba(15,23,42,.7);
@@ -610,9 +614,17 @@ body.dark-mode .art-sidebar-ad {
   border-color: var(--c);
   box-shadow: 0 16px 44px rgba(6,182,212,.18);
 }
+.art-ad-label {
+  position: absolute; top: 12px; left: 12px; z-index: 2;
+  padding: 4px 11px; border-radius: 999px;
+  font-size: .68rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .05em;
+  color: #fff; background: rgba(2,6,23,.6);
+  backdrop-filter: blur(6px);
+}
 .art-ad-imgwrap {
   position: relative; width: 100%; overflow: hidden;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 16 / 9; background: #0f172a;
 }
 .art-ad-imgwrap img {
   width: 100%; height: 100%; display: block;
@@ -620,23 +632,26 @@ body.dark-mode .art-sidebar-ad {
   transition: transform .5s ease;
 }
 .art-sidebar-ad:hover .art-ad-imgwrap img { transform: scale(1.05); }
-.art-ad-veil {
-  position: absolute; inset: 0;
-  background: linear-gradient(180deg, transparent 35%, rgba(2,6,23,.82) 100%);
-  display: flex; align-items: flex-end; padding: 20px;
+.art-ad-content { padding: 16px 18px 18px; }
+.art-ad-content h4 {
+  font-size: .95rem; font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 5px;
 }
-.art-ad-info h4 {
-  font-size: .95rem; font-weight: 700; color: #fff;
-  margin: 0 0 5px; text-shadow: 0 2px 8px rgba(0,0,0,.4);
+body.dark-mode .art-ad-content h4 { color: #f1f5f9; }
+.art-ad-content p {
+  font-size: .82rem; color: rgba(30,41,59,.65);
+  margin: 0 0 12px; line-height: 1.5;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+  overflow: hidden;
 }
-.art-ad-info p {
-  font-size: .82rem; color: rgba(255,255,255,.85);
-  margin: 0 0 10px; line-height: 1.5;
-}
+body.dark-mode .art-ad-content p { color: rgba(255,255,255,.6); }
 .art-ad-cta {
   display: inline-flex; align-items: center; gap: 6px;
   font-size: .78rem; font-weight: 700; color: var(--c);
 }
+.art-sidebar-ad:hover .art-ad-cta i { transform: translateX(3px); }
+.art-ad-cta i { transition: transform .25s ease; }
 
 /* Section label */
 .art-sec-lbl {
@@ -1099,24 +1114,27 @@ body:not(.dark-mode) .comment-form-wrapper textarea {
 
       @if(isset($sidebarAds) && $sidebarAds->count() > 0)
         @foreach($sidebarAds as $ad)
+        @if($ad->isVideoAd())
+          @include('partials.youtube-ad-card', ['ad' => $ad, 'label' => 'Sponsorisé'])
+        @else
         <div class="art-sidebar-ad">
-          <a href="{{ $ad->link_url ?? '#' }}" target="_blank" onclick="trackAdClick({{ $ad->id }})" style="display:block;text-decoration:none;color:inherit;">
+          <a href="{{ $ad->link_url ?? '#' }}" target="_blank" rel="noopener" onclick="trackAdClick({{ $ad->id }})">
+            <span class="art-ad-label">Sponsorisé</span>
             @if($ad->image)
             <div class="art-ad-imgwrap">
               <img src="{{ $ad->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($ad->image) : $ad->image }}"
-                   alt="{{ $ad->name }}" width="400" height="300" loading="lazy" decoding="async"
+                   alt="{{ $ad->name }}" width="400" height="225" loading="lazy" decoding="async"
                    onerror="this.style.display='none'">
-              <div class="art-ad-veil">
-                <div class="art-ad-info">
-                  <h4>{{ $ad->name }}</h4>
-                  @if($ad->description)<p>{{ $ad->description }}</p>@endif
-                  <span class="art-ad-cta">Découvrir <i class="fas fa-arrow-right"></i></span>
-                </div>
-              </div>
             </div>
             @endif
+            <div class="art-ad-content">
+              <h4>{{ $ad->name }}</h4>
+              @if($ad->description)<p>{{ $ad->description }}</p>@endif
+              <span class="art-ad-cta">Découvrir <i class="fas fa-arrow-right"></i></span>
+            </div>
           </a>
         </div>
+        @endif
         @php $ad->incrementImpressions(); @endphp
         @endforeach
       @endif

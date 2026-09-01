@@ -560,7 +560,50 @@
         });
     </script>
     @endif
-    
+
+    <!-- Publicités vidéo YouTube (np-youtube-ad) : l'iframe du lecteur n'est créée
+         qu'au clic sur le bouton play, jamais au chargement de la page — voir
+         partials/youtube-ad-card.blade.php. Lancée avec autoplay+boucle : autorisé
+         par les navigateurs car déclenché par un geste utilisateur (le clic). -->
+    <script>
+        function nAdTrackAdClick(adId) {
+            fetch('/api/ads/' + adId + '/click', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                    'Content-Type': 'application/json'
+                }
+            }).catch(function() {});
+        }
+
+        function nAdYouTubePlay(adId, btn) {
+            const stage = btn.closest('[data-youtube-stage]');
+            if (!stage || stage.dataset.youtubeLoaded === '1') return;
+            stage.dataset.youtubeLoaded = '1';
+
+            const videoId = stage.dataset.youtubeId;
+            const thumb = stage.querySelector('[data-youtube-thumb]');
+            const embed = stage.querySelector('[data-youtube-embed]');
+
+            if (thumb) thumb.style.display = 'none';
+            if (embed && videoId) {
+                const iframe = document.createElement('iframe');
+                iframe.src = 'https://www.youtube-nocookie.com/embed/' + videoId
+                    + '?autoplay=1&mute=0&loop=1&playlist=' + videoId
+                    + '&rel=0&modestbranding=1&playsinline=1';
+                iframe.width = '100%';
+                iframe.height = '100%';
+                iframe.frameBorder = '0';
+                iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share';
+                iframe.allowFullscreen = true;
+                embed.appendChild(iframe);
+                embed.hidden = false;
+            }
+
+            nAdTrackAdClick(adId);
+        }
+    </script>
+
     <!-- Toastr JS - Chargé de manière différée -->
     <script>
         // Charger Toastr après le chargement de la page pour ne pas bloquer le rendu

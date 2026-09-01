@@ -309,7 +309,7 @@ class EmploiController extends Controller
                         $q->whereNull('location')
                           ->orWhere('location', 'article_sidebar');
                     })
-                    ->select('id', 'name', 'description', 'image', 'image_type', 'link_url')
+                    ->select('id', 'name', 'description', 'image', 'image_type', 'ad_code', 'link_url')
                     ->orderBy('order')
                     ->get();
             });

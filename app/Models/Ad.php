@@ -12,6 +12,7 @@ class Ad extends Model
         'description',
         'image',
         'image_type',
+        'ad_code',
         'link_url',
         'position',
         'location',
@@ -30,6 +31,28 @@ class Ad extends Model
         'impressions' => 'integer',
         'order' => 'integer'
     ];
+
+    /**
+     * Une publicité vidéo (YouTube) stocke ses données oEmbed en JSON dans la
+     * colonne 'ad_code' — colonne texte présente depuis la création de la table
+     * mais jamais utilisée jusqu'ici, réemployée pour éviter une migration.
+     * Retourne null pour une publicité image classique.
+     */
+    public function getVideoDataAttribute(): ?array
+    {
+        if (empty($this->attributes['ad_code'])) {
+            return null;
+        }
+
+        $data = json_decode($this->attributes['ad_code'], true);
+
+        return (is_array($data) && !empty($data['youtube_url'])) ? $data : null;
+    }
+
+    public function isVideoAd(): bool
+    {
+        return $this->video_data !== null;
+    }
 
     /**
      * Scope pour les publicités actives

@@ -758,7 +758,7 @@
 <div class="mobile-menu" id="mobileMenu">
     <div class="mobile-menu-header">
         <div class="mobile-menu-title">Menu</div>
-        <button type="button" class="mobile-menu-close" onclick="closeMobileMenu()">
+        <button type="button" class="mobile-menu-close" onclick="closeMobileMenu()" aria-label="Fermer le menu">
             <i class="fas fa-times"></i>
         </button>
     </div>

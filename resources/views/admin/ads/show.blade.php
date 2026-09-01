@@ -696,13 +696,21 @@
                         <div class="info-value">{{ $ad->name }}</div>
                     </div>
                     
+                    @php
+                        $locationLabels = [
+                            '' => "Général (accueil + sidebar articles)",
+                            'homepage_after_exercises' => "🏠 Accueil — bloc unique",
+                            'article_sidebar' => "📄 Articles emploi — Sidebar",
+                        ];
+                        $locationLabel = $locationLabels[$ad->location ?? ''] ?? $ad->location;
+                    @endphp
                     <div class="info-item">
-                        <div class="info-label">Position</div>
+                        <div class="info-label">Emplacement</div>
                         <div class="info-value">
-                            <span class="badge-position">{{ ucfirst($ad->position) }}</span>
+                            <span class="badge-position">{{ $locationLabel }}</span>
                         </div>
                     </div>
-                    
+
                     <div class="info-item">
                         <div class="info-label">Statut</div>
                         <div class="info-value">
@@ -712,22 +720,22 @@
                             </span>
                         </div>
                     </div>
+
+                    <div class="info-item">
+                        <div class="info-label">Format</div>
+                        <div class="info-value">
+                            <span class="badge-position" style="{{ $ad->isVideoAd() ? 'background: rgba(239, 68, 68, 0.2); border-color: rgba(239, 68, 68, 0.4); color: #ef4444;' : '' }}">
+                                <i class="fa{{ $ad->isVideoAd() ? 'b fa-youtube' : 's fa-image' }}"></i>
+                                {{ $ad->isVideoAd() ? 'Vidéo YouTube' : 'Image' }}
+                            </span>
+                        </div>
+                    </div>
                     
                     <div class="info-item">
                         <div class="info-label">Ordre d'affichage</div>
                         <div class="info-value">{{ $ad->order }}</div>
                     </div>
                     
-                    @if($ad->location)
-                    <div class="info-item">
-                        <div class="info-label">Emplacement spécifique</div>
-                        <div class="info-value">
-                            <span class="badge-position">
-                                {{ $ad->location === 'homepage_after_exercises' ? '🏠 Page d\'accueil' : '📄 Articles' }}
-                            </span>
-                        </div>
-                    </div>
-                    @endif
                 </div>
                 
                 @if($ad->description)
@@ -791,18 +799,26 @@
             </div>
             @endif
             
-            <!-- Code de la publicité -->
-            @if($ad->ad_code)
+            <!-- Aperçu de la vidéo YouTube -->
+            @if($ad->isVideoAd())
             <div class="ad-card">
                 <div class="card-header-modern">
                     <div class="card-icon-modern">
-                        <i class="fas fa-code"></i>
+                        <i class="fab fa-youtube"></i>
                     </div>
-                    <h2 class="card-title-modern">Code de la Publicité</h2>
+                    <h2 class="card-title-modern">Aperçu de la Vidéo YouTube</h2>
                 </div>
-                
-                <div class="code-block">
-                    <pre style="margin: 0; white-space: pre-wrap; word-wrap: break-word;">{{ htmlspecialchars($ad->ad_code) }}</pre>
+
+                <div style="max-width: 480px; margin: 0 auto;">
+                    @include('partials.youtube-ad-card', ['ad' => $ad, 'label' => 'Aperçu'])
+                </div>
+
+                <div style="margin-top: 20px; text-align: center;">
+                    <a href="{{ $ad->video_data['youtube_url'] }}" target="_blank"
+                       style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; background: rgba(239, 68, 68, 0.15); border: 2px solid rgba(239, 68, 68, 0.3); border-radius: 12px; color: #ef4444; text-decoration: none; font-weight: 700; transition: all 0.3s ease;">
+                        <i class="fab fa-youtube"></i>
+                        Voir la vidéo originale sur YouTube
+                    </a>
                 </div>
             </div>
             @endif

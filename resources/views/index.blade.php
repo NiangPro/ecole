@@ -277,7 +277,7 @@
           <article class="hp-review-card" style="--stagger: {{ $loop->index }};">
             <i class="fas fa-quote-right hp-review-quote-icon" aria-hidden="true"></i>
 
-            <div class="hp-review-stars" aria-label="Note : {{ $review->rating }} sur 5">
+            <div class="hp-review-stars" role="img" aria-label="Note : {{ $review->rating }} sur 5">
               @for($i = 1; $i <= 5; $i++)
                 <i class="fas fa-star{{ $i <= $review->rating ? '' : '-o' }}" aria-hidden="true"></i>
               @endfor
@@ -293,7 +293,7 @@
                 <span class="hp-review-author">
                   {{ $review->display_name }}
                   @if($review->is_verified_purchase)
-                  <i class="fas fa-check-circle hp-review-verified" title="Achat vérifié" aria-label="Achat vérifié"></i>
+                  <i class="fas fa-check-circle hp-review-verified" title="Achat vérifié" role="img" aria-label="Achat vérifié"></i>
                   @endif
                 </span>
                 @if($review->document)
@@ -677,6 +677,9 @@
   <section class="hp-section">
     <div class="hp-container">
       @foreach($homepageAds->take(1) as $ad)
+      @if($ad->isVideoAd())
+        @include('partials.youtube-ad-card', ['ad' => $ad, 'label' => __('homepage.ads.sponsored')])
+      @else
       <div class="hp-native-ad" style="margin-block-end:1.5rem;">
         <span class="hp-native-ad__label">{{ __('homepage.ads.sponsored') }}</span>
 
@@ -703,6 +706,7 @@
           @endif
         </div>
       </div>
+      @endif
       @endforeach
     </div>
   </section>
@@ -817,6 +821,9 @@
         <h2 class="hp-section-title">{{ __('homepage.partners.title') }}</h2>
       </div>
       @foreach($sidebarAds as $ad)
+      @if($ad->isVideoAd())
+        @include('partials.youtube-ad-card', ['ad' => $ad, 'label' => __('homepage.partners.label')])
+      @else
       <div class="hp-native-ad" style="margin-block-end:1.5rem;">
         <span class="hp-native-ad__label">{{ __('homepage.partners.label') }}</span>
         @if($ad->image)
@@ -841,6 +848,7 @@
           @endif
         </div>
       </div>
+      @endif
       @endforeach
     </div>
   </section>

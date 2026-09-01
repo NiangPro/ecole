@@ -81,6 +81,14 @@
     </div>
     @endif
 
+    {{-- Solde actuel (cumulé, toujours visible) --}}
+    <div class="stat-card mb-6 !p-5 border-2 {{ $currentBalance >= 0 ? 'border-cyan-500/40' : 'border-orange-500/40' }}">
+        <p id="kpiCurrentBalanceLabel" class="text-sm font-medium mb-1 {{ $currentBalance >= 0 ? 'text-cyan-400' : 'text-orange-400' }}">💼 Solde actuel</p>
+        <p id="kpiCurrentBalance" class="text-4xl font-bold {{ $currentBalance >= 0 ? 'text-cyan-400' : 'text-orange-400' }}">
+            {{ $currentBalance >= 0 ? '+' : '' }}{{ number_format($currentBalance, 0, ',', ' ') }} <span class="text-lg">XOF</span>
+        </p>
+    </div>
+
     {{-- KPIs du mois --}}
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div class="stat-card">
@@ -383,6 +391,16 @@
     }
 
     function updateKpisFromTransaction(t) {
+        const amount = Math.round(parseFloat(t.amount_xof));
+        const currentBalanceEl = document.getElementById('kpiCurrentBalance');
+        const parseAmountEl = el => parseInt(el.textContent.replace(/[^\d-]/g, ''), 10) || 0;
+        let currentBalance = parseAmountEl(currentBalanceEl);
+        currentBalance += t.type === 'income' ? amount : -amount;
+        currentBalanceEl.innerHTML = `${currentBalance >= 0 ? '+' : ''}${currentBalance.toLocaleString('fr-FR')} <span class="text-lg">XOF</span>`;
+        const currentBalanceClass = currentBalance >= 0 ? 'text-cyan-400' : 'text-orange-400';
+        currentBalanceEl.className = `text-4xl font-bold ${currentBalanceClass}`;
+        document.getElementById('kpiCurrentBalanceLabel').className = `text-sm font-medium mb-1 ${currentBalanceClass}`;
+
         const today = new Date();
         const txDate = new Date(t.transaction_date);
         if (txDate.getFullYear() !== today.getFullYear() || txDate.getMonth() !== today.getMonth()) return;
@@ -394,7 +412,6 @@
 
         let income = parseAmount(incomeEl);
         let expense = parseAmount(expenseEl);
-        const amount = Math.round(parseFloat(t.amount_xof));
 
         if (t.type === 'income') income += amount; else expense += amount;
         const balance = income - expense;

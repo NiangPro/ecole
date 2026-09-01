@@ -535,3 +535,158 @@
     }
   }
 }
+
+/* ─────────────────────────────────────────────────────────
+   Publicité vidéo YouTube (np-youtube-ad) — carte partagée entre
+   l'accueil et la sidebar des articles emplois (voir
+   partials/youtube-ad-card.blade.php). Le lecteur (iframe) n'est
+   créé qu'au clic (jamais au chargement de la page).
+   ───────────────────────────────────────────────────────── */
+.np-youtube-ad {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  background: var(--surface, oklch(100% 0 0));
+  border: 1px solid oklch(60% 0.24 25 / 14%);
+  box-shadow: 0 4px 20px oklch(0% 0 0 / 6%);
+}
+
+.np-youtube-ad__label {
+  position: absolute;
+  inset-block-start: .75rem;
+  inset-inline-start: .75rem;
+  z-index: 2;
+  padding: .25rem .7rem;
+  border-radius: 999px;
+  font-size: .7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: #fff;
+  background: oklch(20% 0.02 260 / 70%);
+  backdrop-filter: blur(6px);
+}
+
+.np-youtube-ad__stage {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background: linear-gradient(160deg, oklch(20% 0.02 260), oklch(12% 0.02 260));
+  overflow: hidden;
+}
+
+.np-youtube-ad__thumb {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, oklch(0% 0 0 / 10%) 0%, oklch(0% 0 0 / 45%) 100%);
+  }
+}
+
+.np-youtube-ad__play {
+  position: relative;
+  z-index: 1;
+  width: 64px;
+  height: 64px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background: oklch(55% 0.24 25);
+  box-shadow: 0 8px 24px oklch(0% 0 0 / 35%);
+  transition: transform .25s ease, box-shadow .25s ease;
+
+  & svg { margin-inline-start: 2px; }
+
+  &:hover {
+    transform: scale(1.08);
+    background: oklch(50% 0.24 25);
+    box-shadow: 0 10px 30px oklch(0% 0 0 / 45%);
+  }
+}
+
+.np-youtube-ad__platform {
+  position: absolute;
+  inset-block-end: .75rem;
+  inset-inline-end: .75rem;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  padding: .3rem .6rem;
+  border-radius: 999px;
+  font-size: .72rem;
+  font-weight: 700;
+  color: #fff;
+  background: oklch(0% 0 0 / 55%);
+  backdrop-filter: blur(6px);
+}
+
+.np-youtube-ad__embed {
+  position: absolute;
+  inset: 0;
+  background: #000;
+
+  & iframe { width: 100%; height: 100%; }
+}
+
+.np-youtube-ad__content {
+  padding: 1rem 1.15rem 1.15rem;
+}
+
+.np-youtube-ad__title {
+  margin: 0 0 .35rem;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text, oklch(20% 0.02 260));
+}
+
+.np-youtube-ad__desc {
+  margin: 0 0 .5rem;
+  font-size: .875rem;
+  line-height: 1.5;
+  color: var(--text-muted, oklch(45% 0.02 260));
+}
+
+.np-youtube-ad__author {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  margin-bottom: .75rem;
+  font-size: .8rem;
+  color: var(--text-muted, oklch(45% 0.02 260));
+
+  & i { font-size: .7rem; opacity: .7; }
+}
+
+.np-youtube-ad__cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  padding: .65rem 1rem;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: .875rem;
+  text-decoration: none;
+  color: #fff;
+  background: oklch(55% 0.24 25);
+  transition: transform .2s ease, box-shadow .2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    background: oklch(50% 0.24 25);
+    box-shadow: 0 8px 20px oklch(60% 0.24 25 / 30%);
+  }
+}
