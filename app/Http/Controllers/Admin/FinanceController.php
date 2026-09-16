@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\FinanceCategory;
 use App\Models\FinanceNotification;
-use App\Models\FinanceRecurring;
 use App\Models\FinanceTransaction;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
@@ -55,12 +54,6 @@ class FinanceController extends Controller
             return $cat->current_month_amount > $cat->monthly_budget;
         });
 
-        $upcomingRecurrings = FinanceRecurring::where('is_active', true)
-            ->where('next_due_date', '<=', now()->addDays(30))
-            ->orderBy('next_due_date')
-            ->with('category')
-            ->get();
-
         $unreadNotifications = FinanceNotification::where('is_read', false)
             ->with('recurring.category')
             ->orderBy('due_date')
@@ -78,7 +71,7 @@ class FinanceController extends Controller
             'monthIncome', 'monthExpense', 'balance',
             'currentBalance',
             'yearIncome', 'yearExpense',
-            'budgetAlerts', 'upcomingRecurrings',
+            'budgetAlerts',
             'unreadNotifications', 'recentTransactions',
             'minChartYear'
         ));

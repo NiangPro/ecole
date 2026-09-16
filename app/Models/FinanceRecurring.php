@@ -57,4 +57,33 @@ class FinanceRecurring extends Model
         // every_n_days
         return $from->copy()->addDays((int) $this->recurrence_value);
     }
+
+    /**
+     * Fait avancer next_due_date jusqu'à la prochaine échéance future si elle est
+     * dépassée — utile quand la page notifications est visitée avant le passage du
+     * cron finance:check-reminders (07:00), ou si celui-ci a manqué plusieurs jours.
+     * Ne crée aucune transaction (contrairement au cron) : uniquement la date.
+     */
+    public function rescheduleIfOverdue(): bool
+    {
+        if (!$this->next_due_date || $this->next_due_date->gte(today())) {
+            return false;
+        }
+
+        $next = $this->next_due_date;
+        $iterations = 0;
+        while ($next->lt(today()) && $iterations < 1000) {
+            $advanced = $this->calculateNextDueDate($next);
+            if ($advanced->lte($next)) {
+                break; // Garde-fou : recurrence_value mal configurée (0 ou négative).
+            }
+            $next = $advanced;
+            $iterations++;
+        }
+
+        $this->next_due_date = $next;
+        $this->save();
+
+        return true;
+    }
 }

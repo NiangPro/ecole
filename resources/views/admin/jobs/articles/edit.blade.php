@@ -344,7 +344,31 @@
     .word-count-hint.hint-ok {
         color: #22c55e;
     }
-    
+
+    .year-mismatch-warning {
+        display: none;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 14px 16px;
+        margin-bottom: 15px;
+        background: rgba(245, 158, 11, 0.1);
+        border: 2px solid rgba(245, 158, 11, 0.4);
+        border-radius: 12px;
+        color: #f59e0b;
+        font-size: 0.9rem;
+        font-weight: 600;
+        line-height: 1.5;
+    }
+
+    .year-mismatch-warning i {
+        margin-top: 2px;
+    }
+
+    body.light-mode .year-mismatch-warning {
+        background: rgba(245, 158, 11, 0.08);
+        color: #b45309;
+    }
+
     .seo-card {
         background: rgba(15, 23, 42, 0.6);
         border: 2px solid rgba(6, 182, 212, 0.2);
@@ -570,6 +594,7 @@
                         <i class="fas fa-file-alt"></i>
                         <span>Contenu de l'article</span>
                     </div>
+                    <div id="yearMismatchWarning" class="year-mismatch-warning"></div>
                     <div class="editor-toolbar">
                         <div class="editor-buttons">
                             <button type="button" onclick="formatText('bold')" class="editor-btn" title="Gras">
@@ -801,7 +826,16 @@
                                  validation HTML5 native de type="url" rejette (elle exige un schéma absolu) et qui
                                  bloquait silencieusement la soumission du formulaire. La validation souple (relatif
                                  "/..." ou URL absolue http(s)) est faite en JS ci-dessous via setCustomValidity. --}}
-                            <input type="text" inputmode="url" name="cover_image_url" id="coverImageUrl" value="{{ old('cover_image_url', (isset($article) && $article->cover_type === 'external' ? $article->cover_image : '')) }}"
+                            @php
+                                // La validation serveur (règle Laravel "url") exige un schéma absolu ; un chemin
+                                // relatif stocké tel quel en base (articles historiques) la ferait échouer au
+                                // ré-enregistrement. On préfixe donc ici avec l'URL de base du site avant affichage
+                                // (cf. normalisation JS équivalente juste avant submit, plus bas, pour une saisie
+                                // fraîche d'un chemin relatif).
+                                $rawCoverUrl = old('cover_image_url', (isset($article) && $article->cover_type === 'external' ? $article->cover_image : ''));
+                                $coverUrlValue = $rawCoverUrl && str_starts_with($rawCoverUrl, '/') ? url($rawCoverUrl) : $rawCoverUrl;
+                            @endphp
+                            <input type="text" inputmode="url" name="cover_image_url" id="coverImageUrl" value="{{ $coverUrlValue }}"
                                    class="form-input" placeholder="https://example.com/image.jpg ou /images/articles/exemple.jpg">
                             <div class="form-help">URL absolue (https://...) ou chemin relatif existant sur le serveur (ex : /images/articles/article-87.jpg)</div>
                             @error('cover_image_url')
@@ -1054,6 +1088,50 @@
         });
     })();
 
+    // Alerte "année evergreen" : sur les guides mis à jour d'une année sur l'autre (ex. "Concours X
+    // 2025" → "2026"), le H1 du contenu garde parfois l'ancienne année alors que le titre a été
+    // mis à jour (ou l'inverse), ce qui crée un mismatch pénalisant pour le SEO interne. On ne
+    // touche pas au contenu ni à la base : on se contente de signaler visuellement la divergence
+    // pour que l'équipe éditoriale corrige à la main.
+    (function () {
+        const titleField = document.getElementById('articleTitle');
+        const contentField = document.getElementById('articleContent');
+        const warningEl = document.getElementById('yearMismatchWarning');
+        if (!titleField || !contentField || !warningEl) return;
+
+        function extractYear(text) {
+            if (!text) return null;
+            const match = text.match(/\b(20\d{2})\b/);
+            return match ? match[1] : null;
+        }
+
+        function extractContentH1Text(html) {
+            try {
+                const doc = new DOMParser().parseFromString(html || '', 'text/html');
+                const h1 = doc.querySelector('h1');
+                return h1 ? h1.textContent : null;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function checkYearMismatch() {
+            const titleYear = extractYear(titleField.value);
+            const h1Year = extractYear(extractContentH1Text(contentField.value));
+
+            if (titleYear && h1Year && titleYear !== h1Year) {
+                warningEl.style.display = 'flex';
+                warningEl.innerHTML = '<i class="fas fa-exclamation-triangle"></i><span>Le H1 du contenu mentionne <strong>' + h1Year + '</strong> alors que le titre indique <strong>' + titleYear + '</strong>. Pensez à harmoniser l\'année (mise à jour evergreen).</span>';
+            } else {
+                warningEl.style.display = 'none';
+            }
+        }
+
+        titleField.addEventListener('input', checkYearMismatch);
+        contentField.addEventListener('input', checkYearMismatch);
+        setTimeout(checkYearMismatch, 500);
+    })();
+
     // État de chargement sur "Enregistrer" : évite les doubles soumissions (upload d'image compris)
     // et donne une confirmation immédiate pendant que le POST classique navigue vers la page suivante.
     (function () {
@@ -1069,6 +1147,23 @@
 
             if (window.toastr) {
                 toastr.info('Enregistrement en cours, merci de patienter...', '', { timeOut: 4000 });
+            }
+        });
+    })();
+
+    // Normalisation de cover_image_url avant envoi : la règle serveur "url" (Laravel) exige un
+    // schéma absolu. Le champ accepte un chemin relatif à la saisie (cf. isAcceptableCoverUrl
+    // plus haut), donc on le préfixe ici avec l'origine du site juste avant la soumission pour
+    // éviter un rejet serveur silencieux au ré-enregistrement d'un article historique.
+    (function () {
+        const form = document.getElementById('articleForm');
+        const coverImageUrl = document.getElementById('coverImageUrl');
+        if (!form || !coverImageUrl) return;
+
+        form.addEventListener('submit', function () {
+            const value = coverImageUrl.value.trim();
+            if (value.startsWith('/')) {
+                coverImageUrl.value = window.location.origin + value;
             }
         });
     })();

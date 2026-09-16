@@ -139,34 +139,6 @@
         </div>
     </div>
 
-    {{-- Prochaines échéances --}}
-    <div class="stat-card mb-6">
-        <h2 class="font-semibold text-slate-200 mb-4">📅 Prochaines échéances (30 jours)</h2>
-        @forelse($upcomingRecurrings as $r)
-        <div class="flex justify-between items-center py-2 border-b border-slate-700 last:border-0">
-            <div class="flex items-center gap-2">
-                <span>{{ $r->category->icon }}</span>
-                <span class="text-sm text-slate-300">{{ $r->label }}</span>
-                <span class="text-xs px-2 py-0.5 rounded-full {{ $r->type === 'income' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400' }}">
-                    {{ $r->type === 'income' ? 'Revenu' : 'Dépense' }}
-                </span>
-                <button onclick='quickAddFromTemplate({{ $r->id }}, {!! json_encode($r->label) !!}, {{ $r->amount }}, "{{ $r->type }}", {{ $r->finance_category_id }})'
-                        class="text-xs bg-cyan-500/10 text-cyan-400 hover:bg-cyan-500/20 px-2 py-0.5 rounded">
-                    ✚ Enregistrer
-                </button>
-            </div>
-            <div class="text-right">
-                <p class="text-sm font-semibold {{ $r->type === 'income' ? 'text-green-400' : 'text-red-400' }}">
-                    {{ number_format($r->amount, 0, ',', ' ') }} XOF
-                </p>
-                <p class="text-xs text-slate-500">{{ $r->next_due_date->format('d/m/Y') }}</p>
-            </div>
-        </div>
-        @empty
-        <p class="text-slate-500 text-sm">Aucune échéance dans les 30 prochains jours.</p>
-        @endforelse
-    </div>
-
     {{-- Dernières transactions --}}
     <div class="stat-card">
         <div class="flex justify-between items-center mb-4">
