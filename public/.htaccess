@@ -19,10 +19,12 @@
     RewriteCond %{REQUEST_FILENAME} -f
     RewriteRule ^robots\.txt$ robots.txt [L]
     
-    # sitemap.xml - Servir le fichier physique s'il existe
-    RewriteCond %{REQUEST_URI} ^/sitemap\.xml$ [NC]
-    RewriteCond %{REQUEST_FILENAME} -f
-    RewriteRule ^sitemap\.xml$ sitemap.xml [L]
+    # sitemap.xml - toujours généré dynamiquement par SitemapController (voir
+    # routes/web.php). Un fichier statique public/sitemap.xml ne doit jamais
+    # exister : la génération planifiée (sitemap:generate) a été désactivée
+    # le 2026-09-16 après avoir causé un désalignement www/non-www dans
+    # Search Console (règle de priorité statique supprimée ici pour la même
+    # raison).
 
     # IMPORTANT : Forcer www.niangprogrammeur.com et HTTPS
     # Étape 1 : Rediriger niangprogrammeur.com vers www.niangprogrammeur.com

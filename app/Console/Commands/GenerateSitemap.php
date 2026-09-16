@@ -16,7 +16,7 @@ class GenerateSitemap extends Command
         
         // Forcer l'URL de production pour le sitemap
         // Toujours utiliser le domaine de production pour le sitemap
-        $baseUrl = 'https://niangprogrammeur.com';
+        $baseUrl = 'https://www.niangprogrammeur.com';
         
         // Pages principales
         $pages = [

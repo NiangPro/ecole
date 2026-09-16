@@ -15,7 +15,7 @@ class SitemapController extends Controller
     {
         // Détecter l'URL de base (production ou local)
         $baseUrl = config('app.env') === 'production' 
-            ? 'https://niangprogrammeur.com' 
+            ? 'https://www.niangprogrammeur.com' 
             : (request()->getSchemeAndHttpHost());
         
         // Cache du sitemap index pendant 1 heure (3600 secondes)
@@ -95,7 +95,7 @@ class SitemapController extends Controller
     {
         // Détecter l'URL de base (production ou local)
         $baseUrl = config('app.env') === 'production' 
-            ? 'https://niangprogrammeur.com' 
+            ? 'https://www.niangprogrammeur.com' 
             : (request()->getSchemeAndHttpHost());
         
         // Cache du sitemap pages pendant 6 heures (21600 secondes)
@@ -207,7 +207,7 @@ class SitemapController extends Controller
     {
         // Détecter l'URL de base (production ou local)
         $baseUrl = config('app.env') === 'production' 
-            ? 'https://niangprogrammeur.com' 
+            ? 'https://www.niangprogrammeur.com' 
             : (request()->getSchemeAndHttpHost());
         
         // Cache du sitemap articles pendant 1 heure (3600 secondes)
@@ -303,7 +303,7 @@ class SitemapController extends Controller
     {
         // Détecter l'URL de base (production ou local)
         $baseUrl = config('app.env') === 'production' 
-            ? 'https://niangprogrammeur.com' 
+            ? 'https://www.niangprogrammeur.com' 
             : (request()->getSchemeAndHttpHost());
         
         // Cache du sitemap documents pendant 1 heure (3600 secondes)
@@ -374,7 +374,7 @@ class SitemapController extends Controller
     public function administrativeDocuments()
     {
         $baseUrl = config('app.env') === 'production'
-            ? 'https://niangprogrammeur.com'
+            ? 'https://www.niangprogrammeur.com'
             : request()->getSchemeAndHttpHost();
 
         $sitemap = Cache::remember('sitemap_administrative_documents_' . md5($baseUrl), 3600, function () use ($baseUrl) {
@@ -429,7 +429,7 @@ class SitemapController extends Controller
     public function epreuves()
     {
         $baseUrl = config('app.env') === 'production'
-            ? 'https://niangprogrammeur.com'
+            ? 'https://www.niangprogrammeur.com'
             : request()->getSchemeAndHttpHost();
 
         $sitemap = Cache::remember('sitemap_epreuves_' . md5($baseUrl), 3600, function () use ($baseUrl) {

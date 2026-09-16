@@ -18,8 +18,12 @@ Schedule::command('cache:clear')->dailyAt('00:00')->withoutOverlapping();
 // Planifier le nettoyage des vues compilées tous les jours à 1h du matin
 Schedule::command('view:clear')->dailyAt('01:00')->withoutOverlapping();
 
-// Planifier la régénération du sitemap tous les jours à 3h du matin
-Schedule::command('sitemap:generate')->dailyAt('03:00')->withoutOverlapping();
+// Désactivé (2026-09-16) : ce fichier statique public/sitemap.xml est servi en
+// priorité sur la route dynamique par le .htaccess dès qu'il existe, et shadow
+// silencieusement SitemapController (qui est plus complet : images, news,
+// documents, épreuves). Cause racine du désalignement www/non-www détecté par
+// Search Console. Voir app/Console/Commands/GenerateSitemap.php.
+// Schedule::command('sitemap:generate')->dailyAt('03:00')->withoutOverlapping();
 
 // Planifier la création automatique d'articles d'emploi tous les jours à 4h du matin
 // Crée 5 nouveaux articles par jour

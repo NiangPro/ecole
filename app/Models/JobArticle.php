@@ -164,8 +164,8 @@ class JobArticle extends Model
             Cache::forget('top_viewed_articles_sidebar');
             // Invalider le cache du sitemap pour forcer sa régénération
             Cache::forget('sitemap_articles_lastmod');
-            Cache::forget('sitemap_index_' . md5('https://niangprogrammeur.com'));
-            Cache::forget('sitemap_articles_' . md5('https://niangprogrammeur.com'));
+            Cache::forget('sitemap_index_' . md5('https://www.niangprogrammeur.com'));
+            Cache::forget('sitemap_articles_' . md5('https://www.niangprogrammeur.com'));
             if ($article->category_id) {
                 $category = $article->category ?? Category::find($article->category_id);
                 if ($category) {
@@ -191,8 +191,8 @@ class JobArticle extends Model
             Cache::forget('top_viewed_articles_sidebar');
             // Invalider le cache du sitemap pour forcer sa régénération
             Cache::forget('sitemap_articles_lastmod');
-            Cache::forget('sitemap_index_' . md5('https://niangprogrammeur.com'));
-            Cache::forget('sitemap_articles_' . md5('https://niangprogrammeur.com'));
+            Cache::forget('sitemap_index_' . md5('https://www.niangprogrammeur.com'));
+            Cache::forget('sitemap_articles_' . md5('https://www.niangprogrammeur.com'));
             if ($article->category_id) {
                 $category = $article->category ?? Category::find($article->category_id);
                 if ($category) {
@@ -217,8 +217,8 @@ class JobArticle extends Model
             Cache::forget('top_viewed_articles_sidebar');
             // Invalider le cache du sitemap pour forcer sa régénération
             Cache::forget('sitemap_articles_lastmod');
-            Cache::forget('sitemap_index_' . md5('https://niangprogrammeur.com'));
-            Cache::forget('sitemap_articles_' . md5('https://niangprogrammeur.com'));
+            Cache::forget('sitemap_index_' . md5('https://www.niangprogrammeur.com'));
+            Cache::forget('sitemap_articles_' . md5('https://www.niangprogrammeur.com'));
             if ($article->category_id) {
                 $category = Category::find($article->category_id);
                 if ($category) {
