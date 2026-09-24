@@ -15,7 +15,6 @@ Plateforme de formation gratuite en développement web avec système de badges, 
 - [Configuration](#-configuration)
 - [Utilisation](#-utilisation)
 - [Structure du Projet](#-structure-du-projet)
-- [Documentation](#-documentation)
 - [Tests](#-tests)
 - [Déploiement](#-déploiement)
 - [Contribution](#-contribution)
@@ -353,18 +352,6 @@ formation-laravel/
 ├── package.json                  # Dépendances Node.js
 └── README.md                     # Ce fichier
 ```
-
-## 📚 Documentation
-
-- [INSTALLATION.md](INSTALLATION.md) - Guide d'installation détaillé
-- [API.md](API.md) - Documentation de l'API
-- [CONTRIBUTING.md](CONTRIBUTING.md) - Guide pour contribuer
-- [CHANGELOG.md](CHANGELOG.md) - Historique des versions (généré automatiquement avec `composer changelog`)
-- [GENERATION_SITEMAP.md](GENERATION_SITEMAP.md) - Génération du sitemap
-- [DEPLOIEMENT_BADGES_PRODUCTION.md](DEPLOIEMENT_BADGES_PRODUCTION.md) - Déploiement badges
-- [GUIDE_ACCEPTATION_ADSENSE.md](GUIDE_ACCEPTATION_ADSENSE.md) - Guide AdSense
-- [CONFIGURATION_SEO.md](CONFIGURATION_SEO.md) - Configuration SEO
-- [INTEGRATION_BING_API.md](INTEGRATION_BING_API.md) - Intégration Bing
 
 ## 🧪 Tests
 

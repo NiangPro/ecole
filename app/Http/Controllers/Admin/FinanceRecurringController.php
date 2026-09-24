@@ -100,6 +100,34 @@ class FinanceRecurringController extends Controller
         return back()->with('success', $recurring->is_active ? 'Activé.' : 'Désactivé.');
     }
 
+    public function reschedule(Request $request, FinanceRecurring $recurring)
+    {
+        $rules = ['required', 'date', 'after_or_equal:today'];
+        if ($recurring->end_date) {
+            $rules[] = 'before_or_equal:'.$recurring->end_date->toDateString();
+        }
+
+        $data = $request->validate(['next_due_date' => $rules], [
+            'next_due_date.after_or_equal' => "La nouvelle échéance ne peut pas être dans le passé.",
+            'next_due_date.before_or_equal' => 'La nouvelle échéance dépasse la date de fin du récurrent.',
+        ]);
+
+        $oldDate = $recurring->next_due_date?->toDateString();
+        $newDate = Carbon::parse($data['next_due_date'])->toDateString();
+
+        if ($oldDate !== $newDate) {
+            // Les rappels non lus de l'ancienne échéance deviennent obsolètes.
+            $recurring->notifications()
+                ->where('due_date', $oldDate)
+                ->where('is_read', false)
+                ->delete();
+
+            $recurring->update(['next_due_date' => $newDate]);
+        }
+
+        return back()->with('success', "« {$recurring->label} » reprogrammé au ".Carbon::parse($newDate)->format('d/m/Y').'.');
+    }
+
     private function validated(Request $request): array
     {
         return $request->validate([

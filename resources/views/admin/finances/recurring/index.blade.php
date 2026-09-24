@@ -68,6 +68,8 @@
         background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.3); color: #22c55e;
     }
 
+    .recx-flash.is-error { background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); color: #ef4444; }
+
     /* ---------- Grid ---------- */
     .recx-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.1rem; }
 
@@ -277,6 +279,12 @@
     }
 
     .recx-modal-submit:hover { transform: translateY(-2px); }
+
+    .recx-modal-sub { margin: -0.5rem 0 1rem; font-size: 0.82rem; color: rgba(255, 255, 255, 0.55); }
+    body.light-mode .recx-modal-sub { color: rgba(30, 41, 59, 0.6); }
+
+    .recx-shortcuts { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.9rem; }
+    .recx-shortcuts .recx-action-btn { font-size: 0.72rem; }
 </style>
 @endsection
 
@@ -301,6 +309,10 @@
 
     @if(session('success'))
     <div class="recx-flash"><i class="fas fa-check-circle"></i> {{ session('success') }}</div>
+    @endif
+
+    @if($errors->any())
+    <div class="recx-flash is-error"><i class="fas fa-exclamation-circle"></i> {{ $errors->first() }}</div>
     @endif
 
     <form method="GET" class="recx-filters">
@@ -386,6 +398,10 @@
                         class="recx-action-btn">
                     <i class="fas fa-plus"></i> Enregistrer
                 </button>
+                <button type="button" class="recx-action-btn"
+                        onclick='openReschedule({!! json_encode(route('admin.finances.recurring.reschedule', $r)) !!}, {!! json_encode($r->label) !!}, "{{ $r->next_due_date->toDateString() }}", "{{ $r->calculateNextDueDate($r->next_due_date)->toDateString() }}", "{{ $r->end_date?->toDateString() }}")'>
+                    <i class="fas fa-calendar-alt"></i> Reprogrammer
+                </button>
                 <a href="{{ route('admin.finances.recurring.edit', $r) }}" class="recx-action-btn"><i class="fas fa-pen"></i> Modifier</a>
                 <form method="POST" action="{{ route('admin.finances.recurring.toggle', $r) }}">
                     @csrf @method('PATCH')
@@ -441,7 +457,85 @@
         </div>
     </div>
 
+    {{-- Modal Reprogrammer la prochaine échéance --}}
+    <div id="rescheduleModal" class="recx-modal-overlay" style="display:none;">
+        <div class="recx-modal">
+            <div class="recx-modal-head">
+                <h3>📅 Reprogrammer l'échéance</h3>
+                <button type="button" onclick="closeReschedule()" class="recx-modal-close">✕</button>
+            </div>
+            <p class="recx-modal-sub"><strong id="rsLabel"></strong> — actuellement le <span id="rsCurrent"></span></p>
+
+            <form method="POST" id="rescheduleForm">
+                @csrf @method('PATCH')
+
+                <div class="recx-shortcuts">
+                    <button type="button" class="recx-action-btn" onclick="rsShift(7)">+7 jours</button>
+                    <button type="button" class="recx-action-btn" onclick="rsShift(15)">+15 jours</button>
+                    <button type="button" class="recx-action-btn" onclick="rsShiftMonth()">+1 mois</button>
+                    <button type="button" class="recx-action-btn" onclick="rsSkip()">Sauter cette échéance</button>
+                </div>
+
+                <input type="date" name="next_due_date" id="rsDate" min="{{ date('Y-m-d') }}" required class="recx-modal-field">
+
+                <button type="submit" class="recx-modal-submit">Enregistrer la nouvelle date</button>
+            </form>
+        </div>
+    </div>
+
     <script>
+    let rsState = { current: null, skip: null };
+
+    function rsFormat(d) {
+        return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    }
+
+    function rsParse(s) {
+        const [y, m, d] = s.split('-').map(Number);
+        return new Date(y, m - 1, d);
+    }
+
+    function rsBase() {
+        // Décalage à partir de la date affichée dans le champ (ou de l'échéance actuelle)
+        const v = document.getElementById('rsDate').value || rsState.current;
+        return rsParse(v);
+    }
+
+    function rsShift(days) {
+        const d = rsBase();
+        d.setDate(d.getDate() + days);
+        document.getElementById('rsDate').value = rsFormat(d);
+    }
+
+    function rsShiftMonth() {
+        const d = rsBase();
+        const day = d.getDate();
+        d.setDate(1);
+        d.setMonth(d.getMonth() + 1);
+        const lastDay = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+        d.setDate(Math.min(day, lastDay));
+        document.getElementById('rsDate').value = rsFormat(d);
+    }
+
+    function rsSkip() {
+        document.getElementById('rsDate').value = rsState.skip;
+    }
+
+    function openReschedule(action, label, current, skip, endDate) {
+        rsState = { current, skip };
+        document.getElementById('rescheduleForm').action = action;
+        document.getElementById('rsLabel').textContent = label;
+        document.getElementById('rsCurrent').textContent = rsParse(current).toLocaleDateString('fr-FR');
+        const input = document.getElementById('rsDate');
+        input.value = current;
+        if (endDate) { input.max = endDate; } else { input.removeAttribute('max'); }
+        document.getElementById('rescheduleModal').style.display = 'flex';
+    }
+
+    function closeReschedule() {
+        document.getElementById('rescheduleModal').style.display = 'none';
+    }
+
     function quickAddFromTemplate(id, label, amount, type, categoryId) {
         document.getElementById('quickAddModal').style.display = 'flex';
         document.getElementById('qaType').value = type;

@@ -674,6 +674,7 @@ Route::middleware(['admin'])->group(function () {
         Route::resource('transactions', \App\Http\Controllers\Admin\FinanceTransactionController::class)->except(['show']);
 
         Route::patch('/recurring/{recurring}/toggle', [\App\Http\Controllers\Admin\FinanceRecurringController::class, 'toggle'])->name('recurring.toggle');
+        Route::patch('/recurring/{recurring}/reschedule', [\App\Http\Controllers\Admin\FinanceRecurringController::class, 'reschedule'])->name('recurring.reschedule');
         Route::resource('recurring', \App\Http\Controllers\Admin\FinanceRecurringController::class)->except(['show']);
 
         Route::resource('categories', \App\Http\Controllers\Admin\FinanceCategoryController::class)->except(['show']);
