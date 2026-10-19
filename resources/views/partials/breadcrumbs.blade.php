@@ -1,9 +1,11 @@
 @php
-// Breadcrumbs désactivés sur toutes les pages
-        $breadcrumbs = [];
+// Fil d'Ariane visible uniquement sur les formations et les articles emploi.
+// Le BreadcrumbList JSON-LD est émis par partials/schema-org à partir du même $breadcrumbs.
+$showBreadcrumbs = request()->routeIs('formations.*', 'emplois.article')
+    && isset($breadcrumbs) && is_array($breadcrumbs);
 @endphp
 
-@if(false && count($breadcrumbs) > 1)
+@if($showBreadcrumbs && count($breadcrumbs) > 1)
 <style>
 .breadcrumb-nav {
     position: relative;
@@ -191,18 +193,14 @@ main:not(:has(.tutorial-header)):not(:has(.hero-section)):not(:has(.article-hero
 }
 </style>
 <nav aria-label="Breadcrumb" class="breadcrumb-nav">
-    <ol class="breadcrumb-list" itemscope itemtype="https://schema.org/BreadcrumbList">
+    <ol class="breadcrumb-list">
         @foreach($breadcrumbs as $index => $breadcrumb)
-        <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <li class="breadcrumb-item">
             @if($index < count($breadcrumbs) - 1)
-            <a href="{{ $breadcrumb['url'] }}" itemprop="item">
-                <span itemprop="name">{{ $breadcrumb['name'] }}</span>
-            </a>
-            <meta itemprop="position" content="{{ $index + 1 }}">
+            <a href="{{ $breadcrumb['url'] }}">{{ $breadcrumb['name'] }}</a>
             <span class="breadcrumb-separator">/</span>
             @else
-            <span itemprop="name" class="breadcrumb-current">{{ $breadcrumb['name'] }}</span>
-            <meta itemprop="position" content="{{ $index + 1 }}">
+            <span class="breadcrumb-current" aria-current="page">{{ $breadcrumb['name'] }}</span>
             @endif
         </li>
         @endforeach
@@ -219,6 +217,7 @@ main:not(:has(.tutorial-header)):not(:has(.hero-section)):not(:has(.article-hero
         const heroSection = document.querySelector('.tutorial-header') || 
                            document.querySelector('.hero-section') || 
                            document.querySelector('.article-hero') ||
+                           document.querySelector('.art-hero') ||
                            document.querySelector('.article-hero-fallback');
         
         if (heroSection) {

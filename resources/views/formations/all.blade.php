@@ -4,6 +4,13 @@
 @section('meta_description', trans('app.formations.subtitle'))
 @section('meta_keywords', 'formations programmation, cours développement web, apprendre HTML CSS JavaScript PHP, formations gratuites, tutoriels programmation')
 
+@php
+    $breadcrumbs = [
+        ['name' => 'Accueil', 'url' => url('/')],
+        ['name' => 'Formations', 'url' => url('/formations')],
+    ];
+@endphp
+
 @section('styles')
 <style>
     /* Fonts chargées via preload dans le head - pas de @import bloquant */
@@ -1165,7 +1172,7 @@
 <!-- Structured Data for SEO -->
 <script type="application/ld+json">
 {!! json_encode([
-    '@context' => 'https://schema.org',
+    '@@context' => 'https://schema.org',
     '@type' => 'CollectionPage',
     'name' => trans('app.formations.title'),
     'description' => trans('app.formations.subtitle'),

@@ -15,6 +15,22 @@
 @if($document->seo_keywords)
 <meta name="keywords" content="{{ $document->seo_keywords }}">
 @endif
+@if(!empty($documentFaqs))
+@php
+    // Clés construites par concaténation : voir emplois/article.blade.php (directive Blade @context).
+    $ldTypeKey = '@' . 'type';
+    $faqSchema = [
+        '@' . 'context' => 'https://schema.org',
+        $ldTypeKey      => 'FAQPage',
+        'mainEntity'    => array_map(fn($faq) => [
+            $ldTypeKey       => 'Question',
+            'name'           => $faq['question'],
+            'acceptedAnswer' => [$ldTypeKey => 'Answer', 'text' => $faq['answer']],
+        ], $documentFaqs),
+    ];
+@endphp
+<script type="application/ld+json">{!! json_encode($faqSchema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG) !!}</script>
+@endif
 @endpush
 
 @push('styles')

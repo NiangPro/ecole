@@ -202,7 +202,7 @@
             @endif
             <div class="em-art-card__meta">
               @if($article->published_at)
-              <span><i class="fas fa-calendar"></i> {{ $article->published_at->format('d/m/Y') }}</span>
+              <span><i class="fas fa-calendar"></i> <time datetime="{{ $article->published_at->toDateString() }}">{{ $article->published_at->format('d/m/Y') }}</time></span>
               @endif
               <span><i class="fas fa-eye"></i> {{ $article->featured_display_views ?? $article->views }}</span>
             </div>

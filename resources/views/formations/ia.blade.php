@@ -308,7 +308,8 @@
         overflow-x: hidden;
         max-width: calc(100% - 300px);
     }
-    .main-content h1 {
+    .main-content h1, .main-content h2.intro-title {
+        margin-top: 0;
         color: #000;
         font-size: 42px;
         margin-bottom: 10px;
@@ -545,7 +546,7 @@
             overflow-x: hidden;
             max-width: calc(100% - 300px);
         }
-        .main-content h1 {
+        .main-content h1, .main-content h2.intro-title {
             color: #000;
             font-size: 42px;
             margin-bottom: 10px;
@@ -1032,7 +1033,7 @@
 
         <!-- Main Content -->
         <main class="main-content">
-            <h1 id="intro">{{ trans('app.formations.ia.intro_title') }}</h1>
+            <h2 id="intro" class="intro-title">{{ trans('app.formations.ia.intro_title') }}</h2>
             <p>{{ trans('app.formations.ia.intro_text') }}</p>
 
             <h3>{{ trans('app.formations.ia.why_title') }}</h3>

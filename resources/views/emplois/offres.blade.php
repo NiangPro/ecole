@@ -587,7 +587,7 @@
                 <p class="job-card-excerpt">{{ $article->excerpt }}</p>
                 @endif
                 <div class="job-card-meta">
-                    <span><i class="fas fa-calendar"></i> {{ $article->published_at ? $article->published_at->format('d/m/Y') : '' }}</span>
+                    <span><i class="fas fa-calendar"></i> @if($article->published_at)<time datetime="{{ $article->published_at->toDateString() }}">{{ $article->published_at->format('d/m/Y') }}</time>@endif</span>
                     <span><i class="fas fa-eye"></i> {{ $article->featured_display_views }}</span>
                 </div>
                 <span class="job-card-cta">Voir l'offre <i class="fas fa-arrow-right"></i></span>

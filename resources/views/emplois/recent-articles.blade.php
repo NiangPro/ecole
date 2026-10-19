@@ -444,7 +444,7 @@
                         @endif
                         <span itemprop="datePublished" content="{{ $article->published_at ? $article->published_at->toIso8601String() : $article->created_at->toIso8601String() }}">
                             <i class="fas fa-calendar"></i>
-                            {{ $article->published_at ? $article->published_at->format('d/m/Y') : $article->created_at->format('d/m/Y') }}
+                            <time datetime="{{ ($article->published_at ?? $article->created_at)->toDateString() }}">{{ ($article->published_at ?? $article->created_at)->format('d/m/Y') }}</time>
                         </span>
                         <span>
                             <i class="fas fa-eye"></i>
