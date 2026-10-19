@@ -26,6 +26,10 @@ export default defineConfig(({ mode }) => ({
         tailwindcss(),
     ],
     build: {
+        // Garder les fichiers hachés des builds précédents : les pages HTML en cache
+        // (page.cache, formation_html_*) les référencent encore jusqu'à expiration.
+        // Sans ça, elles s'affichent sans CSS après chaque build. Purger public/build de temps en temps.
+        emptyOutDir: false,
         // Minification activée en production uniquement
         minify: mode === 'production' ? 'terser' : false,
         terserOptions: mode === 'production' ? {

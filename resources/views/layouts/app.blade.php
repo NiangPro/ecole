@@ -144,8 +144,11 @@
     </style>
 
     @php
-        $viteManifest = \Illuminate\Support\Facades\Cache::remember('vite_manifest', 3600, function () {
-            return json_decode(file_get_contents(public_path('build/manifest.json')), true);
+        // Clé liée à la date du manifest : après un `npm run build`, les nouveaux fichiers hachés
+        // sont pris en compte immédiatement (sinon l'ancien CSS, supprimé par le build, renvoie 404 jusqu'à 1 h).
+        $viteManifestPath = public_path('build/manifest.json');
+        $viteManifest = \Illuminate\Support\Facades\Cache::remember('vite_manifest_' . @filemtime($viteManifestPath), 3600, function () use ($viteManifestPath) {
+            return json_decode(file_get_contents($viteManifestPath), true);
         });
         $viteCssFile  = $viteManifest['resources/css/app.css']['file'] ?? null;
     @endphp
