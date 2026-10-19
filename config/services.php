@@ -75,6 +75,12 @@ return [
         'key' => env('OPENAI_API_KEY'),
     ],
 
+    // Chatbot « Sokhna » (widget public) — https://console.groq.com
+    'groq' => [
+        'key'   => env('GROQ_API_KEY'),
+        'model' => env('GROQ_MODEL', 'llama-3.3-70b-versatile'),
+    ],
+
     'vapid' => [
         'public_key'  => env('VAPID_PUBLIC_KEY', ''),
         'private_key' => env('VAPID_PRIVATE_KEY', ''),

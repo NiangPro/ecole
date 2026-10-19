@@ -564,6 +564,9 @@
     </script>
     @endif
 
+    <!-- Chatbot IA « Sokhna » (Groq) -->
+    @include('partials.sokhna-chat')
+
     <!-- Publicités vidéo YouTube (np-youtube-ad) : l'iframe du lecteur n'est créée
          qu'au clic sur le bouton play, jamais au chargement de la page — voir
          partials/youtube-ad-card.blade.php. Lancée avec autoplay+boucle : autorisé
