@@ -122,53 +122,11 @@
     <meta name="googlebot" content="index, follow">
     <meta name="bingbot" content="index, follow">
     
-    <!-- Schema.org JobPosting (offres d'emploi uniquement) -->
-    @php
-        $jldFlags = JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_UNESCAPED_SLASHES | JSON_INVALID_UTF8_SUBSTITUTE;
-        $jobCategorySlugs = ['offres-emploi', 'candidature-spontanee', 'opportunites-professionnelles'];
-        $isJobPosting = $article->category && in_array($article->category->slug, $jobCategorySlugs, true);
-        if ($isJobPosting) {
-            // Champs localisation : fallback sur Dakar (les offres ne stockent pas ces données)
-            $jldStreetAddress  = $article->street_address ?? $article->location ?? $article->ville ?? 'Dakar';
-            $jldAddressLocality = $article->ville ?? $article->location ?? 'Dakar';
-            $jldAddressRegion  = $article->region ?? $article->ville ?? 'Dakar';
-            $jldPostalCode     = $article->postal_code ?? '10700';
-
-            $jldData = [
-                '@context'           => 'https://schema.org',
-                '@type'              => 'JobPosting',
-                'title'              => $article->title ?? '',
-                'description'        => strip_tags($article->excerpt ?? substr(strip_tags($article->content ?? ''), 0, 500)),
-                'datePosted'         => ($article->published_at ?? $article->created_at)?->toIso8601String() ?? now()->toIso8601String(),
-                'validThrough'       => ($article->published_at ?? $article->created_at)?->addMonths(2)->toIso8601String() ?? now()->addMonths(2)->toIso8601String(),
-                'hiringOrganization' => [
-                    '@type'  => 'Organization',
-                    'name'   => 'Recruteur — via NiangProgrammeur',
-                    'sameAs' => 'https://www.niangprogrammeur.com',
-                ],
-                'jobLocation' => [
-                    '@type'   => 'Place',
-                    'address' => [
-                        '@type'           => 'PostalAddress',
-                        'streetAddress'   => $jldStreetAddress,
-                        'addressLocality' => $jldAddressLocality,
-                        'addressRegion'   => $jldAddressRegion,
-                        'postalCode'      => $jldPostalCode,
-                        'addressCountry'  => 'SN',
-                    ],
-                ],
-                'employmentType'                => 'FULL_TIME',
-                'applicantLocationRequirements' => ['@type' => 'Country', 'name' => 'Sénégal'],
-                'url'                           => $articleUrl,
-            ];
-
-            // baseSalary omis volontairement : aucune donnée salariale n'est stockée en base.
-            // Google accepte son absence (champ recommandé, non obligatoire).
-        }
-    @endphp
-    @if($isJobPosting)
-    <script type="application/ld+json">{!! json_encode($jldData, $jldFlags) !!}</script>
-    @endif
+    {{-- Schema.org JobPosting retiré (audit SEO-02) : il était généré pour toute la catégorie
+         (guides et candidatures spontanées compris) avec un employeur générique et une date
+         limite inventée (publication + 2 mois). Google for Jobs exige le vrai employeur et la
+         vraie date limite, que la table job_articles ne stocke pas encore. Les articles gardent
+         le schéma NewsArticle (partials/schema-org). --}}
 
     <!-- Article Meta -->
     <meta property="article:published_time" content="{{ ($article->published_at ?? $article->created_at)?->toIso8601String() ?? now()->toIso8601String() }}">
