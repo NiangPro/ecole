@@ -34,7 +34,9 @@
 @section('content')
 
   {{-- HERO --}}
-  <section class="hp-hero">
+  {{-- google-anno-skip / google-anno-sc : exclut le hero des annotations automatiques
+       AdSense (lien « Réseaux sociaux » injecté dans le sous-titre, audit UX-02). --}}
+  <section class="hp-hero google-anno-skip google-anno-sc">
     <div>
       <span class="hp-hero__eyebrow">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>

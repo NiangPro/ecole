@@ -18,7 +18,7 @@
 
 <!-- Navigation Ultra Moderne -->
 
-<nav class="navbar-modern" id="navigation" role="navigation" aria-label="Navigation principale">
+<nav class="navbar-modern google-anno-skip" id="navigation" role="navigation" aria-label="Navigation principale">
     <div class="navbar-container">
         <!-- Logo -->
         <a href="{{ route('home') }}" class="navbar-logo">
