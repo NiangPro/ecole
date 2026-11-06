@@ -153,8 +153,8 @@
     
     <!-- font-display:swap pour Font Awesome (avant son chargement) -->
     <style>
-    @font-face{font-family:"Font Awesome 6 Free";font-style:normal;font-weight:900;font-display:swap;src:url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/webfonts/fa-solid-900.woff2") format("woff2")}
-    @font-face{font-family:"Font Awesome 6 Brands";font-style:normal;font-weight:400;font-display:swap;src:url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/webfonts/fa-brands-400.woff2") format("woff2")}
+    @font-face{font-family:"Font Awesome 6 Free";font-style:normal;font-weight:900;font-display:swap;src:url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/webfonts/fa-solid-900.woff2") format("woff2")}
+    @font-face{font-family:"Font Awesome 6 Brands";font-style:normal;font-weight:400;font-display:swap;src:url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/webfonts/fa-brands-400.woff2") format("woff2")}
     </style>
 
     <!-- CSS critique inline (above the fold — aucun HTTP request) -->
@@ -177,17 +177,25 @@
             return json_decode(file_get_contents($viteManifestPath), true);
         });
         $viteCssFile  = $viteManifest['resources/css/app.css']['file'] ?? null;
+        // navigation / ux-improvements / social-features : intégrés au build Vite (audit PERF-01).
+        $__viteCss = fn (string $entry) => isset($viteManifest[$entry]['file']) ? asset('build/' . $viteManifest[$entry]['file']) : null;
+        $navCssUrl = $__viteCss('resources/css/navigation.css');
+        $uxCssUrl  = $__viteCss('resources/css/ux-improvements.css');
+        $socialCssUrl = $__viteCss('resources/css/social-features.css');
     @endphp
 
     <!-- Preload hints — démarrer le téléchargement tôt sans différer l'application -->
-    @php $navCssV = \Illuminate\Support\Facades\Cache::remember('nav_css_mtime', 3600, fn() => filemtime(public_path('css/navigation.css'))); @endphp
-    <link rel="preload" href="{{ asset('css/navigation.css') }}?v={{ $navCssV }}" as="style">
+    @if($navCssUrl)
+    <link rel="preload" href="{{ $navCssUrl }}" as="style">
+    @endif
     @if($viteCssFile)
     <link rel="preload" href="{{ asset('build/' . $viteCssFile) }}" as="style">
     @endif
 
     <!-- CSS synchrone (bloquant mais sans CLS — styles appliqués avant le premier paint) -->
-    <link rel="stylesheet" href="{{ asset('css/navigation.css') }}?v={{ $navCssV }}">
+    @if($navCssUrl)
+    <link rel="stylesheet" href="{{ $navCssUrl }}">
+    @endif
     @if($viteCssFile)
     <link rel="stylesheet" href="{{ asset('build/' . $viteCssFile) }}">
     @endif
@@ -245,8 +253,8 @@
     </script>
     @endif
     <!-- Font Awesome - Chargement asynchrone avec preload -->
-    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"></noscript>
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer"></noscript>
     
     <!-- Poppins 900 (latin) préchargé directement en woff2 : évite le double aller-retour
          CSS Google Fonts → fichier woff2 pour le H1 du hero, élément LCP de la home -->
@@ -256,17 +264,21 @@
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@700;800;900&display=swap"></noscript>
     
-    <!-- Toastr CSS - Chargement asynchrone -->
-    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"></noscript>
+    {{-- Toastr retiré des pages publiques (audit PERF-01) : il exige jQuery, qui n'y est pas
+         chargé — il ne fonctionnait donc pas. Les messages passent par la notification native
+         de ux-improvements.js (window.feedbackManager). --}}
     
     <!-- UX Improvements CSS - Chargement asynchrone -->
-    <link rel="preload" href="{{ asset('css/ux-improvements.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="{{ asset('css/ux-improvements.css') }}"></noscript>
+    @if($uxCssUrl)
+    <link rel="preload" href="{{ $uxCssUrl }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="{{ $uxCssUrl }}"></noscript>
+    @endif
 
     <!-- Social Features CSS - Chargement asynchrone -->
-    <link rel="preload" href="{{ asset('css/social-features.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="{{ asset('css/social-features.css') }}"></noscript>
+    @if($socialCssUrl)
+    <link rel="preload" href="{{ $socialCssUrl }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="{{ $socialCssUrl }}"></noscript>
+    @endif
     
     @php
         $adsenseSettings = \Illuminate\Support\Facades\Cache::remember('adsense_settings', 3600, function () {
@@ -636,51 +648,27 @@
         }
     </script>
 
-    <!-- Toastr JS - Chargé de manière différée -->
+    {{-- Messages flash (erreur / info / avertissement) : notification native, chargée
+         seulement s'il y a un message à afficher. --}}
+    @php $__flash = array_filter(['error' => session('error'), 'info' => session('info'), 'warning' => session('warning')]); @endphp
+    @if($__flash)
     <script>
-        // Charger Toastr après le chargement de la page pour ne pas bloquer le rendu
-        window.addEventListener('load', function() {
-            const script = document.createElement('script');
-            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js';
-            script.async = true;
-            document.head.appendChild(script);
-            
-            script.onload = function() {
-                if (typeof toastr !== 'undefined') {
-                    toastr.options = {
-                        "closeButton": true,
-                        "debug": false,
-                        "newestOnTop": true,
-                        "progressBar": true,
-                        "positionClass": "toast-top-right",
-                        "preventDuplicates": false,
-                        "onclick": null,
-                        "showDuration": "300",
-                        "hideDuration": "1000",
-                        "timeOut": "5000",
-                        "extendedTimeOut": "1000",
-                        "showEasing": "swing",
-                        "hideEasing": "linear",
-                        "showMethod": "fadeIn",
-                        "hideMethod": "fadeOut"
-                    };
-
-                    // Afficher les messages d'erreur, info et warning
-                    @if(session('error'))
-                        toastr.error('{{ addslashes(session('error')) }}', 'Erreur');
-                    @endif
-
-                    @if(session('info'))
-                        toastr.info('{{ addslashes(session('info')) }}', 'Information');
-                    @endif
-
-                    @if(session('warning'))
-                        toastr.warning('{{ addslashes(session('warning')) }}', 'Attention');
-                    @endif
+        window.addEventListener('load', function () {
+            var messages = {!! json_encode($__flash, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE) !!};
+            var essais = 0;
+            (function afficher() {
+                // ux-improvements.js est chargé en différé (requestIdleCallback).
+                if (!window.feedbackManager) {
+                    if (++essais < 40) return setTimeout(afficher, 125);
+                    return;
                 }
-            };
+                if (messages.error)   window.feedbackManager.showError(messages.error);
+                if (messages.info)    window.feedbackManager.showInfo(messages.info);
+                if (messages.warning) window.feedbackManager.showWarning(messages.warning);
+            })();
         });
     </script>
+    @endif
     
     <!-- Scripts JS - Chargement différé avec requestIdleCallback -->
     @php

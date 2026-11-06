@@ -7,6 +7,10 @@ export default defineConfig(({ mode }) => ({
         laravel({
             input: [
                 'resources/css/app.css',
+                // Anciennement servis depuis public/css (audit PERF-01) : minifiés et hachés.
+                'resources/css/navigation.css',
+                'resources/css/ux-improvements.css',
+                'resources/css/social-features.css',
                 'resources/js/app.js',
                 'resources/css/features/homepage.css',
                 'resources/css/features/about.css',

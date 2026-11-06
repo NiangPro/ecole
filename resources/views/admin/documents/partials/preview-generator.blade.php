@@ -1,6 +1,6 @@
 {{-- Génère les images d'aperçu public (3 premières pages) depuis le PDF, dans le navigateur via pdf.js --}}
 @once
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script integrity="sha512-q+4liFwdPC/bNdhUpZx6aXDx/h77yEQtn4I1slHydcbZK34nLaR3cAeYSJshoxIOq3mjEf7xJE8YWIUHMn+oCQ==" crossorigin="anonymous" referrerpolicy="no-referrer" src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
 window.DocPreviewGenerator = (function () {
     const MAX_PAGES = {{ \App\Models\Document::PREVIEW_MAX_PAGES }};
