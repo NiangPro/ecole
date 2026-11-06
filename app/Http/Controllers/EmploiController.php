@@ -88,13 +88,18 @@ class EmploiController extends Controller
     public function offres(Request $request)
     {
         $categorySlug = $request->get('category');
-        $page = $request->get('page', 1);
-        
+        // Page entière ≥ 1 (sert aussi de clé de cache : pas de valeur arbitraire).
+        $page = max(1, (int) $request->get('page', 1));
+
         // Cache la catégorie (1 heure)
         if ($categorySlug) {
             $category = Cache::remember("category_{$categorySlug}", 3600, function () use ($categorySlug) {
                 return Category::where('slug', $categorySlug)->first();
             });
+            // Audit SEO-04 : catégorie inconnue → 404 (au lieu de la liste par défaut en 200).
+            if (! $category) {
+                abort(404);
+            }
         } else {
             $category = Cache::remember('category_offres-emploi', 3600, function () {
                 return Category::where('slug', 'offres-emploi')->first();

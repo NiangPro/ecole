@@ -52,11 +52,20 @@
     <link rel="dns-prefetch" href="//pagead2.googlesyndication.com">
     <link rel="dns-prefetch" href="//www.googletagmanager.com">
     <!-- Canonical URL -->
-    @hasSection('canonical')
-        <link rel="canonical" href="@yield('canonical')">
-    @else
-        <link rel="canonical" href="{{ url()->current() }}">
-    @endif
+    @php
+        // Audit SEO-04 : canonical auto-référente sur les pages paginées (page 2 → …page=2),
+        // au lieu de pointer vers la page 1. Seulement si la vue affiche un paginateur.
+        // yieldContent() renvoie la valeur déjà échappée par @section : pas de second échappement.
+        $__canonical = trim($__env->yieldContent('canonical')) ?: e(url()->current());
+        foreach (get_defined_vars() as $__v) {
+            if ($__v instanceof \Illuminate\Contracts\Pagination\Paginator && $__v->currentPage() > 1
+                && ! str_contains($__canonical, 'page=')) {
+                $__canonical .= (str_contains($__canonical, '?') ? '&amp;' : '?') . 'page=' . $__v->currentPage();
+                break;
+            }
+        }
+    @endphp
+    <link rel="canonical" href="{!! $__canonical !!}">
     
     {{-- Pas de balises hreflang (audit SEO-01) : les deux langues sont servies à la même URL ;
          les anciennes pointaient vers l'URL d'action /language/xx?redirect=…, ce qui est faux.
