@@ -823,16 +823,16 @@
         <div style="background: linear-gradient(135deg, rgba(4, 170, 109, 0.1) 0%, rgba(4, 170, 109, 0.05) 100%); border: 2px solid rgba(4, 170, 109, 0.3); border-radius: 15px; padding: 1.5rem; box-shadow: 0 4px 15px rgba(4, 170, 109, 0.1);">
             <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;">
                 <div style="flex: 1; min-width: 250px;">
-                    <h3 style="font-size: 1.25rem; font-weight: 700; color: #04AA6D; margin: 0 0 0.75rem 0; display: flex; align-items: center; gap: 0.5rem;">
+                    <h3 style="font-size: 1.25rem; font-weight: 700; color: #047857; margin: 0 0 0.75rem 0; display: flex; align-items: center; gap: 0.5rem;">
                         <i class="fas fa-chart-line"></i>
                         {{ trans('app.formations.progress.title') }}
                     </h3>
                     <div style="width: 100%; height: 12px; background: rgba(4, 170, 109, 0.2); border-radius: 6px; overflow: hidden; margin-bottom: 0.75rem;">
-                        <div id="progress-bar-fill" style="height: 100%; width: {{ $progress->progress_percentage }}%; background: linear-gradient(90deg, #04AA6D, #06b6d4); transition: width 0.6s ease; border-radius: 6px;"></div>
+                        <div id="progress-bar-fill" style="height: 100%; width: {{ $progress->progress_percentage }}%; background: linear-gradient(90deg, #047857, #06b6d4); transition: width 0.6s ease; border-radius: 6px;"></div>
                     </div>
                     <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; font-size: 0.9rem; color: #2c3e50;">
                         <span style="display: flex; align-items: center; gap: 0.5rem;">
-                            <i class="fas fa-percentage" style="color: #04AA6D;"></i>
+                            <i class="fas fa-percentage" style="color: #047857;"></i>
                             <strong id="progress-percentage-text">{{ $progress->progress_percentage }}%</strong> {{ trans('app.formations.progress.completed') }}
                         </span>
                         <span style="display: flex; align-items: center; gap: 0.5rem;">
@@ -848,12 +848,12 @@
                     </div>
                 </div>
                 <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
-                    <a href="{{ route('dashboard.formations') }}" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #04AA6D, #038f5a); color: white; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(4, 170, 109, 0.3);">
+                    <a href="{{ route('dashboard.formations') }}" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: linear-gradient(135deg, #047857, #038f5a); color: white; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(4, 170, 109, 0.3);">
                         <i class="fas fa-tachometer-alt"></i>
                         {{ trans('app.formations.progress.view_dashboard') }}
                     </a>
                     @if($progress->progress_percentage < 100)
-                    <a href="#intro" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: white; color: #04AA6D; border: 2px solid #04AA6D; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: all 0.3s ease;">
+                    <a href="#intro" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: white; color: #047857; border: 2px solid #047857; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: all 0.3s ease;">
                         <i class="fas fa-arrow-down"></i>
                         {{ trans('app.formations.progress.continue') }}
                     </a>
@@ -871,7 +871,7 @@
                 <div style="display: flex; align-items: start; gap: 1.5rem; flex-wrap: wrap;">
                     <div style="flex: 1; min-width: 300px;">
                         <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
-                            <div style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #04AA6D, #06b6d4); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.75rem; box-shadow: 0 4px 15px rgba(4, 170, 109, 0.4);">
+                            <div style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #047857, #06b6d4); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.75rem; box-shadow: 0 4px 15px rgba(4, 170, 109, 0.4);">
                                 <i class="fas fa-rocket"></i>
                             </div>
                             <h3 style="font-size: 1.5rem; font-weight: 700; color: #2c3e50; margin: 0;">
@@ -883,24 +883,24 @@
                         </p>
                         <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1.5rem;">
                             <div style="display: flex; align-items: center; gap: 0.5rem; color: #2c3e50; font-size: 0.95rem;">
-                                <i class="fas fa-check-circle" style="color: #04AA6D;"></i>
+                                <i class="fas fa-check-circle" style="color: #047857;"></i>
                                 <span>{{ trans('app.formations.cta.benefit1') }}</span>
                             </div>
                             <div style="display: flex; align-items: center; gap: 0.5rem; color: #2c3e50; font-size: 0.95rem;">
-                                <i class="fas fa-check-circle" style="color: #04AA6D;"></i>
+                                <i class="fas fa-check-circle" style="color: #047857;"></i>
                                 <span>{{ trans('app.formations.cta.benefit2') }}</span>
                             </div>
                             <div style="display: flex; align-items: center; gap: 0.5rem; color: #2c3e50; font-size: 0.95rem;">
-                                <i class="fas fa-check-circle" style="color: #04AA6D;"></i>
+                                <i class="fas fa-check-circle" style="color: #047857;"></i>
                                 <span>{{ trans('app.formations.cta.benefit3') }}</span>
                             </div>
                         </div>
                         <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-                            <a href="{{ route('register') }}" style="display: inline-flex; align-items: center; gap: 0.75rem; padding: 1rem 2rem; background: linear-gradient(135deg, #04AA6D, #038f5a); color: white; border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 1.1rem; transition: all 0.3s ease; box-shadow: 0 6px 20px rgba(4, 170, 109, 0.4);">
+                            <a href="{{ route('register') }}" style="display: inline-flex; align-items: center; gap: 0.75rem; padding: 1rem 2rem; background: linear-gradient(135deg, #047857, #038f5a); color: white; border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 1.1rem; transition: all 0.3s ease; box-shadow: 0 6px 20px rgba(4, 170, 109, 0.4);">
                                 <i class="fas fa-user-plus"></i>
                                 {{ trans('app.formations.cta.create_account') }}
                             </a>
-                            <a href="{{ route('login') }}" style="display: inline-flex; align-items: center; gap: 0.75rem; padding: 1rem 2rem; background: white; color: #04AA6D; border: 2px solid #04AA6D; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 1.1rem; transition: all 0.3s ease;">
+                            <a href="{{ route('login') }}" style="display: inline-flex; align-items: center; gap: 0.75rem; padding: 1rem 2rem; background: white; color: #047857; border: 2px solid #047857; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 1.1rem; transition: all 0.3s ease;">
                                 <i class="fas fa-sign-in-alt"></i>
                                 {{ trans('app.formations.cta.login') }}
                             </a>
@@ -1659,7 +1659,7 @@ async function lireFichier(nomFichier: string): Promise<string> {
             <h2>{{ trans('app.formations.typescript.next_steps_title') }}</h2>
             <p>{{ trans('app.formations.typescript.next_steps_text') }}</p>
             
-            <div class="example-box" style="background-color: #d4edda; border-left-color: #28a745;">
+            <div class="example-box example-box--success">
                 <h3 style="color: #000;">{{ trans('app.formations.typescript.next_steps_learned_title') }}</h3>
                 <ul style="margin-left: 20px; line-height: 2; color: #000;">
                     @foreach(trans('app.formations.typescript.next_steps_learned_items') as $item)
@@ -2155,7 +2155,7 @@ async function lireFichier(nomFichier: string): Promise<string> {
         
         function showCompletionNotification() {
             const notification = document.createElement('div');
-            notification.style.cssText = 'position: fixed; top: 20px; right: 20px; background: linear-gradient(135deg, #04AA6D, #06b6d4); color: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 8px 25px rgba(4, 170, 109, 0.4); z-index: 10000; max-width: 350px; animation: slideInRight 0.5s ease;';
+            notification.style.cssText = 'position: fixed; top: 20px; right: 20px; background: linear-gradient(135deg, #047857, #06b6d4); color: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 8px 25px rgba(4, 170, 109, 0.4); z-index: 10000; max-width: 350px; animation: slideInRight 0.5s ease;';
             notification.innerHTML = `
                 <div style="display: flex; align-items: center; gap: 1rem;">
                     <div style="width: 50px; height: 50px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">

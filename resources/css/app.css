@@ -426,3 +426,8 @@
    ───────────────────────────────────────────────────────── */
 @import './features/widgets.css';
 @import './features/dark-mode.css';
+
+/* Formations : encadré « succès » (remplace un style inline répété dans 24 vues).
+   Mode sombre : le texte passe en blanc, le fond doit donc s'assombrir (audit A11Y-01). */
+.example-box.example-box--success { background-color: #d4edda; border-left-color: #28a745; }
+body.dark-mode .example-box.example-box--success { background-color: rgba(40, 167, 69, 0.18); }

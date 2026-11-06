@@ -190,7 +190,7 @@
         }
         
         .pagination-info-text strong {
-            color: #06b6d4;
+            color: #0e7490; /* A11Y-01 : #06b6d4 faisait 2,3:1 sur fond clair (cyan conservé en sombre) */
             font-weight: 700;
         }
         

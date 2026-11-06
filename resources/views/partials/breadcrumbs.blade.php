@@ -164,6 +164,12 @@ main:not(:has(.tutorial-header)):not(:has(.hero-section)):not(:has(.article-hero
 }
 
 
+/* Mode clair : #06b6d4 (2,3:1) et #64748b sur fond teinté (4:1) trop pâles (audit A11Y-01) */
+body:not(.dark-mode) .breadcrumb-item a,
+body:not(.dark-mode) .breadcrumb-item a:hover { color: #0e7490; }
+body:not(.dark-mode) .breadcrumb-current { color: #475569; }
+body.dark-mode .breadcrumb-current { color: #94a3b8; }
+
 /* Responsive */
 @media (max-width: 768px) {
     .breadcrumb-nav {

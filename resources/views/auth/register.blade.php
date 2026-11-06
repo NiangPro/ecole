@@ -197,9 +197,9 @@
 
     body:not(.dark-mode) .register-card h1 { color: #0f172a; }
 
-    .register-subtitle { color: rgba(255, 255, 255, .55); margin-bottom: 28px; font-size: .98rem; }
+    .register-subtitle { color: rgba(255, 255, 255, .7); margin-bottom: 28px; font-size: .98rem; }
 
-    body:not(.dark-mode) .register-subtitle { color: rgba(30, 41, 59, .6); }
+    body:not(.dark-mode) .register-subtitle { color: rgba(30, 41, 59, .78); } /* A11Y-01 */
 
     /* ── Champs ──────────────────────────────────────────────────────── */
     .field { margin-bottom: 20px; }
@@ -391,12 +391,12 @@
         display: flex;
         align-items: center;
         gap: 12px;
-        color: rgba(255, 255, 255, .4);
+        color: rgba(255, 255, 255, .62);
         font-size: .8rem;
         margin-bottom: 20px;
     }
 
-    body:not(.dark-mode) .register-divider { color: rgba(30, 41, 59, .45); }
+    body:not(.dark-mode) .register-divider { color: rgba(30, 41, 59, .72); }
 
     .register-divider::before, .register-divider::after {
         content: '';
@@ -445,8 +445,8 @@
     .register-footer { text-align: center; padding-top: 22px; border-top: 1px solid rgba(255, 255, 255, .08); }
     body:not(.dark-mode) .register-footer { border-top-color: rgba(15, 23, 42, .1); }
 
-    .register-footer p { color: rgba(255, 255, 255, .5); margin-bottom: 14px; font-size: .9rem; }
-    body:not(.dark-mode) .register-footer p { color: rgba(15, 23, 42, .55); }
+    .register-footer p { color: rgba(255, 255, 255, .68); margin-bottom: 14px; font-size: .9rem; }
+    body:not(.dark-mode) .register-footer p { color: rgba(15, 23, 42, .72); }
 
     .register-footer a {
         display: inline-flex;
@@ -463,6 +463,7 @@
     }
 
     .register-footer a:hover { background: rgba(6, 182, 212, .1); transform: translateY(-2px); }
+    body:not(.dark-mode) .register-footer a { color: #0e7490; } /* #22d3ee sur blanc : 1,8:1 */
     .register-footer a svg { width: 16px; height: 16px; }
 
     @media (max-width: 480px) {

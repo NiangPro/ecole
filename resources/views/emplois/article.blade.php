@@ -170,12 +170,16 @@
    ═══════════════════════════════════════════ */
 :root {
   --c:   #06b6d4;
-  --cd:  #0891b2;
+  /* --cd = accent utilisé comme COULEUR DE TEXTE. #0891b2 ne faisait que 3,7:1 sur blanc
+     (audit A11Y-01) : #0e7490 (cyan-700) ≥ 4,8:1 sur les fonds clairs de la page. */
+  --cd:  #0e7490;
   --ct:  #14b8a6;
   --r:   20px;
   --rs:  12px;
   --tr:  all .3s cubic-bezier(.4,0,.2,1);
 }
+
+body.dark-mode { --cd: #22d3ee; } /* texte accent sur fond sombre */
 
 *, *::before, *::after { box-sizing: border-box; }
 
@@ -523,9 +527,9 @@ body.dark-mode .art-body td { color: rgba(255,255,255,.8); border-color: rgba(6,
 .art-share-lbl {
   font-size: .72rem; font-weight: 700;
   letter-spacing: .07em; text-transform: uppercase;
-  color: rgba(30,41,59,.45); margin-bottom: 14px;
+  color: rgba(30,41,59,.7); margin-bottom: 14px;
 }
-body.dark-mode .art-share-lbl { color: rgba(255,255,255,.4); }
+body.dark-mode .art-share-lbl { color: rgba(255,255,255,.62); }
 .art-share-row { display: flex; gap: 9px; flex-wrap: wrap; }
 .art-shr {
   display: inline-flex; align-items: center; gap: 7px;
@@ -534,12 +538,12 @@ body.dark-mode .art-share-lbl { color: rgba(255,255,255,.4); }
   color: #fff; transition: var(--tr);
 }
 .art-shr:hover { transform: translateY(-2px); filter: brightness(1.1); }
-.art-shr[data-share="facebook"]  { background: #1877f2; }
-.art-shr[data-share="twitter"]   { background: #1da1f2; }
+.art-shr[data-share="facebook"]  { background: #1466d4; } /* teintes foncées : texte blanc ≥ 4,5:1 (A11Y-01) */
+.art-shr[data-share="twitter"]   { background: #0c6fb3; }
 .art-shr[data-share="linkedin"]  { background: #0077b5; }
-.art-shr[data-share="whatsapp"]  { background: #25d366; }
-.art-shr[data-share="email"]     { background: var(--cd); }
-.art-shr[data-share="copy"]      { background: #6366f1; }
+.art-shr[data-share="whatsapp"]  { background: #0f7a3f; }
+.art-shr[data-share="email"]     { background: #0e7490; }
+.art-shr[data-share="copy"]      { background: #4f46e5; }
 
 /* ── Sidebar ── */
 .art-sidebar {
@@ -603,7 +607,7 @@ body.dark-mode .art-ad-content h4 { color: #f1f5f9; }
 body.dark-mode .art-ad-content p { color: rgba(255,255,255,.6); }
 .art-ad-cta {
   display: inline-flex; align-items: center; gap: 6px;
-  font-size: .78rem; font-weight: 700; color: var(--c);
+  font-size: .78rem; font-weight: 700; color: var(--cd);
 }
 .art-sidebar-ad:hover .art-ad-cta i { transform: translateX(3px); }
 .art-ad-cta i { transition: transform .25s ease; }
@@ -612,10 +616,10 @@ body.dark-mode .art-ad-content p { color: rgba(255,255,255,.6); }
 .art-sec-lbl {
   font-size: .72rem; font-weight: 700;
   letter-spacing: .07em; text-transform: uppercase;
-  color: rgba(30,41,59,.45); margin-bottom: 12px;
+  color: rgba(30,41,59,.7); margin-bottom: 12px;
   display: flex; align-items: center; gap: 7px;
 }
-body.dark-mode .art-sec-lbl { color: rgba(255,255,255,.42); }
+body.dark-mode .art-sec-lbl { color: rgba(255,255,255,.62); }
 .art-sec-lbl i { color: var(--c); }
 
 /* Document card */
@@ -650,9 +654,9 @@ body.dark-mode .art-doc {
 body.dark-mode .art-doc-name { color: rgba(255,255,255,.9); }
 .art-doc-meta {
   display: flex; align-items: center; gap: 7px;
-  font-size: .72rem; color: rgba(30,41,59,.5); flex-wrap: wrap;
+  font-size: .72rem; color: rgba(30,41,59,.7); flex-wrap: wrap;
 }
-body.dark-mode .art-doc-meta { color: rgba(255,255,255,.45); }
+body.dark-mode .art-doc-meta { color: rgba(255,255,255,.62); }
 .badge-free {
   padding: 2px 7px;
   background: linear-gradient(135deg,#10b981,#059669);
@@ -676,7 +680,7 @@ body.dark-mode .badge-price { color: var(--c); }
   display: inline-block;
   font-size: .72rem; font-weight: 700;
   letter-spacing: .1em; text-transform: uppercase;
-  color: var(--c); margin-bottom: 10px;
+  color: var(--cd); margin-bottom: 10px;
 }
 .art-related-title {
   font-size: 2rem; font-weight: 900; margin: 0;
@@ -734,7 +738,7 @@ body.dark-mode .art-rel-card {
 .art-rel-cat {
   font-size: .7rem; font-weight: 700;
   letter-spacing: .06em; text-transform: uppercase;
-  color: var(--c); margin-bottom: 8px; display: block;
+  color: var(--cd); margin-bottom: 8px; display: block;
 }
 .art-rel-ttl {
   font-size: .975rem; font-weight: 700; line-height: 1.45;

@@ -7,7 +7,11 @@
   --lg-bg:       #ffffff;
   --lg-panel:    #f8fafc;
   --lg-border:   #e2e8f0;
-  --lg-accent:   oklch(55% 0.18 200);
+  /* Audit A11Y-01 : l'ancien accent oklch(55% 0.18 200) = #008d9b faisait 3,97:1 (texte
+     blanc sur bouton, liens sur blanc). Fond de bouton : #0e7490 (5,4:1 avec du blanc).
+     Texte accent : --lg-accent-text, foncé en clair, cyan clair en sombre. */
+  --lg-accent:   #0e7490;
+  --lg-accent-text: #0e7490;
   --lg-accent2:  oklch(52% 0.15 178);
   --lg-text:     #0f172a;
   --lg-muted:    #64748b;
@@ -160,7 +164,7 @@
   align-items: center;
   justify-content: center;
   font-size: .9rem;
-  color: var(--lg-accent);
+  color: var(--lg-accent-text);
   flex-shrink: 0;
 }
 
@@ -326,7 +330,7 @@
 }
 
 .lg-input-wrap:focus-within .lg-input-icon {
-  color: var(--lg-accent);
+  color: var(--lg-accent-text);
 }
 
 .lg-input {
@@ -365,7 +369,7 @@
   transition: color .2s;
 }
 
-.lg-pwd-toggle:hover { color: var(--lg-accent); }
+.lg-pwd-toggle:hover { color: var(--lg-accent-text); }
 
 /* Row remember + forgot */
 .lg-row {
@@ -420,7 +424,7 @@
 
 .lg-forgot {
   font-size: .8rem;
-  color: var(--lg-accent);
+  color: var(--lg-accent-text);
   text-decoration: none;
   font-weight: 600;
   transition: opacity .2s;
@@ -517,7 +521,7 @@
   display: flex;
   align-items: center;
   gap: .9rem;
-  color: #cbd5e1;
+  color: var(--lg-muted);
   font-size: .75rem;
 }
 
@@ -540,7 +544,7 @@
 }
 
 .lg-register a {
-  color: var(--lg-accent);
+  color: var(--lg-accent-text);
   text-decoration: none;
   font-weight: 700;
   transition: opacity .2s;
@@ -559,7 +563,7 @@
   align-items: center;
   gap: .4rem;
   font-size: .8rem;
-  color: #94a3b8;
+  color: var(--lg-muted);
   text-decoration: none;
   transition: color .2s;
 }
@@ -575,6 +579,7 @@ body.dark-mode .lg-page {
   --lg-border:  rgba(255,255,255,.1);
   --lg-text:    rgba(255,255,255,.94);
   --lg-muted:   rgba(255,255,255,.58);
+  --lg-accent-text: #22d3ee;
   --lg-shadow:  0 1px 3px rgba(0,0,0,.4), 0 8px 28px rgba(0,0,0,.4);
 }
 
@@ -631,7 +636,7 @@ body.dark-mode .lg-input:focus {
 body.dark-mode .lg-input::placeholder { color: rgba(255,255,255,.28); }
 
 body.dark-mode .lg-pwd-toggle { color: rgba(255,255,255,.4); }
-body.dark-mode .lg-pwd-toggle:hover { color: var(--lg-accent); }
+body.dark-mode .lg-pwd-toggle:hover { color: var(--lg-accent-text); }
 
 body.dark-mode .lg-remember__box {
   background: rgba(255,255,255,.05);
@@ -654,9 +659,9 @@ body.dark-mode .lg-google-btn:hover {
 body.dark-mode .social-icon-github { color: #fff; }
 body.dark-mode .social-icon-facebook { color: #4993ff; }
 
-body.dark-mode .lg-divider { color: rgba(255,255,255,.22); }
+body.dark-mode .lg-divider { color: rgba(255,255,255,.6); }
 
-body.dark-mode .lg-back a { color: rgba(255,255,255,.4); }
+body.dark-mode .lg-back a { color: rgba(255,255,255,.62); }
 body.dark-mode .lg-back a:hover { color: rgba(255,255,255,.9); }
 
 body.dark-mode .lg-mobile-logo__name { color: rgba(255,255,255,.94); }
