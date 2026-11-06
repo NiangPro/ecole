@@ -663,10 +663,10 @@
                     @endif
 
                     <div class="form-group">
-                        <label class="form-label">
+                        <label for="donor_name" class="form-label">
                             {{ trans('app.donations.name_label') }} <span class="required">*</span>
                         </label>
-                        <input type="text" name="donor_name" required value="{{ old('donor_name', Auth::check() ? Auth::user()->name : '') }}" class="form-input" placeholder="{{ trans('app.donations.name_placeholder') }}">
+                        <input type="text" id="donor_name" name="donor_name" required value="{{ old('donor_name', Auth::check() ? Auth::user()->name : '') }}" class="form-input" placeholder="{{ trans('app.donations.name_placeholder') }}">
                         @error('donor_name')
                         <p class="form-error">{{ $message }}</p>
                         @enderror
@@ -674,8 +674,8 @@
 
                     @guest
                     <div class="form-group">
-                        <label class="form-label">{{ trans('app.donations.email_label') }}</label>
-                        <input type="email" name="donor_email" value="{{ old('donor_email') }}" class="form-input" placeholder="{{ trans('app.donations.email_placeholder') }}">
+                        <label for="donor_email" class="form-label">{{ trans('app.donations.email_label') }}</label>
+                        <input type="email" id="donor_email" name="donor_email" value="{{ old('donor_email') }}" class="form-input" placeholder="{{ trans('app.donations.email_placeholder') }}">
                         @error('donor_email')
                         <p class="form-error">{{ $message }}</p>
                         @enderror
@@ -683,7 +683,7 @@
                     @endguest
 
                     <div class="form-group">
-                        <label class="form-label">
+                        <label for="payment_method_select" class="form-label">
                             {{ trans('app.donations.payment_method_label') }} <span class="required">*</span>
                         </label>
                         <select name="payment_method" required id="payment_method_select" class="form-select">
@@ -703,7 +703,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">
+                        <label for="donation_amount" class="form-label">
                             {{ trans('app.donations.amount_label') }} (<span id="currency_display">FCFA</span>) <span class="required">*</span>
                         </label>
                         <input type="number" name="amount" required id="donation_amount" min="100" step="100" value="{{ old('amount', 1000) }}" class="form-input" placeholder="1000">
@@ -731,8 +731,8 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">{{ trans('app.donations.message_label') }}</label>
-                        <textarea name="message" rows="3" class="form-textarea" placeholder="{{ trans('app.donations.message_placeholder') }}">{{ old('message') }}</textarea>
+                        <label for="donation_message" class="form-label">{{ trans('app.donations.message_label') }}</label>
+                        <textarea id="donation_message" name="message" rows="3" class="form-textarea" placeholder="{{ trans('app.donations.message_placeholder') }}">{{ old('message') }}</textarea>
                         @error('message')
                         <p class="form-error">{{ $message }}</p>
                         @enderror

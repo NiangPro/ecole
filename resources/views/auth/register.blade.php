@@ -573,7 +573,7 @@
                     <div class="field">
                         <label for="phone_number">{{ trans('app.auth.register.phone') }}</label>
                         <div class="phone-row">
-                            <select name="phone_country" id="phone_country" class="phone-select">
+                            <select name="phone_country" id="phone_country" class="phone-select" aria-label="Indicatif pays">
                                 <option value="+221" data-flag="🇸🇳">🇸🇳 +221</option>
                                 <option value="+33" data-flag="🇫🇷">🇫🇷 +33</option>
                                 <option value="+1" data-flag="🇺🇸">🇺🇸 +1</option>
