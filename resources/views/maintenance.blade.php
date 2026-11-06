@@ -346,8 +346,8 @@
 
   {{-- Sélecteur de langue --}}
   <div class="lang-row">
-    <a href="{{ route('language.set', 'fr') }}?redirect=/maintenance" class="lang-btn {{ $locale === 'fr' ? 'active' : '' }}">🇫🇷 Français</a>
-    <a href="{{ route('language.set', 'en') }}?redirect=/maintenance" class="lang-btn {{ $locale === 'en' ? 'active' : '' }}">🇬🇧 English</a>
+    <a href="{{ route('language.set', 'fr') }}?redirect=/maintenance" rel="nofollow" class="lang-btn {{ $locale === 'fr' ? 'active' : '' }}">🇫🇷 Français</a>
+    <a href="{{ route('language.set', 'en') }}?redirect=/maintenance" rel="nofollow" class="lang-btn {{ $locale === 'en' ? 'active' : '' }}">🇬🇧 English</a>
   </div>
 
 </div>

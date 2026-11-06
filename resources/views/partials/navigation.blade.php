@@ -1030,7 +1030,7 @@
             $tooltipText = $currentLang === 'fr' ? 'Changer en anglais' : 'Switch to French';
         @endphp
         <li class="mobile-menu-item">
-            <a href="{{ route('language.set', ['locale' => $currentLang === 'fr' ? 'en' : 'fr']) }}?redirect={{ urlencode(request()->url()) }}" class="mobile-menu-link" onclick="toggleLanguage(); return false;" style="background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.3);">
+            <a href="{{ route('language.set', ['locale' => $currentLang === 'fr' ? 'en' : 'fr']) }}?redirect={{ urlencode(request()->getRequestUri()) }}" rel="nofollow" class="mobile-menu-link" onclick="toggleLanguage(); return false;" style="background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.3);">
                 @if($currentLang === 'fr')
                 <!-- Drapeau français -->
                 <svg class="mobile-language-flag" viewBox="0 0 640 480" xmlns="http://www.w3.org/2000/svg" style="width: 24px; height: 18px; margin-right: 12px;">

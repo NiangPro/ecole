@@ -58,17 +58,9 @@
         <link rel="canonical" href="{{ url()->current() }}">
     @endif
     
-    <!-- Hreflang pour support multilingue -->
-    @php
-        $currentUrl = url()->current();
-        $currentLocale = app()->getLocale();
-        $alternateLocale = $currentLocale === 'fr' ? 'en' : 'fr';
-        // Générer l'URL alternative en changeant la langue
-        $alternateUrl = route('language.set', ['locale' => $alternateLocale]) . '?redirect=' . urlencode($currentUrl);
-    @endphp
-    <link rel="alternate" hreflang="{{ $currentLocale }}" href="{{ $currentUrl }}">
-    <link rel="alternate" hreflang="{{ $alternateLocale }}" href="{{ $alternateUrl }}">
-    <link rel="alternate" hreflang="x-default" href="{{ url('/') }}">
+    {{-- Pas de balises hreflang (audit SEO-01) : les deux langues sont servies à la même URL ;
+         les anciennes pointaient vers l'URL d'action /language/xx?redirect=…, ce qui est faux.
+         À réintroduire avec des URL distinctes par langue (/en/…). --}}
     
     <!-- Open Graph / Facebook -->
     @php

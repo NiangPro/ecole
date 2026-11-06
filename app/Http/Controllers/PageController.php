@@ -388,22 +388,49 @@ class PageController extends Controller
             config(['app.fallback_locale' => 'fr']);
         }
         
-        // Récupérer l'URL de redirection depuis le paramètre de requête
-        $redirectUrl = request()->get('redirect');
-        
-        // Si une URL de redirection est fournie et valide (URL relative qui commence par /)
-        if ($redirectUrl && strpos($redirectUrl, '/') === 0) {
-            // Nettoyer l'URL pour éviter les injections
-            $redirectUrl = parse_url($redirectUrl, PHP_URL_PATH);
-            if ($redirectUrl) {
-                // Ajouter le paramètre lang à l'URL pour forcer la locale
-                $separator = strpos($redirectUrl, '?') !== false ? '&' : '?';
-                return redirect($redirectUrl . $separator . 'lang=' . $locale);
+        // Retour à la page d'origine — uniquement une URL de CE site (audit SEO-01 :
+        // protection contre la redirection ouverte). Le paramètre `redirect` et, à défaut,
+        // le Referer sont acceptés s'ils sont relatifs (« /chemin ») ou sur le même hôte.
+        $target = $this->safeLocalRedirect(request()->get('redirect'))
+            ?? $this->safeLocalRedirect(request()->headers->get('referer'))
+            ?? '/';
+
+        return redirect($target)->with('language_changed', true);
+    }
+
+    /**
+     * Chemin (+ query string) d'une URL du site, ou null si l'URL est externe ou invalide.
+     */
+    private function safeLocalRedirect(?string $url): ?string
+    {
+        if (! is_string($url) || $url === '' || strlen($url) > 2000) {
+            return null;
+        }
+
+        // « //hote » et « /\hote » sont interprétés par les navigateurs comme des URL externes.
+        if (preg_match('#^/(?![/\\\\])#', $url) !== 1) {
+            $host = parse_url($url, PHP_URL_HOST);
+            $scheme = parse_url($url, PHP_URL_SCHEME);
+            if (! $host || ! in_array($scheme, ['http', 'https'], true)
+                || strcasecmp($host, request()->getHost()) !== 0) {
+                return null;
             }
         }
-        
-        // Sinon, rediriger vers la page précédente ou la page d'accueil
-        return redirect()->back()->with('language_changed', true);
+
+        $path = parse_url($url, PHP_URL_PATH) ?: '/';
+        if (preg_match('#^/(?![/\\\\])#', $path) !== 1 || str_starts_with($path, '/language/')) {
+            return null;
+        }
+
+        $query = parse_url($url, PHP_URL_QUERY);
+        if ($query) {
+            // L'ancien paramètre « lang » n'est plus nécessaire : la langue est en session.
+            parse_str($query, $params);
+            unset($params['lang']);
+            $query = http_build_query($params);
+        }
+
+        return $path . ($query ? '?' . $query : '');
     }
 
     /**
