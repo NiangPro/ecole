@@ -17,14 +17,20 @@ class AnalyticsController extends Controller
     public function trackEvent(Request $request)
     {
         $validated = $request->validate([
-            'event_type' => 'required|string|max:50',
+            'event_type' => 'required|string|alpha_dash|max:50',
             'event_name' => 'required|string|max:255',
             'page_url' => 'required|string|max:500',
             'page_title' => 'nullable|string|max:255',
             'element_id' => 'nullable|string|max:255',
             'element_class' => 'nullable|string|max:255',
             'element_text' => 'nullable|string|max:500',
-            'metadata' => 'nullable|array',
+            // Route publique : métadonnées plates et bornées (pas d'objet arbitraire en base).
+            'metadata' => 'nullable|array|max:20',
+            'metadata.*' => ['nullable', function ($attribute, $value, $fail) {
+                if (! is_scalar($value) || mb_strlen((string) $value) > 500) {
+                    $fail('Métadonnée invalide.');
+                }
+            }],
         ]);
 
         EventTrackingService::trackEvent($validated, $request);
@@ -40,10 +46,10 @@ class AnalyticsController extends Controller
         $validated = $request->validate([
             'page_url' => 'required|string|max:500',
             'page_title' => 'nullable|string|max:255',
-            'x_position' => 'required|integer|min:0',
-            'y_position' => 'required|integer|min:0',
-            'viewport_width' => 'required|integer|min:0',
-            'viewport_height' => 'required|integer|min:0',
+            'x_position' => 'required|integer|min:0|max:100000',
+            'y_position' => 'required|integer|min:0|max:1000000',
+            'viewport_width' => 'required|integer|min:0|max:20000',
+            'viewport_height' => 'required|integer|min:0|max:20000',
             'element_selector' => 'nullable|string|max:500',
             'element_type' => 'nullable|string|max:50',
             'interaction_type' => 'nullable|string|in:click,hover,scroll',
@@ -62,7 +68,7 @@ class AnalyticsController extends Controller
     {
         $validated = $request->validate([
             'funnel_id' => 'required|exists:analytics_funnels,id',
-            'step_number' => 'required|integer|min:1',
+            'step_number' => 'required|integer|min:1|max:100',
             'completed' => 'nullable|boolean',
         ]);
 
@@ -73,6 +79,22 @@ class AnalyticsController extends Controller
         );
 
         return response()->json(['success' => true]);
+    }
+
+    /**
+     * Tests A/B actifs pour une URL (lecture seule, ouvert aux invités).
+     */
+    public function activeABTests(Request $request)
+    {
+        $validated = $request->validate(['url' => 'required|string|max:500']);
+
+        $tests = \App\Models\AbTest::where('is_active', true)
+            ->where('target_url', $validated['url'])
+            ->where(fn ($q) => $q->whereNull('started_at')->orWhere('started_at', '<=', now()))
+            ->where(fn ($q) => $q->whereNull('ended_at')->orWhere('ended_at', '>=', now()))
+            ->get(['id', 'name', 'test_type', 'variants']);
+
+        return response()->json($tests);
     }
 
     /**

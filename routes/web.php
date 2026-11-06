@@ -433,13 +433,17 @@ Route::middleware('auth')->prefix('api')->name('api.')->group(function () {
     // Notifications push
     Route::post('/push/subscribe', [\App\Http\Controllers\PushNotificationController::class, 'subscribe'])->name('push.subscribe');
     Route::post('/push/unsubscribe', [\App\Http\Controllers\PushNotificationController::class, 'unsubscribe'])->name('push.unsubscribe');
-    
-    // Analytics tracking
+});
+
+// Traceur analytique interne (audit FCT-01) : ouvert aux visiteurs non connectés — c'est
+// presque tout le trafic, le groupe « auth » ci-dessus leur renvoyait 401. Protégé par le
+// CSRF du groupe web et limité en débit ; aucune IP stockée en clair (cf. EventTrackingService).
+Route::middleware('throttle:60,1')->prefix('api')->name('api.')->group(function () {
     Route::post('/analytics/track', [\App\Http\Controllers\AnalyticsController::class, 'trackEvent'])->name('analytics.track');
     Route::post('/analytics/heatmap', [\App\Http\Controllers\AnalyticsController::class, 'trackHeatmap'])->name('analytics.heatmap');
     Route::post('/analytics/funnel', [\App\Http\Controllers\AnalyticsController::class, 'trackFunnelStep'])->name('analytics.funnel');
-    Route::get('/analytics/ab-test/{testId}', [\App\Http\Controllers\AnalyticsController::class, 'getABTestVariant'])->name('analytics.ab-test');
-    Route::get('/analytics/ab-tests', [\App\Http\Controllers\Admin\AnalyticsController::class, 'getActiveABTests'])->name('analytics.ab-tests');
+    Route::get('/analytics/ab-test/{testId}', [\App\Http\Controllers\AnalyticsController::class, 'getABTestVariant'])->whereNumber('testId')->name('analytics.ab-test');
+    Route::get('/analytics/ab-tests', [\App\Http\Controllers\AnalyticsController::class, 'activeABTests'])->name('analytics.ab-tests');
     Route::post('/analytics/ab-test/conversion', [\App\Http\Controllers\AnalyticsController::class, 'markABTestConversion'])->name('analytics.ab-test.conversion');
 });
 
