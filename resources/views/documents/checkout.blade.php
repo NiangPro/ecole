@@ -1586,14 +1586,14 @@ document.getElementById('checkout-form').addEventListener('submit', function(e) 
         
         // Récupérer les données du formulaire
         const formData = new FormData(this);
-        formData.append('_token', '{{ csrf_token() }}');
         
         // Faire un appel AJAX
         fetch('{{ route("documents.checkout.process") }}', {
             method: 'POST',
             body: formData,
             headers: {
-                'X-Requested-With': 'XMLHttpRequest'
+                'X-Requested-With': 'XMLHttpRequest',
+                ...npCsrfHeader()
             }
         })
         .then(response => response.json())
@@ -1707,7 +1707,7 @@ function applyCoupon() {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            ...npCsrfHeader(),
             'X-Requested-With': 'XMLHttpRequest'
         },
         body: JSON.stringify({
@@ -1723,7 +1723,7 @@ function applyCoupon() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    ...npCsrfHeader(),
                     'X-Requested-With': 'XMLHttpRequest'
                 },
                 body: JSON.stringify({ code: code })
@@ -1750,7 +1750,7 @@ function removeCoupon() {
     fetch('{{ route("coupons.remove") }}', {
         method: 'POST',
         headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            ...npCsrfHeader(),
             'X-Requested-With': 'XMLHttpRequest'
         }
     })

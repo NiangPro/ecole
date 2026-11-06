@@ -470,7 +470,6 @@ document.getElementById('newsletterForm').addEventListener('submit', async funct
     const email   = document.getElementById('newsletterEmail').value;
     const btn     = document.getElementById('newsletterBtn');
     const msg     = document.getElementById('newsletterMessage');
-    const csrf    = document.querySelector('input[name="_token"]')?.value ?? document.querySelector('meta[name="csrf-token"]')?.content ?? '';
 
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Envoi…';
@@ -478,7 +477,7 @@ document.getElementById('newsletterForm').addEventListener('submit', async funct
     try {
         const res  = await fetch('{{ route("newsletter.subscribe") }}', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', ...npCsrfHeader() },
             body: JSON.stringify({ email })
         });
         const data = await res.json();

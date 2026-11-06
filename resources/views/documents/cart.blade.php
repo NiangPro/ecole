@@ -446,7 +446,6 @@ window.confirmWaveDirect = function() {
     const waveTab = window.open('', '_blank');
 
     const fd = new FormData();
-    fd.append('_token', '{{ csrf_token() }}');
     fd.append('payment_method', 'wave');
     fd.append('customer_name', name);
     fd.append('customer_email', email);
@@ -455,7 +454,7 @@ window.confirmWaveDirect = function() {
     fetch('{{ route('documents.checkout.process') }}', {
         method: 'POST',
         body: fd,
-        headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+        headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json', ...npCsrfHeader() }
     })
     .then(r => r.json().then(data => ({ ok: r.ok, data })))
     .then(({ ok, data }) => {
@@ -549,7 +548,7 @@ window.updateQuantity = function(itemId, quantity) {
         method: 'POST',
         body: formData,
         headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            ...npCsrfHeader(),
             'Accept': 'application/json',
             'X-Requested-With': 'XMLHttpRequest',
         }

@@ -622,7 +622,7 @@
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
-                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            ...npCsrfHeader(),
                             'Accept': 'application/json'
                         },
                         body: JSON.stringify({ code: code })
@@ -1023,7 +1023,7 @@
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                ...npCsrfHeader()
             },
             body: JSON.stringify({ code: code })
         })
@@ -1188,7 +1188,7 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        ...npCsrfHeader()
                     },
                     body: JSON.stringify({
                         code: code,

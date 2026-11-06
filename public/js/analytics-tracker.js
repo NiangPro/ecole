@@ -258,7 +258,7 @@ class AnalyticsTracker {
                     'Content-Type': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest',
                     'Accept': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                    ...npCsrfHeader()
                 },
                 body: JSON.stringify({ test_id: testId })
             });
@@ -278,7 +278,7 @@ class AnalyticsTracker {
                     'Content-Type': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest',
                     'Accept': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                    ...npCsrfHeader()
                 },
                 body: JSON.stringify({
                     funnel_id: funnelId,
@@ -302,7 +302,7 @@ class AnalyticsTracker {
                     'Content-Type': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest',
                     'Accept': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                    ...npCsrfHeader()
                 },
                 body: JSON.stringify(data)
             });
@@ -323,7 +323,7 @@ class AnalyticsTracker {
                     'Content-Type': 'application/json',
                     'X-Requested-With': 'XMLHttpRequest',
                     'Accept': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                    ...npCsrfHeader()
                 },
                 body: JSON.stringify(data)
             });

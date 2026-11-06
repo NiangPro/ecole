@@ -147,6 +147,11 @@ class JobArticle extends Model
             }
         });
 
+        // Cache HTML des pages publiques (PageCache) : toute publication / modification /
+        // suppression d'article change l'accueil, les listes et la page de l'article.
+        static::saved(fn () => \App\Http\Middleware\PageCache::flush());
+        static::deleted(fn () => \App\Http\Middleware\PageCache::flush());
+
         // Invalider le cache lors de la création, mise à jour ou suppression.
         // 'homepage_view_v4_*' (et non v2 : la clé de PageController a été renommée
         // depuis, l'ancienne référence ne vidait plus rien) et 'navigation_job_categories'

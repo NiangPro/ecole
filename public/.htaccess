@@ -107,8 +107,12 @@
     ExpiresActive On
     ExpiresDefault "access plus 1 month"
     
-    # HTML - Cache court (1 heure)
+    # HTML statique uniquement : les réponses de Laravel (index.php) sont exclues
+    # ci-dessous, sinon mod_expires leur ajoute « max-age=3600 » + Expires (audit CACHE-01).
     ExpiresByType text/html "access plus 1 hour"
+    <FilesMatch "\.php$">
+        ExpiresActive Off
+    </FilesMatch>
     
     # Images - Cache long terme (1 an)
     ExpiresByType image/jpg "access plus 1 year"
@@ -137,8 +141,6 @@
     # Documents
     ExpiresByType application/pdf "access plus 1 month"
     
-    # HTML - Cache court terme (pour les mises à jour)
-    ExpiresByType text/html "access plus 1 hour"
     
     # JavaScript et CSS - Cache moyen terme
     ExpiresByType application/javascript "access plus 1 month"
@@ -192,11 +194,10 @@
         Header set Link "</fonts.googleapis.com>; rel=preconnect; crossorigin, </fonts.gstatic.com>; rel=preconnect; crossorigin"
     </FilesMatch>
     
-    # SEO - Ne pas mettre en cache les pages HTML dynamiques
-    <FilesMatch "\.(html|htm|php)$">
-        Header set Cache-Control "max-age=3600, must-revalidate, public"
-        Header set Pragma "public"
-    </FilesMatch>
+    # Pages dynamiques (index.php) : Laravel pose lui-même Cache-Control
+    # (« no-cache, private », cf. App\Http\Middleware\HttpCacheHeaders). Ne rien forcer ici :
+    # l'ancien « public, max-age=3600 » laissait le proxy de l'hébergeur partager le HTML
+    # — jeton CSRF et langue compris — entre visiteurs (audit CACHE-01).
     
     # Cache des fichiers statiques - Cache long terme
     <FilesMatch "\.(jpg|jpeg|png|gif|ico|svg|webp|avif)$">

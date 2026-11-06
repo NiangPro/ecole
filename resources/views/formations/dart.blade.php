@@ -1975,7 +1975,7 @@ class MyApp extends StatelessWidget {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                    ...npCsrfHeader()
                 },
                 body: JSON.stringify({
                     formation_slug: formationSlug,

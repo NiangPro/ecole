@@ -7,16 +7,16 @@ use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Ajoute des en-têtes HTTP de cache agressifs pour les pages publiques statiques.
+ * En-têtes de cache HTTP des pages HTML publiques.
  *
- * Stratégie :
- *  - Les pages d'articles (emplois, admin-docs) : stale-while-revalidate 60 s,
- *    max-age 5 min  → le navigateur sert depuis son cache immédiatement puis
- *    revalide en arrière-plan. Idéal pour 3G/4G.
- *  - Les pages de liste / index : max-age 2 min (contenu qui change plus souvent).
- *  - Les assets statiques (JS, CSS, images) sont gérés par Vite/serveur web,
- *    ce middleware cible uniquement les réponses HTML.
- *  - Les routes authentifiées et les POST reçoivent no-store.
+ * Audit CACHE-01 / SEC-02 : ces pages contiennent un jeton CSRF propre au visiteur et sont
+ * rendues dans la langue de sa session. Un « Cache-Control: public » laissait le proxy de
+ * l'hébergeur (et tout cache partagé) servir le même HTML — même jeton, même langue — à
+ * tous les visiteurs. Politique unique pour le HTML : « private, no-cache » (le navigateur
+ * peut garder la page mais doit revalider ; aucun cache partagé ne la stocke).
+ * La rapidité est assurée côté serveur par PageCache.
+ *
+ * Le paramètre $profile (article|list) est conservé pour ne pas toucher aux routes.
  */
 class HttpCacheHeaders
 {
@@ -24,37 +24,18 @@ class HttpCacheHeaders
     {
         $response = $next($request);
 
-        // Ne jamais cacher les requêtes non-GET / non-HEAD ou les réponses d'erreur
-        if (!$request->isMethodCacheable() || $response->getStatusCode() >= 400) {
+        if (! str_contains((string) $response->headers->get('Content-Type', ''), 'text/html')) {
             return $response;
         }
 
-        // Ne jamais cacher si l'utilisateur est authentifié
-        if ($request->user()) {
+        if ($request->user() || ! $request->isMethodCacheable() || $response->getStatusCode() >= 400) {
             $response->headers->set('Cache-Control', 'no-store, private');
+
             return $response;
         }
 
-        // Ne pas écraser si la réponse pose déjà ses propres en-têtes de cache
-        if ($response->headers->hasCacheControlDirective('no-store')
-            || $response->headers->hasCacheControlDirective('private')) {
-            return $response;
-        }
-
-        match ($profile) {
-            'article' => $response->headers->set(
-                'Cache-Control',
-                'public, max-age=300, stale-while-revalidate=60, stale-if-error=3600'
-            ),
-            'list' => $response->headers->set(
-                'Cache-Control',
-                'public, max-age=120, stale-while-revalidate=30, stale-if-error=1800'
-            ),
-            default => null,
-        };
-
-        // Vary: Accept-Encoding pour les CDN/Infomaniak
-        $response->headers->set('Vary', 'Accept-Encoding');
+        $response->headers->set('Cache-Control', 'no-cache, private');
+        $response->headers->set('Vary', 'Accept-Encoding, Cookie');
 
         return $response;
     }

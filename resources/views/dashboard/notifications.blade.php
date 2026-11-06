@@ -132,7 +132,7 @@ async function markAsRead(id) {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
                 'Accept': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                ...npCsrfHeader()
             }
         });
 
@@ -165,7 +165,7 @@ async function markAllAsRead() {
             headers: {
                 'X-Requested-With': 'XMLHttpRequest',
                 'Accept': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                ...npCsrfHeader()
             }
         });
 

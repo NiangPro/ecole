@@ -1322,7 +1322,7 @@ body:not(.dark-mode) .comment-form-wrapper textarea {
     fetch('/api/ads/' + adId + '/click', {
       method: 'POST',
       headers: {
-        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+        ...npCsrfHeader(),
         'Content-Type': 'application/json'
       }
     }).catch(function(e) { console.log('Ad click tracking error:', e); });

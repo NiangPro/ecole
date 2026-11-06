@@ -2035,7 +2035,7 @@ import streamlit  # Pour créer des dashboards interactifs</code></pre>
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || ''
+                    ...npCsrfHeader()
                 },
                 body: JSON.stringify({
                     formation_slug: formationSlug,

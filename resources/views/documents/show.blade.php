@@ -1658,7 +1658,6 @@ body.dark-mode .wd-done-btn{background:#334155;color:#cbd5e1;}
         const waveTab = window.open('', '_blank');
 
         const fd = new FormData();
-        fd.append('_token', '{{ csrf_token() }}');
         fd.append('customer_name', name);
         fd.append('customer_email', email);
         fd.append('customer_phone', phone);
@@ -1666,7 +1665,7 @@ body.dark-mode .wd-done-btn{background:#334155;color:#cbd5e1;}
         fetch('{{ url('/documents') }}/' + documentId + '/wave-direct', {
             method: 'POST',
             body: fd,
-            headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+            headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json', ...npCsrfHeader() }
         })
         .then(r => r.json().then(data => ({ ok: r.ok, data })))
         .then(({ ok, data }) => {
@@ -1779,7 +1778,7 @@ body.dark-mode .wd-done-btn{background:#334155;color:#cbd5e1;}
         btn.disabled = true; btn.style.opacity = '.6';
         fetch('{{ route("wishlist.toggle", ":id") }}'.replace(':id', documentId), {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'X-Requested-With': 'XMLHttpRequest' }
+            headers: { 'Content-Type': 'application/json', ...npCsrfHeader(), 'X-Requested-With': 'XMLHttpRequest' }
         })
         .then(r => r.json())
         .then(data => {

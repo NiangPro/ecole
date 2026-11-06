@@ -5,96 +5,153 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Cookie;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Cache HTML complet des pages publiques dans le cache fichier.
- * Réduit le TTFB de ~440ms à ~30ms sur les hits de cache.
+ * Cache HTML complet des pages publiques (réduit le TTFB de ~440 ms à ~30 ms sur un HIT).
  *
- * Comportement :
- *  - GET uniquement, utilisateurs non authentifiés
- *  - Clé = hash de l'URL complète (query string inclus)
- *  - Le token CSRF est normalisé → __CSRF__ avant stockage
- *    et injecté au moment de servir (évite le problème de token partagé)
- *  - TTL configurable via le paramètre de route (défaut : 300 s)
+ * Règles (audit CACHE-01 — le HTML ne doit jamais passer d'un visiteur à l'autre) :
+ *  - lecture/écriture seulement pour un GET d'un visiteur NON connecté, SANS cookie de
+ *    session existant (premier passage) et sans message flash / erreurs de validation ;
+ *  - jamais de mise en cache d'une réponse non-200, non HTML, ou qui pose un cookie
+ *    applicatif (les cookies de session et XSRF-TOKEN, posés plus haut dans la pile par
+ *    StartSession / VerifyCsrfToken pour chaque visiteur, ne sont pas dans le HTML) ;
+ *  - la clé inclut la langue réellement utilisée pour le rendu ;
+ *  - certaines URL ne sont jamais mises en cache (formulaires, compte, admin…) ;
+ *  - le jeton CSRF est remplacé par __CSRF__ avant stockage et le jeton de la session du
+ *    visiteur est réinjecté à chaque HIT : le HTML stocké ne contient aucun jeton valide.
+ *
+ * Vidage : `php artisan page-cache:clear`, et automatiquement à chaque enregistrement
+ * ou suppression d'un article (JobArticle).
  */
 class PageCache
 {
+    /** URL jamais mises en cache, même si la route porte le middleware. */
+    public const EXCLUDED_PATHS = [
+        'login', 'register', 'logout', 'password/*', 'forgot-password', 'reset-password*',
+        'contact', 'donations', 'donations/*', 'payment/*',
+        'forum', 'forum/*', 'newsletter/*', 'language/*', 'search', 'search/*',
+        'admin', 'admin/*', 'dashboard', 'dashboard/*', 'profile', 'profile/*',
+        'api/*',
+    ];
+
+    private const VERSION_KEY = 'pcache_version';
+
     public function handle(Request $request, Closure $next, int $ttl = 300): Response
     {
-        // Conditions pour bypasser le cache
-        if (
-            $request->method() !== 'GET' ||
-            auth()->check() ||
-            $request->has('preview') ||
-            session()->has('errors')
-        ) {
-            return $next($request);
+        if (! self::isCacheableRequest($request)) {
+            $response = $next($request);
+            $response->headers->set('X-Page-Cache', 'BYPASS');
+
+            return $response;
         }
 
-        // La locale effective (session 'language', paramètre `lang`) est déterminée par
-        // LocaleTrait::ensureLocale() dans le contrôleur, APRÈS ce middleware. On la
-        // déduit ici avec la même règle pour que la clé de cache en tienne compte —
-        // sinon une réponse rendue en anglais peut être mise en cache sous l'URL
-        // canonique et servie à tous les visiteurs suivants (dont Googlebot) jusqu'à
-        // expiration du TTL, quelle que soit leur propre locale.
-        $locale = $request->get('lang', session('language', 'fr'));
-        if (!in_array($locale, ['fr', 'en'], true)) {
+        // Sans cookie de session, la langue ne peut venir que du paramètre `lang`
+        // (même règle que LocaleTrait::ensureLocale()).
+        $locale = $request->query('lang', 'fr');
+        if (! in_array($locale, ['fr', 'en'], true)) {
             $locale = 'fr';
         }
 
-        $cacheKey = 'pcache_' . $locale . '_' . md5($request->fullUrl());
+        $cacheKey = self::key($request->fullUrl(), $locale);
 
-        // Servir depuis le cache si disponible
-        if (Cache::has($cacheKey)) {
-            $html = Cache::get($cacheKey);
-            // Injecter le CSRF token de la session courante
-            $html = str_replace('__CSRF__', csrf_token(), $html);
-            return response($html, 200, ['Content-Type' => 'text/html; charset=UTF-8'])
-                ->header('X-Page-Cache', 'HIT');
+        $html = Cache::get($cacheKey);
+        if (is_string($html)) {
+            return response(self::injectToken($html), 200, [
+                'Content-Type' => 'text/html; charset=UTF-8',
+                'X-Page-Cache' => 'HIT',
+            ]);
         }
 
-        // Exécuter la requête normalement
         $response = $next($request);
 
-        // Ne cacher que les 200 OK HTML
-        if (
-            $response->getStatusCode() === 200 &&
-            str_contains($response->headers->get('Content-Type', ''), 'text/html')
-        ) {
-            $html = $response->getContent();
-
-            // Normaliser le CSRF token avant de stocker
-            // (remplace le token de la session courante par le placeholder)
-            $token = csrf_token();
-            if ($token) {
-                $html = str_replace($token, '__CSRF__', $html);
-            }
-
-            Cache::put($cacheKey, $html, $ttl);
+        if ($this->isStorable($response, $locale)) {
+            Cache::put($cacheKey, self::stripToken($response->getContent()), $ttl);
             $response->headers->set('X-Page-Cache', 'MISS');
+        } else {
+            $response->headers->set('X-Page-Cache', 'BYPASS');
         }
 
         return $response;
     }
 
     /**
-     * Vider le cache d'une URL spécifique (toutes locales confondues, cf. clé
-     * préfixée par la locale dans handle()).
+     * Une page peut-elle être servie depuis / écrite dans un cache partagé entre visiteurs ?
+     * Utilisé aussi par FormationController (cache HTML des formations).
+     */
+    public static function isCacheableRequest(Request $request): bool
+    {
+        if (! $request->isMethod('GET') || $request->has('preview')) {
+            return false;
+        }
+
+        // Visiteur déjà connu (cookie de session) ou connecté : rendu dédié, jamais partagé.
+        if ($request->cookies->has(config('session.cookie')) || auth()->check()) {
+            return false;
+        }
+
+        if ($request->hasSession()) {
+            $session = $request->session();
+            if ($session->has('errors') || ! empty($session->get('_flash.old', []))) {
+                return false;
+            }
+        }
+
+        return ! $request->is(...self::EXCLUDED_PATHS);
+    }
+
+    private function isStorable(Response $response, string $locale): bool
+    {
+        return $response->getStatusCode() === 200
+            && str_contains((string) $response->headers->get('Content-Type', ''), 'text/html')
+            // Un cookie posé par le contrôleur (langue, préférence…) = réponse personnalisée.
+            && $response->headers->getCookies() === []
+            && Cookie::getQueuedCookies() === []
+            // Rendu dans une autre langue que celle de la clé (ex. locale modifiée en cours de
+            // route) : on ne stocke pas plutôt que de servir la mauvaise langue.
+            && app()->getLocale() === $locale
+            && ! auth()->check();
+    }
+
+    /** Remplace le jeton CSRF de la session courante par un marqueur avant stockage. */
+    public static function stripToken(string $html): string
+    {
+        $token = csrf_token();
+
+        return $token ? str_replace($token, '__CSRF__', $html) : $html;
+    }
+
+    /** Réinjecte le jeton CSRF de la session du visiteur courant. */
+    public static function injectToken(string $html): string
+    {
+        return str_replace('__CSRF__', (string) csrf_token(), $html);
+    }
+
+    private static function key(string $url, string $locale): string
+    {
+        $version = (int) Cache::get(self::VERSION_KEY, 1);
+
+        return 'pcache_v' . $version . '_' . $locale . '_' . md5($url);
+    }
+
+    /**
+     * Vider le cache d'une URL précise (toutes langues).
      */
     public static function forget(string $url): void
     {
         foreach (['fr', 'en'] as $locale) {
-            Cache::forget('pcache_' . $locale . '_' . md5($url));
+            Cache::forget(self::key($url, $locale));
         }
     }
 
     /**
-     * Vider tous les caches de pages (utile après un déploiement ou modification).
-     * Fonctionne uniquement avec le driver 'file'.
+     * Invalider toutes les pages en cache. On change de « version » de clé au lieu de
+     * Cache::flush(), qui viderait aussi les compteurs de throttle, les réglages, etc.
+     * Les anciennes entrées expirent d'elles-mêmes (TTL de quelques minutes).
      */
     public static function flush(): void
     {
-        Cache::flush();
+        Cache::forever(self::VERSION_KEY, (int) Cache::get(self::VERSION_KEY, 1) + 1);
     }
 }

@@ -1396,7 +1396,6 @@ function copyCodeToClipboard(button, codeElement) {
 (function() {
     'use strict';
 
-    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
 
     function updateProgressUI(data) {
         const ring = document.getElementById('courseProgressRing');
@@ -1424,11 +1423,11 @@ function copyCodeToClipboard(button, codeElement) {
     }
 
     function markComplete(url) {
-        if (!url || !csrfToken) return Promise.resolve(null);
+        if (!url) return Promise.resolve(null);
         return fetch(url, {
             method: 'POST',
             headers: {
-                'X-CSRF-TOKEN': csrfToken,
+                ...npCsrfHeader(),
                 'Accept': 'application/json',
             },
         }).then(function(res) { return res.ok ? res.json() : null; }).catch(function() { return null; });
@@ -1454,7 +1453,7 @@ function copyCodeToClipboard(button, codeElement) {
             // Fire-and-forget : ne bloque pas la navigation vers le chapitre suivant.
             fetch(url, {
                 method: 'POST',
-                headers: { 'X-CSRF-TOKEN': csrfToken, 'Accept': 'application/json' },
+                headers: { ...npCsrfHeader(), 'Accept': 'application/json' },
                 keepalive: true,
             }).catch(function() {});
         });

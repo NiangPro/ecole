@@ -10,7 +10,18 @@
     <meta name="googlebot" content="index, follow">
     <meta name="bingbot" content="index, follow">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    
+    {{-- Jeton CSRF des appels fetch (audit CACHE-01) : lu dans le cookie XSRF-TOKEN, propre à
+         chaque visiteur, plutôt que dans le HTML (qui peut venir du cache de page).
+         Usage : headers: { 'Accept': 'application/json', ...npCsrfHeader() } --}}
+    <script>
+        window.npCsrfHeader = function () {
+            var m = document.cookie.match(/(?:^|;\s*)XSRF-TOKEN=([^;]*)/);
+            if (m) return { 'X-XSRF-TOKEN': decodeURIComponent(m[1]) };
+            var meta = document.querySelector('meta[name="csrf-token"]');
+            return meta ? { 'X-CSRF-TOKEN': meta.content } : {};
+        };
+    </script>
+
     <!-- SEO amélioré -->
     <meta name="language" content="{{ app()->getLocale() }}">
     <meta name="geo.region" content="SN">
@@ -576,7 +587,7 @@
             fetch('/api/ads/' + adId + '/click', {
                 method: 'POST',
                 headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                    ...npCsrfHeader(),
                     'Content-Type': 'application/json'
                 }
             }).catch(function() {});
