@@ -15,6 +15,13 @@ class AppServiceProvider extends ServiceProvider
         // Chargement direct (indépendant de `composer dump-autoload`, qui n'est pas
         // toujours relancé après un déploiement manuel — voir NumberHelper.php).
         require_once app_path('Helpers/NumberHelper.php');
+
+        // Garde-fou (audit SEC-01) : en production, jamais de page de debug publique
+        // (pile d'appels, extraits de code, chemins serveur), même si APP_DEBUG=true
+        // traîne dans le .env. Appliqué à l'exécution : survit à config:cache.
+        if ($this->app->environment('production') && config('app.debug')) {
+            config(['app.debug' => false]);
+        }
     }
 
     /**
