@@ -43,9 +43,10 @@
             
             <!-- Dropdown Formations -->
             <li class="navbar-item dropdown">
-                <a href="#" class="navbar-link dropdown-toggle">
+                {{-- Audit FCT-02 : lien vers la page des formations (le menu s'ouvre au survol). --}}
+                <a href="{{ route('formations.all') }}" class="navbar-link dropdown-toggle {{ request()->routeIs('formations.*') ? 'active' : '' }}">
                     {{ trans('app.nav.formations') }}
-                    <i class="fas fa-chevron-down dropdown-icon"></i>
+                    <i class="fas fa-chevron-down dropdown-icon" aria-hidden="true"></i>
                 </a>
                 <div class="dropdown-menu">
                     @if($hasPaidCourses)
@@ -311,10 +312,11 @@
 
             <!-- Dropdown À propos / Contact -->
             <li class="navbar-item dropdown">
-                <a href="{{ route('about') }}" class="navbar-link dropdown-toggle {{ request()->routeIs(['about', 'contact', 'monetization.index', 'monetization.affiliates', 'monetization.affiliates.dashboard', 'docs', 'documents.*', 'forum.*', 'admin-docs.*', 'bundles.*']) ? 'active' : '' }}">
+                {{-- Audit FCT-02 : « Ressources » ouvre le sous-menu (il menait à /about, déjà présent dans le sous-menu). --}}
+                <button type="button" aria-haspopup="true" class="navbar-link navbar-link--button dropdown-toggle {{ request()->routeIs(['about', 'contact', 'monetization.index', 'monetization.affiliates', 'monetization.affiliates.dashboard', 'docs', 'documents.*', 'forum.*', 'admin-docs.*', 'bundles.*']) ? 'active' : '' }}">
                     {{ trans('app.nav.about') }}
-                    <i class="fas fa-chevron-down dropdown-icon"></i>
-                </a>
+                    <i class="fas fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+                </button>
                 <div class="dropdown-menu">
                     @php
                         $hasActiveSubscriptionPlans = \App\Models\SubscriptionPlan::active()->exists();
