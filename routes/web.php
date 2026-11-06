@@ -86,13 +86,13 @@ Route::get('/', [PageController::class, 'index'])->middleware(['http.cache:list'
 Route::get('/maintenance', [PageController::class, 'maintenance'])->name('maintenance');
 // Route Recherche - Utiliser SearchController
 use App\Http\Controllers\SearchController;
-Route::get('/search', [SearchController::class, 'index'])->middleware('throttle:30,1')->name('search');
+Route::get('/search', [SearchController::class, 'index'])->middleware(['throttle:30,1', 'noindex'])->name('search');
 
 // Routes Forum (publiques)
 use App\Http\Controllers\ForumController;
 Route::prefix('forum')->name('forum.')->group(function () {
     Route::get('/', [ForumController::class, 'index'])->name('index');
-    Route::get('/search', [ForumController::class, 'search'])->name('search');
+    Route::get('/search', [ForumController::class, 'search'])->middleware('noindex')->name('search');
     Route::get('/category/{slug}', [ForumController::class, 'category'])->name('category');
     Route::get('/{categorySlug}/{topicSlug}', [ForumController::class, 'show'])->name('show');
     

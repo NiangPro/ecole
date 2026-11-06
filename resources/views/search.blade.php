@@ -2,7 +2,7 @@
 
 @section('title', $query ? "« {$query} » — Recherche | NiangProgrammeur" : 'Recherche | NiangProgrammeur')
 @section('meta_description', 'Recherchez parmi nos formations, articles emploi et ressources pour développeurs.')
-@section('canonical', route('search', ['q' => $query]))
+@section('robots', 'noindex, follow')
 
 @section('styles')
 <style>

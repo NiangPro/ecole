@@ -14,8 +14,6 @@
     <meta property="og:url" content="{{ route('emplois.recent-articles') }}">
     <meta property="og:title" content="Articles les Plus Récents - Emplois & Opportunités | NiangProgrammeur">
     <meta property="og:description" content="Découvrez les articles les plus récents sur les emplois, bourses d'études, opportunités de carrière et candidatures spontanées au Sénégal.">
-    <meta name="robots" content="index, follow">
-    <meta name="googlebot" content="index, follow">
 @endpush
 
 @section('styles')

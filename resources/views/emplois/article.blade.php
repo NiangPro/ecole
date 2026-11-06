@@ -118,9 +118,6 @@
     <!-- Meta Tags SEO -->
     <meta name="keywords" content="{{ $article->meta_keywords ? implode(', ', is_array($article->meta_keywords) ? $article->meta_keywords : json_decode($article->meta_keywords, true) ?? []) : '' }}">
     <meta name="author" content="NiangProgrammeur">
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-    <meta name="googlebot" content="index, follow">
-    <meta name="bingbot" content="index, follow">
     
     {{-- Schema.org JobPosting retiré (audit SEO-02) : il était généré pour toute la catégorie
          (guides et candidatures spontanées compris) avec un employeur générique et une date

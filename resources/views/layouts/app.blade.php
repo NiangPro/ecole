@@ -6,9 +6,11 @@
     <meta name="description" content="@yield('meta_description', 'Plateforme de formation gratuite en développement web. Apprenez HTML5, CSS3, JavaScript, PHP, Laravel, Bootstrap, Git, WordPress et Intelligence Artificielle avec NiangProgrammeur.')">
     <meta name="keywords" content="@yield('meta_keywords', 'formation développement web, HTML5, CSS3, JavaScript, PHP, Laravel, Bootstrap, Git, WordPress, IA, tutoriel gratuit, apprendre programmation, cours en ligne')">
     <meta name="author" content="Bassirou Niang - NiangProgrammeur">
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-    <meta name="googlebot" content="index, follow">
-    <meta name="bingbot" content="index, follow">
+    {{-- Une page peut changer la directive avec @section('robots', 'noindex, follow') (audit SEO-05). --}}
+    @php $__robots = trim($__env->yieldContent('robots')) ?: 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'; @endphp
+    <meta name="robots" content="{!! $__robots !!}">
+    <meta name="googlebot" content="{!! $__robots !!}">
+    <meta name="bingbot" content="{!! $__robots !!}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     {{-- Jeton CSRF des appels fetch (audit CACHE-01) : lu dans le cookie XSRF-TOKEN, propre à
          chaque visiteur, plutôt que dans le HTML (qui peut venir du cache de page).
@@ -65,7 +67,10 @@
             }
         }
     @endphp
+    {{-- Pas de canonical sur une page noindex (ex. recherche) : elle n'a pas vocation à être indexée. --}}
+    @unless(str_contains($__robots, 'noindex'))
     <link rel="canonical" href="{!! $__canonical !!}">
+    @endunless
     
     {{-- Pas de balises hreflang (audit SEO-01) : les deux langues sont servies à la même URL ;
          les anciennes pointaient vers l'URL d'action /language/xx?redirect=…, ce qui est faux.

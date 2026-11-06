@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Recherche - Forum - NiangProgrammeur')
+@section('robots', 'noindex, follow')
 
 @push('styles')
 <style>

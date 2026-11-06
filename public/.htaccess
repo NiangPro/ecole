@@ -233,7 +233,6 @@
     Require all denied
 </FilesMatch>
 
-# Optimisation pour les robots
-<IfModule mod_headers.c>
-    Header set X-Robots-Tag "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
-</IfModule>
+# X-Robots-Tag global « index, follow » retiré (audit SEO-05) : c'est déjà le comportement
+# par défaut, et il contredisait le « noindex » des pages de recherche. Les directives
+# passent par la balise meta robots du layout et par le middleware « noindex ».
