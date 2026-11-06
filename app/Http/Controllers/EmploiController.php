@@ -167,6 +167,11 @@ class EmploiController extends Controller
      */
     public function show($slug)
     {
+        // Doublon fusionné (audit SEO-03) : 301 vers l'article conservé.
+        if ($target = \App\Models\JobArticleRedirect::targetFor((string) $slug)) {
+            return redirect()->route('emplois.article', $target, 301);
+        }
+
         // Charger l'article depuis le cache ou la DB (30 minutes)
         try {
             $article = Cache::remember("job_article_{$slug}", 1800, function () use ($slug) {

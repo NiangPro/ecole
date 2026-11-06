@@ -327,17 +327,10 @@ Route::get('/articles/vedettes', [EmploiController::class, 'featured'])->name('a
 // Placées AVANT la route {slug} pour être servies en 301 plutôt que retourner
 // le contenu de l'article encore en base (le nettoyage des lignes dupliquées en
 // base nécessite un accès à la base de production, non disponible ici).
-foreach ([
-    'comment-postuler-a-sonatel-orange-senegal-en-2026-1',
-    'comment-postuler-a-la-sonatel-en-2026',
-    'comment-postuler-a-sonatel-orange-senegal-en-2026',
-    'sonatel-recrute-candidature-spontanee-2026',
-    'deposer-une-candidature-spontanee-chez-sonatel-2026',
-    'candidature-spontanee-sonatel-orange-senegal-2026-2',
-    'candidature-spontanee-sonatel-comment-postuler-en-2026',
-    'comment-postuler-a-la-sonatel-orange-senegal-2026',
-] as $duplicateSlug) {
-    Route::redirect('/emplois/article/' . $duplicateSlug, '/emplois/article/candidature-spontanee-sonatel-2026-postulez-au-senegal', 301);
+// Liste déplacée dans JobArticleRedirect::LEGACY (audit SEO-03) ; les nouvelles fusions
+// se font en base (table job_article_redirects), gérées par EmploiController::show().
+foreach (\App\Models\JobArticleRedirect::LEGACY as $duplicateSlug => $keptSlug) {
+    Route::redirect('/emplois/article/' . $duplicateSlug, '/emplois/article/' . $keptSlug, 301);
 }
 
 // Route avec paramètre - exclut "articles-recents" pour éviter les conflits

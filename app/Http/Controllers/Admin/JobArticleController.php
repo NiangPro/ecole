@@ -184,7 +184,27 @@ class JobArticleController extends Controller
         }
 
         return redirect()->route('admin.jobs.articles.index')
-            ->with('success', 'Article créé avec succès');
+            ->with('success', 'Article créé avec succès')
+            ->with('warning', $this->duplicateTitleWarning($article));
+    }
+
+    /**
+     * Audit SEO-03 : avertissement (non bloquant) si un autre article publié porte déjà
+     * le même titre — les doublons se cannibalisent dans Google.
+     */
+    private function duplicateTitleWarning(JobArticle $article): ?string
+    {
+        $doublons = JobArticle::where('id', '!=', $article->id)
+            ->where('status', 'published')
+            ->whereRaw('LOWER(TRIM(title)) = ?', [mb_strtolower(trim($article->title))])
+            ->pluck('id');
+
+        if ($doublons->isEmpty()) {
+            return null;
+        }
+
+        return 'Un article publié porte déjà ce titre (id ' . $doublons->implode(', ')
+            . '). Pensez à fusionner les doublons (php artisan articles:doublons).';
     }
 
     public function show($id)
@@ -389,7 +409,8 @@ class JobArticleController extends Controller
         }
 
         return redirect()->route('admin.jobs.articles.index')
-            ->with('success', 'Article mis à jour avec succès');
+            ->with('success', 'Article mis à jour avec succès')
+            ->with('warning', $this->duplicateTitleWarning($article));
     }
 
     public function sendNewsletter($id)

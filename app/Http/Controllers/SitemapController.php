@@ -223,6 +223,8 @@ class SitemapController extends Controller
                     $query->where('is_active', true);
                 }])
                 ->has('category') // S'assurer que l'article a une catégorie active
+                // URL canoniques uniquement : pas les slugs redirigés (doublons fusionnés, SEO-03)
+                ->whereNotIn('slug', \App\Models\JobArticleRedirect::redirectedSlugs())
                 ->orderBy('published_at', 'desc')
                 ->limit(50000) // Limite Google : 50 000 URLs max par sitemap
                 ->get();
