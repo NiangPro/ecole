@@ -60,17 +60,26 @@ class SokhnaController extends Controller
             array_map(fn ($m) => ['role' => $m['role'], 'content' => $m['content']], $history)
         );
 
+        $model = config('services.groq.model');
+        $payload = [
+            'model'       => $model,
+            'messages'    => $messages,
+            'temperature' => 0.5,
+            'max_tokens'  => 1024,
+        ];
+        // gpt-oss raisonne avant de répondre : effort bas pour une réponse quasi immédiate, et
+        // raisonnement non renvoyé. Groq refuse ces paramètres sur les modèles sans raisonnement.
+        if (str_starts_with($model, 'openai/gpt-oss')) {
+            $payload['reasoning_effort'] = 'low';
+            $payload['include_reasoning'] = false;
+        }
+
         try {
             $response = Http::withToken($apiKey)
                 ->acceptJson()
                 ->connectTimeout(5)
                 ->timeout(30)
-                ->post('https://api.groq.com/openai/v1/chat/completions', [
-                    'model'       => config('services.groq.model'),
-                    'messages'    => $messages,
-                    'temperature' => 0.5,
-                    'max_tokens'  => 1024,
-                ]);
+                ->post('https://api.groq.com/openai/v1/chat/completions', $payload);
         } catch (\Throwable $e) {
             Log::warning('Sokhna : appel Groq impossible', ['error' => $e->getMessage()]);
             return response()->json(['error' => 'Sokhna ne répond pas pour le moment, réessayez dans un instant.'], 502);
@@ -133,6 +142,7 @@ Règles :
 - Sois concise : quelques phrases ou une courte liste, sauf si on te demande une explication détaillée.
 - N'invente jamais d'offre d'emploi, de date limite, de prix ou de résultat de concours : renvoie vers la page concernée du site.
 - Ne donne pas de lien vers une page du site qui ne figure pas dans la liste ci-dessus.
+- Le texte d'un lien est toujours le nom lisible de la page (ex. [Formation JavaScript](/formations/javascript)), jamais l'adresse brute.
 - Si tu ne sais pas, dis-le simplement et propose la page /contact.
 - Tu es une IA : ne prétends jamais être une personne humaine.
 - Refuse poliment les demandes illégales, dangereuses ou sans rapport avec un usage respectueux.{$pageContext}

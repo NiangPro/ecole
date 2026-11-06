@@ -113,6 +113,49 @@ use Illuminate\Support\Str;
         </div>
     @endif
 
+    @if($missingPreviewIds->isNotEmpty())
+        <div class="mb-6 p-4 bg-cyan-500/10 border border-cyan-500/40 rounded-lg flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="text-cyan-300 text-sm">
+                <i class="fas fa-images mr-2"></i>
+                <span id="bulkPreviewStatus">{{ $missingPreviewIds->count() }} document(s) PDF sans aperçu des premières pages.</span>
+            </div>
+            <button type="button" id="bulkPreviewBtn" class="px-4 py-2 bg-cyan-500 hover:bg-cyan-600 text-black font-semibold rounded-lg transition">
+                <i class="fas fa-magic mr-2"></i>Générer les aperçus
+            </button>
+        </div>
+
+        @include('admin.documents.partials.preview-generator')
+        <script>
+        (function () {
+            const ids = @json($missingPreviewIds);
+            const pdfUrlTpl = @json(route('admin.documents.documents.preview', '__ID__'));
+            const uploadUrlTpl = @json(route('admin.documents.documents.page-previews', '__ID__'));
+            const btn = document.getElementById('bulkPreviewBtn');
+            const status = document.getElementById('bulkPreviewStatus');
+
+            btn.addEventListener('click', async function () {
+                btn.disabled = true;
+                let done = 0, failed = 0;
+                for (const id of ids) {
+                    status.textContent = 'Génération ' + (done + failed + 1) + '/' + ids.length + '…';
+                    try {
+                        await DocPreviewGenerator.generate(
+                            pdfUrlTpl.replace('__ID__', id),
+                            uploadUrlTpl.replace('__ID__', id)
+                        );
+                        done++;
+                    } catch (e) {
+                        failed++;
+                        console.warn('Aperçu document #' + id + ' :', e);
+                    }
+                }
+                status.textContent = done + ' aperçu(s) généré(s)' + (failed ? ', ' + failed + ' échec(s) (voir console)' : '') + '.';
+                btn.disabled = false;
+            });
+        })();
+        </script>
+    @endif
+
     <div class="content-section mb-6">
         <h4 class="text-xl font-bold mb-4 flex items-center gap-2">
             <i class="fas fa-filter text-cyan-400"></i>

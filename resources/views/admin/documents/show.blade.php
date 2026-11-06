@@ -826,6 +826,59 @@ use Illuminate\Support\Facades\Storage;
             </div>
         </div>
 
+        <!-- Aperçu public : 3 premières pages affichées sur la fiche du document -->
+        @if(strtolower($document->file_extension) === 'pdf')
+        <div class="modern-card mt-6" style="width: 100%;">
+            <div class="card-header">
+                <i class="fas fa-images"></i>
+                <h3>Aperçu public (3 premières pages)</h3>
+            </div>
+            <div id="pagePreviewThumbs" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: .75rem; max-width: 560px;">
+                @foreach($document->previewImageUrls() as $i => $url)
+                    <img src="{{ $url }}" alt="Page {{ $i + 1 }}" style="width: 100%; border-radius: 8px; border: 1px solid var(--border); background: #fff;">
+                @endforeach
+            </div>
+            <p id="pagePreviewStatus" class="text-gray-400 text-sm mt-3">
+                {{ $document->preview_pages > 0 ? $document->preview_pages . ' page(s) visibles sur la page publique.' : 'Aucun aperçu généré pour le moment.' }}
+            </p>
+            <div class="mt-3">
+                <button type="button" id="pagePreviewBtn" class="btn-action btn-edit" style="padding: 0.5rem 1rem; font-size: 0.875rem;">
+                    <i class="fas fa-sync-alt"></i>
+                    <span>{{ $document->preview_pages > 0 ? 'Régénérer l\'aperçu' : 'Générer l\'aperçu' }}</span>
+                </button>
+            </div>
+        </div>
+
+        @include('admin.documents.partials.preview-generator')
+        <script>
+        (function () {
+            const btn = document.getElementById('pagePreviewBtn');
+            const status = document.getElementById('pagePreviewStatus');
+            const pdfUrl = @json(route('admin.documents.documents.preview', $document->id));
+            const uploadUrl = @json(route('admin.documents.documents.page-previews', $document->id));
+
+            async function run() {
+                btn.disabled = true;
+                status.textContent = 'Génération de l\'aperçu en cours…';
+                try {
+                    const pages = await DocPreviewGenerator.generate(pdfUrl, uploadUrl);
+                    status.textContent = pages + ' page(s) générée(s). Rechargement…';
+                    window.location.reload();
+                } catch (e) {
+                    status.textContent = 'Échec de la génération : ' + e.message;
+                    btn.disabled = false;
+                }
+            }
+
+            btn.addEventListener('click', run);
+            @if($document->preview_pages === 0)
+            // Génération automatique au premier affichage (nouveau document ou fichier remplacé)
+            run();
+            @endif
+        })();
+        </script>
+        @endif
+
         <!-- Aperçu PDF - Pleine largeur -->
         @if(strtolower($document->file_extension) === 'pdf')
         <div class="modern-card mt-6" style="width: 100%;">

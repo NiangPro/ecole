@@ -78,7 +78,8 @@ return [
     // Chatbot « Sokhna » (widget public) — https://console.groq.com
     'groq' => [
         'key'   => env('GROQ_API_KEY'),
-        'model' => env('GROQ_MODEL', 'llama-3.3-70b-versatile'),
+        // Modèle à « raisonnement » : reasoning_effort=low dans SokhnaController pour garder des réponses rapides.
+        'model' => env('GROQ_MODEL', 'openai/gpt-oss-120b'),
     ],
 
     'vapid' => [

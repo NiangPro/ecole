@@ -164,6 +164,12 @@ Route::get('/documents/checkout/payment', [DocumentCartController::class, 'check
 Route::post('/documents/checkout/process', [DocumentCartController::class, 'processCheckout'])->name('documents.checkout.process');
 Route::get('/documents/guest-success/{paymentId}', [DocumentCartController::class, 'guestSuccess'])->name('documents.guest-success');
 
+// Aperçu public des premières pages (images générées depuis le PDF)
+Route::get('/documents/{id}/apercu/{page}', [DocumentController::class, 'pagePreview'])
+    ->whereNumber('id')
+    ->whereNumber('page')
+    ->name('documents.page-preview');
+
 // Route téléchargement gratuit (avant /documents/{slug})
 Route::get('/documents/{id}/download-free', [DocumentController::class, 'downloadFree'])
     ->middleware('download_rate_limit')
@@ -806,6 +812,7 @@ Route::middleware(['admin'])->group(function () {
     Route::prefix('admin/documents')->name('admin.documents.')->group(function () {
         // Documents
         Route::get('documents/{id}/preview', [\App\Http\Controllers\Admin\DocumentController::class, 'preview'])->name('documents.preview');
+        Route::post('documents/{id}/page-previews', [\App\Http\Controllers\Admin\DocumentController::class, 'storePagePreviews'])->name('documents.page-previews');
         Route::get('documents/{id}/cover', [\App\Http\Controllers\Admin\DocumentController::class, 'serveCover'])->name('documents.cover');
         Route::resource('documents', \App\Http\Controllers\Admin\DocumentController::class);
         Route::post('documents/{id}/publish', [\App\Http\Controllers\Admin\DocumentController::class, 'publish'])->name('documents.publish');

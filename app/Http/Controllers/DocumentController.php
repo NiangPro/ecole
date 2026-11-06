@@ -9,6 +9,7 @@ use App\Models\DocumentPurchase;
 use App\Models\DocumentDownload;
 use App\Models\Payment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
@@ -96,6 +97,30 @@ class DocumentController extends Controller
     /**
      * Afficher les détails d'un document
      */
+    /**
+     * Sert une image d'aperçu public (pages 1 à 3) d'un document
+     */
+    public function pagePreview($id, $page)
+    {
+        // Pas de filtre "publié" : l'admin voit aussi l'aperçu des brouillons
+        $document = Document::findOrFail($id);
+        $page = (int) $page;
+
+        if ($page < 1 || $page > min($document->preview_pages, Document::PREVIEW_MAX_PAGES)) {
+            abort(404);
+        }
+
+        $path = $document->previewImagePath($page);
+        if (!Storage::disk('public')->exists($path)) {
+            abort(404);
+        }
+
+        return response()->file(Storage::disk('public')->path($path), [
+            'Content-Type' => 'image/jpeg',
+            'Cache-Control' => 'public, max-age=31536000, immutable',
+        ]);
+    }
+
     public function show($slug)
     {
         $this->ensureLocale();
