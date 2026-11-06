@@ -1751,3 +1751,34 @@ body.dark-mode .hp-review-quote-icon { color: oklch(65% 0.20 200 / 15%); }
   .hp-reviews-header { align-items: flex-start; }
   .hp-reviews-stat { width: 100%; }
 }
+
+/* ── Audit UX-01 : boutons flottants et appels à l'action du hero (mobile) ──
+   Sous 768 px, la bulle Sokhna, WhatsApp, le thème et les notifications recouvraient
+   « Commencer gratuitement » / « Parcourir les ressources ». Ils restent masqués tant que
+   ces boutons sont à l'écran (classe posée par un IntersectionObserver dans index.blade.php),
+   puis réapparaissent au défilement. Sans JS : rien ne change. Desktop : rien ne change. */
+@media (max-width: 768px) {
+  .sokhna:not(.is-open),
+  .whatsapp-widget,
+  .dark-mode-widget,
+  .pwa-push-button {
+    transition: opacity 0.25s ease, translate 0.25s ease, visibility 0.25s;
+  }
+
+  body.np-hero-ctas-visible .sokhna:not(.is-open),
+  body.np-hero-ctas-visible .whatsapp-widget,
+  body.np-hero-ctas-visible .dark-mode-widget,
+  body.np-hero-ctas-visible .pwa-push-button {
+    opacity: 0;
+    visibility: hidden;
+    translate: 0 12px;
+    pointer-events: none;
+  }
+}
+
+@media (max-width: 768px) and (prefers-reduced-motion: reduce) {
+  .sokhna:not(.is-open),
+  .whatsapp-widget,
+  .dark-mode-widget,
+  .pwa-push-button { transition: none; }
+}

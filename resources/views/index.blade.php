@@ -7,6 +7,19 @@
 @vite('resources/css/features/homepage.css')
 @endpush
 
+@push('scripts')
+<script>
+  // Audit UX-01 : masque les boutons flottants (mobile) tant que les boutons du hero sont visibles.
+  (function () {
+    var ctas = document.querySelector('.hp-hero__actions');
+    if (!ctas || !('IntersectionObserver' in window)) return;
+    new IntersectionObserver(function (entries) {
+      document.body.classList.toggle('np-hero-ctas-visible', entries[0].isIntersecting);
+    }).observe(ctas);
+  })();
+</script>
+@endpush
+
 @push('preload_images')
 <link rel="preload" as="image" href="{{ asset('images/hero-bg-mobile.webp') }}" type="image/webp" fetchpriority="high" media="(max-width: 768px)">
 @php $heroBgDesktop = public_path('images/hero-bg.webp'); @endphp
