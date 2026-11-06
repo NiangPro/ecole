@@ -81,7 +81,7 @@
         // Pages qui poussent déjà leur propre og:image/twitter:image via @push('meta')
         // (image de couverture réelle : document, article emploi, annonce...).
         // On évite d'émettre une balise par défaut en doublon pour elles.
-        $ogOverrideRoutes = ['documents.show', 'emplois.article', 'emplois.offres', 'emplois.category', 'admin-docs.show'];
+        $ogOverrideRoutes = ['documents.show', 'emplois.article', 'admin-docs.show'];
         $hasCustomOgImage = in_array(optional(request()->route())->getName(), $ogOverrideRoutes, true);
 
         $defaultOgImage = asset('images/og-homepage.jpg');
@@ -91,6 +91,15 @@
             $defaultOgImage = asset('images/og-formations.jpg');
         } elseif (request()->routeIs('emplois')) {
             $defaultOgImage = asset('images/og-emplois.jpg');
+        }
+        // Image propre à la page : @section('og_image', $url) — chemin relatif accepté,
+        // toujours converti en URL absolue (audit SEO-06 : Facebook/WhatsApp ignorent
+        // une og:image relative).
+        $__ogImage = html_entity_decode(trim($__env->yieldContent('og_image')), ENT_QUOTES);
+        if ($__ogImage !== '') {
+            $defaultOgImage = preg_match('#^https?://#i', $__ogImage)
+                ? $__ogImage
+                : (str_starts_with($__ogImage, '//') ? 'https:' . $__ogImage : url($__ogImage));
         }
     @endphp
     <meta property="og:type" content="website">

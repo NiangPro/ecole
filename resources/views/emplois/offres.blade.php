@@ -10,14 +10,14 @@
     : ($category ? ($category->description ?? 'Découvrez les meilleures ' . $category->name . ' au Sénégal.') : 'Offre emploi Sénégal — consultez les meilleures offres de recrutement publiées chaque jour.'))
 @section('meta_keywords', $category ? ($category->name . ', emploi Sénégal, recrutement, offres d\'emploi') : 'emploi Sénégal, offres d\'emploi, recrutement, opportunités carrière')
 @section('canonical', route('emplois.offres', ['category' => $category->slug ?? null]))
+@if($category && $category->image)
+@section('og_image', $category->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($category->image) : $category->image)
+@endif
 @push('meta')
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ route('emplois.offres', ['category' => $category->slug ?? null]) }}">
     <meta property="og:title" content="{{ ($category ? $category->name : 'Offres d\'Emploi') . ' | NiangProgrammeur' }}">
     <meta property="og:description" content="{{ $category ? ($category->description ?? 'Découvrez les meilleures offres d\'emploi dans la catégorie ' . $category->name . ' au Sénégal.') : 'Consultez les meilleures offres d\'emploi publiées au Sénégal.' }}">
-    @if($category && $category->image)
-    <meta property="og:image" content="{{ $category->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($category->image) : $category->image }}">
-    @endif
 @endpush
 
 @section('styles')

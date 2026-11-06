@@ -8,14 +8,14 @@
 @section('meta_description', $category->description ?? 'Découvrez les articles dans la catégorie ' . $category->name . ' sur NiangProgrammeur.')
 @section('meta_keywords', $category->name . ', emploi Sénégal, recrutement, opportunités')
 @section('canonical', route('emplois.category', $category->slug))
+@if($category->image)
+@section('og_image', $category->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($category->image) : $category->image)
+@endif
 @push('meta')
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ route('emplois.category', $category->slug) }}">
     <meta property="og:title" content="{{ $category->name . ' | NiangProgrammeur' }}">
     <meta property="og:description" content="{{ $category->description ?? 'Découvrez les articles dans la catégorie ' . $category->name . ' sur NiangProgrammeur.' }}">
-    @if($category->image)
-    <meta property="og:image" content="{{ $category->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($category->image) : $category->image }}">
-    @endif
 @endpush
 
 @section('styles')
