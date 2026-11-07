@@ -767,7 +767,7 @@
                                 <rect x="5" y="10.5" width="14" height="9.5" rx="2.5"/>
                                 <path d="M8 10.5V7.75a4 4 0 0 1 8 0v2.75"/>
                             </svg>
-                            <input type="password" id="reg-password" name="password" required minlength="6"
+                            <input type="password" id="reg-password" name="password" required minlength="8"
                                    autocomplete="new-password" class="field-input" placeholder="••••••••">
                             <button type="button" class="field-toggle" data-toggle-target="reg-password" aria-label="Afficher le mot de passe">
                                 <svg class="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -781,7 +781,7 @@
                                 </svg>
                             </button>
                         </div>
-                        <div class="field-help">6 caractères minimum</div>
+                        <div class="field-help">8 caractères minimum</div>
                         @error('password')<div class="field-error">{{ $message }}</div>@enderror
                     </div>
 
@@ -792,7 +792,7 @@
                                 <rect x="5" y="10.5" width="14" height="9.5" rx="2.5"/>
                                 <path d="M8 10.5V7.75a4 4 0 0 1 8 0v2.75"/>
                             </svg>
-                            <input type="password" id="reg-password-confirm" name="password_confirmation" required minlength="6"
+                            <input type="password" id="reg-password-confirm" name="password_confirmation" required minlength="8"
                                    autocomplete="new-password" class="field-input" placeholder="••••••••">
                             <button type="button" class="field-toggle" data-toggle-target="reg-password-confirm" aria-label="Afficher le mot de passe">
                                 <svg class="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">

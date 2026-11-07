@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Validation\Rules\Password;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -37,6 +38,9 @@ class AppServiceProvider extends ServiceProvider
 
         // Configuration pour éviter l'erreur "La clé est trop longue" avec MySQL/MariaDB
         Schema::defaultStringLength(191);
+
+        // Règle commune des mots de passe (audit SEC-03) : inscription, réinitialisation, profil.
+        Password::defaults(fn () => Password::min(8));
         
         // Partager les catégories d'emplois avec la navigation
         view()->composer('partials.navigation', \App\View\Composers\NavigationComposer::class);

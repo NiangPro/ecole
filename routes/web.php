@@ -264,7 +264,7 @@ Route::post('/payment/course/{courseId}', [PaymentController::class, 'processCou
 Route::get('/payment/donation', function () {
     return redirect()->route('monetization.donations')->setStatusCode(301);
 })->name('payment.donation.get');
-Route::post('/payment/donation', [PaymentController::class, 'processDonation'])->name('payment.donation');
+Route::post('/payment/donation', [PaymentController::class, 'processDonation'])->middleware('throttle:10,1')->name('payment.donation');
 Route::get('/payment/confirm/{paymentId}', [PaymentController::class, 'confirm'])->name('payment.confirm');
 Route::put('/payment/{paymentId}/update-method', [PaymentController::class, 'updatePaymentMethod'])->middleware('auth')->name('payment.update-method');
 Route::get('/payment/wave/{paymentId}', [PaymentController::class, 'waveRedirect'])->name('payment.wave');
@@ -442,9 +442,9 @@ Route::middleware('throttle:60,1')->prefix('api')->name('api.')->group(function 
 
 // Routes d'authentification utilisateur
 Route::get('/login', [\App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [\App\Http\Controllers\Auth\LoginController::class, 'login'])->name('login.post');
+Route::post('/login', [\App\Http\Controllers\Auth\LoginController::class, 'login'])->middleware('throttle:10,1')->name('login.post'); // audit SEC-03
 Route::get('/register', [\App\Http\Controllers\Auth\RegisterController::class, 'showRegistrationForm'])->name('register');
-Route::post('/register', [\App\Http\Controllers\Auth\RegisterController::class, 'register'])->name('register.post');
+Route::post('/register', [\App\Http\Controllers\Auth\RegisterController::class, 'register'])->middleware('throttle:5,1')->name('register.post'); // audit SEC-03
 Route::post('/logout', [\App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
 
 // Mot de passe oublié — vérification par code OTP envoyé par e-mail
