@@ -28,3 +28,6 @@ niangprogrammeur.sql
 audit-niangprogrammeur/tests/node_modules/
 audit-niangprogrammeur/tests/test-results/
 audit-niangprogrammeur/tests/playwright-report/
+
+# Variantes de logo générées à la demande (SiteSetting::logoVariantUrl)
+/public/logos/variants/

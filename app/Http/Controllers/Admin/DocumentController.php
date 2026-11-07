@@ -227,6 +227,12 @@ class DocumentController extends Controller
             abort(404);
         }
 
+        // Vignettes des listes (audit PERF-02) : ?w=440, inclus dans la signature de l'URL.
+        // Les couvertures font jusqu'à 1086×1448 px pour un affichage en ~220 px.
+        if ((int) request('w') === 440) {
+            $fullPath = \App\Support\ImageVariant::make($fullPath, 440, storage_path('app/image-variants/document-covers'));
+        }
+
         $mimeType = mime_content_type($fullPath) ?: 'image/png';
 
         return response()->file($fullPath, [

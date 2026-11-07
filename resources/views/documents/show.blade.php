@@ -1450,7 +1450,7 @@ body.dark-mode .flash-close   { color: rgba(255,255,255,.5); }
                         <div class="related-sidebar-image">
                             @if($related->cover_image)
                                 @if($related->cover_type === 'internal')
-                                    <img src="{{ \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $related->id]) }}"
+                                    <img src="{{ \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $related->id, 'w' => 440]) }}"
                                          alt="{{ $related->title }}" width="58" height="58" loading="lazy" decoding="async">
                                 @else
                                     <img src="{{ $related->cover_image }}" alt="{{ $related->title }}" width="58" height="58" loading="lazy" decoding="async">

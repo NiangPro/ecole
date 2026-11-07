@@ -211,7 +211,7 @@ body.dark-mode .wd-done-btn{background:#1f2c40;color:#cbd5e1;}
                     <div class="ncart-thumb">
                         @if($item->document->cover_image)
                             @if($item->document->cover_type === 'internal')
-                                <img loading="lazy" src="{{ \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $item->document->id]) }}" alt="{{ $item->document->title }}">
+                                <img loading="lazy" src="{{ \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $item->document->id, 'w' => 440]) }}" alt="{{ $item->document->title }}">
                             @else
                                 <img loading="lazy" src="{{ $item->document->cover_image }}" alt="{{ $item->document->title }}">
                             @endif

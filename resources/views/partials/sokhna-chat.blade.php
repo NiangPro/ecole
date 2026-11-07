@@ -108,7 +108,7 @@ body.dark-mode .sokhna-chip{color:#22d3ee;border-color:#22d3ee}
 
 <div class="sokhna" id="sokhna" data-endpoint="{{ url('/api/sokhna/chat') }}" data-locale="{{ $sokhnaEn ? 'en' : 'fr' }}">
     <button type="button" class="sokhna-launcher" id="sokhna-launcher" aria-expanded="false" aria-controls="sokhna-panel" aria-label="{{ $sokhnaText['open'] }}">
-        <img class="sokhna-avatar" src="{{ asset('images/sokhna.webp') }}" width="40" height="40" alt="" aria-hidden="true" decoding="async">
+        <img class="sokhna-avatar" src="{{ asset('images/sokhna-80.webp') }}" width="40" height="40" alt="" aria-hidden="true" decoding="async">
         <span class="sokhna-launcher-label">Sokhna</span>
         <span class="sokhna-tip" aria-hidden="true">
             <span class="sokhna-tip-icon">
@@ -123,7 +123,7 @@ body.dark-mode .sokhna-chip{color:#22d3ee;border-color:#22d3ee}
 
     <section class="sokhna-panel" id="sokhna-panel" role="dialog" aria-label="Sokhna" aria-hidden="true">
         <header class="sokhna-header">
-            <img class="sokhna-avatar" src="{{ asset('images/sokhna.webp') }}" width="40" height="40" alt="" aria-hidden="true" decoding="async">
+            <img class="sokhna-avatar" src="{{ asset('images/sokhna-80.webp') }}" width="40" height="40" alt="" aria-hidden="true" decoding="async">
             <div class="sokhna-title">
                 <div class="sokhna-name">Sokhna</div>
                 <div class="sokhna-sub">{{ $sokhnaText['subtitle'] }}</div>

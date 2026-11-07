@@ -96,7 +96,7 @@
           <a href="{{ route('documents.show', $document->slug) }}" class="hp-doc-cover">
             @if($document->cover_image)
               @if($document->cover_type === 'internal')
-                <img src="{{ \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $document->id]) }}"
+                <img src="{{ \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $document->id, 'w' => 440]) }}"
                      alt="{{ $document->title }}"
                      width="280" height="200"
                      loading="{{ $loop->first ? 'eager' : 'lazy' }}"

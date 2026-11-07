@@ -1105,7 +1105,7 @@ body:not(.dark-mode) .comment-form-wrapper textarea {
         <a href="{{ route('documents.show', $document->slug) }}" class="art-doc">
           @if($document->cover_image)
           <img class="art-doc-thumb"
-               src="{{ $document->cover_type === 'internal' ? \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $document->id]) : $document->cover_image }}"
+               src="{{ $document->cover_type === 'internal' ? \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $document->id, 'w' => 440]) : $document->cover_image }}"
                alt="{{ $document->title }}" width="68" height="68"
                loading="lazy" decoding="async"
                onerror="this.style.display='none'">

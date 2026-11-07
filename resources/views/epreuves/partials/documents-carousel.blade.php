@@ -24,7 +24,7 @@
             <div class="epr-doc-cover">
                 @if($doc->cover_image)
                     @if($doc->cover_type === 'internal')
-                        <img src="{{ \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $doc->id]) }}"
+                        <img src="{{ \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $doc->id, 'w' => 440]) }}"
                              alt="{{ $doc->title }}" width="265" height="199" loading="lazy" decoding="async">
                     @else
                         <img src="{{ $doc->cover_image }}" alt="{{ $doc->title }}" width="265" height="199" loading="lazy" decoding="async">

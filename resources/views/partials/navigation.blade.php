@@ -22,14 +22,10 @@
     <div class="navbar-container">
         <!-- Logo -->
         <a href="{{ route('home') }}" class="navbar-logo">
-            @if(\App\Models\SiteSetting::hasCustomLogo())
-                <img src="{{ \App\Models\SiteSetting::logoUrl() }}" alt="Logo NiangProgrammeur" class="logo-image" width="44" height="44" loading="eager" fetchpriority="high">
-            @else
-                <picture>
-                    <source srcset="{{ asset('images/logo.webp') }}" type="image/webp">
-                    <img src="{{ asset('images/logo.png') }}" alt="Logo NiangProgrammeur" class="logo-image" width="44" height="44" loading="eager" fetchpriority="high">
-                </picture>
-            @endif
+            {{-- Logo en 64/128 px (audit PERF-02 : l'original de 446 px était affiché en 44 px). --}}
+            <img src="{{ \App\Models\SiteSetting::logoVariantUrl(64) }}"
+                 srcset="{{ \App\Models\SiteSetting::logoVariantUrl(64) }} 1x, {{ \App\Models\SiteSetting::logoVariantUrl(128) }} 2x"
+                 alt="Logo NiangProgrammeur" class="logo-image" width="44" height="44" loading="eager" fetchpriority="high">
             <span class="logo-text">NiangProgrammeur</span>
         </a>
         

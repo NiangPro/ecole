@@ -271,7 +271,7 @@ body.dark-mode .empty-state {
             <div class="document-item">
                 @if($purchase->document->cover_image)
                     @if($purchase->document->cover_type === 'internal')
-                        <img loading="lazy" src="{{ \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $purchase->document->id]) }}" 
+                        <img loading="lazy" src="{{ \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $purchase->document->id, 'w' => 440]) }}" 
                              alt="{{ $purchase->document->title }}" 
                              class="document-image">
                     @else
