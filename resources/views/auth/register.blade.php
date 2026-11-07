@@ -287,7 +287,9 @@
     .field-toggle svg { width: 19px; height: 19px; }
 
     .field-help { font-size: .78rem; color: rgba(255, 255, 255, .4); margin-top: 6px; }
-    body:not(.dark-mode) .field-help { color: rgba(15, 23, 42, .45); }
+    /* Contrastes ≥ 4,5:1 en mode clair (axe, audit A11Y-01) : .45 → 2,9:1 ; #22d3ee → 1,5:1 */
+    body:not(.dark-mode) .field-help { color: rgba(15, 23, 42, .68); }
+    body:not(.dark-mode) .register-brand-eyebrow { color: #155e75; }
 
     .field-error { display: flex; align-items: center; gap: 6px; font-size: .8rem; color: #f87171; margin-top: 6px; font-weight: 500; }
 

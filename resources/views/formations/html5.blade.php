@@ -620,7 +620,7 @@
         color: #ffffff !important;
     }
     
-    .np-accent-link { color: #155e75; }            /* A11Y-01 : ≥ 4,5:1 sur le gris #E7E9EB */
+    .np-accent-link { color: #155e75; text-decoration: underline; } /* A11Y-01 : ≥ 4,5:1 sur le gris #E7E9EB ; souligné : la couleur seule ne distingue pas le lien du texte */
     body.dark-mode .np-accent-link { color: #22d3ee; }
 
     body.dark-mode .example-box p {

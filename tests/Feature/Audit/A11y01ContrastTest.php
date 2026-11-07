@@ -35,4 +35,15 @@ class A11y01ContrastTest extends TestCase
         $this->assertStringContainsString('--cd:  #0e7490;', file_get_contents(resource_path('views/emplois/article.blade.php')));
         $this->assertStringContainsString('--lg-accent-text: #0e7490;', file_get_contents(resource_path('css/features/login.css')));
     }
+
+    /** Inscription (mode clair) et lien de la formation HTML5, relevés par axe après les autres correctifs. */
+    public function test_inscription_et_lien_dans_le_texte(): void
+    {
+        $register = file_get_contents(resource_path('views/auth/register.blade.php'));
+        $this->assertStringContainsString('body:not(.dark-mode) .field-help { color: rgba(15, 23, 42, .68); }', $register);
+        $this->assertStringContainsString('body:not(.dark-mode) .register-brand-eyebrow { color: #155e75; }', $register);
+
+        $html5 = file_get_contents(resource_path('views/formations/html5.blade.php'));
+        $this->assertStringContainsString('.np-accent-link { color: #155e75; text-decoration: underline; }', $html5);
+    }
 }
