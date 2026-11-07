@@ -105,7 +105,7 @@
         margin-bottom: 30px;
     }
     
-    .info-box h3 {
+    .info-box h2 {
         color: #06b6d4;
         font-size: 1.3rem;
         margin-bottom: 15px;
@@ -129,7 +129,7 @@
 
 <div class="application-container">
     <div class="info-box">
-        <h3>💡 Pourquoi envoyer une candidature spontanée ?</h3>
+        <h2>💡 Pourquoi envoyer une candidature spontanée ?</h2>
         <ul>
             <li>Créez votre propre opportunité même si aucune offre n'est publiée</li>
             <li>Montrez votre proactivité et votre motivation</li>

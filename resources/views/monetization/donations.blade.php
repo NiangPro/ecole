@@ -182,7 +182,7 @@
         100% { background-position: -200% 0; }
     }
 
-    .donation-form-card h3 {
+    .donation-form-card h2 {
         font-size: 2rem;
         font-weight: 800;
         color: white;
@@ -192,11 +192,11 @@
         gap: 12px;
     }
 
-    body:not(.dark-mode) .donation-form-card h3 {
+    body:not(.dark-mode) .donation-form-card h2 {
         color: rgba(30, 41, 59, 0.9);
     }
 
-    .donation-form-card h3 i {
+    .donation-form-card h2 i {
         color: #06b6d4;
         font-size: 2.25rem;
     }
@@ -416,7 +416,7 @@
         box-shadow: 0 8px 32px rgba(6, 182, 212, 0.1);
     }
 
-    .donation-wall-card h3 {
+    .donation-wall-card h2 {
         font-size: 1.75rem;
         font-weight: 800;
         color: white;
@@ -428,11 +428,11 @@
         gap: 10px;
     }
 
-    body:not(.dark-mode) .donation-wall-card h3 {
+    body:not(.dark-mode) .donation-wall-card h2 {
         color: rgba(30, 41, 59, 0.9);
     }
 
-    .donation-wall-card h3 i {
+    .donation-wall-card h2 i {
         color: #06b6d4;
         font-size: 2rem;
     }
@@ -649,10 +649,10 @@
         <div class="donations-grid">
             <!-- Formulaire de Donation -->
             <div class="donation-form-card">
-                <h3>
+                <h2>
                     <i class="fas fa-heart"></i>
                     {{ trans('app.donations.form_title') }}
-                </h3>
+                </h2>
                 <p>
                     {{ trans('app.donations.form_description') }}
                 </p>
@@ -753,10 +753,10 @@
 
             <!-- Mur des Donateurs -->
             <div class="donation-wall-card">
-                <h3>
+                <h2>
                     <i class="fas fa-heart"></i>
                     {{ trans('app.donations.donor_wall.title') }}
-                </h3>
+                </h2>
                 <p>{{ trans('app.donations.donor_wall.description') }}</p>
 
                 @if($recentDonations->count() > 0)

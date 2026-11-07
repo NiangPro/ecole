@@ -944,7 +944,7 @@
                 <div class="formation-icon-wrapper">
                     <i class="{{ $formation['icon'] }} formation-icon" style="color: {{ $formation['color'] }};"></i>
                 </div>
-                <h3 class="formation-name">{{ $formation['name'] }}</h3>
+                <h2 class="formation-name">{{ $formation['name'] }}</h2>
                 <p class="formation-description">{{ $formation['description'] }}</p>
                 <span class="formation-link">
                     {{ trans('app.formations.start_learning') }}

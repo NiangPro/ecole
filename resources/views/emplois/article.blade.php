@@ -378,11 +378,12 @@ body.dark-mode .art-back { color: var(--c); }
   display: flex; align-items: center; justify-content: center;
   color: #fff; font-size: .95rem;
 }
-.art-notice-txt h4 {
-  font-size: .95rem; font-weight: 700; margin: 0 0 6px;
+.art-notice-txt .art-notice-title {
+  /* Ancien <h4> (audit A11Y-03 : saut de niveau) : line-height hérité comme avant, pas celui des p */
+  font-size: .95rem; font-weight: 700; margin: 0 0 6px; line-height: inherit;
   color: rgba(15,23,42,.92);
 }
-body.dark-mode .art-notice-txt h4 { color: rgba(255,255,255,.9); }
+body.dark-mode .art-notice-txt .art-notice-title { color: rgba(255,255,255,.9); }
 .art-notice-txt p {
   margin: 0; font-size: .875rem; line-height: 1.65;
   color: rgba(15,23,42,.78);
@@ -973,7 +974,7 @@ body:not(.dark-mode) .comment-form-wrapper textarea {
       <div class="art-notice">
         <div class="art-notice-ico"><i class="fas fa-info-circle"></i></div>
         <div class="art-notice-txt">
-          <h4>{{ app()->getLocale() === 'fr' ? 'Note importante' : 'Important Note' }}</h4>
+          <p class="art-notice-title">{{ app()->getLocale() === 'fr' ? 'Note importante' : 'Important Note' }}</p>
           <p>{{ app()->getLocale() === 'fr'
             ? 'NiangProgrammeur ne recrute pas directement. Nous partageons uniquement les offres d\'emploi, bourses d\'études et opportunités disponibles au Sénégal. Pour postuler, veuillez contacter directement l\'organisme ou l\'entreprise concernée via les coordonnées fournies dans l\'article.'
             : 'NiangProgrammeur does not recruit directly. We only share job offers, scholarships and opportunities available in Senegal. To apply, please contact the organization or company directly using the contact information provided in the article.' }}</p>

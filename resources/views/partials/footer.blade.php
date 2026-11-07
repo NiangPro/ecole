@@ -62,7 +62,7 @@
 
       {{-- COL 2 — Navigation --}}
       <div class="ft__col">
-        <h3 class="ft__col-title">Navigation</h3>
+        <h2 class="ft__col-title">Navigation</h2>
         <nav class="ft__nav" aria-label="Liens rapides">
           <a href="{{ route('home') }}"             class="ft__link"><i class="fas fa-home"></i> Accueil</a>
           <a href="{{ route('formations.all') }}"   class="ft__link"><i class="fas fa-graduation-cap"></i> Formations</a>
@@ -77,7 +77,7 @@
 
       {{-- COL 3 — Formations --}}
       <div class="ft__col">
-        <h3 class="ft__col-title">Technologies</h3>
+        <h2 class="ft__col-title">Technologies</h2>
         <nav class="ft__nav" aria-label="Formations">
           <a href="{{ route('formations.html5') }}"       class="ft__link">🌐 HTML5</a>
           <a href="{{ route('formations.css3') }}"        class="ft__link">🎨 CSS3</a>
@@ -92,7 +92,7 @@
 
       {{-- COL 4 — Newsletter --}}
       <div class="ft__col">
-        <h3 class="ft__col-title">Newsletter</h3>
+        <h2 class="ft__col-title">Newsletter</h2>
         <p class="ft__newsletter-desc">
           {{ trans('app.footer.newsletter_description') ?? 'Recevez nos dernières formations et opportunités directement dans votre boîte mail.' }}
         </p>

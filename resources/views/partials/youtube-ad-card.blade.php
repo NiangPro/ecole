@@ -30,7 +30,7 @@
     </div>
 
     <div class="np-youtube-ad__content">
-        <h4 class="np-youtube-ad__title">{{ $ad->name }}</h4>
+        <p class="np-youtube-ad__title">{{ $ad->name }}</p>
         @if($ad->description)
         <p class="np-youtube-ad__desc">{{ $ad->description }}</p>
         @endif

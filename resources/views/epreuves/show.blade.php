@@ -87,7 +87,7 @@
         <div class="ep2-grid">
 
             {{-- Colonne gauche : aperçu PDF --}}
-            <main>
+            <div>
                 @if($epreuve->isCorrige())
                 {{-- Corrigé : pas d'aperçu --}}
                 <div class="ep2-card" style="text-align:center; padding:3rem 1.5rem;">
@@ -133,7 +133,7 @@
                     </div>
                 </div>
                 @endif
-            </main>
+            </div>
 
             {{-- Colonne droite : actions --}}
             <aside class="ep2-side">

@@ -483,7 +483,7 @@
     </div>
 
     <div class="register-shell">
-        <main class="register-form-panel">
+        <div class="register-form-panel">
             <div class="register-card">
                 <h1>{{ trans('app.auth.register.title') }}</h1>
                 <p class="register-subtitle">{{ trans('app.auth.register.subtitle') }}</p>
@@ -827,7 +827,7 @@
                     </a>
                 </div>
             </div>
-        </main>
+        </div>
 
         <aside class="register-brand">
             <span class="register-brand-eyebrow">Communauté Sénégal</span>

@@ -517,7 +517,7 @@ body.dark-mode .flash-close:hover {
             </a>
         </aside>
 
-        <main class="documents-main">
+        <div class="documents-main">
             @if($documents->count() > 0)
                 <div class="documents-grid">
                     @foreach($documents as $document)
@@ -534,7 +534,7 @@ body.dark-mode .flash-close:hover {
                     <p>Aucun document dans cette catégorie.</p>
                 </div>
             @endif
-        </main>
+        </div>
     </div>
 </div>
 

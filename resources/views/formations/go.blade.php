@@ -807,9 +807,9 @@
                             <div style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #047857, #06b6d4); display: flex; align-items: center; justify-content: center; color: white; font-size: 1.75rem; box-shadow: 0 4px 15px rgba(4, 170, 109, 0.4);">
                                 <i class="fas fa-rocket"></i>
                             </div>
-                            <h3 style="font-size: 1.5rem; font-weight: 700; color: #2c3e50; margin: 0;">
+                            <h2 style="font-size: 1.5rem; font-weight: 700; color: #2c3e50; margin: 0;">
                                 {{ trans('app.formations.cta.title') }}
-                            </h3>
+                            </h2>
                         </div>
                         <p style="font-size: 1.1rem; color: #2c3e50; margin-bottom: 1.5rem; line-height: 1.7;">
                             {{ trans('app.formations.cta.description') }}
@@ -872,7 +872,7 @@
         </aside>
 
         <!-- Main Content -->
-        <main class="main-content">
+        <div class="main-content">
             <h2 id="intro" class="intro-title">{{ trans('app.formations.go.intro_title') }}</h2>
             <p>{!! trans('app.formations.go.intro_text') !!}</p>
 
@@ -1569,7 +1569,7 @@ except Exception as e:
                 <a href="{{ route('formations.ia') }}" class="nav-btn">{{ trans('app.formations.go.nav_previous') }}</a>
                 <a href="{{ route('exercices') }}" class="nav-btn">{{ trans('app.formations.go.nav_next') }}</a>
             </div>
-        </main>
+        </div>
     </div>
 </div>
 

@@ -528,7 +528,7 @@
             
             <!-- Article Content -->
             <div class="all-article-content">
-                <h3 class="all-article-title">{{ $article->title }}</h3>
+                <h2 class="all-article-title">{{ $article->title }}</h2>
                 
                 @if($article->excerpt)
                 <p class="all-article-excerpt">{{ $article->excerpt }}</p>

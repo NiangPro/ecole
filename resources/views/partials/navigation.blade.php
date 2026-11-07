@@ -752,8 +752,8 @@
 <!-- Mobile Menu Overlay -->
 <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
 
-<!-- Mobile Menu -->
-<div class="mobile-menu" id="mobileMenu">
+<!-- Mobile Menu (audit A11Y-03 : repère nav) -->
+<nav class="mobile-menu" id="mobileMenu" aria-label="Menu mobile">
     <div class="mobile-menu-header">
         <div class="mobile-menu-title">Menu</div>
         <button type="button" class="mobile-menu-close" onclick="closeMobileMenu()" aria-label="Fermer le menu">
@@ -1108,7 +1108,7 @@
         </li>
         @endauth
     </ul>
-</div>
+</nav>
 
 <script>
     // Navbar scroll effect

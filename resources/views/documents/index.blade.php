@@ -117,7 +117,7 @@
     100% { background-position: -200% 0; }
 }
 
-.documents-filters h3 {
+.documents-filters h2 {
     font-size: 1.5rem;
     font-weight: 800;
     color: #1e293b;
@@ -127,7 +127,7 @@
     gap: 0.75rem;
 }
 
-.documents-filters h3 i {
+.documents-filters h2 i {
     color: #06b6d4;
 }
 
@@ -594,12 +594,12 @@ body.dark-mode .documents-filters::before {
     background: linear-gradient(90deg, #06b6d4, #14b8a6, #0891b2, #0d9488, #06b6d4);
 }
 
-body.dark-mode .documents-filters h3 {
+body.dark-mode .documents-filters h2 {
     color: white;
     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
-body.dark-mode .documents-filters h3 i {
+body.dark-mode .documents-filters h2 i {
     color: #06b6d4;
     filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.8));
 }
@@ -956,9 +956,9 @@ body.dark-mode .flash-close:hover {
     <div class="documents-container">
         <!-- Sidebar Filtres Sticky -->
         <aside class="documents-filters">
-            <h3>
+            <h2>
                 <i class="fas fa-filter"></i> Filtres
-            </h3>
+            </h2>
 
             <form method="GET" action="{{ route('documents.index') }}">
                 @if(request('search'))
@@ -992,7 +992,7 @@ body.dark-mode .flash-close:hover {
         </aside>
 
         <!-- Contenu Principal -->
-        <main class="documents-main">
+        <div class="documents-main">
             @if($featuredDocuments->count() > 0)
             <div class="featured-section">
                 <div class="section-header">
@@ -1031,7 +1031,7 @@ body.dark-mode .flash-close:hover {
                     <p>Aucun document trouvé.</p>
                 </div>
             @endif
-        </main>
+        </div>
     </div>
 </div>
 

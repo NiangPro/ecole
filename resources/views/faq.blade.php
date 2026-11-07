@@ -199,14 +199,14 @@
         background: linear-gradient(135deg, rgba(6, 182, 212, 0.15), rgba(20, 184, 166, 0.15)) !important;
     }
 
-    .faq-question h3 {
+    .faq-question h2 {
         font-family: 'Poppins', sans-serif;
         font-size: 1.15rem; font-weight: 700;
         color: #06b6d4;
         margin: 0; flex: 1;
     }
 
-    body:not(.dark-mode) .faq-question h3 { color: rgba(30, 41, 59, 0.95) !important; }
+    body:not(.dark-mode) .faq-question h2 { color: rgba(30, 41, 59, 0.95) !important; }
 
     .faq-chevron { color: rgba(6, 182, 212, 0.6); transition: transform 0.3s ease; flex-shrink: 0; }
     .faq-item.is-open .faq-chevron { transform: rotate(180deg); }
@@ -301,7 +301,7 @@
         .faq-hero h1 { font-size: 2.3rem; }
         .faq-hero p { font-size: 1rem; }
         .faq-question { padding: 18px 18px; }
-        .faq-question h3 { font-size: 1.02rem; }
+        .faq-question h2 { font-size: 1.02rem; }
         .faq-answer { padding: 0 18px 20px 63px; }
         .faq-cta { padding: 32px 20px; }
         .faq-cta h3 { font-size: 1.5rem; }
@@ -348,7 +348,7 @@
         <div class="faq-item" data-cat="formations" data-search="prérequis formations débutant niveau">
             <div class="faq-question">
                 <div class="faq-question-icon"><i class="fas fa-graduation-cap"></i></div>
-                <h3>Quels sont les prérequis pour suivre vos formations ?</h3>
+                <h2>Quels sont les prérequis pour suivre vos formations ?</h2>
                 <i class="fas fa-chevron-down faq-chevron"></i>
             </div>
             <div class="faq-answer-wrap">
@@ -361,7 +361,7 @@
         <div class="faq-item" data-cat="formations" data-search="gratuit prix formations gratuites">
             <div class="faq-question">
                 <div class="faq-question-icon"><i class="fas fa-gift"></i></div>
-                <h3>Les formations sont-elles vraiment gratuites ?</h3>
+                <h2>Les formations sont-elles vraiment gratuites ?</h2>
                 <i class="fas fa-chevron-down faq-chevron"></i>
             </div>
             <div class="faq-answer-wrap">
@@ -374,7 +374,7 @@
         <div class="faq-item" data-cat="formations" data-search="technologies langages java python c++ typescript go rust exercices quiz">
             <div class="faq-question">
                 <div class="faq-question-icon"><i class="fas fa-laptop-code"></i></div>
-                <h3>Quelles technologies puis-je apprendre sur NiangProgrammeur ?</h3>
+                <h2>Quelles technologies puis-je apprendre sur NiangProgrammeur ?</h2>
                 <i class="fas fa-chevron-down faq-chevron"></i>
             </div>
             <div class="faq-answer-wrap">
@@ -387,7 +387,7 @@
         <div class="faq-item" data-cat="formations" data-search="durée temps rythme apprentissage">
             <div class="faq-question">
                 <div class="faq-question-icon"><i class="fas fa-clock"></i></div>
-                <h3>Combien de temps faut-il pour terminer une formation ?</h3>
+                <h2>Combien de temps faut-il pour terminer une formation ?</h2>
                 <i class="fas fa-chevron-down faq-chevron"></i>
             </div>
             <div class="faq-answer-wrap">
@@ -401,7 +401,7 @@
         <div class="faq-item" data-cat="documents" data-search="documents téléchargeables pdf fiches cours prix panier paiement wave orange money">
             <div class="faq-question">
                 <div class="faq-question-icon"><i class="fas fa-file-alt"></i></div>
-                <h3>Qu'est-ce que la section « Documents » et sont-ils gratuits ?</h3>
+                <h2>Qu'est-ce que la section « Documents » et sont-ils gratuits ?</h2>
                 <i class="fas fa-chevron-down faq-chevron"></i>
             </div>
             <div class="faq-answer-wrap">
@@ -414,7 +414,7 @@
         <div class="faq-item" data-cat="documents" data-search="packs bundles réduction prix réduit">
             <div class="faq-question">
                 <div class="faq-question-icon"><i class="fas fa-box-open"></i></div>
-                <h3>Comment fonctionnent les packs (bundles) de documents ?</h3>
+                <h2>Comment fonctionnent les packs (bundles) de documents ?</h2>
                 <i class="fas fa-chevron-down faq-chevron"></i>
             </div>
             <div class="faq-answer-wrap">
@@ -427,7 +427,7 @@
         <div class="faq-item" data-cat="documents" data-search="épreuves corrigés examens cfee bac bfem papiers administratifs">
             <div class="faq-question">
                 <div class="faq-question-icon"><i class="fas fa-file-signature"></i></div>
-                <h3>Proposez-vous des épreuves et corrigés d'examens ?</h3>
+                <h2>Proposez-vous des épreuves et corrigés d'examens ?</h2>
                 <i class="fas fa-chevron-down faq-chevron"></i>
             </div>
             <div class="faq-answer-wrap">
@@ -441,7 +441,7 @@
         <div class="faq-item" data-cat="payant" data-search="cours payants abonnement premium différence gratuit">
             <div class="faq-question">
                 <div class="faq-question-icon"><i class="fas fa-crown"></i></div>
-                <h3>Quelle est la différence entre formations gratuites, cours payants et abonnement Premium ?</h3>
+                <h2>Quelle est la différence entre formations gratuites, cours payants et abonnement Premium ?</h2>
                 <i class="fas fa-chevron-down faq-chevron"></i>
             </div>
             <div class="faq-answer-wrap">
@@ -454,7 +454,7 @@
         <div class="faq-item" data-cat="payant" data-search="don faire un don affiliation programme affilié">
             <div class="faq-question">
                 <div class="faq-question-icon"><i class="fas fa-hand-holding-heart"></i></div>
-                <h3>Puis-je faire un don ou devenir affilié ?</h3>
+                <h2>Puis-je faire un don ou devenir affilié ?</h2>
                 <i class="fas fa-chevron-down faq-chevron"></i>
             </div>
             <div class="faq-answer-wrap">
@@ -468,7 +468,7 @@
         <div class="faq-item" data-cat="certificats" data-search="certificat badge récompense profil complet">
             <div class="faq-question">
                 <div class="faq-question-icon"><i class="fas fa-award"></i></div>
-                <h3>Puis-je obtenir un certificat ou un badge ?</h3>
+                <h2>Puis-je obtenir un certificat ou un badge ?</h2>
                 <i class="fas fa-chevron-down faq-chevron"></i>
             </div>
             <div class="faq-answer-wrap">
@@ -482,7 +482,7 @@
         <div class="faq-item" data-cat="compte" data-search="compte inscription connexion google github facebook oauth">
             <div class="faq-question">
                 <div class="faq-question-icon"><i class="fas fa-user-plus"></i></div>
-                <h3>Comment créer un compte ? Puis-je me connecter avec Google ?</h3>
+                <h2>Comment créer un compte ? Puis-je me connecter avec Google ?</h2>
                 <i class="fas fa-chevron-down faq-chevron"></i>
             </div>
             <div class="faq-answer-wrap">
@@ -495,7 +495,7 @@
         <div class="faq-item" data-cat="compte" data-search="mot de passe oublié réinitialiser">
             <div class="faq-question">
                 <div class="faq-question-icon"><i class="fas fa-key"></i></div>
-                <h3>J'ai oublié mon mot de passe, que faire ?</h3>
+                <h2>J'ai oublié mon mot de passe, que faire ?</h2>
                 <i class="fas fa-chevron-down faq-chevron"></i>
             </div>
             <div class="faq-answer-wrap">
@@ -509,7 +509,7 @@
         <div class="faq-item" data-cat="communaute" data-search="forum communauté discussion entraide">
             <div class="faq-question">
                 <div class="faq-question-icon"><i class="fas fa-comments"></i></div>
-                <h3>À quoi sert le forum NiangProgrammeur ?</h3>
+                <h2>À quoi sert le forum NiangProgrammeur ?</h2>
                 <i class="fas fa-chevron-down faq-chevron"></i>
             </div>
             <div class="faq-answer-wrap">
@@ -522,7 +522,7 @@
         <div class="faq-item" data-cat="communaute" data-search="emploi stage offre opportunité candidature">
             <div class="faq-question">
                 <div class="faq-question-icon"><i class="fas fa-briefcase"></i></div>
-                <h3>Proposez-vous des offres d'emploi ou de stage ?</h3>
+                <h2>Proposez-vous des offres d'emploi ou de stage ?</h2>
                 <i class="fas fa-chevron-down faq-chevron"></i>
             </div>
             <div class="faq-answer-wrap">
@@ -535,7 +535,7 @@
         <div class="faq-item" data-cat="communaute" data-search="partager amis réseaux sociaux">
             <div class="faq-question">
                 <div class="faq-question-icon"><i class="fas fa-share-alt"></i></div>
-                <h3>Puis-je partager les formations avec mes amis ?</h3>
+                <h2>Puis-je partager les formations avec mes amis ?</h2>
                 <i class="fas fa-chevron-down faq-chevron"></i>
             </div>
             <div class="faq-answer-wrap">
@@ -549,7 +549,7 @@
         <div class="faq-item" data-cat="support" data-search="contact aide support whatsapp email">
             <div class="faq-question">
                 <div class="faq-question-icon"><i class="fas fa-headset"></i></div>
-                <h3>Proposez-vous un support ou de l'aide ?</h3>
+                <h2>Proposez-vous un support ou de l'aide ?</h2>
                 <i class="fas fa-chevron-down faq-chevron"></i>
             </div>
             <div class="faq-answer-wrap">
@@ -562,7 +562,7 @@
         <div class="faq-item" data-cat="support" data-search="newsletter nouveautés informé réseaux sociaux">
             <div class="faq-question">
                 <div class="faq-question-icon"><i class="fas fa-bell"></i></div>
-                <h3>Comment rester informé des nouveautés ?</h3>
+                <h2>Comment rester informé des nouveautés ?</h2>
                 <i class="fas fa-chevron-down faq-chevron"></i>
             </div>
             <div class="faq-answer-wrap">
@@ -575,7 +575,7 @@
         <div class="faq-item" data-cat="support" data-search="mobile smartphone tablette responsive">
             <div class="faq-question">
                 <div class="faq-question-icon"><i class="fas fa-mobile-alt"></i></div>
-                <h3>Puis-je accéder au site depuis mon mobile ?</h3>
+                <h2>Puis-je accéder au site depuis mon mobile ?</h2>
                 <i class="fas fa-chevron-down faq-chevron"></i>
             </div>
             <div class="faq-answer-wrap">
@@ -588,7 +588,7 @@
         <div class="faq-item" data-cat="support" data-search="mise à jour contenu actualisé usage commercial">
             <div class="faq-question">
                 <div class="faq-question-icon"><i class="fas fa-sync-alt"></i></div>
-                <h3>Les contenus sont-ils régulièrement mis à jour ?</h3>
+                <h2>Les contenus sont-ils régulièrement mis à jour ?</h2>
                 <i class="fas fa-chevron-down faq-chevron"></i>
             </div>
             <div class="faq-answer-wrap">
@@ -660,7 +660,7 @@
 
         items.forEach(item => {
             const matchesCategory = activeCategory === 'all' || item.dataset.cat === activeCategory;
-            const haystack = (item.querySelector('h3').textContent + ' ' + (item.dataset.search || '')).toLowerCase();
+            const haystack = (item.querySelector('h2').textContent + ' ' + (item.dataset.search || '')).toLowerCase();
             const matchesSearch = !query || haystack.includes(query);
             const visible = matchesCategory && matchesSearch;
 

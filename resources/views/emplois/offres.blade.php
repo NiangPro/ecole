@@ -468,7 +468,7 @@
         display: block;
     }
 
-    .jobs-empty h3 {
+    .jobs-empty h2 {
         font-family: 'Poppins', sans-serif;
         font-size: 1.8rem;
         font-weight: 900;
@@ -582,7 +582,7 @@
             </div>
 
             <div class="job-card-body">
-                <h3 class="job-card-title">{{ $article->title }}</h3>
+                <h2 class="job-card-title">{{ $article->title }}</h2>
                 @if($article->excerpt)
                 <p class="job-card-excerpt">{{ $article->excerpt }}</p>
                 @endif
@@ -605,7 +605,7 @@
     @else
     <div class="jobs-empty">
         <i class="fas fa-newspaper"></i>
-        <h3>Aucune offre disponible</h3>
+        <h2>Aucune offre disponible</h2>
         <p>Il n'y a pas encore d'offres publiées dans cette catégorie.</p>
     </div>
     @endif

@@ -164,7 +164,7 @@
         </aside>
 
         <!-- Contenu Principal -->
-        <main class="courses-main">
+        <div class="courses-main">
             <!-- Header avec tri et résultats -->
             <div class="courses-header">
                 <div class="courses-results">
@@ -299,7 +299,7 @@
                 </a>
         </div>
         @endif
-        </main>
+        </div>
     </div>
 </div>
 

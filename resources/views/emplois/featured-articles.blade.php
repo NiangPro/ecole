@@ -520,14 +520,14 @@
         color: #475569;
     }
     
-    .no-featured-articles h3 {
+    .no-featured-articles h2 {
         font-size: 1.5rem;
         color: #1e293b;
         margin-bottom: 12px;
         font-weight: 700;
     }
     
-    body.dark-mode .no-featured-articles h3 {
+    body.dark-mode .no-featured-articles h2 {
         color: #f1f5f9;
     }
     
@@ -641,7 +641,7 @@
                 </div>
                 @endif
                 
-                <h3 class="featured-article-title">{{ $article->title }}</h3>
+                <h2 class="featured-article-title">{{ $article->title }}</h2>
                 
                 @if($article->excerpt)
                 <p class="featured-article-excerpt">{{ $article->excerpt }}</p>
@@ -673,7 +673,7 @@
     @else
     <div class="no-featured-articles">
         <i class="fas fa-fire"></i>
-        <h3>{{ app()->getLocale() === 'fr' ? 'Aucun article vedette disponible' : 'No featured articles available' }}</h3>
+        <h2>{{ app()->getLocale() === 'fr' ? 'Aucun article vedette disponible' : 'No featured articles available' }}</h2>
         <p>{{ app()->getLocale() === 'fr' ? 'Il n\'y a pas encore d\'articles vedettes publiés.' : 'There are no featured articles published yet.' }}</p>
     </div>
     @endif

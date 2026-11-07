@@ -270,7 +270,7 @@
     body:not(.dark-mode) .no-articles { background: rgba(255,255,255,.9) !important; border-color: rgba(6,182,212,.25) !important; }
     .no-articles i { font-size: 6rem; color: rgba(6,182,212,.4); margin-bottom: 30px; display: block; animation: float 3s ease-in-out infinite; }
     @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-20px)} }
-    .no-articles h3 { font-size: 2.5rem; color: #fff; margin-bottom: 15px; font-weight: 900; background: linear-gradient(135deg,#06b6d4,#14b8a6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .no-articles h2 { font-size: 2.5rem; color: #fff; margin-bottom: 15px; font-weight: 900; background: linear-gradient(135deg,#06b6d4,#14b8a6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .no-articles p { color: rgba(255,255,255,.7); font-size: 1.2rem; }
     body:not(.dark-mode) .no-articles p { color: rgba(30,41,59,.7) !important; }
 
@@ -352,7 +352,7 @@
                     <span class="article-card-category">
                         <i class="fas fa-folder"></i> {{ $article->category->name }}
                     </span>
-                    <h3 class="article-card-title">{{ $article->title }}</h3>
+                    <h2 class="article-card-title">{{ $article->title }}</h2>
                 </div>
             </div>
 
@@ -382,7 +382,7 @@
     @else
     <div class="no-articles">
         <i class="fas fa-newspaper"></i>
-        <h3>Aucun article disponible</h3>
+        <h2>Aucun article disponible</h2>
         <p>Il n'y a pas encore d'articles publiés dans cette catégorie.</p>
     </div>
     @endif
