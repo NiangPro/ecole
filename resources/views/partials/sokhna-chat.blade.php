@@ -134,7 +134,8 @@ body.dark-mode .sokhna-chip{color:#22d3ee;border-color:#22d3ee}
 
         <div class="sokhna-log" id="sokhna-log" aria-live="polite"></div>
 
-        <form class="sokhna-form" id="sokhna-form">
+        {{-- method="post" : si le JS échoue, la question ne part jamais dans l'URL (audit FCT-03) --}}
+        <form class="sokhna-form" id="sokhna-form" method="post" action="#">
             <label for="sokhna-input" class="sr-only" style="position:absolute;inline-size:1px;block-size:1px;overflow:hidden;clip:rect(0 0 0 0)">{{ $sokhnaText['placeholder'] }}</label>
             <textarea class="sokhna-input" id="sokhna-input" rows="1" maxlength="2000" placeholder="{{ $sokhnaText['placeholder'] }}"></textarea>
             <button type="submit" class="sokhna-send" id="sokhna-send" aria-label="{{ $sokhnaText['send'] }}"><i class="fas fa-paper-plane" aria-hidden="true"></i></button>

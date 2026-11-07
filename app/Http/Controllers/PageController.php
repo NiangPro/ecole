@@ -335,8 +335,10 @@ class PageController extends Controller
 
     public function newsletterSubscribe(Request $request)
     {
-        $request->validate([
-            'email' => 'required|email|unique:newsletters,email'
+        // Sac d'erreurs dédié : sans JS (repli du formulaire, audit FCT-03), l'erreur s'affiche
+        // sous le formulaire du pied de page sans toucher aux champs « email » de la page.
+        $request->validateWithBag('newsletter', [
+            'email' => 'required|email|max:255|unique:newsletters,email'
         ], [
             'email.required' => 'L\'adresse email est requise.',
             'email.email' => 'Veuillez entrer une adresse email valide.',
@@ -353,9 +355,18 @@ class PageController extends Controller
             'subscribed_at' => now()
         ]);
 
+        $message = 'Merci pour votre inscription ! Vous recevrez bientôt nos actualités.';
+
+        if (! $request->expectsJson()) {
+            $back = $this->safeLocalRedirect(url()->previous()) ?? route('home');
+
+            return redirect()->to(strtok($back, '#') . '#newsletterForm')
+                ->with('newsletter_success', $message);
+        }
+
         return response()->json([
             'success' => true,
-            'message' => 'Merci pour votre inscription ! Vous recevrez bientôt nos actualités.'
+            'message' => $message
         ]);
     }
 

@@ -96,7 +96,8 @@
         <p class="ft__newsletter-desc">
           {{ trans('app.footer.newsletter_description') ?? 'Recevez nos dernières formations et opportunités directement dans votre boîte mail.' }}
         </p>
-        <form id="newsletterForm" class="ft__newsletter-form" novalidate>
+        {{-- method/action : repli sans JS, l'email ne part jamais en GET dans l'URL (audit FCT-03) --}}
+        <form id="newsletterForm" class="ft__newsletter-form" method="POST" action="{{ route('newsletter.subscribe') }}" novalidate>
           @csrf
           <div class="ft__input-wrap">
             <i class="fas fa-envelope ft__input-icon"></i>
@@ -107,6 +108,7 @@
               placeholder="votre@email.com"
               class="ft__input"
               required
+              maxlength="255"
               autocomplete="email"
             >
           </div>
@@ -115,7 +117,8 @@
             S'abonner
           </button>
         </form>
-        <div id="newsletterMessage" class="ft__newsletter-msg" role="alert" aria-live="polite"></div>
+        @php $__nlError = $errors->getBag('newsletter')->first('email'); @endphp
+        <div id="newsletterMessage" class="ft__newsletter-msg{{ session('newsletter_success') ? ' ft__newsletter-msg--ok' : ($__nlError ? ' ft__newsletter-msg--err' : '') }}" role="alert" aria-live="polite">@if(session('newsletter_success'))<i class="fas fa-check-circle"></i> {{ session('newsletter_success') }}@elseif($__nlError)<i class="fas fa-exclamation-circle"></i> {{ $__nlError }}@endif</div>
 
         {{-- Contact rapide --}}
         @if($siteSettings?->contact_email)
