@@ -123,7 +123,8 @@ body.dark-mode .sokhna-chip{color:#22d3ee;border-color:#22d3ee}
         </span>
     </button>
 
-    <section class="sokhna-panel" id="sokhna-panel" role="dialog" aria-label="Sokhna" aria-hidden="true">
+    {{-- inert tant que le panneau est fermé : aria-hidden seul laissait ses boutons focalisables (axe aria-hidden-focus) --}}
+    <section class="sokhna-panel" id="sokhna-panel" role="dialog" aria-label="Sokhna" aria-hidden="true" inert>
         <header class="sokhna-header">
             <img class="sokhna-avatar" src="{{ asset('images/sokhna-80.webp') }}" width="40" height="40" alt="" aria-hidden="true" decoding="async">
             <div class="sokhna-title">
@@ -252,6 +253,7 @@ body.dark-mode .sokhna-chip{color:#22d3ee;border-color:#22d3ee}
         root.classList.toggle('is-open', open);
         launcher.setAttribute('aria-expanded', open ? 'true' : 'false');
         panel.setAttribute('aria-hidden', open ? 'false' : 'true');
+        panel.toggleAttribute('inert', !open);
         if (open) {
             if (!log.childElementCount) renderAll();
             input.focus();

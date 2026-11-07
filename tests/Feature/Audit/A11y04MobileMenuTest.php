@@ -23,4 +23,12 @@ class A11y04MobileMenuTest extends TestCase
             ->assertSee('mobileToggle.focus({ preventScroll: true })', false)
             ->assertSee("if (e.key !== 'Tab' || !mobileMenu.classList.contains('active')) return;", false);
     }
+
+    /** Panneau Sokhna fermé : inert, sinon ses boutons restent focalisables sous aria-hidden. */
+    public function test_panneau_sokhna_inert_quand_ferme(): void
+    {
+        $this->get('/')->assertOk()
+            ->assertSee('aria-label="Sokhna" aria-hidden="true" inert>', false)
+            ->assertSee("panel.toggleAttribute('inert', !open);", false);
+    }
 }
