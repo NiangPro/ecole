@@ -8,6 +8,11 @@
     <meta name="author" content="Bassirou Niang - NiangProgrammeur">
     {{-- Une page peut changer la directive avec @section('robots', 'noindex, follow') (audit SEO-05). --}}
     @php $__robots = trim($__env->yieldContent('robots')) ?: 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'; @endphp
+    {{-- Audit SEO-01 : la version anglaise s'affiche à la même adresse que la française (session
+         ou « ?lang=en »). Tant qu'il n'y a pas d'URL distincte par langue, tout rendu anglais est
+         non indexé et sans canonical (Google déconseille une canonical vers une autre langue).
+         Basé sur la langue du rendu, pas sur l'URL : cohérent avec les caches HTML par langue. --}}
+    @php if (app()->getLocale() === 'en') { $__robots = 'noindex, follow'; } @endphp
     <meta name="robots" content="{!! $__robots !!}">
     <meta name="googlebot" content="{!! $__robots !!}">
     <meta name="bingbot" content="{!! $__robots !!}">

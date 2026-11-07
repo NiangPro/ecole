@@ -57,4 +57,23 @@ class Seo01LanguageTest extends TestCase
     {
         $this->assertStringContainsString('Disallow: /language/', file_get_contents(public_path('robots.txt')));
     }
+
+    /** Rendu anglais (même URL que le français) : non indexé, sans canonical ; le français reste indexé. */
+    public function test_variante_anglaise_par_parametre_non_indexee(): void
+    {
+        foreach (['/', '/formations/html5', '/contact'] as $url) {
+            $en = $this->get($url . '?lang=en')->assertOk()->getContent();
+            $this->assertStringContainsString('<meta name="robots" content="noindex, follow">', $en, $url);
+            $this->assertStringNotContainsString('rel="canonical"', $en, $url);
+
+            // Nouveau visiteur (sans la session anglaise du rendu précédent) : version française.
+            $this->flushSession();
+            $this->defaultCookies = [];
+            app()->setLocale('fr');
+            $fr = $this->get($url)->assertOk()->getContent();
+            $this->assertStringContainsString('<html lang="fr"', $fr, $url);
+            $this->assertStringContainsString('<meta name="robots" content="index, follow', $fr, $url);
+            $this->assertStringContainsString('rel="canonical"', $fr, $url);
+        }
+    }
 }
