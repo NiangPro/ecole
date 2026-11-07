@@ -26,4 +26,13 @@ class Ux0102HomeHeroTest extends TestCase
         $css = file_get_contents(resource_path('css/features/homepage.css'));
         $this->assertStringContainsString('body.np-hero-ctas-visible .whatsapp-widget', $css);
     }
+
+    /** Audit UX-05 : voile du hero plus opaque en mobile (filigrane de la photo derrière le titre). */
+    public function test_filigrane_attenue_en_mobile(): void
+    {
+        $css = file_get_contents(resource_path('css/features/homepage.css'));
+        preg_match('/@media \(max-width: 768px\) \{\s*\.hp-hero \{(.*?)\}/s', $css, $m);
+        $this->assertNotEmpty($m);
+        $this->assertStringContainsString('oklch(5% 0.02 230 / 88%) 50%', $m[1]);
+    }
 }

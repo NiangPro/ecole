@@ -64,11 +64,13 @@
 
   @media (max-width: 768px) {
     .hp-hero {
+      /* Voile plus opaque en mobile (audit UX-05) : le filigrane « < NiangProgrammeur /> »
+         de la photo passait derrière le titre et en gênait la lecture. Desktop inchangé. */
       background-image:
         linear-gradient(to bottom,
-          oklch(5% 0.02 230 / 82%) 0%,
-          oklch(5% 0.02 230 / 72%) 50%,
-          oklch(5% 0.02 230 / 85%) 100%
+          oklch(5% 0.02 230 / 90%) 0%,
+          oklch(5% 0.02 230 / 88%) 50%,
+          oklch(5% 0.02 230 / 90%) 100%
         ),
         image-set(
           url('/images/hero-bg-mobile.webp') type('image/webp'),
