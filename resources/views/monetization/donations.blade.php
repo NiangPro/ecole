@@ -13,7 +13,7 @@
             $paymentMethods['wave'] = [
                 'name' => trans('app.donations.payment_methods.wave.name'),
                 'icon' => 'fas fa-mobile-alt',
-                'min_amount' => 1000,
+                'min_amount' => 1, // Wave : tous les montants acceptés
                 'description' => trans('app.donations.payment_methods.wave.description')
             ];
         }
@@ -40,7 +40,7 @@
         $paymentMethods['wave'] = [
             'name' => trans('app.donations.payment_methods.wave.name'),
             'icon' => 'fas fa-mobile-alt',
-            'min_amount' => 1000,
+            'min_amount' => 1, // Wave : tous les montants acceptés
             'description' => trans('app.donations.payment_methods.wave.description')
         ];
     }
@@ -182,7 +182,7 @@
         100% { background-position: -200% 0; }
     }
 
-    .donation-form-card h3 {
+    .donation-form-card h2 {
         font-size: 2rem;
         font-weight: 800;
         color: white;
@@ -192,11 +192,11 @@
         gap: 12px;
     }
 
-    body:not(.dark-mode) .donation-form-card h3 {
+    body:not(.dark-mode) .donation-form-card h2 {
         color: rgba(30, 41, 59, 0.9);
     }
 
-    .donation-form-card h3 i {
+    .donation-form-card h2 i {
         color: #06b6d4;
         font-size: 2.25rem;
     }
@@ -350,6 +350,7 @@
     }
 
     /* Submit Button */
+    .btn-donate:disabled { opacity: .7; cursor: wait; }
     .btn-donate {
         width: 100%;
         padding: 18px;
@@ -415,7 +416,7 @@
         box-shadow: 0 8px 32px rgba(6, 182, 212, 0.1);
     }
 
-    .donation-wall-card h3 {
+    .donation-wall-card h2 {
         font-size: 1.75rem;
         font-weight: 800;
         color: white;
@@ -427,11 +428,11 @@
         gap: 10px;
     }
 
-    body:not(.dark-mode) .donation-wall-card h3 {
+    body:not(.dark-mode) .donation-wall-card h2 {
         color: rgba(30, 41, 59, 0.9);
     }
 
-    .donation-wall-card h3 i {
+    .donation-wall-card h2 i {
         color: #06b6d4;
         font-size: 2rem;
     }
@@ -648,25 +649,25 @@
         <div class="donations-grid">
             <!-- Formulaire de Donation -->
             <div class="donation-form-card">
-                <h3>
+                <h2>
                     <i class="fas fa-heart"></i>
                     {{ trans('app.donations.form_title') }}
-                </h3>
+                </h2>
                 <p>
                     {{ trans('app.donations.form_description') }}
                 </p>
 
-                <form action="{{ route('payment.donation') }}" method="POST">
+                <form action="{{ route('payment.donation') }}" method="POST" id="donation-form">
                     @csrf
                     @if(request()->has('ref'))
                     <input type="hidden" name="ref_code" value="{{ request()->get('ref') }}">
                     @endif
 
                     <div class="form-group">
-                        <label class="form-label">
+                        <label for="donor_name" class="form-label">
                             {{ trans('app.donations.name_label') }} <span class="required">*</span>
                         </label>
-                        <input type="text" name="donor_name" required value="{{ old('donor_name', Auth::check() ? Auth::user()->name : '') }}" class="form-input" placeholder="{{ trans('app.donations.name_placeholder') }}">
+                        <input type="text" id="donor_name" name="donor_name" required maxlength="255" value="{{ old('donor_name', Auth::check() ? Auth::user()->name : '') }}" class="form-input" placeholder="{{ trans('app.donations.name_placeholder') }}">
                         @error('donor_name')
                         <p class="form-error">{{ $message }}</p>
                         @enderror
@@ -674,8 +675,8 @@
 
                     @guest
                     <div class="form-group">
-                        <label class="form-label">{{ trans('app.donations.email_label') }}</label>
-                        <input type="email" name="donor_email" value="{{ old('donor_email') }}" class="form-input" placeholder="{{ trans('app.donations.email_placeholder') }}">
+                        <label for="donor_email" class="form-label">{{ trans('app.donations.email_label') }}</label>
+                        <input type="email" id="donor_email" name="donor_email" maxlength="255" value="{{ old('donor_email') }}" class="form-input" placeholder="{{ trans('app.donations.email_placeholder') }}">
                         @error('donor_email')
                         <p class="form-error">{{ $message }}</p>
                         @enderror
@@ -683,7 +684,7 @@
                     @endguest
 
                     <div class="form-group">
-                        <label class="form-label">
+                        <label for="payment_method_select" class="form-label">
                             {{ trans('app.donations.payment_method_label') }} <span class="required">*</span>
                         </label>
                         <select name="payment_method" required id="payment_method_select" class="form-select">
@@ -703,7 +704,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">
+                        <label for="donation_amount" class="form-label">
                             {{ trans('app.donations.amount_label') }} (<span id="currency_display">FCFA</span>) <span class="required">*</span>
                         </label>
                         <input type="number" name="amount" required id="donation_amount" min="100" step="100" value="{{ old('amount', 1000) }}" class="form-input" placeholder="1000">
@@ -731,8 +732,8 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">{{ trans('app.donations.message_label') }}</label>
-                        <textarea name="message" rows="3" class="form-textarea" placeholder="{{ trans('app.donations.message_placeholder') }}">{{ old('message') }}</textarea>
+                        <label for="donation_message" class="form-label">{{ trans('app.donations.message_label') }}</label>
+                        <textarea id="donation_message" name="message" rows="3" maxlength="500" class="form-textarea" placeholder="{{ trans('app.donations.message_placeholder') }}">{{ old('message') }}</textarea>
                         @error('message')
                         <p class="form-error">{{ $message }}</p>
                         @enderror
@@ -743,7 +744,7 @@
                         <label for="is_anonymous">{{ trans('app.donations.anonymous_label') }}</label>
                     </div>
 
-                    <button type="submit" class="btn-donate">
+                    <button type="submit" class="btn-donate" id="donation-submit">
                         <i class="fas fa-heart"></i>
                         {{ trans('app.donations.submit_button') }}
                     </button>
@@ -752,10 +753,10 @@
 
             <!-- Mur des Donateurs -->
             <div class="donation-wall-card">
-                <h3>
+                <h2>
                     <i class="fas fa-heart"></i>
                     {{ trans('app.donations.donor_wall.title') }}
-                </h3>
+                </h2>
                 <p>{{ trans('app.donations.donor_wall.description') }}</p>
 
                 @if($recentDonations->count() > 0)
@@ -932,7 +933,9 @@
                 }
                 // Sinon, garder la valeur saisie (déjà en USD ou autre valeur valide)
             } else {
-                donationAmount.step = '100';
+                // Wave accepte tous les montants : pas de 1 (avec step=100 et min=1, le
+                // navigateur n'accepterait que 1, 101, 201…).
+                donationAmount.step = selectedMethod === 'wave' ? '1' : '100';
                 donationAmount.placeholder = '1000';
             }
             
@@ -970,8 +973,14 @@
             validateAmount();
         });
         
-        // Valider le montant avant soumission et convertir en XOF si nécessaire
-        document.querySelector('form').addEventListener('submit', function(e) {
+        // Valider le montant avant soumission et convertir en XOF si nécessaire.
+        // (audit UX-03) Ciblé par id : querySelector('form') renvoyait le formulaire de
+        // recherche du menu, et ce contrôle ne s'exécutait jamais.
+        const donationForm = document.getElementById('donation-form');
+        const donationSubmit = document.getElementById('donation-submit');
+        window.addEventListener('pageshow', function() { donationSubmit.disabled = false; });
+        donationForm.addEventListener('submit', function(e) {
+            if (donationSubmit.disabled) { e.preventDefault(); return false; }
             const selectedOption = paymentMethodSelect.options[paymentMethodSelect.selectedIndex];
             const currency = selectedOption.getAttribute('data-currency') || 'FCFA';
             
@@ -992,6 +1001,9 @@
             } else {
                 document.getElementById('amount_currency').value = 'XOF';
             }
+
+            // Pas de double envoi pendant la redirection vers le paiement.
+            donationSubmit.disabled = true;
         });
         
         paymentMethodSelect.addEventListener('change', function() {

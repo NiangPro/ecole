@@ -258,13 +258,18 @@ class FormationController extends Controller
         $sidebarAds = $allAds->where('position', 'sidebar');
         $footerAds  = $allAds->where('position', 'footer');
 
-        // Cache du HTML rendu pour les visiteurs non-connectés (le contenu ne change pas souvent)
-        if (!Auth::check()) {
-            $cacheKey = "formation_html_{$slug}_{$locale}";
+        // Cache du HTML rendu, partagé entre visiteurs : mêmes règles que PageCache (audit
+        // CACHE-01) — premier passage sans session uniquement, jeton CSRF retiré avant
+        // stockage et réinjecté pour chaque visiteur (il était figé 1 h pour tout le monde).
+        if (\App\Http\Middleware\PageCache::isCacheableRequest(request())) {
+            // Version du cache de page dans la clé : `page-cache:clear` vide aussi les formations.
+            $cacheKey = 'formation_html_v2_p' . \App\Http\Middleware\PageCache::version() . "_{$slug}_{$locale}";
             $html = \Illuminate\Support\Facades\Cache::remember($cacheKey, 3600, function () use ($view, $formationAds, $headerAds, $contentAds, $sidebarAds, $footerAds, $progress) {
-                return view($view, compact('progress', 'formationAds', 'headerAds', 'contentAds', 'sidebarAds', 'footerAds'))->render();
+                return \App\Http\Middleware\PageCache::stripToken(
+                    view($view, compact('progress', 'formationAds', 'headerAds', 'contentAds', 'sidebarAds', 'footerAds'))->render()
+                );
             });
-            return response($html);
+            return response(\App\Http\Middleware\PageCache::injectToken($html));
         }
 
         return view($view, compact('progress', 'formationAds', 'headerAds', 'contentAds', 'sidebarAds', 'footerAds'));

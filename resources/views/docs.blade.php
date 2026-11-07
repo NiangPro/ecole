@@ -1228,7 +1228,7 @@
     </aside>
     
     <!-- Main Content -->
-    <main class="docs-content">
+    <div class="docs-content">
         <!-- Introduction -->
         <section id="introduction" class="docs-section" data-aos="fade-up">
             <h1 class="docs-section-title">
@@ -1589,7 +1589,7 @@
                 </ul>
             </div>
         </section>
-    </main>
+    </div>
 </div>
 </div>
 

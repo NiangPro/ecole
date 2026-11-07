@@ -134,6 +134,30 @@ class SiteSetting extends Model
     }
     
     /**
+     * Logo redimensionné (audit PERF-02 : le logo de 446 px était affiché en 32-44 px).
+     * Variante WebP générée une fois dans public/logos/variants, repli sur logoUrl().
+     */
+    public static function logoVariantUrl(int $width): string
+    {
+        try {
+            $logo = self::hasCustomLogo() ? self::get('logo') : null;
+            $source = match (true) {
+                $logo && is_file(public_path($logo)) => public_path($logo),
+                $logo && \Illuminate\Support\Facades\Storage::disk('public')->exists($logo) => \Illuminate\Support\Facades\Storage::disk('public')->path($logo),
+                default => public_path('images/logo.png'),
+            };
+            $variant = \App\Support\ImageVariant::make($source, $width, public_path('logos/variants'));
+            if ($variant !== $source && str_starts_with($variant, public_path())) {
+                return asset(ltrim(substr($variant, strlen(public_path())), '/'));
+            }
+        } catch (\Throwable $e) {
+            // repli ci-dessous
+        }
+
+        return self::logoUrl();
+    }
+
+    /**
      * Surcharge de la méthode save pour invalider le cache automatiquement
      */
     public function save(array $options = [])

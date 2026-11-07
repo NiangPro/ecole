@@ -99,7 +99,11 @@ class JobArticleController extends Controller
             'status' => 'required|in:draft,published,archived',
             'published_at' => 'nullable|date',
             'is_sponsored' => 'nullable|boolean',
-            'is_featured' => 'nullable|boolean'
+            'is_featured' => 'nullable|boolean',
+            // Offre d'emploi (audit SEO-02) : employeur et date limite réels, pour le JobPosting
+            'location' => 'nullable|string|max:255',
+            'employer_name' => 'nullable|string|max:255',
+            'application_deadline' => 'nullable|date',
         ]);
         
         // Convertir les checkboxes en boolean
@@ -184,7 +188,27 @@ class JobArticleController extends Controller
         }
 
         return redirect()->route('admin.jobs.articles.index')
-            ->with('success', 'Article créé avec succès');
+            ->with('success', 'Article créé avec succès')
+            ->with('warning', $this->duplicateTitleWarning($article));
+    }
+
+    /**
+     * Audit SEO-03 : avertissement (non bloquant) si un autre article publié porte déjà
+     * le même titre — les doublons se cannibalisent dans Google.
+     */
+    private function duplicateTitleWarning(JobArticle $article): ?string
+    {
+        $doublons = JobArticle::where('id', '!=', $article->id)
+            ->where('status', 'published')
+            ->whereRaw('LOWER(TRIM(title)) = ?', [mb_strtolower(trim($article->title))])
+            ->pluck('id');
+
+        if ($doublons->isEmpty()) {
+            return null;
+        }
+
+        return 'Un article publié porte déjà ce titre (id ' . $doublons->implode(', ')
+            . '). Pensez à fusionner les doublons (php artisan articles:doublons).';
     }
 
     public function show($id)
@@ -253,7 +277,11 @@ class JobArticleController extends Controller
             'status' => 'required|in:draft,published,archived',
             'published_at' => 'nullable|date',
             'is_sponsored' => 'nullable|boolean',
-            'is_featured' => 'nullable|boolean'
+            'is_featured' => 'nullable|boolean',
+            // Offre d'emploi (audit SEO-02) : employeur et date limite réels, pour le JobPosting
+            'location' => 'nullable|string|max:255',
+            'employer_name' => 'nullable|string|max:255',
+            'application_deadline' => 'nullable|date',
         ]);
         
         // Convertir les checkboxes en boolean
@@ -389,7 +417,8 @@ class JobArticleController extends Controller
         }
 
         return redirect()->route('admin.jobs.articles.index')
-            ->with('success', 'Article mis à jour avec succès');
+            ->with('success', 'Article mis à jour avec succès')
+            ->with('warning', $this->duplicateTitleWarning($article));
     }
 
     public function sendNewsletter($id)

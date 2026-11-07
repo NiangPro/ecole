@@ -386,7 +386,7 @@
             </h2>
 
             @if($waveLink)
-            <a href="{{ $waveLink }}" target="_blank" class="wpay-pay-btn">
+            <a href="{{ $waveLink }}" target="_blank" rel="noopener noreferrer" class="wpay-pay-btn">
                 <i class="fas fa-mobile-alt"></i>
                 {{ trans('app.donations.wave_payment.pay_button') }}
                 <i class="fas fa-arrow-right"></i>
@@ -419,7 +419,7 @@
                     <strong>C'est urgent&nbsp;?</strong>
                     Après avoir payé, envoyez-nous un message WhatsApp pour une validation rapide&nbsp;:
                 </div>
-                <a href="https://wa.me/{{ $waNumber }}?text={{ $waText }}" target="_blank" rel="noopener" class="wpay-whatsapp-btn">
+                <a href="https://wa.me/{{ $waNumber }}?text={{ $waText }}" target="_blank" rel="noopener noreferrer" class="wpay-whatsapp-btn">
                     <i class="fab fa-whatsapp"></i>
                     Écrire sur WhatsApp
                 </a>

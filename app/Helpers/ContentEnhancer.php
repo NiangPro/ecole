@@ -136,22 +136,23 @@ class ContentEnhancer
         $locationCtx = self::getLocationContext($location);
         $contexte    = $locationCtx[($seed >> 4) % count($locationCtx)];
 
-        $keywords    = self::extractKeywords($title);
-        $kw          = !empty($keywords)
-            ? ' autour de « ' . implode(' et ', array_slice($keywords, 0, 2)) . ' »'
-            : '';
+        // Titre tel quel : l'ancienne extraction de mots-clés (sans accents, joints par « et »)
+        // produisait des tournures fautives comme « recrute et specialiste ».
+        $kw          = trim($title) !== '' ? ' sur « ' . trim($title) . ' »' : '';
 
         // Restaurer le générateur aléatoire PHP après usage du seed
         srand();
 
+        // Les stratégies sont à l'impératif : elles suivent directement la virgule
+        // (« …, relancez le recruteur… ») et non « il est essentiel de ».
         return sprintf(
-            '%s Pour maximiser vos chances%s dans ce contexte de %s, il est essentiel de %s '
+            '%s pour maximiser vos chances%s, %s Contexte du marché — %s. '
             . 'La communauté NiangProgrammeur vous accompagne : préparation méthodique et maîtrise '
             . 'du marché local sont les deux piliers du succès professionnel en Afrique de l\'Ouest.',
             $intro,
             $kw,
-            $contexte,
-            lcfirst($tip)
+            Str::lcfirst($tip),
+            Str::lcfirst($contexte)
         );
     }
 
@@ -235,28 +236,6 @@ class ContentEnhancer
     }
 
     /**
-     * Extrait les mots-clés du titre
-     */
-    private static function extractKeywords(string $title): array {
-        // Supprimer les accents et convertir en minuscules
-        $cleaned = Str::ascii(strtolower($title));
-        
-        // Mots vides communs (stopwords)
-        $stopwords = [
-            'et', 'ou', 'un', 'une', 'des', 'le', 'la', 'les', 'de', 'du', 'en', 
-            'pour', 'par', 'a', 'au', 'aux', 'est', 'son', 'son', 'sa', 'ses'
-        ];
-
-        // Récupérer les mots de plus de 3 caractères
-        $words = array_filter(
-            str_word_count($cleaned, 1, 'àâäæèéêëìîïòôöœùûüçñ'),
-            fn($word) => !in_array($word, $stopwords) && strlen($word) > 3
-        );
-
-        return array_slice(array_unique($words), 0, 3);
-    }
-
-    /**
      * Récupère les stratégies pour un type de contenu
      */
     private static function getStrategiesForType(string $type): array {
@@ -292,24 +271,23 @@ class ContentEnhancer
         ?string $location = null,
         ?string $type = 'offre'
     ): array {
-        $keywords = self::extractKeywords($title);
-        $keywordPhrase = !empty($keywords) ? implode(' ', array_slice($keywords, 0, 2)) : 'cette opportunité';
+        $offerPhrase = trim($title) !== '' ? '« ' . trim($title) . ' »' : 'cette opportunité';
         
         $faqTemplates = match($type) {
             'concours' => [
-                "Quels sont les documents requis pour le concours?" => "Consultez la liste complète des pièces à fournir sur le site de l'organisme. Généralement, vous aurez besoin d'une pièce d'identité valide, de relevés scolaires, et de certificats de stage.",
-                "Comment bien préparer le concours?" => "Étudiez les annales des années précédentes, formez un groupe d'étude avec vos pairs, et suivez les cours spécialisés disponibles sur NiangProgrammeur.",
-                "Quel est le coût de participation?" => "Consultez les frais de candidature auprès de l'organisme responsable. De nombreux concours du Sénégal sont gratuits ou peu onéreux.",
+                "Quels sont les documents requis pour le concours ?" => "Consultez la liste complète des pièces à fournir sur le site de l'organisme. Généralement, vous aurez besoin d'une pièce d'identité valide, de relevés scolaires, et de certificats de stage.",
+                "Comment bien préparer le concours ?" => "Étudiez les annales des années précédentes, formez un groupe d'étude avec vos pairs, et suivez les cours spécialisés disponibles sur NiangProgrammeur.",
+                "Quel est le coût de participation ?" => "Consultez les frais de candidature auprès de l'organisme responsable. De nombreux concours au Sénégal sont gratuits ou peu onéreux.",
             ],
             'bourses' => [
-                "Suis-je éligible à cette bourse?" => "Vérifiez les critères d'éligibilité spécifiques. Généralement, vous devez être citoyen sénégalais ou ressortissant d'un pays de la CEDEAO, et avoir des résultats scolaires satisfaisants.",
-                "Comment candidater?" => "Suivez les instructions du site de l'organisme. Préparez un dossier complet avec lettre de motivation, relevés académiques, et lettres de recommandation.",
-                "Quand est la date limite de candidature?" => "Consultez le calendrier officiel. Les délais varient selon l'organisme de bourse.",
+                "Suis-je éligible à cette bourse ?" => "Vérifiez les critères d'éligibilité spécifiques. Généralement, vous devez être citoyen sénégalais ou ressortissant d'un pays de la CEDEAO, et avoir des résultats scolaires satisfaisants.",
+                "Comment candidater ?" => "Suivez les instructions du site de l'organisme. Préparez un dossier complet avec lettre de motivation, relevés académiques, et lettres de recommandation.",
+                "Quelle est la date limite de candidature ?" => "Consultez le calendrier officiel. Les délais varient selon l'organisme de bourse.",
             ],
             default => [
-                "Comment candidater pour $keywordPhrase?" => "Préparez votre CV, lettre de motivation et pièces justificatives. Consultez l'offre pour connaître les modalités exactes de candidature.",
-                "Quelles sont les compétences requises?" => "Lisez attentivement la description de l'offre. Les compétences clés y sont détaillées. Développez-les via les cours de NiangProgrammeur.",
-                "Quel est le processus de recrutement?" => "Généralement : candidature → examen des dossiers → entretiens → offre. Préarez-vous à chaque étape.",
+                "Comment candidater pour $offerPhrase ?" => "Préparez votre CV, lettre de motivation et pièces justificatives. Consultez l'offre pour connaître les modalités exactes de candidature.",
+                "Quelles sont les compétences requises ?" => "Lisez attentivement la description de l'offre. Les compétences clés y sont détaillées. Développez-les via les cours de NiangProgrammeur.",
+                "Quel est le processus de recrutement ?" => "Généralement : candidature → examen des dossiers → entretiens → offre. Préparez-vous à chaque étape.",
             ]
         };
 

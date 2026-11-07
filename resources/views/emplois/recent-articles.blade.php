@@ -14,8 +14,6 @@
     <meta property="og:url" content="{{ route('emplois.recent-articles') }}">
     <meta property="og:title" content="Articles les Plus Récents - Emplois & Opportunités | NiangProgrammeur">
     <meta property="og:description" content="Découvrez les articles les plus récents sur les emplois, bourses d'études, opportunités de carrière et candidatures spontanées au Sénégal.">
-    <meta name="robots" content="index, follow">
-    <meta name="googlebot" content="index, follow">
 @endpush
 
 @section('styles')
@@ -444,7 +442,7 @@
                         @endif
                         <span itemprop="datePublished" content="{{ $article->published_at ? $article->published_at->toIso8601String() : $article->created_at->toIso8601String() }}">
                             <i class="fas fa-calendar"></i>
-                            {{ $article->published_at ? $article->published_at->format('d/m/Y') : $article->created_at->format('d/m/Y') }}
+                            <time datetime="{{ ($article->published_at ?? $article->created_at)->toDateString() }}">{{ ($article->published_at ?? $article->created_at)->format('d/m/Y') }}</time>
                         </span>
                         <span>
                             <i class="fas fa-eye"></i>
@@ -511,17 +509,21 @@
 </div>
 
 <script>
+// Notification native (feedbackManager, ux-improvements.js) — toastr n'est plus chargé
+// sur les pages publiques (il exigeait jQuery, absent, et ne fonctionnait pas).
+function npNotify(message, type) {
+    if (window.feedbackManager) {
+        type === 'error' ? window.feedbackManager.showError(message) : window.feedbackManager.showSuccess(message);
+    } else {
+        alert(message);
+    }
+}
+
 // Fonction pour copier l'URL dans le presse-papiers
 function copyToClipboard(url, index) {
     if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(url).then(function() {
-            if (typeof toastr !== 'undefined') {
-                toastr.success('URL de l\'article #' + index + ' copiée dans le presse-papiers', 'Succès', {
-                    timeOut: 2000
-                });
-            } else {
-                alert('URL de l\'article #' + index + ' copiée dans le presse-papiers');
-            }
+            npNotify('URL de l\'article #' + index + ' copiée dans le presse-papiers', 'success');
         }).catch(function(err) {
             console.error('Erreur lors de la copie:', err);
             fallbackCopy(url, index);
@@ -542,19 +544,9 @@ function fallbackCopy(url, index) {
     textArea.select();
     try {
         document.execCommand('copy');
-        if (typeof toastr !== 'undefined') {
-            toastr.success('URL de l\'article #' + index + ' copiée dans le presse-papiers', 'Succès', {
-                timeOut: 2000
-            });
-        } else {
-            alert('URL de l\'article #' + index + ' copiée dans le presse-papiers');
-        }
+        npNotify('URL de l\'article #' + index + ' copiée dans le presse-papiers', 'success');
     } catch (err) {
-        if (typeof toastr !== 'undefined') {
-            toastr.error('Impossible de copier l\'URL', 'Erreur');
-        } else {
-            alert('Impossible de copier l\'URL');
-        }
+        npNotify('Impossible de copier l\'URL', 'error');
     }
     document.body.removeChild(textArea);
 }

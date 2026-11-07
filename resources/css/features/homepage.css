@@ -64,11 +64,13 @@
 
   @media (max-width: 768px) {
     .hp-hero {
+      /* Voile plus opaque en mobile (audit UX-05) : le filigrane « < NiangProgrammeur /> »
+         de la photo passait derrière le titre et en gênait la lecture. Desktop inchangé. */
       background-image:
         linear-gradient(to bottom,
-          oklch(5% 0.02 230 / 82%) 0%,
-          oklch(5% 0.02 230 / 72%) 50%,
-          oklch(5% 0.02 230 / 85%) 100%
+          oklch(5% 0.02 230 / 90%) 0%,
+          oklch(5% 0.02 230 / 88%) 50%,
+          oklch(5% 0.02 230 / 90%) 100%
         ),
         image-set(
           url('/images/hero-bg-mobile.webp') type('image/webp'),
@@ -976,7 +978,8 @@
     flex-shrink: 0;
     font-size: 1.25rem;
     font-weight: 900;
-    color: oklch(65% 0.20 200 / 25%);
+    /* Grand texte : 3:1 minimum (audit A11Y-01) ; l'ancienne teinte à 25 % faisait 1,3:1. */
+    color: #3b9aa8;
     font-variant-numeric: tabular-nums;
     line-height: 1;
     padding-block-start: 0.125rem;
@@ -1750,4 +1753,54 @@ body.dark-mode .hp-review-quote-icon { color: oklch(65% 0.20 200 / 15%); }
 @media (max-width: 640px) {
   .hp-reviews-header { align-items: flex-start; }
   .hp-reviews-stat { width: 100%; }
+}
+
+/* ── Audit UX-01 : boutons flottants et appels à l'action du hero (mobile) ──
+   Sous 768 px, la bulle Sokhna, WhatsApp, le thème et les notifications recouvraient
+   « Commencer gratuitement » / « Parcourir les ressources ». Ils restent masqués tant que
+   ces boutons sont à l'écran (classe posée par un IntersectionObserver dans index.blade.php),
+   puis réapparaissent au défilement. Sans JS : rien ne change. Desktop : rien ne change. */
+@media (max-width: 768px) {
+  .sokhna:not(.is-open),
+  .whatsapp-widget,
+  .dark-mode-widget,
+  .pwa-push-button {
+    transition: opacity 0.25s ease, translate 0.25s ease, visibility 0.25s;
+  }
+
+  body.np-hero-ctas-visible .sokhna:not(.is-open),
+  body.np-hero-ctas-visible .whatsapp-widget,
+  body.np-hero-ctas-visible .dark-mode-widget,
+  body.np-hero-ctas-visible .pwa-push-button {
+    opacity: 0;
+    visibility: hidden;
+    translate: 0 12px;
+    pointer-events: none;
+  }
+}
+
+@media (max-width: 768px) and (prefers-reduced-motion: reduce) {
+  .sokhna:not(.is-open),
+  .whatsapp-widget,
+  .dark-mode-widget,
+  .pwa-push-button { transition: none; }
+}
+
+/* ──────────────────────────────────────────
+   Audit UX-04 — lisibilité et cibles tactiles en mobile
+   ────────────────────────────────────────── */
+.hp-article-excerpt {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@media (max-width: 767px) {
+  .hp-course-desc,
+  .hp-article-excerpt { font-size: 0.875rem; }
+  .hp-section-action { min-block-size: 24px; }
 }

@@ -62,9 +62,11 @@ try {
     ];
     $websiteJson = json_encode($websiteSchema, JSON_UNESCAPED_SLASHES | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_PRETTY_PRINT);
     
-    // Article Schema (if article exists)
+    // Article Schema : uniquement sur la page détail. $article fuite aussi depuis les
+    // boucles @foreach(... as $article) des listes (accueil, emplois, recherche...).
+    $isArticlePage = request()->routeIs('emplois.article');
     $articleJson = null;
-    if (isset($article) && !empty($article)) {
+    if ($isArticlePage && isset($article) && !empty($article)) {
         try {
             $articleUrl = route('emplois.article', $article->slug);
             $articleImage = $article->cover_image 
@@ -147,53 +149,15 @@ try {
         }
     }
     
-    // Review Schema (if article with comments)
-    $reviewJson = null;
-    if (isset($article) && !empty($article) && isset($latestComments) && $latestComments->count() > 0) {
-        try {
-            $reviews = [];
-            foreach ($latestComments->take(3) as $comment) {
-                $reviews[] = [
-                    '@type' => 'Review',
-                    'author' => [
-                        '@type' => 'Person',
-                        'name' => $comment->author_name ?? 'Anonyme'
-                    ],
-                    'reviewBody' => substr(strip_tags($comment->content), 0, 200),
-                    'datePublished' => $comment->created_at ? $comment->created_at->toIso8601String() : '',
-                    'reviewRating' => [
-                        '@type' => 'Rating',
-                        'ratingValue' => 5,
-                        'bestRating' => 5
-                    ]
-                ];
-            }
-            
-            if (count($reviews) > 0) {
-                $reviewSchema = [
-                    '@context' => 'https://schema.org',
-                    '@type' => 'Product',
-                    'name' => $article->title ?? '',
-                    'aggregateRating' => [
-                        '@type' => 'AggregateRating',
-                        'ratingValue' => '5',
-                        'reviewCount' => count($reviews)
-                    ],
-                    'review' => $reviews
-                ];
-                $reviewJson = json_encode($reviewSchema, JSON_UNESCAPED_SLASHES | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_PRETTY_PRINT);
-            }
-        } catch (\Exception $e) {
-            $reviewJson = null;
-        }
-    }
+    // Pas de Review/AggregateRating : une note 5/5 déduite des commentaires est un avis
+    // auto-attribué au regard des règles Google (risque d'action manuelle).
+
 } catch (\Exception $e) {
     $orgJson = null;
     $websiteJson = null;
     $articleJson = null;
     $formationJson = null;
     $faqJson = null;
-    $reviewJson = null;
 }
 @endphp
 <script type="application/ld+json">
@@ -210,11 +174,6 @@ try {
 @php if (!empty($faqJson)) { @endphp
 <script type="application/ld+json">
 {!! $faqJson !!}
-</script>
-@php } @endphp
-@php if (!empty($reviewJson)) { @endphp
-<script type="application/ld+json">
-{!! $reviewJson !!}
 </script>
 @php } @endphp
 @php

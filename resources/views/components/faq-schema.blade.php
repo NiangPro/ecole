@@ -50,10 +50,11 @@ body.dark-mode .np-faq-section h2{color:#06b6d4;}
 </style>
 <h2 id="faq-heading"><i class="fas fa-question-circle"></i> Questions Fréquentes</h2>
 @foreach($faqs as $faq)
-<div class="np-faq-item" itemscope itemprop="mainEntity" itemtype="https://schema.org/Question">
-    <div class="np-faq-q" itemprop="name">{{ $faq['question'] }}</div>
-    <div class="np-faq-a" itemscope itemprop="acceptedAnswer" itemtype="https://schema.org/Answer">
-        <span itemprop="text">{{ $faq['answer'] }}</span>
+{{-- Pas de microdata ici : le FAQPage JSON-LD de la vue appelante suffit (évite des Question orphelines en double). --}}
+<div class="np-faq-item">
+    <div class="np-faq-q">{{ $faq['question'] }}</div>
+    <div class="np-faq-a">
+        <span>{{ $faq['answer'] }}</span>
     </div>
 </div>
 @endforeach

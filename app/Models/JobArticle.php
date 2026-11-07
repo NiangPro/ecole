@@ -19,6 +19,8 @@ class JobArticle extends Model
         'excerpt',
         'content',
         'location',
+        'employer_name',
+        'application_deadline',
         'cover_image',
         'cover_type',
         'meta_title',
@@ -42,8 +44,44 @@ class JobArticle extends Model
         'is_featured' => 'boolean',
         'expert_content_added' => 'boolean',
         'views' => 'integer',
-        'published_at' => 'datetime'
+        'published_at' => 'datetime',
+        'application_deadline' => 'date',
     ];
+
+    /**
+     * Catégories qui contiennent de vraies offres (audit SEO-02). Candidature spontanée,
+     * conseils, bourses, concours et conditions d'accès ne sont pas des offres d'emploi.
+     */
+    public const JOB_OFFER_CATEGORY_SLUGS = ['offres-emploi', 'opportunites-professionnelles'];
+
+    /** Date limite dépassée (le jour de la date limite, l'offre est encore ouverte). */
+    public function isExpired(): bool
+    {
+        return $this->application_deadline !== null && $this->application_deadline->lt(today());
+    }
+
+    public function isJobOffer(): bool
+    {
+        return in_array($this->category?->slug, self::JOB_OFFER_CATEGORY_SLUGS, true);
+    }
+
+    /** JobPosting seulement pour une vraie offre, avec employeur réel et date limite non dépassée. */
+    public function hasValidJobPosting(): bool
+    {
+        return $this->isJobOffer()
+            && filled($this->employer_name)
+            && $this->application_deadline !== null
+            && ! $this->isExpired();
+    }
+
+    /** Exclut les offres clôturées des listes « récentes » et « à la une » (elles restent consultables). */
+    public function scopeNotExpired($query)
+    {
+        return $query->where(function ($q) {
+            $q->whereNull('application_deadline')
+              ->orWhereDate('application_deadline', '>=', today());
+        });
+    }
 
     public function category(): BelongsTo
     {
@@ -146,6 +184,11 @@ class JobArticle extends Model
                 $article->slug = Str::slug($article->title);
             }
         });
+
+        // Cache HTML des pages publiques (PageCache) : toute publication / modification /
+        // suppression d'article change l'accueil, les listes et la page de l'article.
+        static::saved(fn () => \App\Http\Middleware\PageCache::flush());
+        static::deleted(fn () => \App\Http\Middleware\PageCache::flush());
 
         // Invalider le cache lors de la création, mise à jour ou suppression.
         // 'homepage_view_v4_*' (et non v2 : la clé de PageController a été renommée

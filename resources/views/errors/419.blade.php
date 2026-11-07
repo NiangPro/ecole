@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>419 - Session Expirée</title>
+    <title>419 - Page expirée</title>
     <link rel="icon" type="image/png" href="{{ \App\Models\SiteSetting::logoUrl() }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer">
     <!-- Google Fonts optimisé avec preload et font-display: swap -->
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -176,15 +176,14 @@
             <i class="fas fa-clock"></i>
         </div>
         <div class="error-code">419</div>
-        <h1 class="error-title">Session Expirée</h1>
+        <h1 class="error-title">Page expirée</h1>
         <p class="error-message">
-            Votre session a expiré pour des raisons de sécurité.<br>
-            Veuillez rafraîchir la page et réessayer.
+            La page a expiré, rechargez-la et réessayez.
         </p>
         <div class="error-actions">
-            <a href="javascript:location.reload()" class="btn-error btn-primary-error">
+            <a href="javascript:history.back()" class="btn-error btn-primary-error">
                 <i class="fas fa-redo"></i>
-                Rafraîchir la Page
+                Revenir au formulaire
             </a>
             <a href="{{ route('home') }}" class="btn-error btn-secondary-error">
                 <i class="fas fa-home"></i>

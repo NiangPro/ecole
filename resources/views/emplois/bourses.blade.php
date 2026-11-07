@@ -197,7 +197,7 @@
         margin-bottom: 20px;
     }
     
-    .no-articles h3 {
+    .no-articles h2 {
         font-size: 1.8rem;
         color: #fff;
         margin-bottom: 10px;
@@ -273,7 +273,7 @@
                     <i class="fas fa-folder mr-2"></i>{{ $article->category->name }}
                 </span>
                 
-                <h3 class="article-card-title">{{ $article->title }}</h3>
+                <h2 class="article-card-title">{{ $article->title }}</h2>
                 
                 <p class="article-card-excerpt">
                     {{ $article->excerpt ?? Str::limit(strip_tags($article->content), 120) }}
@@ -281,7 +281,7 @@
                 
                 <div class="article-card-footer">
                     <div class="article-card-meta">
-                        <span><i class="fas fa-calendar"></i> {{ $article->published_at ? $article->published_at->format('d/m/Y') : '' }}</span>
+                        <span><i class="fas fa-calendar"></i> @if($article->published_at)<time datetime="{{ $article->published_at->toDateString() }}">{{ $article->published_at->format('d/m/Y') }}</time>@endif</span>
                         <span><i class="fas fa-eye"></i> {{ $article->featured_display_views }}</span>
                     </div>
                     <span class="article-card-button">
@@ -302,7 +302,7 @@
     @else
     <div class="no-articles">
         <i class="fas fa-graduation-cap"></i>
-        <h3>Aucune bourse disponible</h3>
+        <h2>Aucune bourse disponible</h2>
         <p>Il n'y a pas encore d'articles publiés dans cette catégorie.</p>
     </div>
     @endif

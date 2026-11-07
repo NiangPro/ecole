@@ -64,7 +64,7 @@
             @endif
 
             <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <a href="{{ route('monetization.course.show', $course->slug) }}" target="_blank" style="flex: 1; padding: 10px; background: rgba(6, 182, 212, 0.2); color: #06b6d4; border: 1px solid #06b6d4; border-radius: 8px; text-decoration: none; text-align: center; font-weight: 600; font-size: 0.9rem; transition: all 0.3s ease;">
+                <a href="{{ route('monetization.course.show', $course->slug) }}" target="_blank" rel="noopener noreferrer" style="flex: 1; padding: 10px; background: rgba(6, 182, 212, 0.2); color: #06b6d4; border: 1px solid #06b6d4; border-radius: 8px; text-decoration: none; text-align: center; font-weight: 600; font-size: 0.9rem; transition: all 0.3s ease;">
                     <i class="fas fa-eye" style="margin-right: 6px;"></i>
                     Voir
                 </a>

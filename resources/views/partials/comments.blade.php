@@ -177,7 +177,7 @@ function likeComment(commentId) {
     fetch(`/comments/${commentId}/like`, {
         method: 'POST',
         headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+            ...npCsrfHeader(),
             'Content-Type': 'application/json'
         }
     })

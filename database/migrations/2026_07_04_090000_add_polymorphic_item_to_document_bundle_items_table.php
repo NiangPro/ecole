@@ -25,6 +25,8 @@ return new class extends Migration
         Schema::table('document_bundle_items', function (Blueprint $table) {
             $table->dropUnique(['bundle_id', 'document_id']);
             $table->dropForeign(['document_id']);
+            // SQLite (tests) refuse de supprimer une colonne encore indexée.
+            $table->dropIndex(['document_id']);
             $table->dropColumn('document_id');
 
             $table->unique(['bundle_id', 'item_type', 'item_id'], 'bundle_item_unique');

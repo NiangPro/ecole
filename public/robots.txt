@@ -21,6 +21,8 @@ Allow: /sitemap.xml
 Disallow: /admin/
 Disallow: /login
 Disallow: /register
+# Changement de langue : URL d'action, pas une page (audit SEO-01)
+Disallow: /language/
 
 # Sitemap
 Sitemap: https://www.niangprogrammeur.com/sitemap.xml

@@ -556,15 +556,15 @@
             Vous pouvez contrôler les annonces que vous voyez de plusieurs façons :
         </p>
         <ul class="privacy-list">
-            <li>Visitez les <a href="https://www.google.com/settings/ads" target="_blank" class="privacy-link">Paramètres des annonces Google</a> pour désactiver la personnalisation</li>
-            <li>Utilisez le <a href="https://optout.aboutads.info/" target="_blank" class="privacy-link">NAI Consumer Opt-Out</a> pour vous désinscrire de la publicité comportementale</li>
+            <li>Visitez les <a href="https://www.google.com/settings/ads" target="_blank" rel="noopener noreferrer" class="privacy-link">Paramètres des annonces Google</a> pour désactiver la personnalisation</li>
+            <li>Utilisez le <a href="https://optout.aboutads.info/" target="_blank" rel="noopener noreferrer" class="privacy-link">NAI Consumer Opt-Out</a> pour vous désinscrire de la publicité comportementale</li>
             <li>Configurez votre navigateur pour bloquer les cookies tiers</li>
             <li>Utilisez des extensions de navigateur pour bloquer les publicités</li>
         </ul>
         
         <h3 class="privacy-subtitle">5.5 Politique de confidentialité de Google</h3>
         <p class="privacy-text">
-            Pour plus d'informations sur la manière dont Google collecte et utilise vos données, consultez la <a href="https://policies.google.com/privacy" target="_blank" class="privacy-link">Politique de confidentialité de Google</a> et les <a href="https://policies.google.com/technologies/partner-sites" target="_blank" class="privacy-link">Règles de confidentialité des partenaires Google</a>.
+            Pour plus d'informations sur la manière dont Google collecte et utilise vos données, consultez la <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer" class="privacy-link">Politique de confidentialité de Google</a> et les <a href="https://policies.google.com/technologies/partner-sites" target="_blank" rel="noopener noreferrer" class="privacy-link">Règles de confidentialité des partenaires Google</a>.
         </p>
     </div>
 
@@ -715,7 +715,7 @@
                     <i class="fab fa-whatsapp"></i>
                     <div>
                         <strong>WhatsApp :</strong>
-                        <a href="https://wa.me/{{ $phoneDigits }}" target="_blank" class="privacy-link">{{ $contactPhone }}</a>
+                        <a href="https://wa.me/{{ $phoneDigits }}" target="_blank" rel="noopener noreferrer" class="privacy-link">{{ $contactPhone }}</a>
                     </div>
                 </div>
                 <div class="privacy-contact-item">

@@ -193,7 +193,7 @@ body.dark-mode .bnd-buy-form input { background: rgba(2,6,23,0.6); border-color:
                 <div class="bnd-item-cover">
                   @if($itemable->cover_image)
                     @if($itemable->cover_type === 'internal')
-                      <img loading="lazy" src="{{ \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $itemable->id]) }}" alt="{{ $itemable->title }}">
+                      <img loading="lazy" src="{{ \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $itemable->id, 'w' => 440]) }}" alt="{{ $itemable->title }}">
                     @else
                       <img loading="lazy" src="{{ $itemable->cover_image }}" alt="{{ $itemable->title }}">
                     @endif
@@ -368,7 +368,7 @@ body.dark-mode .bnd-buy-form input { background: rgba(2,6,23,0.6); border-color:
                         </a>
                     </div>
                 </div>
-                <a href="#" id="wd-reopen-wave" target="_blank" rel="noopener" class="wd-reopen-btn">
+                <a href="#" id="wd-reopen-wave" target="_blank" rel="noopener noreferrer" class="wd-reopen-btn">
                     <i class="fas fa-mobile-alt"></i> Rouvrir la page de paiement Wave
                 </a>
                 <button type="button" class="wd-done-btn" onclick="closeWaveDirectModal()">Fermer</button>

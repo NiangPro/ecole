@@ -18,18 +18,14 @@
 
 <!-- Navigation Ultra Moderne -->
 
-<nav class="navbar-modern" id="navigation" role="navigation" aria-label="Navigation principale">
+<nav class="navbar-modern google-anno-skip" id="navigation" role="navigation" aria-label="Navigation principale">
     <div class="navbar-container">
         <!-- Logo -->
         <a href="{{ route('home') }}" class="navbar-logo">
-            @if(\App\Models\SiteSetting::hasCustomLogo())
-                <img src="{{ \App\Models\SiteSetting::logoUrl() }}" alt="Logo NiangProgrammeur" class="logo-image" width="44" height="44" loading="eager" fetchpriority="high">
-            @else
-                <picture>
-                    <source srcset="{{ asset('images/logo.webp') }}" type="image/webp">
-                    <img src="{{ asset('images/logo.png') }}" alt="Logo NiangProgrammeur" class="logo-image" width="44" height="44" loading="eager" fetchpriority="high">
-                </picture>
-            @endif
+            {{-- Logo en 64/128 px (audit PERF-02 : l'original de 446 px était affiché en 44 px). --}}
+            <img src="{{ \App\Models\SiteSetting::logoVariantUrl(64) }}"
+                 srcset="{{ \App\Models\SiteSetting::logoVariantUrl(64) }} 1x, {{ \App\Models\SiteSetting::logoVariantUrl(128) }} 2x"
+                 alt="Logo NiangProgrammeur" class="logo-image" width="44" height="44" loading="eager" fetchpriority="high">
             <span class="logo-text">NiangProgrammeur</span>
         </a>
         
@@ -43,9 +39,10 @@
             
             <!-- Dropdown Formations -->
             <li class="navbar-item dropdown">
-                <a href="#" class="navbar-link dropdown-toggle">
+                {{-- Audit FCT-02 : lien vers la page des formations (le menu s'ouvre au survol). --}}
+                <a href="{{ route('formations.all') }}" class="navbar-link dropdown-toggle {{ request()->routeIs('formations.*') ? 'active' : '' }}">
                     {{ trans('app.nav.formations') }}
-                    <i class="fas fa-chevron-down dropdown-icon"></i>
+                    <i class="fas fa-chevron-down dropdown-icon" aria-hidden="true"></i>
                 </a>
                 <div class="dropdown-menu">
                     @if($hasPaidCourses)
@@ -311,10 +308,11 @@
 
             <!-- Dropdown À propos / Contact -->
             <li class="navbar-item dropdown">
-                <a href="{{ route('about') }}" class="navbar-link dropdown-toggle {{ request()->routeIs(['about', 'contact', 'monetization.index', 'monetization.affiliates', 'monetization.affiliates.dashboard', 'docs', 'documents.*', 'forum.*', 'admin-docs.*', 'bundles.*']) ? 'active' : '' }}">
+                {{-- Audit FCT-02 : « Ressources » ouvre le sous-menu (il menait à /about, déjà présent dans le sous-menu). --}}
+                <button type="button" aria-haspopup="true" class="navbar-link navbar-link--button dropdown-toggle {{ request()->routeIs(['about', 'contact', 'monetization.index', 'monetization.affiliates', 'monetization.affiliates.dashboard', 'docs', 'documents.*', 'forum.*', 'admin-docs.*', 'bundles.*']) ? 'active' : '' }}">
                     {{ trans('app.nav.about') }}
-                    <i class="fas fa-chevron-down dropdown-icon"></i>
-                </a>
+                    <i class="fas fa-chevron-down dropdown-icon" aria-hidden="true"></i>
+                </button>
                 <div class="dropdown-menu">
                     @php
                         $hasActiveSubscriptionPlans = \App\Models\SubscriptionPlan::active()->exists();
@@ -743,7 +741,7 @@
         @endauth
         
         <!-- Mobile Toggle -->
-        <button type="button" class="mobile-toggle" id="mobileToggle" aria-label="Ouvrir le menu mobile" aria-expanded="false">
+        <button type="button" class="mobile-toggle" id="mobileToggle" aria-label="Ouvrir le menu mobile" aria-expanded="false" aria-controls="mobileMenu">
             <span class="mobile-toggle-line" aria-hidden="true"></span>
             <span class="mobile-toggle-line" aria-hidden="true"></span>
             <span class="mobile-toggle-line" aria-hidden="true"></span>
@@ -754,8 +752,9 @@
 <!-- Mobile Menu Overlay -->
 <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
 
-<!-- Mobile Menu -->
-<div class="mobile-menu" id="mobileMenu">
+<!-- Mobile Menu (audit A11Y-03/04 : repère nav ; inert tant qu'il est fermé, pour que ses
+     liens hors écran ne soient pas atteignables au clavier) -->
+<nav class="mobile-menu" id="mobileMenu" aria-label="Menu mobile" inert>
     <div class="mobile-menu-header">
         <div class="mobile-menu-title">Menu</div>
         <button type="button" class="mobile-menu-close" onclick="closeMobileMenu()" aria-label="Fermer le menu">
@@ -1030,7 +1029,7 @@
             $tooltipText = $currentLang === 'fr' ? 'Changer en anglais' : 'Switch to French';
         @endphp
         <li class="mobile-menu-item">
-            <a href="{{ route('language.set', ['locale' => $currentLang === 'fr' ? 'en' : 'fr']) }}?redirect={{ urlencode(request()->url()) }}" class="mobile-menu-link" onclick="toggleLanguage(); return false;" style="background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.3);">
+            <a href="{{ route('language.set', ['locale' => $currentLang === 'fr' ? 'en' : 'fr']) }}?redirect={{ urlencode(request()->getRequestUri()) }}" rel="nofollow" class="mobile-menu-link" onclick="toggleLanguage(); return false;" style="background: rgba(6, 182, 212, 0.1); border: 1px solid rgba(6, 182, 212, 0.3);">
                 @if($currentLang === 'fr')
                 <!-- Drapeau français -->
                 <svg class="mobile-language-flag" viewBox="0 0 640 480" xmlns="http://www.w3.org/2000/svg" style="width: 24px; height: 18px; margin-right: 12px;">
@@ -1110,7 +1109,7 @@
         </li>
         @endauth
     </ul>
-</div>
+</nav>
 
 <script>
     // Navbar scroll effect
@@ -1134,20 +1133,37 @@
     const mobileMenu = document.getElementById('mobileMenu');
     const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
     
+    // Focus (audit A11Y-04) : libellé dynamique du bouton, focus sur le premier lien à
+    // l'ouverture, piégé dans le panneau, rendu au bouton à la fermeture.
+    const mobileFocusables = () => Array.from(mobileMenu.querySelectorAll('a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])'))
+        .filter(el => el.offsetParent !== null || el === document.activeElement);
+
     function openMobileMenu() {
         mobileToggle.classList.add('active');
         mobileToggle.setAttribute('aria-expanded', 'true');
+        mobileToggle.setAttribute('aria-label', 'Fermer le menu');
+        mobileMenu.removeAttribute('inert');
         mobileMenu.classList.add('active');
         mobileMenuOverlay.classList.add('active');
         document.body.style.overflow = 'hidden';
+        const first = mobileMenu.querySelector('.mobile-menu-list a[href], .mobile-menu-list button');
+        if (first) first.focus({ preventScroll: true });
     }
     
     function closeMobileMenu() {
+        const wasOpen = mobileMenu.classList.contains('active');
+        const focusWasInside = mobileMenu.contains(document.activeElement);
         mobileToggle.classList.remove('active');
         mobileToggle.setAttribute('aria-expanded', 'false');
+        mobileToggle.setAttribute('aria-label', 'Ouvrir le menu mobile');
         mobileMenu.classList.remove('active');
+        mobileMenu.setAttribute('inert', '');
         mobileMenuOverlay.classList.remove('active');
         document.body.style.overflow = '';
+        // Uniquement si le menu était ouvert : ce handler est aussi appelé à chaque clic hors du menu.
+        if (wasOpen && (focusWasInside || document.activeElement === document.body)) {
+            mobileToggle.focus({ preventScroll: true });
+        }
 
         document.querySelectorAll('.mobile-dropdown-content.active').forEach(dropdown => dropdown.classList.remove('active'));
         document.querySelectorAll('.mobile-dropdown-toggle.active').forEach(toggle => {
@@ -1227,6 +1243,16 @@
         }
     });
     
+    // Piège de focus : Tab / Maj+Tab bouclent dans le panneau ouvert.
+    mobileMenu.addEventListener('keydown', (e) => {
+        if (e.key !== 'Tab' || !mobileMenu.classList.contains('active')) return;
+        const items = mobileFocusables();
+        if (!items.length) return;
+        const first = items[0], last = items[items.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    });
+
     // Close on escape key
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
@@ -1510,7 +1536,7 @@
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest',
                     'Accept': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+                    ...npCsrfHeader()
                 }
             });
             

@@ -18,7 +18,7 @@
       {{-- COL 1 — Marque --}}
       <div class="ft__col ft__col--brand">
         <a href="{{ route('home') }}" class="ft__logo-wrap">
-          <img loading="lazy" src="{{ \App\Models\SiteSetting::logoUrl() }}" alt="Logo {{ $siteName }}" class="ft__logo-img" width="44" height="44">
+          <img loading="lazy" src="{{ \App\Models\SiteSetting::logoVariantUrl(64) }}" srcset="{{ \App\Models\SiteSetting::logoVariantUrl(64) }} 1x, {{ \App\Models\SiteSetting::logoVariantUrl(128) }} 2x" alt="Logo {{ $siteName }}" class="ft__logo-img" width="44" height="44">
           <span class="ft__logo-name">{{ $siteName }}</span>
         </a>
         <p class="ft__tagline">
@@ -62,7 +62,7 @@
 
       {{-- COL 2 — Navigation --}}
       <div class="ft__col">
-        <h3 class="ft__col-title">Navigation</h3>
+        <h2 class="ft__col-title">Navigation</h2>
         <nav class="ft__nav" aria-label="Liens rapides">
           <a href="{{ route('home') }}"             class="ft__link"><i class="fas fa-home"></i> Accueil</a>
           <a href="{{ route('formations.all') }}"   class="ft__link"><i class="fas fa-graduation-cap"></i> Formations</a>
@@ -77,7 +77,7 @@
 
       {{-- COL 3 — Formations --}}
       <div class="ft__col">
-        <h3 class="ft__col-title">Technologies</h3>
+        <h2 class="ft__col-title">Technologies</h2>
         <nav class="ft__nav" aria-label="Formations">
           <a href="{{ route('formations.html5') }}"       class="ft__link">🌐 HTML5</a>
           <a href="{{ route('formations.css3') }}"        class="ft__link">🎨 CSS3</a>
@@ -92,11 +92,12 @@
 
       {{-- COL 4 — Newsletter --}}
       <div class="ft__col">
-        <h3 class="ft__col-title">Newsletter</h3>
+        <h2 class="ft__col-title">Newsletter</h2>
         <p class="ft__newsletter-desc">
           {{ trans('app.footer.newsletter_description') ?? 'Recevez nos dernières formations et opportunités directement dans votre boîte mail.' }}
         </p>
-        <form id="newsletterForm" class="ft__newsletter-form" novalidate>
+        {{-- method/action : repli sans JS, l'email ne part jamais en GET dans l'URL (audit FCT-03) --}}
+        <form id="newsletterForm" class="ft__newsletter-form" method="POST" action="{{ route('newsletter.subscribe') }}" novalidate>
           @csrf
           <div class="ft__input-wrap">
             <i class="fas fa-envelope ft__input-icon"></i>
@@ -107,6 +108,7 @@
               placeholder="votre@email.com"
               class="ft__input"
               required
+              maxlength="255"
               autocomplete="email"
             >
           </div>
@@ -115,7 +117,8 @@
             S'abonner
           </button>
         </form>
-        <div id="newsletterMessage" class="ft__newsletter-msg" role="alert" aria-live="polite"></div>
+        @php $__nlError = $errors->getBag('newsletter')->first('email'); @endphp
+        <div id="newsletterMessage" class="ft__newsletter-msg{{ session('newsletter_success') ? ' ft__newsletter-msg--ok' : ($__nlError ? ' ft__newsletter-msg--err' : '') }}" role="alert" aria-live="polite">@if(session('newsletter_success'))<i class="fas fa-check-circle"></i> {{ session('newsletter_success') }}@elseif($__nlError)<i class="fas fa-exclamation-circle"></i> {{ $__nlError }}@endif</div>
 
         {{-- Contact rapide --}}
         @if($siteSettings?->contact_email)
@@ -230,7 +233,7 @@ body:not(.dark-mode) .ft {
 
 .ft__tagline {
   font-size: 0.85rem;
-  color: oklch(55% 0 0);
+  color: oklch(66% 0 0);
   line-height: 1.65;
   margin-block-end: 1.5rem;
 }
@@ -313,7 +316,7 @@ body:not(.dark-mode) .ft {
 /* Newsletter */
 .ft__newsletter-desc {
   font-size: 0.85rem;
-  color: oklch(55% 0 0);
+  color: oklch(66% 0 0);
   line-height: 1.6;
   margin-block-end: 1rem;
 }
@@ -350,7 +353,7 @@ body:not(.dark-mode) .ft {
   transition: border-color 0.2s ease, background 0.2s ease;
 }
 
-.ft__input::placeholder { color: oklch(45% 0 0); }
+.ft__input::placeholder { color: oklch(60% 0 0); }
 
 .ft__input:focus {
   border-color: oklch(65% 0.20 200 / 60%);
@@ -406,9 +409,10 @@ body:not(.dark-mode) .ft {
 .ft__contact-link {
   display: flex;
   align-items: center;
+  min-block-size: 24px; /* cible tactile ≥ 24 px (audit UX-04) */
   gap: 0.5rem;
   font-size: 0.8125rem;
-  color: oklch(55% 0 0);
+  color: oklch(66% 0 0);
   text-decoration: none;
   transition: color 0.15s ease;
 }
@@ -435,8 +439,14 @@ body:not(.dark-mode) .ft {
 }
 
 .ft__legal-link {
+  /* cible tactile ≥ 24×24 px (audit UX-04) */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: 24px;
+  min-inline-size: 24px;
   font-size: 0.8125rem;
-  color: oklch(48% 0 0);
+  color: oklch(62% 0 0);
   text-decoration: none;
   transition: color 0.15s ease;
 }
@@ -457,10 +467,15 @@ body:not(.dark-mode) .ft {
 
 .ft__copyright {
   font-size: 0.8125rem;
-  color: oklch(45% 0 0);
+  color: oklch(60% 0 0);
 }
 
 .ft__copyright strong { color: oklch(65% 0 0); }
+/* Audit UX-04 : corps de texte ≥ 14 px en mobile */
+@media (max-width: 767px) {
+  .ft__tagline,
+  .ft__newsletter-desc { font-size: 0.875rem; }
+}
 </style>
 
 <script>
@@ -470,7 +485,6 @@ document.getElementById('newsletterForm').addEventListener('submit', async funct
     const email   = document.getElementById('newsletterEmail').value;
     const btn     = document.getElementById('newsletterBtn');
     const msg     = document.getElementById('newsletterMessage');
-    const csrf    = document.querySelector('input[name="_token"]')?.value ?? document.querySelector('meta[name="csrf-token"]')?.content ?? '';
 
     btn.disabled = true;
     btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Envoi…';
@@ -478,7 +492,7 @@ document.getElementById('newsletterForm').addEventListener('submit', async funct
     try {
         const res  = await fetch('{{ route("newsletter.subscribe") }}', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': csrf, 'Accept': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', ...npCsrfHeader() },
             body: JSON.stringify({ email })
         });
         const data = await res.json();

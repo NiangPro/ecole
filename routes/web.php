@@ -86,13 +86,13 @@ Route::get('/', [PageController::class, 'index'])->middleware(['http.cache:list'
 Route::get('/maintenance', [PageController::class, 'maintenance'])->name('maintenance');
 // Route Recherche - Utiliser SearchController
 use App\Http\Controllers\SearchController;
-Route::get('/search', [SearchController::class, 'index'])->middleware('throttle:30,1')->name('search');
+Route::get('/search', [SearchController::class, 'index'])->middleware(['throttle:30,1', 'noindex'])->name('search');
 
 // Routes Forum (publiques)
 use App\Http\Controllers\ForumController;
 Route::prefix('forum')->name('forum.')->group(function () {
     Route::get('/', [ForumController::class, 'index'])->name('index');
-    Route::get('/search', [ForumController::class, 'search'])->name('search');
+    Route::get('/search', [ForumController::class, 'search'])->middleware('noindex')->name('search');
     Route::get('/category/{slug}', [ForumController::class, 'category'])->name('category');
     Route::get('/{categorySlug}/{topicSlug}', [ForumController::class, 'show'])->name('show');
     
@@ -163,6 +163,12 @@ Route::post('/documents/cart/clear', [DocumentCartController::class, 'clear'])->
 Route::get('/documents/checkout/payment', [DocumentCartController::class, 'checkoutPayment'])->name('documents.checkout.payment');
 Route::post('/documents/checkout/process', [DocumentCartController::class, 'processCheckout'])->name('documents.checkout.process');
 Route::get('/documents/guest-success/{paymentId}', [DocumentCartController::class, 'guestSuccess'])->name('documents.guest-success');
+
+// Aperçu public des premières pages (images générées depuis le PDF)
+Route::get('/documents/{id}/apercu/{page}', [DocumentController::class, 'pagePreview'])
+    ->whereNumber('id')
+    ->whereNumber('page')
+    ->name('documents.page-preview');
 
 // Route téléchargement gratuit (avant /documents/{slug})
 Route::get('/documents/{id}/download-free', [DocumentController::class, 'downloadFree'])
@@ -258,7 +264,7 @@ Route::post('/payment/course/{courseId}', [PaymentController::class, 'processCou
 Route::get('/payment/donation', function () {
     return redirect()->route('monetization.donations')->setStatusCode(301);
 })->name('payment.donation.get');
-Route::post('/payment/donation', [PaymentController::class, 'processDonation'])->name('payment.donation');
+Route::post('/payment/donation', [PaymentController::class, 'processDonation'])->middleware('throttle:10,1')->name('payment.donation');
 Route::get('/payment/confirm/{paymentId}', [PaymentController::class, 'confirm'])->name('payment.confirm');
 Route::put('/payment/{paymentId}/update-method', [PaymentController::class, 'updatePaymentMethod'])->middleware('auth')->name('payment.update-method');
 Route::get('/payment/wave/{paymentId}', [PaymentController::class, 'waveRedirect'])->name('payment.wave');
@@ -321,17 +327,10 @@ Route::get('/articles/vedettes', [EmploiController::class, 'featured'])->name('a
 // Placées AVANT la route {slug} pour être servies en 301 plutôt que retourner
 // le contenu de l'article encore en base (le nettoyage des lignes dupliquées en
 // base nécessite un accès à la base de production, non disponible ici).
-foreach ([
-    'comment-postuler-a-sonatel-orange-senegal-en-2026-1',
-    'comment-postuler-a-la-sonatel-en-2026',
-    'comment-postuler-a-sonatel-orange-senegal-en-2026',
-    'sonatel-recrute-candidature-spontanee-2026',
-    'deposer-une-candidature-spontanee-chez-sonatel-2026',
-    'candidature-spontanee-sonatel-orange-senegal-2026-2',
-    'candidature-spontanee-sonatel-comment-postuler-en-2026',
-    'comment-postuler-a-la-sonatel-orange-senegal-2026',
-] as $duplicateSlug) {
-    Route::redirect('/emplois/article/' . $duplicateSlug, '/emplois/article/candidature-spontanee-sonatel-2026-postulez-au-senegal', 301);
+// Liste déplacée dans JobArticleRedirect::LEGACY (audit SEO-03) ; les nouvelles fusions
+// se font en base (table job_article_redirects), gérées par EmploiController::show().
+foreach (\App\Models\JobArticleRedirect::LEGACY as $duplicateSlug => $keptSlug) {
+    Route::redirect('/emplois/article/' . $duplicateSlug, '/emplois/article/' . $keptSlug, 301);
 }
 
 // Route avec paramètre - exclut "articles-recents" pour éviter les conflits
@@ -427,21 +426,25 @@ Route::middleware('auth')->prefix('api')->name('api.')->group(function () {
     // Notifications push
     Route::post('/push/subscribe', [\App\Http\Controllers\PushNotificationController::class, 'subscribe'])->name('push.subscribe');
     Route::post('/push/unsubscribe', [\App\Http\Controllers\PushNotificationController::class, 'unsubscribe'])->name('push.unsubscribe');
-    
-    // Analytics tracking
+});
+
+// Traceur analytique interne (audit FCT-01) : ouvert aux visiteurs non connectés — c'est
+// presque tout le trafic, le groupe « auth » ci-dessus leur renvoyait 401. Protégé par le
+// CSRF du groupe web et limité en débit ; aucune IP stockée en clair (cf. EventTrackingService).
+Route::middleware('throttle:60,1')->prefix('api')->name('api.')->group(function () {
     Route::post('/analytics/track', [\App\Http\Controllers\AnalyticsController::class, 'trackEvent'])->name('analytics.track');
     Route::post('/analytics/heatmap', [\App\Http\Controllers\AnalyticsController::class, 'trackHeatmap'])->name('analytics.heatmap');
     Route::post('/analytics/funnel', [\App\Http\Controllers\AnalyticsController::class, 'trackFunnelStep'])->name('analytics.funnel');
-    Route::get('/analytics/ab-test/{testId}', [\App\Http\Controllers\AnalyticsController::class, 'getABTestVariant'])->name('analytics.ab-test');
-    Route::get('/analytics/ab-tests', [\App\Http\Controllers\Admin\AnalyticsController::class, 'getActiveABTests'])->name('analytics.ab-tests');
+    Route::get('/analytics/ab-test/{testId}', [\App\Http\Controllers\AnalyticsController::class, 'getABTestVariant'])->whereNumber('testId')->name('analytics.ab-test');
+    Route::get('/analytics/ab-tests', [\App\Http\Controllers\AnalyticsController::class, 'activeABTests'])->name('analytics.ab-tests');
     Route::post('/analytics/ab-test/conversion', [\App\Http\Controllers\AnalyticsController::class, 'markABTestConversion'])->name('analytics.ab-test.conversion');
 });
 
 // Routes d'authentification utilisateur
 Route::get('/login', [\App\Http\Controllers\Auth\LoginController::class, 'showLoginForm'])->name('login');
-Route::post('/login', [\App\Http\Controllers\Auth\LoginController::class, 'login'])->name('login.post');
+Route::post('/login', [\App\Http\Controllers\Auth\LoginController::class, 'login'])->middleware('throttle:10,1')->name('login.post'); // audit SEC-03
 Route::get('/register', [\App\Http\Controllers\Auth\RegisterController::class, 'showRegistrationForm'])->name('register');
-Route::post('/register', [\App\Http\Controllers\Auth\RegisterController::class, 'register'])->name('register.post');
+Route::post('/register', [\App\Http\Controllers\Auth\RegisterController::class, 'register'])->middleware('throttle:5,1')->name('register.post'); // audit SEC-03
 Route::post('/logout', [\App\Http\Controllers\Auth\LoginController::class, 'logout'])->name('logout');
 
 // Mot de passe oublié — vérification par code OTP envoyé par e-mail
@@ -806,6 +809,7 @@ Route::middleware(['admin'])->group(function () {
     Route::prefix('admin/documents')->name('admin.documents.')->group(function () {
         // Documents
         Route::get('documents/{id}/preview', [\App\Http\Controllers\Admin\DocumentController::class, 'preview'])->name('documents.preview');
+        Route::post('documents/{id}/page-previews', [\App\Http\Controllers\Admin\DocumentController::class, 'storePagePreviews'])->name('documents.page-previews');
         Route::get('documents/{id}/cover', [\App\Http\Controllers\Admin\DocumentController::class, 'serveCover'])->name('documents.cover');
         Route::resource('documents', \App\Http\Controllers\Admin\DocumentController::class);
         Route::post('documents/{id}/publish', [\App\Http\Controllers\Admin\DocumentController::class, 'publish'])->name('documents.publish');

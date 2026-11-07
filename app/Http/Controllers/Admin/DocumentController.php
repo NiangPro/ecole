@@ -43,7 +43,12 @@ class DocumentController extends Controller
         $documents = $query->orderBy('created_at', 'desc')->paginate(20);
         $categories = DocumentCategory::active()->ordered()->get();
 
-        return view('admin.documents.index', compact('documents', 'categories'));
+        // PDF sans aperçu public (pour la génération groupée)
+        $missingPreviewIds = Document::where('preview_pages', 0)
+            ->whereRaw('LOWER(file_extension) = ?', ['pdf'])
+            ->pluck('id');
+
+        return view('admin.documents.index', compact('documents', 'categories', 'missingPreviewIds'));
     }
 
     public function create()
@@ -168,6 +173,35 @@ class DocumentController extends Controller
     }
 
     /**
+     * Enregistre les images d'aperçu public (premières pages rendues côté navigateur via pdf.js)
+     */
+    public function storePagePreviews(Request $request, $id)
+    {
+        $document = Document::findOrFail($id);
+
+        $request->validate([
+            'pages' => 'required|array|min:1|max:' . Document::PREVIEW_MAX_PAGES,
+            'pages.*' => 'required|file|mimes:jpg,jpeg|max:3072',
+        ]);
+
+        $document->deletePreviewImages();
+
+        $count = 0;
+        foreach (array_values($request->file('pages')) as $index => $file) {
+            $path = $document->previewImagePath($index + 1);
+            Storage::disk('public')->putFileAs(dirname($path), $file, basename($path));
+            $count++;
+        }
+
+        // updated_at sert de version de cache pour les URLs d'aperçu
+        $document->preview_pages = $count;
+        $document->updated_at = now();
+        $document->save();
+
+        return response()->json(['success' => true, 'pages' => $count]);
+    }
+
+    /**
      * Sert l'image de couverture d'un document (contourne /storage/ sur LWS)
      */
     public function serveCover($id)
@@ -191,6 +225,12 @@ class DocumentController extends Controller
 
         if (!$fullPath) {
             abort(404);
+        }
+
+        // Vignettes des listes (audit PERF-02) : ?w=440, inclus dans la signature de l'URL.
+        // Les couvertures font jusqu'à 1086×1448 px pour un affichage en ~220 px.
+        if ((int) request('w') === 440) {
+            $fullPath = \App\Support\ImageVariant::make($fullPath, 440, storage_path('app/image-variants/document-covers'));
         }
 
         $mimeType = mime_content_type($fullPath) ?: 'image/png';
@@ -261,6 +301,10 @@ class DocumentController extends Controller
             $validated['file_size'] = $file->getSize();
             $validated['file_type'] = $file->getMimeType();
             $validated['file_extension'] = $file->getClientOriginalExtension();
+
+            // L'aperçu correspondait à l'ancien fichier
+            $document->deletePreviewImages();
+            $validated['preview_pages'] = 0;
         }
 
         $validated['is_featured'] = $request->has('is_featured');
@@ -345,6 +389,8 @@ class DocumentController extends Controller
         if ($document->cover_image && $document->cover_type === 'internal' && Storage::disk('public')->exists($document->cover_image)) {
             Storage::disk('public')->delete($document->cover_image);
         }
+
+        $document->deletePreviewImages();
 
         $document->delete();
 

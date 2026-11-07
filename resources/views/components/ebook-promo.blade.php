@@ -104,6 +104,8 @@
     font-size:.7rem;color:rgba(255,255,255,.55);
     margin-top:.7rem;
 }
+/* Audit UX-04 : texte ≥ 14 px en mobile */
+@media (max-width: 767px){.np-ebook-subtitle,.np-ebook-mention{font-size:.875rem}}
 </style>
     <div class="np-ebook-badge">
         <i class="{{ $ebookIcon }}"></i> {{ $ebookBadge }}

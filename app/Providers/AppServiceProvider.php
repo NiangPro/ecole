@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Validation\Rules\Password;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -15,6 +16,13 @@ class AppServiceProvider extends ServiceProvider
         // Chargement direct (indépendant de `composer dump-autoload`, qui n'est pas
         // toujours relancé après un déploiement manuel — voir NumberHelper.php).
         require_once app_path('Helpers/NumberHelper.php');
+
+        // Garde-fou (audit SEC-01) : en production, jamais de page de debug publique
+        // (pile d'appels, extraits de code, chemins serveur), même si APP_DEBUG=true
+        // traîne dans le .env. Appliqué à l'exécution : survit à config:cache.
+        if ($this->app->environment('production') && config('app.debug')) {
+            config(['app.debug' => false]);
+        }
     }
 
     /**
@@ -30,6 +38,9 @@ class AppServiceProvider extends ServiceProvider
 
         // Configuration pour éviter l'erreur "La clé est trop longue" avec MySQL/MariaDB
         Schema::defaultStringLength(191);
+
+        // Règle commune des mots de passe (audit SEC-03) : inscription, réinitialisation, profil.
+        Password::defaults(fn () => Password::min(8));
         
         // Partager les catégories d'emplois avec la navigation
         view()->composer('partials.navigation', \App\View\Composers\NavigationComposer::class);

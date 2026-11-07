@@ -7,6 +7,10 @@ export default defineConfig(({ mode }) => ({
         laravel({
             input: [
                 'resources/css/app.css',
+                // Anciennement servis depuis public/css (audit PERF-01) : minifiés et hachés.
+                'resources/css/navigation.css',
+                'resources/css/ux-improvements.css',
+                'resources/css/social-features.css',
                 'resources/js/app.js',
                 'resources/css/features/homepage.css',
                 'resources/css/features/about.css',
@@ -26,6 +30,10 @@ export default defineConfig(({ mode }) => ({
         tailwindcss(),
     ],
     build: {
+        // Garder les fichiers hachés des builds précédents : les pages HTML en cache
+        // (page.cache, formation_html_*) les référencent encore jusqu'à expiration.
+        // Sans ça, elles s'affichent sans CSS après chaque build. Purger public/build de temps en temps.
+        emptyOutDir: false,
         // Minification activée en production uniquement
         minify: mode === 'production' ? 'terser' : false,
         terserOptions: mode === 'production' ? {

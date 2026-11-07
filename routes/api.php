@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\ArticleController;
 use App\Http\Controllers\Api\McpController;
+use App\Http\Controllers\Api\SokhnaController;
 use App\Http\Middleware\VerifyMcpConnectorToken;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -55,3 +56,8 @@ Route::middleware(VerifyMcpConnectorToken::class)->group(function () {
     Route::get('/mcp', [McpController::class, 'methodNotAllowed']);
     Route::delete('/mcp', [McpController::class, 'methodNotAllowed']);
 });
+
+// Chatbot public « Sokhna » (Groq) — limité par IP, sans session ; les conversations ne sont pas stockées.
+Route::post('/sokhna/chat', [SokhnaController::class, 'chat'])
+    ->middleware('throttle:15,1')
+    ->name('sokhna.chat');

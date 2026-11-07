@@ -211,7 +211,7 @@ body.dark-mode .wd-done-btn{background:#1f2c40;color:#cbd5e1;}
                     <div class="ncart-thumb">
                         @if($item->document->cover_image)
                             @if($item->document->cover_type === 'internal')
-                                <img loading="lazy" src="{{ \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $item->document->id]) }}" alt="{{ $item->document->title }}">
+                                <img loading="lazy" src="{{ \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $item->document->id, 'w' => 440]) }}" alt="{{ $item->document->title }}">
                             @else
                                 <img loading="lazy" src="{{ $item->document->cover_image }}" alt="{{ $item->document->title }}">
                             @endif
@@ -389,7 +389,7 @@ body.dark-mode .wd-done-btn{background:#1f2c40;color:#cbd5e1;}
                         </a>
                     </div>
                 </div>
-                <a href="#" id="wd-reopen-wave" target="_blank" rel="noopener" class="wd-reopen-btn">
+                <a href="#" id="wd-reopen-wave" target="_blank" rel="noopener noreferrer" class="wd-reopen-btn">
                     <i class="fas fa-mobile-alt"></i> Rouvrir la page de paiement Wave
                 </a>
                 <button type="button" class="wd-done-btn" onclick="closeWaveDirectModal()">Fermer</button>
@@ -446,7 +446,6 @@ window.confirmWaveDirect = function() {
     const waveTab = window.open('', '_blank');
 
     const fd = new FormData();
-    fd.append('_token', '{{ csrf_token() }}');
     fd.append('payment_method', 'wave');
     fd.append('customer_name', name);
     fd.append('customer_email', email);
@@ -455,7 +454,7 @@ window.confirmWaveDirect = function() {
     fetch('{{ route('documents.checkout.process') }}', {
         method: 'POST',
         body: fd,
-        headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+        headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json', ...npCsrfHeader() }
     })
     .then(r => r.json().then(data => ({ ok: r.ok, data })))
     .then(({ ok, data }) => {
@@ -549,7 +548,7 @@ window.updateQuantity = function(itemId, quantity) {
         method: 'POST',
         body: formData,
         headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            ...npCsrfHeader(),
             'Accept': 'application/json',
             'X-Requested-With': 'XMLHttpRequest',
         }

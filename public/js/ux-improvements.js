@@ -532,9 +532,16 @@
     // INITIALISATION
     // ============================================
     
+    // Ce fichier est chargé en différé (requestIdleCallback dans layouts/app) : DOMContentLoaded
+    // est souvent déjà passé et le bloc ci-dessous ne s'exécute pas. Les notifications (messages
+    // flash, copie de lien…) sont donc créées immédiatement (audit PERF-01, retrait de toastr).
+    if (document.readyState !== 'loading' && !window.feedbackManager) {
+        window.feedbackManager = new FeedbackManager();
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
         // Initialiser les managers
-        window.feedbackManager = new FeedbackManager();
+        window.feedbackManager = window.feedbackManager || new FeedbackManager();
         window.accessibilityManager = new AccessibilityManager();
         window.pwaManager = new PWAManager();
 

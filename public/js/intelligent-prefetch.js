@@ -43,7 +43,22 @@ class IntelligentPrefetcher {
     }
 
     // Précharger une URL avec priorité basse
+    // URL qui ne doivent jamais être préchargées : elles agissent (changement de langue,
+    // déconnexion, paiement…) au lieu de simplement afficher une page (audit SEO-01).
+    isPrefetchable(url) {
+        try {
+            const u = new URL(url, window.location.origin);
+            if (u.origin !== window.location.origin) return false;
+            return !/^\/(language|logout|payment|newsletter|admin)(\/|$)/.test(u.pathname);
+        } catch (e) {
+            return false;
+        }
+    }
+
     prefetchUrl(url) {
+        if (!this.isPrefetchable(url)) {
+            return;
+        }
         if (this.prefetchQueue.has(url)) {
             return; // Déjà en file d'attente
         }

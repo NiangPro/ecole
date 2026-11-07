@@ -201,6 +201,17 @@
     opacity: 0.6;
 }
 
+/* Déclencheur sans lien (« Ressources », audit FCT-02) : même rendu qu'un lien */
+button.navbar-link--button {
+    background: none;
+    border: 0;
+    font-family: inherit;
+    line-height: inherit;
+    cursor: pointer;
+}
+
+/* Ouverture au clavier aussi (Tab sur le déclencheur) */
+.dropdown:not(#userDropdown):focus-within .dropdown-menu,
 .dropdown:hover .dropdown-menu {
     opacity: 1;
     visibility: visible;

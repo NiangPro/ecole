@@ -197,9 +197,9 @@
 
     body:not(.dark-mode) .register-card h1 { color: #0f172a; }
 
-    .register-subtitle { color: rgba(255, 255, 255, .55); margin-bottom: 28px; font-size: .98rem; }
+    .register-subtitle { color: rgba(255, 255, 255, .7); margin-bottom: 28px; font-size: .98rem; }
 
-    body:not(.dark-mode) .register-subtitle { color: rgba(30, 41, 59, .6); }
+    body:not(.dark-mode) .register-subtitle { color: rgba(30, 41, 59, .78); } /* A11Y-01 */
 
     /* ── Champs ──────────────────────────────────────────────────────── */
     .field { margin-bottom: 20px; }
@@ -287,7 +287,9 @@
     .field-toggle svg { width: 19px; height: 19px; }
 
     .field-help { font-size: .78rem; color: rgba(255, 255, 255, .4); margin-top: 6px; }
-    body:not(.dark-mode) .field-help { color: rgba(15, 23, 42, .45); }
+    /* Contrastes ≥ 4,5:1 en mode clair (axe, audit A11Y-01) : .45 → 2,9:1 ; #22d3ee → 1,5:1 */
+    body:not(.dark-mode) .field-help { color: rgba(15, 23, 42, .68); }
+    body:not(.dark-mode) .register-brand-eyebrow { color: #155e75; }
 
     .field-error { display: flex; align-items: center; gap: 6px; font-size: .8rem; color: #f87171; margin-top: 6px; font-weight: 500; }
 
@@ -391,12 +393,12 @@
         display: flex;
         align-items: center;
         gap: 12px;
-        color: rgba(255, 255, 255, .4);
+        color: rgba(255, 255, 255, .62);
         font-size: .8rem;
         margin-bottom: 20px;
     }
 
-    body:not(.dark-mode) .register-divider { color: rgba(30, 41, 59, .45); }
+    body:not(.dark-mode) .register-divider { color: rgba(30, 41, 59, .72); }
 
     .register-divider::before, .register-divider::after {
         content: '';
@@ -445,8 +447,8 @@
     .register-footer { text-align: center; padding-top: 22px; border-top: 1px solid rgba(255, 255, 255, .08); }
     body:not(.dark-mode) .register-footer { border-top-color: rgba(15, 23, 42, .1); }
 
-    .register-footer p { color: rgba(255, 255, 255, .5); margin-bottom: 14px; font-size: .9rem; }
-    body:not(.dark-mode) .register-footer p { color: rgba(15, 23, 42, .55); }
+    .register-footer p { color: rgba(255, 255, 255, .68); margin-bottom: 14px; font-size: .9rem; }
+    body:not(.dark-mode) .register-footer p { color: rgba(15, 23, 42, .72); }
 
     .register-footer a {
         display: inline-flex;
@@ -463,6 +465,7 @@
     }
 
     .register-footer a:hover { background: rgba(6, 182, 212, .1); transform: translateY(-2px); }
+    body:not(.dark-mode) .register-footer a { color: #0e7490; } /* #22d3ee sur blanc : 1,8:1 */
     .register-footer a svg { width: 16px; height: 16px; }
 
     @media (max-width: 480px) {
@@ -482,7 +485,7 @@
     </div>
 
     <div class="register-shell">
-        <main class="register-form-panel">
+        <div class="register-form-panel">
             <div class="register-card">
                 <h1>{{ trans('app.auth.register.title') }}</h1>
                 <p class="register-subtitle">{{ trans('app.auth.register.subtitle') }}</p>
@@ -572,7 +575,7 @@
                     <div class="field">
                         <label for="phone_number">{{ trans('app.auth.register.phone') }}</label>
                         <div class="phone-row">
-                            <select name="phone_country" id="phone_country" class="phone-select">
+                            <select name="phone_country" id="phone_country" class="phone-select" aria-label="Indicatif pays">
                                 <option value="+221" data-flag="🇸🇳">🇸🇳 +221</option>
                                 <option value="+33" data-flag="🇫🇷">🇫🇷 +33</option>
                                 <option value="+1" data-flag="🇺🇸">🇺🇸 +1</option>
@@ -766,7 +769,7 @@
                                 <rect x="5" y="10.5" width="14" height="9.5" rx="2.5"/>
                                 <path d="M8 10.5V7.75a4 4 0 0 1 8 0v2.75"/>
                             </svg>
-                            <input type="password" id="reg-password" name="password" required minlength="6"
+                            <input type="password" id="reg-password" name="password" required minlength="8"
                                    autocomplete="new-password" class="field-input" placeholder="••••••••">
                             <button type="button" class="field-toggle" data-toggle-target="reg-password" aria-label="Afficher le mot de passe">
                                 <svg class="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -780,7 +783,7 @@
                                 </svg>
                             </button>
                         </div>
-                        <div class="field-help">6 caractères minimum</div>
+                        <div class="field-help">8 caractères minimum</div>
                         @error('password')<div class="field-error">{{ $message }}</div>@enderror
                     </div>
 
@@ -791,7 +794,7 @@
                                 <rect x="5" y="10.5" width="14" height="9.5" rx="2.5"/>
                                 <path d="M8 10.5V7.75a4 4 0 0 1 8 0v2.75"/>
                             </svg>
-                            <input type="password" id="reg-password-confirm" name="password_confirmation" required minlength="6"
+                            <input type="password" id="reg-password-confirm" name="password_confirmation" required minlength="8"
                                    autocomplete="new-password" class="field-input" placeholder="••••••••">
                             <button type="button" class="field-toggle" data-toggle-target="reg-password-confirm" aria-label="Afficher le mot de passe">
                                 <svg class="icon-eye" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -826,7 +829,7 @@
                     </a>
                 </div>
             </div>
-        </main>
+        </div>
 
         <aside class="register-brand">
             <span class="register-brand-eyebrow">Communauté Sénégal</span>
@@ -909,7 +912,10 @@ document.addEventListener('DOMContentLoaded', function () {
     // ── Retour visuel pendant la soumission ───────────────────────────
     const form = document.getElementById('registerForm');
     const submitBtn = document.getElementById('registerSubmit');
-    form.addEventListener('submit', function () {
+    const submitHtml = submitBtn.innerHTML;
+    window.addEventListener('pageshow', function () { submitBtn.disabled = false; submitBtn.innerHTML = submitHtml; });
+    form.addEventListener('submit', function (e) {
+        if (submitBtn.disabled) { e.preventDefault(); return; }
         if (!form.checkValidity()) return;
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<span class="spinner"></span><span>Création du compte...</span>';

@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@700;800;900&display=swap">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -319,16 +319,16 @@
       <div class="info-block__desc">{{ __('maintenance.follow_desc') }}</div>
       <div class="socials">
         @if($siteSettings?->facebook_url)
-        <a href="{{ $siteSettings->facebook_url }}" target="_blank" rel="noopener" class="social-btn" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="{{ $siteSettings->facebook_url }}" target="_blank" rel="noopener noreferrer" class="social-btn" title="Facebook"><i class="fab fa-facebook-f"></i></a>
         @endif
         @if($siteSettings?->tiktok_url)
-        <a href="{{ $siteSettings->tiktok_url }}" target="_blank" rel="noopener" class="social-btn" title="TikTok"><i class="fab fa-tiktok"></i></a>
+        <a href="{{ $siteSettings->tiktok_url }}" target="_blank" rel="noopener noreferrer" class="social-btn" title="TikTok"><i class="fab fa-tiktok"></i></a>
         @endif
         @if($siteSettings?->youtube_url)
-        <a href="{{ $siteSettings->youtube_url }}" target="_blank" rel="noopener" class="social-btn" title="YouTube"><i class="fab fa-youtube"></i></a>
+        <a href="{{ $siteSettings->youtube_url }}" target="_blank" rel="noopener noreferrer" class="social-btn" title="YouTube"><i class="fab fa-youtube"></i></a>
         @endif
         @if($siteSettings?->github_url)
-        <a href="{{ $siteSettings->github_url }}" target="_blank" rel="noopener" class="social-btn" title="GitHub"><i class="fab fa-github"></i></a>
+        <a href="{{ $siteSettings->github_url }}" target="_blank" rel="noopener noreferrer" class="social-btn" title="GitHub"><i class="fab fa-github"></i></a>
         @endif
       </div>
     </div>
@@ -346,8 +346,8 @@
 
   {{-- Sélecteur de langue --}}
   <div class="lang-row">
-    <a href="{{ route('language.set', 'fr') }}?redirect=/maintenance" class="lang-btn {{ $locale === 'fr' ? 'active' : '' }}">🇫🇷 Français</a>
-    <a href="{{ route('language.set', 'en') }}?redirect=/maintenance" class="lang-btn {{ $locale === 'en' ? 'active' : '' }}">🇬🇧 English</a>
+    <a href="{{ route('language.set', 'fr') }}?redirect=/maintenance" rel="nofollow" class="lang-btn {{ $locale === 'fr' ? 'active' : '' }}">🇫🇷 Français</a>
+    <a href="{{ route('language.set', 'en') }}?redirect=/maintenance" rel="nofollow" class="lang-btn {{ $locale === 'en' ? 'active' : '' }}">🇬🇧 English</a>
   </div>
 
 </div>

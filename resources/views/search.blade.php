@@ -2,7 +2,7 @@
 
 @section('title', $query ? "« {$query} » — Recherche | NiangProgrammeur" : 'Recherche | NiangProgrammeur')
 @section('meta_description', 'Recherchez parmi nos formations, articles emploi et ressources pour développeurs.')
-@section('canonical', route('search', ['q' => $query]))
+@section('robots', 'noindex, follow')
 
 @section('styles')
 <style>
@@ -808,7 +808,7 @@
                     @endif
                     <span class="sr-meta-item">
                       <i class="fas fa-calendar"></i>
-                      {{ ($article->published_at ?? $article->created_at)->format('d/m/Y') }}
+                      <time datetime="{{ ($article->published_at ?? $article->created_at)->toDateString() }}">{{ ($article->published_at ?? $article->created_at)->format('d/m/Y') }}</time>
                     </span>
                     <span class="sr-meta-item">
                       <i class="fas fa-eye"></i> {{ $article->featured_display_views }}

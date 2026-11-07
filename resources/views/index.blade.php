@@ -7,6 +7,19 @@
 @vite('resources/css/features/homepage.css')
 @endpush
 
+@push('scripts')
+<script>
+  // Audit UX-01 : masque les boutons flottants (mobile) tant que les boutons du hero sont visibles.
+  (function () {
+    var ctas = document.querySelector('.hp-hero__actions');
+    if (!ctas || !('IntersectionObserver' in window)) return;
+    new IntersectionObserver(function (entries) {
+      document.body.classList.toggle('np-hero-ctas-visible', entries[0].isIntersecting);
+    }).observe(ctas);
+  })();
+</script>
+@endpush
+
 @push('preload_images')
 <link rel="preload" as="image" href="{{ asset('images/hero-bg-mobile.webp') }}" type="image/webp" fetchpriority="high" media="(max-width: 768px)">
 @php $heroBgDesktop = public_path('images/hero-bg.webp'); @endphp
@@ -21,7 +34,9 @@
 @section('content')
 
   {{-- HERO --}}
-  <section class="hp-hero">
+  {{-- google-anno-skip / google-anno-sc : exclut le hero des annotations automatiques
+       AdSense (lien « Réseaux sociaux » injecté dans le sous-titre, audit UX-02). --}}
+  <section class="hp-hero google-anno-skip google-anno-sc">
     <div>
       <span class="hp-hero__eyebrow">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
@@ -81,7 +96,7 @@
           <a href="{{ route('documents.show', $document->slug) }}" class="hp-doc-cover">
             @if($document->cover_image)
               @if($document->cover_type === 'internal')
-                <img src="{{ \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $document->id]) }}"
+                <img src="{{ \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $document->id, 'w' => 440]) }}"
                      alt="{{ $document->title }}"
                      width="280" height="200"
                      loading="{{ $loop->first ? 'eager' : 'lazy' }}"
@@ -699,7 +714,7 @@
             <p class="hp-native-ad__desc">{{ $ad->description }}</p>
           @endif
           @if($ad->link_url)
-            <a href="{{ $ad->link_url }}" class="hp-native-ad__cta" target="_blank" rel="noopener sponsored">
+            <a href="{{ $ad->link_url }}" class="hp-native-ad__cta" target="_blank" rel="noopener sponsored noreferrer">
               {{ __('homepage.ads.learn_more') }}
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </a>
@@ -743,7 +758,7 @@
             <span class="hp-article-category">{{ $article->category?->name ?? __('homepage.ads.sponsored') }}</span>
             <h3 class="hp-article-title">{{ $article->title }}</h3>
             @if($article->excerpt)
-              <p style="font-size:0.8125rem;color:var(--text-muted);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
+              <p class="hp-article-excerpt">
                 {{ $article->excerpt }}
               </p>
             @endif
@@ -841,7 +856,7 @@
             <p class="hp-native-ad__desc">{{ $ad->description }}</p>
           @endif
           @if($ad->link_url)
-            <a href="{{ $ad->link_url }}" class="hp-native-ad__cta" target="_blank" rel="noopener sponsored">
+            <a href="{{ $ad->link_url }}" class="hp-native-ad__cta" target="_blank" rel="noopener sponsored noreferrer">
               {{ __('homepage.partners.discover') }}
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </a>

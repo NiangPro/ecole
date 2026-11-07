@@ -551,7 +551,7 @@
                 </div>
                 <div class="legal-contact-item">
                     <i class="fab fa-whatsapp"></i>
-                    <div><strong>WhatsApp :</strong> <a href="https://wa.me/{{ $phoneDigits }}" target="_blank" rel="noopener" class="legal-link">{{ $contactPhone }}</a></div>
+                    <div><strong>WhatsApp :</strong> <a href="https://wa.me/{{ $phoneDigits }}" target="_blank" rel="noopener noreferrer" class="legal-link">{{ $contactPhone }}</a></div>
                 </div>
                 <div class="legal-contact-item">
                     <i class="fas fa-map-marker-alt"></i>

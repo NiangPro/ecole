@@ -181,7 +181,7 @@
             border-radius: 12px 12px 0 0;
         }
         .ck-text strong { font-size: .85rem; }
-        .ck-text p { font-size: .75rem; }
+        .ck-text p { font-size: .875rem; } /* ≥ 14 px en mobile (audit UX-04), était .75rem */
         .ck-btn-accept, .ck-btn-refuse { font-size: .78rem; padding: .5rem .9rem; }
     }
 </style>

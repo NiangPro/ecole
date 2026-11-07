@@ -75,6 +75,13 @@ return [
         'key' => env('OPENAI_API_KEY'),
     ],
 
+    // Chatbot « Sokhna » (widget public) — https://console.groq.com
+    'groq' => [
+        'key'   => env('GROQ_API_KEY'),
+        // Modèle à « raisonnement » : reasoning_effort=low dans SokhnaController pour garder des réponses rapides.
+        'model' => env('GROQ_MODEL', 'openai/gpt-oss-120b'),
+    ],
+
     'vapid' => [
         'public_key'  => env('VAPID_PUBLIC_KEY', ''),
         'private_key' => env('VAPID_PRIVATE_KEY', ''),

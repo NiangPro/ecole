@@ -8,14 +8,14 @@
 @section('meta_description', $category->description ?? 'Découvrez les articles dans la catégorie ' . $category->name . ' sur NiangProgrammeur.')
 @section('meta_keywords', $category->name . ', emploi Sénégal, recrutement, opportunités')
 @section('canonical', route('emplois.category', $category->slug))
+@if($category->image)
+@section('og_image', $category->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($category->image) : $category->image)
+@endif
 @push('meta')
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ route('emplois.category', $category->slug) }}">
     <meta property="og:title" content="{{ $category->name . ' | NiangProgrammeur' }}">
     <meta property="og:description" content="{{ $category->description ?? 'Découvrez les articles dans la catégorie ' . $category->name . ' sur NiangProgrammeur.' }}">
-    @if($category->image)
-    <meta property="og:image" content="{{ $category->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($category->image) : $category->image }}">
-    @endif
 @endpush
 
 @section('styles')
@@ -270,7 +270,7 @@
     body:not(.dark-mode) .no-articles { background: rgba(255,255,255,.9) !important; border-color: rgba(6,182,212,.25) !important; }
     .no-articles i { font-size: 6rem; color: rgba(6,182,212,.4); margin-bottom: 30px; display: block; animation: float 3s ease-in-out infinite; }
     @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-20px)} }
-    .no-articles h3 { font-size: 2.5rem; color: #fff; margin-bottom: 15px; font-weight: 900; background: linear-gradient(135deg,#06b6d4,#14b8a6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .no-articles h2 { font-size: 2.5rem; color: #fff; margin-bottom: 15px; font-weight: 900; background: linear-gradient(135deg,#06b6d4,#14b8a6); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .no-articles p { color: rgba(255,255,255,.7); font-size: 1.2rem; }
     body:not(.dark-mode) .no-articles p { color: rgba(30,41,59,.7) !important; }
 
@@ -352,7 +352,7 @@
                     <span class="article-card-category">
                         <i class="fas fa-folder"></i> {{ $article->category->name }}
                     </span>
-                    <h3 class="article-card-title">{{ $article->title }}</h3>
+                    <h2 class="article-card-title">{{ $article->title }}</h2>
                 </div>
             </div>
 
@@ -360,7 +360,7 @@
                 <div class="article-card-footer">
                     <div class="article-card-meta">
                         @if($article->published_at)
-                        <span><i class="fas fa-calendar"></i> {{ $article->published_at->format('d/m/Y') }}</span>
+                        <span><i class="fas fa-calendar"></i> <time datetime="{{ $article->published_at->toDateString() }}">{{ $article->published_at->format('d/m/Y') }}</time></span>
                         @endif
                         <span><i class="fas fa-eye"></i> {{ $article->featured_display_views }}</span>
                     </div>
@@ -382,7 +382,7 @@
     @else
     <div class="no-articles">
         <i class="fas fa-newspaper"></i>
-        <h3>Aucun article disponible</h3>
+        <h2>Aucun article disponible</h2>
         <p>Il n'y a pas encore d'articles publiés dans cette catégorie.</p>
     </div>
     @endif

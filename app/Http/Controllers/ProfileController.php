@@ -465,7 +465,7 @@ class ProfileController extends Controller
         if ($request->filled('current_password') && $request->filled('password')) {
             $request->validate([
                 'current_password' => 'required',
-                'password' => 'required|min:8|confirmed',
+                'password' => ['required', 'confirmed', \Illuminate\Validation\Rules\Password::defaults()],
             ]);
             
             // Vérifier le mot de passe actuel

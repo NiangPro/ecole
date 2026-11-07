@@ -24,6 +24,7 @@ class Document extends Model
         'file_extension',
         'cover_image',
         'cover_type',
+        'preview_pages',
         'price',
         'discount_price',
         'is_free',
@@ -50,6 +51,7 @@ class Document extends Model
         'download_count' => 'integer',
         'sales_count' => 'integer',
         'views_count' => 'integer',
+        'preview_pages' => 'integer',
         'tags' => 'array',
         'published_at' => 'datetime'
     ];
@@ -265,6 +267,43 @@ class Document extends Model
     public function getFileUrl(): string
     {
         return route('documents.download', ['id' => $this->id]);
+    }
+
+    /**
+     * Nombre maximum de pages affichées en aperçu public
+     */
+    public const PREVIEW_MAX_PAGES = 3;
+
+    /**
+     * Chemin (disque public) de l'image d'aperçu d'une page
+     */
+    public function previewImagePath(int $page): string
+    {
+        return 'document-previews/' . $this->id . '/page-' . $page . '.jpg';
+    }
+
+    /**
+     * URLs publiques des pages d'aperçu (vide si aucun aperçu généré)
+     */
+    public function previewImageUrls(): array
+    {
+        $urls = [];
+        for ($page = 1; $page <= min($this->preview_pages, self::PREVIEW_MAX_PAGES); $page++) {
+            $urls[] = route('documents.page-preview', [
+                'id' => $this->id,
+                'page' => $page,
+                'v' => $this->updated_at?->timestamp,
+            ]);
+        }
+        return $urls;
+    }
+
+    /**
+     * Supprimer les images d'aperçu
+     */
+    public function deletePreviewImages(): void
+    {
+        Storage::disk('public')->deleteDirectory('document-previews/' . $this->id);
     }
 
     /**

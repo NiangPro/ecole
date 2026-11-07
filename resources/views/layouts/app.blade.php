@@ -6,11 +6,29 @@
     <meta name="description" content="@yield('meta_description', 'Plateforme de formation gratuite en développement web. Apprenez HTML5, CSS3, JavaScript, PHP, Laravel, Bootstrap, Git, WordPress et Intelligence Artificielle avec NiangProgrammeur.')">
     <meta name="keywords" content="@yield('meta_keywords', 'formation développement web, HTML5, CSS3, JavaScript, PHP, Laravel, Bootstrap, Git, WordPress, IA, tutoriel gratuit, apprendre programmation, cours en ligne')">
     <meta name="author" content="Bassirou Niang - NiangProgrammeur">
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-    <meta name="googlebot" content="index, follow">
-    <meta name="bingbot" content="index, follow">
+    {{-- Une page peut changer la directive avec @section('robots', 'noindex, follow') (audit SEO-05). --}}
+    @php $__robots = trim($__env->yieldContent('robots')) ?: 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'; @endphp
+    {{-- Audit SEO-01 : la version anglaise s'affiche à la même adresse que la française (session
+         ou « ?lang=en »). Tant qu'il n'y a pas d'URL distincte par langue, tout rendu anglais est
+         non indexé et sans canonical (Google déconseille une canonical vers une autre langue).
+         Basé sur la langue du rendu, pas sur l'URL : cohérent avec les caches HTML par langue. --}}
+    @php if (app()->getLocale() === 'en') { $__robots = 'noindex, follow'; } @endphp
+    <meta name="robots" content="{!! $__robots !!}">
+    <meta name="googlebot" content="{!! $__robots !!}">
+    <meta name="bingbot" content="{!! $__robots !!}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    
+    {{-- Jeton CSRF des appels fetch (audit CACHE-01) : lu dans le cookie XSRF-TOKEN, propre à
+         chaque visiteur, plutôt que dans le HTML (qui peut venir du cache de page).
+         Usage : headers: { 'Accept': 'application/json', ...npCsrfHeader() } --}}
+    <script>
+        window.npCsrfHeader = function () {
+            var m = document.cookie.match(/(?:^|;\s*)XSRF-TOKEN=([^;]*)/);
+            if (m) return { 'X-XSRF-TOKEN': decodeURIComponent(m[1]) };
+            var meta = document.querySelector('meta[name="csrf-token"]');
+            return meta ? { 'X-CSRF-TOKEN': meta.content } : {};
+        };
+    </script>
+
     <!-- SEO amélioré -->
     <meta name="language" content="{{ app()->getLocale() }}">
     <meta name="geo.region" content="SN">
@@ -41,30 +59,34 @@
     <link rel="dns-prefetch" href="//pagead2.googlesyndication.com">
     <link rel="dns-prefetch" href="//www.googletagmanager.com">
     <!-- Canonical URL -->
-    @hasSection('canonical')
-        <link rel="canonical" href="@yield('canonical')">
-    @else
-        <link rel="canonical" href="{{ url()->current() }}">
-    @endif
-    
-    <!-- Hreflang pour support multilingue -->
     @php
-        $currentUrl = url()->current();
-        $currentLocale = app()->getLocale();
-        $alternateLocale = $currentLocale === 'fr' ? 'en' : 'fr';
-        // Générer l'URL alternative en changeant la langue
-        $alternateUrl = route('language.set', ['locale' => $alternateLocale]) . '?redirect=' . urlencode($currentUrl);
+        // Audit SEO-04 : canonical auto-référente sur les pages paginées (page 2 → …page=2),
+        // au lieu de pointer vers la page 1. Seulement si la vue affiche un paginateur.
+        // yieldContent() renvoie la valeur déjà échappée par @section : pas de second échappement.
+        $__canonical = trim($__env->yieldContent('canonical')) ?: e(url()->current());
+        foreach (get_defined_vars() as $__v) {
+            if ($__v instanceof \Illuminate\Contracts\Pagination\Paginator && $__v->currentPage() > 1
+                && ! str_contains($__canonical, 'page=')) {
+                $__canonical .= (str_contains($__canonical, '?') ? '&amp;' : '?') . 'page=' . $__v->currentPage();
+                break;
+            }
+        }
     @endphp
-    <link rel="alternate" hreflang="{{ $currentLocale }}" href="{{ $currentUrl }}">
-    <link rel="alternate" hreflang="{{ $alternateLocale }}" href="{{ $alternateUrl }}">
-    <link rel="alternate" hreflang="x-default" href="{{ url('/') }}">
+    {{-- Pas de canonical sur une page noindex (ex. recherche) : elle n'a pas vocation à être indexée. --}}
+    @unless(str_contains($__robots, 'noindex'))
+    <link rel="canonical" href="{!! $__canonical !!}">
+    @endunless
+    
+    {{-- Pas de balises hreflang (audit SEO-01) : les deux langues sont servies à la même URL ;
+         les anciennes pointaient vers l'URL d'action /language/xx?redirect=…, ce qui est faux.
+         À réintroduire avec des URL distinctes par langue (/en/…). --}}
     
     <!-- Open Graph / Facebook -->
     @php
         // Pages qui poussent déjà leur propre og:image/twitter:image via @push('meta')
         // (image de couverture réelle : document, article emploi, annonce...).
         // On évite d'émettre une balise par défaut en doublon pour elles.
-        $ogOverrideRoutes = ['documents.show', 'emplois.article', 'emplois.offres', 'emplois.category', 'admin-docs.show'];
+        $ogOverrideRoutes = ['documents.show', 'emplois.article', 'admin-docs.show'];
         $hasCustomOgImage = in_array(optional(request()->route())->getName(), $ogOverrideRoutes, true);
 
         $defaultOgImage = asset('images/og-homepage.jpg');
@@ -74,6 +96,15 @@
             $defaultOgImage = asset('images/og-formations.jpg');
         } elseif (request()->routeIs('emplois')) {
             $defaultOgImage = asset('images/og-emplois.jpg');
+        }
+        // Image propre à la page : @section('og_image', $url) — chemin relatif accepté,
+        // toujours converti en URL absolue (audit SEO-06 : Facebook/WhatsApp ignorent
+        // une og:image relative).
+        $__ogImage = html_entity_decode(trim($__env->yieldContent('og_image')), ENT_QUOTES);
+        if ($__ogImage !== '') {
+            $defaultOgImage = preg_match('#^https?://#i', $__ogImage)
+                ? $__ogImage
+                : (str_starts_with($__ogImage, '//') ? 'https:' . $__ogImage : url($__ogImage));
         }
     @endphp
     <meta property="og:type" content="website">
@@ -127,8 +158,8 @@
     
     <!-- font-display:swap pour Font Awesome (avant son chargement) -->
     <style>
-    @font-face{font-family:"Font Awesome 6 Free";font-style:normal;font-weight:900;font-display:swap;src:url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/webfonts/fa-solid-900.woff2") format("woff2")}
-    @font-face{font-family:"Font Awesome 6 Brands";font-style:normal;font-weight:400;font-display:swap;src:url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/webfonts/fa-brands-400.woff2") format("woff2")}
+    @font-face{font-family:"Font Awesome 6 Free";font-style:normal;font-weight:900;font-display:swap;src:url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/webfonts/fa-solid-900.woff2") format("woff2")}
+    @font-face{font-family:"Font Awesome 6 Brands";font-style:normal;font-weight:400;font-display:swap;src:url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/webfonts/fa-brands-400.woff2") format("woff2")}
     </style>
 
     <!-- CSS critique inline (above the fold — aucun HTTP request) -->
@@ -144,21 +175,32 @@
     </style>
 
     @php
-        $viteManifest = \Illuminate\Support\Facades\Cache::remember('vite_manifest', 3600, function () {
-            return json_decode(file_get_contents(public_path('build/manifest.json')), true);
+        // Clé liée à la date du manifest : après un `npm run build`, les nouveaux fichiers hachés
+        // sont pris en compte immédiatement (sinon l'ancien CSS, supprimé par le build, renvoie 404 jusqu'à 1 h).
+        $viteManifestPath = public_path('build/manifest.json');
+        $viteManifest = \Illuminate\Support\Facades\Cache::remember('vite_manifest_' . @filemtime($viteManifestPath), 3600, function () use ($viteManifestPath) {
+            return json_decode(file_get_contents($viteManifestPath), true);
         });
         $viteCssFile  = $viteManifest['resources/css/app.css']['file'] ?? null;
+        // navigation / ux-improvements / social-features : intégrés au build Vite (audit PERF-01).
+        $__viteCss = fn (string $entry) => isset($viteManifest[$entry]['file']) ? asset('build/' . $viteManifest[$entry]['file']) : null;
+        $navCssUrl = $__viteCss('resources/css/navigation.css');
+        $uxCssUrl  = $__viteCss('resources/css/ux-improvements.css');
+        $socialCssUrl = $__viteCss('resources/css/social-features.css');
     @endphp
 
     <!-- Preload hints — démarrer le téléchargement tôt sans différer l'application -->
-    @php $navCssV = \Illuminate\Support\Facades\Cache::remember('nav_css_mtime', 3600, fn() => filemtime(public_path('css/navigation.css'))); @endphp
-    <link rel="preload" href="{{ asset('css/navigation.css') }}?v={{ $navCssV }}" as="style">
+    @if($navCssUrl)
+    <link rel="preload" href="{{ $navCssUrl }}" as="style">
+    @endif
     @if($viteCssFile)
     <link rel="preload" href="{{ asset('build/' . $viteCssFile) }}" as="style">
     @endif
 
     <!-- CSS synchrone (bloquant mais sans CLS — styles appliqués avant le premier paint) -->
-    <link rel="stylesheet" href="{{ asset('css/navigation.css') }}?v={{ $navCssV }}">
+    @if($navCssUrl)
+    <link rel="stylesheet" href="{{ $navCssUrl }}">
+    @endif
     @if($viteCssFile)
     <link rel="stylesheet" href="{{ asset('build/' . $viteCssFile) }}">
     @endif
@@ -216,8 +258,8 @@
     </script>
     @endif
     <!-- Font Awesome - Chargement asynchrone avec preload -->
-    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"></noscript>
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer"></noscript>
     
     <!-- Poppins 900 (latin) préchargé directement en woff2 : évite le double aller-retour
          CSS Google Fonts → fichier woff2 pour le H1 du hero, élément LCP de la home -->
@@ -227,17 +269,21 @@
     <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@700;800;900&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@700;800;900&display=swap"></noscript>
     
-    <!-- Toastr CSS - Chargement asynchrone -->
-    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"></noscript>
+    {{-- Toastr retiré des pages publiques (audit PERF-01) : il exige jQuery, qui n'y est pas
+         chargé — il ne fonctionnait donc pas. Les messages passent par la notification native
+         de ux-improvements.js (window.feedbackManager). --}}
     
     <!-- UX Improvements CSS - Chargement asynchrone -->
-    <link rel="preload" href="{{ asset('css/ux-improvements.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="{{ asset('css/ux-improvements.css') }}"></noscript>
+    @if($uxCssUrl)
+    <link rel="preload" href="{{ $uxCssUrl }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="{{ $uxCssUrl }}"></noscript>
+    @endif
 
     <!-- Social Features CSS - Chargement asynchrone -->
-    <link rel="preload" href="{{ asset('css/social-features.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="{{ asset('css/social-features.css') }}"></noscript>
+    @if($socialCssUrl)
+    <link rel="preload" href="{{ $socialCssUrl }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="{{ $socialCssUrl }}"></noscript>
+    @endif
     
     @php
         $adsenseSettings = \Illuminate\Support\Facades\Cache::remember('adsense_settings', 3600, function () {
@@ -444,7 +490,7 @@
             </div>
             <div class="whatsapp-footer">
                 <a href="https://wa.me/{{ $whatsappNumber }}?text=Bonjour,%20je%20souhaite%20en%20savoir%20plus%20sur%20vos%20formations." 
-                   target="_blank" 
+                   target="_blank" rel="noopener noreferrer" 
                    class="whatsapp-send-btn">
                     <i class="fab fa-whatsapp"></i>
                     Ouvrir WhatsApp
@@ -561,6 +607,9 @@
     </script>
     @endif
 
+    <!-- Chatbot IA « Sokhna » (Groq) -->
+    @include('partials.sokhna-chat')
+
     <!-- Publicités vidéo YouTube (np-youtube-ad) : l'iframe du lecteur n'est créée
          qu'au clic sur le bouton play, jamais au chargement de la page — voir
          partials/youtube-ad-card.blade.php. Lancée avec autoplay+boucle : autorisé
@@ -570,7 +619,7 @@
             fetch('/api/ads/' + adId + '/click', {
                 method: 'POST',
                 headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+                    ...npCsrfHeader(),
                     'Content-Type': 'application/json'
                 }
             }).catch(function() {});
@@ -604,51 +653,27 @@
         }
     </script>
 
-    <!-- Toastr JS - Chargé de manière différée -->
+    {{-- Messages flash (erreur / info / avertissement) : notification native, chargée
+         seulement s'il y a un message à afficher. --}}
+    @php $__flash = array_filter(['error' => session('error'), 'info' => session('info'), 'warning' => session('warning')]); @endphp
+    @if($__flash)
     <script>
-        // Charger Toastr après le chargement de la page pour ne pas bloquer le rendu
-        window.addEventListener('load', function() {
-            const script = document.createElement('script');
-            script.src = 'https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js';
-            script.async = true;
-            document.head.appendChild(script);
-            
-            script.onload = function() {
-                if (typeof toastr !== 'undefined') {
-                    toastr.options = {
-                        "closeButton": true,
-                        "debug": false,
-                        "newestOnTop": true,
-                        "progressBar": true,
-                        "positionClass": "toast-top-right",
-                        "preventDuplicates": false,
-                        "onclick": null,
-                        "showDuration": "300",
-                        "hideDuration": "1000",
-                        "timeOut": "5000",
-                        "extendedTimeOut": "1000",
-                        "showEasing": "swing",
-                        "hideEasing": "linear",
-                        "showMethod": "fadeIn",
-                        "hideMethod": "fadeOut"
-                    };
-
-                    // Afficher les messages d'erreur, info et warning
-                    @if(session('error'))
-                        toastr.error('{{ addslashes(session('error')) }}', 'Erreur');
-                    @endif
-
-                    @if(session('info'))
-                        toastr.info('{{ addslashes(session('info')) }}', 'Information');
-                    @endif
-
-                    @if(session('warning'))
-                        toastr.warning('{{ addslashes(session('warning')) }}', 'Attention');
-                    @endif
+        window.addEventListener('load', function () {
+            var messages = {!! json_encode($__flash, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_UNESCAPED_UNICODE) !!};
+            var essais = 0;
+            (function afficher() {
+                // ux-improvements.js est chargé en différé (requestIdleCallback).
+                if (!window.feedbackManager) {
+                    if (++essais < 40) return setTimeout(afficher, 125);
+                    return;
                 }
-            };
+                if (messages.error)   window.feedbackManager.showError(messages.error);
+                if (messages.info)    window.feedbackManager.showInfo(messages.info);
+                if (messages.warning) window.feedbackManager.showWarning(messages.warning);
+            })();
         });
     </script>
+    @endif
     
     <!-- Scripts JS - Chargement différé avec requestIdleCallback -->
     @php

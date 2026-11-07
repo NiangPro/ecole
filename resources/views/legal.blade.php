@@ -372,7 +372,7 @@
         <ul class="legal-list">
             <li><strong>Nom :</strong> Infomaniak Network SA</li>
             <li><strong>Adresse :</strong> Rue Eugène-Marziano 25, 1227 Genève, Suisse</li>
-            <li><strong>Site web :</strong> <a href="https://www.infomaniak.com" target="_blank" rel="noopener" class="legal-link">www.infomaniak.com</a></li>
+            <li><strong>Site web :</strong> <a href="https://www.infomaniak.com" target="_blank" rel="noopener noreferrer" class="legal-link">www.infomaniak.com</a></li>
         </ul>
     </div>
 
@@ -451,7 +451,7 @@
             </div>
             <div class="legal-contact-item">
                 <i class="fab fa-whatsapp"></i>
-                <div><strong>WhatsApp :</strong> <a href="https://wa.me/{{ $phoneDigits }}" target="_blank" rel="noopener" class="legal-link">{{ $contactPhone }}</a></div>
+                <div><strong>WhatsApp :</strong> <a href="https://wa.me/{{ $phoneDigits }}" target="_blank" rel="noopener noreferrer" class="legal-link">{{ $contactPhone }}</a></div>
             </div>
             <div class="legal-contact-item">
                 <i class="fas fa-map-marker-alt"></i>

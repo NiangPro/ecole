@@ -255,10 +255,10 @@
                 <span class="article-card-category">
                     <i class="fas fa-folder"></i>{{ $article->category->name ?? 'Concours' }}
                 </span>
-                <h3 class="article-card-title">{{ $article->title }}</h3>
+                <h2 class="article-card-title">{{ $article->title }}</h2>
                 <p class="article-card-excerpt">{{ $article->excerpt ?? substr(strip_tags($article->content), 0, 150) }}...</p>
                 <div class="article-card-meta">
-                    <span><i class="fas fa-calendar"></i> {{ $article->published_at ? $article->published_at->format('d/m/Y') : '' }}</span>
+                    <span><i class="fas fa-calendar"></i> @if($article->published_at)<time datetime="{{ $article->published_at->toDateString() }}">{{ $article->published_at->format('d/m/Y') }}</time>@endif</span>
                     <span><i class="fas fa-eye"></i> {{ $article->featured_display_views }}</span>
                 </div>
             </div>

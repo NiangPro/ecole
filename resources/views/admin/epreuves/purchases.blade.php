@@ -103,11 +103,11 @@
                                 @php
                                     $waNum = preg_replace('/[^0-9]/', '', ($p->country_code ?? '') . $p->customer_phone);
                                 @endphp
-                                <a href="https://wa.me/{{ $waNum }}?text={{ rawurlencode($shareText) }}" target="_blank" rel="noopener" class="inline-flex items-center px-3 py-1.5 bg-green-500/20 hover:bg-green-500/30 text-green-400 rounded text-sm transition mr-1">
+                                <a href="https://wa.me/{{ $waNum }}?text={{ rawurlencode($shareText) }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-3 py-1.5 bg-green-500/20 hover:bg-green-500/30 text-green-400 rounded text-sm transition mr-1">
                                     <i class="fab fa-whatsapp mr-1"></i>Partager
                                 </a>
                             @endif
-                            <a href="{{ $downloadLink }}" target="_blank" rel="noopener" class="inline-flex items-center px-3 py-1.5 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-400 rounded text-sm transition">
+                            <a href="{{ $downloadLink }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-3 py-1.5 bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-400 rounded text-sm transition">
                                 <i class="fas fa-download mr-1"></i>Lien
                             </a>
                         @elseif($p->status === 'failed' && $p->customer_phone)
@@ -120,7 +120,7 @@
                                     . "C'est rapide et sécurisé."
                                     . ($epreuveLink ? "\n\n" . $epreuveLink : "");
                             @endphp
-                            <a href="https://wa.me/{{ $waNum }}?text={{ rawurlencode($relanceText) }}" target="_blank" rel="noopener" class="inline-flex items-center px-3 py-1.5 bg-green-500/20 hover:bg-green-500/30 text-green-400 rounded text-sm transition">
+                            <a href="https://wa.me/{{ $waNum }}?text={{ rawurlencode($relanceText) }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-3 py-1.5 bg-green-500/20 hover:bg-green-500/30 text-green-400 rounded text-sm transition">
                                 <i class="fab fa-whatsapp mr-1"></i>Relancer
                             </a>
                         @else

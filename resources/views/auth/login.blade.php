@@ -100,7 +100,7 @@
       @endif
 
       {{-- Formulaire --}}
-      <form action="{{ route('login.post') }}" method="POST" class="lg-form">
+      <form action="{{ route('login.post') }}" method="POST" class="lg-form" id="login-form">
         @csrf
 
         {{-- E-mail --}}
@@ -160,7 +160,7 @@
         </div>
 
         {{-- Bouton --}}
-        <button type="submit" class="lg-submit">
+        <button type="submit" class="lg-submit" id="login-submit">
           <i class="fas fa-sign-in-alt"></i>
           {{ trans('app.auth.login.button') }}
         </button>
@@ -206,6 +206,19 @@
 </div>
 
 <script>
+// Pas de double envoi (audit UX-03) : la validation HTML5 est passée quand submit est émis.
+(function () {
+  var form = document.getElementById('login-form');
+  var btn = document.getElementById('login-submit');
+  if (!form || !btn) return;
+  form.addEventListener('submit', function (e) {
+    if (btn.disabled) { e.preventDefault(); return; }
+    btn.disabled = true;
+    btn.setAttribute('aria-busy', 'true');
+  });
+  window.addEventListener('pageshow', function () { btn.disabled = false; btn.removeAttribute('aria-busy'); });
+})();
+
 function lgTogglePwd() {
   const input = document.getElementById('lg-password');
   const icon  = document.getElementById('lg-pwd-eye');

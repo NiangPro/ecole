@@ -31,6 +31,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             \App\Http\Middleware\TrackVisit::class,
             \App\Http\Middleware\CheckMaintenanceMode::class,
+            \App\Http\Middleware\PaginationOutOfRange::class,
         ]);
         
         // Alias pour les middlewares
@@ -40,6 +41,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'download_rate_limit' => \App\Http\Middleware\DownloadRateLimiting::class,
             'http.cache'          => \App\Http\Middleware\HttpCacheHeaders::class,
             'page.cache'          => \App\Http\Middleware\PageCache::class,
+            'noindex'             => \App\Http\Middleware\NoIndex::class,
             'profile.complete'    => \App\Http\Middleware\EnsureProfileComplete::class,
         ]);
     })

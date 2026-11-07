@@ -192,6 +192,11 @@
 
 .ct-label__req { color: oklch(52% 0.20 25); margin-inline-start: .1rem; }
 
+/* Erreur sous un champ (audit UX-03) — #b91c1c : 6,5:1 sur fond clair */
+.ct-field-error { margin: 0; font-size: .8rem; font-weight: 600; color: #b91c1c; }
+.ct-input[aria-invalid="true"], .ct-textarea[aria-invalid="true"] { border-color: #b91c1c; }
+.ct-submit:disabled { opacity: .65; cursor: wait; }
+
 .ct-input,
 .ct-textarea {
   width: 100%;
@@ -419,4 +424,10 @@
 @media (max-width: 600px) {
   .ct-form-card { padding: 1.5rem; }
   .ct-hero { padding-block: 3rem 2rem; }
+}
+
+/* Audit UX-04 : texte ≥ 14 px et cibles tactiles ≥ 24 px en mobile */
+@media (max-width: 767px) {
+  .ct-contact-card__value { font-size: .875rem; }
+  .ct-contact-card__link { min-block-size: 24px; }
 }

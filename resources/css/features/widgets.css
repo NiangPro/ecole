@@ -142,15 +142,16 @@
   /* ══════════════════════════════════════════════════════
      DARK MODE WIDGET
      ══════════════════════════════════════════════════════ */
+  /* En bas à gauche : sa place d'origine (à droite, au-dessus de WhatsApp) revient au chatbot Sokhna. */
   .dark-mode-widget {
     position: fixed;
-    inset-block-end: 70px;
-    inset-inline-end: 20px;
+    inset-block-end: 20px;
+    inset-inline-start: 20px;
     z-index: 9998;
 
     @media (width <= 768px) {
-      inset-block-end: 70px;
-      inset-inline-end: 12px;
+      inset-block-end: 15px;
+      inset-inline-start: 15px;
     }
   }
 
@@ -199,7 +200,7 @@
 
   .dark-mode-tooltip {
     position: absolute;
-    inset-inline-end: calc(100% + 12px);
+    inset-inline-start: calc(100% + 12px);
     inset-block-start: 50%;
     translate: 0 -50%;
     background: oklch(18% 0 0 / 95%);
@@ -220,11 +221,11 @@
     &::after {
       content: '';
       position: absolute;
-      inset-inline-start: 100%;
+      inset-inline-end: 100%;
       inset-block-start: 50%;
       translate: 0 -50%;
       border: 6px solid transparent;
-      border-inline-start-color: oklch(18% 0 0 / 95%);
+      border-inline-end-color: oklch(18% 0 0 / 95%);
     }
   }
 

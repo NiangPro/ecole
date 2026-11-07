@@ -118,56 +118,34 @@
     <!-- Meta Tags SEO -->
     <meta name="keywords" content="{{ $article->meta_keywords ? implode(', ', is_array($article->meta_keywords) ? $article->meta_keywords : json_decode($article->meta_keywords, true) ?? []) : '' }}">
     <meta name="author" content="NiangProgrammeur">
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
-    <meta name="googlebot" content="index, follow">
-    <meta name="bingbot" content="index, follow">
     
-    <!-- Schema.org JobPosting (offres d'emploi uniquement) -->
+    {{-- Schema.org JobPosting (audit SEO-02) : seulement pour une vraie offre (offres d'emploi,
+         opportunités professionnelles) dont l'employeur et la date limite sont renseignés, et tant
+         que la date limite n'est pas passée. Les guides gardent seulement NewsArticle (partials/schema-org). --}}
+    @if($article->hasValidJobPosting())
     @php
-        $jldFlags = JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_UNESCAPED_SLASHES | JSON_INVALID_UTF8_SUBSTITUTE;
-        $jobCategorySlugs = ['offres-emploi', 'candidature-spontanee', 'opportunites-professionnelles'];
-        $isJobPosting = $article->category && in_array($article->category->slug, $jobCategorySlugs, true);
-        if ($isJobPosting) {
-            // Champs localisation : fallback sur Dakar (les offres ne stockent pas ces données)
-            $jldStreetAddress  = $article->street_address ?? $article->location ?? $article->ville ?? 'Dakar';
-            $jldAddressLocality = $article->ville ?? $article->location ?? 'Dakar';
-            $jldAddressRegion  = $article->region ?? $article->ville ?? 'Dakar';
-            $jldPostalCode     = $article->postal_code ?? '10700';
-
-            $jldData = [
-                '@context'           => 'https://schema.org',
-                '@type'              => 'JobPosting',
-                'title'              => $article->title ?? '',
-                'description'        => strip_tags($article->excerpt ?? substr(strip_tags($article->content ?? ''), 0, 500)),
-                'datePosted'         => ($article->published_at ?? $article->created_at)?->toIso8601String() ?? now()->toIso8601String(),
-                'validThrough'       => ($article->published_at ?? $article->created_at)?->addMonths(2)->toIso8601String() ?? now()->addMonths(2)->toIso8601String(),
-                'hiringOrganization' => [
-                    '@type'  => 'Organization',
-                    'name'   => 'Recruteur — via NiangProgrammeur',
-                    'sameAs' => 'https://www.niangprogrammeur.com',
-                ],
-                'jobLocation' => [
-                    '@type'   => 'Place',
-                    'address' => [
-                        '@type'           => 'PostalAddress',
-                        'streetAddress'   => $jldStreetAddress,
-                        'addressLocality' => $jldAddressLocality,
-                        'addressRegion'   => $jldAddressRegion,
-                        'postalCode'      => $jldPostalCode,
-                        'addressCountry'  => 'SN',
-                    ],
-                ],
-                'employmentType'                => 'FULL_TIME',
-                'applicantLocationRequirements' => ['@type' => 'Country', 'name' => 'Sénégal'],
-                'url'                           => $articleUrl,
-            ];
-
-            // baseSalary omis volontairement : aucune donnée salariale n'est stockée en base.
-            // Google accepte son absence (champ recommandé, non obligatoire).
+        // '@context' / '@type' construits par concaténation : un "@context" littéral dans un
+        // .blade.php peut être pris pour une directive Blade (voir le bloc FAQPage plus bas).
+        $ldContextKey = '@' . 'context';
+        $ldTypeKey = '@' . 'type';
+        $jobAddress = [$ldTypeKey => 'PostalAddress', 'addressCountry' => 'SN'];
+        if (filled($article->location)) {
+            $jobAddress['addressLocality'] = $article->location;
         }
+        $jobPosting = [
+            $ldContextKey        => 'https://schema.org',
+            $ldTypeKey           => 'JobPosting',
+            'title'              => $article->title,
+            'description'        => $article->content,
+            'datePosted'         => ($article->published_at ?? $article->created_at)?->toIso8601String(),
+            // Fin de journée de la date limite, heure de Dakar (UTC+0)
+            'validThrough'       => $article->application_deadline->copy()->endOfDay()->toIso8601String(),
+            'hiringOrganization' => [$ldTypeKey => 'Organization', 'name' => $article->employer_name],
+            'jobLocation'        => [$ldTypeKey => 'Place', 'address' => $jobAddress],
+            'url'                => $articleUrl,
+        ];
     @endphp
-    @if($isJobPosting)
-    <script type="application/ld+json">{!! json_encode($jldData, $jldFlags) !!}</script>
+    <script type="application/ld+json">{!! json_encode($jobPosting, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_INVALID_UTF8_SUBSTITUTE) !!}</script>
     @endif
 
     <!-- Article Meta -->
@@ -215,12 +193,16 @@
    ═══════════════════════════════════════════ */
 :root {
   --c:   #06b6d4;
-  --cd:  #0891b2;
+  /* --cd = accent utilisé comme COULEUR DE TEXTE. #0891b2 ne faisait que 3,7:1 sur blanc
+     (audit A11Y-01) : #0e7490 (cyan-700) ≥ 4,8:1 sur les fonds clairs de la page. */
+  --cd:  #0e7490;
   --ct:  #14b8a6;
   --r:   20px;
   --rs:  12px;
   --tr:  all .3s cubic-bezier(.4,0,.2,1);
 }
+
+body.dark-mode { --cd: #22d3ee; } /* texte accent sur fond sombre */
 
 *, *::before, *::after { box-sizing: border-box; }
 
@@ -403,6 +385,30 @@ body:not(.dark-mode) .art-hero-veil {
 body.dark-mode .art-back { color: var(--c); }
 
 /* ── Important notice ── */
+/* Offre clôturée et informations de l'offre (audit SEO-02) */
+.art-closed {
+  display: flex; gap: 14px; align-items: flex-start;
+  padding: 16px 20px; margin-bottom: 20px;
+  background: #fff7ed; border: 1px solid #fdba74; border-left: 4px solid #c2410c;
+  border-radius: var(--rs); color: #7c2d12;
+}
+.art-closed > i { margin-top: 3px; color: #c2410c; }
+.art-closed p { margin: 0; font-size: .9rem; line-height: 1.6; }
+.art-closed .art-closed-title { font-weight: 800; font-size: 1rem; margin-bottom: 2px; }
+body.dark-mode .art-closed { background: rgba(194,65,12,.14); border-color: rgba(251,146,60,.45); color: #fed7aa; }
+body.dark-mode .art-closed > i { color: #fb923c; }
+.art-offer-facts {
+  display: flex; flex-wrap: wrap; gap: 12px 28px;
+  margin: 0 0 20px; padding: 14px 20px;
+  border: 1px solid rgba(14,116,144,.25); border-radius: var(--rs);
+  background: rgba(14,116,144,.05);
+}
+.art-offer-facts dt { font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: #475569; }
+.art-offer-facts dd { margin: 2px 0 0; font-weight: 700; color: #0f172a; }
+body.dark-mode .art-offer-facts { border-color: rgba(34,211,238,.25); background: rgba(34,211,238,.06); }
+body.dark-mode .art-offer-facts dt { color: #94a3b8; }
+body.dark-mode .art-offer-facts dd { color: #f1f5f9; }
+
 .art-notice {
   display: flex; gap: 16px;
   padding: 20px 22px;
@@ -419,11 +425,12 @@ body.dark-mode .art-back { color: var(--c); }
   display: flex; align-items: center; justify-content: center;
   color: #fff; font-size: .95rem;
 }
-.art-notice-txt h4 {
-  font-size: .95rem; font-weight: 700; margin: 0 0 6px;
+.art-notice-txt .art-notice-title {
+  /* Ancien <h4> (audit A11Y-03 : saut de niveau) : line-height hérité comme avant, pas celui des p */
+  font-size: .95rem; font-weight: 700; margin: 0 0 6px; line-height: inherit;
   color: rgba(15,23,42,.92);
 }
-body.dark-mode .art-notice-txt h4 { color: rgba(255,255,255,.9); }
+body.dark-mode .art-notice-txt .art-notice-title { color: rgba(255,255,255,.9); }
 .art-notice-txt p {
   margin: 0; font-size: .875rem; line-height: 1.65;
   color: rgba(15,23,42,.78);
@@ -568,9 +575,9 @@ body.dark-mode .art-body td { color: rgba(255,255,255,.8); border-color: rgba(6,
 .art-share-lbl {
   font-size: .72rem; font-weight: 700;
   letter-spacing: .07em; text-transform: uppercase;
-  color: rgba(30,41,59,.45); margin-bottom: 14px;
+  color: rgba(30,41,59,.7); margin-bottom: 14px;
 }
-body.dark-mode .art-share-lbl { color: rgba(255,255,255,.4); }
+body.dark-mode .art-share-lbl { color: rgba(255,255,255,.62); }
 .art-share-row { display: flex; gap: 9px; flex-wrap: wrap; }
 .art-shr {
   display: inline-flex; align-items: center; gap: 7px;
@@ -579,12 +586,12 @@ body.dark-mode .art-share-lbl { color: rgba(255,255,255,.4); }
   color: #fff; transition: var(--tr);
 }
 .art-shr:hover { transform: translateY(-2px); filter: brightness(1.1); }
-.art-shr[data-share="facebook"]  { background: #1877f2; }
-.art-shr[data-share="twitter"]   { background: #1da1f2; }
+.art-shr[data-share="facebook"]  { background: #1466d4; } /* teintes foncées : texte blanc ≥ 4,5:1 (A11Y-01) */
+.art-shr[data-share="twitter"]   { background: #0c6fb3; }
 .art-shr[data-share="linkedin"]  { background: #0077b5; }
-.art-shr[data-share="whatsapp"]  { background: #25d366; }
-.art-shr[data-share="email"]     { background: var(--cd); }
-.art-shr[data-share="copy"]      { background: #6366f1; }
+.art-shr[data-share="whatsapp"]  { background: #0f7a3f; }
+.art-shr[data-share="email"]     { background: #0e7490; }
+.art-shr[data-share="copy"]      { background: #4f46e5; }
 
 /* ── Sidebar ── */
 .art-sidebar {
@@ -648,7 +655,7 @@ body.dark-mode .art-ad-content h4 { color: #f1f5f9; }
 body.dark-mode .art-ad-content p { color: rgba(255,255,255,.6); }
 .art-ad-cta {
   display: inline-flex; align-items: center; gap: 6px;
-  font-size: .78rem; font-weight: 700; color: var(--c);
+  font-size: .78rem; font-weight: 700; color: var(--cd);
 }
 .art-sidebar-ad:hover .art-ad-cta i { transform: translateX(3px); }
 .art-ad-cta i { transition: transform .25s ease; }
@@ -657,10 +664,10 @@ body.dark-mode .art-ad-content p { color: rgba(255,255,255,.6); }
 .art-sec-lbl {
   font-size: .72rem; font-weight: 700;
   letter-spacing: .07em; text-transform: uppercase;
-  color: rgba(30,41,59,.45); margin-bottom: 12px;
+  color: rgba(30,41,59,.7); margin-bottom: 12px;
   display: flex; align-items: center; gap: 7px;
 }
-body.dark-mode .art-sec-lbl { color: rgba(255,255,255,.42); }
+body.dark-mode .art-sec-lbl { color: rgba(255,255,255,.62); }
 .art-sec-lbl i { color: var(--c); }
 
 /* Document card */
@@ -695,9 +702,9 @@ body.dark-mode .art-doc {
 body.dark-mode .art-doc-name { color: rgba(255,255,255,.9); }
 .art-doc-meta {
   display: flex; align-items: center; gap: 7px;
-  font-size: .72rem; color: rgba(30,41,59,.5); flex-wrap: wrap;
+  font-size: .72rem; color: rgba(30,41,59,.7); flex-wrap: wrap;
 }
-body.dark-mode .art-doc-meta { color: rgba(255,255,255,.45); }
+body.dark-mode .art-doc-meta { color: rgba(255,255,255,.62); }
 .badge-free {
   padding: 2px 7px;
   background: linear-gradient(135deg,#10b981,#059669);
@@ -721,7 +728,7 @@ body.dark-mode .badge-price { color: var(--c); }
   display: inline-block;
   font-size: .72rem; font-weight: 700;
   letter-spacing: .1em; text-transform: uppercase;
-  color: var(--c); margin-bottom: 10px;
+  color: var(--cd); margin-bottom: 10px;
 }
 .art-related-title {
   font-size: 2rem; font-weight: 900; margin: 0;
@@ -779,7 +786,7 @@ body.dark-mode .art-rel-card {
 .art-rel-cat {
   font-size: .7rem; font-weight: 700;
   letter-spacing: .06em; text-transform: uppercase;
-  color: var(--c); margin-bottom: 8px; display: block;
+  color: var(--cd); margin-bottom: 8px; display: block;
 }
 .art-rel-ttl {
   font-size: .975rem; font-weight: 700; line-height: 1.45;
@@ -1011,10 +1018,35 @@ body:not(.dark-mode) .comment-form-wrapper textarea {
         <i class="fas fa-arrow-left"></i> Retour aux offres
       </a>
 
+      {{-- Offre clôturée / informations de l'offre (audit SEO-02) --}}
+      @if($article->isExpired())
+      <div class="art-closed" role="status">
+        <i class="fas fa-lock" aria-hidden="true"></i>
+        <div>
+          <p class="art-closed-title">{{ app()->getLocale() === 'fr' ? 'Offre clôturée' : 'Closed offer' }}</p>
+          <p>{{ app()->getLocale() === 'fr'
+            ? 'La date limite de candidature était le ' . $article->application_deadline->translatedFormat('j F Y') . '. Cette page reste consultable à titre d\'information.'
+            : 'The application deadline was ' . $article->application_deadline->locale('en')->translatedFormat('F j, Y') . '. This page remains available for reference.' }}</p>
+        </div>
+      </div>
+      @elseif($article->isJobOffer() && ($article->employer_name || $article->application_deadline))
+      <dl class="art-offer-facts">
+        @if($article->employer_name)
+        <div><dt>{{ app()->getLocale() === 'fr' ? 'Employeur' : 'Employer' }}</dt><dd>{{ $article->employer_name }}</dd></div>
+        @endif
+        @if($article->application_deadline)
+        <div><dt>{{ app()->getLocale() === 'fr' ? 'Date limite' : 'Deadline' }}</dt><dd><time datetime="{{ $article->application_deadline->toDateString() }}">{{ app()->getLocale() === 'fr' ? $article->application_deadline->translatedFormat('j F Y') : $article->application_deadline->locale('en')->translatedFormat('F j, Y') }}</time></dd></div>
+        @endif
+        @if($article->location)
+        <div><dt>{{ app()->getLocale() === 'fr' ? 'Lieu' : 'Location' }}</dt><dd>{{ $article->location }}</dd></div>
+        @endif
+      </dl>
+      @endif
+
       <div class="art-notice">
         <div class="art-notice-ico"><i class="fas fa-info-circle"></i></div>
         <div class="art-notice-txt">
-          <h4>{{ app()->getLocale() === 'fr' ? 'Note importante' : 'Important Note' }}</h4>
+          <p class="art-notice-title">{{ app()->getLocale() === 'fr' ? 'Note importante' : 'Important Note' }}</p>
           <p>{{ app()->getLocale() === 'fr'
             ? 'NiangProgrammeur ne recrute pas directement. Nous partageons uniquement les offres d\'emploi, bourses d\'études et opportunités disponibles au Sénégal. Pour postuler, veuillez contacter directement l\'organisme ou l\'entreprise concernée via les coordonnées fournies dans l\'article.'
             : 'NiangProgrammeur does not recruit directly. We only share job offers, scholarships and opportunities available in Senegal. To apply, please contact the organization or company directly using the contact information provided in the article.' }}</p>
@@ -1118,7 +1150,7 @@ body:not(.dark-mode) .comment-form-wrapper textarea {
           @include('partials.youtube-ad-card', ['ad' => $ad, 'label' => 'Sponsorisé'])
         @else
         <div class="art-sidebar-ad">
-          <a href="{{ $ad->link_url ?? '#' }}" target="_blank" rel="noopener" onclick="trackAdClick({{ $ad->id }})">
+          <a href="{{ $ad->link_url ?? '#' }}" target="_blank" rel="noopener noreferrer" onclick="trackAdClick({{ $ad->id }})">
             <span class="art-ad-label">Sponsorisé</span>
             @if($ad->image)
             <div class="art-ad-imgwrap">
@@ -1146,7 +1178,7 @@ body:not(.dark-mode) .comment-form-wrapper textarea {
         <a href="{{ route('documents.show', $document->slug) }}" class="art-doc">
           @if($document->cover_image)
           <img class="art-doc-thumb"
-               src="{{ $document->cover_type === 'internal' ? \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $document->id]) : $document->cover_image }}"
+               src="{{ $document->cover_type === 'internal' ? \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $document->id, 'w' => 440]) : $document->cover_image }}"
                alt="{{ $document->title }}" width="68" height="68"
                loading="lazy" decoding="async"
                onerror="this.style.display='none'">
@@ -1322,7 +1354,7 @@ body:not(.dark-mode) .comment-form-wrapper textarea {
     fetch('/api/ads/' + adId + '/click', {
       method: 'POST',
       headers: {
-        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || '',
+        ...npCsrfHeader(),
         'Content-Type': 'application/json'
       }
     }).catch(function(e) { console.log('Ad click tracking error:', e); });

@@ -344,6 +344,87 @@
 }
 
 /* ═══════════════════════════════════════════
+   APERÇU DES PREMIÈRES PAGES
+   ═══════════════════════════════════════════ */
+.doc-page-preview {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: .85rem;
+  padding: 1rem 1rem 2.75rem;
+  margin: 0 0 1.75rem;
+  background: #f1f5f9;
+  border-radius: 14px;
+}
+.doc-page-preview button {
+  padding: 0;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  background: #fff;
+  overflow: hidden;
+  cursor: zoom-in;
+  aspect-ratio: 3 / 4;
+  box-shadow: 0 2px 6px rgba(15,23,42,.08);
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.doc-page-preview button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(15,23,42,.14);
+}
+.doc-page-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  display: block;
+}
+.doc-page-preview-badge {
+  position: absolute;
+  left: 50%;
+  bottom: .7rem;
+  transform: translateX(-50%);
+  padding: .25rem .8rem;
+  border-radius: 999px;
+  background: rgba(0,0,0,.7);
+  color: #fff;
+  font-size: .75rem;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.doc-page-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(2,6,23,.88);
+}
+.doc-page-lightbox.open { display: flex; }
+.doc-page-lightbox img {
+  max-width: min(100%, 820px);
+  max-height: 100%;
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: 0 20px 60px rgba(0,0,0,.5);
+}
+.doc-page-lightbox-close {
+  position: absolute;
+  top: .75rem;
+  right: 1rem;
+  border: 0;
+  background: none;
+  color: #fff;
+  font-size: 2rem;
+  line-height: 1;
+  cursor: pointer;
+}
+@media (max-width: 480px) {
+  .doc-page-preview { gap: .5rem; padding: .6rem .6rem 2.5rem; }
+}
+
+/* ═══════════════════════════════════════════
    INFO GRID (inutilisée mais gardée)
    ═══════════════════════════════════════════ */
 .document-info-grid {
@@ -1005,6 +1086,8 @@ body.dark-mode .document-category-badge {
 body.dark-mode .document-meta { border-bottom-color: rgba(6,182,212,.15); }
 body.dark-mode .meta-item { color: rgba(255,255,255,.65); }
 body.dark-mode .document-description { color: rgba(255,255,255,.82); }
+body.dark-mode .doc-page-preview { background: rgba(6,182,212,.07); }
+body.dark-mode .doc-page-preview button { border-color: rgba(255,255,255,.12); }
 body.dark-mode .info-item {
   background: rgba(6,182,212,.07);
   border-color: rgba(6,182,212,.2);
@@ -1144,6 +1227,24 @@ body.dark-mode .flash-close   { color: rgba(255,255,255,.5); }
                         <span>{{ number_format($document->sales_count, 0, ',', ' ') }} ventes</span>
                     </div>
                 </div>
+
+                {{-- Aperçu des premières pages --}}
+                @php($previewUrls = $document->previewImageUrls())
+                @if(count($previewUrls) > 0)
+                    <div class="doc-page-preview">
+                        @foreach($previewUrls as $i => $url)
+                            <button type="button" data-page-preview="{{ $url }}" aria-label="Agrandir la page {{ $i + 1 }}">
+                                <img src="{{ $url }}" alt="{{ $document->title }} — page {{ $i + 1 }}"
+                                     width="300" height="400" loading="lazy" decoding="async">
+                            </button>
+                        @endforeach
+                        <span class="doc-page-preview-badge">Aperçu gratuit — {{ count($previewUrls) }} page{{ count($previewUrls) > 1 ? 's' : '' }}</span>
+                    </div>
+                    <div class="doc-page-lightbox" id="docPageLightbox" role="dialog" aria-modal="true" aria-label="Aperçu de la page">
+                        <button type="button" class="doc-page-lightbox-close" aria-label="Fermer">&times;</button>
+                        <img src="" alt="">
+                    </div>
+                @endif
 
                 {{-- Description --}}
                 @if($document->description)
@@ -1321,16 +1422,16 @@ body.dark-mode .flash-close   { color: rgba(255,255,255,.5); }
                 <div class="doc-share-section">
                     <p class="doc-share-label"><i class="fas fa-share-alt"></i> Partager</p>
                     <div class="doc-share-buttons">
-                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(url()->current()) }}" target="_blank" class="doc-share-btn doc-share-fb" title="Facebook">
+                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(url()->current()) }}" target="_blank" rel="noopener noreferrer" class="doc-share-btn doc-share-fb" title="Facebook">
                             <i class="fab fa-facebook-f"></i>
                         </a>
-                        <a href="https://twitter.com/intent/tweet?url={{ urlencode(url()->current()) }}&text={{ urlencode($document->title) }}" target="_blank" class="doc-share-btn doc-share-tw" title="Twitter/X">
+                        <a href="https://twitter.com/intent/tweet?url={{ urlencode(url()->current()) }}&text={{ urlencode($document->title) }}" target="_blank" rel="noopener noreferrer" class="doc-share-btn doc-share-tw" title="Twitter/X">
                             <i class="fab fa-twitter"></i>
                         </a>
-                        <a href="https://wa.me/?text={{ urlencode($document->title . ' - ' . url()->current()) }}" target="_blank" class="doc-share-btn doc-share-wa" title="WhatsApp">
+                        <a href="https://wa.me/?text={{ urlencode($document->title . ' - ' . url()->current()) }}" target="_blank" rel="noopener noreferrer" class="doc-share-btn doc-share-wa" title="WhatsApp">
                             <i class="fab fa-whatsapp"></i>
                         </a>
-                        <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ urlencode(url()->current()) }}" target="_blank" class="doc-share-btn doc-share-li" title="LinkedIn">
+                        <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ urlencode(url()->current()) }}" target="_blank" rel="noopener noreferrer" class="doc-share-btn doc-share-li" title="LinkedIn">
                             <i class="fab fa-linkedin-in"></i>
                         </a>
                     </div>
@@ -1349,7 +1450,7 @@ body.dark-mode .flash-close   { color: rgba(255,255,255,.5); }
                         <div class="related-sidebar-image">
                             @if($related->cover_image)
                                 @if($related->cover_type === 'internal')
-                                    <img src="{{ \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $related->id]) }}"
+                                    <img src="{{ \Illuminate\Support\Facades\URL::temporarySignedRoute('document.cover.signed', now()->addHours(24), ['id' => $related->id, 'w' => 440]) }}"
                                          alt="{{ $related->title }}" width="58" height="58" loading="lazy" decoding="async">
                                 @else
                                     <img src="{{ $related->cover_image }}" alt="{{ $related->title }}" width="58" height="58" loading="lazy" decoding="async">
@@ -1437,7 +1538,7 @@ body.dark-mode .flash-close   { color: rgba(255,255,255,.5); }
                         </a>
                     </div>
                 </div>
-                <a href="#" id="wd-reopen-wave" target="_blank" rel="noopener" class="wd-reopen-btn">
+                <a href="#" id="wd-reopen-wave" target="_blank" rel="noopener noreferrer" class="wd-reopen-btn">
                     <i class="fas fa-mobile-alt"></i> Rouvrir la page de paiement Wave
                 </a>
                 <button type="button" class="wd-done-btn" onclick="closeWaveDirectModal()">Fermer</button>
@@ -1494,6 +1595,23 @@ body.dark-mode .wd-done-btn{background:#334155;color:#cbd5e1;}
 
 @push('scripts')
 <script>
+(function () {
+    const box = document.getElementById('docPageLightbox');
+    if (!box) return;
+    const img = box.querySelector('img');
+    const close = () => { box.classList.remove('open'); img.src = ''; };
+    document.querySelectorAll('[data-page-preview]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            img.src = btn.dataset.pagePreview;
+            img.alt = btn.querySelector('img').alt;
+            box.classList.add('open');
+        });
+    });
+    box.addEventListener('click', e => { if (e.target !== img) close(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+})();
+</script>
+<script>
     // ══════════ MODAL PAIEMENT WAVE DIRECT ══════════
     function openWaveDirectModal() {
         const modal = document.getElementById('wave-direct-modal');
@@ -1540,7 +1658,6 @@ body.dark-mode .wd-done-btn{background:#334155;color:#cbd5e1;}
         const waveTab = window.open('', '_blank');
 
         const fd = new FormData();
-        fd.append('_token', '{{ csrf_token() }}');
         fd.append('customer_name', name);
         fd.append('customer_email', email);
         fd.append('customer_phone', phone);
@@ -1548,7 +1665,7 @@ body.dark-mode .wd-done-btn{background:#334155;color:#cbd5e1;}
         fetch('{{ url('/documents') }}/' + documentId + '/wave-direct', {
             method: 'POST',
             body: fd,
-            headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+            headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json', ...npCsrfHeader() }
         })
         .then(r => r.json().then(data => ({ ok: r.ok, data })))
         .then(({ ok, data }) => {
@@ -1661,7 +1778,7 @@ body.dark-mode .wd-done-btn{background:#334155;color:#cbd5e1;}
         btn.disabled = true; btn.style.opacity = '.6';
         fetch('{{ route("wishlist.toggle", ":id") }}'.replace(':id', documentId), {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'X-Requested-With': 'XMLHttpRequest' }
+            headers: { 'Content-Type': 'application/json', ...npCsrfHeader(), 'X-Requested-With': 'XMLHttpRequest' }
         })
         .then(r => r.json())
         .then(data => {

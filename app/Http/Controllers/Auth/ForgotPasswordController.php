@@ -67,7 +67,7 @@ class ForgotPasswordController extends Controller
         $request->validate([
             'email' => 'required|email',
             'otp' => 'required|digits:6',
-            'password' => 'required|min:8|confirmed',
+            'password' => ['required', 'confirmed', \Illuminate\Validation\Rules\Password::defaults()],
         ]);
 
         $reset = DB::table('password_reset_tokens')->where('email', $request->email)->first();

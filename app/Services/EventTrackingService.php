@@ -43,7 +43,11 @@ class EventTrackingService
             'element_class' => $data['element_class'] ?? null,
             'element_text' => $data['element_text'] ?? null,
             'metadata' => $data['metadata'] ?? [],
-            'ip_address' => $request->ip(),
+            // Pas d'IP en clair (audit FCT-01) : empreinte non réversible, suffisante pour
+            // compter des visiteurs distincts. 40 caractères (colonne de 45).
+            'ip_address' => $request->ip()
+                ? substr(hash_hmac('sha256', $request->ip(), (string) config('app.key')), 0, 40)
+                : null,
             'user_agent' => $userAgent,
             'referrer' => $request->header('referer'),
             'device_type' => $deviceType,

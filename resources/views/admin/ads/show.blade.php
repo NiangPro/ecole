@@ -789,7 +789,7 @@
                 
                 @if($ad->link_url)
                 <div style="margin-top: 20px; text-align: center;">
-                    <a href="{{ $ad->link_url }}" target="_blank" 
+                    <a href="{{ $ad->link_url }}" target="_blank" rel="noopener noreferrer" 
                        style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; background: rgba(6, 182, 212, 0.2); border: 2px solid rgba(6, 182, 212, 0.3); border-radius: 12px; color: #06b6d4; text-decoration: none; font-weight: 700; transition: all 0.3s ease;">
                         <i class="fas fa-external-link-alt"></i>
                         Voir l'URL de destination
@@ -814,7 +814,7 @@
                 </div>
 
                 <div style="margin-top: 20px; text-align: center;">
-                    <a href="{{ $ad->video_data['youtube_url'] }}" target="_blank"
+                    <a href="{{ $ad->video_data['youtube_url'] }}" target="_blank" rel="noopener noreferrer"
                        style="display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; background: rgba(239, 68, 68, 0.15); border: 2px solid rgba(239, 68, 68, 0.3); border-radius: 12px; color: #ef4444; text-decoration: none; font-weight: 700; transition: all 0.3s ease;">
                         <i class="fab fa-youtube"></i>
                         Voir la vidéo originale sur YouTube

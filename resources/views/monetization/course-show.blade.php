@@ -130,7 +130,7 @@
     <div class="course-main-container">
         <div class="course-main-grid">
             <!-- Contenu Principal - Sections Gauche/Droite -->
-            <main class="course-main-content">
+            <div class="course-main-content">
                 <div class="course-sections-layout">
                     <!-- Colonne de Gauche - Programme -->
                     <div class="course-sections-left">
@@ -386,7 +386,7 @@
 
                     </div>
                 </div>
-            </main>
+            </div>
         </div>
     </div>
 </div>

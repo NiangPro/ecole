@@ -10,14 +10,14 @@
     : ($category ? ($category->description ?? 'Découvrez les meilleures ' . $category->name . ' au Sénégal.') : 'Offre emploi Sénégal — consultez les meilleures offres de recrutement publiées chaque jour.'))
 @section('meta_keywords', $category ? ($category->name . ', emploi Sénégal, recrutement, offres d\'emploi') : 'emploi Sénégal, offres d\'emploi, recrutement, opportunités carrière')
 @section('canonical', route('emplois.offres', ['category' => $category->slug ?? null]))
+@if($category && $category->image)
+@section('og_image', $category->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($category->image) : $category->image)
+@endif
 @push('meta')
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ route('emplois.offres', ['category' => $category->slug ?? null]) }}">
     <meta property="og:title" content="{{ ($category ? $category->name : 'Offres d\'Emploi') . ' | NiangProgrammeur' }}">
     <meta property="og:description" content="{{ $category ? ($category->description ?? 'Découvrez les meilleures offres d\'emploi dans la catégorie ' . $category->name . ' au Sénégal.') : 'Consultez les meilleures offres d\'emploi publiées au Sénégal.' }}">
-    @if($category && $category->image)
-    <meta property="og:image" content="{{ $category->image_type === 'internal' ? \Illuminate\Support\Facades\Storage::url($category->image) : $category->image }}">
-    @endif
 @endpush
 
 @section('styles')
@@ -468,7 +468,7 @@
         display: block;
     }
 
-    .jobs-empty h3 {
+    .jobs-empty h2 {
         font-family: 'Poppins', sans-serif;
         font-size: 1.8rem;
         font-weight: 900;
@@ -487,6 +487,8 @@
     body:not(.dark-mode) .jobs-empty p { color: #64748b; }
 
     .jobs-pagination { margin-top: 60px; }
+    /* Audit UX-04 : corps de texte ≥ 14 px en mobile */
+    @media (max-width: 767px) { .job-card-excerpt { font-size: 0.875rem; } }
 </style>
 @endsection
 
@@ -582,12 +584,12 @@
             </div>
 
             <div class="job-card-body">
-                <h3 class="job-card-title">{{ $article->title }}</h3>
+                <h2 class="job-card-title">{{ $article->title }}</h2>
                 @if($article->excerpt)
                 <p class="job-card-excerpt">{{ $article->excerpt }}</p>
                 @endif
                 <div class="job-card-meta">
-                    <span><i class="fas fa-calendar"></i> {{ $article->published_at ? $article->published_at->format('d/m/Y') : '' }}</span>
+                    <span><i class="fas fa-calendar"></i> @if($article->published_at)<time datetime="{{ $article->published_at->toDateString() }}">{{ $article->published_at->format('d/m/Y') }}</time>@endif</span>
                     <span><i class="fas fa-eye"></i> {{ $article->featured_display_views }}</span>
                 </div>
                 <span class="job-card-cta">Voir l'offre <i class="fas fa-arrow-right"></i></span>
@@ -605,7 +607,7 @@
     @else
     <div class="jobs-empty">
         <i class="fas fa-newspaper"></i>
-        <h3>Aucune offre disponible</h3>
+        <h2>Aucune offre disponible</h2>
         <p>Il n'y a pas encore d'offres publiées dans cette catégorie.</p>
     </div>
     @endif

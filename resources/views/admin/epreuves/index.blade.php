@@ -102,7 +102,7 @@
                         <input type="checkbox" name="ids[]" value="{{ $epreuve->id }}" form="bulk-action-form" class="row-checkbox" onchange="updateSelectedEpreuvesCount()">
                     </td>
                     <td class="py-3 pr-4">
-                        <a href="{{ route('epreuves.show', $epreuve->slug) }}" target="_blank" rel="noopener" class="text-cyan-400 hover:underline font-medium">{{ Str::limit($epreuve->title, 60) }}</a>
+                        <a href="{{ route('epreuves.show', $epreuve->slug) }}" target="_blank" rel="noopener noreferrer" class="text-cyan-400 hover:underline font-medium">{{ Str::limit($epreuve->title, 60) }}</a>
                         <div class="text-xs text-gray-500 mt-0.5">{{ $epreuve->type_label }}{{ $epreuve->serie ? ' · Série ' . $epreuve->serie : '' }}</div>
                     </td>
                     <td class="py-3 pr-4 text-gray-400">{{ $epreuve->exam_label ?? $epreuve->level_label ?? '—' }}</td>

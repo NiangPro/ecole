@@ -676,14 +676,14 @@
         </aside>
         
         <!-- Main Content -->
-        <main class="dashboard-main">
+        <div class="dashboard-main">
             <div class="page-header">
                 <h1 class="page-title">{{ $pageTitle ?? trans('app.profile.dashboard.default_title') ?? 'Tableau de Bord' }}</h1>
                 <p class="page-subtitle">{{ $pageDescription ?? trans('app.profile.dashboard.default_description') ?? 'Suivez votre progression et vos performances' }}</p>
             </div>
             
             @yield('dashboard-content')
-        </main>
+        </div>
     </div>
 </div>
 

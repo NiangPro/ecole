@@ -528,7 +528,7 @@
             
             <!-- Article Content -->
             <div class="all-article-content">
-                <h3 class="all-article-title">{{ $article->title }}</h3>
+                <h2 class="all-article-title">{{ $article->title }}</h2>
                 
                 @if($article->excerpt)
                 <p class="all-article-excerpt">{{ $article->excerpt }}</p>
@@ -537,7 +537,7 @@
                 <div class="all-article-meta">
                     <span class="all-article-date">
                         <i class="fas fa-calendar-alt"></i>
-                        {{ $article->published_at ? $article->published_at->format('d/m/Y') : $article->created_at->format('d/m/Y') }}
+                        <time datetime="{{ ($article->published_at ?? $article->created_at)->toDateString() }}">{{ ($article->published_at ?? $article->created_at)->format('d/m/Y') }}</time>
                     </span>
                     <span class="all-article-views">
                         <i class="fas fa-eye"></i>

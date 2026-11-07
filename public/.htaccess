@@ -107,8 +107,12 @@
     ExpiresActive On
     ExpiresDefault "access plus 1 month"
     
-    # HTML - Cache court (1 heure)
+    # HTML statique uniquement : les réponses de Laravel (index.php) sont exclues
+    # ci-dessous, sinon mod_expires leur ajoute « max-age=3600 » + Expires (audit CACHE-01).
     ExpiresByType text/html "access plus 1 hour"
+    <FilesMatch "\.php$">
+        ExpiresActive Off
+    </FilesMatch>
     
     # Images - Cache long terme (1 an)
     ExpiresByType image/jpg "access plus 1 year"
@@ -137,8 +141,6 @@
     # Documents
     ExpiresByType application/pdf "access plus 1 month"
     
-    # HTML - Cache court terme (pour les mises à jour)
-    ExpiresByType text/html "access plus 1 hour"
     
     # JavaScript et CSS - Cache moyen terme
     ExpiresByType application/javascript "access plus 1 month"
@@ -181,22 +183,31 @@
 
 # Headers de sécurité, SEO et Performance
 <IfModule mod_headers.c>
-    # Sécurité
+    # Sécurité (audit SEC-02)
     Header set X-Content-Type-Options "nosniff"
     Header set X-Frame-Options "SAMEORIGIN"
-    Header set X-XSS-Protection "1; mode=block"
+    # X-XSS-Protection retiré : obsolète, ignoré par les navigateurs actuels et source de
+    # failles sur les anciens. La protection passe par la CSP ci-dessous.
+    Header unset X-XSS-Protection
     Header set Referrer-Policy "strict-origin-when-cross-origin"
+    # HSTS 1 an + sous-domaines. « always » : posé aussi sur les redirections et erreurs.
+    # (Si l'hébergeur ajoute déjà son propre HSTS plus court, le désactiver dans son panneau.)
+    Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains" "expr=%{HTTPS} == 'on' || %{HTTP:X-Forwarded-Proto} == 'https'"
+    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+    # CSP en mode RAPPORT UNIQUEMENT : rien n'est bloqué, les violations apparaissent dans
+    # la console du navigateur. 'unsafe-inline' est requis tant que les vues contiennent
+    # des scripts en ligne (voir audit-niangprogrammeur/CORRECTIONS.md, SEC-02).
+    Header always set Content-Security-Policy-Report-Only "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com https://cdn.tailwindcss.com https://www.googletagmanager.com https://*.googletagmanager.com https://www.google-analytics.com https://*.google-analytics.com https://analytics.google.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://googleads.g.doubleclick.net https://*.doubleclick.net https://*.google.com https://*.gstatic.com https://*.adtrafficquality.google https://fundingchoicesmessages.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://unpkg.com; font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; img-src 'self' data: blob: https:; media-src 'self' https:; connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://analytics.google.com https://*.googletagmanager.com https://pagead2.googlesyndication.com https://*.googlesyndication.com https://*.doubleclick.net https://*.google.com https://*.adtrafficquality.google https://fundingchoicesmessages.google.com https://cdn.jsdelivr.net; frame-src 'self' https://*.google.com https://*.googlesyndication.com https://*.doubleclick.net https://*.adtrafficquality.google https://fundingchoicesmessages.google.com https://www.youtube.com https://www.youtube-nocookie.com; form-action 'self' https://pay.wave.com https://checkout.stripe.com https://www.paypal.com https://www.sandbox.paypal.com; frame-ancestors 'self'; base-uri 'self'; object-src 'none'; upgrade-insecure-requests"
     
     # Performance - Preconnect pour les ressources externes
     <FilesMatch "\.(html|htm|php)$">
         Header set Link "</fonts.googleapis.com>; rel=preconnect; crossorigin, </fonts.gstatic.com>; rel=preconnect; crossorigin"
     </FilesMatch>
     
-    # SEO - Ne pas mettre en cache les pages HTML dynamiques
-    <FilesMatch "\.(html|htm|php)$">
-        Header set Cache-Control "max-age=3600, must-revalidate, public"
-        Header set Pragma "public"
-    </FilesMatch>
+    # Pages dynamiques (index.php) : Laravel pose lui-même Cache-Control
+    # (« no-cache, private », cf. App\Http\Middleware\HttpCacheHeaders). Ne rien forcer ici :
+    # l'ancien « public, max-age=3600 » laissait le proxy de l'hébergeur partager le HTML
+    # — jeton CSRF et langue compris — entre visiteurs (audit CACHE-01).
     
     # Cache des fichiers statiques - Cache long terme
     <FilesMatch "\.(jpg|jpeg|png|gif|ico|svg|webp|avif)$">
@@ -222,7 +233,6 @@
     Require all denied
 </FilesMatch>
 
-# Optimisation pour les robots
-<IfModule mod_headers.c>
-    Header set X-Robots-Tag "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
-</IfModule>
+# X-Robots-Tag global « index, follow » retiré (audit SEO-05) : c'est déjà le comportement
+# par défaut, et il contredisait le « noindex » des pages de recherche. Les directives
+# passent par la balise meta robots du layout et par le middleware « noindex ».
