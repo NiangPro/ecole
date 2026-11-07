@@ -99,7 +99,11 @@ class JobArticleController extends Controller
             'status' => 'required|in:draft,published,archived',
             'published_at' => 'nullable|date',
             'is_sponsored' => 'nullable|boolean',
-            'is_featured' => 'nullable|boolean'
+            'is_featured' => 'nullable|boolean',
+            // Offre d'emploi (audit SEO-02) : employeur et date limite réels, pour le JobPosting
+            'location' => 'nullable|string|max:255',
+            'employer_name' => 'nullable|string|max:255',
+            'application_deadline' => 'nullable|date',
         ]);
         
         // Convertir les checkboxes en boolean
@@ -273,7 +277,11 @@ class JobArticleController extends Controller
             'status' => 'required|in:draft,published,archived',
             'published_at' => 'nullable|date',
             'is_sponsored' => 'nullable|boolean',
-            'is_featured' => 'nullable|boolean'
+            'is_featured' => 'nullable|boolean',
+            // Offre d'emploi (audit SEO-02) : employeur et date limite réels, pour le JobPosting
+            'location' => 'nullable|string|max:255',
+            'employer_name' => 'nullable|string|max:255',
+            'application_deadline' => 'nullable|date',
         ]);
         
         // Convertir les checkboxes en boolean

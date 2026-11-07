@@ -72,6 +72,7 @@ class EmploiController extends Controller
         // l'article a été ajouté — c'était la cause du décalage avec l'accueil, pas le cache.
         $recentArticles = Cache::remember('recent_job_articles', 900, function () {
             return JobArticle::published()
+                ->notExpired() // offres clôturées hors des listes (audit SEO-02)
                 ->with(['category:id,name,slug']) // Eager loading optimisé
                 ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'created_at', 'views')
                 ->orderBy('created_at', 'desc')
@@ -186,7 +187,8 @@ class EmploiController extends Controller
                         $query->where('is_active', true);
                     })
                     ->with(['category:id,name,slug'])
-                    ->select('id', 'title', 'slug', 'excerpt', 'content', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views', 'meta_title', 'meta_description', 'meta_keywords', 'created_at', 'updated_at')
+                    ->select('id', 'title', 'slug', 'excerpt', 'content', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views', 'meta_title', 'meta_description', 'meta_keywords', 'created_at', 'updated_at',
+                        'location', 'employer_name', 'application_deadline') // offre d'emploi (audit SEO-02)
                     ->firstOrFail();
             });
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
@@ -411,6 +413,7 @@ class EmploiController extends Controller
         $page = $request->get('page', 1);
         $recentArticles = Cache::remember("recent_articles_seo_page_{$page}", 900, function () {
             return JobArticle::published()
+                ->notExpired() // offres clôturées hors des listes (audit SEO-02)
                 ->with(['category:id,name,slug']) // Eager loading optimisé
                 ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views', 'meta_title', 'meta_description', 'created_at')
                 ->orderBy('published_at', 'desc')
@@ -433,6 +436,7 @@ class EmploiController extends Controller
         
         $articles = Cache::remember($cacheKey, 900, function () {
             return JobArticle::published()
+                ->notExpired() // offres clôturées hors des listes (audit SEO-02)
                 ->where('is_featured', true)
                 ->with(['category:id,name,slug']) // Eager loading optimisé
                 ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')

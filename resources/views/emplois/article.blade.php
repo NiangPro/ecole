@@ -119,11 +119,34 @@
     <meta name="keywords" content="{{ $article->meta_keywords ? implode(', ', is_array($article->meta_keywords) ? $article->meta_keywords : json_decode($article->meta_keywords, true) ?? []) : '' }}">
     <meta name="author" content="NiangProgrammeur">
     
-    {{-- Schema.org JobPosting retiré (audit SEO-02) : il était généré pour toute la catégorie
-         (guides et candidatures spontanées compris) avec un employeur générique et une date
-         limite inventée (publication + 2 mois). Google for Jobs exige le vrai employeur et la
-         vraie date limite, que la table job_articles ne stocke pas encore. Les articles gardent
-         le schéma NewsArticle (partials/schema-org). --}}
+    {{-- Schema.org JobPosting (audit SEO-02) : seulement pour une vraie offre (offres d'emploi,
+         opportunités professionnelles) dont l'employeur et la date limite sont renseignés, et tant
+         que la date limite n'est pas passée. Les guides gardent seulement NewsArticle (partials/schema-org). --}}
+    @if($article->hasValidJobPosting())
+    @php
+        // '@context' / '@type' construits par concaténation : un "@context" littéral dans un
+        // .blade.php peut être pris pour une directive Blade (voir le bloc FAQPage plus bas).
+        $ldContextKey = '@' . 'context';
+        $ldTypeKey = '@' . 'type';
+        $jobAddress = [$ldTypeKey => 'PostalAddress', 'addressCountry' => 'SN'];
+        if (filled($article->location)) {
+            $jobAddress['addressLocality'] = $article->location;
+        }
+        $jobPosting = [
+            $ldContextKey        => 'https://schema.org',
+            $ldTypeKey           => 'JobPosting',
+            'title'              => $article->title,
+            'description'        => $article->content,
+            'datePosted'         => ($article->published_at ?? $article->created_at)?->toIso8601String(),
+            // Fin de journée de la date limite, heure de Dakar (UTC+0)
+            'validThrough'       => $article->application_deadline->copy()->endOfDay()->toIso8601String(),
+            'hiringOrganization' => [$ldTypeKey => 'Organization', 'name' => $article->employer_name],
+            'jobLocation'        => [$ldTypeKey => 'Place', 'address' => $jobAddress],
+            'url'                => $articleUrl,
+        ];
+    @endphp
+    <script type="application/ld+json">{!! json_encode($jobPosting, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_INVALID_UTF8_SUBSTITUTE) !!}</script>
+    @endif
 
     <!-- Article Meta -->
     <meta property="article:published_time" content="{{ ($article->published_at ?? $article->created_at)?->toIso8601String() ?? now()->toIso8601String() }}">
@@ -362,6 +385,30 @@ body:not(.dark-mode) .art-hero-veil {
 body.dark-mode .art-back { color: var(--c); }
 
 /* ── Important notice ── */
+/* Offre clôturée et informations de l'offre (audit SEO-02) */
+.art-closed {
+  display: flex; gap: 14px; align-items: flex-start;
+  padding: 16px 20px; margin-bottom: 20px;
+  background: #fff7ed; border: 1px solid #fdba74; border-left: 4px solid #c2410c;
+  border-radius: var(--rs); color: #7c2d12;
+}
+.art-closed > i { margin-top: 3px; color: #c2410c; }
+.art-closed p { margin: 0; font-size: .9rem; line-height: 1.6; }
+.art-closed .art-closed-title { font-weight: 800; font-size: 1rem; margin-bottom: 2px; }
+body.dark-mode .art-closed { background: rgba(194,65,12,.14); border-color: rgba(251,146,60,.45); color: #fed7aa; }
+body.dark-mode .art-closed > i { color: #fb923c; }
+.art-offer-facts {
+  display: flex; flex-wrap: wrap; gap: 12px 28px;
+  margin: 0 0 20px; padding: 14px 20px;
+  border: 1px solid rgba(14,116,144,.25); border-radius: var(--rs);
+  background: rgba(14,116,144,.05);
+}
+.art-offer-facts dt { font-size: .75rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: #475569; }
+.art-offer-facts dd { margin: 2px 0 0; font-weight: 700; color: #0f172a; }
+body.dark-mode .art-offer-facts { border-color: rgba(34,211,238,.25); background: rgba(34,211,238,.06); }
+body.dark-mode .art-offer-facts dt { color: #94a3b8; }
+body.dark-mode .art-offer-facts dd { color: #f1f5f9; }
+
 .art-notice {
   display: flex; gap: 16px;
   padding: 20px 22px;
@@ -970,6 +1017,31 @@ body:not(.dark-mode) .comment-form-wrapper textarea {
       <a href="{{ route('emplois.offres') }}" class="art-back">
         <i class="fas fa-arrow-left"></i> Retour aux offres
       </a>
+
+      {{-- Offre clôturée / informations de l'offre (audit SEO-02) --}}
+      @if($article->isExpired())
+      <div class="art-closed" role="status">
+        <i class="fas fa-lock" aria-hidden="true"></i>
+        <div>
+          <p class="art-closed-title">{{ app()->getLocale() === 'fr' ? 'Offre clôturée' : 'Closed offer' }}</p>
+          <p>{{ app()->getLocale() === 'fr'
+            ? 'La date limite de candidature était le ' . $article->application_deadline->translatedFormat('j F Y') . '. Cette page reste consultable à titre d\'information.'
+            : 'The application deadline was ' . $article->application_deadline->locale('en')->translatedFormat('F j, Y') . '. This page remains available for reference.' }}</p>
+        </div>
+      </div>
+      @elseif($article->isJobOffer() && ($article->employer_name || $article->application_deadline))
+      <dl class="art-offer-facts">
+        @if($article->employer_name)
+        <div><dt>{{ app()->getLocale() === 'fr' ? 'Employeur' : 'Employer' }}</dt><dd>{{ $article->employer_name }}</dd></div>
+        @endif
+        @if($article->application_deadline)
+        <div><dt>{{ app()->getLocale() === 'fr' ? 'Date limite' : 'Deadline' }}</dt><dd><time datetime="{{ $article->application_deadline->toDateString() }}">{{ app()->getLocale() === 'fr' ? $article->application_deadline->translatedFormat('j F Y') : $article->application_deadline->locale('en')->translatedFormat('F j, Y') }}</time></dd></div>
+        @endif
+        @if($article->location)
+        <div><dt>{{ app()->getLocale() === 'fr' ? 'Lieu' : 'Location' }}</dt><dd>{{ $article->location }}</dd></div>
+        @endif
+      </dl>
+      @endif
 
       <div class="art-notice">
         <div class="art-notice-ico"><i class="fas fa-info-circle"></i></div>

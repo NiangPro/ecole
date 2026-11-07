@@ -27,6 +27,7 @@ class PageController extends Controller
         $cachedView = \Illuminate\Support\Facades\Cache::remember($cacheKey, 900, function () use ($locale) {
             // Cache les 12 derniers articles publiés - Optimisé avec eager loading
             $latestJobs = \App\Models\JobArticle::published()
+                ->notExpired() // offres clôturées hors des listes (audit SEO-02)
                 ->where('is_sponsored', false)
                 ->with(['category:id,name,slug'])
                 ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'created_at', 'views')
@@ -94,6 +95,7 @@ class PageController extends Controller
             
             // Cache les articles vedettes - Optimisé avec eager loading
             $featuredArticles = \App\Models\JobArticle::published()
+                ->notExpired() // offres clôturées hors des listes (audit SEO-02)
                 ->where('is_featured', true)
                 ->with(['category:id,name,slug'])
                 ->select('id', 'title', 'slug', 'excerpt', 'cover_image', 'cover_type', 'category_id', 'published_at', 'views')

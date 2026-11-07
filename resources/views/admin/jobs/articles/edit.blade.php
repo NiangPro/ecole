@@ -717,6 +717,38 @@
 
             <!-- Sidebar (métadonnées) -->
             <div>
+                <!-- Offre d'emploi (audit SEO-02) -->
+                <div class="form-card">
+                    <div class="form-section-title">
+                        <i class="fas fa-briefcase"></i>
+                        <span>Offre d'emploi</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="employerName">Employeur</label>
+                        <input type="text" name="employer_name" id="employerName" maxlength="255"
+                               value="{{ old('employer_name', $article->employer_name ?? '') }}"
+                               class="form-input" placeholder="Ex. : Sonatel, PNUD, Ministère de la Santé">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="applicationDeadline">Date limite de candidature</label>
+                        <input type="date" name="application_deadline" id="applicationDeadline"
+                               value="{{ old('application_deadline', isset($article) && $article->application_deadline ? $article->application_deadline->format('Y-m-d') : '') }}"
+                               class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="jobLocation">Lieu du poste</label>
+                        <input type="text" name="location" id="jobLocation" maxlength="255"
+                               value="{{ old('location', $article->location ?? '') }}"
+                               class="form-input" placeholder="Ex. : Dakar">
+                    </div>
+                    <div class="form-help">
+                        <i class="fas fa-info-circle"></i>
+                        Pour les catégories « Offres d'emploi » et « Opportunités professionnelles » : avec l'employeur et la date limite,
+                        l'offre apparaît dans Google for Jobs. Après la date limite, elle est marquée « Offre clôturée »
+                        et retirée des listes récentes et à la une (elle reste consultable). Ne pas inventer : laisser vide si inconnu.
+                    </div>
+                </div>
+
                 <!-- Publier -->
                 <div class="form-card">
                     <div class="form-section-title">
