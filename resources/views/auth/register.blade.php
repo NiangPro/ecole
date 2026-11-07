@@ -910,7 +910,10 @@ document.addEventListener('DOMContentLoaded', function () {
     // ── Retour visuel pendant la soumission ───────────────────────────
     const form = document.getElementById('registerForm');
     const submitBtn = document.getElementById('registerSubmit');
-    form.addEventListener('submit', function () {
+    const submitHtml = submitBtn.innerHTML;
+    window.addEventListener('pageshow', function () { submitBtn.disabled = false; submitBtn.innerHTML = submitHtml; });
+    form.addEventListener('submit', function (e) {
+        if (submitBtn.disabled) { e.preventDefault(); return; }
         if (!form.checkValidity()) return;
         submitBtn.disabled = true;
         submitBtn.innerHTML = '<span class="spinner"></span><span>Création du compte...</span>';

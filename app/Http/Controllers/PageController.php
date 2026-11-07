@@ -229,11 +229,12 @@ class PageController extends Controller
         }
 
         $request->validate([
+            // Mêmes limites que les maxlength du formulaire (audit UX-03).
             'name' => 'required|string|max:255',
-            'email' => 'required|email',
+            'email' => 'required|email|max:255',
             'phone' => 'nullable|string|max:20',
             'subject' => 'required|string|max:255',
-            'message' => 'required|string',
+            'message' => 'required|string|max:5000',
         ]);
         
         ContactMessage::create($request->all());

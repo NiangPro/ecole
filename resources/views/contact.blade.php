@@ -81,8 +81,9 @@
                 {{ __('contact.form.name_label') }}
                 <span class="ct-label__req">*</span>
               </label>
-              <input class="ct-input" type="text" id="name" name="name" required
-                     placeholder="{{ __('contact.form.name_placeholder') }}">
+              <input class="ct-input" type="text" id="name" name="name" required maxlength="255" value="{{ old('name') }}"
+                     placeholder="{{ __('contact.form.name_placeholder') }}" @error('name') aria-invalid="true" aria-describedby="name-error" @enderror>
+              @error('name')<p class="ct-field-error" id="name-error">{{ $message }}</p>@enderror
             </div>
 
             <div class="ct-field">
@@ -91,7 +92,8 @@
                 {{ __('contact.form.email_label') }}
                 <span class="ct-label__req">*</span>
               </label>
-              <input class="ct-input" type="email" id="email" name="email" required placeholder="votre@email.com">
+              <input class="ct-input" type="email" id="email" name="email" required maxlength="255" value="{{ old('email') }}" placeholder="votre@email.com" @error('email') aria-invalid="true" aria-describedby="email-error" @enderror>
+              @error('email')<p class="ct-field-error" id="email-error">{{ $message }}</p>@enderror
             </div>
 
             <div class="ct-field">
@@ -99,8 +101,10 @@
                 <i class="fas fa-phone"></i>
                 {{ __('contact.form.phone_label') }}
               </label>
-              <input class="ct-input" type="tel" id="phone" name="phone" placeholder="">
+              <input class="ct-input" type="tel" id="phone" name="phone" placeholder="" maxlength="20" value="{{ old('phone') }}" aria-describedby="phone-error">
               <input type="hidden" id="phone_country" name="phone_country" value="">
+              {{-- Erreur de format affichée ici (audit UX-03 : remplace l'ancien alert()) --}}
+              <p class="ct-field-error" id="phone-error" role="alert" @unless($errors->has('phone')) hidden @endunless>{{ $errors->first('phone') }}</p>
             </div>
 
             <div class="ct-field">
@@ -109,8 +113,9 @@
                 {{ __('contact.form.subject_label') }}
                 <span class="ct-label__req">*</span>
               </label>
-              <input class="ct-input" type="text" id="subject" name="subject" required
-                     placeholder="{{ __('contact.form.subject_placeholder') }}">
+              <input class="ct-input" type="text" id="subject" name="subject" required maxlength="255" value="{{ old('subject') }}"
+                     placeholder="{{ __('contact.form.subject_placeholder') }}" @error('subject') aria-invalid="true" aria-describedby="subject-error" @enderror>
+              @error('subject')<p class="ct-field-error" id="subject-error">{{ $message }}</p>@enderror
             </div>
 
             <div class="ct-field">
@@ -119,12 +124,14 @@
                 {{ __('contact.form.message_label') }}
                 <span class="ct-label__req">*</span>
               </label>
-              <textarea class="ct-textarea" id="message" name="message" required
-                        placeholder="{{ __('contact.form.message_placeholder') }}"></textarea>
+              <textarea class="ct-textarea" id="message" name="message" required maxlength="5000"
+                        placeholder="{{ __('contact.form.message_placeholder') }}" @error('message') aria-invalid="true" aria-describedby="message-error" @enderror>{{ old('message') }}</textarea>
+              @error('message')<p class="ct-field-error" id="message-error">{{ $message }}</p>@enderror
             </div>
 
-            <button type="submit" class="ct-submit"
-              onclick="event.preventDefault(); if (typeof executeRecaptcha === 'function') { executeRecaptcha('contact-form', function() { document.getElementById('contact-form').submit(); }); } else { document.getElementById('contact-form').submit(); }">
+            {{-- Plus d'onclick + form.submit() : il contournait la validation HTML5 et le contrôle
+                 du téléphone. L'envoi passe par l'événement submit ci-dessous (audit UX-03). --}}
+            <button type="submit" class="ct-submit" id="contact-submit">
               <i class="fas fa-paper-plane"></i>
               {{ __('contact.form.submit') }}
             </button>
@@ -267,21 +274,48 @@ document.addEventListener('DOMContentLoaded', function () {
     var f = document.getElementById('phone_country');
     if (f) f.value = iti.getSelectedCountryData().iso2;
 
-    var form = document.getElementById('contact-form');
-    if (form) {
-      form.addEventListener('submit', function (e) {
-        if (phoneInput.value.trim()) {
-          if (!iti.isValidNumber()) {
-            e.preventDefault();
-            alert('{{ __('contact.form.phone_invalid') }}');
-            phoneInput.focus();
-            return false;
-          }
-          phoneInput.value = iti.getNumber();
-        }
-      });
-    }
+    window.npContactIti = iti;
   }
+
+  // Envoi (audit UX-03) : la validation HTML5 a déjà eu lieu quand l'événement submit part.
+  // Téléphone invalide → message sous le champ ; sinon reCAPTCHA puis envoi, bouton désactivé
+  // pour éviter les doubles soumissions.
+  var form = document.getElementById('contact-form');
+  var btn = document.getElementById('contact-submit');
+  var phoneError = document.getElementById('phone-error');
+  if (!form) return;
+
+  if (phoneInput) {
+    phoneInput.addEventListener('input', function () {
+      phoneError.hidden = true;
+      phoneInput.removeAttribute('aria-invalid');
+    });
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (btn.disabled) return;
+
+    var iti = window.npContactIti;
+    if (iti && phoneInput.value.trim()) {
+      if (!iti.isValidNumber()) {
+        phoneError.textContent = @json(__('contact.form.phone_invalid'));
+        phoneError.hidden = false;
+        phoneInput.setAttribute('aria-invalid', 'true');
+        phoneInput.focus();
+        return;
+      }
+      phoneInput.value = iti.getNumber();
+    }
+
+    btn.disabled = true;
+    btn.setAttribute('aria-busy', 'true');
+    var send = function () { HTMLFormElement.prototype.submit.call(form); };
+    if (typeof executeRecaptcha === 'function') { executeRecaptcha('contact-form', send); } else { send(); }
+  });
+
+  // Retour arrière (bfcache) : le bouton redevient utilisable.
+  window.addEventListener('pageshow', function () { btn.disabled = false; btn.removeAttribute('aria-busy'); });
 });
 </script>
 @endsection

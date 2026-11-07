@@ -214,7 +214,7 @@ class PaymentController extends Controller
         // Valider d'abord les champs de base
         $request->validate([
             'donor_name' => 'required|string|max:255',
-            'donor_email' => 'nullable|email',
+            'donor_email' => 'nullable|email|max:255',
             'payment_method' => 'required|in:mobile_money,bank_transfer,stripe,paypal,wave',
             'message' => 'nullable|string|max:500',
             'is_anonymous' => 'boolean',

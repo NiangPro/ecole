@@ -350,6 +350,7 @@
     }
 
     /* Submit Button */
+    .btn-donate:disabled { opacity: .7; cursor: wait; }
     .btn-donate {
         width: 100%;
         padding: 18px;
@@ -656,7 +657,7 @@
                     {{ trans('app.donations.form_description') }}
                 </p>
 
-                <form action="{{ route('payment.donation') }}" method="POST">
+                <form action="{{ route('payment.donation') }}" method="POST" id="donation-form">
                     @csrf
                     @if(request()->has('ref'))
                     <input type="hidden" name="ref_code" value="{{ request()->get('ref') }}">
@@ -666,7 +667,7 @@
                         <label for="donor_name" class="form-label">
                             {{ trans('app.donations.name_label') }} <span class="required">*</span>
                         </label>
-                        <input type="text" id="donor_name" name="donor_name" required value="{{ old('donor_name', Auth::check() ? Auth::user()->name : '') }}" class="form-input" placeholder="{{ trans('app.donations.name_placeholder') }}">
+                        <input type="text" id="donor_name" name="donor_name" required maxlength="255" value="{{ old('donor_name', Auth::check() ? Auth::user()->name : '') }}" class="form-input" placeholder="{{ trans('app.donations.name_placeholder') }}">
                         @error('donor_name')
                         <p class="form-error">{{ $message }}</p>
                         @enderror
@@ -675,7 +676,7 @@
                     @guest
                     <div class="form-group">
                         <label for="donor_email" class="form-label">{{ trans('app.donations.email_label') }}</label>
-                        <input type="email" id="donor_email" name="donor_email" value="{{ old('donor_email') }}" class="form-input" placeholder="{{ trans('app.donations.email_placeholder') }}">
+                        <input type="email" id="donor_email" name="donor_email" maxlength="255" value="{{ old('donor_email') }}" class="form-input" placeholder="{{ trans('app.donations.email_placeholder') }}">
                         @error('donor_email')
                         <p class="form-error">{{ $message }}</p>
                         @enderror
@@ -732,7 +733,7 @@
 
                     <div class="form-group">
                         <label for="donation_message" class="form-label">{{ trans('app.donations.message_label') }}</label>
-                        <textarea id="donation_message" name="message" rows="3" class="form-textarea" placeholder="{{ trans('app.donations.message_placeholder') }}">{{ old('message') }}</textarea>
+                        <textarea id="donation_message" name="message" rows="3" maxlength="500" class="form-textarea" placeholder="{{ trans('app.donations.message_placeholder') }}">{{ old('message') }}</textarea>
                         @error('message')
                         <p class="form-error">{{ $message }}</p>
                         @enderror
@@ -743,7 +744,7 @@
                         <label for="is_anonymous">{{ trans('app.donations.anonymous_label') }}</label>
                     </div>
 
-                    <button type="submit" class="btn-donate">
+                    <button type="submit" class="btn-donate" id="donation-submit">
                         <i class="fas fa-heart"></i>
                         {{ trans('app.donations.submit_button') }}
                     </button>
@@ -970,8 +971,14 @@
             validateAmount();
         });
         
-        // Valider le montant avant soumission et convertir en XOF si nécessaire
-        document.querySelector('form').addEventListener('submit', function(e) {
+        // Valider le montant avant soumission et convertir en XOF si nécessaire.
+        // (audit UX-03) Ciblé par id : querySelector('form') renvoyait le formulaire de
+        // recherche du menu, et ce contrôle ne s'exécutait jamais.
+        const donationForm = document.getElementById('donation-form');
+        const donationSubmit = document.getElementById('donation-submit');
+        window.addEventListener('pageshow', function() { donationSubmit.disabled = false; });
+        donationForm.addEventListener('submit', function(e) {
+            if (donationSubmit.disabled) { e.preventDefault(); return false; }
             const selectedOption = paymentMethodSelect.options[paymentMethodSelect.selectedIndex];
             const currency = selectedOption.getAttribute('data-currency') || 'FCFA';
             
@@ -992,6 +999,9 @@
             } else {
                 document.getElementById('amount_currency').value = 'XOF';
             }
+
+            // Pas de double envoi pendant la redirection vers le paiement.
+            donationSubmit.disabled = true;
         });
         
         paymentMethodSelect.addEventListener('change', function() {

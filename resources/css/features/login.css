@@ -459,6 +459,7 @@
 }
 
 .lg-submit:active { transform: translateY(0); }
+.lg-submit:disabled { opacity: .7; cursor: wait; transform: none; }
 
 /* Boutons de connexion sociale */
 .lg-social-group {
