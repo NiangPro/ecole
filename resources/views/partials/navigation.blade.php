@@ -741,7 +741,7 @@
         @endauth
         
         <!-- Mobile Toggle -->
-        <button type="button" class="mobile-toggle" id="mobileToggle" aria-label="Ouvrir le menu mobile" aria-expanded="false">
+        <button type="button" class="mobile-toggle" id="mobileToggle" aria-label="Ouvrir le menu mobile" aria-expanded="false" aria-controls="mobileMenu">
             <span class="mobile-toggle-line" aria-hidden="true"></span>
             <span class="mobile-toggle-line" aria-hidden="true"></span>
             <span class="mobile-toggle-line" aria-hidden="true"></span>
@@ -752,8 +752,9 @@
 <!-- Mobile Menu Overlay -->
 <div class="mobile-menu-overlay" id="mobileMenuOverlay"></div>
 
-<!-- Mobile Menu (audit A11Y-03 : repère nav) -->
-<nav class="mobile-menu" id="mobileMenu" aria-label="Menu mobile">
+<!-- Mobile Menu (audit A11Y-03/04 : repère nav ; inert tant qu'il est fermé, pour que ses
+     liens hors écran ne soient pas atteignables au clavier) -->
+<nav class="mobile-menu" id="mobileMenu" aria-label="Menu mobile" inert>
     <div class="mobile-menu-header">
         <div class="mobile-menu-title">Menu</div>
         <button type="button" class="mobile-menu-close" onclick="closeMobileMenu()" aria-label="Fermer le menu">
@@ -1132,20 +1133,37 @@
     const mobileMenu = document.getElementById('mobileMenu');
     const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
     
+    // Focus (audit A11Y-04) : libellé dynamique du bouton, focus sur le premier lien à
+    // l'ouverture, piégé dans le panneau, rendu au bouton à la fermeture.
+    const mobileFocusables = () => Array.from(mobileMenu.querySelectorAll('a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])'))
+        .filter(el => el.offsetParent !== null || el === document.activeElement);
+
     function openMobileMenu() {
         mobileToggle.classList.add('active');
         mobileToggle.setAttribute('aria-expanded', 'true');
+        mobileToggle.setAttribute('aria-label', 'Fermer le menu');
+        mobileMenu.removeAttribute('inert');
         mobileMenu.classList.add('active');
         mobileMenuOverlay.classList.add('active');
         document.body.style.overflow = 'hidden';
+        const first = mobileMenu.querySelector('.mobile-menu-list a[href], .mobile-menu-list button');
+        if (first) first.focus({ preventScroll: true });
     }
     
     function closeMobileMenu() {
+        const wasOpen = mobileMenu.classList.contains('active');
+        const focusWasInside = mobileMenu.contains(document.activeElement);
         mobileToggle.classList.remove('active');
         mobileToggle.setAttribute('aria-expanded', 'false');
+        mobileToggle.setAttribute('aria-label', 'Ouvrir le menu mobile');
         mobileMenu.classList.remove('active');
+        mobileMenu.setAttribute('inert', '');
         mobileMenuOverlay.classList.remove('active');
         document.body.style.overflow = '';
+        // Uniquement si le menu était ouvert : ce handler est aussi appelé à chaque clic hors du menu.
+        if (wasOpen && (focusWasInside || document.activeElement === document.body)) {
+            mobileToggle.focus({ preventScroll: true });
+        }
 
         document.querySelectorAll('.mobile-dropdown-content.active').forEach(dropdown => dropdown.classList.remove('active'));
         document.querySelectorAll('.mobile-dropdown-toggle.active').forEach(toggle => {
@@ -1225,6 +1243,16 @@
         }
     });
     
+    // Piège de focus : Tab / Maj+Tab bouclent dans le panneau ouvert.
+    mobileMenu.addEventListener('keydown', (e) => {
+        if (e.key !== 'Tab' || !mobileMenu.classList.contains('active')) return;
+        const items = mobileFocusables();
+        if (!items.length) return;
+        const first = items[0], last = items[items.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    });
+
     // Close on escape key
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
