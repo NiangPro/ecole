@@ -319,16 +319,16 @@
       <div class="info-block__desc">{{ __('maintenance.follow_desc') }}</div>
       <div class="socials">
         @if($siteSettings?->facebook_url)
-        <a href="{{ $siteSettings->facebook_url }}" target="_blank" rel="noopener" class="social-btn" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="{{ $siteSettings->facebook_url }}" target="_blank" rel="noopener noreferrer" class="social-btn" title="Facebook"><i class="fab fa-facebook-f"></i></a>
         @endif
         @if($siteSettings?->tiktok_url)
-        <a href="{{ $siteSettings->tiktok_url }}" target="_blank" rel="noopener" class="social-btn" title="TikTok"><i class="fab fa-tiktok"></i></a>
+        <a href="{{ $siteSettings->tiktok_url }}" target="_blank" rel="noopener noreferrer" class="social-btn" title="TikTok"><i class="fab fa-tiktok"></i></a>
         @endif
         @if($siteSettings?->youtube_url)
-        <a href="{{ $siteSettings->youtube_url }}" target="_blank" rel="noopener" class="social-btn" title="YouTube"><i class="fab fa-youtube"></i></a>
+        <a href="{{ $siteSettings->youtube_url }}" target="_blank" rel="noopener noreferrer" class="social-btn" title="YouTube"><i class="fab fa-youtube"></i></a>
         @endif
         @if($siteSettings?->github_url)
-        <a href="{{ $siteSettings->github_url }}" target="_blank" rel="noopener" class="social-btn" title="GitHub"><i class="fab fa-github"></i></a>
+        <a href="{{ $siteSettings->github_url }}" target="_blank" rel="noopener noreferrer" class="social-btn" title="GitHub"><i class="fab fa-github"></i></a>
         @endif
       </div>
     </div>

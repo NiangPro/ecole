@@ -37,7 +37,7 @@
         @if($video['author_name'] ?? null)
         <span class="np-youtube-ad__author"><i class="fas fa-user"></i> {{ $video['author_name'] }}</span>
         @endif
-        <a href="{{ $ad->link_url ?: $video['youtube_url'] }}" target="_blank" rel="noopener"
+        <a href="{{ $ad->link_url ?: $video['youtube_url'] }}" target="_blank" rel="noopener noreferrer"
            class="np-youtube-ad__cta" onclick="nAdTrackAdClick({{ $ad->id }})">
             Voir sur YouTube
             <i class="fas fa-arrow-up-right-from-square"></i>

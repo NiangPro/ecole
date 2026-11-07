@@ -96,9 +96,9 @@
                     <p class="text-gray-400 text-sm mb-2">
                         Actuelle :
                         @if($bundle->cover_type === 'internal')
-                            <a href="{{ \Illuminate\Support\Facades\URL::signedRoute('bundle.cover.signed', ['id' => $bundle->id]) }}" target="_blank" class="text-cyan-400 underline">voir l'image</a>
+                            <a href="{{ \Illuminate\Support\Facades\URL::signedRoute('bundle.cover.signed', ['id' => $bundle->id]) }}" target="_blank" rel="noopener noreferrer" class="text-cyan-400 underline">voir l'image</a>
                         @else
-                            <a href="{{ $bundle->cover_image }}" target="_blank" class="text-cyan-400 underline">voir l'image</a>
+                            <a href="{{ $bundle->cover_image }}" target="_blank" rel="noopener noreferrer" class="text-cyan-400 underline">voir l'image</a>
                         @endif
                     </p>
                     @endif

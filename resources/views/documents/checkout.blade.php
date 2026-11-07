@@ -1463,7 +1463,7 @@ body.dark-mode .wave-qr-placeholder i {
                 <span class="wave-amount-value" id="paypal-amount-display">0 FCFA</span>
             </div>
             
-            <a href="#" id="paypal-pay-button" target="_blank" class="wave-pay-button" style="background: linear-gradient(135deg, #0070ba, #003087);">
+            <a href="#" id="paypal-pay-button" target="_blank" rel="noopener noreferrer" class="wave-pay-button" style="background: linear-gradient(135deg, #0070ba, #003087);">
                 <i class="fab fa-paypal"></i>
                 <span>Payer avec PayPal</span>
                 <i class="fas fa-arrow-right"></i>
@@ -1547,7 +1547,7 @@ body.dark-mode .wave-qr-placeholder i {
                 <span class="wave-amount-value" id="wave-amount-display">0 FCFA</span>
             </div>
             
-            <a href="#" id="wave-pay-button" target="_blank" class="wave-pay-button">
+            <a href="#" id="wave-pay-button" target="_blank" rel="noopener noreferrer" class="wave-pay-button">
                 <i class="fas fa-mobile-alt"></i>
                 <span>Payer avec Wave</span>
                 <i class="fas fa-arrow-right"></i>

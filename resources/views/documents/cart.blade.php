@@ -389,7 +389,7 @@ body.dark-mode .wd-done-btn{background:#1f2c40;color:#cbd5e1;}
                         </a>
                     </div>
                 </div>
-                <a href="#" id="wd-reopen-wave" target="_blank" rel="noopener" class="wd-reopen-btn">
+                <a href="#" id="wd-reopen-wave" target="_blank" rel="noopener noreferrer" class="wd-reopen-btn">
                     <i class="fas fa-mobile-alt"></i> Rouvrir la page de paiement Wave
                 </a>
                 <button type="button" class="wd-done-btn" onclick="closeWaveDirectModal()">Fermer</button>

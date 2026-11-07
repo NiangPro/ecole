@@ -906,7 +906,7 @@
 
             <div class="example-box">
                 <h3>{{ trans('app.formations.html5.editors_install_title') }}</h3>
-                <p>1. {{ trans('app.formations.html5.editors_install_steps')[0] }} <a href="https://code.visualstudio.com" target="_blank" class="np-accent-link hover:underline">code.visualstudio.com</a></p>
+                <p>1. {{ trans('app.formations.html5.editors_install_steps')[0] }} <a href="https://code.visualstudio.com" target="_blank" rel="noopener noreferrer" class="np-accent-link hover:underline">code.visualstudio.com</a></p>
                 <p>2. {{ trans('app.formations.html5.editors_install_steps')[1] }}</p>
                 <p>3. {{ trans('app.formations.html5.editors_install_steps')[2] }} <code>.html</code></p>
                 <p>4. {{ trans('app.formations.html5.editors_install_steps')[3] }}</p>

@@ -1422,16 +1422,16 @@ body.dark-mode .flash-close   { color: rgba(255,255,255,.5); }
                 <div class="doc-share-section">
                     <p class="doc-share-label"><i class="fas fa-share-alt"></i> Partager</p>
                     <div class="doc-share-buttons">
-                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(url()->current()) }}" target="_blank" class="doc-share-btn doc-share-fb" title="Facebook">
+                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(url()->current()) }}" target="_blank" rel="noopener noreferrer" class="doc-share-btn doc-share-fb" title="Facebook">
                             <i class="fab fa-facebook-f"></i>
                         </a>
-                        <a href="https://twitter.com/intent/tweet?url={{ urlencode(url()->current()) }}&text={{ urlencode($document->title) }}" target="_blank" class="doc-share-btn doc-share-tw" title="Twitter/X">
+                        <a href="https://twitter.com/intent/tweet?url={{ urlencode(url()->current()) }}&text={{ urlencode($document->title) }}" target="_blank" rel="noopener noreferrer" class="doc-share-btn doc-share-tw" title="Twitter/X">
                             <i class="fab fa-twitter"></i>
                         </a>
-                        <a href="https://wa.me/?text={{ urlencode($document->title . ' - ' . url()->current()) }}" target="_blank" class="doc-share-btn doc-share-wa" title="WhatsApp">
+                        <a href="https://wa.me/?text={{ urlencode($document->title . ' - ' . url()->current()) }}" target="_blank" rel="noopener noreferrer" class="doc-share-btn doc-share-wa" title="WhatsApp">
                             <i class="fab fa-whatsapp"></i>
                         </a>
-                        <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ urlencode(url()->current()) }}" target="_blank" class="doc-share-btn doc-share-li" title="LinkedIn">
+                        <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ urlencode(url()->current()) }}" target="_blank" rel="noopener noreferrer" class="doc-share-btn doc-share-li" title="LinkedIn">
                             <i class="fab fa-linkedin-in"></i>
                         </a>
                     </div>
@@ -1538,7 +1538,7 @@ body.dark-mode .flash-close   { color: rgba(255,255,255,.5); }
                         </a>
                     </div>
                 </div>
-                <a href="#" id="wd-reopen-wave" target="_blank" rel="noopener" class="wd-reopen-btn">
+                <a href="#" id="wd-reopen-wave" target="_blank" rel="noopener noreferrer" class="wd-reopen-btn">
                     <i class="fas fa-mobile-alt"></i> Rouvrir la page de paiement Wave
                 </a>
                 <button type="button" class="wd-done-btn" onclick="closeWaveDirectModal()">Fermer</button>

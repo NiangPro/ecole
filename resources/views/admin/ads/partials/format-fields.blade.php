@@ -46,7 +46,7 @@
             @if(isset($ad) && $ad && $ad->image_type === 'internal' && $ad->image)
                 <p class="field-help">
                     <i class="fas fa-check-circle"></i>
-                    Image actuelle : <a href="{{ \Illuminate\Support\Facades\Storage::url($ad->image) }}" target="_blank" style="color: #06b6d4; text-decoration: none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">{{ basename($ad->image) }}</a>
+                    Image actuelle : <a href="{{ \Illuminate\Support\Facades\Storage::url($ad->image) }}" target="_blank" rel="noopener noreferrer" style="color: #06b6d4; text-decoration: none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">{{ basename($ad->image) }}</a>
                 </p>
             @else
                 <p class="field-help">

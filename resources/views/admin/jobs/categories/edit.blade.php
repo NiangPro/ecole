@@ -499,7 +499,7 @@
                         <input type="file" name="image_file" accept="image/*" class="form-input">
                         @if($category->image_type === 'internal' && $category->image)
                             <div class="form-help">
-                                Image actuelle: <a href="{{ \Illuminate\Support\Facades\Storage::url($category->image) }}" target="_blank" style="color: #06b6d4; text-decoration: none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">{{ basename($category->image) }}</a>
+                                Image actuelle: <a href="{{ \Illuminate\Support\Facades\Storage::url($category->image) }}" target="_blank" rel="noopener noreferrer" style="color: #06b6d4; text-decoration: none;" onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">{{ basename($category->image) }}</a>
                             </div>
                         @else
                             <div class="form-help">Formats acceptés: JPG, PNG, GIF</div>

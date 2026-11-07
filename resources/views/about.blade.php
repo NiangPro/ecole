@@ -234,7 +234,7 @@
           <div class="ab-xp-card__logo"><i class="fas fa-building"></i></div>
           <div class="ab-xp-card__info">
             <div class="ab-xp-card__company">Sunucode</div>
-            <a href="https://sunucode.com/" target="_blank" rel="noopener" class="ab-xp-card__link">
+            <a href="https://sunucode.com/" target="_blank" rel="noopener noreferrer" class="ab-xp-card__link">
               <i class="fas fa-external-link-alt"></i> sunucode.com
             </a>
           </div>
@@ -332,7 +332,7 @@
             <p class="ab-achiev-card__desc">{{ Str::limit($achievement->description, 140) }}</p>
             @endif
             @if($achievement->link_url)
-            <a href="{{ $achievement->link_url }}" target="_blank" rel="noopener" class="ab-achiev-card__link">
+            <a href="{{ $achievement->link_url }}" target="_blank" rel="noopener noreferrer" class="ab-achiev-card__link">
               {{ trans('app.about.achievements.view_project') }}
               <i class="fas fa-arrow-right"></i>
             </a>

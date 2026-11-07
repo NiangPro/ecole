@@ -368,7 +368,7 @@ body.dark-mode .bnd-buy-form input { background: rgba(2,6,23,0.6); border-color:
                         </a>
                     </div>
                 </div>
-                <a href="#" id="wd-reopen-wave" target="_blank" rel="noopener" class="wd-reopen-btn">
+                <a href="#" id="wd-reopen-wave" target="_blank" rel="noopener noreferrer" class="wd-reopen-btn">
                     <i class="fas fa-mobile-alt"></i> Rouvrir la page de paiement Wave
                 </a>
                 <button type="button" class="wd-done-btn" onclick="closeWaveDirectModal()">Fermer</button>

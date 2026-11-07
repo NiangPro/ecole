@@ -60,7 +60,7 @@
                         <input type="file" name="image_file" accept="image/*" class="input-admin">
                         @if($achievement->image_type === 'internal' && $achievement->image)
                             <p class="text-gray-400 text-sm mt-1">
-                                Image actuelle: <a href="{{ \Illuminate\Support\Facades\Storage::url($achievement->image) }}" target="_blank" class="text-cyan-400 hover:underline">{{ basename($achievement->image) }}</a>
+                                Image actuelle: <a href="{{ \Illuminate\Support\Facades\Storage::url($achievement->image) }}" target="_blank" rel="noopener noreferrer" class="text-cyan-400 hover:underline">{{ basename($achievement->image) }}</a>
                             </p>
                         @else
                             <p class="text-gray-400 text-sm mt-1">Formats acceptés: JPG, PNG, GIF</p>

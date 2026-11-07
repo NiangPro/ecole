@@ -294,7 +294,7 @@
                 <p class="text-gray-500 text-sm mt-2">
                     <i class="fas fa-info-circle mr-1"></i>
                     Nécessaire pour le partage via l'API Facebook. 
-                    <a href="https://developers.facebook.com/apps/" target="_blank" class="text-cyan-400 hover:underline">
+                    <a href="https://developers.facebook.com/apps/" target="_blank" rel="noopener noreferrer" class="text-cyan-400 hover:underline">
                         Créer une App Facebook
                     </a>
                 </p>
@@ -373,7 +373,7 @@
                 <div>
                     <p class="font-semibold text-yellow-400 mb-2">Comment obtenir votre ID Google Analytics ?</p>
                     <ol class="text-sm text-gray-300 space-y-1 ml-4 list-decimal">
-                        <li>Créez un compte sur <a href="https://analytics.google.com/" target="_blank" class="text-cyan-400 hover:underline">analytics.google.com</a></li>
+                        <li>Créez un compte sur <a href="https://analytics.google.com/" target="_blank" rel="noopener noreferrer" class="text-cyan-400 hover:underline">analytics.google.com</a></li>
                         <li>Créez une propriété GA4</li>
                         <li>Copiez l'ID de mesure (format: G-XXXXXXXXXX)</li>
                         <li>Collez-le dans le champ ci-dessous</li>
@@ -411,7 +411,7 @@
                    placeholder="Votre clé API Bing">
             <p class="text-gray-500 text-sm mt-2">
                 <i class="fas fa-lightbulb mr-1"></i>
-                Obtenez votre clé API depuis <a href="https://www.bing.com/webmasters" target="_blank" class="text-cyan-400 hover:underline">Bing Webmaster Tools</a>
+                Obtenez votre clé API depuis <a href="https://www.bing.com/webmasters" target="_blank" rel="noopener noreferrer" class="text-cyan-400 hover:underline">Bing Webmaster Tools</a>
             </p>
             @error('bing_api_key')
                 <p class="text-red-400 text-sm mt-2">{{ $message }}</p>
@@ -742,7 +742,7 @@
                         class="inline-flex items-center gap-2 px-5 py-2.5 bg-orange-500 hover:bg-orange-600 text-black font-bold rounded-lg transition text-sm">
                     <i class="fas fa-save"></i>Sauvegarder la maintenance
                 </button>
-                <a href="{{ route('maintenance') }}" target="_blank"
+                <a href="{{ route('maintenance') }}" target="_blank" rel="noopener noreferrer"
                    class="inline-flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 border border-gray-600 rounded-lg text-sm font-semibold transition">
                     <i class="fas fa-eye"></i>Prévisualiser la page
                 </a>

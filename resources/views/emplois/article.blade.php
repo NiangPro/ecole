@@ -1077,7 +1077,7 @@ body:not(.dark-mode) .comment-form-wrapper textarea {
           @include('partials.youtube-ad-card', ['ad' => $ad, 'label' => 'Sponsorisé'])
         @else
         <div class="art-sidebar-ad">
-          <a href="{{ $ad->link_url ?? '#' }}" target="_blank" rel="noopener" onclick="trackAdClick({{ $ad->id }})">
+          <a href="{{ $ad->link_url ?? '#' }}" target="_blank" rel="noopener noreferrer" onclick="trackAdClick({{ $ad->id }})">
             <span class="art-ad-label">Sponsorisé</span>
             @if($ad->image)
             <div class="art-ad-imgwrap">

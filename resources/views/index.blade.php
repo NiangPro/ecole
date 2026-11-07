@@ -714,7 +714,7 @@
             <p class="hp-native-ad__desc">{{ $ad->description }}</p>
           @endif
           @if($ad->link_url)
-            <a href="{{ $ad->link_url }}" class="hp-native-ad__cta" target="_blank" rel="noopener sponsored">
+            <a href="{{ $ad->link_url }}" class="hp-native-ad__cta" target="_blank" rel="noopener sponsored noreferrer">
               {{ __('homepage.ads.learn_more') }}
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </a>
@@ -856,7 +856,7 @@
             <p class="hp-native-ad__desc">{{ $ad->description }}</p>
           @endif
           @if($ad->link_url)
-            <a href="{{ $ad->link_url }}" class="hp-native-ad__cta" target="_blank" rel="noopener sponsored">
+            <a href="{{ $ad->link_url }}" class="hp-native-ad__cta" target="_blank" rel="noopener sponsored noreferrer">
               {{ __('homepage.partners.discover') }}
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
             </a>

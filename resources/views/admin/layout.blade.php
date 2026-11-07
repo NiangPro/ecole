@@ -1302,7 +1302,7 @@
                         <i class="fas fa-user"></i>
                         <span>Profil</span>
                     </a>
-                    <a href="{{ route('home') }}" target="_blank" class="dropdown-item">
+                    <a href="{{ route('home') }}" target="_blank" rel="noopener noreferrer" class="dropdown-item">
                         <i class="fas fa-globe"></i>
                         <span>Voir le site</span>
                     </a>

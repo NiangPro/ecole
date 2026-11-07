@@ -200,37 +200,37 @@
             @endphp
 
             @if($siteSettings && $siteSettings->facebook_url)
-            <a href="{{ $siteSettings->facebook_url }}" target="_blank" rel="noopener" class="ct-social-btn ct-social-btn--facebook" title="Facebook">
+            <a href="{{ $siteSettings->facebook_url }}" target="_blank" rel="noopener noreferrer" class="ct-social-btn ct-social-btn--facebook" title="Facebook">
               <i class="fab fa-facebook-f"></i>
             </a>
             @endif
 
             @if($siteSettings && $siteSettings->tiktok_url)
-            <a href="{{ $siteSettings->tiktok_url }}" target="_blank" rel="noopener" class="ct-social-btn ct-social-btn--tiktok" title="TikTok">
+            <a href="{{ $siteSettings->tiktok_url }}" target="_blank" rel="noopener noreferrer" class="ct-social-btn ct-social-btn--tiktok" title="TikTok">
               <i class="fab fa-tiktok"></i>
             </a>
             @endif
 
             @if($siteSettings && $siteSettings->linkedin_url)
-            <a href="{{ $siteSettings->linkedin_url }}" target="_blank" rel="noopener" class="ct-social-btn ct-social-btn--linkedin" title="LinkedIn">
+            <a href="{{ $siteSettings->linkedin_url }}" target="_blank" rel="noopener noreferrer" class="ct-social-btn ct-social-btn--linkedin" title="LinkedIn">
               <i class="fab fa-linkedin-in"></i>
             </a>
             @endif
 
             @if($siteSettings && $siteSettings->instagram_url)
-            <a href="{{ $siteSettings->instagram_url }}" target="_blank" rel="noopener" class="ct-social-btn ct-social-btn--instagram" title="Instagram">
+            <a href="{{ $siteSettings->instagram_url }}" target="_blank" rel="noopener noreferrer" class="ct-social-btn ct-social-btn--instagram" title="Instagram">
               <i class="fab fa-instagram"></i>
             </a>
             @endif
 
             @if($siteSettings && $siteSettings->youtube_url)
-            <a href="{{ $siteSettings->youtube_url }}" target="_blank" rel="noopener" class="ct-social-btn ct-social-btn--youtube" title="YouTube">
+            <a href="{{ $siteSettings->youtube_url }}" target="_blank" rel="noopener noreferrer" class="ct-social-btn ct-social-btn--youtube" title="YouTube">
               <i class="fab fa-youtube"></i>
             </a>
             @endif
 
             @if($siteSettings && $siteSettings->github_url)
-            <a href="{{ $siteSettings->github_url }}" target="_blank" rel="noopener" class="ct-social-btn ct-social-btn--github" title="GitHub">
+            <a href="{{ $siteSettings->github_url }}" target="_blank" rel="noopener noreferrer" class="ct-social-btn ct-social-btn--github" title="GitHub">
               <i class="fab fa-github"></i>
             </a>
             @endif

@@ -189,7 +189,7 @@ body.dark-mode .sokhna-chip{color:#22d3ee;border-color:#22d3ee}
                 var href = safeHref(url.replace(/&amp;/g, '&'));
                 if (!href) return label;
                 var external = href.charAt(0) !== '/' && new URL(href).host !== location.host;
-                return '<a href="' + escapeHtml(href) + '"' + (external ? ' target="_blank" rel="noopener nofollow"' : '') + '>' + label + '</a>';
+                return '<a href="' + escapeHtml(href) + '"' + (external ? ' target="_blank" rel="noopener nofollow noreferrer"' : '') + '>' + label + '</a>';
             });
     }
     function renderMarkdown(src) {

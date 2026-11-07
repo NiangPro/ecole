@@ -62,7 +62,7 @@
             <p>Veuillez configurer votre clé API Bing dans les <a href="{{ route('admin.settings') }}" class="alert-link">paramètres du site</a>.</p>
             <p class="mt-2">
                 <i class="fas fa-info-circle"></i>
-                Obtenez votre clé API depuis <a href="https://www.bing.com/webmasters" target="_blank" class="alert-link">Bing Webmaster Tools</a>
+                Obtenez votre clé API depuis <a href="https://www.bing.com/webmasters" target="_blank" rel="noopener noreferrer" class="alert-link">Bing Webmaster Tools</a>
             </p>
         </div>
         <button class="alert-close" onclick="this.parentElement.remove()">

@@ -20,7 +20,7 @@
                     <i class="fas fa-download mr-2"></i>Télécharger le PDF
                 </a>
             @endif
-            <a href="{{ route('epreuves.show', $epreuve->slug) }}" target="_blank" rel="noopener" class="px-4 py-2 bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 rounded-xl border border-emerald-500/40 transition whitespace-nowrap">
+            <a href="{{ route('epreuves.show', $epreuve->slug) }}" target="_blank" rel="noopener noreferrer" class="px-4 py-2 bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 rounded-xl border border-emerald-500/40 transition whitespace-nowrap">
                 <i class="fas fa-eye mr-2"></i>Voir sur le site
             </a>
         </div>

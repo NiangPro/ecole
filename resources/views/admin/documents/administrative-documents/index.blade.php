@@ -87,7 +87,7 @@
                 @forelse($documents as $doc)
                 <tr class="border-b border-gray-700/50 hover:bg-gray-800/30 transition">
                     <td class="py-3 pr-4">
-                        <a href="{{ route('admin-docs.show', $doc->slug) }}" target="_blank" rel="noopener" class="text-cyan-400 hover:underline font-medium">{{ $doc->title }}</a>
+                        <a href="{{ route('admin-docs.show', $doc->slug) }}" target="_blank" rel="noopener noreferrer" class="text-cyan-400 hover:underline font-medium">{{ $doc->title }}</a>
                     </td>
                     <td class="py-3 pr-4 text-gray-400">{{ $doc->category ?? '—' }}</td>
                     <td class="py-3 pr-4">

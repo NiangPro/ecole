@@ -726,7 +726,7 @@
                     <i class="fas fa-link"></i>
                     <span>Copier le lien de téléchargement</span>
                 </button>
-                <a href="{{ $whatsappUrl }}" target="_blank" class="btn-action whatsapp">
+                <a href="{{ $whatsappUrl }}" target="_blank" rel="noopener noreferrer" class="btn-action whatsapp">
                     <i class="fab fa-whatsapp"></i>
                     <span>Partager via WhatsApp</span>
                 </a>

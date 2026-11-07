@@ -485,7 +485,7 @@
             </div>
             <div class="whatsapp-footer">
                 <a href="https://wa.me/{{ $whatsappNumber }}?text=Bonjour,%20je%20souhaite%20en%20savoir%20plus%20sur%20vos%20formations." 
-                   target="_blank" 
+                   target="_blank" rel="noopener noreferrer" 
                    class="whatsapp-send-btn">
                     <i class="fab fa-whatsapp"></i>
                     Ouvrir WhatsApp
