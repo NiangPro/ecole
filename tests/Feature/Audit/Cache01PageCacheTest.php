@@ -151,4 +151,17 @@ class Cache01PageCacheTest extends TestCase
 
         $this->visiteurNeuf('/')->assertHeader('X-Page-Cache', 'MISS');
     }
+
+    public function test_le_vidage_invalide_aussi_le_cache_des_formations(): void
+    {
+        $this->visiteurNeuf('/formations/html5')->assertOk();
+        $avant = \App\Http\Middleware\PageCache::version();
+        $this->assertTrue(\Illuminate\Support\Facades\Cache::has("formation_html_v2_p{$avant}_html5_fr"));
+
+        $this->artisan('page-cache:clear')->assertSuccessful();
+
+        $apres = \App\Http\Middleware\PageCache::version();
+        $this->assertNotSame($avant, $apres);
+        $this->assertFalse(\Illuminate\Support\Facades\Cache::has("formation_html_v2_p{$apres}_html5_fr"));
+    }
 }

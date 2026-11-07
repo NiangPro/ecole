@@ -130,9 +130,13 @@ class PageCache
 
     private static function key(string $url, string $locale): string
     {
-        $version = (int) Cache::get(self::VERSION_KEY, 1);
+        return 'pcache_v' . self::version() . '_' . $locale . '_' . md5($url);
+    }
 
-        return 'pcache_v' . $version . '_' . $locale . '_' . md5($url);
+    /** Version courante des clés ; à inclure dans toute autre clé de cache HTML (formations…). */
+    public static function version(): int
+    {
+        return (int) Cache::get(self::VERSION_KEY, 1);
     }
 
     /**

@@ -262,7 +262,8 @@ class FormationController extends Controller
         // CACHE-01) — premier passage sans session uniquement, jeton CSRF retiré avant
         // stockage et réinjecté pour chaque visiteur (il était figé 1 h pour tout le monde).
         if (\App\Http\Middleware\PageCache::isCacheableRequest(request())) {
-            $cacheKey = "formation_html_v2_{$slug}_{$locale}";
+            // Version du cache de page dans la clé : `page-cache:clear` vide aussi les formations.
+            $cacheKey = 'formation_html_v2_p' . \App\Http\Middleware\PageCache::version() . "_{$slug}_{$locale}";
             $html = \Illuminate\Support\Facades\Cache::remember($cacheKey, 3600, function () use ($view, $formationAds, $headerAds, $contentAds, $sidebarAds, $footerAds, $progress) {
                 return \App\Http\Middleware\PageCache::stripToken(
                     view($view, compact('progress', 'formationAds', 'headerAds', 'contentAds', 'sidebarAds', 'footerAds'))->render()
