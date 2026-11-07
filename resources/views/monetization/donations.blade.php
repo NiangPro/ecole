@@ -13,7 +13,7 @@
             $paymentMethods['wave'] = [
                 'name' => trans('app.donations.payment_methods.wave.name'),
                 'icon' => 'fas fa-mobile-alt',
-                'min_amount' => 1000,
+                'min_amount' => 1, // Wave : tous les montants acceptés
                 'description' => trans('app.donations.payment_methods.wave.description')
             ];
         }
@@ -40,7 +40,7 @@
         $paymentMethods['wave'] = [
             'name' => trans('app.donations.payment_methods.wave.name'),
             'icon' => 'fas fa-mobile-alt',
-            'min_amount' => 1000,
+            'min_amount' => 1, // Wave : tous les montants acceptés
             'description' => trans('app.donations.payment_methods.wave.description')
         ];
     }
@@ -933,7 +933,9 @@
                 }
                 // Sinon, garder la valeur saisie (déjà en USD ou autre valeur valide)
             } else {
-                donationAmount.step = '100';
+                // Wave accepte tous les montants : pas de 1 (avec step=100 et min=1, le
+                // navigateur n'accepterait que 1, 101, 201…).
+                donationAmount.step = selectedMethod === 'wave' ? '1' : '100';
                 donationAmount.placeholder = '1000';
             }
             

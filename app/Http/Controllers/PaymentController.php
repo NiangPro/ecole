@@ -252,7 +252,7 @@ class PaymentController extends Controller
                 $amountInXOF = (int) $request->amount;
             }
         } elseif ($paymentMethod === 'wave') {
-            $minAmount = 1000; // Minimum Wave
+            $minAmount = 1; // Wave : tous les montants acceptés (montant positif)
             $request->validate([
                 'amount' => "required|numeric|min:{$minAmount}",
             ], [
@@ -275,7 +275,6 @@ class PaymentController extends Controller
 
         // Si Wave est sélectionné, générer le lien et rediriger
         if ($request->payment_method === 'wave') {
-            // Valider le montant minimum pour Wave (1000 FCFA)
 
             // Créer le don en attente
             $donation = Donation::create([
