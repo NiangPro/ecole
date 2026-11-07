@@ -186,7 +186,7 @@
         color: #2c3e50;
         text-decoration: none;
         border-radius: 10px;
-        margin-bottom: 6px;
+        margin-bottom: 8px; /* liens plus espacés (audit UX-04) */
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         font-size: 14px;
         font-weight: 500;
@@ -386,6 +386,7 @@
         color: white;
         border: none;
         padding: 2px 10px;
+        min-height: 24px; /* cible tactile ≥ 24 px (audit UX-04) */
         border-radius: 4px;
         cursor: pointer;
         font-size: 12px;

@@ -758,7 +758,7 @@
             <span class="hp-article-category">{{ $article->category?->name ?? __('homepage.ads.sponsored') }}</span>
             <h3 class="hp-article-title">{{ $article->title }}</h3>
             @if($article->excerpt)
-              <p style="font-size:0.8125rem;color:var(--text-muted);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
+              <p class="hp-article-excerpt">
                 {{ $article->excerpt }}
               </p>
             @endif

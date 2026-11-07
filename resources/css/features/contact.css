@@ -425,3 +425,9 @@
   .ct-form-card { padding: 1.5rem; }
   .ct-hero { padding-block: 3rem 2rem; }
 }
+
+/* Audit UX-04 : texte ≥ 14 px et cibles tactiles ≥ 24 px en mobile */
+@media (max-width: 767px) {
+  .ct-contact-card__value { font-size: .875rem; }
+  .ct-contact-card__link { min-block-size: 24px; }
+}

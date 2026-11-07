@@ -409,6 +409,7 @@ body:not(.dark-mode) .ft {
 .ft__contact-link {
   display: flex;
   align-items: center;
+  min-block-size: 24px; /* cible tactile ≥ 24 px (audit UX-04) */
   gap: 0.5rem;
   font-size: 0.8125rem;
   color: oklch(66% 0 0);
@@ -438,6 +439,12 @@ body:not(.dark-mode) .ft {
 }
 
 .ft__legal-link {
+  /* cible tactile ≥ 24×24 px (audit UX-04) */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: 24px;
+  min-inline-size: 24px;
   font-size: 0.8125rem;
   color: oklch(62% 0 0);
   text-decoration: none;
@@ -464,6 +471,11 @@ body:not(.dark-mode) .ft {
 }
 
 .ft__copyright strong { color: oklch(65% 0 0); }
+/* Audit UX-04 : corps de texte ≥ 14 px en mobile */
+@media (max-width: 767px) {
+  .ft__tagline,
+  .ft__newsletter-desc { font-size: 0.875rem; }
+}
 </style>
 
 <script>

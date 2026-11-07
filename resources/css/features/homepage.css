@@ -1783,3 +1783,22 @@ body.dark-mode .hp-review-quote-icon { color: oklch(65% 0.20 200 / 15%); }
   .dark-mode-widget,
   .pwa-push-button { transition: none; }
 }
+
+/* ──────────────────────────────────────────
+   Audit UX-04 — lisibilité et cibles tactiles en mobile
+   ────────────────────────────────────────── */
+.hp-article-excerpt {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@media (max-width: 767px) {
+  .hp-course-desc,
+  .hp-article-excerpt { font-size: 0.875rem; }
+  .hp-section-action { min-block-size: 24px; }
+}

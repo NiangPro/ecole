@@ -487,6 +487,8 @@
     body:not(.dark-mode) .jobs-empty p { color: #64748b; }
 
     .jobs-pagination { margin-top: 60px; }
+    /* Audit UX-04 : corps de texte ≥ 14 px en mobile */
+    @media (max-width: 767px) { .job-card-excerpt { font-size: 0.875rem; } }
 </style>
 @endsection
 

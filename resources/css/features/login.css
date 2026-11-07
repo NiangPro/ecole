@@ -666,3 +666,7 @@ body.dark-mode .lg-back a { color: rgba(255,255,255,.62); }
 body.dark-mode .lg-back a:hover { color: rgba(255,255,255,.9); }
 
 body.dark-mode .lg-mobile-logo__name { color: rgba(255,255,255,.94); }
+
+/* Audit UX-04 : cibles tactiles ≥ 24×24 px */
+.lg-pwd-toggle { min-inline-size: 24px; min-block-size: 24px; }
+.lg-forgot { display: inline-flex; align-items: center; min-block-size: 24px; }

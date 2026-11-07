@@ -95,6 +95,8 @@ body.dark-mode .sokhna-chip{color:#22d3ee;border-color:#22d3ee}
 .sokhna-send{display:grid;place-items:center;inline-size:42px;block-size:42px;flex-shrink:0;border:0;border-radius:12px;background:linear-gradient(135deg,var(--sk-accent),var(--sk-accent-2));color:#fff;cursor:pointer}
 .sokhna-send:disabled{opacity:.5;cursor:not-allowed}
 .sokhna-disclaimer{margin:0;padding:0 .8rem .6rem;font-size:.7rem;color:var(--sk-muted);text-align:center}
+/* Audit UX-04 : texte ≥ 14 px en mobile */
+@media (max-width: 767px){.sokhna-sub{font-size:.875rem}.sokhna-disclaimer{font-size:.875rem}}
 @media (max-width:768px){
   .sokhna{inset-block-end:65px;inset-inline-end:12px}
   .sokhna-launcher{padding:.4rem}
